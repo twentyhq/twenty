@@ -71,27 +71,27 @@ export const LocalePicker = () => {
     },
     {
       label: t`French`,
-      value: APP_LOCALES.fr,
+      value: APP_LOCALES['fr-FR'],
     },
     {
       label: t`Spanish`,
-      value: APP_LOCALES.es,
+      value: APP_LOCALES['es-ES'],
     },
     {
       label: t`German`,
-      value: APP_LOCALES.de,
+      value: APP_LOCALES['de-DE'],
     },
     {
       label: t`Italian`,
-      value: APP_LOCALES.it,
+      value: APP_LOCALES['it-IT'],
     },
     {
       label: t`Korean`,
-      value: APP_LOCALES.ko,
+      value: APP_LOCALES['ko-KR'],
     },
     {
       label: t`Japanese`,
-      value: APP_LOCALES.ja,
+      value: APP_LOCALES['ja-JP'],
     },
     {
       label: t`Portuguese — Portugal`,
@@ -103,17 +103,17 @@ export const LocalePicker = () => {
     },
     {
       label: t`Chinese — Simplified`,
-      value: APP_LOCALES['zh-Hans'],
+      value: APP_LOCALES['zh-CN'],
     },
     {
       label: t`Chinese — Traditional`,
-      value: APP_LOCALES['zh-Hant'],
+      value: APP_LOCALES['zh-TW'],
     },
   ];
   if (isDebugMode) {
     localeOptions.push({
       label: t`Pseudo-English`,
-      value: 'pseudo-en',
+      value: APP_LOCALES['pseudo-en'],
     });
   }
 

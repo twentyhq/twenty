@@ -1,0 +1,1813 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-30 18:16+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: ko\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Korean\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: ko\n"
+"X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
+"X-Crowdin-File-ID: 29\n"
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr "{fieldLabel}의 {aggregateLabel}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
+msgid "{apiKeyName} API Key"
+msgstr "{apiKeyName} API 키"
+
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
+#: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
+msgid "{name}"
+msgstr "{name}"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:92
+msgid "1 000 workflow node executions"
+msgstr "워크플로 노드 실행 1,000회"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:63
+msgid "12h ({hour12Label})"
+msgstr "12시간 ({hour12Label})"
+
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:198
+msgid "2. Configure field"
+msgstr "2. 필드 구성"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
+msgid "24h ({hour24Label})"
+msgstr "24시간 ({hour24Label})"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:116
+msgid "A shared environment where you will be able to manage your customer relations with your team."
+msgstr "\\\n"
+"팀과 함께 고객 관계를 관리할 수 있는 공유 환경입니다."
+
+#: src/modules/ui/input/components/ImageInput.tsx:156
+msgid "Abort"
+msgstr "중단"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:90
+msgid "About"
+msgstr "정보"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:40
+#: src/pages/settings/accounts/SettingsAccounts.tsx:46
+msgid "Account"
+msgstr "계정"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:321
+#: src/modules/settings/profile/components/DeleteAccount.tsx:45
+msgid "Account Deletion"
+msgstr "계정 삭제"
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+msgid "Accounts"
+msgstr "계정"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
+msgid "Activate"
+msgstr "활성화"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:67
+msgid "Activate Workflow"
+msgstr "워크플로 활성화"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:190
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
+msgid "Active"
+msgstr "활성"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+msgid "Active API keys created by you or your team."
+msgstr "본인 또는 팀이 생성한 활성 API 키입니다."
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:38
+msgid "Add"
+msgstr "추가"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
+msgid "Add Field"
+msgstr "필드 추가"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
+msgid "Add object"
+msgstr "개체 추가"
+
+#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
+msgid "Add SSO Identity Provider"
+msgstr "SSO ID 공급자 추가"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
+msgid "Add to blocklist"
+msgstr "차단 목록에 추가"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:68
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:79
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:105
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:106
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:35
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:36
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:194
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:195
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
+msgid "Add to favorites"
+msgstr "즐겨찾기에 추가"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:16
+msgid "Add your first {objectLabel}"
+msgstr "첫 번째 {objectLabel} 추가"
+
+#: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
+msgid "Added {beautifiedCreatedAt}"
+msgstr "{beautifiedCreatedAt} 추가"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
+msgid "All"
+msgstr "전체"
+
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+msgid "All ({relationRecordsCount})"
+msgstr "전체 ({relationRecordsCount})"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:119
+msgid "All roles"
+msgstr "모든 역할"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
+msgid "Allow logins through Google's single sign-on functionality."
+msgstr "Google의 SSO 기능을 통한 로그인 허용."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
+msgid "Allow logins through Microsoft's single sign-on functionality."
+msgstr "Microsoft의 SSO 기능을 통한 로그인 허용."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
+msgid "Allow the invitation of new users by sharing an invite link."
+msgstr "초대 링크 공유를 통한 새 사용자 초대 허용."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
+msgid "Allow users to sign in with an email and password."
+msgstr "이메일과 비밀번호로 로그인 허용."
+
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "비밀번호 업데이트 중 오류가 발생했습니다"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
+msgid "An optional description"
+msgstr "선택적 설명"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
+msgid "and"
+msgstr "및"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:91
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+msgid "API & Webhooks"
+msgstr "API 및 웹훅"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
+msgid "API Key"
+msgstr "API 키"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+msgid "API keys"
+msgstr "API 키"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
+msgid "API Name"
+msgstr "API 이름"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "Appearance"
+msgstr "외관"
+
+#: src/pages/settings/SettingsBilling.tsx:189
+msgid "Are you sure that you want to change your billing interval?"
+msgstr "청구 주기를 변경하시겠습니까?"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Ascending"
+msgstr "오름차순"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:120
+msgid "Assign roles to specify each member's access permissions"
+msgstr "각 구성원의 접근 권한을 지정하려면 역할을 할당하세요"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:14
+msgid "Assigned members"
+msgstr "할당된 멤버"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:129
+msgid "Assigned to"
+msgstr "할당됨"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:64
+msgid "Assignment"
+msgstr "할당"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "최소 8자 이상."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
+msgid "At least one authentication method must be enabled"
+msgstr "하나 이상의 인증 방법이 활성화되어야 합니다"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:63
+msgid "Authentication"
+msgstr "인증"
+
+#: src/pages/auth/Authorize.tsx:127
+msgid "Authorize"
+msgstr "승인"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
+msgid "Average"
+msgstr "평균"
+
+#: src/pages/not-found/NotFound.tsx:58
+msgid "Back to content"
+msgstr "콘텐츠로 돌아가기"
+
+#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/SettingsBilling.tsx:138
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+msgid "Billing"
+msgstr "청구"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
+msgid "Blocklist"
+msgstr "차단 목록"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:210
+msgid "Book a Call"
+msgstr "통화 예약"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
+msgid "By using Twenty, you agree to the"
+msgstr "Twenty를 사용함으로써 귀하는 다음에 동의합니다"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
+msgid "Calculate"
+msgstr "계산"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
+msgid "Calendar"
+msgstr "캘린더"
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+msgid "Calendars"
+msgstr "캘린더"
+
+#: src/pages/auth/Authorize.tsx:124
+#: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:152
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
+#: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
+msgid "Cancel"
+msgstr "취소"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:152
+msgid "Cancel anytime"
+msgstr "언제든지 취소 가능"
+
+#: src/pages/settings/SettingsBilling.tsx:176
+msgid "Cancel Plan"
+msgstr "요금제 취소"
+
+#: src/pages/settings/SettingsBilling.tsx:171
+msgid "Cancel your subscription"
+msgstr "구독 취소"
+
+#: src/pages/settings/SettingsBilling.tsx:193
+msgid "Change {to}"
+msgstr "{to}로 변경"
+
+#: src/pages/auth/PasswordReset.tsx:246
+#: src/modules/settings/profile/components/ChangePassword.tsx:52
+#: src/modules/settings/profile/components/ChangePassword.tsx:58
+msgid "Change Password"
+msgstr "비밀번호 변경"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+msgid "Chinese — Simplified"
+msgstr "중국어 - 간체"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
+msgid "Chinese — Traditional"
+msgstr "중국어 - 번체"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
+msgid "Choose an object"
+msgstr "개체 선택"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
+msgid "Choose your provider"
+msgstr "제공업체 선택"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:147
+msgid "Choose your Trial"
+msgstr "평가판 선택"
+
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
+msgid "Close"
+msgstr "닫기"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:48
+msgid "Configure an SSO connection"
+msgstr "SSO 연결 구성"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:58
+msgid "Configure and customize your calendar preferences."
+msgstr "캘린더 환경설정을 구성하고 사용자 지정하세요."
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+msgid "Configure how dates are displayed across the app"
+msgstr "앱 전체에 날짜가 표시되는 방식 구성"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
+msgid "Configure your emails and calendar settings."
+msgstr "이메일 및 캘린더 설정 구성."
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
+msgid "Connect a new account to your workspace"
+msgstr "새 계정을 워크스페이스에 연결"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:61
+msgid "Connect with Google"
+msgstr "Google과 연결"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:70
+msgid "Connect with Microsoft"
+msgstr "Microsoft와 연결"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:56
+msgid "Connected accounts"
+msgstr "연결된 계정"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:97
+msgid "Context"
+msgstr "컨텍스트"
+
+#: src/pages/onboarding/InviteTeam.tsx:228
+#: src/pages/onboarding/CreateWorkspace.tsx:154
+#: src/pages/onboarding/CreateProfile.tsx:221
+#: src/pages/onboarding/ChooseYourPlan.tsx:198
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:92
+msgid "Continue"
+msgstr "계속"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:75
+msgid "Continue with Email"
+msgstr "이메일로 계속"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
+msgid "Continue with Google"
+msgstr "Google로 계속"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
+msgid "Continue with Microsoft"
+msgstr "Microsoft로 계속"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:65
+msgid "Copilot"
+msgstr "부조종사"
+
+#: src/pages/onboarding/InviteTeam.tsx:217
+msgid "Copy invitation link"
+msgstr "초대 링크 복사"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
+msgid "Copy this key as it will not be visible again"
+msgstr "이 키는 다시 표시되지 않으므로 복사하세요"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
+msgid "Count"
+msgstr "개수"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
+msgid "Count all"
+msgstr "전체 개수"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
+msgid "Count empty"
+msgstr "비어 있는 개수"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
+msgid "Count not empty"
+msgstr "비어 있지 않은 개수"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
+msgid "Count unique values"
+msgstr "고유 값 개수"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
+msgid "Create a workflow and return here to view its versions"
+msgstr "워크플로를 생성하고 여기로 돌아와 버전을 확인하세요"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+msgid "Create API key"
+msgstr "API 키 생성"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
+msgid "Create new record"
+msgstr "새 레코드 생성"
+
+#: src/pages/onboarding/CreateProfile.tsx:154
+msgid "Create profile"
+msgstr "프로필 생성"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:193
+msgid "Create Role"
+msgstr "역할 생성"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:72
+msgid "Create Webhook"
+msgstr "Webhook 생성"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:113
+msgid "Create your workspace"
+msgstr "워크스페이스 만들기"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:90
+msgid "Custom objects"
+msgstr "사용자 지정 개체"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
+msgid "Customise the fields available in the {objectLabelSingular} views."
+msgstr "{objectLabelSingular} 보기에서 사용 가능한 필드를 사용자 지정하세요."
+
+#: src/pages/settings/SettingsWorkspace.tsx:56
+msgid "Customize Domain"
+msgstr "도메인 사용자 지정"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:64
+msgid "Customize your workspace security"
+msgstr "워크스페이스 보안 사용자 지정"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
+#: src/modules/settings/profile/components/DeleteAccount.tsx:29
+msgid "Danger zone"
+msgstr "위험 구역"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:139
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+msgid "Data model"
+msgstr "데이터 모델"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
+msgid "Data type"
+msgstr "데이터 유형"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
+msgid "Date"
+msgstr "날짜"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+msgid "Date and time"
+msgstr "날짜 및 시간"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
+msgid "Deactivate"
+msgstr "비활성화"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
+msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
+msgstr "\"개체 레이블 및 API 이름 동기화\"를 비활성화하여 사용자 지정 API 이름을 설정하세요"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
+msgid "Deactivate this field"
+msgstr "이 필드 비활성화"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:82
+msgid "Deactivate Workflow"
+msgstr "워크플로 비활성화"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:91
+msgid "Define the name and description of your object"
+msgstr "개체의 이름과 설명을 정의하세요"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:31
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:45
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx:61
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:225
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:241
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:116
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
+msgid "Delete"
+msgstr "삭제"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:332
+#: src/modules/settings/profile/components/DeleteAccount.tsx:37
+#: src/modules/settings/profile/components/DeleteAccount.tsx:53
+msgid "Delete account"
+msgstr "계정 삭제"
+
+#: src/modules/settings/profile/components/DeleteAccount.tsx:30
+msgid "Delete account and all the associated data"
+msgstr "계정 및 모든 관련 데이터 삭제"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
+msgid "Delete API key"
+msgstr "API 키 삭제"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
+msgid "Delete record"
+msgstr "레코드 삭제"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
+msgid "Delete records"
+msgstr "레코드 삭제"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
+msgid "Delete this integration"
+msgstr "이 통합 삭제"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
+msgid "Delete webhook"
+msgstr "Webhook 삭제"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
+msgid "Delete workflow"
+msgstr "워크플로 삭제"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
+msgid "Delete workflows"
+msgstr "워크플로 삭제"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
+msgid "Delete workspace"
+msgstr "워크스페이스 삭제"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
+msgid "Delete your whole workspace"
+msgstr "전체 워크스페이스 삭제"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Descending"
+msgstr "내림차순"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
+msgid "Description"
+msgstr "설명"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:254
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:296
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:155
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:193
+msgid "Destroy"
+msgstr "파기"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:35
+#: src/pages/settings/developers/SettingsDevelopers.tsx:42
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:79
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+msgid "Developers"
+msgstr "개발자"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:97
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:98
+msgid "Discard Draft"
+msgstr "초안 삭제"
+
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
+msgid "Display as relative date"
+msgstr "상대 날짜로 표시"
+
+#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/workspace/SettingsHostname.tsx:115
+#: src/pages/settings/workspace/SettingsDomain.tsx:115
+#: src/pages/settings/workspace/SettingsDomain.tsx:125
+msgid "Domain"
+msgstr "도메인"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
+msgid "E.g. backoffice integration"
+msgstr "예: 백오피스 통합"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
+msgid "Earliest"
+msgstr "가장 빠름"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
+msgid "Earliest date"
+msgstr "가장 빠른 날짜"
+
+#: src/pages/settings/SettingsBilling.tsx:158
+msgid "Edit billing interval"
+msgstr "청구 주기 편집"
+
+#: src/pages/settings/SettingsBilling.tsx:146
+msgid "Edit payment method, see your invoices and more"
+msgstr "결제 방법 편집, 송장 확인 등"
+
+#: src/pages/settings/SettingsWorkspace.tsx:52
+msgid "Edit your subdomain name or set a custom domain."
+msgstr "하위 도메인 이름을 편집하거나 사용자 지정 도메인을 설정하세요."
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:180
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:256
+#: src/pages/settings/SettingsProfile.tsx:42
+#: src/pages/auth/PasswordReset.tsx:206
+msgid "Email"
+msgstr "이메일"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:89
+msgid "Email integration"
+msgstr "이메일 통합"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:55
+msgid "Email or domain is already in blocklist"
+msgstr "이메일 또는 도메인이 이미 차단 목록에 있습니다"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
+msgid "Emails"
+msgstr "이메일"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
+msgid "employees"
+msgstr "직원"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
+msgid "Employees"
+msgstr "직원"
+
+#: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
+msgid "Empty"
+msgstr "비어 있음"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
+msgid "Endpoint URL"
+msgstr "엔드포인트 URL"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "English"
+msgstr "영어"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:157
+msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
+msgstr "{withCreditCardTrialPeriodDuration}일 무료 체험을 즐기세요"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:51
+msgid "Enterprise"
+msgstr "엔터프라이즈"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
+msgid "Error deleting api key: {err}"
+msgstr "API 키 삭제 오류: {err}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
+msgid "Error regenerating api key: {err}"
+msgstr "API 키 재생성 오류: {err}"
+
+#: src/pages/settings/SettingsBilling.tsx:124
+msgid "Error while switching subscription {to}."
+msgstr "구독 전환 중 오류 발생: {to}."
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+msgid "Establish Webhook endpoints for notifications on asynchronous events."
+msgstr "비동기 이벤트 알림을 위한 Webhook 엔드포인트 설정."
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
+msgid "Exclude the following people and domains from my email sync"
+msgstr "다음 사람 및 도메인을 이메일 동기화에서 제외"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:162
+msgid "Existing objects"
+msgstr "기존 개체"
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+msgid "Exit Settings"
+msgstr "설정 종료"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
+#~ msgid "Expected selected node to be a create step node."
+#~ msgstr "Expected selected node to be a create step node."
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+msgid "Experience"
+msgstr "경험"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:219
+msgid "Expiration"
+msgstr "만료"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:126
+msgid "Expiration Date"
+msgstr "만료일"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:259
+msgid "Expires in"
+msgstr "만료까지 남은 시간"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:78
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:136
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:149
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:88
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:101
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:270
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:283
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:129
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:142
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:89
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:102
+msgid "Export"
+msgstr "내보내기"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:135
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:87
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
+msgid "Export records"
+msgstr "레코드 내보내기"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
+msgid "Export to PDF"
+msgstr "PDF로 내보내기"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:148
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:282
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
+msgid "Export view"
+msgstr "보기 내보내기"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
+msgid "Export Workflows"
+msgstr "워크플로 내보내기"
+
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
+msgid "Favorites"
+msgstr "즐겨찾기"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
+msgid "Field type"
+msgstr "필드 유형"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
+msgid "Fields"
+msgstr "필드"
+
+#: src/testing/mock-data/tableData.ts:22
+msgid "Fields Count"
+msgstr "필드 수"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
+#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
+msgid "Filter"
+msgstr "필터"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
+msgid "Filters"
+msgstr "필터"
+
+#: src/pages/onboarding/CreateProfile.tsx:180
+msgid "First Name"
+msgstr "이름"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "비밀번호를 잊으셨나요?"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+msgid "French"
+msgstr "프랑스어"
+
+#: src/pages/settings/SettingsBilling.tsx:47
+msgid "from monthly to yearly"
+msgstr "월간에서 연간으로"
+
+#: src/pages/settings/SettingsBilling.tsx:54
+msgid "from yearly to monthly"
+msgstr "연간에서 월간으로"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:87
+msgid "Full access"
+msgstr "전체 접근"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+msgid "Functions"
+msgstr "기능"
+
+#: src/pages/settings/SettingsWorkspace.tsx:29
+#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:122
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+msgid "General"
+msgstr "일반"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
+msgid "German"
+msgstr "독일어"
+
+#: src/pages/onboarding/InviteTeam.tsx:184
+msgid "Get the most out of your workspace by inviting your team."
+msgstr "팀을 초대하여 워크스페이스를 최대한 활용하세요."
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:148
+msgid "Get your subscription"
+msgstr "구독 신청"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:79
+msgid "Global"
+msgstr "글로벌"
+
+#: src/pages/settings/SettingsWorkspace.tsx:65
+msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+msgstr "Twenty 지원팀에 임시 접근 권한을 부여하여 문제를 해결하거나 콘텐츠를 복구할 수 있도록 하세요. 언제든지 접근 권한을 취소할 수 있습니다."
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
+msgid "Hide"
+msgstr "숨기기"
+
+#: src/pages/onboarding/CreateProfile.tsx:157
+msgid "How you'll be identified on the app."
+msgstr "앱에서 사용자를 식별하는 방법입니다."
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
+msgid "Icon and Name"
+msgstr "아이콘 및 이름"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
+msgid "Identifier"
+msgstr "식별자"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
+msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
+msgstr "이 키를 분실한 경우 다시 생성할 수 있지만, 이 키를 사용하는 모든 스크립트를 업데이트해야 합니다. 확인하려면 \"{confirmationValue}\"을 입력하세요."
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:215
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
+msgid "Inactive"
+msgstr "비활성"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
+msgid "Indexes"
+msgstr "색인"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
+msgid "Input must be in camel case and cannot start with a number"
+msgstr "입력은 카멜 케이스여야 하며 숫자로 시작할 수 없습니다"
+
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
+msgid "Instances"
+msgstr "인스턴스"
+
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:15
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:21
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+msgid "Integrations"
+msgstr "통합"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
+msgid "Invalid auth provider"
+msgstr "잘못된 인증 제공자"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:21
+msgid "Invalid email"
+msgstr "잘못된 이메일"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:44
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:50
+msgid "Invalid email or domain"
+msgstr "잘못된 이메일 또는 도메인"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:71
+msgid "Invalid form values"
+msgstr "잘못된 양식 값"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:244
+msgid "Invite by email"
+msgstr "이메일로 초대"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:157
+msgid "Invite by link"
+msgstr "링크로 초대"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
+msgid "Invite by Link"
+msgstr "링크로 초대"
+
+#: src/pages/onboarding/InviteTeam.tsx:152
+msgid "Invite link sent to email addresses"
+msgstr "이메일 주소로 전송된 초대 링크"
+
+#: src/pages/onboarding/InviteTeam.tsx:181
+msgid "Invite your team"
+msgstr "팀 초대"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
+msgid "Italian"
+msgstr "이탈리아어"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Japanese"
+msgstr "일본어"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+msgid "Korean"
+msgstr "한국어"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+msgid "Lab"
+msgstr "실험실"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+msgid "Language"
+msgstr "언어"
+
+#: src/pages/onboarding/CreateProfile.tsx:202
+msgid "Last Name"
+msgstr "성"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
+msgid "Latest"
+msgstr "최신"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
+msgid "Latest date"
+msgstr "최신 날짜"
+
+#: src/pages/onboarding/InviteTeam.tsx:127
+msgid "Link copied to clipboard"
+msgstr "링크가 클립보드에 복사되었습니다"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:206
+msgid "Log out"
+msgstr "로그아웃"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+msgid "Logout"
+msgstr "로그아웃"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:167
+msgid "Manage Members"
+msgstr "회원 관리"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:168
+msgid "Manage the members of your space here"
+msgstr "여기에서 워크스페이스의 회원을 관리하세요"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:57
+msgid "Manage your internet accounts."
+msgstr "인터넷 계정을 관리하세요."
+
+#: src/pages/settings/SettingsBilling.tsx:145
+msgid "Manage your subscription"
+msgstr "구독 관리"
+
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:69
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:60
+msgid "Mark as done"
+msgstr "완료로 표시"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:13
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:13
+msgid "Max"
+msgstr "최대"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:143
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:149
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+msgid "Members"
+msgstr "회원"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
+msgid "Min"
+msgstr "최소"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
+msgid "More options"
+msgstr "추가 옵션"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
+msgid "Move left"
+msgstr "왼쪽으로 이동"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
+msgid "Move right"
+msgstr "오른쪽으로 이동"
+
+#: src/testing/mock-data/tableData.ts:16
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:177
+#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsProfile.tsx:35
+#: src/pages/settings/roles/SettingsRoles.tsx:126
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
+#: src/pages/onboarding/CreateProfile.tsx:166
+#: src/modules/settings/workspace/components/NameField.tsx:91
+msgid "Name"
+msgstr "이름"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:49
+msgid "Name can not be empty"
+msgstr "이름은 비워 둘 수 없습니다"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+msgid "Name of your API key"
+msgstr "API 키 이름"
+
+#: src/pages/settings/SettingsWorkspace.tsx:44
+msgid "Name of your workspace"
+msgstr "워크스페이스 이름"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:181
+msgid "Navigate to next record"
+msgstr "다음 레코드로 이동"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:95
+msgid "Navigate to next version"
+msgstr "다음 버전으로 이동"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:184
+msgid "Navigate to next workflow"
+msgstr "다음 워크플로로 이동"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:65
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:170
+msgid "Navigate to previous record"
+msgstr "이전 레코드로 이동"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:85
+msgid "Navigate to previous version"
+msgstr "이전 버전으로 이동"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:174
+msgid "Navigate to previous workflow"
+msgstr "이전 워크플로로 이동"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+msgid "New"
+msgstr "새로운"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
+msgid "New account"
+msgstr "새 계정"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
+msgid "New key"
+msgstr "새 키"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
+msgid "New Key"
+msgstr "새 키"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
+msgid "New Object"
+msgstr "새 개체"
+
+#: src/pages/auth/PasswordReset.tsx:233
+msgid "New Password"
+msgstr "새 비밀번호"
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:27
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:29
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:46
+msgid "New record"
+msgstr "새 레코드"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:52
+#~ msgid "New Role"
+#~ msgstr "New Role"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
+msgid "New Webhook"
+msgstr "새 Webhook"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
+msgid "No connected account"
+msgstr "연결된 계정 없음"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
+msgid "No workflow runs yet"
+msgstr "아직 워크플로 실행 없음"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
+msgid "No workflow versions yet"
+msgstr "아직 워크플로 버전 없음"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
+msgid "Not empty"
+msgstr "비어 있지 않음"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:75
+msgid "Object"
+msgstr "개체"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:155
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
+msgid "Objects"
+msgstr "개체"
+
+#: src/pages/not-found/NotFound.tsx:47
+msgid "Off the beaten path"
+msgstr "잘 알려지지 않은 길"
+
+#: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
+msgid "Opened"
+msgstr "열림"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
+msgid "Options"
+msgstr "옵션"
+
+#: src/pages/onboarding/InviteTeam.tsx:213
+msgid "or"
+msgstr "또는"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+msgid "Other"
+msgstr "기타"
+
+#: src/pages/not-found/NotFound.tsx:41
+msgid "Page Not Found"
+msgstr "페이지를 찾을 수 없음"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
+msgid "Password"
+msgstr "비밀번호"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "비밀번호가 업데이트되었습니다"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:34
+msgid "Password reset link has been sent to the email"
+msgstr "비밀번호 재설정 링크가 이메일로 전송되었습니다"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
+msgid "Percent"
+msgstr "퍼센트"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
+msgid "Percent empty"
+msgstr "비어 있는 퍼센트"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
+msgid "Percent not empty"
+msgstr "비어 있지 않은 퍼센트"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:253
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
+msgid "Permanently destroy record"
+msgstr "레코드 영구 삭제"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
+msgid "Permanently destroy records"
+msgstr "레코드 영구 삭제"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
+msgid "Permanently destroy workflows"
+msgstr "워크플로 영구 삭제"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:70
+#: src/pages/settings/roles/components/RolePermissions.tsx:14
+msgid "Permissions"
+msgstr "권한"
+
+#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsProfile.tsx:30
+msgid "Picture"
+msgstr "사진"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
+msgid "Please enter a valid URL"
+msgstr "유효한 URL을 입력하세요"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
+msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
+msgstr "\"{confirmationValue}\"을 입력하여 이 API 키를 삭제할 것인지 확인하세요. 이 키를 사용하는 모든 스크립트는 작동이 중지됩니다."
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
+msgid "Please type {confirmationText} to confirm you want to delete this webhook."
+msgstr "{confirmationText}을 입력하여 이 Webhook을 삭제할 것인지 확인하세요."
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#~ msgid "Portuguese"
+#~ msgstr "Portuguese"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
+msgid "Portuguese — Brazil"
+msgstr "포르투갈어 - 브라질"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+msgid "Portuguese — Portugal"
+msgstr "포르투갈어 - 포르투갈"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
+#~ msgid "Portuguese (Brazil)"
+#~ msgstr "Portuguese (Brazil)"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#~ msgid "Portuguese (Portugal)"
+#~ msgstr "Portuguese (Portugal)"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
+#: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
+msgid "Preview"
+msgstr "미리보기"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
+msgid "Privacy Policy"
+msgstr "개인정보 보호정책"
+
+#: src/pages/settings/SettingsProfile.tsx:19
+#: src/pages/settings/SettingsProfile.tsx:25
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+msgid "Profile"
+msgstr "프로필"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
+msgid "Pseudo-English"
+msgstr "의사 영어"
+
+#: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx:9
+msgid "Read documentation"
+msgstr "문서 읽기"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:53
+msgid "Receive an email containing password update link"
+msgstr "비밀번호 업데이트 링크가 포함된 이메일 받기"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:69
+msgid "Record Selection"
+msgstr "레코드 선택"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
+msgid "Regenerate an API key"
+msgstr "API 키 재생성"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
+msgid "Regenerate key"
+msgstr "키 재생성"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
+msgid "Regenerate Key"
+msgstr "키 재생성"
+
+#: src/pages/settings/Releases.tsx:111
+#: src/pages/settings/Releases.tsx:117
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+msgid "Releases"
+msgstr "릴리스"
+
+#: src/modules/ui/input/components/ImageInput.tsx:172
+msgid "Remove"
+msgstr "제거"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:51
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:209
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:210
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:84
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:85
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:47
+msgid "Remove from favorites"
+msgstr "즐겨찾기에서 제거"
+
+#: src/pages/auth/PasswordReset.tsx:177
+msgid "Reset Password"
+msgstr "비밀번호 재설정"
+
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:47
+msgid "Reset to"
+msgstr "다음으로 재설정"
+
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:227
+msgid "Results"
+msgstr "결과"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:107
+#: src/pages/settings/roles/SettingsRoles.tsx:113
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+msgid "Roles"
+msgstr "역할"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
+msgid "Run a workflow and return here to view its executions"
+msgstr "워크플로를 실행하고 여기로 돌아와 실행 결과를 확인하세요"
+
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+msgid "Search"
+msgstr "검색"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "''{commandMenuSearch}''으로 검색..."
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
+msgid "Search a field..."
+msgstr "필드 검색..."
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
+msgid "Search an index..."
+msgstr "색인 검색..."
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+msgid "Search fields"
+msgstr "필드 검색"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:166
+msgid "Search for an object..."
+msgstr "개체 검색..."
+
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+msgid "Search records"
+msgstr "레코드 검색"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:33
+#: src/pages/settings/security/SettingsSecurity.tsx:40
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+msgid "Security"
+msgstr "보안"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:112
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:113
+msgid "See active version"
+msgstr "활성 버전 보기"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:55
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:56
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:127
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:128
+msgid "See runs"
+msgstr "실행 보기"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:143
+msgid "See versions"
+msgstr "버전 보기"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:142
+msgid "See versions history"
+msgstr "버전 기록 보기"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
+msgid "Select the events you wish to send to this endpoint"
+msgstr "이 엔드포인트로 보내려는 이벤트를 선택하세요"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+msgid "Select your preferred language"
+msgstr "선호하는 언어 선택"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:245
+msgid "Send an invite email to your team"
+msgstr "팀에 초대 이메일 보내기"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+msgid "Server Admin Panel"
+msgstr "서버 관리자 패널"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
+msgid "Set email visibility, manage your blocklist and more."
+msgstr "이메일 공개 여부 설정, 차단 목록 관리 등을 할 수 있습니다."
+
+#: src/pages/settings/workspace/SettingsHostname.tsx:115
+msgid "Set the name of your domain"
+msgstr "도메인 이름 설정"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+msgid "Set the name of your subdomain"
+msgstr "하위 도메인 이름 설정"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
+msgid "Settings"
+msgstr "설정"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:158
+msgid "Share this link to invite users to join your workspace"
+msgstr "이 링크를 공유하여 사용자를 워크스페이스에 초대하세요"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
+msgid "Should changing a field's label also change the API name?"
+msgstr "필드의 레이블을 변경하면 API 이름도 변경되어야 하나요?"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
+msgid "Sign in"
+msgstr "로그인"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:89
+msgid "Sign up"
+msgstr "가입하기"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "싱글 사인온(SSO)"
+
+#: src/pages/onboarding/InviteTeam.tsx:236
+msgid "Skip"
+msgstr "건너뛰기"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
+msgid "Sort"
+msgstr "정렬"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+msgid "Spanish"
+msgstr "스페인어"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr "SSO"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+msgid "Subdomain"
+msgstr "하위 도메인"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:89
+msgid "Subdomain already taken"
+msgstr "이미 사용 중인 하위 도메인"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:35
+msgid "Subdomain can not be longer than 30 characters"
+msgstr "하위 도메인은 30자를 초과할 수 없습니다"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:34
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "하위 도메인은 3자보다 짧을 수 없습니다"
+
+#: src/pages/settings/SettingsBilling.tsx:120
+msgid "Subscription has been switched {to}"
+msgstr "구독이 {to}로 전환되었습니다"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
+msgid "Sum"
+msgstr "합계"
+
+#: src/pages/settings/SettingsWorkspace.tsx:63
+msgid "Support"
+msgstr "지원"
+
+#: src/pages/settings/SettingsBilling.tsx:159
+msgid "Switch {from}"
+msgstr "{from}에서 전환"
+
+#: src/pages/settings/SettingsBilling.tsx:163
+msgid "Switch {to}"
+msgstr "{to}로 전환"
+
+#: src/pages/settings/SettingsBilling.tsx:187
+msgid "Switch billing {to}"
+msgstr "청구 {to}로 전환"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
+msgid "Synchronize Field Label and API Name"
+msgstr "필드 레이블과 API 이름 동기화"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
+msgid "System settings - {systemDateFormatLabel}"
+msgstr "시스템 설정 - {systemDateFormatLabel}"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
+msgid "System Settings - {systemTimeFormatLabel}"
+msgstr "시스템 설정 - {systemTimeFormatLabel}"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
+msgid "Terms of Service"
+msgstr "서비스 약관"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:158
+msgid "Test"
+msgstr "테스트"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:157
+msgid "Test Workflow"
+msgstr "테스트 워크플로"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
+msgid "The description of this field"
+msgstr "이 필드의 설명"
+
+#: src/pages/settings/SettingsProfile.tsx:43
+msgid "The email associated to your account"
+msgstr "계정에 연결된 이메일"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:209
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:240
+msgid "The name and icon of this field"
+msgstr "이 필드의 이름과 아이콘"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:129
+msgid "The name of your organization"
+msgstr "조직의 이름"
+
+#: src/pages/not-found/NotFound.tsx:50
+msgid "The page you're seeking is either gone or never was. Let's get you back on track"
+msgstr "찾고 계신 페이지는 이미 사라졌거나 존재하지 않습니다. 다시 정상화해 드리겠습니다"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:229
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:252
+msgid "The values of this field"
+msgstr "이 필드의 값"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
+msgid "The values of this field must be unique"
+msgstr "이 필드의 값은 고유해야 합니다"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "비밀번호 업데이트 중 오류가 발생했습니다."
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:38
+msgid "There was an issue"
+msgstr "문제가 발생했습니다"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:323
+msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
+msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 사용자가 영구적으로 삭제되고 모든 할당에서 제거됩니다."
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
+msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
+msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 전체 워크스페이스가 영구적으로 삭제됩니다. <0/> 확인하려면 이메일을 입력하세요."
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:15
+msgid "This Role has the following permissions."
+msgstr "이 역할은 다음과 같은 권한을 가지고 있습니다."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:15
+msgid "This Role is assigned to these workspace member."
+msgstr "이 역할은 해당 워크스페이스 멤버에게 할당되어 있습니다."
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
+msgid "Time format"
+msgstr "시간 형식"
+
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "to monthly"
+msgstr "월간으로"
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "to yearly"
+msgstr "연간으로"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:56
+msgid "Trigger Type"
+msgstr "트리거 유형"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:60
+msgid "Trigger type should be Manual - when no record(s) are selected"
+msgstr "트리거 유형은 수동이어야 합니다 - 선택된 레코드가 없는 경우"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
+msgid "Type"
+msgstr "유형"
+
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
+msgid "Type anything"
+msgstr "아무거나 입력하세요"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
+msgid "Unique"
+msgstr "고유"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:80
+msgid "Unknown error"
+msgstr "알 수 없는 오류"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:88
+msgid "Unlimited contacts"
+msgstr "무제한 연락처"
+
+#: src/modules/ui/input/components/ImageInput.tsx:164
+msgid "Upload"
+msgstr "업로드"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+msgid "URL"
+msgstr "URL"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:40
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:41
+msgid "Use as draft"
+msgstr "초안으로 사용"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:37
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr "문자, 숫자, 대시만 사용하세요. 문자 또는 숫자로 시작하고 끝내세요"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:16
+msgid "Use our API or add your first {objectLabel} manually"
+msgstr "API를 사용하거나 첫 번째 {objectLabel}을 수동으로 추가하세요"
+
+#: src/pages/settings/SettingsProfile.tsx:22
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
+#: src/pages/settings/accounts/SettingsAccounts.tsx:43
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+msgid "User"
+msgstr "사용자"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:51
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:106
+msgid "User is not logged in"
+msgstr "사용자가 로그인하지 않았습니다"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:223
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:228
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:251
+msgid "Values"
+msgstr "값"
+
+#: src/pages/settings/SettingsBilling.tsx:150
+msgid "View billing details"
+msgstr "청구 세부 정보 보기"
+
+#: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx:35
+msgid "Visualize"
+msgstr "시각화"
+
+#: src/modules/ui/input/components/ImageInput.tsx:177
+msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
+msgstr "10MB 미만의 정사각형 PNG, JPEG 및 GIF를 지원합니다"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+msgid "We will send POST requests to this endpoint for every new event"
+msgstr "모든 새로운 이벤트에 대해 이 엔드포인트로 POST 요청을 보냅니다"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
+msgid "Webhook"
+msgstr "Webhook"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:65
+msgid "Webhooks"
+msgstr "Webhooks"
+
+#: src/pages/auth/SignInUp.tsx:43
+#~ msgid "Welcome to"
+#~ msgstr "Welcome to"
+
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "{workspaceName}에 오신 것을 환영합니다"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
+msgid "When the API key will expire."
+msgstr "API 키 만료일."
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
+msgid "When the key will be disabled"
+msgstr "키 비활성화 시기"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:58
+msgid "Workflow cannot be tested"
+msgstr "워크플로를 테스트할 수 없음"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:146
+#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsBilling.tsx:135
+#: src/pages/settings/Releases.tsx:114
+#: src/pages/settings/workspace/SettingsDomain.tsx:118
+#: src/pages/settings/security/SettingsSecurity.tsx:37
+#: src/pages/settings/roles/SettingsRoles.tsx:110
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:18
+#: src/pages/settings/developers/SettingsDevelopers.tsx:39
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
+#: src/pages/settings/data-model/SettingsObjects.tsx:152
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/favorites/components/WorkspaceFavorites.tsx:19
+msgid "Workspace"
+msgstr "워크스페이스"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
+msgid "Workspace Deletion"
+msgstr "워크스페이스 삭제"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:123
+msgid "Workspace logo"
+msgstr "워크스페이스 로고"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:128
+msgid "Workspace name"
+msgstr "워크스페이스 이름"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
+msgid "Write a description"
+msgstr "설명을 작성하세요"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
+msgid "yes"
+msgstr "예"
+
+#: src/pages/settings/SettingsBilling.tsx:48
+msgid "You will be charged immediately for the full year."
+msgstr "1년 요금이 즉시 청구됩니다."
+
+#: src/pages/settings/SettingsBilling.tsx:55
+msgid "Your credit balance will be used to pay the monthly bills."
+msgstr "크레딧 잔액이 월 청구서 결제에 사용됩니다."
+
+#: src/pages/settings/SettingsProfile.tsx:36
+msgid "Your name as it will be displayed"
+msgstr "표시될 이름"
+
+#: src/pages/onboarding/CreateProfile.tsx:167
+msgid "Your name as it will be displayed on the app"
+msgstr "앱에 디스플레이될 귀하의 이름"
+
+#: src/pages/auth/SignInUp.tsx:73
+msgid "Your Workspace"
+msgstr "귀하의 워크스페이스"
+
+#: src/pages/settings/SettingsBilling.tsx:172
+msgid "Your workspace will be disabled"
+msgstr "워크스페이스가 비활성화됩니다"
+

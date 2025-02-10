@@ -17590,13 +17590,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:^6.9.7":
-  version: 6.9.17
-  resolution: "@types/qs@npm:6.9.17"
-  checksum: 10c0/a183fa0b3464267f8f421e2d66d960815080e8aab12b9aadab60479ba84183b1cdba8f4eff3c06f76675a8e42fe6a3b1313ea76c74f2885c3e25d32499c17d1b
-  languageName: node
-  linkType: hard
-
 "@types/range-parser@npm:*":
   version: 1.2.7
   resolution: "@types/range-parser@npm:1.2.7"
@@ -23122,21 +23115,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cloudflare@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "cloudflare@npm:3.5.0"
+"cloudflare@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "cloudflare@npm:4.0.0"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
-    "@types/qs": "npm:^6.9.7"
     abort-controller: "npm:^3.0.0"
     agentkeepalive: "npm:^4.2.1"
     form-data-encoder: "npm:1.7.2"
     formdata-node: "npm:^4.3.2"
     node-fetch: "npm:^2.6.7"
-    qs: "npm:^6.10.3"
-    web-streams-polyfill: "npm:^3.2.1"
-  checksum: 10c0/bb48ff68a4f5b7e945ceec570e7e17251ad167d8d2dadf8099fd74df46582356382b8cd3f62a9da74cd3a208f8f5181a40c561bc5873592d6a4930458c0e7b86
+  checksum: 10c0/d83a4d0544de5794935acb802c875c6f718713d8c7613b2a74d6145b922f18415e514cc57bbef9249726d83c0788ac8a72517a69efb1fd5b5af58b654403c375
   languageName: node
   linkType: hard
 
@@ -40591,15 +40581,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.10.3":
-  version: 6.13.1
-  resolution: "qs@npm:6.13.1"
-  dependencies:
-    side-channel: "npm:^1.0.6"
-  checksum: 10c0/5ef527c0d62ffca5501322f0832d800ddc78eeb00da3b906f1b260ca0492721f8cdc13ee4b8fd8ac314a6ec37b948798c7b603ccc167e954088df392092f160c
-  languageName: node
-  linkType: hard
-
 "qs@npm:~6.5.2":
   version: 6.5.3
   resolution: "qs@npm:6.5.3"
@@ -45936,7 +45917,7 @@ __metadata:
     cache-manager: "npm:^5.4.0"
     cache-manager-redis-yet: "npm:^4.1.2"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
-    cloudflare: "npm:^3.5.0"
+    cloudflare: "npm:^4.0.0"
     connect-redis: "npm:^7.1.1"
     express-session: "npm:^1.18.1"
     graphql-middleware: "npm:^6.1.35"

@@ -81,6 +81,10 @@ export class User {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
+  @Field(() => String, { nullable: false })
+  @Column({ nullable: false, default: 'en' })
+  locale: string;
+
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
   })

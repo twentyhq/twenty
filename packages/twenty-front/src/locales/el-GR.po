@@ -1,0 +1,1819 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-30 18:16+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: el\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Greek\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: el\n"
+"X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
+"X-Crowdin-File-ID: 29\n"
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr "{aggregateLabel} του {fieldLabel}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
+msgid "{apiKeyName} API Key"
+msgstr "API Key {apiKeyName}"
+
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
+#: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
+msgid "{name}"
+msgstr "{name}"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:92
+msgid "1 000 workflow node executions"
+msgstr "1 000 εκτελέσεις κόμβων διεργασιών"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:63
+msgid "12h ({hour12Label})"
+msgstr "12ω ({hour12Label})"
+
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:198
+msgid "2. Configure field"
+msgstr "2. Διαμόρφωση πεδίου"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
+msgid "24h ({hour24Label})"
+msgstr "24ω ({hour24Label})"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:116
+msgid "A shared environment where you will be able to manage your customer relations with your team."
+msgstr "Ένα κοινό περιβάλλον όπου θα μπορέσετε να διαχειρίζεστε τις σχέσεις με τους πελάτες σας με την ομάδα σας."
+
+#: src/modules/ui/input/components/ImageInput.tsx:156
+msgid "Abort"
+msgstr "Ακύρωση"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:90
+msgid "About"
+msgstr "Περίπου"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:40
+#: src/pages/settings/accounts/SettingsAccounts.tsx:46
+msgid "Account"
+msgstr "Λογαριασμός"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:321
+#: src/modules/settings/profile/components/DeleteAccount.tsx:45
+msgid "Account Deletion"
+msgstr "Διαγραφή Λογαριασμού"
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+msgid "Accounts"
+msgstr "Λογαριασμοί"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
+msgid "Activate"
+msgstr "Ενεργοποίηση"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:67
+msgid "Activate Workflow"
+msgstr "Ενεργοποίηση διεργασιών"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:190
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
+msgid "Active"
+msgstr "Ενεργό"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+msgid "Active API keys created by you or your team."
+msgstr "Ενεργά API keys που έχουν δημιουργηθεί από εσάς ή την ομάδα σας."
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:38
+msgid "Add"
+msgstr "Προσθήκη"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
+msgid "Add Field"
+msgstr "Προσθήκη Πεδίου"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
+msgid "Add object"
+msgstr "Προσθήκη αντικειμένου"
+
+#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
+msgid "Add SSO Identity Provider"
+msgstr "Προσθήκη παρόχου ταυτότητας SSO"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
+msgid "Add to blocklist"
+msgstr "Προσθήκη στη λίστα αποκλεισμού"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:68
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:79
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:105
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:106
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:35
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:36
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:194
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:195
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
+msgid "Add to favorites"
+msgstr "Προσθήκη στα αγαπημένα"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:16
+msgid "Add your first {objectLabel}"
+msgstr "Προσθέστε το πρώτο σας {objectLabel}"
+
+#: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
+msgid "Added {beautifiedCreatedAt}"
+msgstr "Προστέθηκε {beautifiedCreatedAt}"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
+msgid "All"
+msgstr "Όλα"
+
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+msgid "All ({relationRecordsCount})"
+msgstr "Όλα ({relationRecordsCount})"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:119
+msgid "All roles"
+msgstr "Όλοι οι ρόλοι"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
+msgid "Allow logins through Google's single sign-on functionality."
+msgstr "Επιτρέψτε συνδέσεις μέσω της λειτουργικότητας μοναδικής σύνδεσης της Google."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
+msgid "Allow logins through Microsoft's single sign-on functionality."
+msgstr "Επιτρέψτε συνδέσεις μέσω της λειτουργικότητας μοναδικής σύνδεσης της Microsoft."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
+msgid "Allow the invitation of new users by sharing an invite link."
+msgstr "Επιτρέψτε την πρόσκληση νέων χρηστών μέσω κοινής χρήσης ενός συνδέσμου πρόσκλησης."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
+msgid "Allow users to sign in with an email and password."
+msgstr "Επιτρέψτε στους χρήστες να συνδέονται με email και κωδικό πρόσβασης."
+
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "Προέκυψε σφάλμα κατά την ενημέρωση του κωδικού πρόσβασης"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
+msgid "An optional description"
+msgstr "Μια προαιρετική περιγραφή"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
+msgid "and"
+msgstr "και"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:91
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+msgid "API & Webhooks"
+msgstr "API & Webhooks"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
+msgid "API Key"
+msgstr "API Key"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+msgid "API keys"
+msgstr "Κλειδιά API"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
+msgid "API Name"
+msgstr "Όνομα API"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "Appearance"
+msgstr "Εμφάνιση"
+
+#: src/pages/settings/SettingsBilling.tsx:189
+msgid "Are you sure that you want to change your billing interval?"
+msgstr "Είστε βέβαιοι ότι θέλετε να αλλάξετε το διάστημα χρέωσης;"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Ascending"
+msgstr "Αύξουσα"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:120
+msgid "Assign roles to specify each member's access permissions"
+msgstr "Αναθέστε ρόλους για να καθορίσετε τα δικαιώματα πρόσβασης του κάθε μέλους"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:14
+msgid "Assigned members"
+msgstr "Ανατεθειμένα μέλη"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:129
+msgid "Assigned to"
+msgstr "Ανατεθειμένο σε"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:64
+msgid "Assignment"
+msgstr "Ανάθεση"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "Τουλάχιστον 8 χαρακτήρες."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
+msgid "At least one authentication method must be enabled"
+msgstr "Τουλάχιστον μία μέθοδος ταυτοποίησης πρέπει να είναι ενεργή"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:63
+msgid "Authentication"
+msgstr "Ταυτοποίηση"
+
+#: src/pages/auth/Authorize.tsx:127
+msgid "Authorize"
+msgstr "Εξουσιοδότηση"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
+msgid "Average"
+msgstr "Μέσος όρος"
+
+#: src/pages/not-found/NotFound.tsx:58
+msgid "Back to content"
+msgstr "Επιστροφή στο περιεχόμενο"
+
+#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/SettingsBilling.tsx:138
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+msgid "Billing"
+msgstr "Χρέωση"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
+msgid "Blocklist"
+msgstr "Μαύρη λίστα"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:210
+msgid "Book a Call"
+msgstr "Κλείστε ένα τηλεφώνημα"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
+msgid "By using Twenty, you agree to the"
+msgstr "Χρησιμοποιώντας το Twenty, συμφωνείτε με τους"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
+msgid "Calculate"
+msgstr "Υπολογίστε"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
+msgid "Calendar"
+msgstr "Ημερολόγιο"
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+msgid "Calendars"
+msgstr "Ημερολόγια"
+
+#: src/pages/auth/Authorize.tsx:124
+#: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:152
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
+#: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:152
+msgid "Cancel anytime"
+msgstr "Ακύρωση ανά πάσα στιγμή"
+
+#: src/pages/settings/SettingsBilling.tsx:176
+msgid "Cancel Plan"
+msgstr "Ακύρωση σχεδίου"
+
+#: src/pages/settings/SettingsBilling.tsx:171
+msgid "Cancel your subscription"
+msgstr "Ακύρωση της συνδρομής σας"
+
+#: src/pages/settings/SettingsBilling.tsx:193
+msgid "Change {to}"
+msgstr "Αλλαγή σε {to}"
+
+#: src/pages/auth/PasswordReset.tsx:246
+#: src/modules/settings/profile/components/ChangePassword.tsx:52
+#: src/modules/settings/profile/components/ChangePassword.tsx:58
+msgid "Change Password"
+msgstr "Αλλαγή Κωδικού"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+msgid "Chinese — Simplified"
+msgstr "Κινέζικα — Απλοποιημένα"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
+msgid "Chinese — Traditional"
+msgstr "Κινέζικα — Παραδοσιακά"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
+msgid "Choose an object"
+msgstr "Επιλέξτε ένα αντικείμενο"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
+msgid "Choose your provider"
+msgstr "Επιλέξτε τον πάροχό σας"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:147
+msgid "Choose your Trial"
+msgstr "Επιλέξτε τη Δοκιμή σας"
+
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
+msgid "Close"
+msgstr "Κλείσιμο"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:48
+msgid "Configure an SSO connection"
+msgstr "Ρυθμίστε μια σύνδεση SSO"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:58
+msgid "Configure and customize your calendar preferences."
+msgstr "Ρυθμίστε και προσαρμόστε τις προτιμήσεις του ημερολογίου σας."
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+msgid "Configure how dates are displayed across the app"
+msgstr "Ρυθμίστε πώς εμφανίζονται οι ημερομηνίες σε όλη την εφαρμογή"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
+msgid "Configure your emails and calendar settings."
+msgstr "Ρυθμίστε τις ρυθμίσεις email και ημερολογίου σας."
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
+msgid "Connect a new account to your workspace"
+msgstr "Συνδέστε έναν νέο λογαριασμό με το χώρο εργασίας σας"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:61
+msgid "Connect with Google"
+msgstr "Συνδέστε με το Google"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:70
+msgid "Connect with Microsoft"
+msgstr "Συνδέστε με τη Microsoft"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:56
+msgid "Connected accounts"
+msgstr "Συνδεδεμένοι λογαριασμοί"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:97
+msgid "Context"
+msgstr "Περιβάλλον"
+
+#: src/pages/onboarding/InviteTeam.tsx:228
+#: src/pages/onboarding/CreateWorkspace.tsx:154
+#: src/pages/onboarding/CreateProfile.tsx:221
+#: src/pages/onboarding/ChooseYourPlan.tsx:198
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:92
+msgid "Continue"
+msgstr "Συνέχεια"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:75
+msgid "Continue with Email"
+msgstr "Συνέχεια με Email"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
+msgid "Continue with Google"
+msgstr "Συνέχεια με Google"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
+msgid "Continue with Microsoft"
+msgstr "Συνέχεια με τη Microsoft"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:65
+msgid "Copilot"
+msgstr "Πηδαλιούχος"
+
+#: src/pages/onboarding/InviteTeam.tsx:217
+msgid "Copy invitation link"
+msgstr "Αντιγραφή συνδέσμου πρόσκλησης"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
+msgid "Copy this key as it will not be visible again"
+msgstr "Αντιγράψτε αυτό το κλειδί γιατί δεν θα είναι ξανά ορατό"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
+msgid "Count"
+msgstr "Καταμέτρηση"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
+msgid "Count all"
+msgstr "Καταμέτρηση όλων"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
+msgid "Count empty"
+msgstr "Καταμέτρηση κενών"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
+msgid "Count not empty"
+msgstr "Καταμέτρηση μη κενών"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
+msgid "Count unique values"
+msgstr "Καταμέτρηση μοναδικών τιμών"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
+msgid "Create a workflow and return here to view its versions"
+msgstr "Δημιουργήστε ένα workflow και επιστρέψτε εδώ για να δείτε τις εκδόσεις του"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+msgid "Create API key"
+msgstr "Δημιουργήστε μια κλειδί API"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
+msgid "Create new record"
+msgstr "Δημιουργήστε νέα εγγραφή"
+
+#: src/pages/onboarding/CreateProfile.tsx:154
+msgid "Create profile"
+msgstr "Δημιουργήστε προφίλ"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:193
+msgid "Create Role"
+msgstr "Δημιουργήστε ρόλο"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:72
+msgid "Create Webhook"
+msgstr "Δημιουργήστε Webhook"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:113
+msgid "Create your workspace"
+msgstr "Δημιουργήστε το χώρο εργασίας σας"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:90
+msgid "Custom objects"
+msgstr "Προσαρμοσμένα αντικείμενα"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
+msgid "Customise the fields available in the {objectLabelSingular} views."
+msgstr "Προσαρμόστε τα πεδία που είναι διαθέσιμα στις προβολές {objectLabelSingular}."
+
+#: src/pages/settings/SettingsWorkspace.tsx:56
+msgid "Customize Domain"
+msgstr "Προσαρμογή Domain"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:64
+msgid "Customize your workspace security"
+msgstr "Προσαρμόστε την ασφάλεια του χώρου εργασίας σας"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
+#: src/modules/settings/profile/components/DeleteAccount.tsx:29
+msgid "Danger zone"
+msgstr "Ζώνη κινδύνου"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:139
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+msgid "Data model"
+msgstr "Μοντέλο δεδομένων"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
+msgid "Data type"
+msgstr "Τύπος δεδομένων"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
+msgid "Date"
+msgstr "Ημερομηνία"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+msgid "Date and time"
+msgstr "Ημερομηνία και ώρα"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
+msgid "Deactivate"
+msgstr "Απενεργοποίηση"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
+msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
+msgstr "Απενεργοποιήστε τη συγχρονισμό των ετικετών αντικειμένων και των ονομάτων API για να ορίσετε ένα προσαρμοσμένο όνομα API"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
+msgid "Deactivate this field"
+msgstr "Απενεργοποίηση αυτού του πεδίου"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:82
+msgid "Deactivate Workflow"
+msgstr "Απενεργοποίηση Workflow"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:91
+msgid "Define the name and description of your object"
+msgstr "Ορίστε το όνομα και την περιγραφή του αντικειμένου σας"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:31
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:45
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx:61
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:225
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:241
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:116
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
+msgid "Delete"
+msgstr "Διαγραφή"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:332
+#: src/modules/settings/profile/components/DeleteAccount.tsx:37
+#: src/modules/settings/profile/components/DeleteAccount.tsx:53
+msgid "Delete account"
+msgstr "Διαγραφή λογαριασμού"
+
+#: src/modules/settings/profile/components/DeleteAccount.tsx:30
+msgid "Delete account and all the associated data"
+msgstr "Διαγραφή λογαριασμού και όλων των συσχετιζόμενων δεδομένων"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
+msgid "Delete API key"
+msgstr "Διαγραφή κλειδιού API"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
+msgid "Delete record"
+msgstr "Διαγραφή εγγραφής"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
+msgid "Delete records"
+msgstr "Διαγραφή εγγραφών"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
+msgid "Delete this integration"
+msgstr "Διαγραφή αυτής της ενσωμάτωσης"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
+msgid "Delete webhook"
+msgstr "Διαγραφή webhook"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
+msgid "Delete workflow"
+msgstr "Διαγραφή ροής εργασίας"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
+msgid "Delete workflows"
+msgstr "Διαγραφή ροών εργασίας"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
+msgid "Delete workspace"
+msgstr "Διαγραφή χώρου εργασίας"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
+msgid "Delete your whole workspace"
+msgstr "Διαγραφή ολόκληρου του χώρου εργασίας σου"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Descending"
+msgstr "Φθίνουσα"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
+msgid "Description"
+msgstr "Περιγραφή"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:254
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:296
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:155
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:193
+msgid "Destroy"
+msgstr "Καταστροφή"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:35
+#: src/pages/settings/developers/SettingsDevelopers.tsx:42
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:79
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+msgid "Developers"
+msgstr "Προγραμματιστές"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:97
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:98
+msgid "Discard Draft"
+msgstr "Απόρριψη πρόχειρου"
+
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
+msgid "Display as relative date"
+msgstr "Εμφάνιση σε σχετική ημερομηνία"
+
+#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/workspace/SettingsHostname.tsx:115
+#: src/pages/settings/workspace/SettingsDomain.tsx:115
+#: src/pages/settings/workspace/SettingsDomain.tsx:125
+msgid "Domain"
+msgstr "Τομέας"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
+msgid "E.g. backoffice integration"
+msgstr "Π.χ. ενσωμάτωση backoffice"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
+msgid "Earliest"
+msgstr "Νωρίτερο"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
+msgid "Earliest date"
+msgstr "Νωρίτερη ημερομηνία"
+
+#: src/pages/settings/SettingsBilling.tsx:158
+msgid "Edit billing interval"
+msgstr "Επεξεργασία διαστήματος χρέωσης"
+
+#: src/pages/settings/SettingsBilling.tsx:146
+msgid "Edit payment method, see your invoices and more"
+msgstr "Επεξεργασία τρόπου πληρωμής, προβολή των τιμολογίων σου και άλλα"
+
+#: src/pages/settings/SettingsWorkspace.tsx:52
+msgid "Edit your subdomain name or set a custom domain."
+msgstr "Επεξεργαστείτε το όνομα του υποτομέα σας ή ορίστε ένα προσαρμοσμένο τομέα."
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:180
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:256
+#: src/pages/settings/SettingsProfile.tsx:42
+#: src/pages/auth/PasswordReset.tsx:206
+msgid "Email"
+msgstr "Ηλεκτρονικό ταχυδρομείο"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:89
+msgid "Email integration"
+msgstr "Ενσωμάτωση με email"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:55
+msgid "Email or domain is already in blocklist"
+msgstr "Το email ή ο τομέας βρίσκεται ήδη στη λίστα απόκλεισης"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
+msgid "Emails"
+msgstr "Ηλεκτρονικά ταχυδρομεία"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
+msgid "employees"
+msgstr "εργαζόμενοι"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
+msgid "Employees"
+msgstr "Εργαζόμενοι"
+
+#: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
+msgid "Empty"
+msgstr "Κενό"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
+msgid "Endpoint URL"
+msgstr "URL τελικού σημείου"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "English"
+msgstr "Αγγλικά"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:157
+msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
+msgstr "Απολαύστε μια δωρεάν δοκιμαστική περίοδο {withCreditCardTrialPeriodDuration} ημερών"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:51
+msgid "Enterprise"
+msgstr "\n"
+"        {\"Enterprise\": \"{0, plural, one {Επιχείρηση} other {Επιχειρήσεις}}\",\n"
+"        \"broken_translation\": \"Επιχειρήσεις\",\n"
+"        \"qa_issues\": [\"Translation is the same as the source text\"],\n"
+"        \"key\": \"Enterprise\",\n"
+"        \"context\": \"#: src/pages/settings/security/SettingsSecurity.tsx:51\\n\",\n"
+"        \"maxLength\": null\n"
+"        }"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
+msgid "Error deleting api key: {err}"
+msgstr "Σφάλμα κατά τη διαγραφή κλειδιού api: {err}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
+msgid "Error regenerating api key: {err}"
+msgstr "Σφάλμα κατά την επαναδημιουργία κλειδιού api: {err}"
+
+#: src/pages/settings/SettingsBilling.tsx:124
+msgid "Error while switching subscription {to}."
+msgstr "Σφάλμα κατά την αλλαγή συνδρομής {to}."
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+msgid "Establish Webhook endpoints for notifications on asynchronous events."
+msgstr "Καθορισμός τελικών σημείων Webhook για ειδοποιήσεις σε ασύγχρονα γεγονότα."
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
+msgid "Exclude the following people and domains from my email sync"
+msgstr "Αποκλεισμός των ακόλουθων ατόμων και τομέων από τον συγχρονισμό του email μου"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:162
+msgid "Existing objects"
+msgstr "Υπάρχοντα αντικείμενα"
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+msgid "Exit Settings"
+msgstr "Έξοδος από Ρυθμίσεις"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
+#~ msgid "Expected selected node to be a create step node."
+#~ msgstr "Expected selected node to be a create step node."
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+msgid "Experience"
+msgstr "Εμπειρία"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:219
+msgid "Expiration"
+msgstr "Λήξη"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:126
+msgid "Expiration Date"
+msgstr "Ημερομηνία λήξης"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:259
+msgid "Expires in"
+msgstr "Λήγει σε"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:78
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:136
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:149
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:88
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:101
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:270
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:283
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:129
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:142
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:89
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:102
+msgid "Export"
+msgstr "Εξαγωγή"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:135
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:87
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
+msgid "Export records"
+msgstr "Εξαγωγή εγγραφών"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
+msgid "Export to PDF"
+msgstr "Εξαγωγή σε PDF"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:148
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:282
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
+msgid "Export view"
+msgstr "Εξαγωγή προβολής"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
+msgid "Export Workflows"
+msgstr "Εξαγωγή Workflows"
+
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
+msgid "Favorites"
+msgstr "Αγαπημένα"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
+msgid "Field type"
+msgstr "Τύπος πεδίου"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
+msgid "Fields"
+msgstr "Πεδία"
+
+#: src/testing/mock-data/tableData.ts:22
+msgid "Fields Count"
+msgstr "Αριθμός πεδίων"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
+#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
+msgid "Filter"
+msgstr "Φίλτρο"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
+msgid "Filters"
+msgstr "Φίλτρα"
+
+#: src/pages/onboarding/CreateProfile.tsx:180
+msgid "First Name"
+msgstr "Όνομα"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "Ξεχάσατε τον κωδικό σας;"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+msgid "French"
+msgstr "Γαλλικά"
+
+#: src/pages/settings/SettingsBilling.tsx:47
+msgid "from monthly to yearly"
+msgstr "από μηνιαίο σε ετήσιο"
+
+#: src/pages/settings/SettingsBilling.tsx:54
+msgid "from yearly to monthly"
+msgstr "από ετήσιο σε μηνιαίο"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:87
+msgid "Full access"
+msgstr "Πλήρης πρόσβαση"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+msgid "Functions"
+msgstr "Λειτουργίες"
+
+#: src/pages/settings/SettingsWorkspace.tsx:29
+#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:122
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+msgid "General"
+msgstr "Γενικά"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
+msgid "German"
+msgstr "Γερμανικά"
+
+#: src/pages/onboarding/InviteTeam.tsx:184
+msgid "Get the most out of your workspace by inviting your team."
+msgstr "Αξιοποιείστε τον χώρο εργασίας σας με τον καλύτερο τρόπο, καλώντας την ομάδα σας."
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:148
+msgid "Get your subscription"
+msgstr "Αποκτήστε τη συνδρομή σας"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:79
+msgid "Global"
+msgstr "Παγκόσμιο"
+
+#: src/pages/settings/SettingsWorkspace.tsx:65
+msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+msgstr "Παραχωρήστε στην υποστήριξη του Twenty προσωρινή πρόσβαση στον χώρο εργασίας σας, ώστε να μπορούμε να διαγνώσουμε προβλήματα ή να ανακτήσουμε περιεχόμενο για λογαριασμό σας. Μπορείτε να ανακαλέσετε την πρόσβαση ανά πάσα στιγμή."
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
+msgid "Hide"
+msgstr "Απόκρυψη"
+
+#: src/pages/onboarding/CreateProfile.tsx:157
+msgid "How you'll be identified on the app."
+msgstr "Πώς θα ταυτοποιείστε στην εφαρμογή."
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
+msgid "Icon and Name"
+msgstr "Εικονίδιο και Όνομα"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
+msgid "Identifier"
+msgstr "Αναγνωριστικό"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
+msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
+msgstr "Αν έχετε χάσει αυτό το κλειδί, μπορείτε να το ανακτήσετε, αλλά να είστε ενημερωμένοι ότι οποιοδήποτε script χρησιμοποιεί αυτό το κλειδί θα πρέπει να ενημερωθεί. Παρακαλώ πληκτρολογήστε \"{confirmationValue}\" για επιβεβαίωση."
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:215
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
+msgid "Inactive"
+msgstr "Ανενεργό"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
+msgid "Indexes"
+msgstr "Ευρετήρια"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
+msgid "Input must be in camel case and cannot start with a number"
+msgstr "Η εισαγωγή πρέπει να είναι σε μορφή camel case και δεν μπορεί να ξεκινά με έναν αριθμό"
+
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
+msgid "Instances"
+msgstr "Παραδείγματα"
+
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:15
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:21
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+msgid "Integrations"
+msgstr "Ενσωματώσεις"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
+msgid "Invalid auth provider"
+msgstr "Μη έγκυρος πάροχος εξουσιοδότησης"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:21
+msgid "Invalid email"
+msgstr "Μη έγκυρο email"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:44
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:50
+msgid "Invalid email or domain"
+msgstr "Μη έγκυρο email ή domain"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:71
+msgid "Invalid form values"
+msgstr "Μη έγκυρες τιμές φόρμας"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:244
+msgid "Invite by email"
+msgstr "Πρόσκληση μέσω email"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:157
+msgid "Invite by link"
+msgstr "Πρόσκληση μέσω συνδέσμου"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
+msgid "Invite by Link"
+msgstr "Πρόσκληση μέσω Συνδέσμου"
+
+#: src/pages/onboarding/InviteTeam.tsx:152
+msgid "Invite link sent to email addresses"
+msgstr "Ο σύνδεσμος πρόσκλησης εστάλη στις διευθύνσεις email"
+
+#: src/pages/onboarding/InviteTeam.tsx:181
+msgid "Invite your team"
+msgstr "Προσκαλέστε την ομάδα σας"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
+msgid "Italian"
+msgstr "Ιταλικά"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Japanese"
+msgstr "Ιαπωνικά"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+msgid "Korean"
+msgstr "Κορεατικά"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+msgid "Lab"
+msgstr "Εργαστήριο"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+msgid "Language"
+msgstr "Γλώσσα"
+
+#: src/pages/onboarding/CreateProfile.tsx:202
+msgid "Last Name"
+msgstr "Επώνυμο"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
+msgid "Latest"
+msgstr "Τελευταίο"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
+msgid "Latest date"
+msgstr "Τελευταία ημερομηνία"
+
+#: src/pages/onboarding/InviteTeam.tsx:127
+msgid "Link copied to clipboard"
+msgstr "Ο σύνδεσμος αντιγράφηκε στο πρόχειρο"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:206
+msgid "Log out"
+msgstr "Αποσύνδεση"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+msgid "Logout"
+msgstr "Αποσύνδεση"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:167
+msgid "Manage Members"
+msgstr "Διαχείριση Μελών"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:168
+msgid "Manage the members of your space here"
+msgstr "Διαχειριστείτε τα μέλη του χώρου σας εδώ"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:57
+msgid "Manage your internet accounts."
+msgstr "Διαχειριστείτε τους λογαριασμούς σας στο διαδίκτυο."
+
+#: src/pages/settings/SettingsBilling.tsx:145
+msgid "Manage your subscription"
+msgstr "Διαχείριση της συνδρομής σας"
+
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:69
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:60
+msgid "Mark as done"
+msgstr "Σημειώστε ως ολοκληρωμένο"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:13
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:13
+msgid "Max"
+msgstr "Μέγιστο"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:143
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:149
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+msgid "Members"
+msgstr "Μέλη"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
+msgid "Min"
+msgstr "Ελάχιστο"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
+msgid "More options"
+msgstr "Περισσότερες επιλογές"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
+msgid "Move left"
+msgstr "Μετακίνηση αριστερά"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
+msgid "Move right"
+msgstr "Μετακίνηση δεξιά"
+
+#: src/testing/mock-data/tableData.ts:16
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:177
+#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsProfile.tsx:35
+#: src/pages/settings/roles/SettingsRoles.tsx:126
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
+#: src/pages/onboarding/CreateProfile.tsx:166
+#: src/modules/settings/workspace/components/NameField.tsx:91
+msgid "Name"
+msgstr "Όνομα"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:49
+msgid "Name can not be empty"
+msgstr "Το όνομα δεν μπορεί να είναι κενό"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+msgid "Name of your API key"
+msgstr "Όνομα του API κλειδιού σας"
+
+#: src/pages/settings/SettingsWorkspace.tsx:44
+msgid "Name of your workspace"
+msgstr "Όνομα του χώρου εργασίας σας"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:181
+msgid "Navigate to next record"
+msgstr "Μετάβαση στο επόμενο αρχείο"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:95
+msgid "Navigate to next version"
+msgstr "Μετάβαση στην επόμενη έκδοση"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:184
+msgid "Navigate to next workflow"
+msgstr "Μετάβαση στον επόμενο workflow"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:65
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:170
+msgid "Navigate to previous record"
+msgstr "Μετάβαση στην προηγούμενη εγγραφή"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:85
+msgid "Navigate to previous version"
+msgstr "Μετάβαση στην προηγούμενη έκδοση"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:174
+msgid "Navigate to previous workflow"
+msgstr "Μετάβαση στον προηγούμενο workflow"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+msgid "New"
+msgstr "Νέο"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
+msgid "New account"
+msgstr "Νέος λογαριασμός"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
+msgid "New key"
+msgstr "Νέο κλειδί"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
+msgid "New Key"
+msgstr "Νέο Κλειδί"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
+msgid "New Object"
+msgstr "Νέο Αντικείμενο"
+
+#: src/pages/auth/PasswordReset.tsx:233
+msgid "New Password"
+msgstr "Νέος Κωδικός"
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:27
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:29
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:46
+msgid "New record"
+msgstr "Νέα εγγραφή"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:52
+#~ msgid "New Role"
+#~ msgstr "New Role"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
+msgid "New Webhook"
+msgstr "Νέο Webhook"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
+msgid "No connected account"
+msgstr "Κανένας συνδεδεμένος λογαριασμός"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
+msgid "No workflow runs yet"
+msgstr "Δεν υπάρχουν ακόμα runs του workflow"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
+msgid "No workflow versions yet"
+msgstr "Δεν υπάρχουν ακόμα έκδοσεις του workflow"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
+msgid "Not empty"
+msgstr "Όχι άδειο"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:75
+msgid "Object"
+msgstr "Αντικείμενο"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:155
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
+msgid "Objects"
+msgstr "Αντικείμενα"
+
+#: src/pages/not-found/NotFound.tsx:47
+msgid "Off the beaten path"
+msgstr ""
+
+#: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
+msgid "Opened"
+msgstr "Ανοίχτηκε"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
+msgid "Options"
+msgstr "Επιλογές"
+
+#: src/pages/onboarding/InviteTeam.tsx:213
+msgid "or"
+msgstr "ή"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+msgid "Other"
+msgstr "Άλλο"
+
+#: src/pages/not-found/NotFound.tsx:41
+msgid "Page Not Found"
+msgstr "Η Σελίδα Δεν Βρέθηκε"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
+msgid "Password"
+msgstr "Κωδικός"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "Ο κωδικός έχει ενημερωθεί"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:34
+msgid "Password reset link has been sent to the email"
+msgstr "Ο σύνδεσμος για την επαναφορά του κωδικού έχει σταλεί στο email"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
+msgid "Percent"
+msgstr "Ποσοστό"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
+msgid "Percent empty"
+msgstr "Ποσοστό άδειο"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
+msgid "Percent not empty"
+msgstr "Ποσοστό μη άδειο"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:253
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
+msgid "Permanently destroy record"
+msgstr "Καταστροφή της εγγραφής οριστικά"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
+msgid "Permanently destroy records"
+msgstr "Καταστροφή των εγγραφών οριστικά"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
+msgid "Permanently destroy workflows"
+msgstr "Καταστροφή των workflows οριστικά"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:70
+#: src/pages/settings/roles/components/RolePermissions.tsx:14
+msgid "Permissions"
+msgstr "Δικαιώματα"
+
+#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsProfile.tsx:30
+msgid "Picture"
+msgstr "Εικόνα"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
+msgid "Please enter a valid URL"
+msgstr "Παρακαλώ εισάγετε μία έγκυρη διεύθυνση URL"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
+msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
+msgstr "Παρακαλώ πληκτρολογήστε \"{confirmationValue}\" για να επιβεβαιώσετε ότι θέλετε να διαγράψετε αυτό το API Key. Σημειώστε ότι κάθε σενάριο στο οποίο χρησιμοποιείται αυτό το κλειδί θα σταματήσει να λειτουργεί."
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
+msgid "Please type {confirmationText} to confirm you want to delete this webhook."
+msgstr "Παρακαλώ πληκτρολογήστε {confirmationText} για να επιβεβαιώσετε ότι θέλετε να διαγράψετε αυτό το webhook."
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#~ msgid "Portuguese"
+#~ msgstr "Portuguese"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
+msgid "Portuguese — Brazil"
+msgstr "Πορτογαλικά — Βραζιλία"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+msgid "Portuguese — Portugal"
+msgstr "Πορτογαλικά — Πορτογαλία"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
+#~ msgid "Portuguese (Brazil)"
+#~ msgstr "Portuguese (Brazil)"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#~ msgid "Portuguese (Portugal)"
+#~ msgstr "Portuguese (Portugal)"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
+#: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
+msgid "Preview"
+msgstr "Προεπισκόπηση"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
+msgid "Privacy Policy"
+msgstr "Πολιτική Απορρήτου"
+
+#: src/pages/settings/SettingsProfile.tsx:19
+#: src/pages/settings/SettingsProfile.tsx:25
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+msgid "Profile"
+msgstr "Προφίλ"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
+msgid "Pseudo-English"
+msgstr "Ψευδο-Αγγλικά"
+
+#: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx:9
+msgid "Read documentation"
+msgstr "Διαβάστε την τεκμηρίωση"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:53
+msgid "Receive an email containing password update link"
+msgstr "Λάβετε ένα email που περιέχει τον σύνδεσμο ενημέρωσης κωδικού πρόσβασης"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:69
+msgid "Record Selection"
+msgstr "Επιλογή Εγγραφών"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
+msgid "Regenerate an API key"
+msgstr "Επαναπαραγωγή κλειδιού API"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
+msgid "Regenerate key"
+msgstr "Επαναπαραγωγή κλειδιού"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
+msgid "Regenerate Key"
+msgstr "Επαναπαραγωγή Κλειδιού"
+
+#: src/pages/settings/Releases.tsx:111
+#: src/pages/settings/Releases.tsx:117
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+msgid "Releases"
+msgstr "Ενημερώσεις"
+
+#: src/modules/ui/input/components/ImageInput.tsx:172
+msgid "Remove"
+msgstr "Αφαίρεση"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:51
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:209
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:210
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:84
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:85
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:47
+msgid "Remove from favorites"
+msgstr "Αφαίρεση από τα αγαπημένα"
+
+#: src/pages/auth/PasswordReset.tsx:177
+msgid "Reset Password"
+msgstr "Επαναφορά Κωδικού Πρόσβασης"
+
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:47
+msgid "Reset to"
+msgstr "Επαναφορά σε"
+
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:227
+msgid "Results"
+msgstr "Αποτελέσματα"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:107
+#: src/pages/settings/roles/SettingsRoles.tsx:113
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+msgid "Roles"
+msgstr "Ρόλοι"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
+msgid "Run a workflow and return here to view its executions"
+msgstr "Εκτελέστε ένα workflow και επιστρέψτε εδώ για να δείτε τις εκτελέσεις του"
+
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+msgid "Search"
+msgstr "Αναζήτηση"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "Αναζήτηση ''{commandMenuSearch}'' με..."
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
+msgid "Search a field..."
+msgstr "Αναζήτηση πεδίου..."
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
+msgid "Search an index..."
+msgstr "Αναζήτηση ευρετηρίου..."
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+msgid "Search fields"
+msgstr "Αναζήτηση πεδίων"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:166
+msgid "Search for an object..."
+msgstr "Αναζήτηση αντικειμένου..."
+
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+msgid "Search records"
+msgstr "Αναζήτηση εγγραφών"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:33
+#: src/pages/settings/security/SettingsSecurity.tsx:40
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+msgid "Security"
+msgstr "Ασφάλεια"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:112
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:113
+msgid "See active version"
+msgstr "Δείτε την ενεργή έκδοση"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:55
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:56
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:127
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:128
+msgid "See runs"
+msgstr "Δείτε τις εκτελέσεις"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:143
+msgid "See versions"
+msgstr "Δείτε τις εκδόσεις"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:142
+msgid "See versions history"
+msgstr "Δείτε το ιστορικό των εκδόσεων"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
+msgid "Select the events you wish to send to this endpoint"
+msgstr "Επιλέξτε τα γεγονότα που επιθυμείτε να στείλετε σε αυτό το τελικό σημείο"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+msgid "Select your preferred language"
+msgstr "Επιλέξτε την προτιμώμενη γλώσσα σας"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:245
+msgid "Send an invite email to your team"
+msgstr "Στείλτε ένα email πρόσκλησης στην ομάδα σας"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+msgid "Server Admin Panel"
+msgstr "Διαχειριστής Πίνακας Διακομιστή"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
+msgid "Set email visibility, manage your blocklist and more."
+msgstr "Ρυθμίστε την ορατότητα του email, διαχειριστείτε τη λίστα αποκλεισμού σας και άλλα."
+
+#: src/pages/settings/workspace/SettingsHostname.tsx:115
+msgid "Set the name of your domain"
+msgstr "Ορίστε το όνομα του τομέα σας"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+msgid "Set the name of your subdomain"
+msgstr "Ορίστε το όνομα του υποτομέα σας"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
+msgid "Settings"
+msgstr "Ρυθμίσεις"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:158
+msgid "Share this link to invite users to join your workspace"
+msgstr "Μοιραστείτε αυτόν τον σύνδεσμο για να προσκαλέσετε χρήστες να συμμετάσχουν στον χώρο εργασίας σας"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
+msgid "Should changing a field's label also change the API name?"
+msgstr "Θα πρέπει η αλλαγή της ετικέτας ενός πεδίου να αλλάζει επίσης το όνομα API;"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
+msgid "Sign in"
+msgstr "Είσοδος"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:89
+msgid "Sign up"
+msgstr "Εγγραφή"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "Ενιαία Σύνδεση (SSO)"
+
+#: src/pages/onboarding/InviteTeam.tsx:236
+msgid "Skip"
+msgstr "Παράλειψη"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
+msgid "Sort"
+msgstr "Ταξινόμηση"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+msgid "Spanish"
+msgstr "Ισπανικά"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr "Ενιαίο Σύστημα Εισόδου"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+msgid "Subdomain"
+msgstr "Υποτομέας"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:89
+msgid "Subdomain already taken"
+msgstr "Ο υποτομέας έχει ήδη ληφθεί"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:35
+msgid "Subdomain can not be longer than 30 characters"
+msgstr "Ο υποτομέας δεν μπορεί να είναι μεγαλύτερος από 30 χαρακτήρες"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:34
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "Ο υποτομέας δεν μπορεί να είναι μικρότερος από 3 χαρακτήρες"
+
+#: src/pages/settings/SettingsBilling.tsx:120
+msgid "Subscription has been switched {to}"
+msgstr "Η συνδρομή έχει αλλάξει <b>{σε}</b>"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
+msgid "Sum"
+msgstr "Σύνολο"
+
+#: src/pages/settings/SettingsWorkspace.tsx:63
+msgid "Support"
+msgstr "Υποστήριξη"
+
+#: src/pages/settings/SettingsBilling.tsx:159
+msgid "Switch {from}"
+msgstr "Εναλλαγή <b>{από}</b>"
+
+#: src/pages/settings/SettingsBilling.tsx:163
+msgid "Switch {to}"
+msgstr "Εναλλαγή <b>{σε}</b>"
+
+#: src/pages/settings/SettingsBilling.tsx:187
+msgid "Switch billing {to}"
+msgstr "Εναλλαγή χρέωσης <b>{σε}</b>"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
+msgid "Synchronize Field Label and API Name"
+msgstr "Συγχρονίστε την Ετικέτα Πεδίου και το Όνομα API"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
+msgid "System settings - {systemDateFormatLabel}"
+msgstr "Ρυθμίσεις συστήματος - {systemDateFormatLabel}"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
+msgid "System Settings - {systemTimeFormatLabel}"
+msgstr "Ρυθμίσεις Συστήματος - {systemTimeFormatLabel}"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
+msgid "Terms of Service"
+msgstr "Όροι Υπηρεσίας"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:158
+msgid "Test"
+msgstr "Δοκιμή"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:157
+msgid "Test Workflow"
+msgstr "Δοκιμή Ροής Εργασίας"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
+msgid "The description of this field"
+msgstr "Η περιγραφή αυτού του πεδίου"
+
+#: src/pages/settings/SettingsProfile.tsx:43
+msgid "The email associated to your account"
+msgstr "Το email που συνδέεται με τον λογαριασμό σας"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:209
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:240
+msgid "The name and icon of this field"
+msgstr "Το όνομα και το εικονίδιο αυτού του πεδίου"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:129
+msgid "The name of your organization"
+msgstr "Το όνομα της οργάνωσής σας"
+
+#: src/pages/not-found/NotFound.tsx:50
+msgid "The page you're seeking is either gone or never was. Let's get you back on track"
+msgstr "Η σελίδα που αναζητάτε είτε έχει διαγραφεί είτε ποτέ δεν υπήρχε. Ας σας επαναφέρουμε στον σωστό δρόμο"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:229
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:252
+msgid "The values of this field"
+msgstr "Οι τιμές αυτού του πεδίου"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
+msgid "The values of this field must be unique"
+msgstr "Οι τιμές αυτού του πεδίου πρέπει να είναι μοναδικές"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "Παρουσιάστηκε σφάλμα κατά την ενημέρωση του κωδικού πρόσβασης."
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:38
+msgid "There was an issue"
+msgstr "Υπήρξε ένα πρόβλημα"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:323
+msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
+msgstr "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Αυτό θα διαγράψει μόνιμα αυτόν τον χρήστη και θα τον αφαιρέσει από όλες τις αναθέσεις του."
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
+msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
+msgstr "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Αυτό θα διαγράψει μόνιμα ολόκληρο τον χώρο εργασίας σας. <0/> Παρακαλώ πληκτρολογήστε το email σας για επιβεβαίωση."
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:15
+msgid "This Role has the following permissions."
+msgstr "Αυτός ο Ρόλος έχει τις ακόλουθες δικαιοδοσίες."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:15
+msgid "This Role is assigned to these workspace member."
+msgstr "Αυτός ο Ρόλος έχει ανατεθεί σε αυτά τα μέλη του χώρου εργασίας."
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
+msgid "Time format"
+msgstr "Μορφή ώρας"
+
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "to monthly"
+msgstr "σε μηνιαία"
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "to yearly"
+msgstr "σε ετήσια"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:56
+msgid "Trigger Type"
+msgstr "Τύπος Εναύσματος"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:60
+msgid "Trigger type should be Manual - when no record(s) are selected"
+msgstr "Ο τύπος ενεργοποιήσεως πρέπει να είναι Χειροκίνητος - όταν δεν έχουν επιλεγεί <b>εγγραφές</b>"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
+msgid "Type"
+msgstr "Τύπος"
+
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
+msgid "Type anything"
+msgstr "Πληκτρολογήστε οτιδήποτε"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
+msgid "Unique"
+msgstr "Μοναδικό"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:80
+msgid "Unknown error"
+msgstr "Άγνωστο σφάλμα"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:88
+msgid "Unlimited contacts"
+msgstr "Απεριόριστες επαφές"
+
+#: src/modules/ui/input/components/ImageInput.tsx:164
+msgid "Upload"
+msgstr "Ανέβασμα"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+msgid "URL"
+msgstr "Διεύθυνση URL"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:40
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:41
+msgid "Use as draft"
+msgstr "Χρήση ως πρόχειρο"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:37
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr "Χρησιμοποιήστε γράμμα, αριθμό και παύλα μόνο. Αρχίστε και τελειώστε με ένα γράμμα ή ένα αριθμό"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:16
+msgid "Use our API or add your first {objectLabel} manually"
+msgstr "Χρησιμοποιήστε το API μας ή προσθέστε το πρώτο σας {objectLabel} χειροκίνητα"
+
+#: src/pages/settings/SettingsProfile.tsx:22
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
+#: src/pages/settings/accounts/SettingsAccounts.tsx:43
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+msgid "User"
+msgstr "Χρήστης"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:51
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:106
+msgid "User is not logged in"
+msgstr "Ο χρήστης δεν έχει συνδεθεί"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:223
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:228
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:251
+msgid "Values"
+msgstr "Τιμές"
+
+#: src/pages/settings/SettingsBilling.tsx:150
+msgid "View billing details"
+msgstr "Προβολή λεπτομερειών χρέωσης"
+
+#: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx:35
+msgid "Visualize"
+msgstr "Απεικόνιση"
+
+#: src/modules/ui/input/components/ImageInput.tsx:177
+msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
+msgstr "Υποστηρίζουμε τα τετράγωνα PNG, JPEG και GIF σας κάτω από 10MB"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+msgid "We will send POST requests to this endpoint for every new event"
+msgstr "Θα στέλνουμε αιτήματα POST σε αυτό το σημείο τέλους για κάθε νέο γεγονός"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
+msgid "Webhook"
+msgstr "Webhook"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:65
+msgid "Webhooks"
+msgstr "Webhooks"
+
+#: src/pages/auth/SignInUp.tsx:43
+#~ msgid "Welcome to"
+#~ msgstr "Welcome to"
+
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "Καλώς ήρθατε στο {workspaceName}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
+msgid "When the API key will expire."
+msgstr "Πότε θα λήξει το κλειδί API."
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
+msgid "When the key will be disabled"
+msgstr "Όταν το κλειδί θα απενεργοποιηθεί"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:58
+msgid "Workflow cannot be tested"
+msgstr "Το Workflow δεν μπορεί να δοκιμαστεί"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:146
+#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsBilling.tsx:135
+#: src/pages/settings/Releases.tsx:114
+#: src/pages/settings/workspace/SettingsDomain.tsx:118
+#: src/pages/settings/security/SettingsSecurity.tsx:37
+#: src/pages/settings/roles/SettingsRoles.tsx:110
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:18
+#: src/pages/settings/developers/SettingsDevelopers.tsx:39
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
+#: src/pages/settings/data-model/SettingsObjects.tsx:152
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/favorites/components/WorkspaceFavorites.tsx:19
+msgid "Workspace"
+msgstr "Περιοχή Εργασίας"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
+msgid "Workspace Deletion"
+msgstr "Διαγραφή Workspace"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:123
+msgid "Workspace logo"
+msgstr "Λογότυπο Workspace"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:128
+msgid "Workspace name"
+msgstr "Όνομα Workspace"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
+msgid "Write a description"
+msgstr "Γράψτε μια περιγραφή"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
+msgid "yes"
+msgstr "ναι"
+
+#: src/pages/settings/SettingsBilling.tsx:48
+msgid "You will be charged immediately for the full year."
+msgstr "Θα χρεωθείτε αμέσως για το πλήρες έτος."
+
+#: src/pages/settings/SettingsBilling.tsx:55
+msgid "Your credit balance will be used to pay the monthly bills."
+msgstr "Το πιστωτικό σας υπόλοιπο θα χρησιμοποιηθεί για την πληρωμή των μηνιαίων λογαριασμών."
+
+#: src/pages/settings/SettingsProfile.tsx:36
+msgid "Your name as it will be displayed"
+msgstr "Το όνομά σας όπως θα εμφανίζεται"
+
+#: src/pages/onboarding/CreateProfile.tsx:167
+msgid "Your name as it will be displayed on the app"
+msgstr "Το όνομά σας όπως θα εμφανίζεται στην εφαρμογή"
+
+#: src/pages/auth/SignInUp.tsx:73
+msgid "Your Workspace"
+msgstr "Ο χώρος εργασίας σας"
+
+#: src/pages/settings/SettingsBilling.tsx:172
+msgid "Your workspace will be disabled"
+msgstr "Ο χώρος εργασίας σας θα απενεργοποιηθεί"
+

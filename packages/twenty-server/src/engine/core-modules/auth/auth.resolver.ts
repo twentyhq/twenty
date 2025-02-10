@@ -197,6 +197,7 @@ export class AuthResolver {
     const { userData } = this.authService.formatUserDataPayload(
       {
         email: signUpInput.email,
+        locale: signUpInput.locale,
       },
       existingUser,
     );

@@ -222,7 +222,7 @@ export class WorkspaceResolver {
 
   @Query(() => CustomHostnameDetails, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async getHostnameDetails(
+  async getCustomHostnameDetails(
     @AuthWorkspace() { hostname }: Workspace,
   ): Promise<CustomHostnameDetails | undefined> {
     if (!hostname) return undefined;
