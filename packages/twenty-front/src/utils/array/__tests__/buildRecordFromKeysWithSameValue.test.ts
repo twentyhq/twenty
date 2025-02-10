@@ -1,4 +1,4 @@
-import { recordFromArrayWithValue } from '~/utils/array/recordFromArrayWithValue';
+import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 describe('recordFromArrayWithValue', () => {
   test.each([
@@ -14,7 +14,7 @@ describe('recordFromArrayWithValue', () => {
       arg: true,
     },
   ])('.recordFromArrayWithValue($array, $arg)', ({ array, arg, expected }) => {
-    const result = recordFromArrayWithValue(array, arg);
+    const result = buildRecordFromKeysWithSameValue(array, arg);
     expect(result).toEqual(expected);
   });
 });

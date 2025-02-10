@@ -14,7 +14,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from 'twenty-shared';
-import { recordFromArrayWithValue } from '~/utils/array/recordFromArrayWithValue';
+import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
@@ -160,7 +160,7 @@ export const useUpdateOneRecord = <
             objectMetadataItem,
             record: cachedRecord,
           }),
-          ...recordFromArrayWithValue(recordKeysAddedByOptimisticCache, true),
+          ...buildRecordFromKeysWithSameValue(recordKeysAddedByOptimisticCache, true),
         };
 
         updateRecordFromCache({
@@ -169,7 +169,7 @@ export const useUpdateOneRecord = <
           cache: apolloClient.cache,
           record: {
             ...cachedRecord,
-            ...recordFromArrayWithValue(recordKeysAddedByOptimisticCache, null),
+            ...buildRecordFromKeysWithSameValue(recordKeysAddedByOptimisticCache, null),
           },
           recordGqlFields,
         });

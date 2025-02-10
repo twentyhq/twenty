@@ -3,7 +3,7 @@
 // returns { foo: true, bar: true }
 // result has strictly typed keys foo and bar
 
-export const recordFromArrayWithValue = <T, U extends string>(
+export const buildRecordFromKeysWithSameValue = <T, U extends string>(
   array: string[] | readonly U[],
   value: T,
 ): Record<U, T> =>
