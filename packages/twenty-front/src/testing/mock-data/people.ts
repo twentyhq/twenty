@@ -1,10 +1,32 @@
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 export const getPeopleMock = (): ObjectRecord[] => {
   const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
 
   return peopleMock;
+};
+
+export const getPersonObjectMetadaItem = () => {
+  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'person',
+  );
+
+  if (!personObjectMetadataItem) {
+    throw new Error('Person object metadata item not found');
+  }
+
+  return personObjectMetadataItem;
+};
+
+export const getRandomPersonRecord = (overrides?: Partial<ObjectRecord>) => {
+  const personRecords = getPeopleMock();
+  const randomIndex = Math.floor(Math.random() * personRecords.length);
+  return {
+    ...personRecords[randomIndex],
+    ...overrides,
+  };
 };
 
 export const mockedEmptyPersonData = {

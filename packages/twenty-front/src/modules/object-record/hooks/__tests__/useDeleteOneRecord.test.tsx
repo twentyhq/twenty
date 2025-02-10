@@ -16,77 +16,60 @@ import { InMemoryCache } from '@apollo/client';
 import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/jest';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
-
-const getDefaultMocks = (
-  overrides?: Partial<MockedResponse>,
-): MockedResponse[] => [
-  {
-    request: {
-      query,
-      variables,
-    },
-    result: jest.fn(() => ({
-      data: {
-        deletePerson: responseData,
-      },
-    })),
-    ...overrides,
-  },
-];
-const defaultMocks = getDefaultMocks();
-const assertCachedRecordMatch = (
-  expectedRecord: ObjectRecord,
-  cache: InMemoryCache,
-) => {
-  const cachedRecord = getRecordFromCache({
-    cache,
-    objectMetadataItem,
-    objectMetadataItems,
-    recordId: personRecord.id,
-  });
-  expect(cachedRecord).not.toBeNull();
-  if (cachedRecord === null) throw new Error('Should never occurs');
-  expect(expectedRecord).toMatchObject(cachedRecord);
-};
-
-// TODO make a util
-const getPersonObjectMetadaItem = () => {
-  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'person',
-  );
-
-  if (!personObjectMetadataItem) {
-    throw new Error('Person object metadata item not found');
-  }
-
-  return personObjectMetadataItem;
-};
-const personRecord: ObjectRecord = {
-  ...getPeopleMock()[0],
-  id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9',
-  deletedAt: null,
-};
-
-const objectMetadataItem = getPersonObjectMetadaItem();
-const objectMetadataItems = [objectMetadataItem];
-
-jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
-const mockRefetchAggregateQueries = jest.fn();
-(useRefetchAggregateQueries as jest.Mock).mockReturnValue({
-  refetchAggregateQueries: mockRefetchAggregateQueries,
-});
+import {
+  getPersonObjectMetadaItem,
+  getRandomPersonRecord,
+} from '~/testing/mock-data/people';
 
 // TODO Should test relation deletion cache hydratation
-describe("useDeleteOneRecord", () => {
+describe('useDeleteOneRecord', () => {
+  jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
+  const mockRefetchAggregateQueries = jest.fn();
+  (useRefetchAggregateQueries as jest.Mock).mockReturnValue({
+    refetchAggregateQueries: mockRefetchAggregateQueries,
+  });
+
   let cache!: InMemoryCache;
+  const getDefaultMocks = (
+    overrides?: Partial<MockedResponse>,
+  ): MockedResponse[] => [
+    {
+      request: {
+        query,
+        variables,
+      },
+      result: jest.fn(() => ({
+        data: {
+          deletePerson: responseData,
+        },
+      })),
+      ...overrides,
+    },
+  ];
+  const defaultMocks = getDefaultMocks();
+  const personRecord = getRandomPersonRecord({
+    id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9',
+    deletedAt: null,
+  });
+  const objectMetadataItem = getPersonObjectMetadaItem();
+  const objectMetadataItems = [objectMetadataItem];
+  const assertCachedRecordMatch = (expectedRecord: ObjectRecord) => {
+    const cachedRecord = getRecordFromCache({
+      cache,
+      objectMetadataItem,
+      objectMetadataItems,
+      recordId: personRecord.id,
+    });
+    expect(cachedRecord).not.toBeNull();
+    if (cachedRecord === null) throw new Error('Should never occurs');
+    expect(expectedRecord).toMatchObject(cachedRecord);
+  };
   beforeEach(() => {
     jest.clearAllMocks();
     cache = new InMemoryCache();
   });
-  describe('A. Starting from empty cache', () => {
 
+  describe('A. Starting from empty cache', () => {
     it('1. Should successfull record deletion', async () => {
       const { result } = renderHook(
         () =>
@@ -100,7 +83,7 @@ describe("useDeleteOneRecord", () => {
           }),
         },
       );
-  
+
       await act(async () => {
         const deleteOneResult = await result.current.deleteOneRecord(
           personRecord.id,
@@ -111,13 +94,13 @@ describe("useDeleteOneRecord", () => {
           id: personRecord.id,
         };
         expect(deleteOneResult).toStrictEqual(expectedResult);
-        assertCachedRecordMatch(expectedResult, cache);
+        assertCachedRecordMatch(expectedResult);
       });
-  
+
       expect(defaultMocks[0].result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
-  
+
     it('2. Should handle optimistic cache update on record deletion', async () => {
       const apolloMocks: MockedResponse[] = getDefaultMocks({
         delay: Number.POSITIVE_INFINITY,
@@ -134,7 +117,7 @@ describe("useDeleteOneRecord", () => {
           }),
         },
       );
-  
+
       await act(async () => {
         result.current.deleteOneRecord(personRecord.id);
         await waitFor(() => {
@@ -143,21 +126,23 @@ describe("useDeleteOneRecord", () => {
             deletedAt: expect.any(String),
             id: personRecord.id,
           };
-          assertCachedRecordMatch(expectedCachedRecord, cache);
+          assertCachedRecordMatch(expectedCachedRecord);
         });
       });
-  
+
       expect(defaultMocks[0].result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
-  
+
     it('3. Sould handle optimistic cache update rollback on record deletion failure', async () => {
       const apolloMocks: MockedResponse[] = getDefaultMocks({
         error: new Error('Internal server error'),
       });
       const { result } = renderHook(
         () =>
-          useDeleteOneRecord({ objectNameSingular: objectMetadataItem.nameSingular }),
+          useDeleteOneRecord({
+            objectNameSingular: objectMetadataItem.nameSingular,
+          }),
         {
           wrapper: getJestMetadataAndApolloMocksWrapper({
             cache,
@@ -165,7 +150,7 @@ describe("useDeleteOneRecord", () => {
           }),
         },
       );
-  
+
       await act(async () => {
         // Could not make it work with expect error
         try {
@@ -179,12 +164,12 @@ describe("useDeleteOneRecord", () => {
             deletedAt: null,
             id: personRecord.id,
           };
-          assertCachedRecordMatch(expectedCachedRecord, cache);
+          assertCachedRecordMatch(expectedCachedRecord);
         }
       });
     });
   });
-  
+
   describe('B. Starting from filled cache', () => {
     beforeEach(() => {
       const recordGqlFields = generateDepthOneRecordGqlFields({
@@ -199,7 +184,7 @@ describe("useDeleteOneRecord", () => {
         recordGqlFields,
       });
     });
-  
+
     it('1. Should handle successfull record deletion', async () => {
       const { result } = renderHook(
         () =>
@@ -213,25 +198,25 @@ describe("useDeleteOneRecord", () => {
           }),
         },
       );
-  
+
       await act(async () => {
         const res = await result.current.deleteOneRecord(personRecord.id);
         expect(res).toBeDefined();
         expect(res.deletedAt).toBeDefined();
         expect(res).toHaveProperty('id', personRecord.id);
-  
+
         const personRecordWithDeletedAt = {
           ...personRecord,
           deletedAt: expect.any(String),
         };
-        assertCachedRecordMatch(personRecordWithDeletedAt, cache);
+        assertCachedRecordMatch(personRecordWithDeletedAt);
         // Test relations udpate here too
       });
-  
+
       expect(defaultMocks[0].result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
-  
+
     it('2. Should handle optimistic cache on record deletion', async () => {
       const apolloMocks = getDefaultMocks({
         // Used to assert loading state
@@ -249,7 +234,7 @@ describe("useDeleteOneRecord", () => {
           }),
         },
       );
-  
+
       await act(async () => {
         result.current.deleteOneRecord(personRecord.id);
         await waitFor(() => {
@@ -257,14 +242,14 @@ describe("useDeleteOneRecord", () => {
             ...personRecord,
             deletedAt: expect.any(String),
           };
-          assertCachedRecordMatch(personRecordWithDeletedAt, cache);
+          assertCachedRecordMatch(personRecordWithDeletedAt);
         });
       });
-  
+
       expect(apolloMocks[0].result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
-  
+
     it('3. Should handle optimistic cache rollback on record deletion failure', async () => {
       const apolloMocks = getDefaultMocks({
         error: new Error('Internal server error'),
@@ -281,7 +266,7 @@ describe("useDeleteOneRecord", () => {
           }),
         },
       );
-  
+
       await act(async () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
@@ -293,14 +278,12 @@ describe("useDeleteOneRecord", () => {
             ...personRecord,
             deletedAt: null,
           };
-          assertCachedRecordMatch(personRecordWithDeletedAt, cache);
+          assertCachedRecordMatch(personRecordWithDeletedAt);
         }
       });
-  
+
       expect(apolloMocks[0].result).not.toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
   });
-  
-})
-
+});

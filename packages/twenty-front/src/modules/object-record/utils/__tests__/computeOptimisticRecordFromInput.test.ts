@@ -3,31 +3,9 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
+import { getCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-
-const getPersonObjectMetadaItem = () => {
-  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'person',
-  );
-
-  if (!personObjectMetadataItem) {
-    throw new Error('Person object metadata item not found');
-  }
-
-  return personObjectMetadataItem;
-};
-
-const getCompanyObjectMetadataItem = () => {
-  const companyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'company',
-  );
-
-  if (!companyObjectMetadataItem) {
-    throw new Error('Company object metadata item not found');
-  }
-
-  return companyObjectMetadataItem;
-};
+import { getPersonObjectMetadaItem } from '~/testing/mock-data/people';
 
 describe('computeOptimisticRecordFromInput', () => {
   it('should generate correct optimistic record if no relation field is present', () => {

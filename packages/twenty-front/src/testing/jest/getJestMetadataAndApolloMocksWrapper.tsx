@@ -15,7 +15,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
   cache,
   onInitializeRecoilSnapshot,
 }: {
-  cache?: InMemoryCache
+  cache?: InMemoryCache;
   apolloMocks?:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;

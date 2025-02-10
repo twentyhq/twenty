@@ -95,7 +95,6 @@ export const useDeleteOneRecord = ({
         objectMetadataItems,
       });
 
-      console.log("SALUT")
       const deletedRecord = await apolloClient
         .mutate({
           mutation: deleteOneRecordMutation,
@@ -103,7 +102,6 @@ export const useDeleteOneRecord = ({
             idToDelete: idToDelete,
           },
           update: (cache, { data }) => {
-            console.log("Succes")
             const record = data?.[mutationResponseField];
             if (!isDefined(record) || !isDefined(computedOptimisticRecord))
               return;
@@ -118,8 +116,6 @@ export const useDeleteOneRecord = ({
           },
         })
         .catch((error: Error) => {
-          console.log("failure")
-          console.log({cachedRecord})
           const recordGqlFields = {
             deletedAt: true,
           };
