@@ -4,6 +4,10 @@ export const getWorkflowMock = () => {
   return workflowQueryResult.workflows.edges[0].node;
 };
 
+export const getWorkflowCurrentVersionMock = () => {
+  return getWorkflowMock().versions.edges[0].node;
+};
+
 export const getWorkflowVersionsMock = () => {
   return {
     ...getWorkflowMock().versions,
