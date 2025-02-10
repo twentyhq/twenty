@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 12:24\n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,98 +20,98 @@ msgstr ""
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
 msgid "{aggregateLabel} of {fieldLabel}"
-msgstr ""
+msgstr "{aggregateLabel}, {fieldLabel}'in"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
 msgid "{apiKeyName} API Key"
-msgstr ""
+msgstr "{apiKeyName} API Anahtar"
 
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
 msgid "{name}"
-msgstr ""
+msgstr "{name}"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
-msgstr ""
+msgstr "1 iş akışı düğümü yürütmesi"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:63
 msgid "12h ({hour12Label})"
-msgstr ""
+msgstr "12 saat ({hour12Label})"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:198
 msgid "2. Configure field"
-msgstr ""
+msgstr "2. Alanı Yapılandır"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
 msgid "24h ({hour24Label})"
-msgstr ""
+msgstr "24 saat ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr ""
+msgstr "Ekibinizle birlikte müşteri ilişkilerinizi yönetebileceğiniz paylaşılan bir ortam."
 
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
-msgstr ""
+msgstr "İptal"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
 msgid "About"
-msgstr ""
+msgstr "Hakkında"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:40
 #: src/pages/settings/accounts/SettingsAccounts.tsx:46
 msgid "Account"
-msgstr ""
+msgstr "Hesap"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:321
 #: src/modules/settings/profile/components/DeleteAccount.tsx:45
 msgid "Account Deletion"
-msgstr ""
+msgstr "Hesap Silme"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
 msgid "Accounts"
-msgstr ""
+msgstr "Hesaplar"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
 msgid "Activate"
-msgstr ""
+msgstr "Aktif Et"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:67
 msgid "Activate Workflow"
-msgstr ""
+msgstr "İş Akışını Aktif Et"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:190
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
 msgid "Active"
-msgstr ""
+msgstr "Aktif"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "Active API keys created by you or your team."
-msgstr ""
+msgstr "Ekip arkadaşlarınız ya da sizin tarafınızdan oluşturulan etkin API anahtarları."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx:38
 msgid "Add"
-msgstr ""
+msgstr "Ekle"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
 msgid "Add Field"
-msgstr ""
+msgstr "Alan Ekle"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
 msgid "Add object"
-msgstr ""
+msgstr "Nesne Ekle"
 
 #: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
 msgid "Add SSO Identity Provider"
-msgstr ""
+msgstr "SSO Kimlik Sağlayıcısı Ekle"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
 msgid "Add to blocklist"
-msgstr ""
+msgstr "Kara Listeye Ekle"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:68
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:79
@@ -125,43 +125,43 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:70
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
 msgid "Add to favorites"
-msgstr ""
+msgstr "Sık Kullanılanlara Ekle"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:16
 msgid "Add your first {objectLabel}"
-msgstr ""
+msgstr "İlk {objectLabel}'ınızı Ekleyin"
 
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
 msgid "Added {beautifiedCreatedAt}"
-msgstr ""
+msgstr "{beautifiedCreatedAt} Eklendi"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
-msgstr ""
+msgstr "Tüm"
 
 #: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
 msgid "All ({relationRecordsCount})"
-msgstr ""
+msgstr "Tüm ({relationRecordsCount})"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "All roles"
-msgstr ""
+msgstr "Tüm roller"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
 msgid "Allow logins through Google's single sign-on functionality."
-msgstr ""
+msgstr "Google'ın tekli oturum açma işlevselliği ile oturum açmayı kabul et."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
 msgid "Allow logins through Microsoft's single sign-on functionality."
-msgstr ""
+msgstr "Microsoft'un tekli oturum açma işlevselliği ile oturum açmayı kabul et."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
 msgid "Allow the invitation of new users by sharing an invite link."
-msgstr ""
+msgstr "Davet bağlantısı paylaşarak yeni kullanıcı davet etmeyi kabul et."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
 msgid "Allow users to sign in with an email and password."
-msgstr ""
+msgstr "Kullanıcıların e-posta ve şifre ile oturum açmasına izin ver."
 
 #: src/pages/auth/PasswordReset.tsx:162
 msgid "An error occurred while updating password"
@@ -169,204 +169,204 @@ msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
-msgstr ""
+msgstr "İsteğe bağlı bir açıklama"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
 msgid "and"
-msgstr ""
+msgstr "ve"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
 msgid "API & Webhooks"
-msgstr ""
+msgstr "API & Webhook'lar"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
 msgid "API Key"
-msgstr ""
+msgstr "API Anahtar"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:49
 msgid "API keys"
-msgstr ""
+msgstr "API anahtarları"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
 msgid "API Name"
-msgstr ""
+msgstr "API Adı"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
-msgstr ""
+msgstr "Görünüm"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
-msgstr ""
+msgstr "Faturalandırma aralığınızı değiştirmek istediğinizden emin misiniz?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Ascending"
-msgstr ""
+msgstr "Artan"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:120
 msgid "Assign roles to specify each member's access permissions"
-msgstr ""
+msgstr "Her üyenin erişim izinlerini belirtmek için roller atayın"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:14
 msgid "Assigned members"
-msgstr ""
+msgstr "Atanan üyeler"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:129
 msgid "Assigned to"
-msgstr ""
+msgstr "Atanan"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:64
 msgid "Assignment"
-msgstr ""
+msgstr "Atama"
 
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
 msgid "At least 8 characters long."
-msgstr ""
+msgstr "En az 8 karakter uzunluğunda."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
-msgstr ""
+msgstr "En az bir kimlik doğrulama yöntemi etkin olmalıdır"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:63
 msgid "Authentication"
-msgstr ""
+msgstr "Kimlik Doğrulama"
 
 #: src/pages/auth/Authorize.tsx:127
 msgid "Authorize"
-msgstr ""
+msgstr "Yetkilendir"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
 msgid "Average"
-msgstr ""
+msgstr "Ortalama"
 
 #: src/pages/not-found/NotFound.tsx:58
 msgid "Back to content"
-msgstr ""
+msgstr "İçeriğe geri dön"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Billing"
-msgstr ""
+msgstr "Faturalandırma"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
 msgid "Blocklist"
-msgstr ""
+msgstr "Engellenmiş Liste"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:210
 msgid "Book a Call"
-msgstr ""
+msgstr "\"Twenty\"'yi kullanarak"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
 msgid "By using Twenty, you agree to the"
-msgstr ""
+msgstr "Twenty'i kullanarak,"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
 msgid "Calculate"
-msgstr ""
+msgstr "Hesapla"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
 msgid "Calendar"
-msgstr ""
+msgstr "Takvim"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
 msgid "Calendars"
-msgstr ""
+msgstr "Takvimler"
 
 #: src/pages/auth/Authorize.tsx:124
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:152
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
 msgid "Cancel"
-msgstr ""
+msgstr "İptal"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:152
 msgid "Cancel anytime"
-msgstr ""
+msgstr "İstediğiniz zaman iptal edin"
 
 #: src/pages/settings/SettingsBilling.tsx:176
 msgid "Cancel Plan"
-msgstr ""
+msgstr "Planı İptal Et"
 
 #: src/pages/settings/SettingsBilling.tsx:171
 msgid "Cancel your subscription"
-msgstr ""
+msgstr "Aboneliğinizi iptal edin"
 
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
-msgstr ""
+msgstr "{to} Değiştir"
 
 #: src/pages/auth/PasswordReset.tsx:246
 #: src/modules/settings/profile/components/ChangePassword.tsx:52
 #: src/modules/settings/profile/components/ChangePassword.tsx:58
 msgid "Change Password"
-msgstr ""
+msgstr "Şifre Değiştir"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Chinese — Simplified"
-msgstr ""
+msgstr "Çince — Basitleştirilmiş"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
 msgid "Chinese — Traditional"
-msgstr ""
+msgstr "Çince — Geleneksel"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
 msgid "Choose an object"
-msgstr ""
+msgstr "Bir nesne seçin"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
-msgstr ""
+msgstr "Sağlayıcınızı seçin"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:147
 msgid "Choose your Trial"
-msgstr ""
+msgstr "Deneme Sürümünüzü Seçin"
 
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
-msgstr ""
+msgstr "Kapat"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
-msgstr ""
+msgstr "SSO bağlantısı yapılandırın"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:58
 msgid "Configure and customize your calendar preferences."
-msgstr ""
+msgstr "Takvim tercihlerinizi yapılandırın ve özelleştirin."
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
-msgstr ""
+msgstr "Uygulama genelinde tarihlerin nasıl görüntüleneceğini yapılandırın"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
 msgid "Configure your emails and calendar settings."
-msgstr ""
+msgstr "E-posta ve takvim ayarlarınızı yapılandırın."
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
-msgstr ""
+msgstr "Çalışma alanınıza yeni bir hesap bağlayın"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:61
 msgid "Connect with Google"
-msgstr ""
+msgstr "Google ile Bağlan"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:70
 msgid "Connect with Microsoft"
-msgstr ""
+msgstr "Microsoft ile Bağlan"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:56
 msgid "Connected accounts"
-msgstr ""
+msgstr "Bağlı hesaplar"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
-msgstr ""
+msgstr "Bağlam"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 #: src/pages/onboarding/CreateWorkspace.tsx:154
@@ -374,97 +374,97 @@ msgstr ""
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:92
 msgid "Continue"
-msgstr ""
+msgstr "Devam"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:75
 msgid "Continue with Email"
-msgstr ""
+msgstr "E-posta ile Devam Et"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
 msgid "Continue with Google"
-msgstr ""
+msgstr "Google ile Devam Et"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
 msgid "Continue with Microsoft"
-msgstr ""
+msgstr "Microsoft ile devam et"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
-msgstr ""
+msgstr "Yardımcı Pilot"
 
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
-msgstr ""
+msgstr "Davetiye bağlantısını kopyala"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
-msgstr ""
+msgstr "Bu anahtarı kopyalayın, çünkü tekrar görünür olmayacak"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
 msgid "Count"
-msgstr ""
+msgstr "Sayım"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
 msgid "Count all"
-msgstr ""
+msgstr "Toplamı say"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
 msgid "Count empty"
-msgstr ""
+msgstr "Boş olanları say"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
 msgid "Count not empty"
-msgstr ""
+msgstr "Boş olmayanları say"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
 msgid "Count unique values"
-msgstr ""
+msgstr "Benzersiz değerleri say"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
 msgid "Create a workflow and return here to view its versions"
-msgstr ""
+msgstr "Bir iş akışı oluşturun ve sürümlerini görmek için buraya geri dönün"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:56
 msgid "Create API key"
-msgstr ""
+msgstr "API anahtarı oluştur"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
 msgid "Create new record"
-msgstr ""
+msgstr "Yeni kayıt oluştur"
 
 #: src/pages/onboarding/CreateProfile.tsx:154
 msgid "Create profile"
-msgstr ""
+msgstr "Profil oluştur"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
-msgstr ""
+msgstr "Rol oluştur"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
-msgstr ""
+msgstr "Webhook oluştur"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:113
 msgid "Create your workspace"
-msgstr ""
+msgstr "Çalışma alanınızı oluşturun"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
-msgstr ""
+msgstr "Özel nesneler"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
 msgid "Customise the fields available in the {objectLabelSingular} views."
-msgstr ""
+msgstr "{objectLabelSingular} görünümlerindeki kullanılabilir alanları özelleştirin."
 
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
-msgstr ""
+msgstr "Alan adını özelleştir"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:64
 msgid "Customize your workspace security"
-msgstr ""
+msgstr "Çalışma alanınızın güvenliğini özelleştirin"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
@@ -472,50 +472,50 @@ msgstr ""
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
 msgid "Danger zone"
-msgstr ""
+msgstr "Tehlike bölgesi"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
 msgid "Data model"
-msgstr ""
+msgstr "Veri modeli"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
 msgid "Data type"
-msgstr ""
+msgstr "Veri tipi"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
 msgid "Date"
-msgstr ""
+msgstr "Tarih"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
-msgstr ""
+msgstr "Tarih ve saat"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
-msgstr ""
+msgstr "Devre dışı bırak"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
-msgstr ""
+msgstr "Özel bir API adı belirlemek için \"Nesnelerin Etiketlerini ve API Adlarını Senkronize Et\" özelliğini devre dışı bırakın"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
-msgstr ""
+msgstr "Bu alanı devre dışı bırak"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:82
 msgid "Deactivate Workflow"
-msgstr ""
+msgstr "İş Akışını Devre Dışı Bırak"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
-msgstr ""
+msgstr "Nesnenizin adını ve açıklamasını tanımlayın"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
@@ -531,75 +531,75 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
 msgid "Delete"
-msgstr ""
+msgstr "Sil"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:332
 #: src/modules/settings/profile/components/DeleteAccount.tsx:37
 #: src/modules/settings/profile/components/DeleteAccount.tsx:53
 msgid "Delete account"
-msgstr ""
+msgstr "Hesabı sil"
 
 #: src/modules/settings/profile/components/DeleteAccount.tsx:30
 msgid "Delete account and all the associated data"
-msgstr ""
+msgstr "Hesabı ve tüm ilişkili verileri sil"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
 msgid "Delete API key"
-msgstr ""
+msgstr "API anahtarını sil"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
 msgid "Delete record"
-msgstr ""
+msgstr "Kaydı sil"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
 msgid "Delete records"
-msgstr ""
+msgstr "Kayıtları Sil"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
-msgstr ""
+msgstr "Bu entegrasyonu sil"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
 msgid "Delete webhook"
-msgstr ""
+msgstr "Webhook'u Sil"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
 msgid "Delete workflow"
-msgstr ""
+msgstr "İş akışını Sil"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
 msgid "Delete workflows"
-msgstr ""
+msgstr "İş akışlarını Sil"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
 msgid "Delete workspace"
-msgstr ""
+msgstr "Çalışma alanını Sil"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
 msgid "Delete your whole workspace"
-msgstr ""
+msgstr "Tüm çalışma alanınızı silin"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Descending"
-msgstr ""
+msgstr "Azalan"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
-msgstr ""
+msgstr "Açıklama"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:254
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:296
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:155
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:193
 msgid "Destroy"
-msgstr ""
+msgstr "Yok Et"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:35
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
@@ -608,128 +608,128 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
 msgid "Developers"
-msgstr ""
+msgstr "Geliştiriciler"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:97
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:98
 msgid "Discard Draft"
-msgstr ""
+msgstr "Taslağı İptal Et"
 
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
 msgid "Display as relative date"
-msgstr ""
+msgstr "İlgili tarihi göster"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
 #: src/pages/settings/workspace/SettingsHostname.tsx:115
 #: src/pages/settings/workspace/SettingsDomain.tsx:115
 #: src/pages/settings/workspace/SettingsDomain.tsx:125
 msgid "Domain"
-msgstr ""
+msgstr "Alan Adı"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
 msgid "E.g. backoffice integration"
-msgstr ""
+msgstr "Örn. backoffice entegrasyonu"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
 msgid "Earliest"
-msgstr ""
+msgstr "En Erken"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
 msgid "Earliest date"
-msgstr ""
+msgstr "En erken tarih"
 
 #: src/pages/settings/SettingsBilling.tsx:158
 msgid "Edit billing interval"
-msgstr ""
+msgstr "Fatura dönemi düzenle"
 
 #: src/pages/settings/SettingsBilling.tsx:146
 msgid "Edit payment method, see your invoices and more"
-msgstr ""
+msgstr "Ödeme yöntemini düzenleyin, faturalarınızı görün ve daha fazlası"
 
 #: src/pages/settings/SettingsWorkspace.tsx:52
 msgid "Edit your subdomain name or set a custom domain."
-msgstr ""
+msgstr "Alt alan adınızı düzenleyin veya özel bir domain ayarlayın."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:180
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:256
 #: src/pages/settings/SettingsProfile.tsx:42
 #: src/pages/auth/PasswordReset.tsx:206
 msgid "Email"
-msgstr ""
+msgstr "E-posta"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:89
 msgid "Email integration"
-msgstr ""
+msgstr "E-posta entegrasyonu"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:55
 msgid "Email or domain is already in blocklist"
-msgstr ""
+msgstr "E-posta veya alan adı zaten engellenmişler listesinde"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
-msgstr ""
+msgstr "E-postalar"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
 msgid "employees"
-msgstr ""
+msgstr "çalışanlar"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
 msgid "Employees"
-msgstr ""
+msgstr "Çalışanlar"
 
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
 msgid "Empty"
-msgstr ""
+msgstr "Boş"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
 msgid "Endpoint URL"
-msgstr ""
+msgstr "Uç Noktası URL"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "English"
-msgstr ""
+msgstr "İngilizce"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:157
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
-msgstr ""
+msgstr "{withCreditCardTrialPeriodDuration} gün süresince ücretsiz deneme süresinin tadını çıkarın"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:51
 msgid "Enterprise"
-msgstr ""
+msgstr "Kurumsal"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
 msgid "Error deleting api key: {err}"
-msgstr ""
+msgstr "Api anahtarını silerken hata: {err}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
 msgid "Error regenerating api key: {err}"
-msgstr ""
+msgstr "Api anahtarını yeniden oluştururken hata: {err}"
 
 #: src/pages/settings/SettingsBilling.tsx:124
 msgid "Error while switching subscription {to}."
-msgstr ""
+msgstr "Abonelik değiştirilirken hata {to}."
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
-msgstr ""
+msgstr "Asenkron olaylar üzerine bildirimler için Webhook uç noktaları oluşturun."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
 msgid "Exclude the following people and domains from my email sync"
-msgstr ""
+msgstr "E-posta senkronizasyonumdan şu kişi ve alan adlarını hariç tutun"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:162
 msgid "Existing objects"
-msgstr ""
+msgstr "Mevcut nesneler"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx:36
 msgid "Exit Settings"
-msgstr ""
+msgstr "Ayarları Kapat"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
 #~ msgid "Expected selected node to be a create step node."
@@ -739,19 +739,19 @@ msgstr ""
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
-msgstr ""
+msgstr "Deneyim"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:219
 msgid "Expiration"
-msgstr ""
+msgstr "Son Kullanma"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:126
 msgid "Expiration Date"
-msgstr ""
+msgstr "Son Kullanma Tarihi"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:259
 msgid "Expires in"
-msgstr ""
+msgstr "Bitiş süresi"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:78
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:136
@@ -766,18 +766,18 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:89
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:102
 msgid "Export"
-msgstr ""
+msgstr "Dışa Aktar"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:135
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:87
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
 msgid "Export records"
-msgstr ""
+msgstr "Kayıtları Dışa Aktar"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
 msgid "Export to PDF"
-msgstr ""
+msgstr "PDF olarak dışa aktar"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:148
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:100
@@ -785,270 +785,270 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
 msgid "Export view"
-msgstr ""
+msgstr "Görünümü Dışa Aktar"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
 msgid "Export Workflows"
-msgstr ""
+msgstr "İş Akışlarını Dışa Aktar"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
-msgstr ""
+msgstr "Favoriler"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
 msgid "Field type"
-msgstr ""
+msgstr "Alan tipi"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
-msgstr ""
+msgstr "Alanlar"
 
 #: src/testing/mock-data/tableData.ts:22
 msgid "Fields Count"
-msgstr ""
+msgstr "Alan Sayısı"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
 #: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
-msgstr ""
+msgstr "Filtre"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
-msgstr ""
+msgstr "Filtreler"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
-msgstr ""
+msgstr "İsim"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Parolanızı mı unuttunuz?"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
-msgstr ""
+msgstr "Fransızca"
 
 #: src/pages/settings/SettingsBilling.tsx:47
 msgid "from monthly to yearly"
-msgstr ""
+msgstr "aylıktan yıllığa"
 
 #: src/pages/settings/SettingsBilling.tsx:54
 msgid "from yearly to monthly"
-msgstr ""
+msgstr "yıllıktan aylığa"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:87
 msgid "Full access"
-msgstr ""
+msgstr "Tam erişim"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
 msgid "Functions"
-msgstr ""
+msgstr "Fonksiyonlar"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
 #: src/pages/settings/workspace/SettingsDomain.tsx:122
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
-msgstr ""
+msgstr "Genel"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
 msgid "German"
-msgstr ""
+msgstr "Almanca"
 
 #: src/pages/onboarding/InviteTeam.tsx:184
 msgid "Get the most out of your workspace by inviting your team."
-msgstr ""
+msgstr "Ekibinizi davet ederek çalışma alanınızdan en iyi şekilde yararlanın."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:148
 msgid "Get your subscription"
-msgstr ""
+msgstr "Aboneliğinizi alın"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
-msgstr ""
+msgstr "Küresel"
 
 #: src/pages/settings/SettingsWorkspace.tsx:65
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr ""
+msgstr "Sorunları gidermemizi veya adınıza içerikleri kurtarmamızı sağlayacak şekilde Twenty destek ekibine çalışma alanınızda geçici olarak erişim izni verin. İstediğiniz zaman erişimi iptal edebilirsiniz."
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
-msgstr ""
+msgstr "Gizle"
 
 #: src/pages/onboarding/CreateProfile.tsx:157
 msgid "How you'll be identified on the app."
-msgstr ""
+msgstr "Uygulamada nasıl tanınacağınız."
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
 msgid "Icon and Name"
-msgstr ""
+msgstr "Simge ve İsim"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
 msgid "Identifier"
-msgstr ""
+msgstr "Tanımlayıcı"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
-msgstr ""
+msgstr "Bu anahtarı kaybettiyseniz, yeniden oluşturabilirsiniz ancak bu anahtarı kullanan herhangi bir betiği güncellemeniz gerekeceğini unutmayın. Onaylamak için lütfen \"{confirmationValue}\" yazın."
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:215
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
 msgid "Inactive"
-msgstr ""
+msgstr "Aktif Olmayan"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
 msgid "Indexes"
-msgstr ""
+msgstr "Dizinler"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
-msgstr ""
+msgstr "Giriş deve şeklinde olmalı ve bir rakamla başlayamaz"
 
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
 msgid "Instances"
-msgstr ""
+msgstr "Örnekler"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
 msgid "Integrations"
-msgstr ""
+msgstr "Entegrasyonlar"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
 msgid "Invalid auth provider"
-msgstr ""
+msgstr "Geçersiz yetkilendirme sağlayıcısı"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
-msgstr ""
+msgstr "Geçersiz e-posta"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:44
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:50
 msgid "Invalid email or domain"
-msgstr ""
+msgstr "Geçersiz e-posta veya alan adı"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:71
 msgid "Invalid form values"
-msgstr ""
+msgstr "Geçersiz form değerleri"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
-msgstr ""
+msgstr "E-posta ile davet et"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:157
 msgid "Invite by link"
-msgstr ""
+msgstr "Link ile davet et"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
 msgid "Invite by Link"
-msgstr ""
+msgstr "Link ile Davet Et"
 
 #: src/pages/onboarding/InviteTeam.tsx:152
 msgid "Invite link sent to email addresses"
-msgstr ""
+msgstr "Davet linki e-posta adreslerine gönderildi"
 
 #: src/pages/onboarding/InviteTeam.tsx:181
 msgid "Invite your team"
-msgstr ""
+msgstr "Takımını davet et"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
 msgid "Italian"
-msgstr ""
+msgstr "İtalyanca"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Japanese"
-msgstr ""
+msgstr "Japonca"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
 msgid "Korean"
-msgstr ""
+msgstr "Korece"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
 msgid "Lab"
-msgstr ""
+msgstr "Laboratuvar"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Language"
-msgstr ""
+msgstr "Dil"
 
 #: src/pages/onboarding/CreateProfile.tsx:202
 msgid "Last Name"
-msgstr ""
+msgstr "Soyadı"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
 msgid "Latest"
-msgstr ""
+msgstr "En Son"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
 msgid "Latest date"
-msgstr ""
+msgstr "En son tarih"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 msgid "Link copied to clipboard"
-msgstr ""
+msgstr "Link panoya kopyalandı"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
-msgstr ""
+msgstr "Oturumu kapat"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
 msgid "Logout"
-msgstr ""
+msgstr "Çıkış yap"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:167
 msgid "Manage Members"
-msgstr ""
+msgstr "Üyeleri Yönet"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:168
 msgid "Manage the members of your space here"
-msgstr ""
+msgstr "Alanınızdaki üyeleri buradan yönetin"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:57
 msgid "Manage your internet accounts."
-msgstr ""
+msgstr "İnternet hesaplarınızı yönetin."
 
 #: src/pages/settings/SettingsBilling.tsx:145
 msgid "Manage your subscription"
-msgstr ""
+msgstr "Aboneliğinizi yönetin"
 
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:69
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:60
 msgid "Mark as done"
-msgstr ""
+msgstr "Tamamlandı olarak işaretle"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:13
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:13
 msgid "Max"
-msgstr ""
+msgstr "Maks"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
 msgid "Members"
-msgstr ""
+msgstr "Üyeler"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
 msgid "Min"
-msgstr ""
+msgstr "Dk"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
 msgid "More options"
-msgstr ""
+msgstr "Daha fazla seçenek"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
 msgid "Move left"
-msgstr ""
+msgstr "Sola taşı"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
 msgid "Move right"
-msgstr ""
+msgstr "Sağa taşı"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
@@ -1063,77 +1063,77 @@ msgstr ""
 #: src/pages/onboarding/CreateProfile.tsx:166
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:49
 msgid "Name can not be empty"
-msgstr ""
+msgstr "İsim boş olamaz"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
-msgstr ""
+msgstr "API anahtarınızın adı"
 
 #: src/pages/settings/SettingsWorkspace.tsx:44
 msgid "Name of your workspace"
-msgstr ""
+msgstr "Çalışma alanınızın adı"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:181
 msgid "Navigate to next record"
-msgstr ""
+msgstr "Bir sonraki kayda geç"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:95
 msgid "Navigate to next version"
-msgstr ""
+msgstr "Sonraki versiyona git"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:184
 msgid "Navigate to next workflow"
-msgstr ""
+msgstr "Sonraki iş akışına git"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:65
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:170
 msgid "Navigate to previous record"
-msgstr ""
+msgstr "Önceki kayda git"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:85
 msgid "Navigate to previous version"
-msgstr ""
+msgstr "Önceki versiyona git"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:174
 msgid "Navigate to previous workflow"
-msgstr ""
+msgstr "Önceki iş akışına git"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
-msgstr ""
+msgstr "Yeni"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
-msgstr ""
+msgstr "Yeni hesap"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
-msgstr ""
+msgstr "Yeni anahtar"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
 msgid "New Key"
-msgstr ""
+msgstr "Yeni Anahtar"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:66
 msgid "New Object"
-msgstr ""
+msgstr "Yeni Nesne"
 
 #: src/pages/auth/PasswordReset.tsx:233
 msgid "New Password"
-msgstr ""
+msgstr "Yeni Parola"
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx:27
 #: src/modules/ui/layout/page/components/PageAddButton.tsx:29
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:58
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:46
 msgid "New record"
-msgstr ""
+msgstr "Yeni kayıt"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:52
 #~ msgid "New Role"
@@ -1141,118 +1141,118 @@ msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
 msgid "New Webhook"
-msgstr ""
+msgstr "Yeni Webhook"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
 msgid "No connected account"
-msgstr ""
+msgstr "Bağlı hesap yok"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
-msgstr ""
+msgstr "Henüz iş akışı çalıştırması yok"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
 msgid "No workflow versions yet"
-msgstr ""
+msgstr "Henüz iş akışı versiyonu yok"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
-msgstr ""
+msgstr "Boş değil"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
-msgstr ""
+msgstr "Nesne"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
-msgstr ""
+msgstr "Nesneler"
 
 #: src/pages/not-found/NotFound.tsx:47
 msgid "Off the beaten path"
-msgstr ""
+msgstr "Alışılmışın dışında"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
-msgstr ""
+msgstr "Açık"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
-msgstr ""
+msgstr "Seçenekler"
 
 #: src/pages/onboarding/InviteTeam.tsx:213
 msgid "or"
-msgstr ""
+msgstr "veya"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
 msgid "Other"
-msgstr ""
+msgstr "Diğer"
 
 #: src/pages/not-found/NotFound.tsx:41
 msgid "Page Not Found"
-msgstr ""
+msgstr "Sayfa Bulunamadı"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
 msgid "Password"
-msgstr ""
+msgstr "Parola"
 
 #: src/pages/auth/PasswordReset.tsx:146
 msgid "Password has been updated"
-msgstr ""
+msgstr "Parola güncellendi"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
-msgstr ""
+msgstr "Parola sıfırlama bağlantısı e-postaya gönderildi"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
 msgid "Percent"
-msgstr ""
+msgstr "Yüzde"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
 msgid "Percent empty"
-msgstr ""
+msgstr "Yüzde olarak boş"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
 msgid "Percent not empty"
-msgstr ""
+msgstr "Yüzde olarak dolu"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:253
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
 msgid "Permanently destroy record"
-msgstr ""
+msgstr "Kaydı kalıcı olarak yok et"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
 msgid "Permanently destroy records"
-msgstr ""
+msgstr "Kayıtları kalıcı olarak yok et"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
 msgid "Permanently destroy workflows"
-msgstr ""
+msgstr "İş akışlarını kalıcı olarak yok et"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:70
 #: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
-msgstr ""
+msgstr "İzinler"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
-msgstr ""
+msgstr "Resim"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
 msgid "Please enter a valid URL"
-msgstr ""
+msgstr "Geçerli bir URL giriniz"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
-msgstr ""
+msgstr "Bu API Anahtarını silmek istediğinizi onaylamak için \"{confirmationValue}\" yazınız. Bu anahtarı kullanan herhangi bir betiğin çalışmayacağını unutmayın."
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
-msgstr ""
+msgstr "Bu webhook'u silmek istediğinizi onaylamak için {confirmationText} yazın."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
@@ -1260,11 +1260,11 @@ msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "Portuguese — Brazil"
-msgstr ""
+msgstr "Portekizce — Brezilya"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Portuguese — Portugal"
-msgstr ""
+msgstr "Portekizce — Portekiz"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
 #~ msgid "Portuguese (Brazil)"
@@ -1277,56 +1277,56 @@ msgstr ""
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
 msgid "Preview"
-msgstr ""
+msgstr "Önizleme"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Gizlilik Politikası"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
 msgid "Pseudo-English"
-msgstr ""
+msgstr "Sahte-İngilizce"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx:9
 msgid "Read documentation"
-msgstr ""
+msgstr "Dökümanları Oku"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:53
 msgid "Receive an email containing password update link"
-msgstr ""
+msgstr "Şifre güncelleme bağlantısı içeren e-posta alın"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
-msgstr ""
+msgstr "Kayıt Seçimi"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
 msgid "Regenerate an API key"
-msgstr ""
+msgstr "Bir API anahtarını yeniden oluştur"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
 msgid "Regenerate key"
-msgstr ""
+msgstr "Anahtarı yeniden oluştur"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
 msgid "Regenerate Key"
-msgstr ""
+msgstr "Anahtar Yeniden Oluştur"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
 msgid "Releases"
-msgstr ""
+msgstr "Sürümler"
 
 #: src/modules/ui/input/components/ImageInput.tsx:172
 msgid "Remove"
-msgstr ""
+msgstr "Kaldır"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1338,345 +1338,345 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:85
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:47
 msgid "Remove from favorites"
-msgstr ""
+msgstr "Favorilerden çıkar"
 
 #: src/pages/auth/PasswordReset.tsx:177
 msgid "Reset Password"
-msgstr ""
+msgstr "Şifreyi Sıfırla"
 
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:47
 msgid "Reset to"
-msgstr ""
+msgstr "Sıfırla"
 
 #: src/modules/command-menu/hooks/useSearchRecords.tsx:227
 msgid "Results"
-msgstr ""
+msgstr "Sonuçlar"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:107
 #: src/pages/settings/roles/SettingsRoles.tsx:113
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
 msgid "Roles"
-msgstr ""
+msgstr "Roller"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
-msgstr ""
+msgstr "Bir iş akışı çalıştırın ve yürütmelerini görmek için buraya geri dönün"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
 msgid "Search"
-msgstr ""
+msgstr "Arama"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Search ''{commandMenuSearch}'' with..."
-msgstr ""
+msgstr "''{commandMenuSearch}'' ile ara..."
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
-msgstr ""
+msgstr "Bir alan ara..."
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
-msgstr ""
+msgstr "Bir indeks ara..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
 msgid "Search fields"
-msgstr ""
+msgstr "Alan ara"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:166
 msgid "Search for an object..."
-msgstr ""
+msgstr "Bir nesne ara..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
 msgid "Search records"
-msgstr ""
+msgstr "Kayıtları ara"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
 msgid "Security"
-msgstr ""
+msgstr "Güvenlik"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:112
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:113
 msgid "See active version"
-msgstr ""
+msgstr "Aktif sürümü gör"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:55
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:56
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:127
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:128
 msgid "See runs"
-msgstr ""
+msgstr "Çalıştırmaları gör"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:70
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:143
 msgid "See versions"
-msgstr ""
+msgstr "Sürümleri gör"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:69
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:142
 msgid "See versions history"
-msgstr ""
+msgstr "Sürüm geçmişini gör"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
 msgid "Select the events you wish to send to this endpoint"
-msgstr ""
+msgstr "Bu uç noktaya göndermek istediğiniz olayları seçin"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
 msgid "Select your preferred language"
-msgstr ""
+msgstr "Tercih ettiğiniz dili seçin"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:245
 msgid "Send an invite email to your team"
-msgstr ""
+msgstr "Takımınıza davet e-postası gönderin"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin Panel"
-msgstr ""
+msgstr "Sunucu Yönetim Paneli"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
 msgid "Set email visibility, manage your blocklist and more."
-msgstr ""
+msgstr "E-posta görünürlüğünü ayarlayın, engel listenizi yönetin ve daha fazlası."
 
 #: src/pages/settings/workspace/SettingsHostname.tsx:115
 msgid "Set the name of your domain"
-msgstr ""
+msgstr "Alan adınızın adını belirleyin"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:37
 msgid "Set the name of your subdomain"
-msgstr ""
+msgstr "Alt alan adınızın adını belirleyin"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
-msgstr ""
+msgstr "Ayarlar"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
-msgstr ""
+msgstr "Bu linki paylaşarak kullanıcıları iş alanınıza katılmaya davet edin"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
 msgid "Should changing a field's label also change the API name?"
-msgstr ""
+msgstr "Bir alanın etiketi değiştirilirse API adı da değiştirilsin mi?"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
-msgstr ""
+msgstr "Oturum aç"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:89
 msgid "Sign up"
-msgstr ""
+msgstr "Kaydol"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
 msgid "Single sign-on (SSO)"
-msgstr ""
+msgstr "Tek oturum açma (SSO)"
 
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
-msgstr ""
+msgstr "Atla"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
 msgid "Sort"
-msgstr ""
+msgstr "Sırala"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Spanish"
-msgstr ""
+msgstr "İspanyolca"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:47
 msgid "SSO"
-msgstr ""
+msgstr "Tek Oturum Açma"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:36
 msgid "Subdomain"
-msgstr ""
+msgstr "Alt alan adı"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:89
 msgid "Subdomain already taken"
-msgstr ""
+msgstr "Alt alan adı zaten alınmış"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:35
 msgid "Subdomain can not be longer than 30 characters"
-msgstr ""
+msgstr "Alt alan adı 30 karakterden uzun olamaz"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:34
 msgid "Subdomain can not be shorter than 3 characters"
-msgstr ""
+msgstr "Alt alan adı 3 karakterden kısa olamaz"
 
 #: src/pages/settings/SettingsBilling.tsx:120
 msgid "Subscription has been switched {to}"
-msgstr ""
+msgstr "Abonelik {to} olarak değiştirildi"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
 msgid "Sum"
-msgstr ""
+msgstr "Toplam"
 
 #: src/pages/settings/SettingsWorkspace.tsx:63
 msgid "Support"
-msgstr ""
+msgstr "Destek"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
-msgstr ""
+msgstr "{from} değiştir"
 
 #: src/pages/settings/SettingsBilling.tsx:163
 msgid "Switch {to}"
-msgstr ""
+msgstr "{to} değiştir"
 
 #: src/pages/settings/SettingsBilling.tsx:187
 msgid "Switch billing {to}"
-msgstr ""
+msgstr "Faturalandırmayı {to} olarak değiştir"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
-msgstr ""
+msgstr "Alan Etiketi ve API Adı Eşzamanlığını Sürdür"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
-msgstr ""
+msgstr "Sistem ayarları - {systemDateFormatLabel}"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
 msgid "System Settings - {systemTimeFormatLabel}"
-msgstr ""
+msgstr "Sistem Ayarları - {systemTimeFormatLabel}"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
 msgid "Terms of Service"
-msgstr ""
+msgstr "Kullanım Koşulları"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:158
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:157
 msgid "Test Workflow"
-msgstr ""
+msgstr "İş Akışını Test Et"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
 msgid "The description of this field"
-msgstr ""
+msgstr "Bu alanın açıklaması"
 
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
-msgstr ""
+msgstr "Hesabınızla ilişkilendirilmiş e-posta"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:209
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:240
 msgid "The name and icon of this field"
-msgstr ""
+msgstr "Bu alanın adı ve simgesi"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:129
 msgid "The name of your organization"
-msgstr ""
+msgstr "Organizasyonunuzun adı"
 
 #: src/pages/not-found/NotFound.tsx:50
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
-msgstr ""
+msgstr "Aradığınız sayfa ya kaybolmuş ya da hiç olmamış. Sizi tekrar doğru yola yönlendirelim"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:229
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:252
 msgid "The values of this field"
-msgstr ""
+msgstr "Bu alanın değerleri"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
-msgstr ""
+msgstr "Bu alanın değerleri eşsiz olmalı"
 
 #: src/pages/auth/PasswordReset.tsx:139
 msgid "There was an error while updating password."
-msgstr ""
+msgstr "Şifre güncelleme sırasında bir hata oluştu."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
-msgstr ""
+msgstr "Bir sorun oluştu"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:323
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
-msgstr ""
+msgstr "Bu işlem geri alınamaz. Bu, kullanıcıyı kalıcı olarak siler ve tüm görevlerden çıkarır."
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
-msgstr ""
+msgstr "Bu işlem geri alınamaz. Bu, iş alanınızı tamamen silecek. <0/>Onaylamak için lütfen e-postanızı yazın."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
-msgstr ""
+msgstr "Bu Rol şu izinlere sahip."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 msgid "This Role is assigned to these workspace member."
-msgstr ""
+msgstr "Bu Rol bu iş alanı üyelerine atanmış."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
-msgstr ""
+msgstr "Zaman formatı"
 
 #: src/pages/settings/SettingsBilling.tsx:53
 msgid "to monthly"
-msgstr ""
+msgstr "aylığa"
 
 #: src/pages/settings/SettingsBilling.tsx:46
 msgid "to yearly"
-msgstr ""
+msgstr "yıllığa"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:56
 msgid "Trigger Type"
-msgstr ""
+msgstr "Tetikleyici Türü"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:60
 msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr ""
+msgstr "Tetikleme türü, hiçbir kayıt seçilmediğinde Manuel olmalıdır"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
-msgstr ""
+msgstr "Tür"
 
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
 msgid "Type anything"
-msgstr ""
+msgstr "Bir şeyler yazın"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
 msgid "Unique"
-msgstr ""
+msgstr "Benzersiz"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:80
 msgid "Unknown error"
-msgstr ""
+msgstr "Bilinmeyen hata"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
-msgstr ""
+msgstr "Sınırsız kişilerle iletişim"
 
 #: src/modules/ui/input/components/ImageInput.tsx:164
 msgid "Upload"
-msgstr ""
+msgstr "Yükle"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:40
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:41
 msgid "Use as draft"
-msgstr ""
+msgstr "Taslak olarak kullan"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:37
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
-msgstr ""
+msgstr "Sadece harf, rakam ve çizgi kullanın. Harf veya rakamla başlayıp bitirin"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:16
 msgid "Use our API or add your first {objectLabel} manually"
-msgstr ""
+msgstr "API'mızı kullanın veya ilk {objectLabel} kaydınızı manuel olarak ekleyin"
 
 #: src/pages/settings/SettingsProfile.tsx:22
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
@@ -1684,43 +1684,43 @@ msgstr ""
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
 msgid "User"
-msgstr ""
+msgstr "Kullanıcı"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:51
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:106
 msgid "User is not logged in"
-msgstr ""
+msgstr "Kullanıcı giriş yapmamış"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:223
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:228
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:251
 msgid "Values"
-msgstr ""
+msgstr "Değerler"
 
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
-msgstr ""
+msgstr "Fatura detaylarını görüntüle"
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx:35
 msgid "Visualize"
-msgstr ""
+msgstr "Görselleştirme"
 
 #: src/modules/ui/input/components/ImageInput.tsx:177
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
-msgstr ""
+msgstr "10MB'nin altındaki kare PNG, JPEG ve GIF'lerinizi destekliyoruz"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
 msgid "We will send POST requests to this endpoint for every new event"
-msgstr ""
+msgstr "Yeni her olay için bu uç noktaya POST istekleri göndereceğiz"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
 msgid "Webhook"
-msgstr ""
+msgstr "Web kancası"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:65
 msgid "Webhooks"
-msgstr ""
+msgstr "Web kancaları"
 
 #: src/pages/auth/SignInUp.tsx:43
 #~ msgid "Welcome to"
@@ -1728,19 +1728,19 @@ msgstr ""
 
 #: src/pages/auth/SignInUp.tsx:76
 msgid "Welcome to {workspaceName}"
-msgstr ""
+msgstr "{workspaceName}'e Hoş Geldiniz"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
-msgstr ""
+msgstr "API anahtarının ne zaman süresi dolacak."
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
 msgid "When the key will be disabled"
-msgstr ""
+msgstr "Anahtarın ne zaman devre dışı bırakılacağı"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:58
 msgid "Workflow cannot be tested"
-msgstr ""
+msgstr "İş Akışı test edilemez"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
@@ -1763,50 +1763,50 @@ msgstr ""
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
-msgstr ""
+msgstr "İş Alanı"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
 msgid "Workspace Deletion"
-msgstr ""
+msgstr "İş Alanı Silme"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:123
 msgid "Workspace logo"
-msgstr ""
+msgstr "İş Alanı logosu"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:128
 msgid "Workspace name"
-msgstr ""
+msgstr "İş Alanı adı"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
 msgid "Write a description"
-msgstr ""
+msgstr "Bir açıklama yazın"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
-msgstr ""
+msgstr "evet"
 
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
-msgstr ""
+msgstr "Tüm yıl için hemen ücretlendirileceksiniz."
 
 #: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."
-msgstr ""
+msgstr "Kredi bakiyeniz aylık faturaları ödemek için kullanılacak."
 
 #: src/pages/settings/SettingsProfile.tsx:36
 msgid "Your name as it will be displayed"
-msgstr ""
+msgstr "Görüntülenecek adınız"
 
 #: src/pages/onboarding/CreateProfile.tsx:167
 msgid "Your name as it will be displayed on the app"
-msgstr ""
+msgstr "Uygulamada görüntülenecek adınız"
 
 #: src/pages/auth/SignInUp.tsx:73
 msgid "Your Workspace"
-msgstr ""
+msgstr "Çalışma Alanınız"
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
-msgstr ""
+msgstr "Çalışma alanınız devre dışı bırakılacak"
 
