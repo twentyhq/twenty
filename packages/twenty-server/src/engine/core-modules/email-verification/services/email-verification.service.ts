@@ -21,6 +21,7 @@ import {
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -38,7 +39,7 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    subdomain: string,
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -51,7 +52,7 @@ export class EmailVerificationService {
       this.domainManagerService.buildEmailVerificationURL({
         emailVerificationToken,
         email,
-        subdomain,
+        workspace,
       });
 
     const emailData = {
@@ -80,7 +81,10 @@ export class EmailVerificationService {
     return { success: true };
   }
 
-  async resendEmailVerificationToken(email: string, subdomain: string) {
+  async resendEmailVerificationToken(
+    email: string,
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
+  ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
         'Email verification token cannot be sent because email verification is not required',
@@ -121,7 +125,7 @@ export class EmailVerificationService {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
-    await this.sendVerificationEmail(user.id, email, subdomain);
+    await this.sendVerificationEmail(user.id, email, workspace);
 
     return { success: true };
   }

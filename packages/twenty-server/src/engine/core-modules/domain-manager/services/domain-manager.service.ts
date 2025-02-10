@@ -9,7 +9,7 @@ import {
   DomainManagerException,
   DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
-import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
+import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
 import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
 import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
@@ -74,33 +74,31 @@ export class DomainManagerService {
   buildEmailVerificationURL({
     emailVerificationToken,
     email,
-    subdomain,
+    workspace,
   }: {
     emailVerificationToken: string;
     email: string;
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>;
   }) {
     return this.buildWorkspaceURL({
-      subdomain,
+      workspace,
       pathname: 'verify-email',
       searchParams: { emailVerificationToken, email },
     });
   }
 
   buildWorkspaceURL({
-    subdomain,
+    workspace,
     pathname,
     searchParams,
   }: {
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const url = this.getFrontUrl();
+    const workspaceUrls = this.getWorkspaceUrls(workspace);
 
-    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      url.hostname = `${subdomain}.${url.hostname}`;
-    }
+    const url = new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl);
 
     if (pathname) {
       url.pathname = pathname;
@@ -117,22 +115,7 @@ export class DomainManagerService {
     return url;
   }
 
-  // @Deprecated
-  getWorkspaceSubdomainFromUrl = (url: string) => {
-    const { hostname: originHostname } = new URL(url);
-
-    if (!originHostname.endsWith(this.getFrontUrl().hostname)) {
-      return null;
-    }
-
-    const frontDomain = this.getFrontUrl().hostname;
-
-    const subdomain = originHostname.replace(`.${frontDomain}`, '');
-
-    return this.isDefaultSubdomain(subdomain) ? null : subdomain;
-  };
-
-  getSubdomainAndHostnameFromUrl = (url: string) => {
+  getSubdomainAndCustomDomainFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
 
     const frontDomain = this.getFrontUrl().hostname;
@@ -146,7 +129,7 @@ export class DomainManagerService {
         isFrontdomain && !this.isDefaultSubdomain(subdomain)
           ? subdomain
           : undefined,
-      hostname: isFrontdomain ? undefined : originHostname,
+      customDomain: isFrontdomain ? undefined : originHostname,
     };
   };
 
@@ -162,9 +145,12 @@ export class DomainManagerService {
     return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
   }
 
-  computeRedirectErrorUrl(errorMessage: string, subdomain: string) {
+  computeRedirectErrorUrl(
+    errorMessage: string,
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
+  ) {
     const url = this.buildWorkspaceURL({
-      subdomain: subdomain,
+      workspace,
       pathname: '/verify',
       searchParams: { errorMessage },
     });
@@ -215,11 +201,12 @@ export class DomainManagerService {
       return this.getDefaultWorkspace();
     }
 
-    const { subdomain, hostname } = this.getSubdomainAndHostnameFromUrl(origin);
+    const { subdomain, customDomain } =
+      this.getSubdomainAndCustomDomainFromUrl(origin);
 
-    if (!hostname && !subdomain) return;
+    if (!customDomain && !subdomain) return;
 
-    const where = isDefined(hostname) ? { hostname } : { subdomain };
+    const where = isDefined(customDomain) ? { customDomain } : { subdomain };
 
     return (
       (await this.workspaceRepository.findOne({
@@ -250,10 +237,10 @@ export class DomainManagerService {
     return `${subdomain}${existingWorkspaceCount > 0 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
   }
 
-  async registerCustomHostname(hostname: string) {
+  async registerCustomDomain(customDomain: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    if (await this.getCustomHostnameDetails(hostname)) {
+    if (await this.getCustomDomainDetails(customDomain)) {
       throw new DomainManagerException(
         'Hostname already registered',
         DomainManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED,
@@ -262,7 +249,7 @@ export class DomainManagerService {
 
     return await this.cloudflareClient.customHostnames.create({
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
-      hostname,
+      hostname: customDomain,
       ssl: {
         method: 'txt',
         type: 'dv',
@@ -279,14 +266,14 @@ export class DomainManagerService {
     });
   }
 
-  async getCustomHostnameDetails(
-    hostname: string,
-  ): Promise<CustomHostnameDetails | undefined> {
+  async getCustomDomainDetails(
+    customDomain: string,
+  ): Promise<CustomDomainDetails | undefined> {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const response = await this.cloudflareClient.customHostnames.list({
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
-      hostname,
+      hostname: customDomain,
     });
 
     if (response.result.length === 0) {
@@ -296,45 +283,60 @@ export class DomainManagerService {
     if (response.result.length === 1) {
       return {
         id: response.result[0].id,
-        hostname: response.result[0].hostname,
-        status: response.result[0].status,
-        ownershipVerifications: [
+        customDomain: response.result[0].hostname,
+        records: [
           response.result[0].ownership_verification,
-          response.result[0].ownership_verification_http,
-        ].reduce(
-          (acc, ownershipVerification) => {
-            if (!ownershipVerification) return acc;
+          ...(response.result[0].ssl?.validation_records ?? []),
+        ]
+          .map<CustomDomainDetails['records'][0] | undefined>(
+            (record: Record<string, string>) => {
+              if (!record) return;
 
-            if (
-              'http_body' in ownershipVerification &&
-              'http_url' in ownershipVerification &&
-              ownershipVerification.http_body &&
-              ownershipVerification.http_url
-            ) {
-              acc.push({
-                type: 'http',
-                body: ownershipVerification.http_body,
-                url: ownershipVerification.http_url,
-              });
-            }
+              if (
+                'txt_name' in record &&
+                'txt_value' in record &&
+                record.txt_name &&
+                record.txt_value
+              ) {
+                return {
+                  validationType: 'ssl' as const,
+                  type: 'txt' as const,
+                  status: response.result[0].ssl.status ?? 'pending',
+                  key: record.txt_name,
+                  value: record.txt_value,
+                };
+              }
 
-            if (
-              'type' in ownershipVerification &&
-              ownershipVerification.type === 'txt' &&
-              ownershipVerification.value &&
-              ownershipVerification.name
-            ) {
-              acc.push({
-                type: 'txt',
-                value: ownershipVerification.value,
-                name: ownershipVerification.name,
-              });
-            }
-
-            return acc;
-          },
-          [] as CustomHostnameDetails['ownershipVerifications'],
-        ),
+              if (
+                'type' in record &&
+                record.type === 'txt' &&
+                record.value &&
+                record.name
+              ) {
+                return {
+                  validationType: 'ownership' as const,
+                  type: 'txt' as const,
+                  status: response.result[0].status ?? 'pending',
+                  key: record.name,
+                  value: record.value,
+                };
+              }
+            },
+          )
+          .filter(isDefined)
+          .concat([
+            {
+              validationType: 'redirection' as const,
+              type: 'cname' as const,
+              status:
+                response.result[0].verification_errors?.[0] ===
+                'custom hostname does not CNAME to this zone.'
+                  ? 'error'
+                  : 'success',
+              key: response.result[0].hostname,
+              value: this.getFrontUrl().hostname,
+            },
+          ]),
       };
     }
 
@@ -342,24 +344,23 @@ export class DomainManagerService {
     throw new Error('More than one custom hostname found in cloudflare');
   }
 
-  async updateCustomHostname(fromHostname: string, toHostname: string) {
+  async updateCustomDomain(fromHostname: string, toHostname: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    const fromCustomHostname =
-      await this.getCustomHostnameDetails(fromHostname);
+    const fromCustomHostname = await this.getCustomDomainDetails(fromHostname);
 
     if (fromCustomHostname) {
       await this.deleteCustomHostname(fromCustomHostname.id);
     }
 
-    return await this.registerCustomHostname(toHostname);
+    return this.registerCustomDomain(toHostname);
   }
 
-  async deleteCustomHostnameByHostnameSilently(hostname: string) {
+  async deleteCustomHostnameByHostnameSilently(customDomain: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     try {
-      const customHostname = await this.getCustomHostnameDetails(hostname);
+      const customHostname = await this.getCustomDomainDetails(customDomain);
 
       if (customHostname) {
         await this.cloudflareClient.customHostnames.delete(customHostname.id, {
@@ -377,5 +378,33 @@ export class DomainManagerService {
     return this.cloudflareClient.customHostnames.delete(customHostnameId, {
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
     });
+  }
+
+  private getCustomWorkspaceUrl(customDomain: string) {
+    const url = this.getFrontUrl();
+
+    url.hostname = customDomain;
+
+    return url.toString();
+  }
+
+  private getTwentyWorkspaceUrl(subdomain: string) {
+    const url = this.getFrontUrl();
+
+    url.hostname = `${subdomain}.${url.hostname}`;
+
+    return url.toString();
+  }
+
+  getWorkspaceUrls({
+    subdomain,
+    customDomain,
+  }: Pick<Workspace, 'subdomain' | 'customDomain'>) {
+    return {
+      customUrl: customDomain
+        ? this.getCustomWorkspaceUrl(customDomain)
+        : undefined,
+      subdomainUrl: this.getTwentyWorkspaceUrl(subdomain),
+    };
   }
 }

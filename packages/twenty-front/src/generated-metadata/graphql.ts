@@ -109,11 +109,10 @@ export type AuthorizeApp = {
 export type AvailableWorkspaceOutput = {
   __typename?: 'AvailableWorkspaceOutput';
   displayName?: Maybe<Scalars['String']['output']>;
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
-  subdomain: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type Billing = {
@@ -385,25 +384,19 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type CustomHostnameDetails = {
-  __typename?: 'CustomHostnameDetails';
-  hostname: Scalars['String']['output'];
+export type CustomDomainDetails = {
+  __typename?: 'CustomDomainDetails';
+  customDomain: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  ownershipVerifications: Array<OwnershipVerification>;
-  status?: Maybe<Scalars['String']['output']>;
+  records: Array<CustomDomainVerification>;
 };
 
-export type CustomHostnameOwnershipVerificationHttp = {
-  __typename?: 'CustomHostnameOwnershipVerificationHttp';
-  body: Scalars['String']['output'];
+export type CustomDomainVerification = {
+  __typename?: 'CustomDomainVerification';
+  key: Scalars['String']['output'];
+  status: Scalars['String']['output'];
   type: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type CustomHostnameOwnershipVerificationTxt = {
-  __typename?: 'CustomHostnameOwnershipVerificationTxt';
-  name: Scalars['String']['output'];
-  type: Scalars['String']['output'];
+  validationType: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
 
@@ -475,58 +468,37 @@ export type EnvironmentVariable = {
 };
 
 export enum EnvironmentVariablesGroup {
-  Analytics = 'Analytics',
-  Authentication = 'Authentication',
-  Billing = 'Billing',
-  Cache = 'Cache',
-  Database = 'Database',
-  Email = 'Email',
-  Frontend = 'Frontend',
+  BillingConfig = 'BillingConfig',
+  CaptchaConfig = 'CaptchaConfig',
+  CloudflareConfig = 'CloudflareConfig',
+  EmailSettings = 'EmailSettings',
+  ExceptionHandler = 'ExceptionHandler',
+  GoogleAuth = 'GoogleAuth',
   LLM = 'LLM',
   Logging = 'Logging',
-  QueueConfig = 'QueueConfig',
-  Security = 'Security',
+  MicrosoftAuth = 'MicrosoftAuth',
+  Other = 'Other',
+  RateLimiting = 'RateLimiting',
+  SSL = 'SSL',
   ServerConfig = 'ServerConfig',
-  Serverless = 'Serverless',
-  Storage = 'Storage',
-  Support = 'Support',
-  Workspace = 'Workspace'
+  ServerlessConfig = 'ServerlessConfig',
+  StorageConfig = 'StorageConfig',
+  SupportChatConfig = 'SupportChatConfig',
+  TinybirdConfig = 'TinybirdConfig',
+  TokensDuration = 'TokensDuration'
 }
 
 export type EnvironmentVariablesGroupData = {
   __typename?: 'EnvironmentVariablesGroupData';
-  groupName: EnvironmentVariablesGroup;
-  subgroups: Array<EnvironmentVariablesSubgroupData>;
+  description: Scalars['String']['output'];
+  isHiddenOnLoad: Scalars['Boolean']['output'];
+  name: EnvironmentVariablesGroup;
   variables: Array<EnvironmentVariable>;
 };
 
 export type EnvironmentVariablesOutput = {
   __typename?: 'EnvironmentVariablesOutput';
   groups: Array<EnvironmentVariablesGroupData>;
-};
-
-export enum EnvironmentVariablesSubGroup {
-  CloudflareConfig = 'CloudflareConfig',
-  EmailSettings = 'EmailSettings',
-  FrontSupportConfig = 'FrontSupportConfig',
-  GoogleAuth = 'GoogleAuth',
-  LambdaConfig = 'LambdaConfig',
-  MicrosoftAuth = 'MicrosoftAuth',
-  PasswordAuth = 'PasswordAuth',
-  RateLimiting = 'RateLimiting',
-  S3Config = 'S3Config',
-  SSL = 'SSL',
-  SentryConfig = 'SentryConfig',
-  SmtpConfig = 'SmtpConfig',
-  StripeConfig = 'StripeConfig',
-  TinybirdConfig = 'TinybirdConfig',
-  Tokens = 'Tokens'
-}
-
-export type EnvironmentVariablesSubgroupData = {
-  __typename?: 'EnvironmentVariablesSubgroupData';
-  subgroupName: EnvironmentVariablesSubGroup;
-  variables: Array<EnvironmentVariable>;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -704,7 +676,7 @@ export enum IdentityProviderType {
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceSubdomainAndId;
+  workspace: WorkspaceUrlsAndId;
 };
 
 export type Index = {
@@ -1117,6 +1089,7 @@ export type MutationSendInvitationsArgs = {
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
+  locale?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   workspaceId?: InputMaybe<Scalars['String']['input']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
@@ -1319,8 +1292,6 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean']['output'];
 };
 
-export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
-
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
@@ -1358,10 +1329,9 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']['output']>;
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
-  subdomain: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type PublishServerlessFunctionInput = {
@@ -1388,11 +1358,11 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON']['output'];
+  getCustomDomainDetails?: Maybe<CustomDomainDetails>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
-  getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
-  getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
+  getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -1762,6 +1732,16 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY'
 }
 
+export enum SettingsFeatures {
+  ADMIN_PANEL = 'ADMIN_PANEL',
+  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
+  DATA_MODEL = 'DATA_MODEL',
+  ROLES = 'ROLES',
+  SECURITY_SETTINGS = 'SECURITY_SETTINGS',
+  WORKSPACE_SETTINGS = 'WORKSPACE_SETTINGS',
+  WORKSPACE_USERS = 'WORKSPACE_USERS'
+}
+
 export type SetupOidcSsoInput = {
   clientID: Scalars['String']['input'];
   clientSecret: Scalars['String']['input'];
@@ -1790,7 +1770,7 @@ export type SetupSsoOutput = {
 export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceSubdomainAndId;
+  workspace: WorkspaceUrlsAndId;
 };
 
 export enum SubscriptionInterval {
@@ -1976,8 +1956,8 @@ export type UpdateWorkflowVersionStepInput = {
 
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
+  customDomain?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
-  hostname?: InputMaybe<Scalars['String']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1992,6 +1972,7 @@ export type User = {
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
+  currentUserWorkspace?: Maybe<UserWorkspace>;
   currentWorkspace?: Maybe<Workspace>;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -2001,6 +1982,7 @@ export type User = {
   id: Scalars['UUID']['output'];
   isEmailVerified: Scalars['Boolean']['output'];
   lastName: Scalars['String']['output'];
+  locale: Scalars['String']['output'];
   onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']['output']>;
   supportUserHash?: Maybe<Scalars['String']['output']>;
@@ -2067,6 +2049,7 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
+  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];
@@ -2106,13 +2089,13 @@ export type Workspace = {
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime']['output'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
+  customDomain?: Maybe<Scalars['String']['output']>;
   databaseSchema: Scalars['String']['output'];
   databaseUrl: Scalars['String']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   featureFlags?: Maybe<Array<FeatureFlag>>;
   hasValidEnterpriseKey: Scalars['Boolean']['output'];
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   isGoogleAuthEnabled: Scalars['Boolean']['output'];
@@ -2124,6 +2107,7 @@ export type Workspace = {
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export enum WorkspaceActivationStatus {
@@ -2201,10 +2185,16 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
-export type WorkspaceSubdomainAndId = {
-  __typename?: 'WorkspaceSubdomainAndId';
+export type WorkspaceUrlsAndId = {
+  __typename?: 'WorkspaceUrlsAndId';
   id: Scalars['String']['output'];
-  subdomain: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
+};
+
+export type WorkspaceUrls = {
+  __typename?: 'workspaceUrls';
+  customUrl?: Maybe<Scalars['String']['output']>;
+  subdomainUrl: Scalars['String']['output'];
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };

@@ -17,9 +17,8 @@ import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guar
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -28,7 +27,6 @@ export class MicrosoftAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -54,6 +52,7 @@ export class MicrosoftAuthController {
       workspaceInviteHash,
       workspaceId,
       billingCheckoutSessionState,
+      locale,
     } = req.user;
 
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
@@ -82,6 +81,7 @@ export class MicrosoftAuthController {
           lastName,
           email,
           picture,
+          locale,
         },
         existingUser,
       );
@@ -111,8 +111,7 @@ export class MicrosoftAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          subdomain: workspace.subdomain,
-
+          workspace,
           billingCheckoutSessionState,
         }),
       );
@@ -120,9 +119,9 @@ export class MicrosoftAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          currentWorkspace ?? {
-            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-          },
+          this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
+            currentWorkspace,
+          ),
         ),
       );
     }

@@ -50,9 +50,13 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      this.guardRedirectService.dispatchErrorFromGuard(context, err, {
-        subdomain: this.guardRedirectService.getSubdomainFromContext(context),
-      });
+      this.guardRedirectService.dispatchErrorFromGuard(
+        context,
+        err,
+        this.guardRedirectService.getSubdomainAndCustomDomainFromContext(
+          context,
+        ),
+      );
 
       return false;
     }

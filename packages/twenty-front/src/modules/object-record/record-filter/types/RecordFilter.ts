@@ -4,7 +4,6 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export type RecordFilter = {
   id: string;
-  variant?: 'default' | 'danger';
   fieldMetadataId: string;
   value: string;
   displayValue: string;

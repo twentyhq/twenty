@@ -24,7 +24,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
-  const isMatchingLocation = useIsMatchingLocation();
+  const { isMatchingLocation } = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,

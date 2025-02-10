@@ -3,8 +3,8 @@ import { IconComponent, createState } from 'twenty-ui';
 
 export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
-  pageTitle?: string;
-  pageIcon?: IconComponent;
+  pageTitle: string;
+  pageIcon: IconComponent;
 };
 
 export const commandMenuNavigationStackState = createState<

@@ -3328,6 +3328,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.10.5":
+  version: 7.26.7
+  resolution: "@babel/runtime@npm:7.26.7"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 10c0/60199c049f90e5e41c687687430052a370aca60bac7859ff4ee761c5c1739b8ba1604d391d01588c22dc0e93828cbadb8ada742578ad1b1df240746bce98729a
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.18.10, @babel/template@npm:^7.20.7, @babel/template@npm:^7.22.15, @babel/template@npm:^7.22.5, @babel/template@npm:^7.24.7, @babel/template@npm:^7.25.0, @babel/template@npm:^7.3.3":
   version: 7.25.0
   resolution: "@babel/template@npm:7.25.0"
@@ -7142,9 +7151,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/swc-plugin@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "@lingui/swc-plugin@npm:5.0.2"
+"@lingui/swc-plugin@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@lingui/swc-plugin@npm:5.1.0"
   peerDependencies:
     "@lingui/core": 5
   peerDependenciesMeta:
@@ -7152,7 +7161,7 @@ __metadata:
       optional: true
     next:
       optional: true
-  checksum: 10c0/5f7ca68349b642f7034800f6080c4f28f33d97059a8611144b9d78878cf14727b9293e4f5aec5c82a4930617f4bcacd2c25618e6d39ded7ceac15465f3b5aed2
+  checksum: 10c0/ca514c4fcc2d6d1ca62e7063fe4dc8ef2b29d328bbe22184b4773149a86448335c39f72faccfe41f10ca2081df379cfcb7f9e70337a27aec2568571c0118c0d6
   languageName: node
   linkType: hard
 
@@ -17200,6 +17209,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.165":
+  version: 4.17.15
+  resolution: "@types/lodash@npm:4.17.15"
+  checksum: 10c0/2eb2dc6d231f5fb4603d176c08c8d7af688f574d09af47466a179cd7812d9f64144ba74bb32ca014570ffdc544eedc51b7a5657212bad083b6eecbd72223f9bb
+  languageName: node
+  linkType: hard
+
 "@types/long@npm:^4.0.0":
   version: 4.0.2
   resolution: "@types/long@npm:4.0.2"
@@ -17571,13 +17587,6 @@ __metadata:
   version: 6.9.16
   resolution: "@types/qs@npm:6.9.16"
   checksum: 10c0/a4e871b80fff623755e356fd1f225aea45ff7a29da30f99fddee1a05f4f5f33485b314ab5758145144ed45708f97e44595aa9a8368e9bbc083932f931b12dbb6
-  languageName: node
-  linkType: hard
-
-"@types/qs@npm:^6.9.7":
-  version: 6.9.17
-  resolution: "@types/qs@npm:6.9.17"
-  checksum: 10c0/a183fa0b3464267f8f421e2d66d960815080e8aab12b9aadab60479ba84183b1cdba8f4eff3c06f76675a8e42fe6a3b1313ea76c74f2885c3e25d32499c17d1b
   languageName: node
   linkType: hard
 
@@ -18919,37 +18928,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xyflow/react@npm:^12.0.4":
-  version: 12.0.4
-  resolution: "@xyflow/react@npm:12.0.4"
+"@xyflow/react@npm:^12.4.2":
+  version: 12.4.2
+  resolution: "@xyflow/react@npm:12.4.2"
   dependencies:
-    "@xyflow/system": "npm:0.0.37"
+    "@xyflow/system": "npm:0.0.50"
     classcat: "npm:^5.0.3"
     zustand: "npm:^4.4.0"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 10c0/57b04024c3cca1b5d19b5625b92a5ca5015870a5b6adf2ab2c0bcfa701f93929805777ad081e7142b9c94846ad83d65abb65041b50134515b135b6514d74766e
+  checksum: 10c0/7f58fd5fa7d9a04645228ad867273c660cc4ca4b77f8dc045c4d2dd52dec2ce31d5a7d92290ec54ea46aaf2e32e4fbf90f81c07cdd4da5ee8a64f06bea6ab373
   languageName: node
   linkType: hard
 
-"@xyflow/react@npm:^12.3.5":
-  version: 12.3.5
-  resolution: "@xyflow/react@npm:12.3.5"
-  dependencies:
-    "@xyflow/system": "npm:0.0.46"
-    classcat: "npm:^5.0.3"
-    zustand: "npm:^4.4.0"
-  peerDependencies:
-    react: ">=17"
-    react-dom: ">=17"
-  checksum: 10c0/f4eb2f8ed31454aa2bbc7fef3b3e9592093cbf238ca7ba572d002a0bd5fac267d488b6d560d173ee610c83e02ca0e9505c35083bdedc9890c1a65f52297f8c1c
-  languageName: node
-  linkType: hard
-
-"@xyflow/system@npm:0.0.37":
-  version: 0.0.37
-  resolution: "@xyflow/system@npm:0.0.37"
+"@xyflow/system@npm:0.0.50":
+  version: 0.0.50
+  resolution: "@xyflow/system@npm:0.0.50"
   dependencies:
     "@types/d3-drag": "npm:^3.0.7"
     "@types/d3-selection": "npm:^3.0.10"
@@ -18958,22 +18953,7 @@ __metadata:
     d3-drag: "npm:^3.0.0"
     d3-selection: "npm:^3.0.0"
     d3-zoom: "npm:^3.0.0"
-  checksum: 10c0/60b2de70a53dc3f2b691d837f2adcd2324f2e3e19258d6928e58578ad896a7f9fa7dd20938b224e7054284542135e0d7519ab34c012d69a8ed0e15ecf452d1ee
-  languageName: node
-  linkType: hard
-
-"@xyflow/system@npm:0.0.46":
-  version: 0.0.46
-  resolution: "@xyflow/system@npm:0.0.46"
-  dependencies:
-    "@types/d3-drag": "npm:^3.0.7"
-    "@types/d3-selection": "npm:^3.0.10"
-    "@types/d3-transition": "npm:^3.0.8"
-    "@types/d3-zoom": "npm:^3.0.8"
-    d3-drag: "npm:^3.0.0"
-    d3-selection: "npm:^3.0.0"
-    d3-zoom: "npm:^3.0.0"
-  checksum: 10c0/973886c03a389e96d504ef6e8ff350949688d7a82f159549ac2a38f7f11ebed2ce5b65b52c70bd7d9f344247c913dc751c79b737953d8759d7d13e98a5ee512d
+  checksum: 10c0/7a7e45340efb7e59f898eed726a1f3323857bdeb5b700eb3f2d9338f0bbddccb75c74ddecae15b244fbefe3d5a45d58546e7768730797d39f8219181c8a65753
   languageName: node
   linkType: hard
 
@@ -23135,21 +23115,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cloudflare@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "cloudflare@npm:3.5.0"
+"cloudflare@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "cloudflare@npm:4.0.0"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
-    "@types/qs": "npm:^6.9.7"
     abort-controller: "npm:^3.0.0"
     agentkeepalive: "npm:^4.2.1"
     form-data-encoder: "npm:1.7.2"
     formdata-node: "npm:^4.3.2"
     node-fetch: "npm:^2.6.7"
-    qs: "npm:^6.10.3"
-    web-streams-polyfill: "npm:^3.2.1"
-  checksum: 10c0/bb48ff68a4f5b7e945ceec570e7e17251ad167d8d2dadf8099fd74df46582356382b8cd3f62a9da74cd3a208f8f5181a40c561bc5873592d6a4930458c0e7b86
+  checksum: 10c0/d83a4d0544de5794935acb802c875c6f718713d8c7613b2a74d6145b922f18415e514cc57bbef9249726d83c0788ac8a72517a69efb1fd5b5af58b654403c375
   languageName: node
   linkType: hard
 
@@ -24029,6 +24006,15 @@ __metadata:
   dependencies:
     luxon: "npm:^3.2.1"
   checksum: 10c0/348622bdcd1a15695b61fc33af8a60133e5913a85cf99f6344367579e7002896514ba3b0a9d6bb569b02667d6b06836722bf2295fcd101b3de378f71d37bed0b
+  languageName: node
+  linkType: hard
+
+"cron-validate@npm:^1.4.5":
+  version: 1.4.5
+  resolution: "cron-validate@npm:1.4.5"
+  dependencies:
+    yup: "npm:0.32.9"
+  checksum: 10c0/4c210bea21832269fd8e18e4c9e9d750b314da04bc475b8b58414a6421a4c86804a6f1a8b9eda6d357af4c43f627fa3ee372f6fbb99b849d2a9b2aef2917bddf
   languageName: node
   linkType: hard
 
@@ -34176,7 +34162,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.17.21":
+"lodash-es@npm:^4.17.15, lodash-es@npm:^4.17.21":
   version: 4.17.21
   resolution: "lodash-es@npm:4.17.21"
   checksum: 10c0/fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2
@@ -40595,15 +40581,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.10.3":
-  version: 6.13.1
-  resolution: "qs@npm:6.13.1"
-  dependencies:
-    side-channel: "npm:^1.0.6"
-  checksum: 10c0/5ef527c0d62ffca5501322f0832d800ddc78eeb00da3b906f1b260ca0492721f8cdc13ee4b8fd8ac314a6ec37b948798c7b603ccc167e954088df392092f160c
-  languageName: node
-  linkType: hard
-
 "qs@npm:~6.5.2":
   version: 6.5.3
   resolution: "qs@npm:6.5.3"
@@ -45894,7 +45871,7 @@ __metadata:
     "@tiptap/extension-text-style": "npm:^2.10.4"
     "@tiptap/react": "npm:^2.10.4"
     "@types/file-saver": "npm:^2"
-    "@xyflow/react": "npm:^12.0.4"
+    "@xyflow/react": "npm:^12.4.2"
     buffer: "npm:^6.0.3"
     docx: "npm:^9.1.0"
     file-saver: "npm:^2.0.5"
@@ -45940,7 +45917,7 @@ __metadata:
     cache-manager: "npm:^5.4.0"
     cache-manager-redis-yet: "npm:^4.1.2"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
-    cloudflare: "npm:^3.5.0"
+    cloudflare: "npm:^4.0.0"
     connect-redis: "npm:^7.1.1"
     express-session: "npm:^1.18.1"
     graphql-middleware: "npm:^6.1.35"
@@ -46056,7 +46033,7 @@ __metadata:
     "@lingui/cli": "npm:^5.1.2"
     "@lingui/core": "npm:^5.1.2"
     "@lingui/react": "npm:^5.1.2"
-    "@lingui/swc-plugin": "npm:^5.0.2"
+    "@lingui/swc-plugin": "npm:^5.1.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
     "@mdx-js/react": "npm:^3.0.0"
     "@microsoft/microsoft-graph-client": "npm:^3.0.7"
@@ -46175,7 +46152,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
     "@vitest/ui": "npm:1.4.0"
     "@wyw-in-js/vite": "npm:^0.5.3"
-    "@xyflow/react": "npm:^12.3.5"
+    "@xyflow/react": "npm:^12.4.2"
     add: "npm:^2.0.6"
     addressparser: "npm:^1.0.1"
     afterframe: "npm:^1.0.2"
@@ -46192,6 +46169,7 @@ __metadata:
     class-transformer: "npm:^0.5.1"
     clsx: "npm:^2.1.1"
     concurrently: "npm:^8.2.2"
+    cron-validate: "npm:^1.4.5"
     cross-env: "npm:^7.0.3"
     cross-var: "npm:^1.1.0"
     css-loader: "npm:^7.1.2"
@@ -49312,6 +49290,21 @@ __metadata:
   version: 3.2.1
   resolution: "yoga-layout@npm:3.2.1"
   checksum: 10c0/9001e51be993c85e03757e5a04a2b61b8b30c9e5a7865d0156ca87a6431a3b717d51eb4990bfe588189fcfeac688dd9c3de707bbd50d1c344a84e63974cc54a8
+  languageName: node
+  linkType: hard
+
+"yup@npm:0.32.9":
+  version: 0.32.9
+  resolution: "yup@npm:0.32.9"
+  dependencies:
+    "@babel/runtime": "npm:^7.10.5"
+    "@types/lodash": "npm:^4.14.165"
+    lodash: "npm:^4.17.20"
+    lodash-es: "npm:^4.17.15"
+    nanoclone: "npm:^0.2.1"
+    property-expr: "npm:^2.0.4"
+    toposort: "npm:^2.0.2"
+  checksum: 10c0/b2adff31f4be85aaad338e6db12a26715b9e11270c587afe051d42c423f7f24de2d184f646047cb5c3b8c65163c37611f8309f2ef4eb6bb7a66688158a081d66
   languageName: node
   linkType: hard
 

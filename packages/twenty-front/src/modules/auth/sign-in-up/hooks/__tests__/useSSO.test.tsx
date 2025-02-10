@@ -3,6 +3,7 @@ import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MockedProvider } from '@apollo/client/testing';
+import { MemoryRouter } from 'react-router-dom';
 import { renderHook } from '@testing-library/react';
 
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
@@ -52,9 +53,11 @@ const apolloMocks = [
 ];
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <MockedProvider mocks={apolloMocks} addTypename={false}>
-    {children}
-  </MockedProvider>
+  <MemoryRouter>
+    <MockedProvider mocks={apolloMocks} addTypename={false}>
+      {children}
+    </MockedProvider>
+  </MemoryRouter>
 );
 
 describe('useSSO', () => {

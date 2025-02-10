@@ -13,6 +13,7 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { SettingsFeatures } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
@@ -46,8 +47,8 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
@@ -78,26 +79,15 @@ export class UserResolver {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
+    private readonly permissionsService: PermissionsService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => User)
   async currentUser(
     @AuthUser() { id: userId }: User,
-    @OriginHeader() origin: string,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<User> {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
-    await this.userService.hasUserAccessToWorkspaceOrThrow(
-      userId,
-      workspace.id,
-    );
-
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -110,7 +100,36 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    return { ...user, currentWorkspace: workspace };
+    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsPermissionsEnabled,
+      workspace.id,
+    );
+
+    if (permissionsEnabled === true) {
+      const currentUserWorkspace = user.workspaces.find(
+        (userWorkspace) => userWorkspace.workspace.id === workspace.id,
+      );
+
+      if (!currentUserWorkspace) {
+        throw new Error('Current user workspace not found');
+      }
+      const permissions =
+        await this.permissionsService.getUserWorkspaceSettingsPermissions({
+          userWorkspaceId: currentUserWorkspace.id,
+        });
+
+      const permittedFeatures: SettingsFeatures[] = (
+        Object.keys(permissions) as SettingsFeatures[]
+      ).filter((feature) => permissions[feature] === true);
+
+      currentUserWorkspace.settingsPermissions = permittedFeatures;
+      user.currentUserWorkspace = currentUserWorkspace;
+    }
+
+    return {
+      ...user,
+      currentWorkspace: workspace,
+    };
   }
 
   @ResolveField(() => GraphQLJSONObject)
@@ -295,7 +314,6 @@ export class UserResolver {
     return `${paths[0]}?token=${fileToken}`;
   }
 
-  @UseGuards(DemoEnvGuard)
   @Mutation(() => User)
   async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion
@@ -315,5 +333,10 @@ export class UserResolver {
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     return this.onboardingService.getOnboardingStatus(user, workspace);
+  }
+
+  @ResolveField(() => Workspace)
+  async currentWorkspace(@AuthWorkspace() workspace: Workspace) {
+    return workspace;
   }
 }

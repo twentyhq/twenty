@@ -1,0 +1,70 @@
+name: 'Extract and upload translations'
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: ['main']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  extract_translations:
+    name: Extract and upload translations
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build dependencies
+        run: npx nx build twenty-shared
+
+      - name: Extract translations
+        run: |
+          npx nx run twenty-server:lingui:extract
+          npx nx run twenty-emails:lingui:extract
+          npx nx run twenty-front:lingui:extract
+
+      - name: Check and commit any files created
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          git add .
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: extract translations"
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          fi
+
+      - name: Compile translations
+        id: compile_translations
+        run: |
+          npx nx run twenty-server:lingui:compile
+          npx nx run twenty-emails:lingui:compile
+          npx nx run twenty-front:lingui:compile
+        continue-on-error: true
+
+      - name: Upload missing translations
+        if: ${{ steps.compile_translations.outcome == 'failure' }}
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: true
+          download_translations: false
+          localization_branch_name: chore/translations
+          base_url: 'https://twenty.api.crowdin.com'
+        env:
+          # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
+          CROWDIN_PROJECT_ID: 1
+
+          # Visit https://crowdin.com/settings#api-key to create this token
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

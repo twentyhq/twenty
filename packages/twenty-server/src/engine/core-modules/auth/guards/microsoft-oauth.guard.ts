@@ -5,14 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly environmentService: EnvironmentService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {
@@ -41,9 +39,9 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        workspace ?? {
-          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-        },
+        this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
+          workspace,
+        ),
       );
 
       return false;

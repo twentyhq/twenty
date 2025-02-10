@@ -2,6 +2,8 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
@@ -106,9 +108,10 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     const workspaceDataSource = new DataSource({
       url: dataSource.url ?? this.environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging: this.environmentService.get('DEBUG_MODE')
-        ? ['query', 'error']
-        : ['error'],
+      logging:
+        this.environmentService.get('NODE_ENV') === NodeEnvironment.development
+          ? ['query', 'error']
+          : ['error'],
       schema,
       ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {

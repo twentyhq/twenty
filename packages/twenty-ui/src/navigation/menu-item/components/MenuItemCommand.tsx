@@ -48,10 +48,10 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   user-select: none;
   width: calc(100% - 2 * var(--horizontal-padding));
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${({ theme }) => theme.background.transparent.lighter};
   }
   &[data-selected='true'] {
-    background: ${({ theme }) => theme.background.tertiary};
+    background: ${({ theme }) => theme.background.transparent.light};
   }
   &[data-disabled='true'] {
     color: ${({ theme }) => theme.font.color.light};

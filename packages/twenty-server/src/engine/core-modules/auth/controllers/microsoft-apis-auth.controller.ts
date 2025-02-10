@@ -23,9 +23,9 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Controller('auth/microsoft-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -71,16 +71,6 @@ export class MicrosoftAPIsAuthController {
 
       const { workspaceMemberId, userId, workspaceId } =
         await this.transientTokenService.verifyTransientToken(transientToken);
-
-      const demoWorkspaceIds =
-        this.environmentService.get('DEMO_WORKSPACE_IDS');
-
-      if (demoWorkspaceIds.includes(workspaceId)) {
-        throw new AuthException(
-          'Cannot connect Microsoft account to demo workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
 
       if (!workspaceId) {
         throw new AuthException(
@@ -130,7 +120,7 @@ export class MicrosoftAPIsAuthController {
       return res.redirect(
         this.domainManagerService
           .buildWorkspaceURL({
-            subdomain: workspace.subdomain,
+            workspace,
             pathname: redirectLocation || '/settings/accounts',
           })
           .toString(),

@@ -10,14 +10,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -39,12 +38,13 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
+import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
 import { Workspace } from './workspace.entity';
 
@@ -151,7 +151,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(DemoEnvGuard, WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
   }
@@ -215,18 +215,23 @@ export class WorkspaceResolver {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
-  @Query(() => CustomHostnameDetails, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
-  async getHostnameDetails(
-    @AuthWorkspace() { hostname }: Workspace,
-  ): Promise<CustomHostnameDetails | undefined> {
-    if (!hostname) return undefined;
+  @ResolveField(() => workspaceUrls)
+  workspaceUrls(@Parent() workspace: Workspace) {
+    return this.domainManagerService.getWorkspaceUrls(workspace);
+  }
 
-    return await this.domainManagerService.getCustomHostnameDetails(hostname);
+  @Query(() => CustomDomainDetails, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard)
+  async getCustomDomainDetails(
+    @AuthWorkspace() { customDomain }: Workspace,
+  ): Promise<CustomDomainDetails | undefined> {
+    if (!customDomain) return undefined;
+
+    return await this.domainManagerService.getCustomDomainDetails(customDomain);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataBySubdomain(
+  async getPublicWorkspaceDataByDomain(
     @OriginHeader() origin: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
@@ -263,8 +268,7 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        subdomain: workspace.subdomain,
-        hostname: workspace.hostname,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

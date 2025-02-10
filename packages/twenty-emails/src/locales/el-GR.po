@@ -1,0 +1,120 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-02-01 18:53+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: el\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Greek\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: el\n"
+"X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
+"X-Crowdin-File-ID: 27\n"
+
+#: src/emails/send-invite-link.email.tsx:57
+msgid "Accept invite"
+msgstr "Αποδοχή πρόσκλησης"
+
+#: src/emails/clean-suspended-workspace.email.tsx:33
+msgid "All data in this workspace has been permanently deleted."
+msgstr "Όλα τα δεδομένα σε αυτόν τον χώρο εργασίας έχουν διαγραφεί μόνιμα."
+
+#: src/emails/send-email-verification-link.email.tsx:22
+msgid "Confirm your email address"
+msgstr "Επιβεβαιώστε τη διεύθυνση email σας"
+
+#: src/emails/password-update-notify.email.tsx:46
+msgid "Connect to Twenty"
+msgstr "Συνδεθείτε στο Twenty"
+
+#: src/emails/password-update-notify.email.tsx:24
+#~ msgid "Dear"
+#~ msgstr "Dear"
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Dear {userName}"
+msgstr "Αγαπητέ/ή {userName}"
+
+#: src/emails/send-invite-link.email.tsx:50
+msgid "has invited you to join a workspace called "
+msgstr "σας έχει προσκαλέσει να συμμετάσχετε σε έναν χώρο εργασίας με την ονομασία "
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Hello"
+msgstr "Γεια σας"
+
+#: src/emails/password-update-notify.email.tsx:40
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Εάν δεν έχετε προβεί εσείς σε αυτήν την αλλαγή, παρακαλώ επικοινωνήστε άμεσα με τον ιδιοκτήτη του χώρου εργασίας σας."
+
+#: src/emails/warn-suspended-workspace.email.tsx:46
+msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+msgstr "Εάν επιθυμείτε να συνεχίστε να χρησιμοποιείτε το Twenty, παρακαλούμε ενημερώστε την συνδρομή σας εντός των επόμενων {remainingDays} {dayOrDays}."
+
+#: src/emails/clean-suspended-workspace.email.tsx:36
+msgid "If you wish to use Twenty again, you can create a new workspace."
+msgstr "Εάν επιθυμείτε να χρησιμοποιήσετε ξανά το Twenty, μπορείτε να δημιουργήσετε ένα νέο χώρο εργασίας."
+
+#: src/emails/warn-suspended-workspace.email.tsx:34
+msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
+msgstr "Φαίνεται ότι ο χώρος εργασίας σας <0>{workspaceDisplayName}</0> έχει ανασταλεί για {daysSinceInactive} ημέρες."
+
+#: src/emails/send-invite-link.email.tsx:42
+msgid "Join your team on Twenty"
+msgstr "Συμμετέχετε στην ομάδα σας στο Twenty"
+
+#: src/emails/password-update-notify.email.tsx:29
+msgid "Password updated"
+msgstr "Ο κωδικός έχει ενημερωθεί"
+
+#: src/emails/password-reset-link.email.tsx:24
+msgid "Reset"
+msgstr "Επαναφορά"
+
+#: src/emails/password-reset-link.email.tsx:23
+msgid "Reset your password 🗝"
+msgstr "Επαναφέρετε τον κωδικό σας 🗝"
+
+#: src/emails/send-email-verification-link.email.tsx:27
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+msgstr "Σας ευχαριστούμε που εγγραφήκατε για έναν λογαριασμό στο Twenty! Πριν ξεκινήσουμε, πρέπει μόνο να επιβεβαιώσουμε ότι αυτός είστε εσείς. Κάντε κλικ παραπάνω για να επαληθεύσετε τη διεύθυνση email σας."
+
+#: src/emails/warn-suspended-workspace.email.tsx:40
+msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+msgstr "Ο χώρος εργασίας θα απενεργοποιηθεί σε {remainingDays} {dayOrDays}, και όλα τα δεδομένα του θα διαγραφούν."
+
+#: src/emails/password-update-notify.email.tsx:34
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Αυτό είναι ένα επιβεβαίωση ότι ο κωδικός για τον λογαριασμό σας ({email}) άλλαξε με επιτυχία στις {formattedDate}."
+
+#: src/emails/password-update-notify.email.tsx:36
+#~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+#~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+
+#: src/emails/password-reset-link.email.tsx:26
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Αυτός ο σύνδεσμος ισχύει μόνο για τις επόμενες {duration}. Εάν ο σύνδεσμος δεν λειτουργεί, μπορείτε να χρησιμοποιήσετε τον σύνδεσμο επαλήθευσης σύνδεσης απευθείας:"
+
+#: src/emails/password-reset-link.email.tsx:28
+#~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+#~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+
+#: src/emails/warn-suspended-workspace.email.tsx:53
+msgid "Update your subscription"
+msgstr "Ενημερώστε τη συνδρομή σας"
+
+#: src/emails/send-email-verification-link.email.tsx:23
+msgid "Verify Email"
+msgstr "Επαληθεύστε το Email"
+
+#: src/emails/clean-suspended-workspace.email.tsx:27
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+msgstr "Ο χώρος εργασίας σας <0>{workspaceDisplayName}</0> έχει διαγραφεί καθώς η συνδρομή σας έληξε {inactiveDaysBeforeDelete} ημέρες πριν."
+

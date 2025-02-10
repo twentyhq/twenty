@@ -12,7 +12,6 @@ import {
 import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
@@ -21,12 +20,13 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   constructor(
     private readonly sSOService: SSOService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly environmentService: EnvironmentService,
   ) {
     super();
   }
 
-  private getIdentityProviderId(request: any): string {
+  private getStateByRequest(request: any): {
+    identityProviderId: string;
+  } {
     if (request.params.identityProviderId) {
       return request.params.identityProviderId;
     }
@@ -39,24 +39,27 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     ) {
       const state = JSON.parse(request.query.state);
 
-      return state.identityProviderId;
+      return {
+        identityProviderId: state.identityProviderId,
+      };
     }
 
     throw new Error('Invalid OIDC identity provider params');
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
 
     let identityProvider:
       | (SSOConfiguration & WorkspaceSSOIdentityProvider)
       | null = null;
 
     try {
-      const identityProviderId = this.getIdentityProviderId(request);
+      const state = this.getStateByRequest(request);
 
-      identityProvider =
-        await this.sSOService.findSSOIdentityProviderById(identityProviderId);
+      identityProvider = await this.sSOService.findSSOIdentityProviderById(
+        state.identityProviderId,
+      );
 
       if (!identityProvider) {
         throw new AuthException(
@@ -77,9 +80,9 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        identityProvider?.workspace ?? {
-          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-        },
+        this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
+          identityProvider?.workspace,
+        ),
       );
 
       return false;

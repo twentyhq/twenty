@@ -122,6 +122,24 @@ export type WorkflowManualTrigger = BaseTrigger & {
   };
 };
 
+export type WorkflowCronTrigger = BaseTrigger & {
+  type: 'CRON';
+  settings: (
+    | {
+        type: 'HOURS';
+        schedule: { hour: number; minute: number };
+      }
+    | {
+        type: 'MINUTES';
+        schedule: { minute: number };
+      }
+    | {
+        type: 'CUSTOM';
+        pattern: string;
+      }
+  ) & { outputSchema: object };
+};
+
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 
 export type WorkflowManualTriggerAvailability =
@@ -130,7 +148,8 @@ export type WorkflowManualTriggerAvailability =
 
 export type WorkflowTrigger =
   | WorkflowDatabaseEventTrigger
-  | WorkflowManualTrigger;
+  | WorkflowManualTrigger
+  | WorkflowCronTrigger;
 
 export type WorkflowTriggerType = WorkflowTrigger['type'];
 

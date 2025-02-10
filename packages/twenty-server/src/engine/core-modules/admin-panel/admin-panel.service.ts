@@ -12,10 +12,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { ENVIRONMENT_VARIABLES_GROUP_POSITION } from 'src/engine/core-modules/environment/constants/environment-variables-group-position';
-import { ENVIRONMENT_VARIABLES_HIDDEN_GROUPS } from 'src/engine/core-modules/environment/constants/environment-variables-hidden-groups';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { ENVIRONMENT_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/environment/constants/environment-variables-group-metadata';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
-import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -34,6 +33,7 @@ export class AdminPanelService {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
@@ -72,7 +72,9 @@ export class AdminPanelService {
     return {
       workspace: {
         id: user.workspaces[0].workspace.id,
-        subdomain: user.workspaces[0].workspace.subdomain,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(
+          user.workspaces[0].workspace,
+        ),
       },
       loginToken,
     };
@@ -171,18 +173,11 @@ export class AdminPanelService {
     const rawEnvVars = this.environmentService.getAll();
     const groupedData = new Map<
       EnvironmentVariablesGroup,
-      {
-        variables: EnvironmentVariable[];
-        subgroups: Map<EnvironmentVariablesSubGroup, EnvironmentVariable[]>;
-      }
+      EnvironmentVariable[]
     >();
 
     for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
-      const { group, subGroup, description } = metadata;
-
-      if (ENVIRONMENT_VARIABLES_HIDDEN_GROUPS.has(group)) {
-        continue;
-      }
+      const { group, description } = metadata;
 
       const envVar: EnvironmentVariable = {
         name: varName,
@@ -191,47 +186,28 @@ export class AdminPanelService {
         sensitive: metadata.sensitive ?? false,
       };
 
-      let currentGroup = groupedData.get(group);
-
-      if (!currentGroup) {
-        currentGroup = {
-          variables: [],
-          subgroups: new Map(),
-        };
-        groupedData.set(group, currentGroup);
+      if (!groupedData.has(group)) {
+        groupedData.set(group, []);
       }
 
-      if (subGroup) {
-        let subgroupVars = currentGroup.subgroups.get(subGroup);
-
-        if (!subgroupVars) {
-          subgroupVars = [];
-          currentGroup.subgroups.set(subGroup, subgroupVars);
-        }
-        subgroupVars.push(envVar);
-      } else {
-        currentGroup.variables.push(envVar);
-      }
+      groupedData.get(group)?.push(envVar);
     }
 
     const groups: EnvironmentVariablesGroupData[] = Array.from(
       groupedData.entries(),
     )
       .sort((a, b) => {
-        const positionA = ENVIRONMENT_VARIABLES_GROUP_POSITION[a[0]];
-        const positionB = ENVIRONMENT_VARIABLES_GROUP_POSITION[b[0]];
+        const positionA = ENVIRONMENT_VARIABLES_GROUP_METADATA[a[0]].position;
+        const positionB = ENVIRONMENT_VARIABLES_GROUP_METADATA[b[0]].position;
 
         return positionA - positionB;
       })
-      .map(([groupName, data]) => ({
-        groupName,
-        variables: data.variables.sort((a, b) => a.name.localeCompare(b.name)),
-        subgroups: Array.from(data.subgroups.entries())
-          .sort((a, b) => a[0].localeCompare(b[0]))
-          .map(([subgroupName, variables]) => ({
-            subgroupName,
-            variables,
-          })),
+      .map(([name, variables]) => ({
+        name,
+        description: ENVIRONMENT_VARIABLES_GROUP_METADATA[name].description,
+        isHiddenOnLoad:
+          ENVIRONMENT_VARIABLES_GROUP_METADATA[name].isHiddenOnLoad,
+        variables: variables.sort((a, b) => a.name.localeCompare(b.name)),
       }));
 
     return { groups };

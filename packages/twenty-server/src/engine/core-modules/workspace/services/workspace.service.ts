@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
+import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -24,10 +24,14 @@ import {
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
+  private readonly featureLookUpKey = BillingEntitlementKey.CUSTOM_DOMAIN;
+
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -42,8 +46,24 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {
     super(workspaceRepository);
+  }
+
+  private async isCustomDomainEnabled(workspaceId: string) {
+    const isCustomDomainBillingEnabled =
+      await this.billingService.hasEntitlement(
+        workspaceId,
+        this.featureLookUpKey,
+      );
+
+    if (!isCustomDomainBillingEnabled) {
+      throw new WorkspaceException(
+        `No entitlement found for this workspace`,
+        WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED,
+      );
+    }
   }
 
   private async validateSubdomainUpdate(newSubdomain: string) {
@@ -60,9 +80,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  private async setCustomDomain(workspace: Workspace, hostname: string) {
+  private async setCustomDomain(workspace: Workspace, customDomain: string) {
+    await this.isCustomDomainEnabled(workspace.id);
+
     const existingWorkspace = await this.workspaceRepository.findOne({
-      where: { hostname },
+      where: { customDomain },
     });
 
     if (existingWorkspace && existingWorkspace.id !== workspace.id) {
@@ -73,22 +95,22 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     if (
-      hostname &&
-      workspace.hostname !== hostname &&
-      isDefined(workspace.hostname)
+      customDomain &&
+      workspace.customDomain !== customDomain &&
+      isDefined(workspace.customDomain)
     ) {
-      await this.domainManagerService.updateCustomHostname(
-        workspace.hostname,
-        hostname,
+      await this.domainManagerService.updateCustomDomain(
+        workspace.customDomain,
+        customDomain,
       );
     }
 
     if (
-      hostname &&
-      workspace.hostname !== hostname &&
-      !isDefined(workspace.hostname)
+      customDomain &&
+      workspace.customDomain !== customDomain &&
+      !isDefined(workspace.customDomain)
     ) {
-      await this.domainManagerService.registerCustomHostname(hostname);
+      await this.domainManagerService.registerCustomDomain(customDomain);
     }
   }
 
@@ -105,14 +127,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     let customDomainRegistered = false;
 
-    if (payload.hostname === null && isDefined(workspace.hostname)) {
+    if (payload.customDomain === null && isDefined(workspace.customDomain)) {
       await this.domainManagerService.deleteCustomHostnameByHostnameSilently(
-        workspace.hostname,
+        workspace.customDomain,
       );
     }
 
-    if (payload.hostname && workspace.hostname !== payload.hostname) {
-      await this.setCustomDomain(workspace, payload.hostname);
+    if (
+      payload.customDomain &&
+      workspace.customDomain !== payload.customDomain
+    ) {
+      await this.setCustomDomain(workspace, payload.customDomain);
       customDomainRegistered = true;
     }
 
@@ -123,13 +148,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
     } catch (error) {
       // revert custom domain registration on error
-      if (payload.hostname && customDomainRegistered) {
+      if (payload.customDomain && customDomainRegistered) {
         this.domainManagerService
-          .deleteCustomHostnameByHostnameSilently(payload.hostname)
-          .catch(() => {
-            // send to sentry
+          .deleteCustomHostnameByHostnameSilently(payload.customDomain)
+          .catch((err) => {
+            this.exceptionHandlerService.captureExceptions([err]);
           });
       }
+      throw error;
     }
   }
 

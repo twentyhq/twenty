@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { useImpersonateMutation } from '~/generated/graphql';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useImpersonate = () => {
   const [currentUser] = useRecoilState(currentUserState);
@@ -55,9 +56,13 @@ export const useImpersonate = () => {
         return;
       }
 
-      return redirectToWorkspaceDomain(workspace.subdomain, AppPath.Verify, {
-        loginToken: loginToken.token,
-      });
+      return redirectToWorkspaceDomain(
+        getWorkspaceUrl(workspace.workspaceUrls),
+        AppPath.Verify,
+        {
+          loginToken: loginToken.token,
+        },
+      );
     } catch (error) {
       setError('Failed to impersonate user. Please try again.');
       setIsLoading(false);

@@ -27,6 +27,10 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
+      workspaceUrls: {
+        subdomainUrl: 'https://twenty.twenty.com',
+        customUrl: 'https://my-custom-domain.com',
+      },
       currentBillingSubscription: {
         id: '1',
         interval: SubscriptionInterval.Month,

@@ -7,7 +7,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -33,9 +33,25 @@ jest.mock(
 );
 
 jest.mock(
-  'src/engine/core-modules/environment/constants/environment-variables-hidden-groups',
+  '../../environment/constants/environment-variables-group-metadata',
   () => ({
-    ENVIRONMENT_VARIABLES_HIDDEN_GROUPS: new Set(['HIDDEN_GROUP']),
+    ENVIRONMENT_VARIABLES_GROUP_METADATA: {
+      SERVER_CONFIG: {
+        position: 100,
+        description: 'Server config description',
+        isHiddenOnLoad: false,
+      },
+      RATE_LIMITING: {
+        position: 200,
+        description: 'Rate limiting description',
+        isHiddenOnLoad: false,
+      },
+      OTHER: {
+        position: 300,
+        description: 'Other description',
+        isHiddenOnLoad: true,
+      },
+    },
   }),
 );
 
@@ -69,6 +85,15 @@ describe('AdminPanelService', () => {
           provide: LoginTokenService,
           useValue: {
             generateLoginToken: LoginTokenServiceGenerateLoginTokenMock,
+          },
+        },
+        {
+          provide: DomainManagerService,
+          useValue: {
+            getWorkspaceUrls: jest.fn().mockReturnValue({
+              customUrl: undefined,
+              subdomainUrl: 'https://twenty.twenty.com',
+            }),
           },
         },
         {
@@ -206,7 +231,10 @@ describe('AdminPanelService', () => {
       expect.objectContaining({
         workspace: {
           id: 'workspace-id',
-          subdomain: 'example-subdomain',
+          workspaceUrls: {
+            customUrl: undefined,
+            subdomainUrl: 'https://twenty.twenty.com',
+          },
         },
         loginToken: expect.objectContaining({
           token: 'mock-login-token',
@@ -232,29 +260,35 @@ describe('AdminPanelService', () => {
   });
 
   describe('getEnvironmentVariablesGrouped', () => {
-    it('should correctly group environment variables', () => {
+    it('should correctly group and sort environment variables', () => {
       EnvironmentServiceGetAllMock.mockReturnValue({
-        VAR_1: {
-          value: 'value1',
+        SERVER_URL: {
+          value: 'http://localhost',
           metadata: {
-            group: 'GROUP_1',
-            description: 'Description 1',
+            group: 'SERVER_CONFIG',
+            description: 'Server URL',
           },
         },
-        VAR_2: {
-          value: 'value2',
+        RATE_LIMIT_TTL: {
+          value: '60',
           metadata: {
-            group: 'GROUP_1',
-            subGroup: 'SUBGROUP_1',
-            description: 'Description 2',
+            group: 'RATE_LIMITING',
+            description: 'Rate limit TTL',
+          },
+        },
+        API_KEY: {
+          value: 'secret-key',
+          metadata: {
+            group: 'SERVER_CONFIG',
+            description: 'API Key',
             sensitive: true,
           },
         },
-        VAR_3: {
-          value: 'value3',
+        OTHER_VAR: {
+          value: 'other',
           metadata: {
-            group: 'GROUP_2',
-            description: 'Description 3',
+            group: 'OTHER',
+            description: 'Other var',
           },
         },
       });
@@ -262,73 +296,58 @@ describe('AdminPanelService', () => {
       const result = service.getEnvironmentVariablesGrouped();
 
       expect(result).toEqual({
-        groups: expect.arrayContaining([
-          expect.objectContaining({
-            groupName: 'GROUP_1',
+        groups: [
+          {
+            name: 'SERVER_CONFIG',
+            description: 'Server config description',
+            isHiddenOnLoad: false,
             variables: [
               {
-                name: 'VAR_1',
-                value: 'value1',
-                description: 'Description 1',
+                name: 'API_KEY',
+                value: 'secret-key',
+                description: 'API Key',
+                sensitive: true,
+              },
+              {
+                name: 'SERVER_URL',
+                value: 'http://localhost',
+                description: 'Server URL',
                 sensitive: false,
               },
             ],
-            subgroups: [
-              {
-                subgroupName: 'SUBGROUP_1',
-                variables: [
-                  {
-                    name: 'VAR_2',
-                    value: 'value2',
-                    description: 'Description 2',
-                    sensitive: true,
-                  },
-                ],
-              },
-            ],
-          }),
-          expect.objectContaining({
-            groupName: 'GROUP_2',
+          },
+          {
+            name: 'RATE_LIMITING',
+            description: 'Rate limiting description',
+            isHiddenOnLoad: false,
             variables: [
               {
-                name: 'VAR_3',
-                value: 'value3',
-                description: 'Description 3',
+                name: 'RATE_LIMIT_TTL',
+                value: '60',
+                description: 'Rate limit TTL',
                 sensitive: false,
               },
             ],
-            subgroups: [],
-          }),
-        ]),
-      });
-    });
-
-    it('should sort groups by position and variables alphabetically', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
-        Z_VAR: {
-          value: 'valueZ',
-          metadata: {
-            group: 'GROUP_1',
-            description: 'Description Z',
           },
-        },
-        A_VAR: {
-          value: 'valueA',
-          metadata: {
-            group: 'GROUP_1',
-            description: 'Description A',
+          {
+            name: 'OTHER',
+            description: 'Other description',
+            isHiddenOnLoad: true,
+            variables: [
+              {
+                name: 'OTHER_VAR',
+                value: 'other',
+                description: 'Other var',
+                sensitive: false,
+              },
+            ],
           },
-        },
+        ],
       });
 
-      const result = service.getEnvironmentVariablesGrouped();
-
-      const group = result.groups.find(
-        (g) => g.groupName === ('GROUP_1' as EnvironmentVariablesGroup),
-      );
-
-      expect(group?.variables[0].name).toBe('A_VAR');
-      expect(group?.variables[1].name).toBe('Z_VAR');
+      expect(result.groups[0].name).toBe('SERVER_CONFIG');
+      expect(result.groups[1].name).toBe('RATE_LIMITING');
+      expect(result.groups[2].name).toBe('OTHER');
     });
 
     it('should handle empty environment variables', () => {
@@ -341,33 +360,24 @@ describe('AdminPanelService', () => {
       });
     });
 
-    it('should exclude hidden groups from the output', () => {
+    it('should handle variables with undefined metadata fields', () => {
       EnvironmentServiceGetAllMock.mockReturnValue({
-        VAR_1: {
-          value: 'value1',
+        TEST_VAR: {
+          value: 'test',
           metadata: {
-            group: 'HIDDEN_GROUP',
-            description: 'Description 1',
-          },
-        },
-        VAR_2: {
-          value: 'value2',
-          metadata: {
-            group: 'VISIBLE_GROUP',
-            description: 'Description 2',
+            group: 'SERVER_CONFIG',
           },
         },
       });
 
       const result = service.getEnvironmentVariablesGrouped();
 
-      expect(result.groups).toHaveLength(1);
-      expect(result.groups[0].groupName).toBe('VISIBLE_GROUP');
-      expect(result.groups).not.toContainEqual(
-        expect.objectContaining({
-          groupName: 'HIDDEN_GROUP',
-        }),
-      );
+      expect(result.groups[0].variables[0]).toEqual({
+        name: 'TEST_VAR',
+        value: 'test',
+        description: undefined,
+        sensitive: false,
+      });
     });
   });
 });

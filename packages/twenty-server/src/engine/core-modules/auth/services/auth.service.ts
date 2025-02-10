@@ -455,15 +455,15 @@ export class AuthService {
 
   computeRedirectURI({
     loginToken,
-    subdomain,
+    workspace,
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({
-      subdomain,
+      workspace,
       pathname: '/verify',
       searchParams: {
         loginToken,

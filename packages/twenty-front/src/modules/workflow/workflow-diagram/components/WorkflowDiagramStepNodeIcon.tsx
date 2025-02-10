@@ -1,3 +1,4 @@
+import React from 'react';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -37,6 +38,16 @@ export const WorkflowDiagramStepNodeIcon = ({
           );
         }
         case 'MANUAL': {
+          return (
+            <StyledStepNodeLabelIconContainer>
+              <Icon
+                size={theme.icon.size.md}
+                color={theme.font.color.tertiary}
+              />
+            </StyledStepNodeLabelIconContainer>
+          );
+        }
+        case 'CRON': {
           return (
             <StyledStepNodeLabelIconContainer>
               <Icon
