@@ -115,6 +115,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   return (
     <SubMenuTopBarContainer
       title={formData.targetUrl}
+      reserveTitleSpace
       links={[
         {
           children: t`Workspace`,
