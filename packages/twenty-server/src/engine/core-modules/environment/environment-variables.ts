@@ -222,7 +222,7 @@ export class EnvironmentVariables {
   REFRESH_TOKEN_EXPIRES_IN = '60d';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.AuthenticationTokensDuration,
+    group: EnvironmentVariablesGroup.TokensDuration,
     description: 'Cooldown period for refreshing tokens',
   })
   @IsDuration()
@@ -230,7 +230,7 @@ export class EnvironmentVariables {
   REFRESH_TOKEN_COOL_DOWN = '1m';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.AuthenticationTokensDuration,
+    group: EnvironmentVariablesGroup.TokensDuration,
     description: 'Duration for which the login token is valid',
   })
   @IsDuration()
