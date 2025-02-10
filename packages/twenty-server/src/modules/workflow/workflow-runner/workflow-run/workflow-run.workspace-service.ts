@@ -81,7 +81,6 @@ export class WorkflowRunWorkspaceService {
     return workflowRunRepository.update(workflowRunToUpdate.id, {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
-      stepIndex: 0,
       context,
     });
   }
@@ -131,12 +130,10 @@ export class WorkflowRunWorkspaceService {
   async saveWorkflowRunState({
     workflowRunId,
     output,
-    stepIndex,
     context,
   }: {
     workflowRunId: string;
     output: WorkflowRunOutput;
-    stepIndex: number;
     context: Record<string, any>;
   }) {
     const workflowRunRepository =
@@ -157,7 +154,6 @@ export class WorkflowRunWorkspaceService {
 
     return workflowRunRepository.update(workflowRunId, {
       output,
-      stepIndex,
       context,
     });
   }

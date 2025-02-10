@@ -116,7 +116,6 @@ export class WorkflowExecutorWorkspaceService {
         output: {
           steps: updatedOutputSteps,
         },
-        stepIndex: currentStepIndex + 1,
         context: updatedContext,
       });
 
@@ -135,7 +134,6 @@ export class WorkflowExecutorWorkspaceService {
         output: {
           steps: updatedOutputSteps,
         },
-        stepIndex: currentStepIndex + 1,
         context,
       });
 
@@ -167,7 +165,6 @@ export class WorkflowExecutorWorkspaceService {
       output: {
         steps: updatedOutputSteps,
       },
-      stepIndex: currentStepIndex,
       context,
     });
 
