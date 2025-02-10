@@ -1,10 +1,12 @@
 import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
-import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
+import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
+import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
+import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
@@ -13,6 +15,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
@@ -81,6 +84,7 @@ export const CommandMenuTopBar = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
   );
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLingui();
 
@@ -98,7 +102,9 @@ export const CommandMenuTopBar = () => {
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
-  const { title, Icon } = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuNavigationStack = useRecoilValue(
+    commandMenuNavigationStackState,
+  );
 
   const theme = useTheme();
 
@@ -106,39 +112,53 @@ export const CommandMenuTopBar = () => {
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
+  const contextChips = useMemo(() => {
+    return commandMenuNavigationStack
+      .filter((page) => page.page !== CommandMenuPages.Root)
+      .map((page) => {
+        return {
+          Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+          text: page.pageTitle,
+        };
+      });
+  }, [commandMenuNavigationStack, theme.icon.size.sm]);
+
   return (
     <StyledInputContainer>
       <StyledContentContainer>
         {isCommandMenuV2Enabled && (
-          <CommandMenuContextChip
-            Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-            onClick={() => {
-              goBackFromCommandMenu();
-            }}
-            testId="command-menu-go-back-button"
-          />
+          <>
+            {commandMenuPage !== CommandMenuPages.Root && (
+              <CommandMenuContextChip
+                Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+                onClick={() => {
+                  goBackFromCommandMenu();
+                }}
+                testId="command-menu-go-back-button"
+              />
+            )}
+            {isDefined(contextStoreCurrentObjectMetadataId) &&
+            commandMenuPage !== CommandMenuPages.SearchRecords ? (
+              <CommandMenuContextChipGroupsWithRecordSelection
+                contextChips={contextChips}
+                objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+              />
+            ) : (
+              <CommandMenuContextChipGroups contextChips={contextChips} />
+            )}
+          </>
         )}
-        {commandMenuPage !== CommandMenuPages.SearchRecords &&
-          isDefined(contextStoreCurrentObjectMetadataId) && (
-            <CommandMenuContextRecordChip
-              objectMetadataItemId={contextStoreCurrentObjectMetadataId}
-            />
-          )}
-        {isDefined(Icon) && (
-          <CommandMenuContextChip
-            Icons={[<Icon size={theme.icon.size.sm} />]}
-            text={title}
-          />
-        )}
-
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
-          <StyledInput
-            autoFocus
-            value={commandMenuSearch}
-            placeholder={t`Type anything`}
-            onChange={handleSearchChange}
-          />
+          <>
+            <StyledInput
+              ref={inputRef}
+              value={commandMenuSearch}
+              placeholder={t`Type anything`}
+              onChange={handleSearchChange}
+            />
+            <CommandMenuTopBarInputFocusEffect inputRef={inputRef} />
+          </>
         )}
       </StyledContentContainer>
       {!isMobile && (

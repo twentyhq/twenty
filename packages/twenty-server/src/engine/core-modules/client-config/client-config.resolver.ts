@@ -1,5 +1,7 @@
 import { Query, Resolver } from '@nestjs/graphql';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
@@ -50,7 +52,8 @@ export class ClientConfigResolver {
       ),
       defaultSubdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
       frontDomain: this.domainManagerService.getFrontUrl().hostname,
-      debugMode: this.environmentService.get('DEBUG_MODE'),
+      debugMode:
+        this.environmentService.get('NODE_ENV') === NodeEnvironment.development,
       support: {
         supportDriver: this.environmentService.get('SUPPORT_DRIVER'),
         supportFrontChatId: this.environmentService.get(
@@ -74,7 +77,8 @@ export class ClientConfigResolver {
       },
       analyticsEnabled: this.environmentService.get('ANALYTICS_ENABLED'),
       canManageFeatureFlags:
-        this.environmentService.get('DEBUG_MODE') ||
+        this.environmentService.get('NODE_ENV') ===
+          NodeEnvironment.development ||
         this.environmentService.get('IS_BILLING_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
       isMicrosoftMessagingEnabled: this.environmentService.get(

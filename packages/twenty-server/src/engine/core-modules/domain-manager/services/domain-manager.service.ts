@@ -74,33 +74,31 @@ export class DomainManagerService {
   buildEmailVerificationURL({
     emailVerificationToken,
     email,
-    subdomain,
+    workspace,
   }: {
     emailVerificationToken: string;
     email: string;
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
   }) {
     return this.buildWorkspaceURL({
-      subdomain,
+      workspace,
       pathname: 'verify-email',
       searchParams: { emailVerificationToken, email },
     });
   }
 
   buildWorkspaceURL({
-    subdomain,
+    workspace,
     pathname,
     searchParams,
   }: {
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const url = this.getFrontUrl();
+    const workspaceUrls = this.getworkspaceUrls(workspace);
 
-    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      url.hostname = `${subdomain}.${url.hostname}`;
-    }
+    const url = new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl);
 
     if (pathname) {
       url.pathname = pathname;
@@ -116,21 +114,6 @@ export class DomainManagerService {
 
     return url;
   }
-
-  // @Deprecated
-  getWorkspaceSubdomainFromUrl = (url: string) => {
-    const { hostname: originHostname } = new URL(url);
-
-    if (!originHostname.endsWith(this.getFrontUrl().hostname)) {
-      return null;
-    }
-
-    const frontDomain = this.getFrontUrl().hostname;
-
-    const subdomain = originHostname.replace(`.${frontDomain}`, '');
-
-    return this.isDefaultSubdomain(subdomain) ? null : subdomain;
-  };
 
   getSubdomainAndHostnameFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
@@ -162,9 +145,12 @@ export class DomainManagerService {
     return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
   }
 
-  computeRedirectErrorUrl(errorMessage: string, subdomain: string) {
+  computeRedirectErrorUrl(
+    errorMessage: string,
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>,
+  ) {
     const url = this.buildWorkspaceURL({
-      subdomain: subdomain,
+      workspace,
       pathname: '/verify',
       searchParams: { errorMessage },
     });
@@ -297,44 +283,59 @@ export class DomainManagerService {
       return {
         id: response.result[0].id,
         hostname: response.result[0].hostname,
-        status: response.result[0].status,
-        ownershipVerifications: [
+        records: [
           response.result[0].ownership_verification,
-          response.result[0].ownership_verification_http,
-        ].reduce(
-          (acc, ownershipVerification) => {
-            if (!ownershipVerification) return acc;
+          ...(response.result[0].ssl?.validation_records ?? []),
+        ]
+          .map<CustomHostnameDetails['records'][0] | undefined>(
+            (record: Record<string, string>) => {
+              if (!record) return;
 
-            if (
-              'http_body' in ownershipVerification &&
-              'http_url' in ownershipVerification &&
-              ownershipVerification.http_body &&
-              ownershipVerification.http_url
-            ) {
-              acc.push({
-                type: 'http',
-                body: ownershipVerification.http_body,
-                url: ownershipVerification.http_url,
-              });
-            }
+              if (
+                'txt_name' in record &&
+                'txt_value' in record &&
+                record.txt_name &&
+                record.txt_value
+              ) {
+                return {
+                  validationType: 'ssl' as const,
+                  type: 'txt' as const,
+                  status: response.result[0].ssl.status ?? 'pending',
+                  key: record.txt_name,
+                  value: record.txt_value,
+                };
+              }
 
-            if (
-              'type' in ownershipVerification &&
-              ownershipVerification.type === 'txt' &&
-              ownershipVerification.value &&
-              ownershipVerification.name
-            ) {
-              acc.push({
-                type: 'txt',
-                value: ownershipVerification.value,
-                name: ownershipVerification.name,
-              });
-            }
-
-            return acc;
-          },
-          [] as CustomHostnameDetails['ownershipVerifications'],
-        ),
+              if (
+                'type' in record &&
+                record.type === 'txt' &&
+                record.value &&
+                record.name
+              ) {
+                return {
+                  validationType: 'ownership' as const,
+                  type: 'txt' as const,
+                  status: response.result[0].status ?? 'pending',
+                  key: record.name,
+                  value: record.value,
+                };
+              }
+            },
+          )
+          .filter(isDefined)
+          .concat([
+            {
+              validationType: 'redirection' as const,
+              type: 'cname' as const,
+              status:
+                response.result[0].verification_errors?.[0] ===
+                'custom hostname does not CNAME to this zone.'
+                  ? 'error'
+                  : 'success',
+              key: response.result[0].hostname,
+              value: this.getFrontUrl().hostname,
+            },
+          ]),
       };
     }
 
@@ -352,7 +353,7 @@ export class DomainManagerService {
       await this.deleteCustomHostname(fromCustomHostname.id);
     }
 
-    return await this.registerCustomHostname(toHostname);
+    return this.registerCustomHostname(toHostname);
   }
 
   async deleteCustomHostnameByHostnameSilently(hostname: string) {
@@ -377,5 +378,33 @@ export class DomainManagerService {
     return this.cloudflareClient.customHostnames.delete(customHostnameId, {
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
     });
+  }
+
+  private getCustomWorkspaceEndpoint(hostname: string) {
+    const url = this.getFrontUrl();
+
+    url.hostname = hostname;
+
+    return url.toString();
+  }
+
+  private getTwentyWorkspaceEndpoint(subdomain: string) {
+    const url = this.getFrontUrl();
+
+    url.hostname = `${subdomain}.${url.hostname}`;
+
+    return url.toString();
+  }
+
+  getworkspaceUrls({
+    subdomain,
+    hostname,
+  }: Pick<Workspace, 'subdomain' | 'hostname'>) {
+    return {
+      customUrl: hostname
+        ? this.getCustomWorkspaceEndpoint(hostname)
+        : undefined,
+      subdomainUrl: this.getTwentyWorkspaceEndpoint(subdomain),
+    };
   }
 }

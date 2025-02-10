@@ -1,5 +1,7 @@
 import { HttpAdapterHost } from '@nestjs/core';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OPTIONS_TYPE } from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
@@ -30,7 +32,8 @@ export const exceptionHandlerModuleFactory = async (
           release: environmentService.get('SENTRY_RELEASE'),
           dsn: environmentService.get('SENTRY_DSN') ?? '',
           serverInstance: adapterHost.httpAdapter?.getInstance(),
-          debug: environmentService.get('DEBUG_MODE'),
+          debug:
+            environmentService.get('NODE_ENV') === NodeEnvironment.development,
         },
       };
     }

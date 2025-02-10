@@ -3,8 +3,6 @@ import {
   BullMQDriverFactoryOptions,
   MessageQueueDriverType,
   MessageQueueModuleOptions,
-  PgBossDriverFactoryOptions,
-  SyncDriverFactoryOptions,
 } from 'src/engine/core-modules/message-queue/interfaces';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
@@ -17,9 +15,10 @@ export const messageQueueModuleFactory = async (
   environmentService: EnvironmentService,
   redisClientService: RedisClientService,
 ): Promise<MessageQueueModuleOptions> => {
-  const driverType = environmentService.get('MESSAGE_QUEUE_TYPE');
+  const driverType = MessageQueueDriverType.BullMQ;
 
   switch (driverType) {
+    /* 
     case MessageQueueDriverType.Sync: {
       return {
         type: MessageQueueDriverType.Sync,
@@ -35,7 +34,7 @@ export const messageQueueModuleFactory = async (
           connectionString,
         },
       } satisfies PgBossDriverFactoryOptions;
-    }
+    }*/
     case MessageQueueDriverType.BullMQ: {
       return {
         type: MessageQueueDriverType.BullMQ,

@@ -1,11 +1,22 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-02 20:44+0100\n"
+"POT-Creation-Date: 2025-02-01 18:53+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: pt-PT\n"
+"Language: pt\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Portuguese\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: pt\n"
+"X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
+"X-Crowdin-File-ID: 27\n"
 
 #: src/emails/send-invite-link.email.tsx:57
 msgid "Accept invite"
@@ -24,8 +35,16 @@ msgid "Connect to Twenty"
 msgstr "Conecte-se ao Twenty"
 
 #: src/emails/password-update-notify.email.tsx:24
+#~ msgid "Dear"
+#~ msgstr "Dear"
+
+#: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
 msgstr "Caro {userName}"
+
+#: src/emails/send-invite-link.email.tsx:50
+msgid "has invited you to join a workspace called "
+msgstr "convidou-o a juntar-se a um workspace chamado "
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Hello"
@@ -75,9 +94,17 @@ msgstr "O workspace será desativado em {remainingDays} {dayOrDays} e todos os s
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "Esta é uma confirmação de que a palavra-passe da sua conta ({email}) foi alterada com sucesso em {formattedDate}."
 
+#: src/emails/password-update-notify.email.tsx:36
+#~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+#~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+
 #: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Este link só é válido para os próximos {duration}. Se o link não funcionar, pode usar diretamente o link de verificação de login:"
+
+#: src/emails/password-reset-link.email.tsx:28
+#~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+#~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
 
 #: src/emails/warn-suspended-workspace.email.tsx:53
 msgid "Update your subscription"
@@ -91,6 +118,3 @@ msgstr "Verifique o e-mail"
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 msgstr "O seu workspace <0>{workspaceDisplayName}</0> foi eliminado porque a sua subscrição expirou há {inactiveDaysBeforeDelete} dias."
 
-#: src/emails/send-invite-link.email.tsx:50
-msgid "has invited you to join a workspace called "
-msgstr "convidou-o a juntar-se a um workspace chamado "

@@ -94,7 +94,7 @@ export class QueryRunnerArgsFactory {
             fieldMetadataMapByNameByName,
             {
               argIndex: 0,
-              shouldBackfillPosition,
+              shouldBackfillPosition: false,
             },
           ),
         } satisfies UpdateOneResolverArgs;
@@ -113,7 +113,7 @@ export class QueryRunnerArgsFactory {
                 fieldMetadataMapByNameByName,
                 {
                   argIndex: index,
-                  shouldBackfillPosition,
+                  shouldBackfillPosition: false,
                 },
               ),
             ) ?? [],

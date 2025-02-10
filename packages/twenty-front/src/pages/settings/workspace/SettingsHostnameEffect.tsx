@@ -2,10 +2,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { useGetHostnameDetailsQuery } from '~/generated/graphql';
+import { useGetCustomHostnameDetailsQuery } from '~/generated/graphql';
 
 export const SettingsHostnameEffect = () => {
-  const { refetch } = useGetHostnameDetailsQuery();
+  const { refetch } = useGetCustomHostnameDetailsQuery();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 

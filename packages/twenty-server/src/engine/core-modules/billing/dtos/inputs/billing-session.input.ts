@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { ArgsType, Field } from '@nestjs/graphql';
 
 import { IsOptional, IsString } from 'class-validator';

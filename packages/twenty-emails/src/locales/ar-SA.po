@@ -1,0 +1,120 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-02-01 18:53+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: ar\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: ar\n"
+"X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
+"X-Crowdin-File-ID: 27\n"
+
+#: src/emails/send-invite-link.email.tsx:57
+msgid "Accept invite"
+msgstr "قبول الدعوة"
+
+#: src/emails/clean-suspended-workspace.email.tsx:33
+msgid "All data in this workspace has been permanently deleted."
+msgstr "تم حذف جميع البيانات في هذه الواجهة بشكل دائم."
+
+#: src/emails/send-email-verification-link.email.tsx:22
+msgid "Confirm your email address"
+msgstr "تأكد من عنوان بريدك الإلكتروني"
+
+#: src/emails/password-update-notify.email.tsx:46
+msgid "Connect to Twenty"
+msgstr "الاتصال بـ Twenty"
+
+#: src/emails/password-update-notify.email.tsx:24
+#~ msgid "Dear"
+#~ msgstr "Dear"
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Dear {userName}"
+msgstr "عزيزي {userName}"
+
+#: src/emails/send-invite-link.email.tsx:50
+msgid "has invited you to join a workspace called "
+msgstr "لقد دُعيت للإنضمام إلى مساحة عمل تسمى "
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Hello"
+msgstr "مرحبًا"
+
+#: src/emails/password-update-notify.email.tsx:40
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "إذا لم تكن قد بدأت هذا التغيير، يرجى الاتصال بمالك مساحة العمل الخاصة بك على الفور."
+
+#: src/emails/warn-suspended-workspace.email.tsx:46
+msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+msgstr "إذا كنت ترغب في الاستمرار في استخدام Twenty، يُرجى تحديث اشتراكك خلال الأيام {remainingDays} {dayOrDays} القادمة."
+
+#: src/emails/clean-suspended-workspace.email.tsx:36
+msgid "If you wish to use Twenty again, you can create a new workspace."
+msgstr "إذا كنت ترغب في استخدام Twenty مرة أخرى، يمكنك إنشاء مساحة عمل جديدة."
+
+#: src/emails/warn-suspended-workspace.email.tsx:34
+msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
+msgstr "يبدو أن مساحة عملك <0>{workspaceDisplayName}</0> قد تم تعليقها لمدة {daysSinceInactive} أيام."
+
+#: src/emails/send-invite-link.email.tsx:42
+msgid "Join your team on Twenty"
+msgstr "انضم إلى فريقك في Twenty"
+
+#: src/emails/password-update-notify.email.tsx:29
+msgid "Password updated"
+msgstr "تم تحديث كلمة المرور"
+
+#: src/emails/password-reset-link.email.tsx:24
+msgid "Reset"
+msgstr "إعادة تعيين"
+
+#: src/emails/password-reset-link.email.tsx:23
+msgid "Reset your password 🗝"
+msgstr "إعادة تعيين كلمة مرورك 🗝"
+
+#: src/emails/send-email-verification-link.email.tsx:27
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+msgstr "شكراً لتسجيلك لحساب على Twenty! قبل أن نبدأ، نحتاج فقط إلى التأكد من أن هذا أنت. انقر أعلاه للتحقق من عنوان بريدك الإلكتروني."
+
+#: src/emails/warn-suspended-workspace.email.tsx:40
+msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+msgstr "سيتم تعطيل مساحة العمل في غضون {remainingDays} {dayOrDays}، وسيتم حذف كل بياناتها."
+
+#: src/emails/password-update-notify.email.tsx:34
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "هذا تأكيد أن كلمة مرور حسابك ({email}) قد تم تغييرها بنجاح في {formattedDate}."
+
+#: src/emails/password-update-notify.email.tsx:36
+#~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+#~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+
+#: src/emails/password-reset-link.email.tsx:26
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "هذا الرابط صالح فقط للمدة {duration} القادمة. إذا لم يعمل الرابط، يمكنك استخدام رابط التحقق من تسجيل الدخول مباشرة:"
+
+#: src/emails/password-reset-link.email.tsx:28
+#~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+#~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+
+#: src/emails/warn-suspended-workspace.email.tsx:53
+msgid "Update your subscription"
+msgstr "تحديث الاشتراك"
+
+#: src/emails/send-email-verification-link.email.tsx:23
+msgid "Verify Email"
+msgstr "تحقق من البريد الإلكتروني"
+
+#: src/emails/clean-suspended-workspace.email.tsx:27
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+msgstr "تم حذف مساحة العمل <0>{workspaceDisplayName}</0> كون اشتراكك قد انتهى منذ {inactiveDaysBeforeDelete} أيام."
+

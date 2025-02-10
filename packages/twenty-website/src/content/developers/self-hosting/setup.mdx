@@ -158,7 +158,6 @@ yarn command:prod cron:calendar:ongoing-stale
     ['FRONT_PROTOCOL', 'http', 'protocol of the frontend server. Could be `http` or `https`'],
     ['FRONT_PORT', '3001', 'Port of the frontend server.'],
     ['PORT', '3000', 'Port of the backend server'],
-    ['CACHE_STORAGE_TYPE', 'redis', 'Cache type (memory, redis...)'],
     ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></ArticleTable>
 
@@ -236,7 +235,7 @@ yarn command:prod cron:calendar:ongoing-stale
   - EMAIL_SMTP_HOST=smtp.office365.com
   - EMAIL_SMTP_PORT=587
   - EMAIL_SMTP_USER=office365_email_address
-    - EMAIL_SMTP_PASSWORD='office365_password'
+  - EMAIL_SMTP_PASSWORD='office365_password'
 
   </ArticleTab>
 
@@ -275,12 +274,6 @@ yarn command:prod cron:calendar:ongoing-stale
   ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
   ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
 ]}></ArticleTable>
-
-### Message Queue
-
-<ArticleTable options={[
-    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'bull-mq'"],
-    ]}></ArticleTable>
 
 ### Logging
 
@@ -335,7 +328,6 @@ This feature is WIP and is not yet useful for most users.
 ### Debug / Development
 
 <ArticleTable options={[
-    ['DEBUG_MODE', 'true', 'Activate debug mode'],
     ['SIGN_IN_PREFILLED', 'true', 'Prefill the Sign in form for usage in a demo or dev environment'],
     ]}></ArticleTable>
 

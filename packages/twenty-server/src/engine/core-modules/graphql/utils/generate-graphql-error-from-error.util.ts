@@ -1,3 +1,5 @@
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import {
   BaseGraphQLError,
   ErrorCode,
@@ -9,7 +11,7 @@ export const generateGraphQLErrorFromError = (error: Error) => {
     ErrorCode.INTERNAL_SERVER_ERROR,
   );
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === NodeEnvironment.development) {
     graphqlError.stack = error.stack;
     graphqlError.extensions['response'] = error.message;
   }

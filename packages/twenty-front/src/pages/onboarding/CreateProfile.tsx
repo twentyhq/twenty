@@ -21,6 +21,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import { OnboardingStatus } from '~/generated/graphql';
 
@@ -55,6 +56,7 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
+  const { t } = useLingui();
   const onboardingStatus = useOnboardingStatus();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueSnackBar } = useSnackBar();
@@ -148,8 +150,12 @@ export const CreateProfile = () => {
 
   return (
     <>
-      <Title noMarginTop>Create profile</Title>
-      <SubTitle>How you'll be identified on the app.</SubTitle>
+      <Title noMarginTop>
+        <Trans>Create profile</Trans>
+      </Title>
+      <SubTitle>
+        <Trans>How you'll be identified on the app.</Trans>
+      </SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
           <H2Title title="Picture" />
@@ -157,8 +163,8 @@ export const CreateProfile = () => {
         </StyledSectionContainer>
         <StyledSectionContainer>
           <H2Title
-            title="Name"
-            description="Your name as it will be displayed on the app"
+            title={t`Name`}
+            description={t`Your name as it will be displayed on the app`}
           />
           {/* TODO: When react-web-hook-form is added to edit page we should create a dedicated component with context */}
           <StyledComboInputContainer>
@@ -171,7 +177,7 @@ export const CreateProfile = () => {
               }) => (
                 <TextInputV2
                   autoFocus
-                  label="First Name"
+                  label={t`First Name`}
                   value={value}
                   onFocus={() => setIsEditingMode(true)}
                   onBlur={() => {
@@ -193,7 +199,7 @@ export const CreateProfile = () => {
                 fieldState: { error },
               }) => (
                 <TextInputV2
-                  label="Last Name"
+                  label={t`Last Name`}
                   value={value}
                   onFocus={() => setIsEditingMode(true)}
                   onBlur={() => {
@@ -212,7 +218,7 @@ export const CreateProfile = () => {
       </StyledContentContainer>
       <StyledButtonContainer>
         <MainButton
-          title="Continue"
+          title={t`Continue`}
           onClick={handleSubmit(onSubmit)}
           disabled={!isValid || isSubmitting}
           fullWidth

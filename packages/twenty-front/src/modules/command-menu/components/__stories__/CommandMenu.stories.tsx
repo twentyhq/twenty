@@ -22,6 +22,7 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
+import { IconDotsVertical } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
@@ -89,6 +90,8 @@ const meta: Meta<typeof CommandMenu> = {
       setCommandMenuNavigationStack([
         {
           page: CommandMenuPages.Root,
+          pageTitle: 'Command Menu',
+          pageIcon: IconDotsVertical,
         },
       ]);
 
@@ -191,17 +194,6 @@ export const NoResultsSearchFallback: Story = {
         }),
       ],
     },
-  },
-};
-
-export const GoBack: Story = {
-  play: async () => {
-    const canvas = within(document.body);
-    const goBackButton = await canvas.findByTestId(
-      'command-menu-go-back-button',
-    );
-    await userEvent.click(goBackButton);
-    await expect(goBackButton).not.toBeVisible();
   },
 };
 

@@ -27,6 +27,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -92,9 +93,13 @@ export const SignInUpGlobalScopeForm = () => {
         if (response.__typename === 'UserExists') {
           if (response.availableWorkspaces.length >= 1) {
             const workspace = response.availableWorkspaces[0];
-            return redirectToWorkspaceDomain(workspace.subdomain, pathname, {
-              email: form.getValues('email'),
-            });
+            return redirectToWorkspaceDomain(
+              getWorkspaceUrl(workspace.workspaceUrls),
+              pathname,
+              {
+                email: form.getValues('email'),
+              },
+            );
           }
         }
         if (response.__typename === 'UserNotExists') {
@@ -103,6 +108,12 @@ export const SignInUpGlobalScopeForm = () => {
         }
       },
     });
+  };
+
+  const onEmailChange = (email: string) => {
+    if (email !== form.getValues('email')) {
+      setSignInUpStep(SignInUpStep.Email);
+    }
   };
 
   return (
@@ -116,7 +127,10 @@ export const SignInUpGlobalScopeForm = () => {
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
-            <SignInUpEmailField showErrors={showErrors} />
+            <SignInUpEmailField
+              showErrors={showErrors}
+              onInputChange={onEmailChange}
+            />
             {signInUpStep === SignInUpStep.Password && (
               <SignInUpPasswordField
                 showErrors={showErrors}

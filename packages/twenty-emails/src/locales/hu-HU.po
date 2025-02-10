@@ -1,0 +1,120 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-02-01 18:53+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: hu\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Hungarian\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: hu\n"
+"X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
+"X-Crowdin-File-ID: 27\n"
+
+#: src/emails/send-invite-link.email.tsx:57
+msgid "Accept invite"
+msgstr "Meghívó elfogadása"
+
+#: src/emails/clean-suspended-workspace.email.tsx:33
+msgid "All data in this workspace has been permanently deleted."
+msgstr "A munkaterület minden adata végérvényesen törlésre került."
+
+#: src/emails/send-email-verification-link.email.tsx:22
+msgid "Confirm your email address"
+msgstr "Erősítse meg email címét"
+
+#: src/emails/password-update-notify.email.tsx:46
+msgid "Connect to Twenty"
+msgstr "Csatlakozás a Twentyhez"
+
+#: src/emails/password-update-notify.email.tsx:24
+#~ msgid "Dear"
+#~ msgstr "Dear"
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Dear {userName}"
+msgstr "Kedves {userName}"
+
+#: src/emails/send-invite-link.email.tsx:50
+msgid "has invited you to join a workspace called "
+msgstr "meghívta Önt, hogy csatlakozzon egy munkaterülethez, amelynek a neve: "
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Hello"
+msgstr "Üdvözlöm"
+
+#: src/emails/password-update-notify.email.tsx:40
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Amennyiben Ön nem kezdeményezte ezt a változtatást, kérjük azonnal lépjen kapcsolatba a munkaterület tulajdonosával."
+
+#: src/emails/warn-suspended-workspace.email.tsx:46
+msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+msgstr "Amennyiben szeretné folytatni a Twenty használatát, kérjük frissítse előfizetését a következő {remainingDays} {dayOrDays} időszakban."
+
+#: src/emails/clean-suspended-workspace.email.tsx:36
+msgid "If you wish to use Twenty again, you can create a new workspace."
+msgstr "Ha újra szeretné használni a Twenty-t, létrehozhat egy új munkaterületet."
+
+#: src/emails/warn-suspended-workspace.email.tsx:34
+msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
+msgstr "Úgy tűnik, hogy a munkaterülete <0>{workspaceDisplayName}</0> felfüggesztésre került {daysSinceInactive} napja."
+
+#: src/emails/send-invite-link.email.tsx:42
+msgid "Join your team on Twenty"
+msgstr "Csatlakozzon a csapatához a Twentyn"
+
+#: src/emails/password-update-notify.email.tsx:29
+msgid "Password updated"
+msgstr "Jelszó frissítve"
+
+#: src/emails/password-reset-link.email.tsx:24
+msgid "Reset"
+msgstr "Visszaállítás"
+
+#: src/emails/password-reset-link.email.tsx:23
+msgid "Reset your password 🗝"
+msgstr "Jelszó visszaállítása 🗝"
+
+#: src/emails/send-email-verification-link.email.tsx:27
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+msgstr "Köszönjük, hogy regisztrált a Twenty szolgáltatására! Mielőtt elkezdenénk, csak meg kell erősítenünk, hogy ez Ön. Kattintson a fenti hivatkozásra email címének megerősítéséhez."
+
+#: src/emails/warn-suspended-workspace.email.tsx:40
+msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+msgstr "A munkaterület {remainingDays} {dayOrDays} múlva lesz deaktiválva, és minden adat törlésre kerül."
+
+#: src/emails/password-update-notify.email.tsx:34
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Ez egy megerősítés arról, hogy fiókja jelszavát ({email}) sikeresen megváltoztatták {formattedDate} napján."
+
+#: src/emails/password-update-notify.email.tsx:36
+#~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+#~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+
+#: src/emails/password-reset-link.email.tsx:26
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Ez a hivatkozás csak a következő {duration} ideig érvényes. Ha a hivatkozás nem működik, használhatja közvetlenül a belépés ellenőrző hivatkozását:"
+
+#: src/emails/password-reset-link.email.tsx:28
+#~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+#~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+
+#: src/emails/warn-suspended-workspace.email.tsx:53
+msgid "Update your subscription"
+msgstr "Előfizetés frissítése"
+
+#: src/emails/send-email-verification-link.email.tsx:23
+msgid "Verify Email"
+msgstr "Email ellenőrzése"
+
+#: src/emails/clean-suspended-workspace.email.tsx:27
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+msgstr "Munkaterülete <0>{workspaceDisplayName}</0> törlésre került, mivel előfizetése {inactiveDaysBeforeDelete} nappal ezelőtt lejárt."
+

@@ -4,7 +4,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
-import { GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataBySubdomain';
+import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -36,7 +36,7 @@ const userMetadataLoaderMocks = {
         });
       }),
       graphql.query(
-        getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN) ?? '',
+        getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN) ?? '',
         () => {
           return HttpResponse.json({
             data: {

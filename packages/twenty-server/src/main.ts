@@ -9,6 +9,8 @@ import { useContainer, ValidationError } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
@@ -25,7 +27,7 @@ const bootstrap = async () => {
     cors: true,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
-    snapshot: process.env.DEBUG_MODE === 'true',
+    snapshot: process.env.NODE_ENV === NodeEnvironment.development,
     ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
       ? {
           httpsOptions: {

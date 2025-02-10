@@ -59,6 +59,9 @@ export class WorkflowBuilderWorkspaceService {
           objectMetadataRepository: this.objectMetadataRepository,
         });
       }
+      case WorkflowTriggerType.CRON: {
+        return {};
+      }
       case WorkflowActionType.SEND_EMAIL: {
         return this.computeSendEmailActionOutputSchema();
       }

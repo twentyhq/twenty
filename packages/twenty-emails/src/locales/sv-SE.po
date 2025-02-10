@@ -1,0 +1,120 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-02-01 18:53+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: sv\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Swedish\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: sv\n"
+"X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
+"X-Crowdin-File-ID: 27\n"
+
+#: src/emails/send-invite-link.email.tsx:57
+msgid "Accept invite"
+msgstr "Acceptera inbjudan"
+
+#: src/emails/clean-suspended-workspace.email.tsx:33
+msgid "All data in this workspace has been permanently deleted."
+msgstr "Alla data i det här arbetsutrymmet har raderats permanent."
+
+#: src/emails/send-email-verification-link.email.tsx:22
+msgid "Confirm your email address"
+msgstr "Bekräfta din e-postadress"
+
+#: src/emails/password-update-notify.email.tsx:46
+msgid "Connect to Twenty"
+msgstr "Anslut till Twenty"
+
+#: src/emails/password-update-notify.email.tsx:24
+#~ msgid "Dear"
+#~ msgstr "Dear"
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Dear {userName}"
+msgstr "Kära {userName}"
+
+#: src/emails/send-invite-link.email.tsx:50
+msgid "has invited you to join a workspace called "
+msgstr "har bjudit in dig till ett arbetsutrymme som heter "
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Hello"
+msgstr "Hej"
+
+#: src/emails/password-update-notify.email.tsx:40
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Om du inte initierade denna förändring, vänligen kontakta ägaren av ditt arbetsutrymme omedelbart."
+
+#: src/emails/warn-suspended-workspace.email.tsx:46
+msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+msgstr "Om du vill fortsätta använda Twenty, vänligen uppdatera din prenumeration inom de nästa {remainingDays} {dayOrDays}."
+
+#: src/emails/clean-suspended-workspace.email.tsx:36
+msgid "If you wish to use Twenty again, you can create a new workspace."
+msgstr "Om du vill använda Twenty igen kan du skapa ett nytt arbetsutrymme."
+
+#: src/emails/warn-suspended-workspace.email.tsx:34
+msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
+msgstr "Det verkar som att ditt arbetsutrymme <0>{workspaceDisplayName}</0> har varit inaktivt i {daysSinceInactive} dagar."
+
+#: src/emails/send-invite-link.email.tsx:42
+msgid "Join your team on Twenty"
+msgstr "Gå med i ditt team på Twenty"
+
+#: src/emails/password-update-notify.email.tsx:29
+msgid "Password updated"
+msgstr "Lösenordet uppdaterat"
+
+#: src/emails/password-reset-link.email.tsx:24
+msgid "Reset"
+msgstr "Återställ"
+
+#: src/emails/password-reset-link.email.tsx:23
+msgid "Reset your password 🗝"
+msgstr "Återställ ditt lösenord 🗝"
+
+#: src/emails/send-email-verification-link.email.tsx:27
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+msgstr "Tack för att du registrerade ett konto på Twenty! Innan vi börjar behöver vi bara bekräfta att det är du. Klicka ovan för att verifiera din e-postadress."
+
+#: src/emails/warn-suspended-workspace.email.tsx:40
+msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+msgstr "Arbetsutrymmet kommer att inaktiveras om {remainingDays} {dayOrDays}, och all dess data kommer att raderas."
+
+#: src/emails/password-update-notify.email.tsx:34
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Det här är en bekräftelse på att lösenordet för ditt konto ({email}) har ändrats framgångsrikt den {formattedDate}."
+
+#: src/emails/password-update-notify.email.tsx:36
+#~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+#~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+
+#: src/emails/password-reset-link.email.tsx:26
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Den här länken är bara giltig under de nästa {duration}. Om länken inte fungerar kan du använda länken för inloggningsverifiering direkt:"
+
+#: src/emails/password-reset-link.email.tsx:28
+#~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+#~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+
+#: src/emails/warn-suspended-workspace.email.tsx:53
+msgid "Update your subscription"
+msgstr "Uppdatera din prenumeration"
+
+#: src/emails/send-email-verification-link.email.tsx:23
+msgid "Verify Email"
+msgstr "Verifiera e-post"
+
+#: src/emails/clean-suspended-workspace.email.tsx:27
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+msgstr "Ditt arbetsutrymme <0>{workspaceDisplayName}</0> har raderats eftersom din prenumeration gick ut för {inactiveDaysBeforeDelete} dagar sedan."
+

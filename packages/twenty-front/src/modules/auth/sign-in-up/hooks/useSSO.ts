@@ -13,14 +13,16 @@ export const useSSO = () => {
 
   const { enqueueSnackBar } = useSnackBar();
   const { redirect } = useRedirect();
-
   const redirectToSSOLoginPage = async (identityProviderId: string) => {
     let authorizationUrlForSSOResult;
     try {
       authorizationUrlForSSOResult = await apolloClient.mutate({
         mutation: GET_AUTHORIZATION_URL,
         variables: {
-          input: { identityProviderId, workspaceInviteHash },
+          input: {
+            identityProviderId,
+            workspaceInviteHash,
+          },
         },
       });
     } catch (error: any) {

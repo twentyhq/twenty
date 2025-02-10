@@ -13,6 +13,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -37,6 +38,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly typeORMService: TypeORMService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(userWorkspaceRepository);
@@ -68,14 +70,15 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
-        ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
-        VALUES ($1, $2, 'System', $3, $4, $5)`,
+        ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl", "locale")
+        VALUES ($1, $2, 'System', $3, $4, $5, $6)`,
       [
         user.firstName,
         user.lastName,
         user.id,
         user.email,
         user.defaultAvatarUrl ?? '',
+        user.locale ?? 'en',
       ],
     );
     const workspaceMember = await workspaceDataSource?.query(
@@ -179,7 +182,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
       id: userWorkspace.workspaceId,
       displayName: userWorkspace.workspace.displayName,
-      subdomain: userWorkspace.workspace.subdomain,
+      workspaceUrls: this.domainManagerService.getworkspaceUrls(
+        userWorkspace.workspace,
+      ),
       logo: userWorkspace.workspace.logo,
       sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
         (acc, identityProvider) =>

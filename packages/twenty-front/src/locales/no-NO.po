@@ -1,0 +1,1812 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-30 18:16+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: no\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Norwegian\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: no\n"
+"X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
+"X-Crowdin-File-ID: 29\n"
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr "{aggregateLabel} av {fieldLabel}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
+msgid "{apiKeyName} API Key"
+msgstr "{apiKeyName} API-nøkkel"
+
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
+#: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
+msgid "{name}"
+msgstr "{name}"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:92
+msgid "1 000 workflow node executions"
+msgstr "1 000 workflow-noden utførelser"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:63
+msgid "12h ({hour12Label})"
+msgstr "12t ({hour12Label})"
+
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:198
+msgid "2. Configure field"
+msgstr "2. Konfigurer felt"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
+msgid "24h ({hour24Label})"
+msgstr "24t ({hour24Label})"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:116
+msgid "A shared environment where you will be able to manage your customer relations with your team."
+msgstr "Et delt miljø hvor du vil kunne håndtere dine kundeforhold med teamet ditt."
+
+#: src/modules/ui/input/components/ImageInput.tsx:156
+msgid "Abort"
+msgstr "Avbryt"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:90
+msgid "About"
+msgstr "Om"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:40
+#: src/pages/settings/accounts/SettingsAccounts.tsx:46
+msgid "Account"
+msgstr "Konto"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:321
+#: src/modules/settings/profile/components/DeleteAccount.tsx:45
+msgid "Account Deletion"
+msgstr "Kontosletting"
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+msgid "Accounts"
+msgstr "Kontoer"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
+msgid "Activate"
+msgstr "Aktiver"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:67
+msgid "Activate Workflow"
+msgstr "Aktiver arbeidsflyt"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:190
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
+msgid "Active"
+msgstr "Aktiv"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+msgid "Active API keys created by you or your team."
+msgstr "Aktive API-nøkler opprettet av deg eller teamet ditt."
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:38
+msgid "Add"
+msgstr "Legg til"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
+msgid "Add Field"
+msgstr "Legg til felt"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
+msgid "Add object"
+msgstr "Legg til objekt"
+
+#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
+msgid "Add SSO Identity Provider"
+msgstr "Legg til SSO-identitetsleverandør"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
+msgid "Add to blocklist"
+msgstr "Legg til i blokkeringsliste"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:68
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:79
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:105
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:106
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:35
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:36
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:194
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:195
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
+msgid "Add to favorites"
+msgstr "Favorittmarkere"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:16
+msgid "Add your first {objectLabel}"
+msgstr "Legg til din første {objectLabel}"
+
+#: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
+msgid "Added {beautifiedCreatedAt}"
+msgstr "Lagt til {beautifiedCreatedAt}"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
+msgid "All"
+msgstr "Alle"
+
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+msgid "All ({relationRecordsCount})"
+msgstr "Alle ({relationRecordsCount})"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:119
+msgid "All roles"
+msgstr "Alle roller"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
+msgid "Allow logins through Google's single sign-on functionality."
+msgstr "Tillat innlogging gjennom Googles 'single sign-on'-funksjonalitet."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
+msgid "Allow logins through Microsoft's single sign-on functionality."
+msgstr "Tillat innlogging gjennom Microsofts 'single sign-on'-funksjonalitet."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
+msgid "Allow the invitation of new users by sharing an invite link."
+msgstr "Tillat invitasjon av nye brukere ved å dele en invitasjonslenke."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
+msgid "Allow users to sign in with an email and password."
+msgstr "Tillat brukere å logge inn med en e-post og passord."
+
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "Det oppstod en feil under oppdatering av passordet"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
+msgid "An optional description"
+msgstr "En valgfri beskrivelse"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
+msgid "and"
+msgstr "og"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:91
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+msgid "API & Webhooks"
+msgstr "API og webhooks"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
+msgid "API Key"
+msgstr "API-nøkkel"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+msgid "API keys"
+msgstr "API-nøkler"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
+msgid "API Name"
+msgstr "API-navn"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "Appearance"
+msgstr "Utseende"
+
+#: src/pages/settings/SettingsBilling.tsx:189
+msgid "Are you sure that you want to change your billing interval?"
+msgstr "Er du sikker på at du vil endre din faktureringsintervall?"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Ascending"
+msgstr "Stigende"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:120
+msgid "Assign roles to specify each member's access permissions"
+msgstr "Tilordne roller for å spesifisere hvert medlems tilgangsrettigheter"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:14
+msgid "Assigned members"
+msgstr "Tilordnede medlemmer"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:129
+msgid "Assigned to"
+msgstr "Tilordnet til"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:64
+msgid "Assignment"
+msgstr "Tilordning"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "Minst 8 tegn lang."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
+msgid "At least one authentication method must be enabled"
+msgstr "Minst én autentiseringsmetode må være aktivert"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:63
+msgid "Authentication"
+msgstr "Autentisering"
+
+#: src/pages/auth/Authorize.tsx:127
+msgid "Authorize"
+msgstr "Autoriser"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
+msgid "Average"
+msgstr "Gjennomsnitt"
+
+#: src/pages/not-found/NotFound.tsx:58
+msgid "Back to content"
+msgstr "Tilbake til innhold"
+
+#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/SettingsBilling.tsx:138
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+msgid "Billing"
+msgstr "Fakturering"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
+msgid "Blocklist"
+msgstr "Svarteliste"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:210
+msgid "Book a Call"
+msgstr "Bestill en samtale"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
+msgid "By using Twenty, you agree to the"
+msgstr "Ved å bruke Twenty, samtykker du til"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
+msgid "Calculate"
+msgstr "Beregn"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
+msgid "Calendar"
+msgstr "Kalender"
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+msgid "Calendars"
+msgstr "Kalendere"
+
+#: src/pages/auth/Authorize.tsx:124
+#: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:152
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
+#: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:152
+msgid "Cancel anytime"
+msgstr "Avbryt når som helst"
+
+#: src/pages/settings/SettingsBilling.tsx:176
+msgid "Cancel Plan"
+msgstr "Avbryt abonnement"
+
+#: src/pages/settings/SettingsBilling.tsx:171
+msgid "Cancel your subscription"
+msgstr "Si opp abonnementet ditt"
+
+#: src/pages/settings/SettingsBilling.tsx:193
+msgid "Change {to}"
+msgstr "Endre {to}"
+
+#: src/pages/auth/PasswordReset.tsx:246
+#: src/modules/settings/profile/components/ChangePassword.tsx:52
+#: src/modules/settings/profile/components/ChangePassword.tsx:58
+msgid "Change Password"
+msgstr "Endre passord"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+msgid "Chinese — Simplified"
+msgstr "Kinesisk — Forenklet"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
+msgid "Chinese — Traditional"
+msgstr "Kinesisk — Tradisjonell"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
+msgid "Choose an object"
+msgstr ""
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
+msgid "Choose your provider"
+msgstr "Velg din leverandør"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:147
+msgid "Choose your Trial"
+msgstr "Velg din prøveperiode"
+
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
+msgid "Close"
+msgstr "Lukk"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:48
+msgid "Configure an SSO connection"
+msgstr "Konfigurer en SSO-forbindelse"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:58
+msgid "Configure and customize your calendar preferences."
+msgstr "Konfigurer og tilpass dine kalenderinnstillinger."
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+msgid "Configure how dates are displayed across the app"
+msgstr "Konfigurer hvordan datoer vises i hele appen"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
+msgid "Configure your emails and calendar settings."
+msgstr "Konfigurer dine e-post- og kalenderinnstillinger."
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
+msgid "Connect a new account to your workspace"
+msgstr "Koble en ny konto til arbeidsområdet ditt"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:61
+msgid "Connect with Google"
+msgstr "Koble til med Google"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:70
+msgid "Connect with Microsoft"
+msgstr "Koble til med Microsoft"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:56
+msgid "Connected accounts"
+msgstr "Tilkoblede kontoer"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:97
+msgid "Context"
+msgstr "Kontekst"
+
+#: src/pages/onboarding/InviteTeam.tsx:228
+#: src/pages/onboarding/CreateWorkspace.tsx:154
+#: src/pages/onboarding/CreateProfile.tsx:221
+#: src/pages/onboarding/ChooseYourPlan.tsx:198
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:92
+msgid "Continue"
+msgstr "Fortsett"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:75
+msgid "Continue with Email"
+msgstr "Fortsett med e-post"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
+msgid "Continue with Google"
+msgstr "Fortsett med Google"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
+msgid "Continue with Microsoft"
+msgstr "Fortsett med Microsoft"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:65
+msgid "Copilot"
+msgstr "Kopilot"
+
+#: src/pages/onboarding/InviteTeam.tsx:217
+msgid "Copy invitation link"
+msgstr "Kopier invitasjonslenke"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
+msgid "Copy this key as it will not be visible again"
+msgstr "Kopier denne nkelen da den ikke vil vre synlig igjen"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
+msgid "Count"
+msgstr "Telling"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
+msgid "Count all"
+msgstr "Tell alle"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
+msgid "Count empty"
+msgstr "Tell tomme"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
+msgid "Count not empty"
+msgstr "Tell ikke tomme"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
+msgid "Count unique values"
+msgstr "Tell unike verdier"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
+msgid "Create a workflow and return here to view its versions"
+msgstr "Opprett en arbeidsflyt og kom tilbake her for n vise versjonene"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+msgid "Create API key"
+msgstr "Opprett API-nkkel"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
+msgid "Create new record"
+msgstr "Opprett ny post"
+
+#: src/pages/onboarding/CreateProfile.tsx:154
+msgid "Create profile"
+msgstr "Opprett profil"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:193
+msgid "Create Role"
+msgstr "Opprett Rolle"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:72
+msgid "Create Webhook"
+msgstr "Opprett Webkrok"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:113
+msgid "Create your workspace"
+msgstr "Opprett arbeidsomrdet ditt"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:90
+msgid "Custom objects"
+msgstr "Tilpassede objekter"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
+msgid "Customise the fields available in the {objectLabelSingular} views."
+msgstr "Tilpass feltene som er tilgjengelige i {objectLabelSingular} visningene."
+
+#: src/pages/settings/SettingsWorkspace.tsx:56
+msgid "Customize Domain"
+msgstr "Tilpass domene"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:64
+msgid "Customize your workspace security"
+msgstr "Tilpass sikkerheten for arbeidsomrdet ditt"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
+#: src/modules/settings/profile/components/DeleteAccount.tsx:29
+msgid "Danger zone"
+msgstr "Fareomrrede"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:139
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+msgid "Data model"
+msgstr "Datamodell"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
+msgid "Data type"
+msgstr "Datatype"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
+msgid "Date"
+msgstr "Dato"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+msgid "Date and time"
+msgstr "Dato og tid"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
+msgid "Deactivate"
+msgstr "Deaktiver"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
+msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
+msgstr "Deaktiver \\"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
+msgid "Deactivate this field"
+msgstr "Deaktiver dette feltet"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:82
+msgid "Deactivate Workflow"
+msgstr "Deaktiver Arbeidsflyt"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:91
+msgid "Define the name and description of your object"
+msgstr "Definer navn og beskrivelse av objektet ditt"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:31
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:45
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx:61
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:225
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:241
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:116
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
+msgid "Delete"
+msgstr "Slett"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:332
+#: src/modules/settings/profile/components/DeleteAccount.tsx:37
+#: src/modules/settings/profile/components/DeleteAccount.tsx:53
+msgid "Delete account"
+msgstr "Slett konto"
+
+#: src/modules/settings/profile/components/DeleteAccount.tsx:30
+msgid "Delete account and all the associated data"
+msgstr "Slett kontoen og all tilknyttet data"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
+msgid "Delete API key"
+msgstr "Slett API-nkkel"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
+msgid "Delete record"
+msgstr "Slett post"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
+msgid "Delete records"
+msgstr "Slett oppføringer"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
+msgid "Delete this integration"
+msgstr "Slett denne integrasjonen"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
+msgid "Delete webhook"
+msgstr "Slett webhook"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
+msgid "Delete workflow"
+msgstr "Slett arbeidsflyt"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
+msgid "Delete workflows"
+msgstr "Slett arbeidsflyter"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
+msgid "Delete workspace"
+msgstr "Slett arbeidsområde"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
+msgid "Delete your whole workspace"
+msgstr "Slett hele arbeidsområdet ditt"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Descending"
+msgstr "Synkende"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
+msgid "Description"
+msgstr "Beskrivelse"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:254
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:296
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:155
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:193
+msgid "Destroy"
+msgstr "Ødelegg"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:35
+#: src/pages/settings/developers/SettingsDevelopers.tsx:42
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:79
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+msgid "Developers"
+msgstr "Utviklere"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:97
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:98
+msgid "Discard Draft"
+msgstr "Forkast kladd"
+
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
+msgid "Display as relative date"
+msgstr "Vis som relativ dato"
+
+#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/workspace/SettingsHostname.tsx:115
+#: src/pages/settings/workspace/SettingsDomain.tsx:115
+#: src/pages/settings/workspace/SettingsDomain.tsx:125
+msgid "Domain"
+msgstr "Domene"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
+msgid "E.g. backoffice integration"
+msgstr "F.eks. backoffice-integrasjon"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
+msgid "Earliest"
+msgstr "Tidligste"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
+msgid "Earliest date"
+msgstr "Tidligste dato"
+
+#: src/pages/settings/SettingsBilling.tsx:158
+msgid "Edit billing interval"
+msgstr "Rediger faktureringsintervall"
+
+#: src/pages/settings/SettingsBilling.tsx:146
+msgid "Edit payment method, see your invoices and more"
+msgstr "Rediger betalingsmetode, se dine fakturaer og mer"
+
+#: src/pages/settings/SettingsWorkspace.tsx:52
+msgid "Edit your subdomain name or set a custom domain."
+msgstr "Rediger din underdomenenavn eller sett et tilpasset domene."
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:180
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:256
+#: src/pages/settings/SettingsProfile.tsx:42
+#: src/pages/auth/PasswordReset.tsx:206
+msgid "Email"
+msgstr "E-post"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:89
+msgid "Email integration"
+msgstr "E-postintegrasjon"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:55
+msgid "Email or domain is already in blocklist"
+msgstr "E-post eller domene er allerede i svartelisten"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
+msgid "Emails"
+msgstr "E-poster"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
+msgid "employees"
+msgstr "ansatte"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
+msgid "Employees"
+msgstr "Ansatte"
+
+#: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
+msgid "Empty"
+msgstr "Tom"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
+msgid "Endpoint URL"
+msgstr "Endepunkts-URL"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "English"
+msgstr "Engelsk"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:157
+msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
+msgstr "Nyt en {withCreditCardTrialPeriodDuration}-dagers gratis prøveperiode"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:51
+msgid "Enterprise"
+msgstr "Enterprise"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
+msgid "Error deleting api key: {err}"
+msgstr "Feil ved sletting av API-nøkkel: {err}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
+msgid "Error regenerating api key: {err}"
+msgstr "Feil ved regenerering av API-nøkkel: {err}"
+
+#: src/pages/settings/SettingsBilling.tsx:124
+msgid "Error while switching subscription {to}."
+msgstr "Feil under bytte av abonnement {to}."
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+msgid "Establish Webhook endpoints for notifications on asynchronous events."
+msgstr "Etablere webhook-endepunkter for varsler om asynkrone hendelser."
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
+msgid "Exclude the following people and domains from my email sync"
+msgstr "Ekskluder følgende personer og domener fra min e-postsynkronisering"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:162
+msgid "Existing objects"
+msgstr "Eksisterende objekter"
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+msgid "Exit Settings"
+msgstr "Avslutt innstillinger"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
+#~ msgid "Expected selected node to be a create step node."
+#~ msgstr "Expected selected node to be a create step node."
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+msgid "Experience"
+msgstr "Erfaring"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:219
+msgid "Expiration"
+msgstr "Utløpsdato"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:126
+msgid "Expiration Date"
+msgstr "Utløpsdato"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:259
+msgid "Expires in"
+msgstr "Utløper om"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:78
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:136
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:149
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:88
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:101
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:270
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:283
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:129
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:142
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:89
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:102
+msgid "Export"
+msgstr "Eksporter"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:135
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:87
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
+msgid "Export records"
+msgstr "Eksporter oppføringer"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
+msgid "Export to PDF"
+msgstr "Eksporter til PDF"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:148
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:282
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
+msgid "Export view"
+msgstr "Eksporter visning"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
+msgid "Export Workflows"
+msgstr "Eksporter arbeidsflyter"
+
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
+msgid "Favorites"
+msgstr "Favoritter"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
+msgid "Field type"
+msgstr "Felttype"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
+msgid "Fields"
+msgstr "Felter"
+
+#: src/testing/mock-data/tableData.ts:22
+msgid "Fields Count"
+msgstr "Antall felter"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
+#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
+msgid "Filter"
+msgstr "Filtrer"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
+msgid "Filters"
+msgstr "Filtre"
+
+#: src/pages/onboarding/CreateProfile.tsx:180
+msgid "First Name"
+msgstr "Fornavn"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "Glemt passordet ditt?"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+msgid "French"
+msgstr "Fransk"
+
+#: src/pages/settings/SettingsBilling.tsx:47
+msgid "from monthly to yearly"
+msgstr "fra månedlig til årlig"
+
+#: src/pages/settings/SettingsBilling.tsx:54
+msgid "from yearly to monthly"
+msgstr "fra årlig til månedlig"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:87
+msgid "Full access"
+msgstr "Full tilgang"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+msgid "Functions"
+msgstr "Funksjoner"
+
+#: src/pages/settings/SettingsWorkspace.tsx:29
+#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:122
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+msgid "General"
+msgstr "Generelt"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
+msgid "German"
+msgstr "Tysk"
+
+#: src/pages/onboarding/InviteTeam.tsx:184
+msgid "Get the most out of your workspace by inviting your team."
+msgstr "Få mest mulig ut av arbeidsområdet ditt ved å invitere teamet ditt."
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:148
+msgid "Get your subscription"
+msgstr "Få abonnementet ditt"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:79
+msgid "Global"
+msgstr "Global"
+
+#: src/pages/settings/SettingsWorkspace.tsx:65
+msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+msgstr "Gi Twenty support midlertidig tilgang til arbeidsområdet ditt slik at vi kan feilsøke problemer eller gjenopprette innholdet på dine vegne. Du kan tilbakekalle tilgangen når som helst."
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
+msgid "Hide"
+msgstr "Skjul"
+
+#: src/pages/onboarding/CreateProfile.tsx:157
+msgid "How you'll be identified on the app."
+msgstr "Slik vil du bli identifisert i appen."
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
+msgid "Icon and Name"
+msgstr "Ikon og navn"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
+msgid "Identifier"
+msgstr "Identifikator"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
+msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
+msgstr "Hvis du har mistet denne nøkkelen, kan du lage den på nytt, men vær oppmerksom på at ethvert skript som bruker denne nøkkelen må oppdateres. Vennligst skriv \"{confirmationValue}\" for å bekrefte."
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:215
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
+msgid "Indexes"
+msgstr "Indekser"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
+msgid "Input must be in camel case and cannot start with a number"
+msgstr "Inndata m\\u00e5 v\\u00e6re i kamelkasse og kan ikke starte med et tall"
+
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
+msgid "Instances"
+msgstr "Instanser"
+
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:15
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:21
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+msgid "Integrations"
+msgstr "Integrasjoner"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
+msgid "Invalid auth provider"
+msgstr "Ugyldig autorisasjonsleverand\\u00f8r"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:21
+msgid "Invalid email"
+msgstr "Ugyldig e-post"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:44
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:50
+msgid "Invalid email or domain"
+msgstr "Ugyldig e-post eller domene"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:71
+msgid "Invalid form values"
+msgstr "Ugyldige skjemaverdier"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:244
+msgid "Invite by email"
+msgstr "Inviter via e-post"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:157
+msgid "Invite by link"
+msgstr "Inviter via lenke"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
+msgid "Invite by Link"
+msgstr "Inviter via Lenke"
+
+#: src/pages/onboarding/InviteTeam.tsx:152
+msgid "Invite link sent to email addresses"
+msgstr "Invitasjonslenke sendt til e-postadresser"
+
+#: src/pages/onboarding/InviteTeam.tsx:181
+msgid "Invite your team"
+msgstr "Inviter teamet ditt"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
+msgid "Italian"
+msgstr "Italiensk"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Japanese"
+msgstr "Japansk"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+msgid "Korean"
+msgstr "Koreansk"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+msgid "Lab"
+msgstr "Laboratorium"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+msgid "Language"
+msgstr "Spr\\u00e5k"
+
+#: src/pages/onboarding/CreateProfile.tsx:202
+msgid "Last Name"
+msgstr "Etternavn"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
+msgid "Latest"
+msgstr "Siste"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
+msgid "Latest date"
+msgstr "Siste dato"
+
+#: src/pages/onboarding/InviteTeam.tsx:127
+msgid "Link copied to clipboard"
+msgstr "Lenke kopiert til utklippstavlen"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:206
+msgid "Log out"
+msgstr "Logg ut"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+msgid "Logout"
+msgstr "Logg ut"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:167
+msgid "Manage Members"
+msgstr "Administrer medlemmer"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:168
+msgid "Manage the members of your space here"
+msgstr "Administrer medlemmene i omr\\u00e5det ditt her"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:57
+msgid "Manage your internet accounts."
+msgstr "Administrer internett-kontoene dine."
+
+#: src/pages/settings/SettingsBilling.tsx:145
+msgid "Manage your subscription"
+msgstr "Administrer abonnementet ditt"
+
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:69
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:60
+msgid "Mark as done"
+msgstr "Marker som utf\\u00f8rt"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:13
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:13
+msgid "Max"
+msgstr "Maks"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:143
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:149
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+msgid "Members"
+msgstr "Medlemmer"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
+msgid "Min"
+msgstr "Min"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
+msgid "More options"
+msgstr "Flere alternativer"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
+msgid "Move left"
+msgstr "Flytt til venstre"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
+msgid "Move right"
+msgstr "Flytt til h\\u00f8yre"
+
+#: src/testing/mock-data/tableData.ts:16
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:177
+#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsProfile.tsx:35
+#: src/pages/settings/roles/SettingsRoles.tsx:126
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
+#: src/pages/onboarding/CreateProfile.tsx:166
+#: src/modules/settings/workspace/components/NameField.tsx:91
+msgid "Name"
+msgstr "Navn"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:49
+msgid "Name can not be empty"
+msgstr "Navn kan ikke v\\u00e6re tomt"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+msgid "Name of your API key"
+msgstr "Navnet p\\u00e5 din API-n\\u00f8kkel"
+
+#: src/pages/settings/SettingsWorkspace.tsx:44
+msgid "Name of your workspace"
+msgstr "Navnet p\\u00e5 arbeidsomr\\u00e5det ditt"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:181
+msgid "Navigate to next record"
+msgstr "Naviger til neste post"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:95
+msgid "Navigate to next version"
+msgstr "Naviger til neste versjon"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:184
+msgid "Navigate to next workflow"
+msgstr "Naviger til neste workflow"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:65
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:170
+msgid "Navigate to previous record"
+msgstr "Naviger til forrige post"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:85
+msgid "Navigate to previous version"
+msgstr "Naviger til forrige versjon"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:174
+msgid "Navigate to previous workflow"
+msgstr "Naviger til forrige workflow"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+msgid "New"
+msgstr "Ny"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
+msgid "New account"
+msgstr "Ny konto"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
+msgid "New key"
+msgstr "Ny nøkkel"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
+msgid "New Key"
+msgstr "Ny Nøkkel"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
+msgid "New Object"
+msgstr "Nytt Objekt"
+
+#: src/pages/auth/PasswordReset.tsx:233
+msgid "New Password"
+msgstr "Nytt Passord"
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:27
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:29
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:46
+msgid "New record"
+msgstr "Ny post"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:52
+#~ msgid "New Role"
+#~ msgstr "New Role"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
+msgid "New Webhook"
+msgstr "Ny Webhook"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
+msgid "No connected account"
+msgstr "Ingen tilknyttet konto"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
+msgid "No workflow runs yet"
+msgstr "Ingen workflow-kjøringer ennå"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
+msgid "No workflow versions yet"
+msgstr "Ingen workflow-versjoner ennå"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
+msgid "Not empty"
+msgstr "Ikke tom"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:75
+msgid "Object"
+msgstr "Objekt"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:155
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
+msgid "Objects"
+msgstr "Objekter"
+
+#: src/pages/not-found/NotFound.tsx:47
+msgid "Off the beaten path"
+msgstr "Utenfor allfarvei"
+
+#: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
+msgid "Opened"
+msgstr "Åpnet"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
+msgid "Options"
+msgstr "Alternativer"
+
+#: src/pages/onboarding/InviteTeam.tsx:213
+msgid "or"
+msgstr "eller"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+msgid "Other"
+msgstr "Annen"
+
+#: src/pages/not-found/NotFound.tsx:41
+msgid "Page Not Found"
+msgstr "Siden ble ikke funnet"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
+msgid "Password"
+msgstr "Passord"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "Passordet har blitt oppdatert"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:34
+msgid "Password reset link has been sent to the email"
+msgstr "Lenke for tilbakestilling av passord har blitt sendt til e-posten"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
+msgid "Percent"
+msgstr "Prosent"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
+msgid "Percent empty"
+msgstr "Prosent tom"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
+msgid "Percent not empty"
+msgstr "Prosent ikke tom"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:253
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
+msgid "Permanently destroy record"
+msgstr "Permanent ødelegg post"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
+msgid "Permanently destroy records"
+msgstr "Permanent ødelegg poster"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
+msgid "Permanently destroy workflows"
+msgstr "Permanent ødelegg workflows"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:70
+#: src/pages/settings/roles/components/RolePermissions.tsx:14
+msgid "Permissions"
+msgstr "Tillatelser"
+
+#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsProfile.tsx:30
+msgid "Picture"
+msgstr "Bilde"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
+msgid "Please enter a valid URL"
+msgstr "Vennligst skriv inn en gyldig URL"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
+msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
+msgstr "Vennligst skriv inn \\"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
+msgid "Please type {confirmationText} to confirm you want to delete this webhook."
+msgstr "Vennligst skriv {confirmationText} for å bekrefte at du ønsker å slette denne webhook."
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#~ msgid "Portuguese"
+#~ msgstr "Portuguese"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
+msgid "Portuguese — Brazil"
+msgstr "Portugisisk — Brasil"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+msgid "Portuguese — Portugal"
+msgstr "Portugisisk — Portugal"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
+#~ msgid "Portuguese (Brazil)"
+#~ msgstr "Portuguese (Brazil)"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#~ msgid "Portuguese (Portugal)"
+#~ msgstr "Portuguese (Portugal)"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
+#: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
+msgid "Preview"
+msgstr "Forhåndsvisning"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
+msgid "Privacy Policy"
+msgstr "Personvernpolicy"
+
+#: src/pages/settings/SettingsProfile.tsx:19
+#: src/pages/settings/SettingsProfile.tsx:25
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+msgid "Profile"
+msgstr "Profil"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
+msgid "Pseudo-English"
+msgstr "Pseudo-engelsk"
+
+#: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx:9
+msgid "Read documentation"
+msgstr "Les dokumentasjonen"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:53
+msgid "Receive an email containing password update link"
+msgstr "Motta en e-post med lenke for å oppdatere passordet"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:69
+msgid "Record Selection"
+msgstr "Velg poster"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
+msgid "Regenerate an API key"
+msgstr "Generer en API-nøkkel på nytt"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
+msgid "Regenerate key"
+msgstr "Generer nøkkel på nytt"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
+msgid "Regenerate Key"
+msgstr "Generer Nøkkel på Nytt"
+
+#: src/pages/settings/Releases.tsx:111
+#: src/pages/settings/Releases.tsx:117
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+msgid "Releases"
+msgstr "Utgivelser"
+
+#: src/modules/ui/input/components/ImageInput.tsx:172
+msgid "Remove"
+msgstr "Fjern"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:51
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:209
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:210
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:84
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:85
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:47
+msgid "Remove from favorites"
+msgstr "Fjern fra favoritter"
+
+#: src/pages/auth/PasswordReset.tsx:177
+msgid "Reset Password"
+msgstr "Tilbakestill Passord"
+
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:47
+msgid "Reset to"
+msgstr "Tilbakestill til"
+
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:227
+msgid "Results"
+msgstr "Resultater"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:107
+#: src/pages/settings/roles/SettingsRoles.tsx:113
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+msgid "Roles"
+msgstr "Roller"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
+msgid "Run a workflow and return here to view its executions"
+msgstr "Kjør en arbeidsflyt og kom tilbake her for å se på kjøringene"
+
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+msgid "Search"
+msgstr "Søk"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "Søk ''{commandMenuSearch}'' med..."
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
+msgid "Search a field..."
+msgstr "Søk i et felt..."
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
+msgid "Search an index..."
+msgstr "Søk i et indeks..."
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+msgid "Search fields"
+msgstr "Søk etter felter"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:166
+msgid "Search for an object..."
+msgstr "Søk etter et objekt..."
+
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+msgid "Search records"
+msgstr "Søk poster"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:33
+#: src/pages/settings/security/SettingsSecurity.tsx:40
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+msgid "Security"
+msgstr "Sikkerhet"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:112
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:113
+msgid "See active version"
+msgstr "Se aktiv versjon"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:55
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:56
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:127
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:128
+msgid "See runs"
+msgstr "Se kjøringer"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:143
+msgid "See versions"
+msgstr "Se versjoner"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:142
+msgid "See versions history"
+msgstr "Se historikk over versjoner"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
+msgid "Select the events you wish to send to this endpoint"
+msgstr "Velg hendelsene du ønsker å sende til dette sluttpunktet"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+msgid "Select your preferred language"
+msgstr "Velg ditt foretrukne språk"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:245
+msgid "Send an invite email to your team"
+msgstr "Send en invitasjonse-post til teamet ditt"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+msgid "Server Admin Panel"
+msgstr "Serveradministrasjonspanel"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
+msgid "Set email visibility, manage your blocklist and more."
+msgstr "Angi e-post synlighet, administrere blokkeringslisten og mer."
+
+#: src/pages/settings/workspace/SettingsHostname.tsx:115
+msgid "Set the name of your domain"
+msgstr "Angi navnet på domenet ditt"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+msgid "Set the name of your subdomain"
+msgstr "Angi navnet på underdomenet ditt"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
+msgid "Settings"
+msgstr "Innstillinger"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:158
+msgid "Share this link to invite users to join your workspace"
+msgstr "Del denne lenken for å invitere brukere til å bli med i arbeidsområdet ditt"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
+msgid "Should changing a field's label also change the API name?"
+msgstr "Skal en endring av feltets etikett også endre API-navnet?"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
+msgid "Sign in"
+msgstr "Logg inn"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:89
+msgid "Sign up"
+msgstr "Registrer deg"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "Enkel pålogging (SSO)"
+
+#: src/pages/onboarding/InviteTeam.tsx:236
+msgid "Skip"
+msgstr "Hopp over"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
+msgid "Sort"
+msgstr "Sorter"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+msgid "Spanish"
+msgstr "Spansk"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr "SSO"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+msgid "Subdomain"
+msgstr "Underdomene"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:89
+msgid "Subdomain already taken"
+msgstr "Underdomenet er allerede tatt"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:35
+msgid "Subdomain can not be longer than 30 characters"
+msgstr "Underdomenet kan ikke være lengre enn 30 tegn"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:34
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "Underdomenet kan ikke være kortere enn 3 tegn"
+
+#: src/pages/settings/SettingsBilling.tsx:120
+msgid "Subscription has been switched {to}"
+msgstr "Abonnementet har blitt byttet {to}"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
+msgid "Sum"
+msgstr "Sum"
+
+#: src/pages/settings/SettingsWorkspace.tsx:63
+msgid "Support"
+msgstr "Støtte"
+
+#: src/pages/settings/SettingsBilling.tsx:159
+msgid "Switch {from}"
+msgstr "Bytt {from}"
+
+#: src/pages/settings/SettingsBilling.tsx:163
+msgid "Switch {to}"
+msgstr "Bytt {to}"
+
+#: src/pages/settings/SettingsBilling.tsx:187
+msgid "Switch billing {to}"
+msgstr "Bytt fakturering {to}"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
+msgid "Synchronize Field Label and API Name"
+msgstr "Synkroniser feltetikett og API-navn"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
+msgid "System settings - {systemDateFormatLabel}"
+msgstr "Systeminnstillinger - {systemDateFormatLabel}"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
+msgid "System Settings - {systemTimeFormatLabel}"
+msgstr "Systeminnstillinger - {systemTimeFormatLabel}"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
+msgid "Terms of Service"
+msgstr "Bruksvilkår"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:158
+msgid "Test"
+msgstr "Test"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:157
+msgid "Test Workflow"
+msgstr "Test arbeidsflyt"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
+msgid "The description of this field"
+msgstr "Beskrivelsen av dette feltet"
+
+#: src/pages/settings/SettingsProfile.tsx:43
+msgid "The email associated to your account"
+msgstr "E-posten knyttet til kontoen din"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:209
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:240
+msgid "The name and icon of this field"
+msgstr "Navnet og ikonet til dette feltet"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:129
+msgid "The name of your organization"
+msgstr "Navnet på organisasjonen din"
+
+#: src/pages/not-found/NotFound.tsx:50
+msgid "The page you're seeking is either gone or never was. Let's get you back on track"
+msgstr "Siden du søker etter er enten borte eller var aldri. La oss få deg tilbake på sporet"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:229
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:252
+msgid "The values of this field"
+msgstr "Verdiene til dette feltet"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
+msgid "The values of this field must be unique"
+msgstr "Verdiene til dette feltet må være unike"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "Det var en feil under oppdatering av passord."
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:38
+msgid "There was an issue"
+msgstr "Det var et problem"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:323
+msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
+msgstr "Denne handlingen kan ikke angres. Dette vil permanent slette denne brukeren og fjerne dem fra alle sine oppgaver."
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
+msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
+msgstr "Denne handlingen kan ikke angres. Dette vil permanent slette hele arbeidsområdet ditt. <0/> Vennligst skriv inn din e-post for å bekrefte."
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:15
+msgid "This Role has the following permissions."
+msgstr "Denne rollen har følgende tillatelser."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:15
+msgid "This Role is assigned to these workspace member."
+msgstr "Denne rollen er tildelt disse arbeidsområdemedlemmene."
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
+msgid "Time format"
+msgstr "Tidsformat"
+
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "to monthly"
+msgstr "til månedlig"
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "to yearly"
+msgstr "til årlig"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:56
+msgid "Trigger Type"
+msgstr "Utløsertype"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:60
+msgid "Trigger type should be Manual - when no record(s) are selected"
+msgstr "Utløsertype bør være Manuell - når ingen post(er) er valgt"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
+msgid "Type"
+msgstr "Type"
+
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
+msgid "Type anything"
+msgstr "Skriv hva som helst"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
+msgid "Unique"
+msgstr "Unik"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:80
+msgid "Unknown error"
+msgstr "Ukjent feil"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:88
+msgid "Unlimited contacts"
+msgstr "Ubegrenset kontakter"
+
+#: src/modules/ui/input/components/ImageInput.tsx:164
+msgid "Upload"
+msgstr "Last opp"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+msgid "URL"
+msgstr "URL"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:40
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:41
+msgid "Use as draft"
+msgstr "Bruk som utkast"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:37
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr "Bruk bokstav, tall og bindestrek kun. Start og avslutt med en bokstav eller et tall"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:16
+msgid "Use our API or add your first {objectLabel} manually"
+msgstr "Bruk vår API eller legg til din første {objectLabel} manuelt"
+
+#: src/pages/settings/SettingsProfile.tsx:22
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
+#: src/pages/settings/accounts/SettingsAccounts.tsx:43
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+msgid "User"
+msgstr "Bruker"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:51
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:106
+msgid "User is not logged in"
+msgstr "Brukeren er ikke logget inn"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:223
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:228
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:251
+msgid "Values"
+msgstr "Verdier"
+
+#: src/pages/settings/SettingsBilling.tsx:150
+msgid "View billing details"
+msgstr "Vis faktureringsdetaljer"
+
+#: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx:35
+msgid "Visualize"
+msgstr "Visualiser"
+
+#: src/modules/ui/input/components/ImageInput.tsx:177
+msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
+msgstr "Vi støtter dine kvadratiske PNGer, JPEGs og GIFs på under 10MB"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+msgid "We will send POST requests to this endpoint for every new event"
+msgstr "Vi vil sende POST-forespørsler til dette endepunktet for hver ny hendelse"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
+msgid "Webhook"
+msgstr "Webhook"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:65
+msgid "Webhooks"
+msgstr "Webhooks"
+
+#: src/pages/auth/SignInUp.tsx:43
+#~ msgid "Welcome to"
+#~ msgstr "Welcome to"
+
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "Velkommen til {workspaceName}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
+msgid "When the API key will expire."
+msgstr "Når API-nøkkelen vil utløpe."
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
+msgid "When the key will be disabled"
+msgstr "Når nøkkelen vil bli deaktivert"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:58
+msgid "Workflow cannot be tested"
+msgstr "Arbeidsflyten kan ikke testes"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:146
+#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsBilling.tsx:135
+#: src/pages/settings/Releases.tsx:114
+#: src/pages/settings/workspace/SettingsDomain.tsx:118
+#: src/pages/settings/security/SettingsSecurity.tsx:37
+#: src/pages/settings/roles/SettingsRoles.tsx:110
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:18
+#: src/pages/settings/developers/SettingsDevelopers.tsx:39
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
+#: src/pages/settings/data-model/SettingsObjects.tsx:152
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/favorites/components/WorkspaceFavorites.tsx:19
+msgid "Workspace"
+msgstr "Arbeidsområde"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
+msgid "Workspace Deletion"
+msgstr "Sletting av arbeidsområde"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:123
+msgid "Workspace logo"
+msgstr "Arbeidsområdelogo"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:128
+msgid "Workspace name"
+msgstr "Navn på arbeidsområde"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
+msgid "Write a description"
+msgstr "Skriv en beskrivelse"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
+msgid "yes"
+msgstr "ja"
+
+#: src/pages/settings/SettingsBilling.tsx:48
+msgid "You will be charged immediately for the full year."
+msgstr "Du vil bli belastet umiddelbart for hele året."
+
+#: src/pages/settings/SettingsBilling.tsx:55
+msgid "Your credit balance will be used to pay the monthly bills."
+msgstr "Din kredittsaldo vil bli brukt til å betale de månedlige regningene."
+
+#: src/pages/settings/SettingsProfile.tsx:36
+msgid "Your name as it will be displayed"
+msgstr "Ditt navn slik det vil bli vist"
+
+#: src/pages/onboarding/CreateProfile.tsx:167
+msgid "Your name as it will be displayed on the app"
+msgstr "Ditt navn slik det vil bli vist i appen"
+
+#: src/pages/auth/SignInUp.tsx:73
+msgid "Your Workspace"
+msgstr "Ditt Arbeidsområde"
+
+#: src/pages/settings/SettingsBilling.tsx:172
+msgid "Your workspace will be disabled"
+msgstr "Ditt arbeidsområde vil bli deaktivert"
+
