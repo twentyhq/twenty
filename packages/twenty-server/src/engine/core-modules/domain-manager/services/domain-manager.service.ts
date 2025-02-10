@@ -283,44 +283,59 @@ export class DomainManagerService {
       return {
         id: response.result[0].id,
         hostname: response.result[0].hostname,
-        status: response.result[0].status,
-        ownershipVerifications: [
+        records: [
           response.result[0].ownership_verification,
-          response.result[0].ownership_verification_http,
-        ].reduce(
-          (acc, ownershipVerification) => {
-            if (!ownershipVerification) return acc;
+          ...(response.result[0].ssl?.validation_records ?? []),
+        ]
+          .map<CustomHostnameDetails['records'][0] | undefined>(
+            (record: Record<string, string>) => {
+              if (!record) return;
 
-            if (
-              'http_body' in ownershipVerification &&
-              'http_url' in ownershipVerification &&
-              ownershipVerification.http_body &&
-              ownershipVerification.http_url
-            ) {
-              acc.push({
-                type: 'http',
-                body: ownershipVerification.http_body,
-                url: ownershipVerification.http_url,
-              });
-            }
+              if (
+                'txt_name' in record &&
+                'txt_value' in record &&
+                record.txt_name &&
+                record.txt_value
+              ) {
+                return {
+                  validationType: 'ssl' as const,
+                  type: 'txt' as const,
+                  status: response.result[0].ssl.status ?? 'pending',
+                  key: record.txt_name,
+                  value: record.txt_value,
+                };
+              }
 
-            if (
-              'type' in ownershipVerification &&
-              ownershipVerification.type === 'txt' &&
-              ownershipVerification.value &&
-              ownershipVerification.name
-            ) {
-              acc.push({
-                type: 'txt',
-                value: ownershipVerification.value,
-                name: ownershipVerification.name,
-              });
-            }
-
-            return acc;
-          },
-          [] as CustomHostnameDetails['ownershipVerifications'],
-        ),
+              if (
+                'type' in record &&
+                record.type === 'txt' &&
+                record.value &&
+                record.name
+              ) {
+                return {
+                  validationType: 'ownership' as const,
+                  type: 'txt' as const,
+                  status: response.result[0].status ?? 'pending',
+                  key: record.name,
+                  value: record.value,
+                };
+              }
+            },
+          )
+          .filter(isDefined)
+          .concat([
+            {
+              validationType: 'redirection' as const,
+              type: 'cname' as const,
+              status:
+                response.result[0].verification_errors?.[0] ===
+                'custom hostname does not CNAME to this zone.'
+                  ? 'error'
+                  : 'success',
+              key: response.result[0].hostname,
+              value: this.getFrontUrl().hostname,
+            },
+          ]),
       };
     }
 

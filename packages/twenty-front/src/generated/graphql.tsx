@@ -326,21 +326,15 @@ export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String'];
   id: Scalars['String'];
-  ownershipVerifications: Array<OwnershipVerification>;
-  status?: Maybe<Scalars['String']>;
+  records: Array<CustomHostnameVerification>;
 };
 
-export type CustomHostnameOwnershipVerificationHttp = {
-  __typename?: 'CustomHostnameOwnershipVerificationHttp';
-  body: Scalars['String'];
+export type CustomHostnameVerification = {
+  __typename?: 'CustomHostnameVerification';
+  key: Scalars['String'];
+  status: Scalars['String'];
   type: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type CustomHostnameOwnershipVerificationTxt = {
-  __typename?: 'CustomHostnameOwnershipVerificationTxt';
-  name: Scalars['String'];
-  type: Scalars['String'];
+  validationType: Scalars['String'];
   value: Scalars['String'];
 };
 
@@ -1181,8 +1175,6 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean'];
 };
 
-export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
-
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
@@ -1246,8 +1238,8 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
+  getCustomHostnameDetails?: Maybe<CustomHostnameDetails>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
-  getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
@@ -2432,10 +2424,10 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 
 export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
 
-export type GetHostnameDetailsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCustomHostnameDetailsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetHostnameDetailsQuery = { __typename?: 'Query', getHostnameDetails?: { __typename?: 'CustomHostnameDetails', hostname: string, status?: string | null, ownershipVerifications: Array<{ __typename?: 'CustomHostnameOwnershipVerificationHttp', type: string, body: string, url: string } | { __typename?: 'CustomHostnameOwnershipVerificationTxt', type: string, name: string, value: string }> } | null };
+export type GetCustomHostnameDetailsQuery = { __typename?: 'Query', getCustomHostnameDetails?: { __typename?: 'CustomHostnameDetails', hostname: string, records: Array<{ __typename?: 'CustomHostnameVerification', type: string, key: string, value: string, validationType: string, status: string }> } | null };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -4868,53 +4860,47 @@ export function useUploadWorkspaceLogoMutation(baseOptions?: Apollo.MutationHook
 export type UploadWorkspaceLogoMutationHookResult = ReturnType<typeof useUploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
-export const GetHostnameDetailsDocument = gql`
-    query GetHostnameDetails {
-  getHostnameDetails {
+export const GetCustomHostnameDetailsDocument = gql`
+    query GetCustomHostnameDetails {
+  getCustomHostnameDetails {
     hostname
-    ownershipVerifications {
-      ... on CustomHostnameOwnershipVerificationTxt {
-        type
-        name
-        value
-      }
-      ... on CustomHostnameOwnershipVerificationHttp {
-        type
-        body
-        url
-      }
+    records {
+      type
+      key
+      value
+      validationType
+      status
     }
-    status
   }
 }
     `;
 
 /**
- * __useGetHostnameDetailsQuery__
+ * __useGetCustomHostnameDetailsQuery__
  *
- * To run a query within a React component, call `useGetHostnameDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetHostnameDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetCustomHostnameDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCustomHostnameDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetHostnameDetailsQuery({
+ * const { data, loading, error } = useGetCustomHostnameDetailsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetHostnameDetailsQuery(baseOptions?: Apollo.QueryHookOptions<GetHostnameDetailsQuery, GetHostnameDetailsQueryVariables>) {
+export function useGetCustomHostnameDetailsQuery(baseOptions?: Apollo.QueryHookOptions<GetCustomHostnameDetailsQuery, GetCustomHostnameDetailsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetHostnameDetailsQuery, GetHostnameDetailsQueryVariables>(GetHostnameDetailsDocument, options);
+        return Apollo.useQuery<GetCustomHostnameDetailsQuery, GetCustomHostnameDetailsQueryVariables>(GetCustomHostnameDetailsDocument, options);
       }
-export function useGetHostnameDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetHostnameDetailsQuery, GetHostnameDetailsQueryVariables>) {
+export function useGetCustomHostnameDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCustomHostnameDetailsQuery, GetCustomHostnameDetailsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetHostnameDetailsQuery, GetHostnameDetailsQueryVariables>(GetHostnameDetailsDocument, options);
+          return Apollo.useLazyQuery<GetCustomHostnameDetailsQuery, GetCustomHostnameDetailsQueryVariables>(GetCustomHostnameDetailsDocument, options);
         }
-export type GetHostnameDetailsQueryHookResult = ReturnType<typeof useGetHostnameDetailsQuery>;
-export type GetHostnameDetailsLazyQueryHookResult = ReturnType<typeof useGetHostnameDetailsLazyQuery>;
-export type GetHostnameDetailsQueryResult = Apollo.QueryResult<GetHostnameDetailsQuery, GetHostnameDetailsQueryVariables>;
+export type GetCustomHostnameDetailsQueryHookResult = ReturnType<typeof useGetCustomHostnameDetailsQuery>;
+export type GetCustomHostnameDetailsLazyQueryHookResult = ReturnType<typeof useGetCustomHostnameDetailsLazyQuery>;
+export type GetCustomHostnameDetailsQueryResult = Apollo.QueryResult<GetCustomHostnameDetailsQuery, GetCustomHostnameDetailsQueryVariables>;
 export const GetWorkspaceFromInviteHashDocument = gql`
     query GetWorkspaceFromInviteHash($inviteHash: String!) {
   findWorkspaceFromInviteHash(inviteHash: $inviteHash) {
