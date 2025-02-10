@@ -12,7 +12,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 
 type useDestroyManyRecordProps = {
@@ -73,7 +73,7 @@ export const useDestroyManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const originalRecords = batchedIdToDestroy
+      const cachedRecords = batchedIdToDestroy
         .map((recordId) => getRecordFromCache(recordId, apolloClient.cache))
         .filter(isDefined);
 
@@ -83,6 +83,17 @@ export const useDestroyManyRecords = ({
           variables: {
             filter: { id: { in: batchedIdToDestroy } },
           },
+          // TODO handle as others and dispatch to relations
+          optimisticResponse: skipOptimisticEffect
+            ? undefined
+            : {
+                [mutationResponseField]: batchedIdToDestroy.map(
+                  (idToDestroy) => ({
+                    __typename: capitalize(objectNameSingular),
+                    id: idToDestroy,
+                  }),
+                ),
+              },
           update: (cache, { data }) => {
             if (skipOptimisticEffect) {
               return;
@@ -104,11 +115,11 @@ export const useDestroyManyRecords = ({
           },
         })
         .catch((error: Error) => {
-          if (originalRecords.length > 0 && !skipOptimisticEffect) {
+          if (cachedRecords.length > 0 && !skipOptimisticEffect) {
             triggerCreateRecordsOptimisticEffect({
               cache: apolloClient.cache,
               objectMetadataItem,
-              recordsToCreate: originalRecords,
+              recordsToCreate: cachedRecords,
               objectMetadataItems,
             });
           }
