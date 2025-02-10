@@ -161,7 +161,7 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEnterpriseKey
-        hostname
+        customDomain
         workspaceUrls {
           subdomainUrl
           customUrl
@@ -190,7 +190,7 @@ export const queries = {
           logo
           displayName
           subdomain
-          hostname
+          customDomain
           workspaceUrls {
             subdomainUrl
             customUrl
