@@ -400,29 +400,7 @@ export type EnvironmentVariable = {
 };
 
 export enum EnvironmentVariablesGroup {
-  Authentication = 'Authentication',
-  Email = 'Email',
-  Logging = 'Logging',
-  Other = 'Other',
-  ServerConfig = 'ServerConfig',
-  Workspace = 'Workspace'
-}
-
-export type EnvironmentVariablesGroupData = {
-  __typename?: 'EnvironmentVariablesGroupData';
-  description: Scalars['String'];
-  isHiddenOnLoad: Scalars['Boolean'];
-  name: EnvironmentVariablesGroup;
-  subgroups: Array<EnvironmentVariablesSubgroupData>;
-  variables: Array<EnvironmentVariable>;
-};
-
-export type EnvironmentVariablesOutput = {
-  __typename?: 'EnvironmentVariablesOutput';
-  groups: Array<EnvironmentVariablesGroupData>;
-};
-
-export enum EnvironmentVariablesSubGroup {
+  AuthenticationTokensDuration = 'AuthenticationTokensDuration',
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
@@ -430,10 +408,12 @@ export enum EnvironmentVariablesSubGroup {
   ExceptionHandler = 'ExceptionHandler',
   GoogleAuth = 'GoogleAuth',
   LLM = 'LLM',
+  Logging = 'Logging',
   MicrosoftAuth = 'MicrosoftAuth',
-  PasswordAuth = 'PasswordAuth',
+  Other = 'Other',
   RateLimiting = 'RateLimiting',
   SSL = 'SSL',
+  ServerConfig = 'ServerConfig',
   ServerlessConfig = 'ServerlessConfig',
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
@@ -441,11 +421,17 @@ export enum EnvironmentVariablesSubGroup {
   TokensDuration = 'TokensDuration'
 }
 
-export type EnvironmentVariablesSubgroupData = {
-  __typename?: 'EnvironmentVariablesSubgroupData';
+export type EnvironmentVariablesGroupData = {
+  __typename?: 'EnvironmentVariablesGroupData';
   description: Scalars['String'];
-  name: EnvironmentVariablesSubGroup;
+  isHiddenOnLoad: Scalars['Boolean'];
+  name: EnvironmentVariablesGroup;
   variables: Array<EnvironmentVariable>;
+};
+
+export type EnvironmentVariablesOutput = {
+  __typename?: 'EnvironmentVariablesOutput';
+  groups: Array<EnvironmentVariablesGroupData>;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -2248,7 +2234,7 @@ export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookup
 export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', name: EnvironmentVariablesSubGroup, description: string, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> }> } };
+export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -3906,16 +3892,6 @@ export const GetEnvironmentVariablesGroupedDocument = gql`
         description
         value
         sensitive
-      }
-      subgroups {
-        name
-        description
-        variables {
-          name
-          description
-          value
-          sensitive
-        }
       }
     }
   }
