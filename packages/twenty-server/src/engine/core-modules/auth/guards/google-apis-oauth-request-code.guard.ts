@@ -64,7 +64,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
         );
       }
 
-      new GoogleAPIsOauthRequestCodeStrategy(this.environmentService, {});
+      new GoogleAPIsOauthRequestCodeStrategy(this.environmentService);
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
