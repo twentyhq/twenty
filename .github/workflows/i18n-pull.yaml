@@ -23,16 +23,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
 
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+
+      # Strict mode fails if there are missing translations.
       - name: Compile translations
         id: compile_translations
         run: |
-          npx nx run twenty-server:lingui:compile
-          npx nx run twenty-emails:lingui:compile
-          npx nx run twenty-front:lingui:compile
+          npx nx run twenty-server:lingui:compile --strict
+          npx nx run twenty-emails:lingui:compile --strict
+          npx nx run twenty-front:lingui:compile --strict
         continue-on-error: true
 
       - name: Pull translations from Crowdin
@@ -46,13 +53,22 @@ jobs:
           localization_branch_name: chore/translations
           commit_message: 'chore: add translations'
           pull_request_title: 'chore: add translations'
+          base_url: 'https://twenty.api.crowdin.com'
+          auto_approve_imported: false
+          import_eq_suggestions: false
+          download_sources: false
+          push_sources: true
+          skip_untranslated_strings: false
+          skip_untranslated_files: false
+          push_translations: true
+          create_pull_request: true
+          skip_ref_checkout: false
+          dryrun_action: false
+          github_base_url: 'github.com'
+          github_user_name: 'Crowdin Bot'
+          github_user_email: 'support+bot@crowdin.com'
 
         env:
-          # A classic GitHub Personal Access Token with the 'repo' scope selected (the user should have write access to the repository).
           GITHUB_TOKEN: ${{ github.token }}
-
-          # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
-          CROWDIN_PROJECT_ID: 1
-
-          # Visit https://crowdin.com/settings#api-key to create this token
+          CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

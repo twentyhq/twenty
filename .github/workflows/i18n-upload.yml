@@ -21,9 +21,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build dependencies
+        run: npx nx build twenty-shared
 
       - name: Extract translations
         run: |
@@ -36,7 +40,10 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
           git add .
-          git diff --staged --quiet --exit-code || (git commit -m "chore: extract translations" && git push)
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: extract translations"
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          fi
 
       - name: Compile translations
         id: compile_translations
@@ -54,6 +61,7 @@ jobs:
           upload_translations: true
           download_translations: false
           localization_branch_name: chore/translations
+          base_url: 'https://twenty.api.crowdin.com'
         env:
           # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
           CROWDIN_PROJECT_ID: 1

@@ -25,9 +25,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
 
       - name: Pull translations from Crowdin
         uses: crowdin/github-action@v2
@@ -39,13 +45,14 @@ jobs:
           localization_branch_name: chore/translations
           commit_message: 'chore: add translations'
           pull_request_title: 'chore: add translations'
+          base_url: 'https://twenty.api.crowdin.com'
 
         env:
           # A classic GitHub Personal Access Token with the 'repo' scope selected (the user should have write access to the repository).
           GITHUB_TOKEN: ${{ github.token }}
 
           # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
-          CROWDIN_PROJECT_ID: 1
+          CROWDIN_PROJECT_ID: '1'
 
           # Visit https://crowdin.com/settings#api-key to create this token
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
