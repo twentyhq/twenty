@@ -4,7 +4,7 @@ import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
@@ -42,10 +42,9 @@ export const useDeleteManyRecords = ({
     objectNameSingular,
   });
 
-  const getRecordFromCacheOrMinimalRecord =
-    useGetRecordFromCacheOrMinimalRecord({
-      objectNameSingular,
-    });
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular,
+  });
 
   const { deleteManyRecordsMutation } = useDeleteManyRecordsMutation({
     objectNameSingular,
@@ -77,10 +76,9 @@ export const useDeleteManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const cachedRecords = batchedIdsToDelete.map((idToDelete) =>
-        getRecordFromCacheOrMinimalRecord(idToDelete, apolloClient.cache),
-      );
-
+      const cachedRecords = batchedIdsToDelete
+        .map((idToDelete) => getRecordFromCache(idToDelete, apolloClient.cache))
+        .filter(isDefined);
       const currentTimestamp = new Date().toISOString();
       if (!skipOptimisticEffect) {
         const cachedRecordsNode: RecordGqlNode[] = [];
@@ -109,25 +107,18 @@ export const useDeleteManyRecords = ({
             computeReferences: false,
           });
 
-          if (
-            !isDefined(optimisticRecordNode) ||
-            !isDefined(cachedRecordNode)
-          ) {
-            throw new Error(
-              'Should never occur, encountered empty cache should fallbacked',
-            );
+          if (isDefined(optimisticRecordNode) && isDefined(cachedRecordNode)) {
+            updateRecordFromCache({
+              objectMetadataItems,
+              objectMetadataItem,
+              cache: apolloClient.cache,
+              record: computedOptimisticRecord,
+              recordGqlFields,
+            });
+
+            computedOptimisticRecordsNode.push(optimisticRecordNode);
+            cachedRecordsNode.push(cachedRecordNode);
           }
-
-          updateRecordFromCache({
-            objectMetadataItems,
-            objectMetadataItem,
-            cache: apolloClient.cache,
-            record: computedOptimisticRecord,
-            recordGqlFields,
-          });
-
-          computedOptimisticRecordsNode.push(optimisticRecordNode);
-          cachedRecordsNode.push(cachedRecordNode);
         });
 
         triggerUpdateRecordOptimisticEffectByBatch({
@@ -140,13 +131,37 @@ export const useDeleteManyRecords = ({
       }
 
       const deletedRecordsResponse = await apolloClient
-        .mutate({
+        .mutate<Record<string, ObjectRecord[]>>({
           mutation: deleteManyRecordsMutation,
           variables: {
             filter: { id: { in: batchedIdsToDelete } },
           },
+          update: (cache, { data }) => {
+            if (skipOptimisticEffect) {
+              return;
+            }
+            const records = data?.[mutationResponseField];
+
+            if (!isDefined(records) || records.length === 0) return;
+
+            const cachedRecords = records.map((record) =>
+              getRecordFromCache(record.id, cache),
+            ).filter(isDefined);
+
+            triggerUpdateRecordOptimisticEffectByBatch({
+              cache,
+              objectMetadataItem,
+              currentRecords: cachedRecords,
+              updatedRecords: records,
+              objectMetadataItems,
+            });
+          },
         })
         .catch((error: Error) => {
+          if (skipOptimisticEffect) {
+            throw error;
+          }
+
           const cachedRecordsNode: RecordGqlNode[] = [];
           const computedOptimisticRecordsNode: RecordGqlNode[] = [];
 
@@ -184,16 +199,14 @@ export const useDeleteManyRecords = ({
               });
 
             if (
-              !isDefined(optimisticRecordWithConnection) ||
-              !isDefined(cachedRecordWithConnection)
+              isDefined(optimisticRecordWithConnection) &&
+              isDefined(cachedRecordWithConnection)
             ) {
-              throw new Error(
-                'Should never occur, encountered empty cache should fallbacked',
+              cachedRecordsNode.push(cachedRecordWithConnection);
+              computedOptimisticRecordsNode.push(
+                optimisticRecordWithConnection,
               );
             }
-
-            cachedRecordsNode.push(cachedRecordWithConnection);
-            computedOptimisticRecordsNode.push(optimisticRecordWithConnection);
           });
 
           triggerUpdateRecordOptimisticEffectByBatch({

@@ -5,13 +5,14 @@ import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effec
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useDestroyManyRecordsMutation } from '@/object-record/hooks/useDestroyManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 
 type useDestroyManyRecordProps = {
@@ -39,8 +40,7 @@ export const useDestroyManyRecords = ({
     objectNameSingular,
   });
 
-  const getRecordFromCacheOrMinimalRecord =
-    useGetRecordFromCacheOrMinimalRecord({ objectNameSingular });
+  const getRecordFromCache = useGetRecordFromCache({ objectNameSingular });
 
   const { destroyManyRecordsMutation } = useDestroyManyRecordsMutation({
     objectNameSingular,
@@ -73,47 +73,38 @@ export const useDestroyManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const originalRecords = batchedIdToDestroy.map((recordId) =>
-        getRecordFromCacheOrMinimalRecord(recordId, apolloClient.cache),
-      );
+      const originalRecords = batchedIdToDestroy
+        .map((recordId) => getRecordFromCache(recordId, apolloClient.cache))
+        .filter(isDefined);
 
       const destroyedRecordsResponse = await apolloClient
-        .mutate({
+        .mutate<Record<string, ObjectRecord[]>>({
           mutation: destroyManyRecordsMutation,
           variables: {
             filter: { id: { in: batchedIdToDestroy } },
           },
-          optimisticResponse: skipOptimisticEffect
-            ? undefined
-            : {
-                [mutationResponseField]: batchedIdToDestroy.map(
-                  (idToDestroy) => ({
-                    __typename: capitalize(objectNameSingular),
-                    id: idToDestroy,
-                  }),
-                ),
-              },
-          update: skipOptimisticEffect
-            ? undefined
-            : (cache, { data }) => {
-                const records = data?.[mutationResponseField];
+          update: (cache, { data }) => {
+            if (skipOptimisticEffect) {
+              return;
+            }
+            const records = data?.[mutationResponseField];
 
-                if (!isDefined(records) || records.length === 0) return;
+            if (!isDefined(records) || records.length === 0) return;
 
-                const cachedRecords = records.map((record) =>
-                  getRecordFromCacheOrMinimalRecord(record.id, cache),
-                );
+            const cachedRecords = records.map((record) =>
+              getRecordFromCache(record.id, cache),
+            ).filter(isDefined);
 
-                triggerDestroyRecordsOptimisticEffect({
-                  cache,
-                  objectMetadataItem,
-                  recordsToDestroy: cachedRecords,
-                  objectMetadataItems,
-                });
-              },
+            triggerDestroyRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              recordsToDestroy: cachedRecords,
+              objectMetadataItems,
+            });
+          },
         })
         .catch((error: Error) => {
-          if (originalRecords.length > 0) {
+          if (originalRecords.length > 0 && !skipOptimisticEffect) {
             triggerCreateRecordsOptimisticEffect({
               cache: apolloClient.cache,
               objectMetadataItem,
