@@ -128,7 +128,6 @@ export const RecordShowPageWorkflowVersionHeader = ({
           onClick={() => {
             return deactivateWorkflowVersion({
               workflowVersionId: workflowVersion.id,
-              workflowId: workflowVersion.workflowId,
             });
           }}
         />

@@ -28,10 +28,8 @@ export const useDeactivateWorkflowVersion = () => {
 
   const deactivateWorkflowVersion = async ({
     workflowVersionId,
-    workflowId,
   }: {
     workflowVersionId: string;
-    workflowId: string;
   }) => {
     await mutate({
       variables: {

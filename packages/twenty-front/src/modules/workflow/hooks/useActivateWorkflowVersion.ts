@@ -38,7 +38,6 @@ export const useActivateWorkflowVersion = () => {
         workflowVersionId,
       },
       update: () => {
-        const cacheSnapshot = apolloClient.cache.extract();
         modifyRecordFromCache({
           cache: apolloClient.cache,
           recordId: workflowVersionId,
@@ -48,6 +47,7 @@ export const useActivateWorkflowVersion = () => {
           },
         });
 
+        const cacheSnapshot = apolloClient.cache.extract();
         const allWorkflowVersions: Array<WorkflowVersion> = Object.values(
           cacheSnapshot,
         ).filter(
