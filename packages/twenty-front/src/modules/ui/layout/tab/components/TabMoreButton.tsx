@@ -15,8 +15,9 @@ type StyledButtonProps = {
   onDropdownClose?: () => void;
 };
 
-const StyledButton = styled.div`
+const StyledButton = styled.button`
   align-items: center;
+  border: none;
   color: ${({ theme }) => theme.font.color.secondary};
   background-color: transparent;
   display: flex;
