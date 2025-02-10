@@ -64,13 +64,22 @@ describe('useDeleteOneRecord', () => {
     if (cachedRecord === null) throw new Error('Should never occur');
     expect(expectedRecord).toMatchObject(cachedRecord);
   };
+  const assertCachedRecordIsNull = () =>
+    expect(
+      getRecordFromCache({
+        cache,
+        objectMetadataItem,
+        objectMetadataItems,
+        recordId: personRecord.id,
+      }),
+    ).toBeNull();
   beforeEach(() => {
     jest.clearAllMocks();
     cache = new InMemoryCache();
   });
 
   describe('A. Starting from empty cache', () => {
-    it('1. Should successfully delete record', async () => {
+    it('1. Should successfully delete record and update record cache entry', async () => {
       const { result } = renderHook(
         () =>
           useDeleteOneRecord({
@@ -101,7 +110,7 @@ describe('useDeleteOneRecord', () => {
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
 
-    it('2. Should handle optimistic cache update on record deletion', async () => {
+    it('2. Should not handle optimistic cache update on record deletion', async () => {
       const apolloMocks: MockedResponse[] = getDefaultMocks({
         delay: Number.POSITIVE_INFINITY,
       });
@@ -121,12 +130,7 @@ describe('useDeleteOneRecord', () => {
       await act(async () => {
         result.current.deleteOneRecord(personRecord.id);
         await waitFor(() => {
-          const expectedCachedRecord: ObjectRecord = {
-            __typename: personRecord.__typename,
-            deletedAt: expect.any(String),
-            id: personRecord.id,
-          };
-          assertCachedRecordMatch(expectedCachedRecord);
+          assertCachedRecordIsNull()
         });
       });
 
@@ -134,7 +138,7 @@ describe('useDeleteOneRecord', () => {
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
 
-    it('3. Should handle optimistic cache update rollback on record deletion failure', async () => {
+    it('3. Should not handle optimistic cache update rollback on record deletion failure', async () => {
       const apolloMocks: MockedResponse[] = getDefaultMocks({
         error: new Error('Internal server error'),
       });
@@ -158,12 +162,7 @@ describe('useDeleteOneRecord', () => {
             'Should never occur expected function to throw',
           );
         } catch (e) {
-          const expectedCachedRecord: ObjectRecord = {
-            __typename: personRecord.__typename,
-            deletedAt: null,
-            id: personRecord.id,
-          };
-          assertCachedRecordMatch(expectedCachedRecord);
+          assertCachedRecordIsNull()
         }
       });
     });
