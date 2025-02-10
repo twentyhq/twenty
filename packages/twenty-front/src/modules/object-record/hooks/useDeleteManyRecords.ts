@@ -15,7 +15,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { sleep } from '~/utils/sleep';
 
 type useDeleteManyRecordProps = {
@@ -77,21 +76,29 @@ export const useDeleteManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
+      const __typename = capitalize(objectMetadataItem.nameSingular);
+      const cachedRecords = batchedIdsToDelete.map<ObjectRecord>(
+        (idToDelete) => {
+          const minimalRecord = {
+            id: idToDelete,
+            __typename,
+          };
+
+          return (
+            getRecordFromCache(idToDelete, apolloClient.cache) ?? minimalRecord
+          );
+        },
+      );
+
       const currentTimestamp = new Date().toISOString();
-
-      const cachedRecords = batchedIdsToDelete
-        .map((idToDelete) => getRecordFromCache(idToDelete, apolloClient.cache))
-        .filter(isDefined);
-
       if (!skipOptimisticEffect) {
         const cachedRecordsNode: RecordGqlNode[] = [];
         const computedOptimisticRecordsNode: RecordGqlNode[] = [];
 
+        const recordGqlFields = {
+          deletedAt: true,
+        };
         cachedRecords.forEach((cachedRecord) => {
-          if (!isDefined(cachedRecord) || !isDefined(cachedRecord.id)) {
-            return;
-          }
-
           const cachedRecordNode = getRecordNodeFromRecord<ObjectRecord>({
             record: cachedRecord,
             objectMetadataItem,
@@ -101,8 +108,7 @@ export const useDeleteManyRecords = ({
 
           const computedOptimisticRecord = {
             ...cachedRecord,
-            ...{ id: cachedRecord.id, deletedAt: currentTimestamp },
-            ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+            deletedAt: currentTimestamp,
           };
 
           const optimisticRecordNode = getRecordNodeFromRecord<ObjectRecord>({
@@ -116,12 +122,10 @@ export const useDeleteManyRecords = ({
             !isDefined(optimisticRecordNode) ||
             !isDefined(cachedRecordNode)
           ) {
+            // Could warn ? I don't like throwing here
             return;
           }
 
-          const recordGqlFields = {
-            deletedAt: true,
-          };
           updateRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
@@ -158,10 +162,6 @@ export const useDeleteManyRecords = ({
             deletedAt: true,
           };
           cachedRecords.forEach((cachedRecord) => {
-            if (isUndefinedOrNull(cachedRecord?.id)) {
-              return;
-            }
-
             updateRecordFromCache({
               objectMetadataItems,
               objectMetadataItem,
@@ -180,8 +180,7 @@ export const useDeleteManyRecords = ({
 
             const computedOptimisticRecord = {
               ...cachedRecord,
-              ...{ id: cachedRecord.id, deletedAt: currentTimestamp },
-              ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+              deletedAt: currentTimestamp,
             };
 
             const optimisticRecordWithConnection =
