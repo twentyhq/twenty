@@ -223,11 +223,11 @@ export class WorkspaceResolver {
   @Query(() => CustomDomainDetails, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
   async getCustomDomainDetails(
-    @AuthWorkspace() { customDomain }: Workspace,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<CustomDomainDetails | undefined> {
-    if (!customDomain) return undefined;
-
-    return await this.domainManagerService.getCustomDomainDetails(customDomain);
+    return this.workspaceService.getCustomDomainDetailsAndToggleIsCustomDomainEnabled(
+      workspace,
+    );
   }
 
   @Query(() => PublicWorkspaceDataOutput)

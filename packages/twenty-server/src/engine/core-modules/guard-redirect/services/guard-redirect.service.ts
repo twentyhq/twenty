@@ -33,11 +33,20 @@ export class GuardRedirectService {
   }
 
   getSubdomainAndCustomDomainFromWorkspace(
-    workspace?: Pick<Workspace, 'subdomain' | 'customDomain'> | null,
+    workspace?: Pick<
+      Workspace,
+      'subdomain' | 'customDomain' | 'isCustomDomainEnabled'
+    > | null,
   ) {
     if (!workspace) {
       return {
         subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      };
+    }
+
+    if (!workspace.isCustomDomainEnabled) {
+      return {
+        subdomain: workspace.subdomain,
       };
     }
 

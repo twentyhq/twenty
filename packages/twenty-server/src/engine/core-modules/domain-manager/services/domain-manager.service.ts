@@ -16,6 +16,7 @@ import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceUrlComponentsType } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class DomainManagerService {
@@ -78,7 +79,7 @@ export class DomainManagerService {
   }: {
     emailVerificationToken: string;
     email: string;
-    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>;
+    workspace: WorkspaceUrlComponentsType;
   }) {
     return this.buildWorkspaceURL({
       workspace,
@@ -92,7 +93,10 @@ export class DomainManagerService {
     pathname,
     searchParams,
   }: {
-    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>;
+    workspace: Pick<
+      Workspace,
+      'subdomain' | 'customDomain' | 'isCustomDomainEnabled'
+    >;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
@@ -147,7 +151,10 @@ export class DomainManagerService {
 
   computeRedirectErrorUrl(
     errorMessage: string,
-    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
+    workspace: Pick<
+      Workspace,
+      'subdomain' | 'customDomain' | 'isCustomDomainEnabled'
+    >,
   ) {
     const url = this.buildWorkspaceURL({
       workspace,
@@ -399,11 +406,13 @@ export class DomainManagerService {
   getWorkspaceUrls({
     subdomain,
     customDomain,
-  }: Pick<Workspace, 'subdomain' | 'customDomain'>) {
+    isCustomDomainEnabled,
+  }: WorkspaceUrlComponentsType) {
     return {
-      customUrl: customDomain
-        ? this.getCustomWorkspaceUrl(customDomain)
-        : undefined,
+      customUrl:
+        isCustomDomainEnabled && customDomain
+          ? this.getCustomWorkspaceUrl(customDomain)
+          : undefined,
       subdomainUrl: this.getTwentyWorkspaceUrl(subdomain),
     };
   }
