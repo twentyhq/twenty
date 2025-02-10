@@ -20,7 +20,13 @@ export class WorkflowRunWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
-  async createWorkflowRun(workflowVersionId: string, createdBy: ActorMetadata) {
+  async createWorkflowRun({
+    workflowVersionId,
+    createdBy,
+  }: {
+    workflowVersionId: string;
+    createdBy: ActorMetadata;
+  }) {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
@@ -42,7 +48,13 @@ export class WorkflowRunWorkspaceService {
     ).id;
   }
 
-  async startWorkflowRun(workflowRunId: string) {
+  async startWorkflowRun({
+    workflowRunId,
+    context,
+  }: {
+    workflowRunId: string;
+    context: Record<string, any>;
+  }) {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
@@ -69,14 +81,19 @@ export class WorkflowRunWorkspaceService {
     return workflowRunRepository.update(workflowRunToUpdate.id, {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
+      context,
     });
   }
 
-  async endWorkflowRun(
-    workflowRunId: string,
-    status: WorkflowRunStatus,
-    output: WorkflowRunOutput,
-  ) {
+  async endWorkflowRun({
+    workflowRunId,
+    status,
+    error,
+  }: {
+    workflowRunId: string;
+    status: WorkflowRunStatus;
+    error?: string;
+  }) {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
@@ -102,8 +119,42 @@ export class WorkflowRunWorkspaceService {
 
     return workflowRunRepository.update(workflowRunToUpdate.id, {
       status,
-      output,
       endedAt: new Date().toISOString(),
+      output: {
+        ...(workflowRunToUpdate.output ?? {}),
+        error,
+      },
+    });
+  }
+
+  async saveWorkflowRunState({
+    workflowRunId,
+    output,
+    context,
+  }: {
+    workflowRunId: string;
+    output: WorkflowRunOutput;
+    context: Record<string, any>;
+  }) {
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowRunToUpdate = await workflowRunRepository.findOneBy({
+      id: workflowRunId,
+    });
+
+    if (!workflowRunToUpdate) {
+      throw new WorkflowRunException(
+        'No workflow run to save',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+      );
+    }
+
+    return workflowRunRepository.update(workflowRunId, {
+      output,
+      context,
     });
   }
 }
