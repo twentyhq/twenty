@@ -15,6 +15,7 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import {
   OnboardingStatus,
@@ -34,21 +35,22 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
-const validationSchema = z
-  .object({
-    name: z.string().min(1, { message: 'Name can not be empty' }),
-  })
-  .required();
-
-type Form = z.infer<typeof validationSchema>;
-
 export const CreateWorkspace = () => {
+  const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
 
   const { loadCurrentUser } = useAuth();
   const [activateWorkspace] = useActivateWorkspaceMutation();
+
+  const validationSchema = z
+    .object({
+      name: z.string().min(1, { message: t`Name can not be empty` }),
+    })
+    .required();
+
+  type Form = z.infer<typeof validationSchema>;
 
   // Form
   const {
@@ -75,7 +77,7 @@ export const CreateWorkspace = () => {
         });
 
         if (isDefined(result.errors)) {
-          throw result.errors ?? new Error('Unknown error');
+          throw result.errors ?? new Error(t`Unknown error`);
         }
         await loadCurrentUser();
         setNextOnboardingStatus();
@@ -90,6 +92,7 @@ export const CreateWorkspace = () => {
       enqueueSnackBar,
       loadCurrentUser,
       setNextOnboardingStatus,
+      t,
     ],
   );
 
@@ -106,20 +109,24 @@ export const CreateWorkspace = () => {
 
   return (
     <>
-      <Title noMarginTop>Create your workspace</Title>
+      <Title noMarginTop>
+        <Trans>Create your workspace</Trans>
+      </Title>
       <SubTitle>
-        A shared environment where you will be able to manage your customer
-        relations with your team.
+        <Trans>
+          A shared environment where you will be able to manage your customer
+          relations with your team.
+        </Trans>
       </SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <H2Title title="Workspace logo" />
+          <H2Title title={t`Workspace logo`} />
           <WorkspaceLogoUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <H2Title
-            title="Workspace name"
-            description="The name of your organization"
+            title={t`Workspace name`}
+            description={t`The name of your organization`}
           />
           <Controller
             name="name"
@@ -144,7 +151,7 @@ export const CreateWorkspace = () => {
       </StyledContentContainer>
       <StyledButtonContainer>
         <MainButton
-          title="Continue"
+          title={t`Continue`}
           onClick={handleSubmit(onSubmit)}
           disabled={!isValid || isSubmitting}
           Icon={() => isSubmitting && <Loader />}

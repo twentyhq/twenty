@@ -67,7 +67,7 @@ const ApolloStorybookDevLogEffect = () => {
   return <></>;
 };
 
-dynamicActivate('en');
+await dynamicActivate('en');
 
 const Providers = () => {
   return (
