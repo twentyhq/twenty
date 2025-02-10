@@ -1809,3 +1809,4 @@ msgstr "Votre espace de travail"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Votre espace de travail sera désactivé"
+

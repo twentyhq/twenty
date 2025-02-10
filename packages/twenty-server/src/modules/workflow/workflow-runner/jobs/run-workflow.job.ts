@@ -12,7 +12,7 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-run.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
@@ -38,7 +38,14 @@ export class RunWorkflowJob {
     workflowRunId,
     payload,
   }: RunWorkflowJobData): Promise<void> {
-    await this.workflowRunWorkspaceService.startWorkflowRun(workflowRunId);
+    const context = {
+      trigger: payload,
+    };
+
+    await this.workflowRunWorkspaceService.startWorkflowRun({
+      workflowRunId,
+      context,
+    });
 
     try {
       const workflowVersion =
@@ -48,35 +55,27 @@ export class RunWorkflowJob {
 
       await this.throttleExecution(workflowVersion.workflowId);
 
-      const { steps, status } =
-        await this.workflowExecutorWorkspaceService.execute({
-          currentStepIndex: 0,
-          steps: workflowVersion.steps || [],
-          context: {
-            trigger: payload,
-          },
-          output: {
-            steps: {},
-            status: WorkflowRunStatus.RUNNING,
-          },
-        });
+      const { status } = await this.workflowExecutorWorkspaceService.execute({
+        workflowRunId,
+        currentStepIndex: 0,
+        steps: workflowVersion.steps || [],
+        context,
+        workflowExecutorOutput: {
+          steps: {},
+          status: WorkflowRunStatus.RUNNING,
+        },
+      });
 
-      await this.workflowRunWorkspaceService.endWorkflowRun(
+      await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         status,
-        {
-          steps,
-        },
-      );
+      });
     } catch (error) {
-      await this.workflowRunWorkspaceService.endWorkflowRun(
+      await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
-        WorkflowRunStatus.FAILED,
-        {
-          steps: {},
-          error: error.message,
-        },
-      );
+        status: WorkflowRunStatus.FAILED,
+        error: error.message,
+      });
     }
   }
 

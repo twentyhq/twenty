@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 12:39\n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -49,7 +49,7 @@ msgstr "24h ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr ""
+msgstr "Un ambiente condiviso dove potrai gestire le relazioni con i clienti insieme al tuo team."
 
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
@@ -212,7 +212,7 @@ msgstr "Assegna ruoli per specificare le autorizzazioni di accesso di ogni membr
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:14
 msgid "Assigned members"
-msgstr ""
+msgstr "Membri assegnati"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:129
 msgid "Assigned to"
@@ -220,7 +220,7 @@ msgstr "Assegnato a"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:64
 msgid "Assignment"
-msgstr ""
+msgstr "Assegnazione"
 
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
 msgid "At least 8 characters long."
@@ -436,11 +436,11 @@ msgstr "Crea nuovo record"
 
 #: src/pages/onboarding/CreateProfile.tsx:154
 msgid "Create profile"
-msgstr ""
+msgstr "Crea profilo"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
-msgstr ""
+msgstr "Crea Ruolo"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
@@ -448,7 +448,7 @@ msgstr "Crea webhook"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:113
 msgid "Create your workspace"
-msgstr ""
+msgstr "Crea il tuo spazio di lavoro"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -568,11 +568,11 @@ msgstr "Elimina webhook"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
 msgid "Delete workflow"
-msgstr ""
+msgstr "Elimina workflow"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
 msgid "Delete workflows"
-msgstr ""
+msgstr "Elimina i workflow"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
@@ -789,7 +789,7 @@ msgstr "Esporta vista"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
 msgid "Export Workflows"
-msgstr ""
+msgstr "Esporta i workflow"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
@@ -822,7 +822,7 @@ msgstr "Filtri"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
-msgstr ""
+msgstr "Nome"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
 msgid "Forgot your password?"
@@ -881,7 +881,7 @@ msgstr "Nascondi"
 
 #: src/pages/onboarding/CreateProfile.tsx:157
 msgid "How you'll be identified on the app."
-msgstr ""
+msgstr "Come sarai identificato sull'app."
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -978,7 +978,7 @@ msgstr "Lingua"
 
 #: src/pages/onboarding/CreateProfile.tsx:202
 msgid "Last Name"
-msgstr ""
+msgstr "Cognome"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
 msgid "Latest"
@@ -1067,7 +1067,7 @@ msgstr "Nome"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:49
 msgid "Name can not be empty"
-msgstr ""
+msgstr "Il nome non può essere vuoto"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1226,16 +1226,16 @@ msgstr "Distruggi definitivamente il record"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
 msgid "Permanently destroy records"
-msgstr ""
+msgstr "Distruggi definitivamente i record"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
 msgid "Permanently destroy workflows"
-msgstr ""
+msgstr "Distruggi definitivamente i workflow"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:70
 #: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
-msgstr ""
+msgstr "Permessi"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -1575,7 +1575,7 @@ msgstr "Nome e icona di questo campo"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:129
 msgid "The name of your organization"
-msgstr ""
+msgstr "Il nome della tua organizzazione"
 
 #: src/pages/not-found/NotFound.tsx:50
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -1608,11 +1608,11 @@ msgstr "Questa azione non può essere annullata. Questo eliminerà definitivamen
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
-msgstr ""
+msgstr "Questo Ruolo ha i seguenti permessi."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 msgid "This Role is assigned to these workspace member."
-msgstr ""
+msgstr "Questo Ruolo è assegnato a questi membri dello spazio di lavoro."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1650,7 +1650,7 @@ msgstr "Unico"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:80
 msgid "Unknown error"
-msgstr ""
+msgstr "Errore sconosciuto"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
@@ -1771,11 +1771,11 @@ msgstr "Eliminazione Workspace"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:123
 msgid "Workspace logo"
-msgstr ""
+msgstr "Logo dello spazio di lavoro"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:128
 msgid "Workspace name"
-msgstr ""
+msgstr "Nome dello spazio di lavoro"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
 msgid "Write a description"
@@ -1800,12 +1800,13 @@ msgstr "Il tuo nome come verrà visualizzato"
 
 #: src/pages/onboarding/CreateProfile.tsx:167
 msgid "Your name as it will be displayed on the app"
-msgstr ""
+msgstr "Il tuo nome come sarà visualizzato sull'app"
 
 #: src/pages/auth/SignInUp.tsx:73
 msgid "Your Workspace"
-msgstr ""
+msgstr "Il tuo spazio di lavoro"
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Il tuo workspace sarà disabilitato"
+

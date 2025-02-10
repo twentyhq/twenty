@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 12:39\n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -49,7 +49,8 @@ msgstr "24시간 ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr ""
+msgstr "\\\n"
+"팀과 함께 고객 관계를 관리할 수 있는 공유 환경입니다."
 
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
@@ -212,7 +213,7 @@ msgstr "각 구성원의 접근 권한을 지정하려면 역할을 할당하세
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:14
 msgid "Assigned members"
-msgstr ""
+msgstr "할당된 멤버"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:129
 msgid "Assigned to"
@@ -220,7 +221,7 @@ msgstr "할당됨"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:64
 msgid "Assignment"
-msgstr ""
+msgstr "할당"
 
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
 msgid "At least 8 characters long."
@@ -436,11 +437,11 @@ msgstr "새 레코드 생성"
 
 #: src/pages/onboarding/CreateProfile.tsx:154
 msgid "Create profile"
-msgstr ""
+msgstr "프로필 생성"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
-msgstr ""
+msgstr "역할 생성"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
@@ -448,7 +449,7 @@ msgstr "Webhook 생성"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:113
 msgid "Create your workspace"
-msgstr ""
+msgstr "워크스페이스 만들기"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -568,11 +569,11 @@ msgstr "Webhook 삭제"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
 msgid "Delete workflow"
-msgstr ""
+msgstr "워크플로 삭제"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
 msgid "Delete workflows"
-msgstr ""
+msgstr "워크플로 삭제"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
@@ -789,7 +790,7 @@ msgstr "보기 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
 msgid "Export Workflows"
-msgstr ""
+msgstr "워크플로 내보내기"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
@@ -822,7 +823,7 @@ msgstr "필터"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
-msgstr ""
+msgstr "이름"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
 msgid "Forgot your password?"
@@ -881,7 +882,7 @@ msgstr "숨기기"
 
 #: src/pages/onboarding/CreateProfile.tsx:157
 msgid "How you'll be identified on the app."
-msgstr ""
+msgstr "앱에서 사용자를 식별하는 방법입니다."
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -978,7 +979,7 @@ msgstr "언어"
 
 #: src/pages/onboarding/CreateProfile.tsx:202
 msgid "Last Name"
-msgstr ""
+msgstr "성"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
 msgid "Latest"
@@ -1067,7 +1068,7 @@ msgstr "이름"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:49
 msgid "Name can not be empty"
-msgstr ""
+msgstr "이름은 비워 둘 수 없습니다"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1226,16 +1227,16 @@ msgstr "레코드 영구 삭제"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
 msgid "Permanently destroy records"
-msgstr ""
+msgstr "레코드 영구 삭제"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
 msgid "Permanently destroy workflows"
-msgstr ""
+msgstr "워크플로 영구 삭제"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:70
 #: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
-msgstr ""
+msgstr "권한"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -1575,7 +1576,7 @@ msgstr "이 필드의 이름과 아이콘"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:129
 msgid "The name of your organization"
-msgstr ""
+msgstr "조직의 이름"
 
 #: src/pages/not-found/NotFound.tsx:50
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -1608,11 +1609,11 @@ msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 전체 워크
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
-msgstr ""
+msgstr "이 역할은 다음과 같은 권한을 가지고 있습니다."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 msgid "This Role is assigned to these workspace member."
-msgstr ""
+msgstr "이 역할은 해당 워크스페이스 멤버에게 할당되어 있습니다."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1650,7 +1651,7 @@ msgstr "고유"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:80
 msgid "Unknown error"
-msgstr ""
+msgstr "알 수 없는 오류"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
@@ -1771,11 +1772,11 @@ msgstr "워크스페이스 삭제"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:123
 msgid "Workspace logo"
-msgstr ""
+msgstr "워크스페이스 로고"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:128
 msgid "Workspace name"
-msgstr ""
+msgstr "워크스페이스 이름"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
 msgid "Write a description"
@@ -1800,12 +1801,13 @@ msgstr "표시될 이름"
 
 #: src/pages/onboarding/CreateProfile.tsx:167
 msgid "Your name as it will be displayed on the app"
-msgstr ""
+msgstr "앱에 디스플레이될 귀하의 이름"
 
 #: src/pages/auth/SignInUp.tsx:73
 msgid "Your Workspace"
-msgstr ""
+msgstr "귀하의 워크스페이스"
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "워크스페이스가 비활성화됩니다"
+

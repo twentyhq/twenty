@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 12:39\n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -49,7 +49,7 @@ msgstr "24時間 ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr ""
+msgstr "チームと協力して顧客関係を管理できる共有環境です。"
 
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
@@ -212,7 +212,7 @@ msgstr "各メンバーのアクセス権限を指定するロールを割り当
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:14
 msgid "Assigned members"
-msgstr ""
+msgstr "割り当てられたメンバー"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:129
 msgid "Assigned to"
@@ -220,7 +220,7 @@ msgstr "担当"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:64
 msgid "Assignment"
-msgstr ""
+msgstr "割り当て"
 
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
 msgid "At least 8 characters long."
@@ -436,11 +436,11 @@ msgstr "新しいレコードを作成"
 
 #: src/pages/onboarding/CreateProfile.tsx:154
 msgid "Create profile"
-msgstr ""
+msgstr "プロフィールの作成"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
-msgstr ""
+msgstr "ロールの作成"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
@@ -448,7 +448,7 @@ msgstr "Webhookを作成"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:113
 msgid "Create your workspace"
-msgstr ""
+msgstr "ワークスペースの作成"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -568,11 +568,11 @@ msgstr "Webhookを削除"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
 msgid "Delete workflow"
-msgstr ""
+msgstr "ワークフローの削除"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
 msgid "Delete workflows"
-msgstr ""
+msgstr "ワークフローの削除"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
@@ -789,7 +789,7 @@ msgstr "ビューをエクスポート"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
 msgid "Export Workflows"
-msgstr ""
+msgstr "ワークフローのエクスポート"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
@@ -822,7 +822,7 @@ msgstr "フィルター"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
-msgstr ""
+msgstr "名"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
 msgid "Forgot your password?"
@@ -881,7 +881,7 @@ msgstr "非表示"
 
 #: src/pages/onboarding/CreateProfile.tsx:157
 msgid "How you'll be identified on the app."
-msgstr ""
+msgstr "アプリ上での識別名です。"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -978,7 +978,7 @@ msgstr "言語"
 
 #: src/pages/onboarding/CreateProfile.tsx:202
 msgid "Last Name"
-msgstr ""
+msgstr "姓"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
 msgid "Latest"
@@ -1067,7 +1067,7 @@ msgstr "名前"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:49
 msgid "Name can not be empty"
-msgstr ""
+msgstr "名前は空にできません"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1226,16 +1226,16 @@ msgstr "レコードを永久に削除"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
 msgid "Permanently destroy records"
-msgstr ""
+msgstr "レコードを永久に破壊する"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
 msgid "Permanently destroy workflows"
-msgstr ""
+msgstr "ワークフローを永久に破壊する"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:70
 #: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
-msgstr ""
+msgstr "権限"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -1575,7 +1575,7 @@ msgstr "このフィールドの名前とアイコン"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:129
 msgid "The name of your organization"
-msgstr ""
+msgstr "組織の名前"
 
 #: src/pages/not-found/NotFound.tsx:50
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -1608,11 +1608,11 @@ msgstr "この操作は取り消せません。ワークスペース全体が永
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
-msgstr ""
+msgstr "このロールには以下の権限があります。"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 msgid "This Role is assigned to these workspace member."
-msgstr ""
+msgstr "このロールは、これらのワークスペースメンバーに割り当てられています。"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1650,7 +1650,7 @@ msgstr "一意"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:80
 msgid "Unknown error"
-msgstr ""
+msgstr "不明なエラー"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
@@ -1771,11 +1771,11 @@ msgstr "ワークスペース削除"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:123
 msgid "Workspace logo"
-msgstr ""
+msgstr "ワークスペースのロゴ"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:128
 msgid "Workspace name"
-msgstr ""
+msgstr "ワークスペースの名前"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
 msgid "Write a description"
@@ -1800,12 +1800,13 @@ msgstr "表示名"
 
 #: src/pages/onboarding/CreateProfile.tsx:167
 msgid "Your name as it will be displayed on the app"
-msgstr ""
+msgstr "アプリ上での表示名"
 
 #: src/pages/auth/SignInUp.tsx:73
 msgid "Your Workspace"
-msgstr ""
+msgstr "あなたのワークスペース"
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "ワークスペースが無効になります"
+

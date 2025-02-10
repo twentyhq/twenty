@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 12:24\n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,186 +20,186 @@ msgstr ""
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
 msgid "(System) View Fields"
-msgstr ""
+msgstr "(Sistem) Alanları Görüntüle"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
 msgid "(System) View Filter Groups"
-msgstr ""
+msgstr "(Sistem) Filtre Gruplarını Görüntüle"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
 msgid "(System) View Filters"
-msgstr ""
+msgstr "(Sistem) Filtreleri Görüntüle"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
 msgid "(System) View Groups"
-msgstr ""
+msgstr "(Sistem) Grupları Görüntüle"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
 msgid "(System) View Sorts"
-msgstr ""
+msgstr "(Sistem) Sıralamaları Görüntüle"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:33
 msgid "(System) Views"
-msgstr ""
+msgstr "(Sistem) Görünümleri"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:55
 msgid "A company"
-msgstr ""
+msgstr "Bir şirket"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:30
 msgid "A connected account"
-msgstr ""
+msgstr "Bağlı bir hesap"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
 msgid "A favorite that can be accessed from the left menu"
-msgstr ""
+msgstr "Sol menüden erişilebilen bir favori"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:24
 msgid "A Folder of favorites"
-msgstr ""
+msgstr "Favorilerden bir klasör"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
 msgid "A group of related messages (e.g. email thread, chat thread)"
-msgstr ""
+msgstr "İlgili mesajların bir grubu (örn. e-posta dizisi, sohbet dizisi)"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
-msgstr ""
+msgstr "Bir mesajlaşma kanalı üzerinden gönderilen veya alınan bir mesaj (e-posta, sohbet vb.)"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "A note"
-msgstr ""
+msgstr "Bir not"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
 msgid "A note target"
-msgstr ""
+msgstr "Bir not hedefi"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:59
 msgid "A person"
-msgstr ""
+msgstr "Bir kişi"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:48
 msgid "A task"
-msgstr ""
+msgstr "Bir görev"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
 msgid "A task target"
-msgstr ""
+msgstr "Bir görev hedefi"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:20
 msgid "A webhook"
-msgstr ""
+msgstr "Bir webhook"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
 msgid "A workflow"
-msgstr ""
+msgstr "Bir iş akışı"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
 msgid "A workflow event listener"
-msgstr ""
+msgstr "Bir iş akışı olay dinleyicisi"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
 msgid "A workflow run"
-msgstr ""
+msgstr "Bir iş akışı çalıştırması"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
 msgid "A workflow version"
-msgstr ""
+msgstr "Bir iş akışı sürümü"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
 msgid "A workspace member"
-msgstr ""
+msgstr "Bir çalışma alanı üyesi"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:58
 msgid "Access Token"
-msgstr ""
+msgstr "Erişim Tokeni"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
 #: src/modules/company/standard-objects/company.workspace-entity.ts:176
 msgid "Account Owner"
-msgstr ""
+msgstr "Hesap Sahibi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:169
 msgid "Account owner for companies"
-msgstr ""
+msgstr "Şirketler için hesap sahibi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:168
 msgid "Account Owner For Companies"
-msgstr ""
+msgstr "Şirketler İçin Hesap Sahibi"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:123
 msgid "Address"
-msgstr ""
+msgstr "Adres"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:264
 msgid "Address (deprecated) "
-msgstr ""
+msgstr "Adres (kullanımdan kalkan) "
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:124
 msgid "Address of the company"
-msgstr ""
+msgstr "Şirketin adresi"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:265
 msgid "Address of the company - deprecated in favor of new address field"
-msgstr ""
+msgstr "Yeni adres alanı lehine tercih edilen şirketin adresi - kullanımdan kalkmış"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:189
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
 msgid "Aggregate operation"
-msgstr ""
+msgstr "Toplama işlemi"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:35
 msgid "Aggregated / filtered event to be displayed on the timeline"
-msgstr ""
+msgstr "Zaman çizelgesinde gösterilecek toplanmış/filtrelenmiş olay"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:69
 msgid "Amount"
-msgstr ""
+msgstr "Miktar"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:19
 msgid "An API key"
-msgstr ""
+msgstr "Bir API anahtarı"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:32
 msgid "An attachment"
-msgstr ""
+msgstr "Bir ek"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:24
 msgid "An audit log of actions performed in the system"
-msgstr ""
+msgstr "Sistemde gerçekleştirilen işlemlerin bir denetim günlüğü"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:20
 msgid "An event related to user behavior"
-msgstr ""
+msgstr "Kullanıcı davranışıyla ilgili bir olay"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:50
 msgid "An opportunity"
-msgstr ""
+msgstr "Bir fırsat"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:114
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
-msgstr ""
+msgstr "Yıllık Tekrarlayan Gelir: Şirketin gerçek veya tahmini yıllık geliri"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
 msgid "API Key"
-msgstr ""
+msgstr "API Anahtarı"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:18
 msgid "API Keys"
-msgstr ""
+msgstr "API Anahtarları"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
 msgid "ApiKey expiration date"
-msgstr ""
+msgstr "API Anahtarının Son Kullanma Tarihi"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
 msgid "ApiKey name"
-msgstr ""
+msgstr "API Anahtarının Adı"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
 msgid "ApiKey revocation date"
-msgstr ""
+msgstr "API Anahtarının İptal Tarihi"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:113
 msgid "ARR"
@@ -207,55 +207,55 @@ msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
 msgid "Assigned tasks"
-msgstr ""
+msgstr "Atanan görevler"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:168
 msgid "Assignee"
-msgstr ""
+msgstr "Atanan kişi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
 msgid "Associated User Id"
-msgstr ""
+msgstr "İlişkilendirilmiş Kullanıcı Id"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:30
 msgid "Attachment"
-msgstr ""
+msgstr "Ek"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:70
 msgid "Attachment author"
-msgstr ""
+msgstr "Ek sahibi"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:129
 msgid "Attachment company"
-msgstr ""
+msgstr "Ek şirketi"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:52
 msgid "Attachment full path"
-msgstr ""
+msgstr "Ek tam yolu"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:43
 msgid "Attachment name"
-msgstr ""
+msgstr "Ek adı"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:99
 msgid "Attachment note"
-msgstr ""
+msgstr "Ek notu"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:144
 msgid "Attachment opportunity"
-msgstr ""
+msgstr "Ek fırsatı"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:114
 msgid "Attachment person"
-msgstr ""
+msgstr "Ek kişi"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:84
 msgid "Attachment task"
-msgstr ""
+msgstr "Ek görev"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:61
 msgid "Attachment type"
-msgstr ""
+msgstr "Ek tipi"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:156
 #: src/modules/person/standard-objects/person.workspace-entity.ts:238
@@ -265,110 +265,110 @@ msgstr ""
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
 msgid "Attachments"
-msgstr ""
+msgstr "Ekler"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
 msgid "Attachments created by the workspace member"
-msgstr ""
+msgstr "İş alanı üyesi tarafından oluşturulan ekler"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:240
 msgid "Attachments linked to the company"
-msgstr ""
+msgstr "Şirkete bağlı ekler"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:239
 msgid "Attachments linked to the contact."
-msgstr ""
+msgstr "İletişime bağlı ekler."
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:200
 msgid "Attachments linked to the opportunity"
-msgstr ""
+msgstr "Fırsata bağlı ekler"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:123
 msgid "Attachments tied to the {label}"
-msgstr ""
+msgstr "{label} ile bağlı ekler"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
 msgid "Audit Log"
-msgstr ""
+msgstr "Denetim Kaydı"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:255
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:23
 msgid "Audit Logs"
-msgstr ""
+msgstr "Denetim Kayıtları"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:256
 msgid "Audit Logs linked to the workspace member"
-msgstr ""
+msgstr "İş alanı üyesi ile ilişkilendirilmiş denetim kayıtları"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
 msgid "Auth failed at"
-msgstr ""
+msgstr "Yetkilendirme başarısız oldu"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
 msgid "Author"
-msgstr ""
+msgstr "Yazar"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:180
 msgid "Authored attachments"
-msgstr ""
+msgstr "Yazılmış ekler"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
 msgid "Automatically create People records when receiving or sending emails"
-msgstr ""
+msgstr "E-postalar alırken veya gönderirken otomatik olarak Kişi kayıtları oluştur"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
 msgid "Automatically create records for people you participated with in an event."
-msgstr ""
+msgstr "Bir etkinlikte birlikte olduğunuz kişiler için otomatik olarak kayıt oluştur."
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:146
 msgid "Avatar"
-msgstr ""
+msgstr "Avatar"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:117
 msgid "Avatar Url"
-msgstr ""
+msgstr "Avatar URL"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:18
 msgid "Behavioral Event"
-msgstr ""
+msgstr "Davranışsal Etkinlik"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:19
 msgid "Behavioral Events"
-msgstr ""
+msgstr "Davranışsal Etkinlikler"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:216
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:22
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:24
 msgid "Blocklist"
-msgstr ""
+msgstr "Kara Liste"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:217
 msgid "Blocklisted handles"
-msgstr ""
+msgstr "Kara Listede olan kullanıcı adları"
 
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:23
 msgid "Blocklists"
-msgstr ""
+msgstr "Kara Listeler"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:77
 #: src/modules/task/standard-objects/task.workspace-entity.ts:87
 #: src/modules/note/standard-objects/note.workspace-entity.ts:75
 #: src/modules/note/standard-objects/note.workspace-entity.ts:85
 msgid "Body"
-msgstr ""
+msgstr "İçerik"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
 msgid "Cached record name"
-msgstr ""
+msgstr "Önbelleğe alınmış kayıt adı"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:74
 msgid "Calendar Channel"
-msgstr ""
+msgstr "Takvim Kanalı"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:23
 msgid "Calendar Channel Event Association"
-msgstr ""
+msgstr "Takvim Kanalı Etkinlik İlişkilendirmesi"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:155
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:156
@@ -377,68 +377,68 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:24
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:25
 msgid "Calendar Channel Event Associations"
-msgstr ""
+msgstr "Takvim Kanalı Etkinlik İlişkilendirmeleri"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:139
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:140
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:75
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:76
 msgid "Calendar Channels"
-msgstr ""
+msgstr "Takvim Kanalları"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:27
 msgid "Calendar event"
-msgstr ""
+msgstr "Takvim etkinliği"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:32
 msgid "Calendar event participant"
-msgstr ""
+msgstr "Takvim etkinliği katılımcısı"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:33
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:34
 msgid "Calendar event participants"
-msgstr ""
+msgstr "Takvim etkinliği katılımcıları"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
 #: src/modules/person/standard-objects/person.workspace-entity.ts:262
 #: src/modules/person/standard-objects/person.workspace-entity.ts:263
 msgid "Calendar Event Participants"
-msgstr ""
+msgstr "Takvim Etkinliği Katılımcıları"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:28
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:29
 msgid "Calendar events"
-msgstr ""
+msgstr "Takvim etkinlikleri"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:55
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:56
 msgid "Channel ID"
-msgstr ""
+msgstr "Kanal ID"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:136
 msgid "Channel Type"
-msgstr ""
+msgstr "Kanal Tipi"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:137
 msgid "City"
-msgstr ""
+msgstr "Şehir"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:79
 msgid "Close date"
-msgstr ""
+msgstr "Kapanış tarihi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:97
 msgid "Color Scheme"
-msgstr ""
+msgstr "Renk Şeması"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:108
 msgid "Compact View"
-msgstr ""
+msgstr "Kompakt Görünüm"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:54
 msgid "Companies"
-msgstr ""
+msgstr "Şirketler"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
@@ -449,16 +449,16 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:53
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
 msgid "Company"
-msgstr ""
+msgstr "Şirket"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:144
 msgid "Company record position"
-msgstr ""
+msgstr "Şirket kayıt pozisyonu"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:135
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:136
 msgid "Conference Solution"
-msgstr ""
+msgstr "Konferans Çözümü"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:359
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:360
@@ -466,61 +466,61 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:307
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:308
 msgid "Connected Account"
-msgstr ""
+msgstr "Bağlı Hesap"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:192
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:193
 msgid "Connected accounts"
-msgstr ""
+msgstr "Bağlı hesaplar"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:29
 msgid "Connected Accounts"
-msgstr ""
+msgstr "Bağlı Hesaplar"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:170
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:221
 msgid "Contact auto creation policy"
-msgstr ""
+msgstr "Kişi otomatik oluşturma politikası"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:147
 msgid "Contact’s avatar"
-msgstr ""
+msgstr "Kişinin avatarı"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:138
 msgid "Contact’s city"
-msgstr ""
+msgstr "Kişinin şehri"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:178
 msgid "Contact’s company"
-msgstr ""
+msgstr "Kişinin şirketi"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:80
 msgid "Contact’s Emails"
-msgstr ""
+msgstr "Kişinin E-postaları"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:110
 msgid "Contact’s job title"
-msgstr ""
+msgstr "Kişinin iş unvanı"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:90
 msgid "Contact’s Linkedin account"
-msgstr ""
+msgstr "Kişinin Linkedin hesabı"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:70
 msgid "Contact’s name"
-msgstr ""
+msgstr "Kişinin adı"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:119
 msgid "Contact’s phone number"
-msgstr ""
+msgstr "Kişinin telefon numarası"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:129
 msgid "Contact’s phone numbers"
-msgstr ""
+msgstr "Kişinin telefon numaraları"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:100
 msgid "Contact’s X/Twitter account"
-msgstr ""
+msgstr "Kişinin X/Twitter hesabı"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
@@ -530,109 +530,109 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:154
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
-msgstr ""
+msgstr "Oluşturan"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:44
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:45
 #: src/engine/twenty-orm/base.workspace-entity.ts:26
 #: src/engine/twenty-orm/base.workspace-entity.ts:27
 msgid "Creation date"
-msgstr ""
+msgstr "Oluşturulma tarihi"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
 msgid "Creation DateTime"
-msgstr ""
+msgstr "Oluşturulma Tarihi ve Saati"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:278
 msgid "Date format"
-msgstr ""
+msgstr "Tarih formatı"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:53
 msgid "Date when the record was deleted"
-msgstr ""
+msgstr "Kaydın silindiği tarih"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:52
 msgid "Deleted at"
-msgstr ""
+msgstr "Silindiği tarih"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:109
 msgid "Describes if the view is in compact mode"
-msgstr ""
+msgstr "Görünümün kompakt modda olup olmadığını açıklar"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:109
 msgid "Description"
-msgstr ""
+msgstr "Açıklama"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:48
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:66
 msgid "Direction"
-msgstr ""
+msgstr "Yön"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:62
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:63
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:54
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:55
 msgid "Display Name"
-msgstr ""
+msgstr "Görünen Ad"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:59
 msgid "Display Value"
-msgstr ""
+msgstr "Görüntü Değeri"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:73
 msgid "Domain Name"
-msgstr ""
+msgstr "Alan Adı"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:100
 msgid "Due Date"
-msgstr ""
+msgstr "Bitiş Tarihi"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:79
 msgid "Emails"
-msgstr ""
+msgstr "E-postalar"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:83
 msgid "Employees"
-msgstr ""
+msgstr "Çalışanlar"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:78
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:79
 msgid "End Date"
-msgstr ""
+msgstr "Bitiş Tarihi"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
 msgid "Event company"
-msgstr ""
+msgstr "Etkinlik şirketi"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
 msgid "Event context"
-msgstr ""
+msgstr "Etkinlik bağlamı"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
 msgid "Event details"
-msgstr ""
+msgstr "Etkinlik detayları"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
 msgid "Event external ID"
-msgstr ""
+msgstr "Etkinlik harici kimliği"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
 msgid "Event ID"
-msgstr ""
+msgstr "Etkinlik kimliği"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
 msgid "Event Listeners"
-msgstr ""
+msgstr "Etkinlik Dinleyicileri"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
@@ -640,142 +640,142 @@ msgstr ""
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
 msgid "Event name"
-msgstr ""
+msgstr "Etkinlik adı"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
 msgid "Event name/type"
-msgstr ""
+msgstr "Etkinlik adı/tipi"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
 msgid "Event note"
-msgstr ""
+msgstr "Etkinlik notu"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
 msgid "Event opportunity"
-msgstr ""
+msgstr "Etkinlik fırsatı"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
 msgid "Event Participants"
-msgstr ""
+msgstr "Etkinlik Katılımcıları"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
 msgid "Event person"
-msgstr ""
+msgstr "Etkinlik kişisi"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
 msgid "Event task"
-msgstr ""
+msgstr "Etkinlik görevi"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
 msgid "Event workflow"
-msgstr ""
+msgstr "Etkinlik iş akışı"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
 msgid "Event workflow run"
-msgstr ""
+msgstr "Etkinlik iş akışı çalıştırılması"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
 msgid "Event workflow version"
-msgstr ""
+msgstr "Etkinlik iş akışı versiyonu"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
 msgid "Event workspace member"
-msgstr ""
+msgstr "Etkinlik çalışma alanı üyesi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
 #: src/modules/person/standard-objects/person.workspace-entity.ts:276
 msgid "Events"
-msgstr ""
+msgstr "Etkinlikler"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:277
 msgid "Events linked to the person"
-msgstr ""
+msgstr "Kişi ile ilgili etkinlikler"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
 msgid "Events linked to the workspace member"
-msgstr ""
+msgstr "Çalışma alanı üyesi ile ilgili etkinlikler"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
 msgid "Exclude group emails"
-msgstr ""
+msgstr "Grup e-postalarını hariç tut"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
 msgid "Exclude non professional emails"
-msgstr ""
+msgstr "Profesyonel olmayan e-postaları hariç tut"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
 msgid "Executed by"
-msgstr ""
+msgstr "Tarafından yürütüldü"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
 msgid "Expiration date"
-msgstr ""
+msgstr "Son kullanma tarihi"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
 msgid "Favorite"
-msgstr ""
+msgstr "Favori"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
 msgid "Favorite company"
-msgstr ""
+msgstr "Favori şirket"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
 msgid "Favorite Folder"
-msgstr ""
+msgstr "Favori Klasör"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
 msgid "Favorite folder position"
-msgstr ""
+msgstr "Favori klasör pozisyonu"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
 msgid "Favorite Folders"
-msgstr ""
+msgstr "Favori Klasörleri"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
 msgid "Favorite note"
-msgstr ""
+msgstr "Favori Not"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
 msgid "Favorite opportunity"
-msgstr ""
+msgstr "Favori Fırsat"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
 msgid "Favorite person"
-msgstr ""
+msgstr "Favori Kişi"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
 msgid "Favorite position"
-msgstr ""
+msgstr "Favori Pozisyon"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
 msgid "Favorite task"
-msgstr ""
+msgstr "Favori Görev"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
 msgid "Favorite view"
-msgstr ""
+msgstr "Favori Görünüm"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
 msgid "Favorite workflow"
-msgstr ""
+msgstr "Favori İş Akışı"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
 msgid "Favorite workflow run"
-msgstr ""
+msgstr "Favori İş Akışı Yürütmesi"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
 msgid "Favorite workflow version"
-msgstr ""
+msgstr "Favori İş Akışı Sürümü"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
 msgid "Favorite workspace member"
-msgstr ""
+msgstr "Favori Çalışma Alanı Üyesi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
@@ -791,91 +791,91 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:226
 #: src/engine/twenty-orm/custom.workspace-entity.ts:101
 msgid "Favorites"
-msgstr ""
+msgstr "Favoriler"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
 msgid "Favorites in this folder"
-msgstr ""
+msgstr "Bu Klasördeki Favoriler"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:227
 msgid "Favorites linked to the company"
-msgstr ""
+msgstr "Şirketle İlişkili Favoriler"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:227
 msgid "Favorites linked to the contact"
-msgstr ""
+msgstr "İletişimle İlişkili Favoriler"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:144
 msgid "Favorites linked to the note"
-msgstr ""
+msgstr "Notla İlişkili Favoriler"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:165
 msgid "Favorites linked to the opportunity"
-msgstr ""
+msgstr "Fırsatla İlişkili Favoriler"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:198
 msgid "Favorites linked to the task"
-msgstr ""
+msgstr "Görevle İlişkili Favoriler"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:178
 msgid "Favorites linked to the view"
-msgstr ""
+msgstr "Görünümle İlişkili Favoriler"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
 msgid "Favorites linked to the workflow"
-msgstr ""
+msgstr "İş Akışıyla İlişkili Favoriler"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
 msgid "Favorites linked to the workflow run"
-msgstr ""
+msgstr "İş Akışı Yürütmesiyle İlişkili Favoriler"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
 msgid "Favorites linked to the workflow version"
-msgstr ""
+msgstr "İş Akışı Sürümüyle İlişkili Favoriler"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
 msgid "Favorites linked to the workspace member"
-msgstr ""
+msgstr "Çalışma Alanı Üyesiyle İlişkili Favoriler"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:106
 msgid "Favorites tied to the {label}"
-msgstr ""
+msgstr "<b>{label}</b> ile Bağlantılı Favoriler"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:34
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:45
 msgid "Field Metadata Id"
-msgstr ""
+msgstr "Alan Metadata Id"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:262
 #: src/modules/view/standard-objects/view.workspace-entity.ts:263
 msgid "Field metadata used for aggregate operation"
-msgstr ""
+msgstr "Toplu İşlem için Kullanılan Alan Metadata"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts:6
 msgid "Field used for full-text search"
-msgstr ""
+msgstr "Tam Metin Araması için Kullanılan Alan"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:51
 msgid "Field Value"
-msgstr ""
+msgstr "Alan Değeri"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
 msgid "Folder for Message Channel"
-msgstr ""
+msgstr "Mesaj Kanalı için Klasör"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
 msgid "Folder name"
-msgstr ""
+msgstr "Klasör İsmi"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:51
 msgid "Full path"
-msgstr ""
+msgstr "Tam Yol"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:52
 msgid "Group by this field value"
-msgstr ""
+msgstr "Bu Alan Değerine Göre Grupla"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
 msgid "handle"
@@ -892,256 +892,256 @@ msgstr ""
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:34
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:35
 msgid "Handle"
-msgstr ""
+msgstr "Tanıtıcı"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:95
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:96
 msgid "Handle Aliases"
-msgstr ""
+msgstr "Tanıtıcı Takma Adları"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:40
 msgid "Header message Id"
-msgstr ""
+msgstr "Üstbilgi Mesaj Id"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:126
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:127
 msgid "iCal UID"
-msgstr ""
+msgstr "iCal Kimlik"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:79
 msgid "Icon"
-msgstr ""
+msgstr "Simge"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:133
 msgid "ICP"
-msgstr ""
+msgstr "IKP"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:14
 #: src/engine/twenty-orm/base.workspace-entity.ts:15
 msgid "Id"
-msgstr ""
+msgstr "Kimlik"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:134
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
-msgstr ""
+msgstr "Ideal Müşteri Profili: Şirketin sizin için en uygun ve değerli müşteri olup olmadığını gösterir"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:78
 msgid "If the event is related to a particular object"
-msgstr ""
+msgstr "Etkinliğin belirli bir nesneyle ilgili olup olmadığı"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:48
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:49
 msgid "Is canceled"
-msgstr ""
+msgstr "İptal Edildi"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:160
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:161
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
 msgid "Is Contact Auto Creation Enabled"
-msgstr ""
+msgstr "İletişim Otomatik Oluşturma Etkin"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
 msgid "Is Full Day"
-msgstr ""
+msgstr "Tüm Gün"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
 msgid "Is Organizer"
-msgstr ""
+msgstr "Organizatör mü"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:258
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:259
 msgid "Is Sync Enabled"
-msgstr ""
+msgstr "Senkronizasyon Etkin"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:109
 msgid "Job Title"
-msgstr ""
+msgstr "İş Unvanı"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:68
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:53
 msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr ""
+msgstr "Bağlam sağlamak için Json nesnesi (kullanıcı, cihaz, çalışma alanı, vb.)"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
 msgid "Json object to provide output of the workflow run"
-msgstr ""
+msgstr "Çalışma akışı çalıştırmasının çıktısını sağlamak için Json nesnesi"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
 msgid "Json object to provide steps"
-msgstr ""
+msgstr "Adımlar sağlamak için Json nesnesi"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
 msgid "Json object to provide trigger"
-msgstr ""
+msgstr "Tetikleyici sağlamak için Json nesnesi"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:64
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:58
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:43
 msgid "Json value for event details"
-msgstr ""
+msgstr "Etkinlik detayları için Json değeri"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:87
 msgid "kanbanfieldMetadataId"
-msgstr ""
+msgstr "kanban alanıMetaveriId"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:68
 msgid "Key"
-msgstr ""
+msgstr "Anahtar"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:107
 msgid "Language"
-msgstr ""
+msgstr "Dil"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
 msgid "Last published Version Id"
-msgstr ""
+msgstr "Son yayınlanan Sürüm Id"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
 msgid "Last sync cursor"
-msgstr ""
+msgstr "Son senkronizasyon imleci"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:239
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:240
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:277
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:278
 msgid "Last sync date"
-msgstr ""
+msgstr "Son senkronizasyon tarihi"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:76
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:77
 msgid "Last sync history ID"
-msgstr ""
+msgstr "Son senkronizasyon geçmişi ID"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:40
 msgid "Last time the record was changed"
-msgstr ""
+msgstr "Kaydın son değiştirildiği zaman"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:39
 msgid "Last update"
-msgstr ""
+msgstr "Son güncelleme"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:93
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:94
 msgid "Linked Object Metadata Id"
-msgstr ""
+msgstr "Bağlantılı Nesne Metadata Id"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:192
 msgid "Linked Opportunities"
-msgstr ""
+msgstr "Bağlantılı Fırsatlar"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:74
 msgid "Linked Record cached name"
-msgstr ""
+msgstr "Bağlantılı Kayıt önbelleğe alınmış adı"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:83
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:84
 msgid "Linked Record id"
-msgstr ""
+msgstr "Bağlantılı Kayıt id"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:89
 #: src/modules/company/standard-objects/company.workspace-entity.ts:93
 msgid "Linkedin"
-msgstr ""
+msgstr "Linkedin"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:193
 msgid "List of opportunities for which that person is the point of contact"
-msgstr ""
+msgstr "Bu kişinin iletişim noktası olduğu fırsatlar listesi"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:117
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:118
 msgid "Location"
-msgstr ""
+msgstr "Konum"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:60
 msgid "Logical Operator"
-msgstr ""
+msgstr "Mantıksal Operatör"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:61
 msgid "Logical operator for the filter group"
-msgstr ""
+msgstr "Filtre grubu için mantıksal operatör"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
 msgid "Meet Link"
-msgstr ""
+msgstr "Meet Bağlantısı"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:72
 msgid "Message"
-msgstr ""
+msgstr "Mesaj"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:41
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:42
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:84
 msgid "Message Channel"
-msgstr ""
+msgstr "Mesaj Kanalı"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:105
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:374
 msgid "Message Channel Association"
-msgstr ""
+msgstr "Mesaj Kanalı İlişkilendirmesi"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:91
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:92
 msgid "Message Channel Id"
-msgstr ""
+msgstr "Mesaj Kanalı Id"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:29
 msgid "Message Channel Message Association"
-msgstr ""
+msgstr "Mesaj Kanalı Mesaj İlişkilendirmesi"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:30
 msgid "Message Channel Message Associations"
-msgstr ""
+msgstr "Mesaj Kanalı Mesaj İlişkilendirmeleri"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:85
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:86
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:128
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:129
 msgid "Message Channels"
-msgstr ""
+msgstr "Mesaj Kanalları"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:67
 msgid "Message Direction"
-msgstr ""
+msgstr "Mesaj Yönü"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:45
 msgid "Message External Id"
-msgstr ""
+msgstr "Mesaj Harici Id"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:21
 msgid "Message Folder"
-msgstr ""
+msgstr "Mesaj Klasörü"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:22
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:388
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:389
 msgid "Message Folders"
-msgstr ""
+msgstr "Mesaj Klasörleri"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:106
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:107
 msgid "Message Id"
-msgstr ""
+msgstr "Mesaj Id"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:41
 msgid "Message id from the message header"
-msgstr ""
+msgstr "Mesaj başlığından mesaj id"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:46
 msgid "Message id from the messaging provider"
-msgstr ""
+msgstr "Mesaj sağlayıcısından mesaj id"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:25
 msgid "Message Participant"
-msgstr ""
+msgstr "Mesaj Katılımcısı"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
@@ -1152,46 +1152,46 @@ msgstr ""
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:27
 msgid "Message Participants"
-msgstr ""
+msgstr "Mesaj Katılımcıları"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:31
 msgid "Message Synced with a Message Channel"
-msgstr ""
+msgstr "Bir Mesaj Kanalı ile Senkronize Mesaj"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:23
 msgid "Message Thread"
-msgstr ""
+msgstr "Mesaj Dizisi"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:77
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:78
 msgid "Message Thread Id"
-msgstr ""
+msgstr "Mesaj Dizisi Id"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:24
 msgid "Message Threads"
-msgstr ""
+msgstr "Mesaj Dizileri"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:29
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:34
 msgid "Messages"
-msgstr ""
+msgstr "Mesajlar"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
 msgid "Messages from the channel."
-msgstr ""
+msgstr "Kanaldan mesajlar."
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
 msgid "Messages from the thread."
-msgstr ""
+msgstr "Diziden mesajlar."
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
 msgid "Messaging provider access token"
-msgstr ""
+msgstr "Mesaj sağlayıcı erişim tokeni"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
 msgid "Messaging provider refresh token"
-msgstr ""
+msgstr "Mesaj sağlayıcı yenileme tokeni"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
@@ -1209,15 +1209,15 @@ msgstr ""
 #: src/engine/twenty-orm/custom.workspace-entity.ts:40
 #: src/engine/twenty-orm/custom.workspace-entity.ts:41
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
 msgid "Name of the favorite folder"
-msgstr ""
+msgstr "Favori klasörün adı"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
 msgid "Name of the workflow run"
-msgstr ""
+msgstr "İş Akışı çalışmasının adı"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
 #: src/modules/note/standard-objects/note.workspace-entity.ts:44
@@ -1225,36 +1225,36 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
-msgstr ""
+msgstr "Not"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:119
 msgid "Note attachments"
-msgstr ""
+msgstr "Not eklentileri"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:76
 #: src/modules/note/standard-objects/note.workspace-entity.ts:86
 msgid "Note body"
-msgstr ""
+msgstr "Not gövdesi"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:56
 msgid "Note record position"
-msgstr ""
+msgstr "Not kaydının konumu"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
 msgid "Note Target"
-msgstr ""
+msgstr "Not Hedefi"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:107
 msgid "Note targets"
-msgstr ""
+msgstr "Not hedefleri"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:26
 msgid "Note Targets"
-msgstr ""
+msgstr "Not Hedefleri"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:67
 msgid "Note title"
-msgstr ""
+msgstr "Not başlığı"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:215
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
@@ -1262,56 +1262,56 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:203
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
-msgstr ""
+msgstr "Notlar"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:74
 msgid "Notes tied to the {label}"
-msgstr ""
+msgstr "{label} ile ilişkili notlar"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:204
 msgid "Notes tied to the company"
-msgstr ""
+msgstr "Şirkete bağlı notlar"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:216
 msgid "Notes tied to the contact"
-msgstr ""
+msgstr "Kişiyle ilgili notlar"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
 msgid "Notes tied to the opportunity"
-msgstr ""
+msgstr "Fırsatla ilgili notlar"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
 msgid "NoteTarget company"
-msgstr ""
+msgstr "NoteTarget şirketi"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
 msgid "NoteTarget note"
-msgstr ""
+msgstr "NoteTarget notu"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
 msgid "NoteTarget opportunity"
-msgstr ""
+msgstr "NoteTarget fırsatı"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
 msgid "NoteTarget person"
-msgstr ""
+msgstr "NoteTarget kişi"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:84
 msgid "Number of employees in the company"
-msgstr ""
+msgstr "Şirkette çalışanların sayısı"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
 msgid "Object id"
-msgstr ""
+msgstr "Nesne kimliği"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
 msgid "Object metadata id"
-msgstr ""
+msgstr "Nesne metaveri kimliği"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:51
 msgid "Object Metadata Id"
-msgstr ""
+msgstr "Nesne Metaveri Kimliği"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
@@ -1321,24 +1321,24 @@ msgstr ""
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
 msgid "Operand"
-msgstr ""
+msgstr "İşlenen"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
 msgid "Operation"
-msgstr ""
+msgstr "İşlem"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
 msgid "Operations"
-msgstr ""
+msgstr "İşlemler"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
 #: src/modules/company/standard-objects/company.workspace-entity.ts:214
 msgid "Opportunities"
-msgstr ""
+msgstr "Fırsatlar"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:215
 msgid "Opportunities linked to the company."
-msgstr ""
+msgstr "Şirketle bağlantılı fırsatlar."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
@@ -1347,65 +1347,65 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:118
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:143
 msgid "Opportunity"
-msgstr ""
+msgstr "Fırsat"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:70
 msgid "Opportunity amount"
-msgstr ""
+msgstr "Fırsat tutarı"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:80
 msgid "Opportunity close date"
-msgstr ""
+msgstr "Fırsatın kapanış tarihi"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:149
 msgid "Opportunity company"
-msgstr ""
+msgstr "Fırsat şirketi"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
 msgid "Opportunity point of contact"
-msgstr ""
+msgstr "Fırsatın iletişim noktası"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
 msgid "Opportunity probability"
-msgstr ""
+msgstr "Fırsat olasılığı"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
 msgid "Opportunity record position"
-msgstr ""
+msgstr "Fırsat kaydının konumu"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
 msgid "Opportunity stage"
-msgstr ""
+msgstr "Fırsat aşaması"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:190
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:97
 msgid "Optional aggregate operation"
-msgstr ""
+msgstr "İsteğe bağlı toplu işlem"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr ""
+msgstr "Webhook yükleri için HMAC imzasını hesaplamakta kullanılan isteğe bağlı gizli anahtar. Bu gizli anahtar, webhook isteklerini doğrulamak için Twenty ile webhook tüketicisi arasında paylaşılır."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
 msgid "Output"
-msgstr ""
+msgstr "Çıktı"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:52
 msgid "Parent View Filter Group"
-msgstr ""
+msgstr "Üst Görünüm Filtre Grubu"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:51
 msgid "Parent View Filter Group Id"
-msgstr ""
+msgstr "Üst Görünüm Filtre Grubu Kimliği"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:58
 #: src/modules/company/standard-objects/company.workspace-entity.ts:164
 msgid "People"
-msgstr ""
+msgstr "İnsanlar"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:165
 msgid "People linked to the company."
-msgstr ""
+msgstr "Şirketle ilişkilendirilmiş insanlar."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
@@ -1418,23 +1418,23 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:124
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:113
 msgid "Person"
-msgstr ""
+msgstr "Kişi"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:157
 msgid "Person record Position"
-msgstr ""
+msgstr "Kişi kaydı pozisyonu"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:118
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:128
 msgid "Phones"
-msgstr ""
+msgstr "Telefonlar"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
 msgid "Point of Contact"
-msgstr ""
+msgstr "İletişim Noktası"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
@@ -1452,156 +1452,156 @@ msgstr ""
 #: src/engine/twenty-orm/custom.workspace-entity.ts:49
 #: src/engine/twenty-orm/custom.workspace-entity.ts:50
 msgid "Position"
-msgstr ""
+msgstr "Pozisyon"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:90
 msgid "Position in the parent view filter group"
-msgstr ""
+msgstr "Ebeveyn görünüm filtre grubundaki pozisyon"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
 msgid "Position in the view filter group"
-msgstr ""
+msgstr "Görünüm filtre grubundaki pozisyon"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
 msgid "Position in view filter group"
-msgstr ""
+msgstr "Görünüm filtre grubundaki pozisyon"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
 msgid "Preferred color scheme"
-msgstr ""
+msgstr "Tercih edilen renk şeması"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
 msgid "Preferred language"
-msgstr ""
+msgstr "Tercih edilen dil"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
 msgid "Probability"
-msgstr ""
+msgstr "Olasılık"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:49
 msgid "provider"
-msgstr ""
+msgstr "sağlayıcı"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
 msgid "Received At"
-msgstr ""
+msgstr "Alındığı Zaman"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
 msgid "Record id"
-msgstr ""
+msgstr "Kayıt kimliği"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:45
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:46
 msgid "Recurring Event ID"
-msgstr ""
+msgstr "Tekrarlayan Etkinlik Kimliği"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
 msgid "Refresh Token"
-msgstr ""
+msgstr "Yenileme Jetonu"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
 msgid "Related user email address"
-msgstr ""
+msgstr "İlgili kullanıcı e-posta adresi"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:144
 #: src/modules/note/standard-objects/note.workspace-entity.ts:106
 msgid "Relations"
-msgstr ""
+msgstr "İlişkiler"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:73
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:74
 msgid "Response Status"
-msgstr ""
+msgstr "Yanıt Durumu"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:47
 msgid "Revocation date"
-msgstr ""
+msgstr "İptal tarihi"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:37
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:38
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:121
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:142
 msgid "Runs"
-msgstr ""
+msgstr "Çalışmalar"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
 msgid "Scopes"
-msgstr ""
+msgstr "Kapsamlar"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
 msgid "Search vector"
-msgstr ""
+msgstr "Arama vektörü"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:69
 msgid "Secret"
-msgstr ""
+msgstr "Gizli"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:64
 msgid "Size"
-msgstr ""
+msgstr "Boyut"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
 msgid "Stage"
-msgstr ""
+msgstr "Aşama"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
 msgid "Start Date"
-msgstr ""
+msgstr "Başlangıç Tarihi"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:110
 msgid "Status"
-msgstr ""
+msgstr "Durum"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:87
 msgid "Statuses"
-msgstr ""
+msgstr "Durumlar"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:49
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:50
 msgid "Subject"
-msgstr ""
+msgstr "Konu"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:51
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:52
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:268
 msgid "Sync Cursor"
-msgstr ""
+msgstr "Senkronizasyon İmleci"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr ""
+msgstr "Senkronizasyon İmleci. Takvim sağlayıcısından etkinlikleri senkronize etmek için kullanılır"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:137
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:138
 msgid "Sync stage"
-msgstr ""
+msgstr "Senkronizasyon aşaması"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:339
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:340
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
 msgid "Sync stage started at"
-msgstr ""
+msgstr "Senkronizasyon aşaması başlama zamanı"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:95
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:96
 msgid "Sync status"
-msgstr ""
+msgstr "Senkronizasyon durumu"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:30
 msgid "Target Url"
-msgstr ""
+msgstr "Hedef Url"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
 #: src/modules/task/standard-objects/task.workspace-entity.ts:46
@@ -1609,48 +1609,48 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
 msgid "Task"
-msgstr ""
+msgstr "Görev"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:169
 msgid "Task assignee"
-msgstr ""
+msgstr "Görev atanan kişi"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:157
 msgid "Task attachments"
-msgstr ""
+msgstr "Görev ekleri"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:78
 #: src/modules/task/standard-objects/task.workspace-entity.ts:88
 msgid "Task body"
-msgstr ""
+msgstr "Görev içeriği"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:101
 msgid "Task due date"
-msgstr ""
+msgstr "Görevin bitiş tarihi"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:58
 msgid "Task record position"
-msgstr ""
+msgstr "Görev kayıt pozisyonu"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:111
 msgid "Task status"
-msgstr ""
+msgstr "Görev durumu"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:25
 msgid "Task Target"
-msgstr ""
+msgstr "Görev hedefi"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:145
 msgid "Task targets"
-msgstr ""
+msgstr "Görev hedefleri"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
 msgid "Task Targets"
-msgstr ""
+msgstr "Görev hedefleri"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:69
 msgid "Task title"
-msgstr ""
+msgstr "Görev başlığı"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:47
 #: src/modules/person/standard-objects/person.workspace-entity.ts:204
@@ -1658,72 +1658,72 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:192
 #: src/engine/twenty-orm/custom.workspace-entity.ts:85
 msgid "Tasks"
-msgstr ""
+msgstr "Görevler"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:146
 msgid "Tasks assigned to the workspace member"
-msgstr ""
+msgstr "İş alanı üyesine atanan görevler"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:90
 msgid "Tasks tied to the {label}"
-msgstr ""
+msgstr "{label} ile ilgili görevler"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:193
 msgid "Tasks tied to the company"
-msgstr ""
+msgstr "Şirketle ilgili görevler"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:205
 msgid "Tasks tied to the contact"
-msgstr ""
+msgstr "Kişiyle ilgili görevler"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
 msgid "Tasks tied to the opportunity"
-msgstr ""
+msgstr "Fırsatla ilgili görevler"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:66
 msgid "TaskTarget company"
-msgstr ""
+msgstr "Görev hedefi şirket"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
 msgid "TaskTarget opportunity"
-msgstr ""
+msgstr "Görev hedefi fırsat"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
 msgid "TaskTarget person"
-msgstr ""
+msgstr "Görev hedefi kişi"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:36
 msgid "TaskTarget task"
-msgstr ""
+msgstr "Görev hedefi görev"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
 msgid "Text"
-msgstr ""
+msgstr "Metin"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
 msgid "The account handle (email, username, phone number, etc.)"
-msgstr ""
+msgstr "Hesap tanıtıcı (e-posta, kullanıcı adı, telefon numarası vb.)"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
 msgid "The account provider"
-msgstr ""
+msgstr "Hesap sağlayıcısı"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:94
 msgid "The company Linkedin account"
-msgstr ""
+msgstr "Şirketin Linkedin hesabı"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:65
 msgid "The company name"
-msgstr ""
+msgstr "Şirket ismi"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:104
 msgid "The company Twitter/X account"
-msgstr ""
+msgstr "Şirketin Twitter/X hesabı"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:74
 msgid "The company website URL. We use this url to fetch the company icon"
-msgstr ""
+msgstr "Şirketin web sitesi URL'si. Bu URL'yi şirket ikonunu almak için kullanıyoruz"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
 #: src/modules/task/standard-objects/task.workspace-entity.ts:138
@@ -1733,70 +1733,70 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
-msgstr ""
+msgstr "Kaydın oluşturucusu"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
 msgid "The current statuses of the workflow versions"
-msgstr ""
+msgstr "İş akışı sürümlerinin mevcut durumları"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
 msgid "The date the message was received"
-msgstr ""
+msgstr "Mesajın alındığı tarih"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
 msgid "The executor of the workflow"
-msgstr ""
+msgstr "İş akışını yürüten kişi"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
 msgid "The folder this favorite belongs to"
-msgstr ""
+msgstr "Bu favorinin dahil olduğu klasör"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:61
 msgid "The opportunity name"
-msgstr ""
+msgstr "Fırsat adı"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:35
 msgid "The workflow event listener name"
-msgstr ""
+msgstr "İş akışı olay dinleyicisi adı"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
 msgid "The workflow last published version id"
-msgstr ""
+msgstr "Son yayımlanan iş akışı sürümü kimliği"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
 msgid "The workflow name"
-msgstr ""
+msgstr "İş akışı adı"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:76
 msgid "The workflow version name"
-msgstr ""
+msgstr "İş akışı sürüm adı"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:105
 msgid "The workflow version status"
-msgstr ""
+msgstr "İş akışı sürüm durumu"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:56
 msgid "Thread External Id"
-msgstr ""
+msgstr "Dış İplik Kimliği"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
 msgid "Thread id from the messaging provider"
-msgstr ""
+msgstr "Mesajlaşma sağlayıcısından iplik kimliği"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
 msgid "Throttle Failure Count"
-msgstr ""
+msgstr "Sınırlama Başarısızlık Sayımı"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
 msgid "Time format"
-msgstr ""
+msgstr "Saat biçimi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:268
 msgid "Time zone"
-msgstr ""
+msgstr "Zaman dilimi"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
@@ -1808,101 +1808,101 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:251
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
-msgstr ""
+msgstr "Zaman Çizelgesi Aktiviteleri"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:252
 msgid "Timeline Activities linked to the company"
-msgstr ""
+msgstr "Şirketle bağlantılı Zaman Çizelgesi Aktiviteleri"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:132
 msgid "Timeline Activities linked to the note."
-msgstr ""
+msgstr "Notla bağlantılı Zaman Çizelgesi Aktiviteleri."
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
 msgid "Timeline Activities linked to the opportunity."
-msgstr ""
+msgstr "Fırsatla bağlantılı Zaman Çizelgesi Aktiviteleri."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
 msgid "Timeline activities linked to the run"
-msgstr ""
+msgstr "Çalıştırmayla bağlantılı Zaman Çizelgesi aktiviteleri"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:186
 msgid "Timeline Activities linked to the task."
-msgstr ""
+msgstr "Görevle bağlantılı Zaman Çizelgesi Aktiviteleri."
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
 msgid "Timeline activities linked to the version"
-msgstr ""
+msgstr "Versiyonla bağlantılı Zaman Çizelgesi aktiviteleri"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:156
 msgid "Timeline activities linked to the workflow"
-msgstr ""
+msgstr "İş akışı ile bağlantılı Zaman Çizelgesi aktiviteleri"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:139
 msgid "Timeline Activities tied to the {label}"
-msgstr ""
+msgstr "{label} ile bağlantılı Zaman Çizelgesi Aktiviteleri"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
 msgid "Timeline Activity"
-msgstr ""
+msgstr "Zaman Çizelgesi Aktivitesi"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:68
 #: src/modules/note/standard-objects/note.workspace-entity.ts:66
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
 msgid "Title"
-msgstr ""
+msgstr "Başlık"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:59
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:135
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:60
 msgid "Type"
-msgstr ""
+msgstr "Tür"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:98
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:99
 msgid "Update DateTime"
-msgstr ""
+msgstr "Güncelleme Tarihi Saati"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:126
 msgid "User Email"
-msgstr ""
+msgstr "Kullanıcı E-postası"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:135
 msgid "User Id"
-msgstr ""
+msgstr "Kullanıcı Kimliği"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:270
 msgid "User time zone"
-msgstr ""
+msgstr "Kullanıcının zaman dilimi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:279
 msgid "User's preferred date format"
-msgstr ""
+msgstr "Kullanıcının tercih ettiği tarih biçimi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:315
 msgid "User's preferred time format"
-msgstr ""
+msgstr "Kullanıcının tercih ettiği saat biçimi"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
 msgid "Value"
-msgstr ""
+msgstr "Değer"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
 msgid "Version status"
-msgstr ""
+msgstr "Versiyon durumu"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:94
 msgid "Version steps"
-msgstr ""
+msgstr "Versiyon adımları"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:84
 msgid "Version trigger"
-msgstr ""
+msgstr "Versiyon tetiği"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:110
 msgid "Versions"
-msgstr ""
+msgstr "Versiyonlar"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:31
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:57
@@ -1913,191 +1913,191 @@ msgstr ""
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:85
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:208
 msgid "View"
-msgstr ""
+msgstr "Görünüm"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
 msgid "View Field"
-msgstr ""
+msgstr "Görünüm Alanı"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
 msgid "View Field position"
-msgstr ""
+msgstr "Görünüm Alanı pozisyonu"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
 msgid "View Field related view"
-msgstr ""
+msgstr "İlgili Alan görünümü"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
 msgid "View Field size"
-msgstr ""
+msgstr "Alan boyutu görünümü"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
 msgid "View Field target field"
-msgstr ""
+msgstr "Hedef alan görünümü"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
 msgid "View Field visibility"
-msgstr ""
+msgstr "Alan görünürlüğü görünümü"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:117
 #: src/modules/view/standard-objects/view.workspace-entity.ts:118
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
 msgid "View Fields"
-msgstr ""
+msgstr "Alan Görünümleri"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
 msgid "View Filter"
-msgstr ""
+msgstr "Görünüm Filtresi"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
 msgid "View Filter Display Value"
-msgstr ""
+msgstr "Görünüm Filtresi Görünen Değer"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
 msgid "View Filter Group"
-msgstr ""
+msgstr "Görünüm Filtre Grubu"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
 msgid "View Filter Group Id"
-msgstr ""
+msgstr "Görünüm Filtre Grubu Id"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:153
 #: src/modules/view/standard-objects/view.workspace-entity.ts:154
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
 msgid "View Filter Groups"
-msgstr ""
+msgstr "Görünüm Filtre Grupları"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
 msgid "View Filter operand"
-msgstr ""
+msgstr "Görünüm Filtre Operandı"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
 msgid "View Filter related view"
-msgstr ""
+msgstr "İlgili görünüm filtresi"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
 msgid "View Filter target field"
-msgstr ""
+msgstr "Hedef alan filtresi görünümü"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
 msgid "View Filter value"
-msgstr ""
+msgstr "Görünüm Filtresi değeri"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:141
 #: src/modules/view/standard-objects/view.workspace-entity.ts:142
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
 msgid "View Filters"
-msgstr ""
+msgstr "Görünüm Filtreleri"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
 msgid "View Group"
-msgstr ""
+msgstr "Görünüm Grubu"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
 msgid "View Group related view"
-msgstr ""
+msgstr "İlgili görünüm grubu"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
 msgid "View Group target field"
-msgstr ""
+msgstr "Hedef alan görünüm grubu"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
 msgid "View Group visibility"
-msgstr ""
+msgstr "Görünüm grubu görünürlüğü"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:129
 #: src/modules/view/standard-objects/view.workspace-entity.ts:130
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
 msgid "View Groups"
-msgstr ""
+msgstr "Görünüm Grupları"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:80
 msgid "View icon"
-msgstr ""
+msgstr "Görünüm ikonu"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:88
 msgid "View Kanban column field"
-msgstr ""
+msgstr "Görünüm Kanban sütun alanı"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:69
 msgid "View key"
-msgstr ""
+msgstr "Görünüm anahtarı"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:44
 msgid "View name"
-msgstr ""
+msgstr "Görünüm adı"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:99
 msgid "View position"
-msgstr ""
+msgstr "Görünüm pozisyonu"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
 msgid "View Sort"
-msgstr ""
+msgstr "Görünüm Sıralaması"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
 msgid "View Sort direction"
-msgstr ""
+msgstr "Görünüm sıralama yönü"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
 msgid "View Sort related view"
-msgstr ""
+msgstr "İlgili görünüm sıralaması"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
 msgid "View Sort target field"
-msgstr ""
+msgstr "Hedef alan sıralaması görünümü"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:165
 #: src/modules/view/standard-objects/view.workspace-entity.ts:166
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
 msgid "View Sorts"
-msgstr ""
+msgstr "Görünüm Sıralamaları"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:52
 msgid "View target object"
-msgstr ""
+msgstr "Hedef nesne görünümü"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:60
 msgid "View type"
-msgstr ""
+msgstr "Görünüm tipi"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:32
 msgid "Views"
-msgstr ""
+msgstr "Görünümler"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:186
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:187
 msgid "Visibility"
-msgstr ""
+msgstr "Görünürlük"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
 msgid "Visible"
-msgstr ""
+msgstr "Görünür"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
 msgid "Webhook"
-msgstr ""
+msgstr "Web kancası"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
 msgid "Webhook operation"
-msgstr ""
+msgstr "Webhook operasyonu"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
 msgid "Webhook operations"
-msgstr ""
+msgstr "Webhook operasyonları"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
 msgid "Webhook target url"
-msgstr ""
+msgstr "Webhook hedef url"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
 msgid "Webhooks"
-msgstr ""
+msgstr "Web kancaları"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
@@ -2108,107 +2108,107 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
 msgid "Workflow"
-msgstr ""
+msgstr "İş Akışları"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
 msgid "Workflow event listeners linked to the workflow."
-msgstr ""
+msgstr "İş akışına bağlı olay dinleyicileri."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
 msgid "Workflow linked to the run."
-msgstr ""
+msgstr "Çalışmaya bağlı iş akışı."
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
 msgid "Workflow record position"
-msgstr ""
+msgstr "İş akışı kayıt pozisyonu"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
 msgid "Workflow Run"
-msgstr ""
+msgstr "İş Akışı Çalıştırması"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
 msgid "Workflow run ended at"
-msgstr ""
+msgstr "İş akışı çalıştırması şu tarihte sona erdi"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
 msgid "Workflow run position"
-msgstr ""
+msgstr "İş akışı çalıştırma pozisyonu"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
 msgid "Workflow run started at"
-msgstr ""
+msgstr "İş akışı çalıştırması şu tarihte başladı"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
 msgid "Workflow run status"
-msgstr ""
+msgstr "İş akışı çalıştırma durumu"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
 msgid "Workflow Runs"
-msgstr ""
+msgstr "İş Akışı Çalıştırmaları"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
 msgid "Workflow runs linked to the version."
-msgstr ""
+msgstr "Versiyona bağlı iş akışı çalıştırmaları."
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
 msgid "Workflow runs linked to the workflow."
-msgstr ""
+msgstr "İş akışına bağlı çalıştırmalar."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
 msgid "Workflow version"
-msgstr ""
+msgstr "İş akışı versiyonu"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
 msgid "Workflow Version"
-msgstr ""
+msgstr "İş Akışı Versiyonu"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
 msgid "Workflow version linked to the run."
-msgstr ""
+msgstr "Çalışmaya bağlı iş akışı versiyonu."
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
 msgid "Workflow version position"
-msgstr ""
+msgstr "İş akışı versiyon pozisyonu"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
 msgid "Workflow Versions"
-msgstr ""
+msgstr "İş Akışı Versiyonları"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
 msgid "Workflow versions linked to the workflow."
-msgstr ""
+msgstr "İş akışına bağlı versiyonlar."
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
 msgid "WorkflowEventListener"
-msgstr ""
+msgstr "İş Akışı Olay Dinleyicisi"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
 msgid "WorkflowEventListener workflow"
-msgstr ""
+msgstr "WorkflowEventListener iş akışı"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
 msgid "WorkflowEventListeners"
-msgstr ""
+msgstr "İş Akışı Olay Dinleyicileri"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
 msgid "Workflows"
-msgstr ""
+msgstr "İş Akışları"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
 msgid "WorkflowVersion"
-msgstr ""
+msgstr "İş Akışı Sürümü"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
 msgid "WorkflowVersion workflow"
-msgstr ""
+msgstr "WorkflowVersion iş akışı"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
 msgid "Workspace member"
-msgstr ""
+msgstr "Çalışma alanı üyesi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
@@ -2218,24 +2218,24 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:138
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:139
 msgid "Workspace Member"
-msgstr ""
+msgstr "Çalışma Alanı Üyesi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:118
 msgid "Workspace member avatar"
-msgstr ""
+msgstr "Çalışma alanı üyesi avatarı"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
 msgid "Workspace member name"
-msgstr ""
+msgstr "Çalışma alanı üyesi ismi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
 msgid "Workspace Members"
-msgstr ""
+msgstr "Çalışma Alanı Üyeleri"
 
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
 msgid "WorkspaceMember"
-msgstr ""
+msgstr "Çalışma Alanı Üyesi"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:99
 #: src/modules/company/standard-objects/company.workspace-entity.ts:103
@@ -2244,5 +2244,5 @@ msgstr ""
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:177
 msgid "Your team member responsible for managing the company account"
-msgstr ""
+msgstr "Şirket hesabını yönetmekten sorumlu ekip üyeniz"
 
