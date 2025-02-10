@@ -164,7 +164,7 @@ export const SettingsDataModelOverviewObject = ({
                   (x) => x.type !== FieldMetadataType.RELATION && x.isActive,
                 )
                 .map((field) => (
-                  <StyledCardRow>
+                  <StyledCardRow key={field.id}>
                     <ObjectFieldRowWithoutRelation field={field} />
                   </StyledCardRow>
                 ))}
