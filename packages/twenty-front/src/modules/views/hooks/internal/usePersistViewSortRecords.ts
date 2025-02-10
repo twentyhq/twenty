@@ -134,7 +134,7 @@ export const usePersistViewSortRecords = () => {
               const record = data?.['destroyViewSort'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord(
+              const cachedRecord = getRecordFromCacheOrMinimalRecord<ViewSort>(
                 record.id,
                 cache,
               );

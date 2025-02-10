@@ -70,9 +70,9 @@ export const useDeleteOneRecord = ({
       });
 
       if (!isDefined(optimisticRecordNode) || !isDefined(cachedRecordNode)) {
-        throw new Error(
-          'Should never occurs, encountered empty cache should fallbacked',
-        );
+        throw new Error(  
+          'Empty cache encountered when a minimal record should have been used as fallback'  
+        );  
       }
 
       const recordGqlFields = {
@@ -102,8 +102,9 @@ export const useDeleteOneRecord = ({
           },
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
-            if (!isDefined(record) || !isDefined(computedOptimisticRecord))
+            if (!isDefined(record) || !isDefined(computedOptimisticRecord)) {
               return;
+            }
 
             triggerUpdateRecordOptimisticEffect({
               cache,

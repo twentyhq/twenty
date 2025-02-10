@@ -100,7 +100,7 @@ export const useRestoreManyRecords = ({
             !isDefined(cachedRecordWithConnection)
           ) {
             throw new Error(
-              'Should never occurs, encountered empty cache should fallbacked',
+          'Empty cache encountered when a minimal record should have been used as fallback',
             );
           }
 
@@ -155,7 +155,7 @@ export const useRestoreManyRecords = ({
 
             const computedOptimisticRecord = {
               ...cachedRecord,
-              eletedAt: null,
+              deletedAt: null,
             };
             const optimisticRecordWithConnection =
               getRecordNodeFromRecord<ObjectRecord>({
@@ -170,7 +170,7 @@ export const useRestoreManyRecords = ({
               !isDefined(cachedRecordWithConnection)
             ) {
               throw new Error(
-                'Should never occurs, encountered empty cache should fallbacked',
+            'Empty cache encountered when a minimal record should have been used as fallback',
               );
             }
 

@@ -114,7 +114,7 @@ export const useDeleteManyRecords = ({
             !isDefined(cachedRecordNode)
           ) {
             throw new Error(
-              'Should never occurs, encountered empty cache should fallbacked',
+              'Should never occur, encountered empty cache should fallbacked',
             );
           }
 
@@ -188,7 +188,7 @@ export const useDeleteManyRecords = ({
               !isDefined(cachedRecordWithConnection)
             ) {
               throw new Error(
-                'Should never occurs, encountered empty cache should fallbacked',
+                'Should never occur, encountered empty cache should fallbacked',
               );
             }
 

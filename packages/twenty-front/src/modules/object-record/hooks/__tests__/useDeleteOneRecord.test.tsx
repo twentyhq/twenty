@@ -61,7 +61,7 @@ describe('useDeleteOneRecord', () => {
       recordId: personRecord.id,
     });
     expect(cachedRecord).not.toBeNull();
-    if (cachedRecord === null) throw new Error('Should never occurs');
+    if (cachedRecord === null) throw new Error('Should never occur');
     expect(expectedRecord).toMatchObject(cachedRecord);
   };
   beforeEach(() => {
@@ -70,7 +70,7 @@ describe('useDeleteOneRecord', () => {
   });
 
   describe('A. Starting from empty cache', () => {
-    it('1. Should successfull record deletion', async () => {
+    it('1. Should successfully delete record', async () => {
       const { result } = renderHook(
         () =>
           useDeleteOneRecord({
@@ -134,7 +134,7 @@ describe('useDeleteOneRecord', () => {
       expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
 
-    it('3. Sould handle optimistic cache update rollback on record deletion failure', async () => {
+    it('3. Should handle optimistic cache update rollback on record deletion failure', async () => {
       const apolloMocks: MockedResponse[] = getDefaultMocks({
         error: new Error('Internal server error'),
       });
@@ -155,7 +155,7 @@ describe('useDeleteOneRecord', () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
           expect(false).toEqual(
-            'Should never occurs, expected function to throw',
+            'Should never occur expected function to throw',
           );
         } catch (e) {
           const expectedCachedRecord: ObjectRecord = {
@@ -269,7 +269,7 @@ describe('useDeleteOneRecord', () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
           expect(false).toEqual(
-            'Should never occurs, expected function to throw',
+            'Should never occur, expected function to throw',
           );
         } catch (e) {
           const personRecordWithDeletedAt = {
