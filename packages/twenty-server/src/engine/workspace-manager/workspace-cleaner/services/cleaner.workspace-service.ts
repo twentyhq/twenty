@@ -146,7 +146,7 @@ export class CleanerWorkspaceService {
       `Sending ${workspace.id} ${
         workspace.displayName
       } suspended since ${daysSinceInactive} days emails to users ['${workspaceMembers
-        .map((workspaceUser) => workspaceUser.id)
+        .map((workspaceUser) => workspaceUser.userId)
         .join(', ')}']`,
     );
 
@@ -199,7 +199,7 @@ export class CleanerWorkspaceService {
       `Sending workspace ${workspace.id} ${
         workspace.displayName
       } deletion emails to users ['${workspaceMembers
-        .map((workspaceUser) => workspaceUser.id)
+        .map((workspaceUser) => workspaceUser.userId)
         .join(', ')}']`,
     );
 
