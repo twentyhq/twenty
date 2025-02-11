@@ -12,10 +12,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ENVIRONMENT_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/environment/constants/environment-variables-group-metadata';
-import { ENVIRONMENT_VARIABLES_SUB_GROUP_METADATA } from 'src/engine/core-modules/environment/constants/environment-variables-sub-group-metadata';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
-import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -28,7 +27,6 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class AdminPanelService {
@@ -74,7 +72,7 @@ export class AdminPanelService {
     return {
       workspace: {
         id: user.workspaces[0].workspace.id,
-        workspaceUrls: this.domainManagerService.getworkspaceUrls(
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(
           user.workspaces[0].workspace,
         ),
       },
@@ -175,14 +173,11 @@ export class AdminPanelService {
     const rawEnvVars = this.environmentService.getAll();
     const groupedData = new Map<
       EnvironmentVariablesGroup,
-      {
-        variables: EnvironmentVariable[];
-        subgroups: Map<EnvironmentVariablesSubGroup, EnvironmentVariable[]>;
-      }
+      EnvironmentVariable[]
     >();
 
     for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
-      const { group, subGroup, description } = metadata;
+      const { group, description } = metadata;
 
       const envVar: EnvironmentVariable = {
         name: varName,
@@ -191,27 +186,11 @@ export class AdminPanelService {
         sensitive: metadata.sensitive ?? false,
       };
 
-      let currentGroup = groupedData.get(group);
-
-      if (!currentGroup) {
-        currentGroup = {
-          variables: [],
-          subgroups: new Map(),
-        };
-        groupedData.set(group, currentGroup);
+      if (!groupedData.has(group)) {
+        groupedData.set(group, []);
       }
 
-      if (subGroup) {
-        let subgroupVars = currentGroup.subgroups.get(subGroup);
-
-        if (!subgroupVars) {
-          subgroupVars = [];
-          currentGroup.subgroups.set(subGroup, subgroupVars);
-        }
-        subgroupVars.push(envVar);
-      } else {
-        currentGroup.variables.push(envVar);
-      }
+      groupedData.get(group)?.push(envVar);
     }
 
     const groups: EnvironmentVariablesGroupData[] = Array.from(
@@ -223,20 +202,12 @@ export class AdminPanelService {
 
         return positionA - positionB;
       })
-      .map(([name, data]) => ({
+      .map(([name, variables]) => ({
         name,
         description: ENVIRONMENT_VARIABLES_GROUP_METADATA[name].description,
         isHiddenOnLoad:
           ENVIRONMENT_VARIABLES_GROUP_METADATA[name].isHiddenOnLoad,
-        variables: data.variables.sort((a, b) => a.name.localeCompare(b.name)),
-        subgroups: Array.from(data.subgroups.entries())
-          .sort((a, b) => a[0].localeCompare(b[0]))
-          .map(([name, variables]) => ({
-            name,
-            description:
-              ENVIRONMENT_VARIABLES_SUB_GROUP_METADATA[name].description,
-            variables,
-          })),
+        variables: variables.sort((a, b) => a.name.localeCompare(b.name)),
       }));
 
     return { groups };

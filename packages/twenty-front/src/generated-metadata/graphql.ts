@@ -109,7 +109,6 @@ export type AuthorizeApp = {
 export type AvailableWorkspaceOutput = {
   __typename?: 'AvailableWorkspaceOutput';
   displayName?: Maybe<Scalars['String']['output']>;
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
@@ -385,15 +384,15 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type CustomHostnameDetails = {
-  __typename?: 'CustomHostnameDetails';
-  hostname: Scalars['String']['output'];
+export type CustomDomainDetails = {
+  __typename?: 'CustomDomainDetails';
+  customDomain: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  records: Array<CustomHostnameVerification>;
+  records: Array<CustomDomainVerification>;
 };
 
-export type CustomHostnameVerification = {
-  __typename?: 'CustomHostnameVerification';
+export type CustomDomainVerification = {
+  __typename?: 'CustomDomainVerification';
   key: Scalars['String']['output'];
   status: Scalars['String']['output'];
   type: Scalars['String']['output'];
@@ -1105,6 +1104,7 @@ export type MutationSendInvitationsArgs = {
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
+  locale?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   workspaceId?: InputMaybe<Scalars['String']['input']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
@@ -1373,8 +1373,8 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON']['output'];
+  getCustomDomainDetails?: Maybe<CustomDomainDetails>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
-  getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
@@ -1971,8 +1971,8 @@ export type UpdateWorkflowVersionStepInput = {
 
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
+  customDomain?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
-  hostname?: InputMaybe<Scalars['String']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1997,6 +1997,7 @@ export type User = {
   id: Scalars['UUID']['output'];
   isEmailVerified: Scalars['Boolean']['output'];
   lastName: Scalars['String']['output'];
+  locale: Scalars['String']['output'];
   onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']['output']>;
   supportUserHash?: Maybe<Scalars['String']['output']>;
@@ -2103,13 +2104,13 @@ export type Workspace = {
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime']['output'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
+  customDomain?: Maybe<Scalars['String']['output']>;
   databaseSchema: Scalars['String']['output'];
   databaseUrl: Scalars['String']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   featureFlags?: Maybe<Array<FeatureFlag>>;
   hasValidEnterpriseKey: Scalars['Boolean']['output'];
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   isGoogleAuthEnabled: Scalars['Boolean']['output'];
@@ -2198,16 +2199,16 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
+export type WorkspaceUrlsAndId = {
+  __typename?: 'WorkspaceUrlsAndId';
+  id: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
+};
+
 export type WorkspaceUrls = {
   __typename?: 'workspaceUrls';
   customUrl?: Maybe<Scalars['String']['output']>;
   subdomainUrl: Scalars['String']['output'];
-};
-
-export type WorkspaceUrlsAndId = {
-  __typename?: 'workspaceUrlsAndId';
-  id: Scalars['String']['output'];
-  workspaceUrls: WorkspaceUrls;
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };

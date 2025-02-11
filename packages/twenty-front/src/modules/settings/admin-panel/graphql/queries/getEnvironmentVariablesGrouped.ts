@@ -13,16 +13,6 @@ export const GET_ENVIRONMENT_VARIABLES_GROUPED = gql`
           value
           sensitive
         }
-        subgroups {
-          name
-          description
-          variables {
-            name
-            description
-            value
-            sensitive
-          }
-        }
       }
     }
   }

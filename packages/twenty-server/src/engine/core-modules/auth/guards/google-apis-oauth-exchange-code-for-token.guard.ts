@@ -36,10 +36,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         );
       }
 
-      new GoogleAPIsOauthExchangeCodeForTokenStrategy(
-        this.environmentService,
-        {},
-      );
+      new GoogleAPIsOauthExchangeCodeForTokenStrategy(this.environmentService);
 
       setRequestExtraParams(request, {
         transientToken: state.transientToken,
@@ -53,7 +50,9 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.guardRedirectService.getSubdomainAndHostnameFromContext(context),
+        this.guardRedirectService.getSubdomainAndCustomDomainFromContext(
+          context,
+        ),
       );
 
       return false;

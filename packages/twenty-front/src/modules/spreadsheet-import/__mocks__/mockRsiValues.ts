@@ -4,6 +4,7 @@ import {
   Fields,
   SpreadsheetImportDialogOptions,
 } from '@/spreadsheet-import/types';
+import { FieldMetadataType } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 
 const fields = [
@@ -22,6 +23,7 @@ const fields = [
         errorMessage: 'Name is required',
       },
     ],
+    fieldMetadataType: FieldMetadataType.TEXT,
   },
   {
     icon: null,

@@ -9,7 +9,7 @@ import {
   DomainManagerException,
   DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
-import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
+import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
 import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
 import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
@@ -78,7 +78,7 @@ export class DomainManagerService {
   }: {
     emailVerificationToken: string;
     email: string;
-    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>;
   }) {
     return this.buildWorkspaceURL({
       workspace,
@@ -92,11 +92,11 @@ export class DomainManagerService {
     pathname,
     searchParams,
   }: {
-    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const workspaceUrls = this.getworkspaceUrls(workspace);
+    const workspaceUrls = this.getWorkspaceUrls(workspace);
 
     const url = new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl);
 
@@ -115,7 +115,7 @@ export class DomainManagerService {
     return url;
   }
 
-  getSubdomainAndHostnameFromUrl = (url: string) => {
+  getSubdomainAndCustomDomainFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
 
     const frontDomain = this.getFrontUrl().hostname;
@@ -129,7 +129,7 @@ export class DomainManagerService {
         isFrontdomain && !this.isDefaultSubdomain(subdomain)
           ? subdomain
           : undefined,
-      hostname: isFrontdomain ? undefined : originHostname,
+      customDomain: isFrontdomain ? undefined : originHostname,
     };
   };
 
@@ -147,7 +147,7 @@ export class DomainManagerService {
 
   computeRedirectErrorUrl(
     errorMessage: string,
-    workspace: Pick<Workspace, 'subdomain' | 'hostname'>,
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
   ) {
     const url = this.buildWorkspaceURL({
       workspace,
@@ -201,11 +201,12 @@ export class DomainManagerService {
       return this.getDefaultWorkspace();
     }
 
-    const { subdomain, hostname } = this.getSubdomainAndHostnameFromUrl(origin);
+    const { subdomain, customDomain } =
+      this.getSubdomainAndCustomDomainFromUrl(origin);
 
-    if (!hostname && !subdomain) return;
+    if (!customDomain && !subdomain) return;
 
-    const where = isDefined(hostname) ? { hostname } : { subdomain };
+    const where = isDefined(customDomain) ? { customDomain } : { subdomain };
 
     return (
       (await this.workspaceRepository.findOne({
@@ -236,10 +237,10 @@ export class DomainManagerService {
     return `${subdomain}${existingWorkspaceCount > 0 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
   }
 
-  async registerCustomHostname(hostname: string) {
+  async registerCustomDomain(customDomain: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    if (await this.getCustomHostnameDetails(hostname)) {
+    if (await this.getCustomDomainDetails(customDomain)) {
       throw new DomainManagerException(
         'Hostname already registered',
         DomainManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED,
@@ -248,7 +249,7 @@ export class DomainManagerService {
 
     return await this.cloudflareClient.customHostnames.create({
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
-      hostname,
+      hostname: customDomain,
       ssl: {
         method: 'txt',
         type: 'dv',
@@ -265,14 +266,14 @@ export class DomainManagerService {
     });
   }
 
-  async getCustomHostnameDetails(
-    hostname: string,
-  ): Promise<CustomHostnameDetails | undefined> {
+  async getCustomDomainDetails(
+    customDomain: string,
+  ): Promise<CustomDomainDetails | undefined> {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const response = await this.cloudflareClient.customHostnames.list({
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
-      hostname,
+      hostname: customDomain,
     });
 
     if (response.result.length === 0) {
@@ -282,12 +283,12 @@ export class DomainManagerService {
     if (response.result.length === 1) {
       return {
         id: response.result[0].id,
-        hostname: response.result[0].hostname,
+        customDomain: response.result[0].hostname,
         records: [
           response.result[0].ownership_verification,
           ...(response.result[0].ssl?.validation_records ?? []),
         ]
-          .map<CustomHostnameDetails['records'][0] | undefined>(
+          .map<CustomDomainDetails['records'][0] | undefined>(
             (record: Record<string, string>) => {
               if (!record) return;
 
@@ -343,24 +344,23 @@ export class DomainManagerService {
     throw new Error('More than one custom hostname found in cloudflare');
   }
 
-  async updateCustomHostname(fromHostname: string, toHostname: string) {
+  async updateCustomDomain(fromHostname: string, toHostname: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    const fromCustomHostname =
-      await this.getCustomHostnameDetails(fromHostname);
+    const fromCustomHostname = await this.getCustomDomainDetails(fromHostname);
 
     if (fromCustomHostname) {
       await this.deleteCustomHostname(fromCustomHostname.id);
     }
 
-    return this.registerCustomHostname(toHostname);
+    return this.registerCustomDomain(toHostname);
   }
 
-  async deleteCustomHostnameByHostnameSilently(hostname: string) {
+  async deleteCustomHostnameByHostnameSilently(customDomain: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     try {
-      const customHostname = await this.getCustomHostnameDetails(hostname);
+      const customHostname = await this.getCustomDomainDetails(customDomain);
 
       if (customHostname) {
         await this.cloudflareClient.customHostnames.delete(customHostname.id, {
@@ -380,15 +380,15 @@ export class DomainManagerService {
     });
   }
 
-  private getCustomWorkspaceEndpoint(hostname: string) {
+  private getCustomWorkspaceUrl(customDomain: string) {
     const url = this.getFrontUrl();
 
-    url.hostname = hostname;
+    url.hostname = customDomain;
 
     return url.toString();
   }
 
-  private getTwentyWorkspaceEndpoint(subdomain: string) {
+  private getTwentyWorkspaceUrl(subdomain: string) {
     const url = this.getFrontUrl();
 
     url.hostname = `${subdomain}.${url.hostname}`;
@@ -396,15 +396,15 @@ export class DomainManagerService {
     return url.toString();
   }
 
-  getworkspaceUrls({
+  getWorkspaceUrls({
     subdomain,
-    hostname,
-  }: Pick<Workspace, 'subdomain' | 'hostname'>) {
+    customDomain,
+  }: Pick<Workspace, 'subdomain' | 'customDomain'>) {
     return {
-      customUrl: hostname
-        ? this.getCustomWorkspaceEndpoint(hostname)
+      customUrl: customDomain
+        ? this.getCustomWorkspaceUrl(customDomain)
         : undefined,
-      subdomainUrl: this.getTwentyWorkspaceEndpoint(subdomain),
+      subdomainUrl: this.getTwentyWorkspaceUrl(subdomain),
     };
   }
 }

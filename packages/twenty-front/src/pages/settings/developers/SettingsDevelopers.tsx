@@ -9,6 +9,10 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { Webhook } from '@/settings/developers/types/webhook/Webhook';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -28,7 +32,24 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
 
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
+  const navigate = useNavigateSettings();
   const { t } = useLingui();
+  const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
+    objectNameSingular: CoreObjectNameSingular.Webhook,
+  });
+
+  const createNewWebhook = async () => {
+    const newWebhook = await createOneWebhook({
+      targetUrl: '',
+      operations: ['*.*'],
+    });
+    if (!newWebhook) {
+      return;
+    }
+    navigate(SettingsPath.DevelopersNewWebhookDetail, {
+      webhookId: newWebhook.id,
+    });
+  };
 
   return (
     <SubMenuTopBarContainer
@@ -72,7 +93,7 @@ export const SettingsDevelopers = () => {
                 title={t`Create Webhook`}
                 size="small"
                 variant="secondary"
-                to={getSettingsPath(SettingsPath.DevelopersNewWebhook)}
+                onClick={createNewWebhook}
               />
             </StyledButtonContainer>
           </Section>
