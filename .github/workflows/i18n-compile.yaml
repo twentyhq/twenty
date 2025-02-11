@@ -1,0 +1,48 @@
+name: 'Compile translations'
+
+on:
+  push:
+    branches: ['i18n']
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  compile_translations:
+    name: Compile translations
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: i18n
+
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+
+      - name: Compile translations
+        id: compile_translations
+        run: |
+          npx nx run twenty-server:lingui:compile
+          npx nx run twenty-emails:lingui:compile 
+          npx nx run twenty-front:lingui:compile
+
+      - name: Check and commit compiled files
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          git add .
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: compile translations"
+            git push origin HEAD:i18n
+          fi

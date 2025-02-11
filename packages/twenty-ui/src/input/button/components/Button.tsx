@@ -69,7 +69,6 @@ const StyledButton = styled('button', {
                   : theme.background.transparent.light
                 : theme.background.transparent.light};
               border-width: 1px 1px 1px 1px !important;
-              opacity: ${disabled ? 0.24 : 1};
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
@@ -112,7 +111,6 @@ const StyledButton = styled('button', {
                   }`
                 : 'none'};
               color: ${!inverted ? theme.grayScale.gray0 : theme.color.blue};
-              opacity: ${disabled ? 0.24 : 1};
               ${disabled
                 ? ''
                 : css`
@@ -147,7 +145,6 @@ const StyledButton = styled('button', {
                   }`
                 : 'none'};
               color: ${!inverted ? theme.background.primary : theme.color.red};
-              opacity: ${disabled ? 0.24 : 1};
               ${disabled
                 ? ''
                 : css`
@@ -194,7 +191,6 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              opacity: ${disabled ? 0.24 : 1};
               color: ${!inverted
                 ? !disabled
                   ? theme.font.color.secondary
@@ -241,7 +237,6 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              opacity: ${disabled ? 0.24 : 1};
               color: ${!inverted
                 ? !disabled
                   ? theme.color.blue
@@ -288,7 +283,6 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              opacity: ${disabled ? 0.24 : 1};
               color: ${!inverted
                 ? theme.font.color.danger
                 : theme.font.color.inverted};

@@ -1,36 +1,16 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
+import { getCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-
-const getPersonObjectMetadaItem = () => {
-  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'person',
-  );
-
-  if (!personObjectMetadataItem) {
-    throw new Error('Person object metadata item not found');
-  }
-
-  return personObjectMetadataItem;
-};
-
-const getCompanyObjectMetadataItem = () => {
-  const companyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'company',
-  );
-
-  if (!companyObjectMetadataItem) {
-    throw new Error('Company object metadata item not found');
-  }
-
-  return companyObjectMetadataItem;
-};
+import { getPersonObjectMetadataItem } from '~/testing/mock-data/people';
 
 describe('computeOptimisticRecordFromInput', () => {
   it('should generate correct optimistic record if no relation field is present', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getPersonObjectMetadaItem();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     const result = computeOptimisticRecordFromInput({
       objectMetadataItems: generatedMockObjectMetadataItems,
@@ -48,7 +28,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record if relation field is present but cache is empty', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getPersonObjectMetadaItem();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     const result = computeOptimisticRecordFromInput({
       objectMetadataItems: generatedMockObjectMetadataItems,
@@ -66,7 +46,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record even if recordInput contains field __typename', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getPersonObjectMetadaItem();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
     const companyObjectMetadataItem = getCompanyObjectMetadataItem();
 
     const companyRecord = {
@@ -74,16 +54,22 @@ describe('computeOptimisticRecordFromInput', () => {
       __typename: 'Company',
     };
 
+    const objectMetadataItem: ObjectMetadataItem = {
+      ...companyObjectMetadataItem,
+      fields: companyObjectMetadataItem.fields.filter(
+        (field) => field.name === 'id',
+      ),
+    };
+    const recordGqlFields = generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+      record: companyRecord,
+    });
     updateRecordFromCache({
       objectMetadataItems: generatedMockObjectMetadataItems,
-      objectMetadataItem: {
-        ...companyObjectMetadataItem,
-        fields: companyObjectMetadataItem.fields.filter(
-          (field) => field.name === 'id',
-        ),
-      },
+      objectMetadataItem,
       cache,
       record: companyRecord,
+      recordGqlFields,
     });
 
     const result = computeOptimisticRecordFromInput({
@@ -104,7 +90,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record if relation field is present and cache is not empty', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getPersonObjectMetadaItem();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
     const companyObjectMetadataItem = getCompanyObjectMetadataItem();
 
     const companyRecord = {
@@ -112,16 +98,22 @@ describe('computeOptimisticRecordFromInput', () => {
       __typename: 'Company',
     };
 
+    const objectMetadataItem: ObjectMetadataItem = {
+      ...companyObjectMetadataItem,
+      fields: companyObjectMetadataItem.fields.filter(
+        (field) => field.name === 'id',
+      ),
+    };
+    const recordGqlFields = generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+      record: companyRecord,
+    });
     updateRecordFromCache({
       objectMetadataItems: generatedMockObjectMetadataItems,
-      objectMetadataItem: {
-        ...companyObjectMetadataItem,
-        fields: companyObjectMetadataItem.fields.filter(
-          (field) => field.name === 'id',
-        ),
-      },
+      objectMetadataItem,
       cache,
       record: companyRecord,
+      recordGqlFields,
     });
 
     const result = computeOptimisticRecordFromInput({
@@ -141,7 +133,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record if relation field is null and cache is empty', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getPersonObjectMetadaItem();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     const result = computeOptimisticRecordFromInput({
       objectMetadataItems: generatedMockObjectMetadataItems,
@@ -160,7 +152,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should throw an error if recordInput contains fields unrelated to the current objectMetadata', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getPersonObjectMetadaItem();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     expect(() =>
       computeOptimisticRecordFromInput({
@@ -181,7 +173,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should throw an error if recordInput contains both the relationFieldId and relationField', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getPersonObjectMetadaItem();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     expect(() =>
       computeOptimisticRecordFromInput({
@@ -200,7 +192,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should throw an error if recordInput contains both the relationFieldId and relationField even if null', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getPersonObjectMetadaItem();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     expect(() =>
       computeOptimisticRecordFromInput({

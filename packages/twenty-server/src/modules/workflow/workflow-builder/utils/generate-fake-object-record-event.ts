@@ -4,6 +4,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 export const generateFakeObjectRecordEvent = (
   objectMetadataEntity: ObjectMetadataEntity,
@@ -17,7 +18,7 @@ export const generateFakeObjectRecordEvent = (
   const formattedObjectMetadataEntity = Object.entries(
     objectMetadataEntity,
   ).reduce((acc: BaseOutputSchema, [key, value]) => {
-    acc[key] = { isLeaf: true, value };
+    acc[key] = { isLeaf: true, value, label: camelToTitleCase(key) };
 
     return acc;
   }, {});
