@@ -43,11 +43,25 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
       this.logger.setVerbose(options.verbose ?? false);
     }
 
-    let workspaceIterator = 1;
+    try {
+      for (const [index, workspaceId] of workspaceIds.entries()) {
+        await this.processWorkspace(workspaceId, index, workspaceIds.length);
+      }
 
-    for (const workspaceId of workspaceIds) {
+      this.logger.log(chalk.green('Command completed!'));
+    } catch (error) {
+      this.logger.log(chalk.red('Error executing command'));
+    }
+  }
+
+  private async processWorkspace(
+    workspaceId: string,
+    index: number,
+    total: number,
+  ): Promise<void> {
+    try {
       this.logger.log(
-        `Running command for workspace ${workspaceId} ${workspaceIterator}/${workspaceIds.length}`,
+        `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
       );
 
       const viewRepository =
@@ -157,18 +171,17 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
             },
           );
         }
-
-        await this.workspaceMetadataVersionService.incrementMetadataVersion(
-          workspaceId,
-        );
-
-        workspaceIterator++;
-        this.logger.log(
-          chalk.green(`Command completed for workspace ${workspaceId}`),
-        );
       }
-    }
 
-    this.logger.log(chalk.green('Command completed!'));
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
+
+      this.logger.log(
+        chalk.green(`Command completed for workspace ${workspaceId}`),
+      );
+    } catch (error) {
+      this.logger.log(chalk.red(`Error in workspace ${workspaceId}`));
+    }
   }
 }
