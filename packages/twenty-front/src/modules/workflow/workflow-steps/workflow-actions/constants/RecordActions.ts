@@ -13,7 +13,7 @@ export const RECORD_ACTIONS: Array<{
   {
     label: 'Update Record',
     type: 'UPDATE_RECORD',
-    icon: 'IconRefreshDot',
+    icon: 'IconReload',
   },
   {
     label: 'Delete Record',
