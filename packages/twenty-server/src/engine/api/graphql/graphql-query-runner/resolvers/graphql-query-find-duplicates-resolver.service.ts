@@ -26,7 +26,10 @@ import { settings } from 'src/engine/constants/settings';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import {
+  formatResult,
+  getCompositeFieldMetadataMap,
+} from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseResolverService<
@@ -160,7 +163,16 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
     const criteriaCollection =
       objectMetadataItemWithFieldMaps.duplicateCriteria || [];
 
-    const conditions = records.flatMap((record) => {
+    const formattedRecords = formatData(
+      records,
+      objectMetadataItemWithFieldMaps,
+    );
+
+    const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
+      objectMetadataItemWithFieldMaps,
+    );
+
+    const conditions = formattedRecords.flatMap((record) => {
       const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
         criteria.every((columnName) => {
           const value = record[columnName] as string | undefined;
@@ -175,7 +187,16 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
         const condition = {};
 
         criteria.forEach((columnName) => {
-          condition[columnName] = { eq: record[columnName] };
+          const compositeFieldMetadata =
+            compositeFieldMetadataMap.get(columnName);
+
+          if (compositeFieldMetadata) {
+            condition[compositeFieldMetadata.parentField] = {
+              [compositeFieldMetadata.name]: { eq: record[columnName] },
+            };
+          } else {
+            condition[columnName] = { eq: record[columnName] };
+          }
         });
 
         return condition;

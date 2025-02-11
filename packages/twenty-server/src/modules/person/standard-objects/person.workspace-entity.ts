@@ -66,7 +66,7 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
 @WorkspaceDuplicateCriteria([
   ['nameFirstName', 'nameLastName'],
   ['linkedinLinkPrimaryLinkUrl'],
-  ['email'],
+  ['emailsPrimaryEmail'],
 ])
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
