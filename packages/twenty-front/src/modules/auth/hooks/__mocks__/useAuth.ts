@@ -23,7 +23,12 @@ export const variables = {
     password,
   },
   getAuthTokensFromLoginToken: { loginToken: token },
-  signup: {},
+  signup: {
+    email,
+    password,
+    workspacePersonalInviteToken: null,
+    locale: "",
+  },
   getCurrentUser: {},
 };
 
@@ -103,7 +108,7 @@ export const mocks = [
   {
     request: {
       query: queries.signup,
-      variables: variables.getLoginTokenFromCredentials,
+      variables: variables.signup,
     },
     result: jest.fn(() => ({
       data: {

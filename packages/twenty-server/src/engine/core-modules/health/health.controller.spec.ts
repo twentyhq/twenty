@@ -1,6 +1,7 @@
 import { HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 import { HealthController } from 'src/engine/core-modules/health/health.controller';
 
 describe('HealthController', () => {
@@ -17,6 +18,10 @@ describe('HealthController', () => {
         },
         {
           provide: HttpHealthIndicator,
+          useValue: {},
+        },
+        {
+          provide: HealthCacheService,
           useValue: {},
         },
       ],

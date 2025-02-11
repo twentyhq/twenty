@@ -23,6 +23,7 @@ export function generateFrontConfig(): void {
   const indexPath = path.join(distPath, 'index.html');
 
   if (!fs.existsSync(indexPath)) {
+    // eslint-disable-next-line no-console
     console.log(
       'Frontend build not found, assuming it is served independently',
     );

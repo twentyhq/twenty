@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const main = async (params: {
   a: string;
   b: number;

@@ -9,8 +9,9 @@
            "runtimeModules": {
              "i18n": ["@lingui/core", "i18n"],
              "trans": ["@lingui/react", "Trans"]
-           }
-         }
+           },
+           "stripNonEssentialFields": false
+          }
         ]
       ]
     }

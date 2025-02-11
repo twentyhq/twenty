@@ -39,7 +39,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+        this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
           workspace,
         ),
       );

@@ -197,6 +197,7 @@ export class AuthResolver {
     const { userData } = this.authService.formatUserDataPayload(
       {
         email: signUpInput.email,
+        locale: signUpInput.locale,
       },
       existingUser,
     );
@@ -233,7 +234,7 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        workspaceUrls: this.domainManagerService.getworkspaceUrls(workspace),
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
       },
     };
   }

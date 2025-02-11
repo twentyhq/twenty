@@ -52,6 +52,7 @@ export class FieldMetadataEntity<
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'objectMetadataId' })
+  @Index('IndexOnObjectMetadataId')
   object: Relation<ObjectMetadataEntity>;
 
   @Column({
@@ -97,6 +98,7 @@ export class FieldMetadataEntity<
   isUnique: boolean;
 
   @Column({ nullable: false, type: 'uuid' })
+  @Index('IndexOnWorkspaceId')
   workspaceId: string;
 
   @Column({ default: false })

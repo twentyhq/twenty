@@ -80,7 +80,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+        this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
           identityProvider?.workspace,
         ),
       );
