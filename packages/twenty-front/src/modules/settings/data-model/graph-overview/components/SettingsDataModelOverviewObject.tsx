@@ -111,7 +111,9 @@ export const SettingsDataModelOverviewObject = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const fields = objectMetadataItem.fields.filter((x) => !x.isSystem);
+  const fields = objectMetadataItem.fields.filter(
+    (x) => !x.isSystem && x.isActive,
+  );
 
   const countNonRelation = fields.filter(
     (x) => x.type !== FieldMetadataType.RELATION,
@@ -162,7 +164,7 @@ export const SettingsDataModelOverviewObject = ({
               fields
                 .filter((x) => x.type !== FieldMetadataType.RELATION)
                 .map((field) => (
-                  <StyledCardRow>
+                  <StyledCardRow key={field.id}>
                     <ObjectFieldRowWithoutRelation field={field} />
                   </StyledCardRow>
                 ))}

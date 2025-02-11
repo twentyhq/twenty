@@ -20,7 +20,7 @@ export class GuardRedirectService {
   dispatchErrorFromGuard(
     context: ExecutionContext,
     error: Error | CustomException,
-    workspace: { id?: string; subdomain: string; hostname?: string },
+    workspace: { id?: string; subdomain: string; customDomain?: string },
   ) {
     if ('contextType' in context && context.contextType === 'graphql') {
       throw error;
@@ -32,8 +32,8 @@ export class GuardRedirectService {
       .redirect(this.getRedirectErrorUrlAndCaptureExceptions(error, workspace));
   }
 
-  getSubdomainAndHostnameFromWorkspace(
-    workspace?: Pick<Workspace, 'subdomain' | 'hostname'> | null,
+  getSubdomainAndCustomDomainFromWorkspace(
+    workspace?: Pick<Workspace, 'subdomain' | 'customDomain'> | null,
   ) {
     if (!workspace) {
       return {
@@ -44,23 +44,23 @@ export class GuardRedirectService {
     return workspace;
   }
 
-  getSubdomainAndHostnameFromContext(context: ExecutionContext): {
+  getSubdomainAndCustomDomainFromContext(context: ExecutionContext): {
     subdomain: string;
-    hostname?: string;
+    customDomain?: string;
   } {
     const request = context.switchToHttp().getRequest<Request>();
 
-    const subdomainAndHostnameFromReferer = request.headers.referer
-      ? this.domainManagerService.getSubdomainAndHostnameFromUrl(
+    const subdomainAndCustomDomainFromReferer = request.headers.referer
+      ? this.domainManagerService.getSubdomainAndCustomDomainFromUrl(
           request.headers.referer,
         )
       : null;
 
     return {
       subdomain:
-        subdomainAndHostnameFromReferer?.subdomain ??
+        subdomainAndCustomDomainFromReferer?.subdomain ??
         this.environmentService.get('DEFAULT_SUBDOMAIN'),
-      hostname: subdomainAndHostnameFromReferer?.hostname,
+      customDomain: subdomainAndCustomDomainFromReferer?.customDomain,
     };
   }
 
@@ -76,7 +76,7 @@ export class GuardRedirectService {
 
   getRedirectErrorUrlAndCaptureExceptions(
     err: Error | CustomException,
-    workspace: { id?: string; subdomain: string; hostname?: string },
+    workspace: { id?: string; subdomain: string; customDomain?: string },
   ) {
     this.captureException(err, workspace.id);
 

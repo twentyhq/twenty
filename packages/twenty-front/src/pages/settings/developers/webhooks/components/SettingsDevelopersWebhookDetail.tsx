@@ -20,13 +20,7 @@ import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffec
 import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/AnalyticsGraphDataInstanceContext';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -36,12 +30,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
-import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -68,54 +59,29 @@ export const SettingsDevelopersWebhooksDetail = () => {
   const { t } = useLingui();
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
+
   const isMobile = useIsMobile();
-  const navigate = useNavigateSettings();
+
+  const { getIcon } = useIcons();
+
   const { webhookId = '' } = useParams();
+
+  const {
+    formData,
+    loading,
+    isTargetUrlValid,
+    updateWebhook,
+    updateOperation,
+    removeOperation,
+    deleteWebhook,
+  } = useWebhookUpdateForm({
+    webhookId,
+  });
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
     useState(false);
-  const [description, setDescription] = useState<string>('');
-  const [operations, setOperations] = useState<WebhookOperationType[]>([
-    WEBHOOK_EMPTY_OPERATION,
-  ]);
-  const [secret, setSecret] = useState<string>('');
-  const [isDirty, setIsDirty] = useState<boolean>(false);
-  const { getIcon } = useIcons();
-
-  const { record: webhookData } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Webhook,
-    objectRecordId: webhookId,
-    onCompleted: (data) => {
-      setDescription(data?.description ?? '');
-      const baseOperations = data?.operations
-        ? data.operations.map((op: string) => {
-            const [object, action] = op.split('.');
-            return { object, action };
-          })
-        : data?.operation
-          ? [
-              {
-                object: data.operation.split('.')[0],
-                action: data.operation.split('.')[1],
-              },
-            ]
-          : [];
-
-      setOperations(addEmptyOperationIfNecessary(baseOperations));
-      setSecret(data?.secret ?? '');
-      setIsDirty(false);
-    },
-  });
-
-  const { deleteOneRecord: deleteOneWebhook } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Webhook,
-  });
-
-  const deleteWebhook = () => {
-    deleteOneWebhook(webhookId);
-    navigate(SettingsPath.Developers);
-  };
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsAnalyticsV2Enabled,
@@ -140,69 +106,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
     { value: 'deleted', label: 'Deleted', Icon: IconTrash },
   ];
 
-  const { updateOneRecord } = useUpdateOneRecord<Webhook>({
-    objectNameSingular: CoreObjectNameSingular.Webhook,
-  });
-
-  const cleanAndFormatOperations = (operations: WebhookOperationType[]) => {
-    return Array.from(
-      new Set(
-        operations
-          .filter((op) => isDefined(op.object) && isDefined(op.action))
-          .map((op) => `${op.object}.${op.action}`),
-      ),
-    );
-  };
-
-  const handleSave = async () => {
-    const cleanedOperations = cleanAndFormatOperations(operations);
-    setIsDirty(false);
-    await updateOneRecord({
-      idToUpdate: webhookId,
-      updateOneRecordInput: {
-        operations: cleanedOperations,
-        description: description,
-        secret: secret,
-      },
-    });
-    navigate(SettingsPath.Developers);
-  };
-
-  const addEmptyOperationIfNecessary = (
-    newOperations: WebhookOperationType[],
-  ) => {
-    if (
-      !newOperations.some((op) => op.object === '*' && op.action === '*') &&
-      !newOperations.some((op) => op.object === null)
-    ) {
-      return [...newOperations, WEBHOOK_EMPTY_OPERATION];
-    }
-    return newOperations;
-  };
-
-  const updateOperation = (
-    index: number,
-    field: 'object' | 'action',
-    value: string | null,
-  ) => {
-    const newOperations = [...operations];
-
-    newOperations[index] = {
-      ...newOperations[index],
-      [field]: value,
-    };
-
-    setOperations(addEmptyOperationIfNecessary(newOperations));
-    setIsDirty(true);
-  };
-
-  const removeOperation = (index: number) => {
-    const newOperations = operations.filter((_, i) => i !== index);
-    setOperations(addEmptyOperationIfNecessary(newOperations));
-    setIsDirty(true);
-  };
-
-  if (!webhookData?.targetUrl) {
+  if (loading || !formData) {
     return <></>;
   }
 
@@ -210,7 +114,8 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={webhookData.targetUrl}
+      title={formData.targetUrl}
+      reserveTitleSpace
       links={[
         {
           children: t`Workspace`,
@@ -222,15 +127,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
         },
         { children: t`Webhook` },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
-          isSaveDisabled={!isDirty}
-          onCancel={() => {
-            navigate(SettingsPath.Developers);
-          }}
-          onSave={handleSave}
-        />
-      }
     >
       <SettingsPageContainer>
         <Section>
@@ -240,9 +136,13 @@ export const SettingsDevelopersWebhooksDetail = () => {
           />
           <TextInput
             placeholder={t`URL`}
-            value={webhookData.targetUrl}
-            disabled
+            value={formData.targetUrl}
+            onChange={(targetUrl) => {
+              updateWebhook({ targetUrl });
+            }}
+            error={!isTargetUrlValid ? t`Please enter a valid URL` : undefined}
             fullWidth
+            autoFocus={formData.targetUrl.trim() === ''}
           />
         </Section>
         <Section>
@@ -253,10 +153,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
           <TextArea
             placeholder={t`Write a description`}
             minRows={4}
-            value={description}
+            value={formData.description}
             onChange={(description) => {
-              setDescription(description);
-              setIsDirty(true);
+              updateWebhook({ description });
             }}
           />
         </Section>
@@ -265,7 +164,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
             title={t`Filters`}
             description={t`Select the events you wish to send to this endpoint`}
           />
-          {operations.map((operation, index) => (
+          {formData.operations.map((operation, index) => (
             <StyledFilterRow isMobile={isMobile} key={index}>
               <Select
                 withSearchInput
@@ -293,7 +192,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 options={actionOptions}
               />
 
-              {index < operations.length - 1 ? (
+              {index < formData.operations.length - 1 ? (
                 <IconButton
                   onClick={() => removeOperation(index)}
                   variant="tertiary"
@@ -314,10 +213,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
           <TextInput
             type="password"
             placeholder="Write a secret"
-            value={secret}
+            value={formData.secret}
             onChange={(secret: string) => {
-              setSecret(secret.trim());
-              setIsDirty(true);
+              updateWebhook({ secret: secret.trim() });
             }}
             fullWidth
           />
