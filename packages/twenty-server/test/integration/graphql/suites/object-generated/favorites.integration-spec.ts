@@ -25,7 +25,8 @@ describe('favoritesResolver (e2e)', () => {
                 taskId
                 noteId
                 viewId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -68,7 +69,8 @@ describe('favoritesResolver (e2e)', () => {
           expect(favorites).toHaveProperty('taskId');
           expect(favorites).toHaveProperty('noteId');
           expect(favorites).toHaveProperty('viewId');
-          expect(favorites).toHaveProperty('rocketId');
+          expect(favorites).toHaveProperty('petId');
+          expect(favorites).toHaveProperty('surveyResultId');
         }
       });
   });

@@ -270,7 +270,7 @@ mutation UpdateOneFavorite(
     }
     personId
     position
-    rocket {
+    pet {
       __typename
       createdAt
       createdBy {
@@ -285,7 +285,22 @@ mutation UpdateOneFavorite(
       position
       updatedAt
     }
-    rocketId
+    petId
+    surveyResult {
+      __typename
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      id
+      name
+      position
+      updatedAt
+    }
+    surveyResultId
     task {
       __typename
       assigneeId
@@ -564,9 +579,70 @@ export const mocks = [
               }
             }
             personId
-            position
-            rocket {
+            pet {
               __typename
+              age
+              averageCostOfKibblePerMonth {
+                amountMicros
+                currencyCode
+              }
+              bio
+              birthday
+              comments
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+                context
+              }
+              deletedAt
+              extraData
+              id
+              interestingFacts
+              isGoodWithKids
+              location {
+                addressStreet1
+                addressStreet2
+                addressCity
+                addressState
+                addressCountry
+                addressPostcode
+                addressLat
+                addressLng
+              }
+              makesOwnerThinkOf {
+                firstName
+                lastName
+              }
+              name
+              pictures {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              position
+              soundSwag
+              species
+              traits
+              updatedAt
+              vetEmail {
+                primaryEmail
+                additionalEmails
+              }
+              vetPhone {
+                primaryPhoneNumber
+                primaryPhoneCountryCode
+                primaryPhoneCallingCode
+                additionalPhones
+              }
+            }
+            petId
+            position
+            surveyResult {
+              __typename
+              averageEstimatedNumberOfAtomsInTheUniverse
+              comments
               createdAt
               createdBy {
                 source
@@ -577,10 +653,14 @@ export const mocks = [
               deletedAt
               id
               name
+              participants
+              percentageOfCompletion
               position
+              score
+              shortNotes
               updatedAt
             }
-            rocketId
+            surveyResultId
             task {
               __typename
               assigneeId
