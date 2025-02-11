@@ -70,6 +70,7 @@ export const WorkflowEditTriggerManualForm = ({
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Trigger · Manual"
+        disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>
         <Select

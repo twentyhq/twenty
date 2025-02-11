@@ -1,4 +1,5 @@
 # Pull down translations from Crowdin every two hours or when triggered manually.
+# When force_pull input is true, translations will be pulled regardless of compilation status.
 
 name: 'Pull translations'
 
@@ -6,7 +7,19 @@ on:
   schedule:
     - cron: '0 */2 * * *' # Every two hours.
   workflow_dispatch:
+    inputs:
+      force_pull:
+        description: 'Force pull translations regardless of compilation status'
+        required: false
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      force_pull:
+        description: 'Force pull translations regardless of compilation status'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -43,16 +56,16 @@ jobs:
         continue-on-error: true
 
       - name: Pull translations from Crowdin
-        if: steps.compile_translations.outcome == 'failure'
+        if: inputs.force_pull || steps.compile_translations.outcome == 'failure'
         uses: crowdin/github-action@v2
         with:
           upload_sources: false
           upload_translations: false
           download_translations: true
           export_only_approved: false
-          localization_branch_name: chore/translations
-          commit_message: 'chore: add translations'
-          pull_request_title: 'chore: add translations'
+          localization_branch_name: i18n
+          commit_message: 'i18n - translations'
+          pull_request_title: 'i18n - translations'
           base_url: 'https://twenty.api.crowdin.com'
           auto_approve_imported: false
           import_eq_suggestions: false
@@ -72,17 +85,3 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
-      - name: Compile and commit updated translations
-        if: steps.compile_translations.outcome == 'failure'
-        run: |
-          git fetch origin chore/translations
-          git checkout chore/translations
-          npx nx run twenty-server:lingui:compile
-          npx nx run twenty-emails:lingui:compile
-          npx nx run twenty-front:lingui:compile
-          git config --global user.name 'Crowdin Bot'
-          git config --global user.email 'support+bot@crowdin.com'
-          git add .
-          git commit -m "chore: compile translations"
-          git push origin chore/translations

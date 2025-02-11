@@ -1,17 +1,10 @@
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { WorkflowDiagramCanvasEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditable';
 import { WorkflowDiagramEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramEffect';
 import '@xyflow/react/dist/style.css';
 import { isDefined } from 'twenty-shared';
 
-export const WorkflowVisualizer = ({
-  targetableObject,
-}: {
-  targetableObject: ActivityTargetableObject;
-}) => {
-  const workflowId = targetableObject.id;
-
+export const WorkflowVisualizer = ({ workflowId }: { workflowId: string }) => {
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   return (

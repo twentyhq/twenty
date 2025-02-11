@@ -28,6 +28,7 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldType: {
             type: 'input',
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             `${firstNameLabel} (${fieldMetadataItem.label})`,
@@ -41,6 +42,7 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldType: {
             type: 'input',
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             `${lastNameLabel} (${fieldMetadataItem.label})`,
@@ -54,6 +56,7 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldType: {
             type: 'input',
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             fieldMetadataItem.label + ' (ID)',
@@ -70,6 +73,7 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldType: {
             type: 'input',
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             `${currencyCodeLabel} (${fieldMetadataItem.label})`,
@@ -83,6 +87,7 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldType: {
             type: 'input',
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             FieldMetadataType.NUMBER,
             `${amountMicrosLabel} (${fieldMetadataItem.label})`,
@@ -99,6 +104,7 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldType: {
               type: 'input',
             },
+            fieldMetadataType: fieldMetadataItem.type,
             fieldValidationDefinitions:
               getSpreadSheetFieldValidationDefinitions(
                 fieldMetadataItem.type,
@@ -117,6 +123,7 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldType: {
               type: 'input',
             },
+            fieldMetadataType: fieldMetadataItem.type,
             fieldValidationDefinitions:
               getSpreadSheetFieldValidationDefinitions(
                 fieldMetadataItem.type,
@@ -138,6 +145,7 @@ export const useBuildAvailableFieldsForImport = () => {
                 color: option.color,
               })) || [],
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             fieldMetadataItem.label + ' (ID)',
@@ -157,6 +165,7 @@ export const useBuildAvailableFieldsForImport = () => {
                 color: option.color,
               })) || [],
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             fieldMetadataItem.label + ' (ID)',
@@ -170,6 +179,7 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldType: {
             type: 'checkbox',
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             fieldMetadataItem.label,
@@ -186,6 +196,7 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldType: {
               type: 'input',
             },
+            fieldMetadataType: fieldMetadataItem.type,
             fieldValidationDefinitions:
               getSpreadSheetFieldValidationDefinitions(
                 fieldMetadataItem.type,
@@ -204,11 +215,26 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldType: {
               type: 'input',
             },
+            fieldMetadataType: fieldMetadataItem.type,
             fieldValidationDefinitions:
               getSpreadSheetFieldValidationDefinitions(
                 fieldMetadataItem.type,
                 `${fieldLabel} (${fieldMetadataItem.label})`,
               ),
+          });
+        });
+      } else if (fieldMetadataItem.type === FieldMetadataType.RICH_TEXT_V2) {
+        Object.entries(
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.RICH_TEXT_V2],
+        ).forEach(([_, fieldLabel]) => {
+          availableFieldsForImport.push({
+            icon: getIcon(fieldMetadataItem.icon),
+            label: `${fieldLabel} (${fieldMetadataItem.label})`,
+            key: `${fieldLabel} (${fieldMetadataItem.name})`,
+            fieldType: {
+              type: 'input',
+            },
+            fieldMetadataType: fieldMetadataItem.type,
           });
         });
       } else {
@@ -219,6 +245,7 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldType: {
             type: 'input',
           },
+          fieldMetadataType: fieldMetadataItem.type,
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             fieldMetadataItem.label,

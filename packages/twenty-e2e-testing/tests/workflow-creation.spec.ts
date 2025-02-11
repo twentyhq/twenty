@@ -28,7 +28,9 @@ test('Create workflow', async ({ page }) => {
 
   const nameInput = page.getByRole('textbox');
   await nameInput.fill(NEW_WORKFLOW_NAME);
-  await nameInput.press('Enter');
+
+  const workflowDiagramContainer = page.locator('.react-flow__renderer');
+  await workflowDiagramContainer.click();
 
   const body = await createWorkflowResponse.json();
   const newWorkflowId = body.data.createWorkflow.id;
