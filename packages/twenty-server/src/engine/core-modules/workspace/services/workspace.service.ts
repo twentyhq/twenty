@@ -262,25 +262,23 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   async getCustomDomainDetailsAndToggleIsCustomDomainEnabled(
     workspace: Workspace,
   ) {
-    if (!workspace.customDomain) return undefined;
+    if (!workspace.customDomain) return;
 
-    const result = await this.domainManagerService.getCustomDomainDetails(
-      workspace.customDomain,
-    );
+    const customDomainDetails =
+      await this.domainManagerService.getCustomDomainDetails(
+        workspace.customDomain,
+      );
 
-    if (!result) {
-      return undefined;
-    }
+    if (!customDomainDetails) return;
 
-    const isCustomDomainWorking = result.records.some(
-      ({ status }) => status !== 'success',
-    );
+    const isCustomDomainWorking =
+      this.domainManagerService.isCustomDomainWorking(customDomainDetails);
 
     if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;
       await this.workspaceRepository.save(workspace);
     }
 
-    return result;
+    return customDomainDetails;
   }
 }

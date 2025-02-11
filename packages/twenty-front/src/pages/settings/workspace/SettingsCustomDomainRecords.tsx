@@ -25,7 +25,7 @@ export const SettingsCustomDomainRecords = ({
       <TableBody>
         {records.map((record) => {
           return (
-            <TableRow>
+            <TableRow key={record.key}>
               <TableCell>
                 <TextInputV2
                   value={record.key}

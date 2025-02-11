@@ -23,7 +23,7 @@ export class GuardRedirectService {
     workspace: {
       id?: string;
       subdomain: string;
-      customDomain?: string;
+      customDomain?: string | null;
       isCustomDomainEnabled?: boolean;
     },
   ) {
@@ -90,7 +90,7 @@ export class GuardRedirectService {
     workspace: {
       id?: string;
       subdomain: string;
-      customDomain?: string;
+      customDomain?: string | null;
       isCustomDomainEnabled?: boolean;
     },
   ) {

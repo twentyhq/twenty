@@ -256,7 +256,7 @@ export class DomainManagerService {
         type: 'dv',
         settings: {
           http2: 'on',
-          min_tls_version: '1.2',
+          min_tls_version: '1.0',
           tls_1_3: 'on',
           ciphers: ['ECDHE-RSA-AES128-GCM-SHA256', 'AES128-SHA'],
           early_hints: 'on',
@@ -395,6 +395,12 @@ export class DomainManagerService {
     url.hostname = `${subdomain}.${url.hostname}`;
 
     return url.toString();
+  }
+
+  isCustomDomainWorking(customDomainDetails: CustomDomainDetails) {
+    return customDomainDetails.records.every(
+      ({ status }) => status === 'success',
+    );
   }
 
   getWorkspaceUrls({
