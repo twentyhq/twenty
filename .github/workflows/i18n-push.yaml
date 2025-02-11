@@ -21,13 +21,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
-          ref: i18n
+          ref: main
 
-      - name: Merge main into i18n
+      - name: Setup i18n branch
         run: |
-          git fetch origin main
-          git checkout i18n
-          git merge origin/main
+          if ! git ls-remote --heads origin i18n | grep i18n; then
+            git checkout -b i18n
+          else
+            git checkout i18n
+            git merge origin/main
+          fi
 
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
@@ -49,11 +52,14 @@ jobs:
           git add .
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: extract translations"
-            git push origin HEAD:i18n
             echo "changes_detected=true" >> $GITHUB_OUTPUT
           else
             echo "changes_detected=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Push changes and create remote branch if needed
+        if: steps.check_changes.outputs.changes_detected == 'true'
+        run: git push origin HEAD:i18n
 
       - name: Upload missing translations
         if: steps.check_changes.outputs.changes_detected == 'true'
