@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
+
+import { SettingsFeatures } from 'twenty-shared';
 
 import { ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 
 @Injectable()
 export class ApiKeyService {
@@ -11,6 +14,7 @@ export class ApiKeyService {
     private readonly environmentService: EnvironmentService,
   ) {}
 
+  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.API_KEYS_AND_WEBHOOKS))
   async generateApiKeyToken(
     workspaceId: string,
     apiKeyId?: string,
