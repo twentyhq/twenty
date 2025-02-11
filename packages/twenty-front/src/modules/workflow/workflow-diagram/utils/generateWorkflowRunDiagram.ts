@@ -26,8 +26,16 @@ export const generateWorkflowRunDiagram = ({
   steps: Array<WorkflowStep>;
   output: WorkflowRunOutput | null;
 }): WorkflowRunDiagram => {
+  const triggerBase = getWorkflowDiagramTriggerNode({ trigger });
+
   const nodes: Array<WorkflowRunDiagramNode> = [
-    getWorkflowDiagramTriggerNode({ trigger }),
+    {
+      ...triggerBase,
+      data: {
+        ...triggerBase.data,
+        runStatus: 'success',
+      },
+    },
   ];
   const edges: Array<WorkflowRunDiagramEdge> = [];
 
