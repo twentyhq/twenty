@@ -75,6 +75,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType={headerType}
+        disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>
         <Select

@@ -201,7 +201,7 @@ const mocks: MockedResponse[] = [
                         }
                       }
                       personId
-                      rocket {
+                      pet {
                         __typename
                         createdAt
                         createdBy {
@@ -216,7 +216,8 @@ const mocks: MockedResponse[] = [
                         position
                         updatedAt
                       }
-                      rocketId
+                      petId
+                      surveyResultId
                       updatedAt
                     }
                   }
@@ -361,7 +362,7 @@ const mocks: MockedResponse[] = [
                         }
                       }
                       personId
-                      rocket {
+                      pet {
                         __typename
                         createdAt
                         createdBy {
@@ -376,7 +377,8 @@ const mocks: MockedResponse[] = [
                         position
                         updatedAt
                       }
-                      rocketId
+                      petId
+                      surveyResultId
                       task {
                         __typename
                         assigneeId

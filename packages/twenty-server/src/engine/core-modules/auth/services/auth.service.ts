@@ -53,12 +53,10 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import {
-  WorkspaceAuthProvider,
-  WorkspaceUrlBuilderComponentsType,
-} from 'src/engine/core-modules/workspace/types/workspace.type';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -462,7 +460,7 @@ export class AuthService {
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    workspace: WorkspaceUrlBuilderComponentsType;
+    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({

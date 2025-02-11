@@ -162,7 +162,6 @@ describe('useDeactivateWorkflowSingleRecordAction', () => {
 
     expect(deactivateWorkflowVersionMock).toHaveBeenCalledWith({
       workflowVersionId: activeWorkflowMock.currentVersion.id,
-      workflowId: activeWorkflowMock.id,
     });
   });
 });

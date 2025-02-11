@@ -1,5 +1,6 @@
 import { Field } from '@/spreadsheet-import/types';
 import { generateExampleRow } from '@/spreadsheet-import/utils/generateExampleRow';
+import { FieldMetadataType } from 'twenty-shared';
 
 describe('generateExampleRow', () => {
   const defaultField: Field<'defaultField'> = {
@@ -9,6 +10,7 @@ describe('generateExampleRow', () => {
     fieldType: {
       type: 'input',
     },
+    fieldMetadataType: FieldMetadataType.TEXT,
   };
 
   it('should generate an example row from input field type', () => {
@@ -24,6 +26,7 @@ describe('generateExampleRow', () => {
       {
         ...defaultField,
         fieldType: { type: 'checkbox' },
+        fieldMetadataType: FieldMetadataType.BOOLEAN,
       },
     ];
 
@@ -37,6 +40,7 @@ describe('generateExampleRow', () => {
       {
         ...defaultField,
         fieldType: { type: 'select', options: [] },
+        fieldMetadataType: FieldMetadataType.SELECT,
       },
     ];
 
@@ -50,6 +54,7 @@ describe('generateExampleRow', () => {
       {
         ...defaultField,
         example: 'Example',
+        fieldMetadataType: FieldMetadataType.TEXT,
       },
     ];
 

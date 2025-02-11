@@ -80,7 +80,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   [CardType.WorkflowCard]: ({ targetableObject }) => (
     <>
       <WorkflowVisualizerEffect workflowId={targetableObject.id} />
-      <WorkflowVisualizer targetableObject={targetableObject} />
+      <WorkflowVisualizer workflowId={targetableObject.id} />
     </>
   ),
 

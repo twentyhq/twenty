@@ -1,15 +1,20 @@
-export const microsoftGraphWithMessages = {
+export const microsoftGraphWithMessagesDeltaLink = {
   '@odata.context':
     'https://graph.microsoft.com/beta/$metadata#Collection(message)',
   value: [
     {
       '@odata.type': '#microsoft.graph.message',
       '@odata.etag': 'W/"CQAAABYAAAAadQ+1xAL8SLCZzf1KYyk+AAACItFa"',
-      id: 'AAMkAGZlMDQ1NjU5LTUzN2UtNDAyMC1hNmVlLTZhZmExMGU3ZDU1NwBGAAAAAADzAhgkpMbwQYnkXH1D-Va3BwAadQ_1xAL8SLCZzf1KYyk_AAAAAAEMAAAadQ_1xAL8SLCZzf1KYyk_AAACJSmSAAA=',
+      id: 'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAEksJ3gAA',
+    },
+    {
+      '@odata.type': '#microsoft.graph.message',
+      '@odata.etag': 'W/"CQAAABYAAAAadQ+1xAL8SLCZzf1KYyk+AAANikYP',
+      id: 'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAADZJ8HwAA',
     },
   ],
-  '@odata.nextLink':
-    "https://graph.microsoft.com/beta/me/mailFolders('inbox')/messages/delta?$skiptoken=jWnSM_TVmEdmKBzfVjDdNbDwpt3yYSUqEf9CFdhRcTxhbogC9oaTvY1ZdONMplHuz0pwtPay_qkEcFQ5RLEuDZ3O6IgnI5FXRcfekzOECWlL7zRVdGBidZ5TkXmXV7O7P8cxtvBMFJ2_dV951teFMatpdnD6hvksBK0Ff4tJKfo.HvZwAw_DM9PR3xf90ThtbqSdMCkGCHNPkjpaedxSBN3",
+  '@odata.deltaLink':
+    "https://graph.microsoft.com/beta/me/mailFolders('inbox')/messages/delta?$skiptoken=jWnSM_TVmEdmKBzfVjDdNbDwpt3yYSUqEf9CFdhRcTxhbogC9oaTvY1ZdONMplHuz0pwtPay_qkEcFQ5RLEuDZ3O6IgnI5FXRcfekzOECWlL7zRVdGBidZ5TkXmXV7O7P8cxtvBMFJ2_dV951teFMatpdnD6hvksBK0Ff4tJKfo.HvZwAw_DM9PR3xf90ThtbqSdMCkGCHNPkjpaedxSBN4",
 };
 
 export const microsoftGraphBatchWithTwoMessagesResponse = [

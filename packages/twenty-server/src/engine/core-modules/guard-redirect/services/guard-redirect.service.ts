@@ -7,7 +7,6 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { CustomException } from 'src/utils/custom-exception';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { WorkspaceUrlBuilderComponentsType } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class GuardRedirectService {
@@ -35,24 +34,6 @@ export class GuardRedirectService {
       .switchToHttp()
       .getResponse()
       .redirect(this.getRedirectErrorUrlAndCaptureExceptions(error, workspace));
-  }
-
-  getSubdomainAndCustomDomainFromWorkspace(
-    workspace?: WorkspaceUrlBuilderComponentsType | null,
-  ) {
-    if (!workspace) {
-      return {
-        subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-      };
-    }
-
-    if (!workspace.isCustomDomainEnabled) {
-      return {
-        subdomain: workspace.subdomain,
-      };
-    }
-
-    return workspace;
   }
 
   getSubdomainAndCustomDomainFromContext(context: ExecutionContext): {
