@@ -9,9 +9,11 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
+import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FeatureFlagKey, FieldMetadataType } from '~/generated/graphql';
 
 type SummaryCardProps = {
   objectNameSingular: string;
@@ -53,6 +55,10 @@ export const SummaryCard = ({
     isRecordDeleted: recordFromStore?.isDeleted,
   });
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   if (isNewRightDrawerItemLoading || !isDefined(recordFromStore)) {
     return <ShowPageSummaryCardSkeletonLoader />;
   }
@@ -93,7 +99,14 @@ export const SummaryCard = ({
             isDisplayModeFixHeight: true,
           }}
         >
-          {isInRightDrawer ? (
+          {isCommandMenuV2Enabled ? (
+            <EditableBreadcrumbItem
+              defaultValue={recordFromStore.name}
+              placeholder="Enter a name"
+              onSubmit={() => {}}
+              hotkeyScope={InlineCellHotkeyScope.InlineCell}
+            />
+          ) : isInRightDrawer ? (
             <RightDrawerTitleRecordInlineCell />
           ) : (
             <RecordInlineCell readonly={isReadOnly} />
