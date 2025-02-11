@@ -36,7 +36,7 @@ export const SettingsDevelopers = () => {
   const { t } = useLingui();
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
-    skipPostOptmisticEffect: true,
+    skipPostOptimisticEffect: true,
   });
 
   const createNewWebhook = async () => {
