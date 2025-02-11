@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { In } from 'typeorm';
-
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -53,9 +51,8 @@ export class MessagingCursorService {
     }
   }
 
-  public async processCursorUpdate(
+  public async updateCursor(
     messageChannel: MessageChannelWorkspaceEntity,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
     nextSyncCursor: string,
     folderId?: string,
   ) {
@@ -68,89 +65,39 @@ export class MessagingCursorService {
         'messageFolder',
       );
 
-    switch (connectedAccount.provider) {
-      case 'google':
-        await messageChannelRepository.update(
-          {
-            id: messageChannel.id,
-          },
-          {
-            throttleFailureCount: 0,
-            syncStageStartedAt: null,
-            syncCursor:
-              !messageChannel.syncCursor ||
-              nextSyncCursor > messageChannel.syncCursor
-                ? nextSyncCursor
-                : messageChannel.syncCursor,
-          },
-        );
-        break;
-      case 'microsoft':
-        if (!folderId) {
-          throw new MessageImportException(
-            `Folder ID is required to update cursor for ${connectedAccount.provider}`,
-            MessageImportExceptionCode.FOLDER_ID_REQUIRED,
-          );
-        }
-        await folderRepository.update(
-          {
-            id: folderId,
-          },
-          {
-            syncCursor: nextSyncCursor,
-          },
-        );
-        await messageChannelRepository.update(
-          {
-            id: messageChannel.id,
-          },
-          {
-            throttleFailureCount: 0,
-            syncStageStartedAt: null,
-          },
-        );
-        break;
-
-      default:
-        throw new MessageImportException(
-          `Update Cursor for provider ${connectedAccount.provider} not implemented`,
-          MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-        );
+    if (!folderId) {
+      await messageChannelRepository.update(
+        {
+          id: messageChannel.id,
+        },
+        {
+          throttleFailureCount: 0,
+          syncStageStartedAt: null,
+          syncCursor:
+            !messageChannel.syncCursor ||
+            nextSyncCursor > messageChannel.syncCursor
+              ? nextSyncCursor
+              : messageChannel.syncCursor,
+        },
+      );
+    } else {
+      await folderRepository.update(
+        {
+          id: folderId,
+        },
+        {
+          syncCursor: nextSyncCursor,
+        },
+      );
+      await messageChannelRepository.update(
+        {
+          id: messageChannel.id,
+        },
+        {
+          throttleFailureCount: 0,
+          syncStageStartedAt: null,
+        },
+      );
     }
-  }
-
-  public async getFolders(
-    connectedAccount:
-      | Pick<
-          ConnectedAccountWorkspaceEntity,
-          'provider' | 'refreshToken' | 'id' | 'handle'
-        >
-      | ConnectedAccountWorkspaceEntity,
-  ) {
-    const folderRepository =
-      await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
-        'messageFolder',
-      );
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    const messageChannels = await messageChannelRepository.find({
-      where: {
-        connectedAccountId: connectedAccount.id,
-      },
-    });
-
-    const folders = await folderRepository.find({
-      where: {
-        messageChannelId: In(
-          messageChannels.map((messageChannel) => messageChannel.id),
-        ),
-      },
-    });
-
-    return folders;
   }
 }

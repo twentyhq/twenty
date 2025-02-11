@@ -61,7 +61,6 @@ export class MessagingPartialMessageListFetchService {
 
       const partialMessageLists =
         await this.messagingGetMessageListService.getPartialMessageLists(
-          connectedAccount,
           messageChannel,
         );
 
@@ -115,9 +114,8 @@ export class MessagingPartialMessageListFetchService {
           `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
         );
 
-        await this.messagingCursorService.processCursorUpdate(
+        await this.messagingCursorService.updateCursor(
           messageChannel,
-          connectedAccount,
           nextSyncCursor,
           folderId,
         );

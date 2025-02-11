@@ -106,7 +106,7 @@ export class MicrosoftGetMessageListService {
   ): Promise<GetPartialMessageListForFoldersResponse[]> {
     const result: GetPartialMessageListForFoldersResponse[] = [];
 
-    if (!messageChannel.messageFolders) {
+    if (messageChannel.messageFolders.length === 0) {
       // permanent solution:
       // throw new MessageImportDriverException(
       //   `Message channel ${messageChannel.id} has no message folders`,

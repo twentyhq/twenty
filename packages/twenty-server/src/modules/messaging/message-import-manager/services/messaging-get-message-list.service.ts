@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 import { MicrosoftGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-message-list.service';
 import {
@@ -38,54 +39,56 @@ export class MessagingGetMessageListService {
     private readonly gmailGetMessageListService: GmailGetMessageListService,
     private readonly microsoftGetMessageListService: MicrosoftGetMessageListService,
     private readonly messagingCursorService: MessagingCursorService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async getFullMessageLists(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id' | 'handle'
-    >,
+    messageChannel: MessageChannelWorkspaceEntity,
   ): Promise<GetFullMessageListForFoldersResponse[]> {
-    switch (connectedAccount.provider) {
+    switch (messageChannel.connectedAccount.provider) {
       case 'google':
         return [
           {
             ...(await this.gmailGetMessageListService.getFullMessageList(
-              connectedAccount,
+              messageChannel.connectedAccount,
             )),
             folderId: undefined,
           },
         ];
       case 'microsoft': {
-        const folders =
-          await this.messagingCursorService.getFolders(connectedAccount);
+        const folderRepository =
+          await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+            'messageFolder',
+          );
+
+        const folders = await folderRepository.find({
+          where: {
+            messageChannelId: messageChannel.id,
+          },
+        });
 
         return this.microsoftGetMessageListService.getFullMessageListForFolders(
-          connectedAccount,
+          messageChannel.connectedAccount,
           folders,
         );
       }
       default:
         throw new MessageImportException(
-          `Provider ${connectedAccount.provider} is not supported`,
+          `Provider ${messageChannel.connectedAccount.provider} is not supported`,
           MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
         );
     }
   }
 
   public async getPartialMessageLists(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
-    >,
     messageChannel: MessageChannelWorkspaceEntity,
   ): Promise<GetPartialMessageListForFoldersResponse[]> {
-    switch (connectedAccount.provider) {
+    switch (messageChannel.connectedAccount.provider) {
       case 'google':
         return [
           {
             ...(await this.gmailGetMessageListService.getPartialMessageList(
-              connectedAccount,
+              messageChannel.connectedAccount,
               messageChannel.syncCursor,
             )),
             folderId: undefined,
@@ -93,12 +96,12 @@ export class MessagingGetMessageListService {
         ];
       case 'microsoft':
         return this.microsoftGetMessageListService.getPartialMessageListForFolders(
-          connectedAccount,
+          messageChannel.connectedAccount,
           messageChannel,
         );
       default:
         throw new MessageImportException(
-          `Provider ${connectedAccount.provider} is not supported`,
+          `Provider ${messageChannel.connectedAccount.provider} is not supported`,
           MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
         );
     }

@@ -42,7 +42,7 @@ export class MessagingFullMessageListFetchService {
 
       const fullMessageLists =
         await this.messagingGetMessageListService.getFullMessageLists(
-          connectedAccount,
+          messageChannel,
         );
 
       for (const fullMessageList of fullMessageLists) {
@@ -99,9 +99,8 @@ export class MessagingFullMessageListFetchService {
           );
         }
 
-        await this.messagingCursorService.processCursorUpdate(
+        await this.messagingCursorService.updateCursor(
           messageChannel,
-          connectedAccount,
           nextSyncCursor,
           folderId,
         );
