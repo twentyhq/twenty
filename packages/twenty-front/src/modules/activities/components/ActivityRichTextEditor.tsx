@@ -49,6 +49,10 @@ export const ActivityRichTextEditor = ({
   const cache = useApolloClient().cache;
   const activity = activityInStore as Task | Note | null;
 
+  const isRichTextV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsRichTextV2Enabled,
+  );
+
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
@@ -67,13 +71,20 @@ export const ActivityRichTextEditor = ({
     activityObjectNameSingular: activityObjectNameSingular,
   });
 
-  const persistBodyDebounced = useDebouncedCallback((newBody: string) => {
+  const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
+    const input = isRichTextV2Enabled
+      ? {
+          bodyV2: {
+            blocknote,
+            markdown: null,
+          },
+        }
+      : { body: blocknote };
+
     if (isDefined(activity)) {
       upsertActivity({
         activity,
-        input: {
-          body: newBody,
-        },
+        input,
       });
     }
   }, 300);
@@ -163,14 +174,18 @@ export const ActivityRichTextEditor = ({
   };
 
   const initialBody = useMemo(() => {
+    const blocknote = isRichTextV2Enabled
+      ? activity?.bodyV2?.blocknote
+      : activity?.body;
+
     if (
       isDefined(activity) &&
-      isNonEmptyString(activity.body) &&
-      activity?.body !== '{}'
+      isNonEmptyString(blocknote) &&
+      blocknote !== '{}'
     ) {
-      return JSON.parse(activity.body);
+      return JSON.parse(blocknote);
     }
-  }, [activity]);
+  }, [activity, isRichTextV2Enabled]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
     const { attachmentAbsoluteURL } = await handleUploadAttachment(file);

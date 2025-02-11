@@ -468,29 +468,6 @@ export type EnvironmentVariable = {
 };
 
 export enum EnvironmentVariablesGroup {
-  Authentication = 'Authentication',
-  Email = 'Email',
-  Logging = 'Logging',
-  Other = 'Other',
-  ServerConfig = 'ServerConfig',
-  Workspace = 'Workspace'
-}
-
-export type EnvironmentVariablesGroupData = {
-  __typename?: 'EnvironmentVariablesGroupData';
-  description: Scalars['String']['output'];
-  isHiddenOnLoad: Scalars['Boolean']['output'];
-  name: EnvironmentVariablesGroup;
-  subgroups: Array<EnvironmentVariablesSubgroupData>;
-  variables: Array<EnvironmentVariable>;
-};
-
-export type EnvironmentVariablesOutput = {
-  __typename?: 'EnvironmentVariablesOutput';
-  groups: Array<EnvironmentVariablesGroupData>;
-};
-
-export enum EnvironmentVariablesSubGroup {
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
@@ -498,10 +475,12 @@ export enum EnvironmentVariablesSubGroup {
   ExceptionHandler = 'ExceptionHandler',
   GoogleAuth = 'GoogleAuth',
   LLM = 'LLM',
+  Logging = 'Logging',
   MicrosoftAuth = 'MicrosoftAuth',
-  PasswordAuth = 'PasswordAuth',
+  Other = 'Other',
   RateLimiting = 'RateLimiting',
   SSL = 'SSL',
+  ServerConfig = 'ServerConfig',
   ServerlessConfig = 'ServerlessConfig',
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
@@ -509,11 +488,17 @@ export enum EnvironmentVariablesSubGroup {
   TokensDuration = 'TokensDuration'
 }
 
-export type EnvironmentVariablesSubgroupData = {
-  __typename?: 'EnvironmentVariablesSubgroupData';
+export type EnvironmentVariablesGroupData = {
+  __typename?: 'EnvironmentVariablesGroupData';
   description: Scalars['String']['output'];
-  name: EnvironmentVariablesSubGroup;
+  isHiddenOnLoad: Scalars['Boolean']['output'];
+  name: EnvironmentVariablesGroup;
   variables: Array<EnvironmentVariable>;
+};
+
+export type EnvironmentVariablesOutput = {
+  __typename?: 'EnvironmentVariablesOutput';
+  groups: Array<EnvironmentVariablesGroupData>;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -2175,6 +2160,7 @@ export type WorkspaceMember = {
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']['output']>;
+  userEmail: Scalars['String']['output'];
   userWorkspaceId?: Maybe<Scalars['String']['output']>;
 };
 
