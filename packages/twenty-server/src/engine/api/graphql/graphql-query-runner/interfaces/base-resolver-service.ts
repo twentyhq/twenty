@@ -23,6 +23,10 @@ import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-quer
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -180,7 +184,10 @@ export abstract class GraphqlQueryBaseResolverService<
     ) {
       if (!authContext.apiKey) {
         if (!authContext.userWorkspaceId) {
-          throw new Error('Missing userWorkspaceId in authContext');
+          throw new AuthException(
+            'Missing userWorkspaceId in authContext',
+            AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+          );
         }
 
         const permissionRequired: SettingsFeatures =
