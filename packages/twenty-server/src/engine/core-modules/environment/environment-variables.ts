@@ -822,7 +822,6 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.CloudflareConfig,
     description: 'Random string to validate queries from Cloudflare',
   })
   @IsString()
