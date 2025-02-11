@@ -6,7 +6,7 @@ import { EditableBreadcrumbItemHotkeyScope } from '@/ui/navigation/bread-crumb/t
 
 import { findByText, userEvent } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
-import { ExpandableInput } from '../EditableBreadcrumbItem';
+import { ExpandableInput } from '../../../../input/components/ExpandableInput';
 
 const onSubmit = jest.fn();
 

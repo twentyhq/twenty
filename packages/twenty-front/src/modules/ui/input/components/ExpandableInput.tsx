@@ -1,12 +1,14 @@
-import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { ExpandableInputInstanceContext } from '@/ui/input/states/contexts/ExpandableInputInstanceContext';
+import { isExpandableInputOpenedComponentState } from '@/ui/input/states/isExpandableInputOpenedComponentState';
 import { useOpenEditableBreadCrumbItem } from '@/ui/navigation/bread-crumb/hooks/useOpenEditableBreadCrumbItem';
 import { EditableBreadcrumbItemHotkeyScope } from '@/ui/navigation/bread-crumb/types/EditableBreadcrumbItemHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
@@ -51,8 +53,15 @@ export const ExpandableInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const [isUpdatingRecordEditableName, setIsUpdatingRecordEditableName] =
-    useRecoilState(isUpdatingRecordEditableNameState);
+  const expandableInputInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ExpandableInputInstanceContext,
+  );
+
+  const [isExpandableInputOpened, setIsExpandableInputOpened] =
+    useRecoilComponentStateV2(
+      isExpandableInputOpenedComponentState,
+      expandableInputInstanceId,
+    );
 
   // TODO: remove this and set the hokey scopes synchronously on page change inside the useNavigateApp hook
   useHotkeyScopeOnMount(
@@ -62,7 +71,7 @@ export const ExpandableInput = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      setIsUpdatingRecordEditableName(false);
+      setIsExpandableInputOpened(false);
     },
     EditableBreadcrumbItemHotkeyScope.EditableBreadcrumbItem,
   );
@@ -71,7 +80,7 @@ export const ExpandableInput = ({
     [Key.Enter],
     () => {
       onSubmit(value);
-      setIsUpdatingRecordEditableName(false);
+      setIsExpandableInputOpened(false);
     },
     EditableBreadcrumbItemHotkeyScope.EditableBreadcrumbItem,
   );
@@ -84,7 +93,7 @@ export const ExpandableInput = ({
   useListenClickOutside({
     refs: clickOutsideRefs,
     callback: () => {
-      setIsUpdatingRecordEditableName(false);
+      setIsExpandableInputOpened(false);
     },
     listenerId: 'editable-breadcrumb-item',
   });
@@ -99,7 +108,7 @@ export const ExpandableInput = ({
 
   const { openEditableBreadCrumbItem } = useOpenEditableBreadCrumbItem();
 
-  return isUpdatingRecordEditableName ? (
+  return isExpandableInputOpened ? (
     <TextInputV2
       className={className}
       autoGrow

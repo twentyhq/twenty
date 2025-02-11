@@ -5,10 +5,10 @@ import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-ce
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
-import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { shouldRedirectToShowPageOnCreation } from '@/object-record/utils/shouldRedirectToShowPageOnCreation';
 import { AppPath } from '@/types/AppPath';
+import { isExpandableInputOpenedComponentState } from '@/ui/input/states/isExpandableInputOpenedComponentState';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -81,7 +81,15 @@ export const useCreateNewTableRecord = ({
               objectRecordId: recordId,
             });
 
-            set(isUpdatingRecordEditableNameState, true);
+            // TODO: modify this
+            const expandableInputInstanceId = 'expandable-input-instance-id';
+
+            set(
+              isExpandableInputOpenedComponentState.atomFamily({
+                instanceId: expandableInputInstanceId,
+              }),
+              true,
+            );
             return;
           }
 
