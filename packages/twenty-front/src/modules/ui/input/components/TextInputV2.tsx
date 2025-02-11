@@ -84,10 +84,6 @@ const StyledInput = styled.input<
   }
 `;
 
-const StyledErrorContainer = styled.div`
-  padding-top: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputV2Size }>`
   align-items: center;
   display: flex;
