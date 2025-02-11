@@ -20,7 +20,6 @@ import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { firestoreDB } from 'src/engine/core-modules/meta/FirebaseConfig';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import {
   SendMessageInput,
@@ -245,7 +244,7 @@ export class WhatsappService {
     >,
     isReceiving: boolean,
   ) {
-    const messagesCollection = collection(firestoreDB, 'whatsapp');
+    const messagesCollection = collection(this.firestoreDb, 'whatsapp');
     const docId = `${whatsappDoc.integrationId}_${whatsappDoc.client.phone}`;
     const docRef = doc(messagesCollection, docId);
     const docSnapshot = await getDoc(docRef);
@@ -358,7 +357,7 @@ export class WhatsappService {
       'unreadMessages' | 'lastMessage' | 'isVisible'
     >,
   ) {
-    const messagesCollection = collection(firestoreDB, 'whatsapp');
+    const messagesCollection = collection(this.firestoreDb, 'whatsapp');
     const docId = `${whatsappDoc.integrationId}_${whatsappDoc.client.phone}`;
     const docRef = doc(messagesCollection, docId);
     const docSnapshot = await getDoc(docRef);
@@ -445,7 +444,7 @@ export class WhatsappService {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleChatsWaitingStatus() {
     const chatsQuery = query(
-      collection(firestoreDB, 'whatsapp'),
+      collection(this.firestoreDb, 'whatsapp'),
       where('status', '==', statusEnum.InProgress),
     );
 
@@ -479,7 +478,7 @@ export class WhatsappService {
         }
 
         if (timeDifference >= integration.sla && waDoc.agent !== 'empty') {
-          const docRef = doc(firestoreDB, 'whatsapp', docSnapshot.id);
+          const docRef = doc(this.firestoreDb, 'whatsapp', docSnapshot.id);
 
           await setDoc(docRef, {
             ...waDoc,
@@ -497,7 +496,7 @@ export class WhatsappService {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleResolvedChatsVisibility() {
     const chatsQuery = query(
-      collection(firestoreDB, 'whatsapp'),
+      collection(this.firestoreDb, 'whatsapp'),
       where('status', '==', statusEnum.Resolved),
       where('isVisible', '==', true),
     );
@@ -515,7 +514,7 @@ export class WhatsappService {
         const timeDifference = (now.getTime() - createdAtDate) / 1000 / 60;
 
         if (timeDifference >= 1440) {
-          const docRef = doc(firestoreDB, 'whatsapp', docSnapshot.id);
+          const docRef = doc(this.firestoreDb, 'whatsapp', docSnapshot.id);
 
           await setDoc(docRef, {
             ...waDoc,
