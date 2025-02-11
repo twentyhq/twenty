@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 12:24\n"
+"PO-Revision-Date: 2025-02-11 18:02\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -20,19 +20,19 @@ msgstr ""
 
 #: src/emails/send-invite-link.email.tsx:57
 msgid "Accept invite"
-msgstr ""
+msgstr "קבל הזמנה"
 
 #: src/emails/clean-suspended-workspace.email.tsx:33
 msgid "All data in this workspace has been permanently deleted."
-msgstr ""
+msgstr "כל הנתונים במרחב העבודה הזה נמחקו לצמיתות."
 
 #: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
-msgstr ""
+msgstr "אמת את כתובת האימייל שלך"
 
 #: src/emails/password-update-notify.email.tsx:46
 msgid "Connect to Twenty"
-msgstr ""
+msgstr "התחבר ל-Twenty"
 
 #: src/emails/password-update-notify.email.tsx:24
 #~ msgid "Dear"
@@ -40,43 +40,43 @@ msgstr ""
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
-msgstr ""
+msgstr "יקר {userName}"
 
 #: src/emails/send-invite-link.email.tsx:50
 msgid "has invited you to join a workspace called "
-msgstr ""
+msgstr "הזמין אותך להצטרף למרחב עבודה בשם "
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Hello"
-msgstr ""
+msgstr "שלום"
 
 #: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr ""
+msgstr "אם לא אתה התחלת את השינוי הזה, אנא פנה מיד לבעל מרחב העבודה שלך."
 
 #: src/emails/warn-suspended-workspace.email.tsx:46
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr ""
+msgstr "אם תרצה להמשיך ולהשתמש ב-Twenty, אנא עדכן את המנוי שלך במהלך {remainingDays} {dayOrDays} הבאים."
 
 #: src/emails/clean-suspended-workspace.email.tsx:36
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr ""
+msgstr "אם תרצה להשתמש ב-Twenty שוב, תוכל ליצור מרחב עבודה חדש."
 
 #: src/emails/warn-suspended-workspace.email.tsx:34
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr ""
+msgstr "נראה כי מרחב העבודה שלך <0>{workspaceDisplayName}</0> הושעה ל-{daysSinceInactive} ימים."
 
 #: src/emails/send-invite-link.email.tsx:42
 msgid "Join your team on Twenty"
-msgstr ""
+msgstr "הצטרף לצוות שלך ב-Twenty"
 
 #: src/emails/password-update-notify.email.tsx:29
 msgid "Password updated"
-msgstr ""
+msgstr "הסיסמה עודכנה"
 
 #: src/emails/password-reset-link.email.tsx:24
 msgid "Reset"
-msgstr ""
+msgstr "איפוס"
 
 #: src/emails/password-reset-link.email.tsx:23
 msgid "Reset your password 🗝"
