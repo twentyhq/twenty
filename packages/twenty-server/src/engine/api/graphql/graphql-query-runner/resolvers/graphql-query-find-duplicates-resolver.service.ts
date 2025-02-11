@@ -192,6 +192,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
 
           if (compositeFieldMetadata) {
             condition[compositeFieldMetadata.parentField] = {
+              ...condition[compositeFieldMetadata.parentField],
               [compositeFieldMetadata.name]: { eq: record[columnName] },
             };
           } else {
