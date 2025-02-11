@@ -15,10 +15,8 @@ import {
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { RoleAssignmentConfirmationModalMode } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalMode';
-import {
-  RoleAssignmentConfirmationModal,
-  SelectedWorkspaceMember,
-} from './RoleAssignmentConfirmationModal';
+import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { RoleAssignmentConfirmationModal } from './RoleAssignmentConfirmationModal';
 import { RoleAssignmentTableHeader } from './RoleAssignmentTableHeader';
 import { RoleAssignmentTableRow } from './RoleAssignmentTableRow';
 import { RoleWorkspaceMemberPickerDropdown } from './RoleWorkspaceMemberPickerDropdown';
@@ -76,7 +74,9 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
   const [modalMode, setModalMode] =
     useState<RoleAssignmentConfirmationModalMode | null>(null);
   const [selectedWorkspaceMember, setSelectedWorkspaceMember] =
-    useState<SelectedWorkspaceMember | null>(null);
+    useState<RoleAssignmentConfirmationModalSelectedWorkspaceMember | null>(
+      null,
+    );
   const { data: rolesData } = useGetRolesQuery();
   const { closeDropdown } = useDropdown('role-member-select');
   const [searchFilter, setSearchFilter] = useState('');

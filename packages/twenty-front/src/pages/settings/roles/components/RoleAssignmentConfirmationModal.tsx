@@ -2,16 +2,11 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { t } from '@lingui/core/macro';
 import { RoleAssignmentConfirmationModalSubtitle } from '~/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle';
 import { RoleAssignmentConfirmationModalMode } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalMode';
-
-export type SelectedWorkspaceMember = {
-  id: string;
-  name: string;
-  role?: { id: string; label: string };
-};
+import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 
 type RoleAssignmentConfirmationModalProps = {
   mode: RoleAssignmentConfirmationModalMode;
-  selectedWorkspaceMember: SelectedWorkspaceMember;
+  selectedWorkspaceMember: RoleAssignmentConfirmationModalSelectedWorkspaceMember;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;

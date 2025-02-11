@@ -55,8 +55,7 @@ const StyledAvatarGroup = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 
   > * {
-    border: 2px solid ${({ theme }) => theme.background.primary};
-    margin-left: -8px;
+    margin-left: -5px;
 
     &:first-of-type {
       margin-left: 0;

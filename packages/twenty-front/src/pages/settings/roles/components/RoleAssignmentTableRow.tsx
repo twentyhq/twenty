@@ -4,11 +4,10 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
-  AppTooltip,
   Avatar,
   IconButton,
   IconTrash,
-  TooltipDelay,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 
@@ -62,24 +61,12 @@ export const RoleAssignmentTableRow = ({
               size="md"
             />
           </StyledIconWrapper>
-          <StyledTextContainerWithEllipsis
-            id={`hover-text-${workspaceMember.id}`}
-          >
-            {`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-          </StyledTextContainerWithEllipsis>
-          <AppTooltip
-            anchorSelect={`#hover-text-${workspaceMember.id}`}
-            content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-            noArrow
-            place="top"
-            positionStrategy="fixed"
-            delay={TooltipDelay.shortDelay}
+          <OverflowingTextWithTooltip
+            text={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
           />
         </TableCell>
         <TableCell>
-          <StyledTextContainerWithEllipsis>
-            {workspaceMember.userEmail}
-          </StyledTextContainerWithEllipsis>
+          <OverflowingTextWithTooltip text={workspaceMember.userEmail} />
         </TableCell>
         <TableCell align={'right'}>
           <StyledButtonContainer>
