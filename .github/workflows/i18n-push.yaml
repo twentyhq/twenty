@@ -27,7 +27,7 @@ jobs:
         run: |
           git fetch origin main
           git checkout i18n
-          git merge main
+          git merge origin/main
 
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
