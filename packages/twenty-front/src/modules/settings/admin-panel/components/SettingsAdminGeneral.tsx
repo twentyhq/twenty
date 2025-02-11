@@ -55,7 +55,6 @@ const StyledContentContainer = styled.div`
 
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
-  const [userId, setUserId] = useState('');
   const { enqueueSnackBar } = useSnackBar();
 
   const { activeTabId, setActiveTabId } = useTabList(
@@ -91,10 +90,6 @@ export const SettingsAdminGeneral = () => {
     });
 
     const result = response.data?.userLookupAdminPanel;
-
-    if (isDefined(result?.user?.id)) {
-      setUserId(result.user.id.trim());
-    }
 
     if (isDefined(result?.workspaces) && result.workspaces.length > 0) {
       setActiveTabId(result.workspaces[0].id);
@@ -181,10 +176,7 @@ export const SettingsAdminGeneral = () => {
             />
           </StyledTabListContainer>
           <StyledContentContainer>
-            <SettingsAdminWorkspaceContent
-              activeWorkspace={activeWorkspace}
-              userId={userId}
-            />
+            <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
           </StyledContentContainer>
         </Section>
       )}

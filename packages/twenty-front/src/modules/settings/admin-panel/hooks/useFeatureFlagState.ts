@@ -32,6 +32,5 @@ export const useFeatureFlagState = () => {
 
   return {
     updateFeatureFlagState,
-    userLookupResult,
   };
 };

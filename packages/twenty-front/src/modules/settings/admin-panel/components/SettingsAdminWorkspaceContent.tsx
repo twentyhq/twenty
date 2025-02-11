@@ -2,10 +2,8 @@ import { Button, H2Title, IconUser, Toggle } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
-import { useFeatureFlagMutation } from '@/settings/admin-panel/hooks/useFeatureFlagMutation';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
-import { useImpersonationMutation } from '@/settings/admin-panel/hooks/useImpersonationMutation';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
@@ -19,11 +17,14 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated/graphql';
+import {
+  FeatureFlagKey,
+  useImpersonateMutation,
+  useUpdateWorkspaceFeatureFlagMutation,
+} from '~/generated/graphql';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
-  userId: string;
 };
 
 const StyledTable = styled(Table)`
@@ -32,23 +33,23 @@ const StyledTable = styled(Table)`
 
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
-  userId,
 }: SettingsAdminWorkspaceContentProps) => {
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
   const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);
   const { enqueueSnackBar } = useSnackBar();
   const [currentUser] = useRecoilState(currentUserState);
 
-  const { executeImpersonationMutation } = useImpersonationMutation();
   const { executeImpersonationAuth } = useImpersonationAuth();
   const { executeImpersonationRedirect } = useImpersonationRedirect();
-  const { executeFeatureFlagMutation } = useFeatureFlagMutation();
+  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
+  const [impersonate] = useImpersonateMutation();
+
   const { updateFeatureFlagState } = useFeatureFlagState();
   const userLookupResult = useRecoilValue(userLookupResultState);
 
-  const handleImpersonate = async (userId: string, workspaceId: string) => {
-    if (!userId.trim()) {
-      enqueueSnackBar('Please enter a user ID', {
+  const handleImpersonate = async (workspaceId: string) => {
+    if (!userLookupResult?.user.id) {
+      enqueueSnackBar('Please search for a user first', {
         variant: SnackBarVariant.Error,
       });
       return;
@@ -56,26 +57,30 @@ export const SettingsAdminWorkspaceContent = ({
 
     setIsImpersonationLoading(true);
 
-    try {
-      const { loginToken, workspace, isCurrentWorkspace } =
-        await executeImpersonationMutation(userId, workspaceId);
+    await impersonate({
+      variables: { userId: userLookupResult.user.id, workspaceId },
+      onCompleted: async (data) => {
+        const { loginToken, workspace } = data.impersonate;
+        const isCurrentWorkspace = workspace.id === activeWorkspace?.id;
 
-      if (isCurrentWorkspace) {
-        await executeImpersonationAuth(loginToken.token);
-        return;
-      }
+        if (isCurrentWorkspace) {
+          await executeImpersonationAuth(loginToken.token);
+          return;
+        }
 
-      return executeImpersonationRedirect(
-        workspace.workspaceUrls,
-        loginToken.token,
-      );
-    } catch (error) {
-      enqueueSnackBar('Failed to impersonate user. Please try again.', {
-        variant: SnackBarVariant.Error,
-      });
-    } finally {
+        return executeImpersonationRedirect(
+          workspace.workspaceUrls,
+          loginToken.token,
+        );
+      },
+      onError: (error) => {
+        enqueueSnackBar(`Failed to impersonate user. ${error.message}`, {
+          variant: SnackBarVariant.Error,
+        });
+      },
+    }).finally(() => {
       setIsImpersonationLoading(false);
-    }
+    });
   };
 
   const handleFeatureFlagUpdate = async (
@@ -83,19 +88,27 @@ export const SettingsAdminWorkspaceContent = ({
     featureFlag: FeatureFlagKey,
     value: boolean,
   ) => {
-    const previousState = userLookupResult;
+    const previousValue = userLookupResult?.workspaces
+      .find((workspace) => workspace.id === workspaceId)
+      ?.featureFlags.find((flag) => flag.key === featureFlag)?.value;
 
-    try {
-      updateFeatureFlagState(workspaceId, featureFlag, value);
-      await executeFeatureFlagMutation(workspaceId, featureFlag, value);
-    } catch (error) {
-      if (isDefined(previousState)) {
-        updateFeatureFlagState(workspaceId, featureFlag, !value);
-      }
-      enqueueSnackBar('Failed to update feature flag. Please try again.', {
-        variant: SnackBarVariant.Error,
-      });
-    }
+    updateFeatureFlagState(workspaceId, featureFlag, value);
+    await updateFeatureFlag({
+      variables: {
+        workspaceId,
+        featureFlag,
+        value,
+      },
+
+      onError: (error) => {
+        if (isDefined(previousValue)) {
+          updateFeatureFlagState(workspaceId, featureFlag, previousValue);
+        }
+        enqueueSnackBar(`Failed to update feature flag. ${error.message}`, {
+          variant: SnackBarVariant.Error,
+        });
+      },
+    });
   };
 
   if (!activeWorkspace) return null;
@@ -115,7 +128,7 @@ export const SettingsAdminWorkspaceContent = ({
           variant="primary"
           accent="blue"
           title={'Impersonate'}
-          onClick={() => handleImpersonate(userId, activeWorkspace.id)}
+          onClick={() => handleImpersonate(activeWorkspace.id)}
           disabled={
             isImpersonateLoading || activeWorkspace.allowImpersonation === false
           }
