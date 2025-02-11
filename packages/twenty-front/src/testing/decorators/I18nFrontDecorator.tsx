@@ -5,7 +5,7 @@ import { SOURCE_LOCALE } from 'twenty-shared';
 import { messages as enMessages } from '../../locales/generated/en';
 
 i18n.load({
-  SOURCE_LOCALE: enMessages,
+  [SOURCE_LOCALE]: enMessages,
 });
 i18n.activate(SOURCE_LOCALE);
 
