@@ -27,6 +27,9 @@ export class WorkspaceMember {
   name: FullName;
 
   @Field({ nullable: false })
+  userEmail: string;
+
+  @Field({ nullable: false })
   colorScheme: string;
 
   @Field({ nullable: true })

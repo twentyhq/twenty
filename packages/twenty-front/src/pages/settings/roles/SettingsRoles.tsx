@@ -55,8 +55,7 @@ const StyledAvatarGroup = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 
   > * {
-    border: 2px solid ${({ theme }) => theme.background.primary};
-    margin-left: -8px;
+    margin-left: -5px;
 
     &:first-of-type {
       margin-left: 0;
@@ -84,6 +83,11 @@ const StyledAvatarContainer = styled.div`
   border: 0px;
 `;
 
+const StyledAssignedText = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+`;
+
 export const SettingsRoles = () => {
   const { t } = useLingui();
   const isPermissionsEnabled = useIsFeatureEnabled(
@@ -91,8 +95,9 @@ export const SettingsRoles = () => {
   );
   const theme = useTheme();
   const navigateSettings = useNavigateSettings();
-
-  const { data: rolesData, loading: isRolesLoading } = useGetRolesQuery();
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
+    fetchPolicy: 'network-only',
+  });
 
   if (!isPermissionsEnabled) {
     return null;
@@ -131,7 +136,7 @@ export const SettingsRoles = () => {
                 <TableHeader align={'right'}></TableHeader>
               </TableRow>
             </StyledTableHeaderRow>
-            {!isRolesLoading &&
+            {!rolesLoading &&
               rolesData?.getRoles.map((role) => (
                 <StyledTableRow
                   key={role.id}
@@ -164,7 +169,7 @@ export const SettingsRoles = () => {
                                     workspaceMember.name.firstName ?? ''
                                   }
                                   type="rounded"
-                                  size="sm"
+                                  size="md"
                                 />
                               </StyledAvatarContainer>
                               <AppTooltip
@@ -178,7 +183,9 @@ export const SettingsRoles = () => {
                             </>
                           ))}
                       </StyledAvatarGroup>
-                      {role.workspaceMembers.length}
+                      <StyledAssignedText>
+                        {role.workspaceMembers.length}
+                      </StyledAssignedText>
                     </StyledAssignedCell>
                   </TableCell>
                   <TableCell align={'right'}>
