@@ -29,7 +29,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 
 @Resolver()
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
-@UseGuards(SettingsPermissionsGuard(SettingsFeatures.SECURITY_SETTINGS))
+@UseGuards(SettingsPermissionsGuard(SettingsFeatures.SECURITY))
 export class SSOResolver {
   constructor(private readonly sSOService: SSOService) {}
 
