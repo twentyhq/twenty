@@ -8,6 +8,7 @@ import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflo
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
   WorkflowDiagramEdge,
+  WorkflowDiagramEdgeType,
   WorkflowDiagramNode,
   WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -17,6 +18,7 @@ import styled from '@emotion/styled';
 import {
   Background,
   EdgeChange,
+  EdgeProps,
   FitViewOptions,
   NodeChange,
   NodeProps,
@@ -61,8 +63,6 @@ const StyledResetReactflowStyles = styled.div`
     cursor: pointer;
   }
 
-  --xy-edge-stroke: ${({ theme }) => theme.border.color.strong};
-
   --xy-node-border-radius: none;
   --xy-node-border: none;
   --xy-node-background-color: none;
@@ -85,6 +85,7 @@ const defaultFitViewOptions = {
 export const WorkflowDiagramCanvasBase = ({
   status,
   nodeTypes,
+  edgeTypes,
   children,
 }: {
   status: WorkflowVersionStatus;
@@ -93,6 +94,17 @@ export const WorkflowDiagramCanvasBase = ({
       WorkflowDiagramNodeType,
       React.ComponentType<
         NodeProps & {
+          data: any;
+          type: any;
+        }
+      >
+    >
+  >;
+  edgeTypes: Partial<
+    Record<
+      WorkflowDiagramEdgeType,
+      React.ComponentType<
+        EdgeProps & {
           data: any;
           type: any;
         }
@@ -223,6 +235,7 @@ export const WorkflowDiagramCanvasBase = ({
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
         onNodesChange={handleNodesChange}

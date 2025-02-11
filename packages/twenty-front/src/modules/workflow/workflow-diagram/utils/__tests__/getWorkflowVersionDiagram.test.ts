@@ -133,7 +133,8 @@ describe('getWorkflowVersionDiagram', () => {
     {
       "deletable": false,
       "id": "8f3b2121-f194-4ba4-9fbf-0",
-      "markerEnd": "arrow-rounded",
+      "markerEnd": "workflow-edge-arrow-rounded",
+      "markerStart": "workflow-edge-gray-circle",
       "selectable": false,
       "source": "trigger",
       "target": "step-1",
