@@ -13,6 +13,7 @@ import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOne
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 
 export const usePersistViewFilterRecords = () => {
@@ -42,7 +43,7 @@ export const usePersistViewFilterRecords = () => {
 
   const createViewFilterRecords = useCallback(
     (viewFiltersToCreate: ViewFilter[], view: GraphQLView) => {
-      if (!viewFiltersToCreate.length) return;
+      if (viewFiltersToCreate.length === 0) return;
 
       return Promise.all(
         viewFiltersToCreate.map((viewFilter) =>
@@ -61,7 +62,7 @@ export const usePersistViewFilterRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['createViewFilter'];
-              if (!record) return;
+              if (!isDefined(record)) return;
 
               triggerCreateRecordsOptimisticEffect({
                 cache,
@@ -99,10 +100,13 @@ export const usePersistViewFilterRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['updateViewFilter'];
-              if (!record) return;
-              const cachedRecord = getRecordFromCache<ViewFilter>(record.id);
+              if (!isDefined(record)) return;
 
-              if (!cachedRecord) return;
+              const cachedRecord = getRecordFromCache<ViewFilter>(
+                record.id,
+                cache,
+              );
+              if (!isDefined(cachedRecord)) return;
 
               triggerUpdateRecordOptimisticEffect({
                 cache,
@@ -137,12 +141,13 @@ export const usePersistViewFilterRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['destroyViewFilter'];
+              if (!isDefined(record)) return;
 
-              if (!record) return;
-
-              const cachedRecord = getRecordFromCache(record.id, cache);
-
-              if (!cachedRecord) return;
+              const cachedRecord = getRecordFromCache<ViewFilter>(
+                record.id,
+                cache,
+              );
+              if (!isDefined(cachedRecord)) return;
 
               triggerDestroyRecordsOptimisticEffect({
                 cache,

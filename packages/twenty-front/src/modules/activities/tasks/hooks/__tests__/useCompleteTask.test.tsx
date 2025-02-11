@@ -11,6 +11,10 @@ const task: Task = {
   status: 'DONE',
   title: 'Test',
   body: 'Test',
+  bodyV2: {
+    blocknote: 'Test',
+    markdown: 'Test',
+  },
   dueAt: '2024-03-15T07:33:14.212Z',
   createdAt: '2024-03-15T07:33:14.212Z',
   updatedAt: '2024-03-15T07:33:14.212Z',
@@ -61,7 +65,8 @@ const mocks: MockedResponse[] = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   type
                   updatedAt
@@ -90,8 +95,9 @@ const mocks: MockedResponse[] = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   position
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   viewId
@@ -115,7 +121,8 @@ const mocks: MockedResponse[] = [
                   id
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   updatedAt
                 }
@@ -137,8 +144,9 @@ const mocks: MockedResponse[] = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   properties
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   workflowId

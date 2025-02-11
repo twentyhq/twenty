@@ -1,5 +1,6 @@
 import { Field } from '@/spreadsheet-import/types';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
+import { FieldMetadataType } from 'twenty-shared';
 
 describe('getFieldOptions', () => {
   const optionsArray = [
@@ -25,6 +26,7 @@ describe('getFieldOptions', () => {
         type: 'select',
         options: optionsArray,
       },
+      fieldMetadataType: FieldMetadataType.SELECT,
     },
     {
       key: 'Name',
@@ -33,6 +35,7 @@ describe('getFieldOptions', () => {
       fieldType: {
         type: 'input',
       },
+      fieldMetadataType: FieldMetadataType.TEXT,
     },
   ];
 
