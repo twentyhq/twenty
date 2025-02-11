@@ -2,6 +2,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ExpandableInput } from '@/ui/input/components/ExpandableInput';
+import { ExpandableInputInstanceContext } from '@/ui/input/states/contexts/ExpandableInputInstanceContext';
 import styled from '@emotion/styled';
 import { capitalize } from 'twenty-shared';
 
@@ -66,13 +67,19 @@ export const ObjectRecordShowPageBreadcrumb = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      <ExpandableInput
-        defaultValue={record?.name ?? ''}
-        noValuePlaceholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
-        placeholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
-        onSubmit={handleSubmit}
-        hotkeyScope="editable-breadcrumb-item"
-      />
+      <ExpandableInputInstanceContext.Provider
+        value={{
+          instanceId: objectRecordId,
+        }}
+      >
+        <ExpandableInput
+          defaultValue={record?.name ?? ''}
+          noValuePlaceholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
+          placeholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
+          onSubmit={handleSubmit}
+          hotkeyScope="editable-breadcrumb-item"
+        />
+      </ExpandableInputInstanceContext.Provider>
     </StyledEditableTitleContainer>
   );
 };

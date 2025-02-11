@@ -1,7 +1,7 @@
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { ExpandableInputInstanceContext } from '@/ui/input/states/contexts/ExpandableInputInstanceContext';
 import { isExpandableInputOpenedComponentState } from '@/ui/input/states/isExpandableInputOpenedComponentState';
-import { useOpenEditableBreadCrumbItem } from '@/ui/navigation/bread-crumb/hooks/useOpenEditableBreadCrumbItem';
+import { useOpenExpandableInput } from '@/ui/navigation/bread-crumb/hooks/useOpenEditableBreadCrumbItem';
 import { EditableBreadcrumbItemHotkeyScope } from '@/ui/navigation/bread-crumb/types/EditableBreadcrumbItemHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -106,7 +106,7 @@ export const ExpandableInput = ({
 
   const [value, setValue] = useState<string>(defaultValue);
 
-  const { openEditableBreadCrumbItem } = useOpenEditableBreadCrumbItem();
+  const { openExpandableInput } = useOpenExpandableInput();
 
   return isExpandableInputOpened ? (
     <TextInputV2
@@ -121,7 +121,10 @@ export const ExpandableInput = ({
       autoFocus
     />
   ) : (
-    <StyledButton ref={buttonRef} onClick={openEditableBreadCrumbItem}>
+    <StyledButton
+      ref={buttonRef}
+      onClick={() => openExpandableInput(expandableInputInstanceId)}
+    >
       {value || noValuePlaceholder}
     </StyledButton>
   );

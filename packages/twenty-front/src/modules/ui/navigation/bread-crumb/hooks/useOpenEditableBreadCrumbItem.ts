@@ -1,23 +1,26 @@
 import { isExpandableInputOpenedComponentState } from '@/ui/input/states/isExpandableInputOpenedComponentState';
 import { EditableBreadcrumbItemHotkeyScope } from '@/ui/navigation/bread-crumb/types/EditableBreadcrumbItemHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilCallback } from 'recoil';
 
-export const useOpenEditableBreadCrumbItem = () => {
-  // TODO: modify this
-  const expandableInputInstanceId = 'expandable-input-instance-id';
-
-  const setIsUpdatingRecordEditableName = useSetRecoilComponentStateV2(
-    isExpandableInputOpenedComponentState,
-    expandableInputInstanceId,
-  );
-
+export const useOpenExpandableInput = () => {
   const setHotkeyScope = useSetHotkeyScope();
 
-  const openEditableBreadCrumbItem = () => {
-    setIsUpdatingRecordEditableName(true);
-    setHotkeyScope(EditableBreadcrumbItemHotkeyScope.EditableBreadcrumbItem);
-  };
+  const openExpandableInput = useRecoilCallback(
+    ({ set }) =>
+      (expandableInputInstanceId: string) => {
+        set(
+          isExpandableInputOpenedComponentState.atomFamily({
+            instanceId: expandableInputInstanceId,
+          }),
+          true,
+        );
+        setHotkeyScope(
+          EditableBreadcrumbItemHotkeyScope.EditableBreadcrumbItem,
+        );
+      },
+    [setHotkeyScope],
+  );
 
-  return { openEditableBreadCrumbItem };
+  return { openExpandableInput };
 };
