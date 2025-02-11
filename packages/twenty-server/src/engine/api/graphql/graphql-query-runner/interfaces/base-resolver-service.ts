@@ -179,14 +179,14 @@ export abstract class GraphqlQueryBaseResolverService<
       )
     ) {
       if (!authContext.apiKey) {
+        if (!authContext.userWorkspaceId) {
+          throw new Error('Missing userWorkspaceId in authContext');
+        }
+
         const permissionRequired: SettingsFeatures =
           SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
             objectMetadataItemWithFieldMaps.nameSingular
           ];
-
-        if (!authContext.userWorkspaceId) {
-          throw new Error('Missing userWorkspaceId in authContext');
-        }
 
         const userHasPermission =
           await this.permissionsService.userHasWorkspaceSettingPermission({

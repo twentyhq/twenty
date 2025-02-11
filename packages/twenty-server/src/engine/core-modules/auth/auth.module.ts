@@ -91,7 +91,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     GuardRedirectModule,
     HealthModule,
     PermissionsModule,
-    FeatureFlagModule,
   ],
   controllers: [
     GoogleAuthController,

@@ -165,12 +165,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     );
 
     if (permissionsEnabled) {
-      {
-        await this.validateSecurityPermissions({
-          payload,
-          userWorkspaceId,
-        });
-      }
+      await this.validateSecurityPermissions({
+        payload,
+        userWorkspaceId,
+      });
     }
 
     try {
