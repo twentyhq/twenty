@@ -5,9 +5,9 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import {
-    query,
-    responseData,
-    variables,
+  query,
+  responseData,
+  variables,
 } from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
@@ -17,8 +17,8 @@ import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/jest';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
-    getPersonObjectMetadaItem,
-    getPersonRecord,
+  getPersonObjectMetadaItem,
+  getPersonRecord,
 } from '~/testing/mock-data/people';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
@@ -62,6 +62,7 @@ describe('useDeleteOneRecord', () => {
     });
     expect(cachedRecord).not.toBeNull();
     if (cachedRecord === null) throw new Error('Should never occur');
+    // Find a way to reverse assertion
     expect(expectedRecord).toMatchObject(cachedRecord);
   };
   const assertCachedRecordIsNull = () =>

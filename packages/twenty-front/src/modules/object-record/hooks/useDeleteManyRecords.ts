@@ -5,6 +5,7 @@ import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
@@ -70,6 +71,7 @@ export const useDeleteManyRecords = ({
     );
     const deletedRecords = [];
 
+    debugger;
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
       const batchedIdsToDelete = recordIdsToDelete.slice(
         batchIndex * mutationPageSize,
@@ -98,8 +100,8 @@ export const useDeleteManyRecords = ({
           const computedOptimisticRecord = {
             ...cachedRecord,
             deletedAt: currentTimestamp,
+            __typename: getObjectTypename(objectMetadataItem.nameSingular),
           };
-
           const optimisticRecordNode = getRecordNodeFromRecord<ObjectRecord>({
             record: computedOptimisticRecord,
             objectMetadataItem,
@@ -144,6 +146,7 @@ export const useDeleteManyRecords = ({
 
             if (!isDefined(records) || records.length === 0) return;
 
+            // TODO refactor this consume already compiuted cachedRecords
             const cachedRecords = records
               .map((record) => getRecordFromCache(record.id, cache))
               .filter(isDefined);
@@ -188,6 +191,7 @@ export const useDeleteManyRecords = ({
             const computedOptimisticRecord = {
               ...cachedRecord,
               deletedAt: currentTimestamp,
+              __typename: getObjectTypename(objectMetadataItem.nameSingular),
             };
 
             const optimisticRecordWithConnection =
@@ -222,7 +226,6 @@ export const useDeleteManyRecords = ({
 
       const deletedRecordsForThisBatch =
         deletedRecordsResponse.data?.[mutationResponseField] ?? [];
-
       deletedRecords.push(...deletedRecordsForThisBatch);
 
       if (isDefined(delayInMsBetweenRequests)) {
