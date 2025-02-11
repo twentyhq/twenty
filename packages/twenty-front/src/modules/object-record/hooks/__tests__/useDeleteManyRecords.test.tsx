@@ -49,7 +49,7 @@ const expectedCachedRecordsWithDeletedAt = personRecords.map(
   }),
 );
 describe('useDeleteManyRecords', () => {
-  let cache!: InMemoryCache;
+  let cache: InMemoryCache;
   const assertCachedRecordsMatch = (expectedRecords: ObjectRecord[]) => {
     expectedRecords.forEach((expectedRecord) => {
       const cachedRecord = getRecordFromCache({

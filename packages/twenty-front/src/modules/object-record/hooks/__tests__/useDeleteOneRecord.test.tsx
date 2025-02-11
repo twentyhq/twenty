@@ -29,7 +29,7 @@ const mockRefetchAggregateQueries = jest.fn();
 
 // TODO Should test relation deletion cache hydratation
 describe('useDeleteOneRecord', () => {
-  let cache!: InMemoryCache;
+  let cache: InMemoryCache;
   const getDefaultMocks = (
     overrides?: Partial<MockedResponse>,
   ): MockedResponse[] => [
