@@ -11,7 +11,7 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
-type EditableBreadcrumbItemProps = {
+type ExpandableInputProps = {
   className?: string;
   defaultValue: string;
   noValuePlaceholder?: string;
@@ -41,13 +41,13 @@ const StyledButton = styled('button')`
   }
 `;
 
-export const EditableBreadcrumbItem = ({
+export const ExpandableInput = ({
   className,
   defaultValue,
   noValuePlaceholder,
   placeholder,
   onSubmit,
-}: EditableBreadcrumbItemProps) => {
+}: ExpandableInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 

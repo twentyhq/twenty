@@ -6,13 +6,13 @@ import { EditableBreadcrumbItemHotkeyScope } from '@/ui/navigation/bread-crumb/t
 
 import { findByText, userEvent } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
-import { EditableBreadcrumbItem } from '../EditableBreadcrumbItem';
+import { ExpandableInput } from '../EditableBreadcrumbItem';
 
 const onSubmit = jest.fn();
 
-const meta: Meta<typeof EditableBreadcrumbItem> = {
+const meta: Meta<typeof ExpandableInput> = {
   title: 'UI/Navigation/BreadCrumb/EditableBreadcrumbItem',
-  component: EditableBreadcrumbItem,
+  component: ExpandableInput,
   decorators: [
     (Story) => (
       <RecoilRoot>
@@ -30,7 +30,7 @@ const meta: Meta<typeof EditableBreadcrumbItem> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof EditableBreadcrumbItem>;
+type Story = StoryObj<typeof ExpandableInput>;
 
 export const Default: Story = {
   args: {},

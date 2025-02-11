@@ -9,7 +9,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
-import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
+import { ExpandableInput } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
@@ -100,7 +100,7 @@ export const SummaryCard = ({
           }}
         >
           {isCommandMenuV2Enabled ? (
-            <EditableBreadcrumbItem
+            <ExpandableInput
               defaultValue={recordFromStore.name}
               placeholder="Enter a name"
               onSubmit={() => {}}

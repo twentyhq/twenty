@@ -1,7 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
+import { ExpandableInput } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
 import styled from '@emotion/styled';
 import { capitalize } from 'twenty-shared';
 
@@ -66,7 +66,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      <EditableBreadcrumbItem
+      <ExpandableInput
         defaultValue={record?.name ?? ''}
         noValuePlaceholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
         placeholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
