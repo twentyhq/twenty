@@ -41,7 +41,7 @@ export const useDeleteWorkflowVersionStep = () => {
     const cachedRecord = getRecordFromCache<WorkflowVersion>(
       input.workflowVersionId,
     );
-    if (!cachedRecord) {
+    if (!isDefined(cachedRecord)) {
       return;
     }
 
@@ -52,11 +52,15 @@ export const useDeleteWorkflowVersionStep = () => {
       ),
     };
 
+    const recordGqlFields = {
+      steps: true,
+    };
     updateRecordFromCache({
       objectMetadataItems,
       objectMetadataItem,
       cache: apolloClient.cache,
       record: newCachedRecord,
+      recordGqlFields,
     });
   };
 
