@@ -6,7 +6,6 @@ import {
   IllustrationIconJson,
   IllustrationIconNumbers,
   IllustrationIconOneToMany,
-  IllustrationIconSetting,
   IllustrationIconStar,
   IllustrationIconTag,
   IllustrationIconTags,
@@ -25,7 +24,6 @@ import {
   FieldNumberValue,
   FieldRatingValue,
   FieldRelationValue,
-  FieldRichTextValue,
   FieldSelectValue,
   FieldTextValue,
   FieldUUidValue,
@@ -122,12 +120,6 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       exampleValue: { key: 'value' },
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
-    [FieldMetadataType.RICH_TEXT]: {
-      label: 'Rich Text',
-      Icon: IllustrationIconSetting,
-      exampleValue: "{ key: 'value' }",
-      category: 'Basic',
-    } as const satisfies SettingsFieldTypeConfig<FieldRichTextValue>,
     [FieldMetadataType.ARRAY]: {
       label: 'Array',
       Icon: IllustrationIconArray,
