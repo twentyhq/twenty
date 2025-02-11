@@ -84,6 +84,24 @@ Warnings are informing about pulling additional dependencies which aren't explic
 
 That's expected as user is unauthorized when logged out since its identity is not verified.
 
+#### How to check if your worker is running?
+- Go to [webhook-test.com](https://webhook-test.com/) and copy **Your Unique Webhook URL**.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+- Open your Twenty app, navigate to `/settings`, and enable the **Advanced** toggle at the bottom left of the screen.
+- Create a new webhook.
+- Paste **Your Unique Webhook URL** in the **Endpoint Url** field in Twenty. Set the **Filters** to `Companies` and `Created`.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+</div>
+- Go to `/objects/companies` and create a new company record.
+- Return to [webhook-test.com](https://webhook-test.com/) and check if a new **POST request** has been received.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+</div>
+- If a **POST request** is received, your worker is running successfully. Otherwise, you need to troubleshoot your worker.
+
 ### 1-click Docker compose
 
 #### Unable to Log In

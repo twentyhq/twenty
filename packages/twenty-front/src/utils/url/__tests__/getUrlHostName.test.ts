@@ -1,25 +1,25 @@
-import { getUrlHostName } from '~/utils/url/getUrlHostName';
+import { getUrlHostname } from '~/utils/url/getUrlHostname';
 
-describe('getUrlHostName', () => {
+describe('getUrlHostname', () => {
   it("returns the URL's hostname", () => {
-    expect(getUrlHostName('https://www.example.com')).toBe('example.com');
-    expect(getUrlHostName('http://subdomain.example.com')).toBe(
+    expect(getUrlHostname('https://www.example.com')).toBe('example.com');
+    expect(getUrlHostname('http://subdomain.example.com')).toBe(
       'subdomain.example.com',
     );
-    expect(getUrlHostName('https://www.example.com/path')).toBe('example.com');
-    expect(getUrlHostName('https://www.example.com?query=123')).toBe(
+    expect(getUrlHostname('https://www.example.com/path')).toBe('example.com');
+    expect(getUrlHostname('https://www.example.com?query=123')).toBe(
       'example.com',
     );
-    expect(getUrlHostName('http://localhost:3000')).toBe('localhost');
-    expect(getUrlHostName('example.com')).toBe('example.com');
-    expect(getUrlHostName('www.subdomain.example.com')).toBe(
+    expect(getUrlHostname('http://localhost:3000')).toBe('localhost');
+    expect(getUrlHostname('example.com')).toBe('example.com');
+    expect(getUrlHostname('www.subdomain.example.com')).toBe(
       'subdomain.example.com',
     );
   });
 
   it('returns an empty string for invalid URLs', () => {
-    expect(getUrlHostName('?o')).toBe('');
-    expect(getUrlHostName('')).toBe('');
-    expect(getUrlHostName('\\')).toBe('');
+    expect(getUrlHostname('?o')).toBe('');
+    expect(getUrlHostname('')).toBe('');
+    expect(getUrlHostname('\\')).toBe('');
   });
 });

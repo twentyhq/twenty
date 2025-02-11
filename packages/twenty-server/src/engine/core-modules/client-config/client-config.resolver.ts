@@ -52,7 +52,8 @@ export class ClientConfigResolver {
       ),
       defaultSubdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
       frontDomain: this.domainManagerService.getFrontUrl().hostname,
-      debugMode: this.environmentService.get('NODE_ENV') === 'development',
+      debugMode:
+        this.environmentService.get('NODE_ENV') === NodeEnvironment.development,
       support: {
         supportDriver: this.environmentService.get('SUPPORT_DRIVER'),
         supportFrontChatId: this.environmentService.get(

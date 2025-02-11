@@ -9,7 +9,7 @@ import {
   RunWorkflowJob,
   RunWorkflowJobData,
 } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-run.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
@@ -36,10 +36,10 @@ export class WorkflowRunnerWorkspaceService {
       );
     }
     const workflowRunId =
-      await this.workflowRunWorkspaceService.createWorkflowRun(
+      await this.workflowRunWorkspaceService.createWorkflowRun({
         workflowVersionId,
-        source,
-      );
+        createdBy: source,
+      });
 
     await this.messageQueueService.add<RunWorkflowJobData>(
       RunWorkflowJob.name,

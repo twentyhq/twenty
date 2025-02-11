@@ -1,6 +1,8 @@
+import { APP_LOCALES } from 'twenty-shared';
+
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type SignInUpBaseParams = {
@@ -15,6 +17,7 @@ export type SignInUpNewUserPayload = {
   lastName?: string | null;
   picture?: string | null;
   passwordHash?: string | null;
+  locale?: keyof typeof APP_LOCALES | null;
 };
 
 export type PartialUserWithPicture = {

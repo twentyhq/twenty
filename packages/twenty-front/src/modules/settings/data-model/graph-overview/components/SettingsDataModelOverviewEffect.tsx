@@ -21,7 +21,7 @@ export const SettingsDataModelOverviewEffect = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   useEffect(() => {
-    const items = objectMetadataItems.filter((x) => !x.isSystem);
+    const items = objectMetadataItems.filter((x) => !x.isSystem && x.isActive);
 
     const g = new dagre.graphlib.Graph();
     g.setGraph({ rankdir: 'LR' });
