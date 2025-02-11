@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 const StyledInputErrorHelper = styled.div`
   color: ${({ theme }) => theme.color.red};
   font-size: ${({ theme }) => theme.font.size.xs};
+  position: absolute;
 `;
 
 export const InputErrorHelper = ({

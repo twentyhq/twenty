@@ -86,7 +86,6 @@ const StyledInput = styled.input<
 
 const StyledErrorContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(1)};
-  position: relative;
 `;
 
 const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputV2Size }>`
