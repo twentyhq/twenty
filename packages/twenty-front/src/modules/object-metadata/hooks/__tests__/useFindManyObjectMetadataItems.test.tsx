@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
@@ -9,14 +9,12 @@ import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/Sn
 import {
   query,
   responseData,
-  variables,
 } from '../__mocks__/useFindManyObjectMetadataItems';
 
 const mocks = [
   {
     request: {
       query,
-      variables,
     },
     result: jest.fn(() => ({
       data: {
