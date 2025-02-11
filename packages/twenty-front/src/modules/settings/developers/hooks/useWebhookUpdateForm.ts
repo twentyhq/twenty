@@ -2,6 +2,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useState } from 'react';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { useDebouncedCallback } from 'use-debounce';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
@@ -19,10 +20,17 @@ type WebhookFormData = {
   secret?: string;
 };
 
-export const useWebhookUpdateForm = ({ webhookId }: { webhookId: string }) => {
+export const useWebhookUpdateForm = ({
+  webhookId,
+  isCreationMode,
+}: {
+  webhookId: string;
+  isCreationMode: boolean;
+}) => {
   const navigate = useNavigateSettings();
 
-  const [loading, setLoading] = useState(true);
+  const [isCreated, setIsCreated] = useState(!isCreationMode);
+  const [loading, setLoading] = useState(!isCreationMode);
 
   const [formData, setFormData] = useState<WebhookFormData>({
     targetUrl: '',
@@ -34,6 +42,10 @@ export const useWebhookUpdateForm = ({ webhookId }: { webhookId: string }) => {
   const [isTargetUrlValid, setIsTargetUrlValid] = useState(true);
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({
+    objectNameSingular: CoreObjectNameSingular.Webhook,
+  });
+
+  const { createOneRecord } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
@@ -49,34 +61,6 @@ export const useWebhookUpdateForm = ({ webhookId }: { webhookId: string }) => {
     return newOperations;
   };
 
-  useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Webhook,
-    objectRecordId: webhookId,
-    onCompleted: (data) => {
-      const baseOperations = data?.operations
-        ? data.operations.map((op: string) => {
-            const [object, action] = op.split('.');
-            return { object, action };
-          })
-        : data?.operation
-          ? [
-              {
-                object: data.operation.split('.')[0],
-                action: data.operation.split('.')[1],
-              },
-            ]
-          : [];
-      const operations = addEmptyOperationIfNecessary(baseOperations);
-      setFormData({
-        targetUrl: data.targetUrl,
-        description: data.description,
-        operations,
-        secret: data.secret,
-      });
-      setLoading(false);
-    },
-  });
-
   const cleanAndFormatOperations = (operations: WebhookOperationType[]) => {
     return Array.from(
       new Set(
@@ -89,6 +73,19 @@ export const useWebhookUpdateForm = ({ webhookId }: { webhookId: string }) => {
 
   const handleSave = useDebouncedCallback(async () => {
     const cleanedOperations = cleanAndFormatOperations(formData.operations);
+
+    const webhookData = {
+      ...(isTargetUrlValid && { targetUrl: formData.targetUrl.trim() }),
+      operations: cleanedOperations,
+      description: formData.description,
+      secret: formData.secret,
+    };
+
+    if (!isCreated) {
+      await createOneRecord({ id: webhookId, ...webhookData });
+      setIsCreated(true);
+      return;
+    }
 
     await updateOneRecord({
       idToUpdate: webhookId,
@@ -146,6 +143,35 @@ export const useWebhookUpdateForm = ({ webhookId }: { webhookId: string }) => {
     await deleteOneWebhook(webhookId);
     navigate(SettingsPath.Developers);
   };
+
+  useFindOneRecord({
+    skip: isCreationMode,
+    objectNameSingular: CoreObjectNameSingular.Webhook,
+    objectRecordId: webhookId,
+    onCompleted: (data) => {
+      const baseOperations = data?.operations
+        ? data.operations.map((op: string) => {
+            const [object, action] = op.split('.');
+            return { object, action };
+          })
+        : data?.operation
+          ? [
+              {
+                object: data.operation.split('.')[0],
+                action: data.operation.split('.')[1],
+              },
+            ]
+          : [];
+      const operations = addEmptyOperationIfNecessary(baseOperations);
+      setFormData({
+        targetUrl: data.targetUrl,
+        description: data.description,
+        operations,
+        secret: data.secret,
+      });
+      setLoading(false);
+    },
+  });
 
   return {
     formData,
