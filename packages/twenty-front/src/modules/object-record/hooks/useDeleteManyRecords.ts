@@ -71,7 +71,6 @@ export const useDeleteManyRecords = ({
     );
     const deletedRecords = [];
 
-    debugger;
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
       const batchedIdsToDelete = recordIdsToDelete.slice(
         batchIndex * mutationPageSize,

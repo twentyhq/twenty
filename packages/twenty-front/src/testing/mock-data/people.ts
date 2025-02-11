@@ -22,7 +22,7 @@ export const getPersonObjectMetadaItem = () => {
 
 export const getPersonRecord = (
   overrides?: Partial<ObjectRecord>,
-  index: number = 0,
+  index = 0,
 ) => {
   const personRecords = getPeopleMock();
   return {

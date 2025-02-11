@@ -147,6 +147,7 @@ describe('useDeleteManyRecords', () => {
       expect(apolloMocks[0].result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
     });
+
     it('2. Should handle optimistic behavior before send many record deletion', async () => {
       const apolloMocks = getDefaultMocks();
       const { result } = renderHook(
