@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-02-11 16:02\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -522,6 +522,11 @@ msgstr "Numeri di telefono del contatto"
 msgid "Contact’s X/Twitter account"
 msgstr "Account X/Twitter del contatto"
 
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+msgid "Context"
+msgstr ""
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
 #: src/modules/person/standard-objects/person.workspace-entity.ts:167
@@ -780,7 +785,7 @@ msgstr "Membro preferito del workspace"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
 #: src/modules/task/standard-objects/task.workspace-entity.ts:197
 #: src/modules/person/standard-objects/person.workspace-entity.ts:226
@@ -825,7 +830,7 @@ msgstr "Preferiti collegati alla vista"
 msgid "Favorites linked to the workflow"
 msgstr "Preferiti collegati al workflow"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
 msgid "Favorites linked to the workflow run"
 msgstr "Preferiti collegati all'esecuzione del workflow"
 
@@ -1438,7 +1443,7 @@ msgstr "Punto di contatto"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:156
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
@@ -1800,7 +1805,7 @@ msgstr "Fuso orario"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:198
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:208
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
 #: src/modules/task/standard-objects/task.workspace-entity.ts:185
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
@@ -1822,7 +1827,7 @@ msgstr "Attività della timeline collegate alla nota."
 msgid "Timeline Activities linked to the opportunity."
 msgstr "Attività della timeline legate all'opportunità."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
 msgid "Timeline activities linked to the run"
 msgstr "Attività della timeline legate all'esecuzione"
 
@@ -2101,7 +2106,7 @@ msgstr "Webhooks"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:182
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
@@ -2114,7 +2119,7 @@ msgstr "Workflow"
 msgid "Workflow event listeners linked to the workflow."
 msgstr "Ascoltatori di eventi del workflow collegati al workflow."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
 msgid "Workflow linked to the run."
 msgstr "Workflow collegato all'esecuzione."
 
@@ -2132,7 +2137,7 @@ msgstr "Esecuzione del workflow"
 msgid "Workflow run ended at"
 msgstr "Esecuzione del workflow terminata il"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
 msgid "Workflow run position"
 msgstr "Posizione dell'esecuzione del workflow"
 
@@ -2158,7 +2163,7 @@ msgstr "Esecuzioni del workflow legate alla versione."
 msgid "Workflow runs linked to the workflow."
 msgstr "Esecuzioni del workflow collegate al workflow."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
 msgid "Workflow version"
 msgstr "Versione del workflow"
 
@@ -2166,7 +2171,7 @@ msgstr "Versione del workflow"
 msgid "Workflow Version"
 msgstr "Versione del workflow"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
 msgid "Workflow version linked to the run."
 msgstr "Versione del workflow collegata all'esecuzione."
 

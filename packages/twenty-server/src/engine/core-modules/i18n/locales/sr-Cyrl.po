@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr_Cyrl\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-02-11 16:02\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Cyrillic)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -522,6 +522,11 @@ msgstr "Бројеви телефона контакта"
 msgid "Contact’s X/Twitter account"
 msgstr "X/Twitter налог контакта"
 
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+msgid "Context"
+msgstr ""
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
 #: src/modules/person/standard-objects/person.workspace-entity.ts:167
@@ -780,7 +785,7 @@ msgstr "Омиљени члан радног простора"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
 #: src/modules/task/standard-objects/task.workspace-entity.ts:197
 #: src/modules/person/standard-objects/person.workspace-entity.ts:226
@@ -825,7 +830,7 @@ msgstr "Омиљени повезани са приказом"
 msgid "Favorites linked to the workflow"
 msgstr "Омиљени повезани са Workflows-ом"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
 msgid "Favorites linked to the workflow run"
 msgstr "Омиљени повезани са Workflows извршавањем"
 
@@ -1438,7 +1443,7 @@ msgstr "Контакт особа"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:156
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
@@ -1800,7 +1805,7 @@ msgstr "Временска зона"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:198
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:208
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
 #: src/modules/task/standard-objects/task.workspace-entity.ts:185
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
@@ -1822,7 +1827,7 @@ msgstr "Активности на временској линији везане
 msgid "Timeline Activities linked to the opportunity."
 msgstr "Активности на временској линији везане за прилику."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
 msgid "Timeline activities linked to the run"
 msgstr "Активности на временској линији везане за извршење"
 
@@ -2101,7 +2106,7 @@ msgstr "Вебхукс"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:182
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
@@ -2114,7 +2119,7 @@ msgstr "Радни токови"
 msgid "Workflow event listeners linked to the workflow."
 msgstr "Ослушкивачи догађаја у току рада повезани са током рада."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
 msgid "Workflow linked to the run."
 msgstr "Ток рада повезан са извршавањем."
 
@@ -2132,7 +2137,7 @@ msgstr "Извршавање тока рада"
 msgid "Workflow run ended at"
 msgstr "Извршавање тока рада завршено у"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
 msgid "Workflow run position"
 msgstr "Позиција извршавања тока рада"
 
@@ -2158,7 +2163,7 @@ msgstr "Извршавања тока рада повезана са верзи�
 msgid "Workflow runs linked to the workflow."
 msgstr "Извршавања тока рада повезана са током рада."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
 msgid "Workflow version"
 msgstr "Верзија тока рада"
 
@@ -2166,7 +2171,7 @@ msgstr "Верзија тока рада"
 msgid "Workflow Version"
 msgstr "Верзија тока рада"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
 msgid "Workflow version linked to the run."
 msgstr "Верзија тока рада повезана са извршавањем."
 
