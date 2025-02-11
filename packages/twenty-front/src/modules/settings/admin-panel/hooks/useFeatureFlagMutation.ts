@@ -1,6 +1,6 @@
 import {
-    FeatureFlagKey,
-    useUpdateWorkspaceFeatureFlagMutation,
+  FeatureFlagKey,
+  useUpdateWorkspaceFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useFeatureFlagMutation = () => {
