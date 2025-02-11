@@ -1,4 +1,4 @@
-import { firestoreDB } from '@/chat/config/FirebaseConfig';
+import { useFirestoreDb } from '@/chat/call-center/hooks/useFirestoreDb';
 import {
   ChatStatus,
   statusEnum,
@@ -34,6 +34,8 @@ export const useRealTimeChats = ({
   setChats,
   platform,
 }: getRealTimeChatsArgs) => {
+  const { firestoreDb } = useFirestoreDb();
+
   useEffect(() => {
     if (integrationIds.length === 0) return;
 
@@ -44,7 +46,7 @@ export const useRealTimeChats = ({
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (agent?.isAdmin) {
       chatsQuery = query(
-        collection(firestoreDB, collectionName),
+        collection(firestoreDb, collectionName),
         and(
           where('integrationId', 'in', integrationIds),
           or(
@@ -57,7 +59,7 @@ export const useRealTimeChats = ({
     } else {
       if (activeTabId === ChatStatus.Mine) {
         chatsQuery = query(
-          collection(firestoreDB, collectionName),
+          collection(firestoreDb, collectionName),
           and(
             where('integrationId', 'in', integrationIds),
             or(
@@ -70,7 +72,7 @@ export const useRealTimeChats = ({
         );
       } else {
         chatsQuery = query(
-          collection(firestoreDB, collectionName),
+          collection(firestoreDb, collectionName),
           and(
             where('integrationId', 'in', integrationIds),
             or(

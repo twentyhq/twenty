@@ -19,7 +19,7 @@ import { SectorTopic } from 'src/engine/core-modules/sector/types/SectorTopic';
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 
 @Entity({ name: 'sector', schema: 'core' })
-@ObjectType('Sector')
+@ObjectType()
 export class Sector {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

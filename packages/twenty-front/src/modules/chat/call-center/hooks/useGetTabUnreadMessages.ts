@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { firestoreDB } from '@/chat/config/FirebaseConfig';
+import { useFirestoreDb } from '@/chat/call-center/hooks/useFirestoreDb';
 import { UnreadMessages } from '@/chat/types/MessageType';
 import { statusEnum, WhatsappDocument } from '@/chat/types/WhatsappDocument';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
@@ -18,6 +18,8 @@ export const useGetTabUnreadMessages = ({
   setUnreadTabMessages,
   agent,
 }: getTabUnreadMessagesArgs) => {
+  const { firestoreDb } = useFirestoreDb();
+
   useEffect(() => {
     if (integrationWhatsappIds.length === 0) {
       // && integrationMessengerIds.length === 0
@@ -62,7 +64,7 @@ export const useGetTabUnreadMessages = ({
 
     if (integrationWhatsappIds.length > 0) {
       const waQuery = query(
-        collection(firestoreDB, 'whatsapp'),
+        collection(firestoreDb, 'whatsapp'),
         where('integrationId', 'in', integrationWhatsappIds),
       );
 
@@ -81,7 +83,7 @@ export const useGetTabUnreadMessages = ({
         // if (integrationMessengerIds.length > 0) {
         //   unsubscribeMessenger = onSnapshot(
         //     query(
-        //       collection(firestoreDB, 'messenger'),
+        //       collection(firestoreDb, 'messenger'),
         //       where('integrationId', 'in', integrationMessengerIds),
         //     ),
         //     (snapshot) => {
@@ -115,7 +117,7 @@ export const useGetTabUnreadMessages = ({
 
     // if (integrationMessengerIds.length > 0) {
     //   const fbQuery = query(
-    //     collection(firestoreDB, 'messenger'),
+    //     collection(firestoreDb, 'messenger'),
     //     where('integrationId', 'in', integrationMessengerIds),
     //   );
 

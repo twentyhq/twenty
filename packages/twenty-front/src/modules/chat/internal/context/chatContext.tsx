@@ -4,19 +4,19 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable project-structure/folder-structure */
 import {
-    CurrentWorkspaceMember,
-    currentWorkspaceMemberState,
+  CurrentWorkspaceMember,
+  currentWorkspaceMemberState,
 } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { firestoreDB } from '@/chat/config/FirebaseConfig';
+import { useFirestoreDb } from '@/chat/call-center/hooks/useFirestoreDb';
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
 import {
-    ChatContextType,
-    IChat,
-    IChatUser,
-    ISearchResult,
-    Message,
-    TDateFirestore,
+  ChatContextType,
+  IChat,
+  IChatUser,
+  ISearchResult,
+  Message,
+  TDateFirestore,
 } from '@/chat/internal/types/chat';
 import { MessageType } from '@/chat/types/MessageType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -25,16 +25,16 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-    and,
-    collection,
-    doc,
-    documentId,
-    getDoc,
-    getDocs,
-    onSnapshot,
-    query,
-    setDoc,
-    where,
+  and,
+  collection,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
 } from 'firebase/firestore';
 import { createContext, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -70,8 +70,10 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [chatId, setChatId] = useState<string>('');
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const usersRef = collection(firestoreDB, 'users');
-  const chatsRef = collection(firestoreDB, 'chats');
+  const {firestoreDb} = useFirestoreDb()
+
+  const usersRef = collection(firestoreDb, 'users');
+  const chatsRef = collection(firestoreDb, 'chats');
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
