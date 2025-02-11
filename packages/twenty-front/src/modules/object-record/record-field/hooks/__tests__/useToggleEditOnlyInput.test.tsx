@@ -75,7 +75,8 @@ const mocks: MockedResponse[] = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   type
                   updatedAt
@@ -108,8 +109,9 @@ const mocks: MockedResponse[] = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   position
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   viewId
@@ -144,7 +146,8 @@ const mocks: MockedResponse[] = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   updatedAt
                 }
               }
@@ -243,7 +246,8 @@ const mocks: MockedResponse[] = [
                   id
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   updatedAt
                 }
@@ -265,8 +269,9 @@ const mocks: MockedResponse[] = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   properties
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   workflowId

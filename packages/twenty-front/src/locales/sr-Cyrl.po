@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr_Cyrl\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-02-11 16:02\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Cyrillic)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -26,10 +26,14 @@ msgstr "{aggregateLabel} од {fieldLabel}"
 msgid "{apiKeyName} API Key"
 msgstr "{apiKeyName} API кључ"
 
-#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:40
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
 msgid "{name}"
 msgstr "{name}"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
+msgid "{workspaceMemberName} will be unassigned from the following role:"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -74,6 +78,10 @@ msgstr "Брисање налога"
 msgid "Accounts"
 msgstr "Налози"
 
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
+msgid "Actions"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
@@ -89,7 +97,7 @@ msgstr "Активирајте радни ток"
 msgid "Active"
 msgstr "Активни"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+#: src/pages/settings/developers/SettingsDevelopers.tsx:71
 msgid "Active API keys created by you or your team."
 msgstr "Активни API кључеви које сте креирали ви или ваш тим."
 
@@ -135,6 +143,10 @@ msgstr "Додајте свој први {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Додато {beautifiedCreatedAt}"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "Afrikaans"
+msgstr ""
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
 msgstr "Сви"
@@ -143,7 +155,7 @@ msgstr "Сви"
 msgid "All ({relationRecordsCount})"
 msgstr "Сви ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:119
+#: src/pages/settings/roles/SettingsRoles.tsx:124
 msgid "All roles"
 msgstr "Све улоге"
 
@@ -167,7 +179,7 @@ msgstr "Омогућите корисницима да се пријаве са 
 msgid "An error occurred while updating password"
 msgstr "Дошло је до грешке при ажурирању лозинке"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:151
 msgid "An optional description"
 msgstr "Опциони опис"
 
@@ -185,7 +197,7 @@ msgstr "API и Вебхукси"
 msgid "API Key"
 msgstr "API кључ"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+#: src/pages/settings/developers/SettingsDevelopers.tsx:70
 msgid "API keys"
 msgstr "API кључеви"
 
@@ -197,28 +209,44 @@ msgstr "Назив АПИ"
 msgid "Appearance"
 msgstr "Изглед"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+msgid "Arabic"
+msgstr ""
+
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "Да ли сте сигурни да желите да промените интервал наплате?"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
+msgid "Are you sure you want to assign this role?"
+msgstr ""
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Ascending"
 msgstr "Растуће"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:120
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
+msgid "Assign {workspaceMemberName}?"
+msgstr ""
+
+#: src/pages/settings/roles/SettingsRoles.tsx:125
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Доделите улоге да бисте одредили овлашћења за приступ члановима"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:14
+#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+msgid "Assign to member"
+msgstr ""
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:161
 msgid "Assigned members"
 msgstr "Додељени чланови"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:129
+#: src/pages/settings/roles/SettingsRoles.tsx:134
 msgid "Assigned to"
 msgstr "Додељено"
 
-#: src/pages/settings/roles/SettingsRoleEdit.tsx:64
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:74
 msgid "Assignment"
 msgstr "Додела"
 
@@ -298,6 +326,10 @@ msgstr "Откажи план"
 msgid "Cancel your subscription"
 msgstr "Откажите претплату"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+msgid "Catalan"
+msgstr ""
+
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
 msgstr "Промени {to}"
@@ -308,15 +340,15 @@ msgstr "Промени {to}"
 msgid "Change Password"
 msgstr "Промени лозинку"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
 msgid "Chinese — Simplified"
 msgstr "Кинески — Поједностављен"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
 msgid "Chinese — Traditional"
 msgstr "Кинески — Традиционални"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:180
 msgid "Choose an object"
 msgstr ""
 
@@ -347,6 +379,10 @@ msgstr "Подесите како су датуми приказани широ�
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
 msgid "Configure your emails and calendar settings."
 msgstr "Подесите своје подешавања е-поште и календара."
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
+msgid "Confirm"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
@@ -425,7 +461,7 @@ msgstr "Број јединствених вредности"
 msgid "Create a workflow and return here to view its versions"
 msgstr "Креирајте радни ток и вратите се овде да бисте видели његове верзије"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+#: src/pages/settings/developers/SettingsDevelopers.tsx:77
 msgid "Create API key"
 msgstr "Креирај API кључ"
 
@@ -438,11 +474,11 @@ msgstr "Креирај нови запис"
 msgid "Create profile"
 msgstr "Креирај профил"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:193
+#: src/pages/settings/roles/SettingsRoles.tsx:200
 msgid "Create Role"
 msgstr "Креирај улогу"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:72
+#: src/pages/settings/developers/SettingsDevelopers.tsx:93
 msgid "Create Webhook"
 msgstr "Креирај Webhook"
 
@@ -466,13 +502,21 @@ msgstr "Прилагоди домен"
 msgid "Customize your workspace security"
 msgstr "Прилагоди безбедност свог радног простора"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+msgid "Czech"
+msgstr ""
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
 msgid "Danger zone"
 msgstr "Опасна зона"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Danish"
+msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -517,7 +561,7 @@ msgstr "Деактивирај радни ток"
 msgid "Define the name and description of your object"
 msgstr "Дефинишите име и опис вашег објекта"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:245
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
@@ -556,13 +600,13 @@ msgstr "Обриши запис"
 msgid "Delete records"
 msgstr "Обриши записе"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:240
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
 msgstr "Обриши ову интеграцију"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:262
 msgid "Delete webhook"
 msgstr "Обриши Вебхук"
 
@@ -588,7 +632,7 @@ msgstr "Обриши цео свој простор за рад"
 msgid "Descending"
 msgstr "Опадајуће"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
@@ -601,10 +645,9 @@ msgstr "Опис"
 msgid "Destroy"
 msgstr "Уништи"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:35
-#: src/pages/settings/developers/SettingsDevelopers.tsx:42
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:79
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
+#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+#: src/pages/settings/developers/SettingsDevelopers.tsx:63
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:125
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
 msgid "Developers"
@@ -621,11 +664,15 @@ msgid "Display as relative date"
 msgstr "Приказати као релативан датум"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsHostname.tsx:115
-#: src/pages/settings/workspace/SettingsDomain.tsx:115
-#: src/pages/settings/workspace/SettingsDomain.tsx:125
+#: src/pages/settings/workspace/SettingsDomain.tsx:185
+#: src/pages/settings/workspace/SettingsDomain.tsx:195
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 msgid "Domain"
 msgstr "Домен"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+msgid "Dutch"
+msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
@@ -655,6 +702,7 @@ msgstr "Уредите назив свог потдомена или поста�
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:180
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:256
 #: src/pages/settings/SettingsProfile.tsx:42
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:21
 #: src/pages/auth/PasswordReset.tsx:206
 msgid "Email"
 msgstr "Имејл"
@@ -686,12 +734,11 @@ msgstr "Запослени"
 msgid "Empty"
 msgstr "Празно"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:134
 msgid "Endpoint URL"
 msgstr "Ендпоинт УРЛ"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "English"
 msgstr "Енглески"
 
@@ -715,7 +762,7 @@ msgstr "Грешка приликом поновног генерисања API 
 msgid "Error while switching subscription {to}."
 msgstr "Грешка приликом преласка на претплату {to}."
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+#: src/pages/settings/developers/SettingsDevelopers.tsx:87
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Установите крајње тачке Вебхук за обавештења о асинхроним догађајима."
 
@@ -816,9 +863,13 @@ msgstr "Број поља"
 msgid "Filter"
 msgstr "Филтер"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:164
 msgid "Filters"
 msgstr "Филтери"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+msgid "Finnish"
+msgstr ""
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
@@ -828,7 +879,7 @@ msgstr "Име"
 msgid "Forgot your password?"
 msgstr "Заборавили сте лозинку?"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
 msgid "French"
 msgstr "Француски"
 
@@ -850,12 +901,12 @@ msgstr "Функције"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:122
+#: src/pages/settings/workspace/SettingsDomain.tsx:192
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "Опште"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
 msgid "German"
 msgstr "Немачки"
 
@@ -875,6 +926,14 @@ msgstr "Глобално"
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Омогућите Twenty подршци привремени приступ вашем радном простору како би могли да реше проблеме или поврате садржај у ваше име. У сваком тренутку можете укинути приступ."
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
+msgid "Greek"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
+msgid "Hebrew"
+msgstr ""
+
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
 msgstr "Сакриј"
@@ -882,6 +941,10 @@ msgstr "Сакриј"
 #: src/pages/onboarding/CreateProfile.tsx:157
 msgid "How you'll be identified on the app."
 msgstr "Како ћете бити идентификовани на апликацији."
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
+msgid "Hungarian"
+msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -923,6 +986,10 @@ msgstr "Интеграције"
 msgid "Invalid auth provider"
 msgstr "Невалидан провајдер аутентификације"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx:48
+msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr ""
+
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
 msgstr "Невалидан имејл"
@@ -932,7 +999,7 @@ msgstr "Невалидан имејл"
 msgid "Invalid email or domain"
 msgstr "Невалидан имејл или домен"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:71
+#: src/pages/settings/workspace/SettingsDomain.tsx:166
 msgid "Invalid form values"
 msgstr "Невалиде вредности формулара"
 
@@ -956,15 +1023,15 @@ msgstr "Позивни линк послат на адресе е-поште"
 msgid "Invite your team"
 msgstr "Позовите свој тим"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:129
 msgid "Italian"
 msgstr "Италијански"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:133
 msgid "Japanese"
 msgstr "Јапански"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:137
 msgid "Korean"
 msgstr "Корејски"
 
@@ -1054,7 +1121,8 @@ msgstr "Помери удесно"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:126
+#: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
@@ -1140,12 +1208,28 @@ msgstr "Нови запис"
 #~ msgstr "New Role"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
-msgid "New Webhook"
-msgstr "Нови Webhooks"
+#~ msgid "New Webhook"
+#~ msgstr "New Webhook"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
 msgid "No connected account"
 msgstr "Није повезан налог"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:187
+msgid "No members assigned to this role yet"
+msgstr ""
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
+msgid "No members matching this search"
+msgstr ""
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:186
+msgid "No members matching your search"
+msgstr ""
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
+msgid "No more members to add"
+msgstr ""
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1154,6 +1238,10 @@ msgstr "Још нема покретања радног процеса"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
 msgid "No workflow versions yet"
 msgstr "Још нема верзија радног процеса"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
+msgid "Norwegian"
+msgstr ""
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
@@ -1232,7 +1320,7 @@ msgstr "Трајно уништите записе"
 msgid "Permanently destroy workflows"
 msgstr "Трајно уништите радне процесе"
 
-#: src/pages/settings/roles/SettingsRoleEdit.tsx:70
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:80
 #: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "Дозволе"
@@ -1242,7 +1330,7 @@ msgstr "Дозволе"
 msgid "Picture"
 msgstr "Слика"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:143
 msgid "Please enter a valid URL"
 msgstr "Унесите важећи URL"
 
@@ -1250,19 +1338,23 @@ msgstr "Унесите важећи URL"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Унесите \"{confirmationValue}\" да бисте потврдили да желите да избришете овај API кључ. Имајте на уму да ће сваки скрипт који користи овај кључ престати са радом."
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:256
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Унесите {confirmationText} да потврдите да желите да избришете овај вебхуку."
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
+msgid "Polish"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
 #~ msgstr "Portuguese"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:153
 msgid "Portuguese — Brazil"
 msgstr "Португалски — Бразил"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:149
 msgid "Portuguese — Portugal"
 msgstr "Португалски — Португал"
 
@@ -1289,7 +1381,7 @@ msgstr "Политика приватности"
 msgid "Profile"
 msgstr "Профил"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:191
 msgid "Pseudo-English"
 msgstr "Псеудо-енглески"
 
@@ -1324,9 +1416,15 @@ msgstr "Регенеришите кључ"
 msgid "Releases"
 msgstr "Издања"
 
+#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx:72
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 #: src/modules/ui/input/components/ImageInput.tsx:172
 msgid "Remove"
 msgstr "Уклони"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
+msgid "Remove {workspaceMemberName}?"
+msgstr ""
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1348,19 +1446,27 @@ msgstr "Ресетујте лозинку"
 msgid "Reset to"
 msgstr "Ресетујте на"
 
-#: src/modules/command-menu/hooks/useSearchRecords.tsx:227
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:245
 msgid "Results"
 msgstr "Резултати"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:107
-#: src/pages/settings/roles/SettingsRoles.tsx:113
+#: src/pages/settings/roles/SettingsRoles.tsx:112
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
 msgid "Roles"
 msgstr "Улоге"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
+msgid "Romanian"
+msgstr ""
+
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
 msgstr "Покрените радни процес и вратите се овде да погледате његове извршавања"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
+msgid "Russian"
+msgstr ""
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
@@ -1375,6 +1481,10 @@ msgstr "Претражите ''{commandMenuSearch}'' са..."
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "Претражите поље..."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+msgid "Search a member"
+msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
@@ -1421,7 +1531,7 @@ msgstr "Погледајте верзије"
 msgid "See versions history"
 msgstr "Погледајте историју верзија"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:165
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Изаберите догађаје које желите да пошаљете на овај крај"
 
@@ -1433,6 +1543,10 @@ msgstr "Изаберите жељени језик"
 msgid "Send an invite email to your team"
 msgstr "Пошаљите имејл позивницу вашем тиму"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
+msgid "Serbian (Cyrillic)"
+msgstr ""
+
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin Panel"
 msgstr "Админ панел сервера"
@@ -1441,7 +1555,7 @@ msgstr "Админ панел сервера"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Подесите видљивост имејла, управљајте вашом листом блокираних и још много тога."
 
-#: src/pages/settings/workspace/SettingsHostname.tsx:115
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 msgid "Set the name of your domain"
 msgstr "Поставите име вашег домена"
 
@@ -1449,6 +1563,7 @@ msgstr "Поставите име вашег домена"
 msgid "Set the name of your subdomain"
 msgstr "Поставите име вашег поддомена"
 
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:86
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
@@ -1485,7 +1600,7 @@ msgstr "Прескочи"
 msgid "Sort"
 msgstr "Сортирај"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:169
 msgid "Spanish"
 msgstr "Шпански"
 
@@ -1497,15 +1612,16 @@ msgstr "Јединствена пријава"
 msgid "Subdomain"
 msgstr "Поддомен"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:89
+#: src/pages/settings/workspace/SettingsDomain.tsx:111
+#: src/pages/settings/workspace/SettingsDomain.tsx:138
 msgid "Subdomain already taken"
 msgstr "Поддомен је већ заузет"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:39
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Поддомен не може бити дужи од 30 карактера"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:34
+#: src/pages/settings/workspace/SettingsDomain.tsx:38
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Поддомен не може бити краћи од 3 карактера"
 
@@ -1521,6 +1637,10 @@ msgstr "Збир"
 #: src/pages/settings/SettingsWorkspace.tsx:63
 msgid "Support"
 msgstr "Подршка"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
+msgid "Swedish"
+msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
@@ -1606,13 +1726,21 @@ msgstr "Ова акција се не може опозвати. Ово ће т�
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Ова акција се не може опозвати. Ово ће трајно обрисати ваш радни простор. <0/> Молимо вас да унесете ваш имејл да потврдите."
 
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
+msgid "This member will be unassigned from this role."
+msgstr ""
+
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
 msgstr "Ова улога има следеће дозволе."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
-msgid "This Role is assigned to these workspace member."
-msgstr "Ова улога је додељена овим члановима радног простора."
+#~ msgid "This Role is assigned to these workspace member."
+#~ msgstr "This Role is assigned to these workspace member."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+msgid "This role is assigned to these workspace members."
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1634,14 +1762,22 @@ msgstr "Тип окдашајућег догађаја"
 msgid "Trigger type should be Manual - when no record(s) are selected"
 msgstr "Тип активатора треба да буде Ручни - када није изабран ниједан запис(и)"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
+msgid "Turkish"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
 msgstr "Тип"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
 msgid "Type anything"
 msgstr "Укуцајте било шта"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
+msgid "Ukrainian"
+msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
@@ -1660,8 +1796,7 @@ msgstr "Неограничени контакти"
 msgid "Upload"
 msgstr "Отпреми"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:138
 msgid "URL"
 msgstr "УРЛ"
 
@@ -1670,7 +1805,7 @@ msgstr "УРЛ"
 msgid "Use as draft"
 msgstr "Користи као нацрт"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:37
+#: src/pages/settings/workspace/SettingsDomain.tsx:41
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Користите слово, број и црту само. Почетак и крај морају почети словом или бројем"
 
@@ -1697,6 +1832,10 @@ msgstr "Корисник није улогован"
 msgid "Values"
 msgstr "Вредности"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
+msgid "Vietnamese"
+msgstr ""
+
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
 msgstr "Прегледај детаље о плаћању"
@@ -1709,16 +1848,15 @@ msgstr "Визуализуј"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Подржавамо ваше квадратне PNG, JPEG и GIF фајлове величине испод 10MB"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Слаћемо POST захтеве овом ендпоинту за сваки нови догађај"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
 msgid "Webhook"
 msgstr "Вебхук"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:65
+#: src/pages/settings/developers/SettingsDevelopers.tsx:86
 msgid "Webhooks"
 msgstr "Вебхукс"
 
@@ -1746,13 +1884,12 @@ msgstr "Радња не може бити тестирана"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:118
+#: src/pages/settings/workspace/SettingsDomain.tsx:188
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:110
+#: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
-#: src/pages/settings/developers/SettingsDevelopers.tsx:39
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
+#: src/pages/settings/developers/SettingsDevelopers.tsx:60
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:121
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
@@ -1777,11 +1914,12 @@ msgstr "Лого радног простора"
 msgid "Workspace name"
 msgstr "Име радног простора"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
+#: src/pages/settings/roles/components/RoleSettings.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:154
 msgid "Write a description"
 msgstr "Напишите опис"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:113
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr "да"

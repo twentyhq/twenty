@@ -4,8 +4,6 @@ import { useMemo } from 'react';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
-  FieldFilter,
-  ObjectFilter,
   ObjectMetadataItemsQuery,
   ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
@@ -18,12 +16,8 @@ import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useFindManyObjectMetadataItems = ({
   skip,
-  objectFilter,
-  fieldFilter,
 }: {
   skip?: boolean;
-  objectFilter?: ObjectFilter;
-  fieldFilter?: FieldFilter;
 } = {}) => {
   const apolloMetadataClient = useApolloMetadataClient();
 
@@ -33,10 +27,6 @@ export const useFindManyObjectMetadataItems = ({
     ObjectMetadataItemsQuery,
     ObjectMetadataItemsQueryVariables
   >(FIND_MANY_OBJECT_METADATA_ITEMS, {
-    variables: {
-      objectFilter,
-      fieldFilter,
-    },
     client: apolloMetadataClient ?? undefined,
     skip: skip || !apolloMetadataClient,
     onError: (error) => {

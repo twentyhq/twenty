@@ -18,7 +18,8 @@ describe('noteTargetsResolver (e2e)', () => {
                 personId
                 companyId
                 opportunityId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -54,7 +55,8 @@ describe('noteTargetsResolver (e2e)', () => {
           expect(noteTargets).toHaveProperty('personId');
           expect(noteTargets).toHaveProperty('companyId');
           expect(noteTargets).toHaveProperty('opportunityId');
-          expect(noteTargets).toHaveProperty('rocketId');
+          expect(noteTargets).toHaveProperty('petId');
+          expect(noteTargets).toHaveProperty('surveyResultId');
         }
       });
   });
