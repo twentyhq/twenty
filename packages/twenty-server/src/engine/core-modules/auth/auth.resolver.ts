@@ -46,6 +46,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -59,7 +60,7 @@ import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input
 import { AuthService } from './services/auth.service';
 
 @Resolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
     @InjectRepository(User, 'core')
