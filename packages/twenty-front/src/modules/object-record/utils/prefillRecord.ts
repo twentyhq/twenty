@@ -26,11 +26,12 @@ export const prefillRecord = <T extends ObjectRecord>({
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
         }
 
+        const fieldValue = isUndefined(inputValue)
+          ? generateDefaultFieldValue(fieldMetadataItem)
+          : inputValue;
         return [
           fieldMetadataItem.name,
-          isUndefined(inputValue)
-            ? generateDefaultFieldValue(fieldMetadataItem)
-            : inputValue,
+          fieldValue
         ];
       })
       .filter(isDefined),

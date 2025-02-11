@@ -1,13 +1,17 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
+// Should strictly type to each FieldValue
+// Refactor using generic to get strictly type safety on this
 export const generateEmptyFieldValue = (
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>,
 ) => {
+  console.log(fieldMetadataItem)
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.TEXT: {
       return '';
@@ -94,10 +98,10 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.ACTOR: {
       return {
         source: 'MANUAL',
-        workspaceMemberId: null,
+        workspaceMemberId: undefined,
         name: '',
-        context: {},
-      };
+        context: undefined,
+      } satisfies FieldActorValue; // Should be FieldActorDraftValue or not ?
     }
     case FieldMetadataType.PHONES: {
       return {

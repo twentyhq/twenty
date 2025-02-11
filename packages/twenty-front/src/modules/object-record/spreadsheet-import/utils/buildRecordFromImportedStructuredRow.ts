@@ -1,5 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
+  FieldActorValue,
   FieldAddressValue,
   FieldEmailsValue,
   FieldLinksValue,
@@ -218,8 +219,11 @@ export const buildRecordFromImportedStructuredRow = (
         break;
       case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
-          source: 'IMPORT',
-        };
+          source: 'IMPORT', // Shouldn't this be the user that imported everthing ? IMPORT should be a additional metadata ?
+          workspaceMemberId: undefined, // Could be retrieved ?
+          name: '',
+          context: {},
+        } satisfies FieldActorValue;
         break;
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.MULTI_SELECT: {
