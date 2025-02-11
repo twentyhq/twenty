@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
@@ -44,6 +44,12 @@ const mockRefetchAggregateQueries = jest.fn();
 });
 const objectMetadataItem = getPersonObjectMetadaItem();
 const objectMetadataItems = [objectMetadataItem];
+const expectedCachedRecordsWithDeletedAt = personRecords.map(
+  (personRecord) => ({
+    ...personRecord,
+    deletedAt: expect.any(String),
+  }),
+);
 describe('useDeleteManyRecords', () => {
   let cache!: InMemoryCache;
   const assertCachedRecordsMatch = (expectedRecords: ObjectRecord[]) => {
@@ -56,7 +62,7 @@ describe('useDeleteManyRecords', () => {
       });
       expect(cachedRecord).not.toBeNull();
       if (cachedRecord === null) throw new Error('Should never occur');
-      // TODO find a way to reverse assertion
+      // TODO find a way to reverse assertion or be more strict
       expect(expectedRecord).toMatchObject(cachedRecord);
     });
   };
@@ -118,7 +124,7 @@ describe('useDeleteManyRecords', () => {
         }),
       );
     });
-    it('1. Should handle optimistic behavior after many records successfull deletion', async () => {
+    it('1. Should handle optimistic behavior after many successfull records deletion', async () => {
       const apolloMocks = getDefaultMocks();
       const { result } = renderHook(
         () => useDeleteManyRecords({ objectNameSingular: 'person' }),
@@ -135,17 +141,69 @@ describe('useDeleteManyRecords', () => {
           recordIdsToDelete: personIds,
         });
         expect(res).toEqual(responseData);
-        const expectedCachedRecordsWithDeletedAt = personRecords.map(
-          (personRecord) => ({
-            ...personRecord,
-            deletedAt: expect.any(String),
-          }),
-        );
         assertCachedRecordsMatch(expectedCachedRecordsWithDeletedAt);
       });
 
       expect(apolloMocks[0].result).toHaveBeenCalled();
       expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
+    });
+    it('2. Should handle optimistic behavior before send many record deletion', async () => {
+      const apolloMocks = getDefaultMocks();
+      const { result } = renderHook(
+        () => useDeleteManyRecords({ objectNameSingular: 'person' }),
+        {
+          wrapper: getJestMetadataAndApolloMocksWrapper({
+            apolloMocks: getDefaultMocks({
+              delay: Number.POSITIVE_INFINITY,
+            }),
+            cache,
+          }),
+        },
+      );
+
+      await act(async () => {
+        result.current.deleteManyRecords({
+          recordIdsToDelete: personIds,
+        });
+        await waitFor(() =>
+          assertCachedRecordsMatch(expectedCachedRecordsWithDeletedAt),
+        );
+      });
+
+      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
+    });
+
+    it('3. Should rollback optimistic behavior after failing to delete many records', async () => {
+      const apolloMocks = getDefaultMocks();
+      const { result } = renderHook(
+        () => useDeleteManyRecords({ objectNameSingular: 'person' }),
+        {
+          wrapper: getJestMetadataAndApolloMocksWrapper({
+            apolloMocks: getDefaultMocks({
+              error: new Error('Internal server error'),
+            }),
+            cache,
+          }),
+        },
+      );
+
+      await act(async () => {
+        try {
+          await result.current.deleteManyRecords({
+            recordIdsToDelete: personIds,
+          });
+          expect(true).toBe(false);
+        } catch (e) {
+          expect(e).toMatchInlineSnapshot(
+            `[ApolloError: Internal server error]`,
+          );
+          assertCachedRecordsMatch(personRecords);
+        }
+      });
+
+      expect(apolloMocks[0].result).not.toHaveBeenCalled();
+      expect(mockRefetchAggregateQueries).not.toHaveBeenCalled();
     });
   });
 });

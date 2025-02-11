@@ -138,27 +138,7 @@ export const useDeleteManyRecords = ({
           variables: {
             filter: { id: { in: batchedIdsToDelete } },
           },
-          update: (cache, { data }) => {
-            if (skipOptimisticEffect) {
-              return;
-            }
-            const records = data?.[mutationResponseField];
-
-            if (!isDefined(records) || records.length === 0) return;
-
-            // TODO refactor this consume already compiuted cachedRecords
-            const cachedRecords = records
-              .map((record) => getRecordFromCache(record.id, cache))
-              .filter(isDefined);
-
-            triggerUpdateRecordOptimisticEffectByBatch({
-              cache,
-              objectMetadataItem,
-              currentRecords: cachedRecords,
-              updatedRecords: records,
-              objectMetadataItems,
-            });
-          },
+          // TODO should implem update entry like others optimistic behavior hooks
         })
         .catch((error: Error) => {
           if (skipOptimisticEffect) {
