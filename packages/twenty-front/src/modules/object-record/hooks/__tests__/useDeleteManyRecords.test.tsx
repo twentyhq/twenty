@@ -18,8 +18,6 @@ import { MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getPersonObjectMetadaItem } from '~/testing/mock-data/people';
-// const { personIds, personRecords, query, responseData, variables } =
-//   useDeleteManyRecordsMocks;
 const getDefaultMocks = (
   overrides?: Partial<MockedResponse>,
 ): MockedResponse[] => [

@@ -137,7 +137,6 @@ export const useDeleteManyRecords = ({
           variables: {
             filter: { id: { in: batchedIdsToDelete } },
           },
-          // TODO should implem update entry like others optimistic behavior hooks
         })
         .catch((error: Error) => {
           if (skipOptimisticEffect) {

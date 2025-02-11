@@ -83,7 +83,6 @@ export const useDestroyManyRecords = ({
           variables: {
             filter: { id: { in: batchedIdToDestroy } },
           },
-          // TODO refactor to be handled as siblings hooks and dispatch trigger optimsitic cache to relations
           optimisticResponse: skipOptimisticEffect
             ? undefined
             : {

@@ -2,7 +2,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { gql } from '@apollo/client';
 import { getPersonRecord } from '~/testing/mock-data/people';
 
-// typename required when adding cache to wrapper should investigate why such a behavior
 export const query = gql`
   mutation DeleteManyPeople($filter: PersonFilterInput!) {
     deletePeople(filter: $filter) {

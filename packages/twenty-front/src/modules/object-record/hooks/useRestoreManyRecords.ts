@@ -5,6 +5,7 @@ import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
@@ -86,8 +87,8 @@ export const useRestoreManyRecords = ({
             });
           const computedOptimisticRecord = {
             ...cachedRecord,
-            ...{ id: cachedRecord.id, deletedAt: null },
-            ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+            deletedAt: null,
+            __typename: getObjectTypename(objectMetadataItem.nameSingular),
           };
           const optimisticRecordWithConnection =
             getRecordNodeFromRecord<ObjectRecord>({
