@@ -36,6 +36,8 @@ const StyledShowMoreButton = styled(Button)<{ isSelected?: boolean }>`
   `}
 `;
 
+const StyledEnvVariablesDescription = styled.div``;
+
 export const SettingsAdminEnvVariables = () => {
   const { data: environmentVariables } = useGetEnvironmentVariablesGroupedQuery(
     {
@@ -65,59 +67,68 @@ export const SettingsAdminEnvVariables = () => {
     );
 
   return (
-    <Section>
-      {visibleGroups.map((group) => (
-        <StyledGroupContainer key={group.name}>
-          <H1Title title={group.name} fontColor={H1TitleFontColor.Primary} />
-          {group.description !== '' && (
-            <StyledGroupDescription>{group.description}</StyledGroupDescription>
-          )}
-          {group.variables.length > 0 && (
-            <StyledGroupVariablesContainer>
-              <SettingsAdminEnvVariablesTable variables={group.variables} />
-            </StyledGroupVariablesContainer>
-          )}
-        </StyledGroupContainer>
-      ))}
+    <>
+      <StyledEnvVariablesDescription>
+        These are only the server values. Ensure your worker environment has the
+        same variables and values, this is required for asynchronous tasks like
+        email sync.
+      </StyledEnvVariablesDescription>
+      <Section>
+        {visibleGroups.map((group) => (
+          <StyledGroupContainer key={group.name}>
+            <H1Title title={group.name} fontColor={H1TitleFontColor.Primary} />
+            {group.description !== '' && (
+              <StyledGroupDescription>
+                {group.description}
+              </StyledGroupDescription>
+            )}
+            {group.variables.length > 0 && (
+              <StyledGroupVariablesContainer>
+                <SettingsAdminEnvVariablesTable variables={group.variables} />
+              </StyledGroupVariablesContainer>
+            )}
+          </StyledGroupContainer>
+        ))}
 
-      {hiddenGroups.length > 0 && (
-        <>
-          <StyledButtonsRow>
-            {hiddenGroups.map((group) => (
-              <StyledShowMoreButton
-                key={group.name}
-                onClick={() => toggleGroupVisibility(group.name)}
-                title={group.name}
-                variant="secondary"
-                isSelected={selectedGroup === group.name}
-              >
-                {group.name} variables
-              </StyledShowMoreButton>
-            ))}
-          </StyledButtonsRow>
+        {hiddenGroups.length > 0 && (
+          <>
+            <StyledButtonsRow>
+              {hiddenGroups.map((group) => (
+                <StyledShowMoreButton
+                  key={group.name}
+                  onClick={() => toggleGroupVisibility(group.name)}
+                  title={group.name}
+                  variant="secondary"
+                  isSelected={selectedGroup === group.name}
+                >
+                  {group.name} variables
+                </StyledShowMoreButton>
+              ))}
+            </StyledButtonsRow>
 
-          {selectedGroupData && (
-            <StyledGroupContainer>
-              <H1Title
-                title={selectedGroupData.name}
-                fontColor={H1TitleFontColor.Primary}
-              />
-              {selectedGroupData.description !== '' && (
-                <StyledGroupDescription>
-                  {selectedGroupData.description}
-                </StyledGroupDescription>
-              )}
-              {selectedGroupData.variables.length > 0 && (
-                <StyledGroupVariablesContainer>
-                  <SettingsAdminEnvVariablesTable
-                    variables={selectedGroupData.variables}
-                  />
-                </StyledGroupVariablesContainer>
-              )}
-            </StyledGroupContainer>
-          )}
-        </>
-      )}
-    </Section>
+            {selectedGroupData && (
+              <StyledGroupContainer>
+                <H1Title
+                  title={selectedGroupData.name}
+                  fontColor={H1TitleFontColor.Primary}
+                />
+                {selectedGroupData.description !== '' && (
+                  <StyledGroupDescription>
+                    {selectedGroupData.description}
+                  </StyledGroupDescription>
+                )}
+                {selectedGroupData.variables.length > 0 && (
+                  <StyledGroupVariablesContainer>
+                    <SettingsAdminEnvVariablesTable
+                      variables={selectedGroupData.variables}
+                    />
+                  </StyledGroupVariablesContainer>
+                )}
+              </StyledGroupContainer>
+            )}
+          </>
+        )}
+      </Section>
+    </>
   );
 };
