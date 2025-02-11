@@ -1,6 +1,7 @@
 import DataLoader from 'dataloader';
 
 import {
+  FieldMetadataLoaderPayload,
   RelationLoaderPayload,
   RelationMetadataLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
@@ -22,5 +23,10 @@ export interface IDataloaders {
       sourceFieldMetadata: FieldMetadataEntity;
       targetFieldMetadata: FieldMetadataEntity;
     }
+  >;
+
+  fieldMetadataLoader: DataLoader<
+    FieldMetadataLoaderPayload,
+    FieldMetadataEntity[]
   >;
 }
