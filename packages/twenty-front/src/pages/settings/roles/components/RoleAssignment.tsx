@@ -5,7 +5,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Button, H2Title, IconPlus, IconSearch, Section } from 'twenty-ui';
 import { Role, WorkspaceMember } from '~/generated-metadata/graphql';
 import {
@@ -14,11 +14,11 @@ import {
   useUpdateWorkspaceMemberRoleMutation,
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { RoleAssignmentConfirmationModalMode } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalMode';
 import {
-  ModalMode,
-  RoleAssignmentModal,
+  RoleAssignmentConfirmationModal,
   SelectedWorkspaceMember,
-} from './RoleAssignmentModal';
+} from './RoleAssignmentConfirmationModal';
 import { RoleAssignmentTableHeader } from './RoleAssignmentTableHeader';
 import { RoleAssignmentTableRow } from './RoleAssignmentTableRow';
 import { RoleWorkspaceMemberPickerDropdown } from './RoleWorkspaceMemberPickerDropdown';
@@ -73,41 +73,38 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     refetchQueries: [GetRolesDocument],
   });
 
-  const [modalMode, setModalMode] = useState<ModalMode | null>(null);
+  const [modalMode, setModalMode] =
+    useState<RoleAssignmentConfirmationModalMode | null>(null);
   const [selectedWorkspaceMember, setSelectedWorkspaceMember] =
     useState<SelectedWorkspaceMember | null>(null);
   const { data: rolesData } = useGetRolesQuery();
   const { closeDropdown } = useDropdown('role-member-select');
   const [searchFilter, setSearchFilter] = useState('');
 
-  const workspaceMemberRoleMap = useMemo(() => {
-    if (!rolesData?.getRoles) return new Map();
+  const workspaceMemberRoleMap = new Map<
+    string,
+    { id: string; label: string }
+  >();
+  rolesData?.getRoles?.forEach((role) => {
+    role.workspaceMembers.forEach((member) => {
+      workspaceMemberRoleMap.set(member.id, { id: role.id, label: role.label });
+    });
+  });
 
-    const roleMap = new Map<string, { id: string; label: string }>();
-    rolesData.getRoles.forEach((role) => {
-      role.workspaceMembers.forEach((member) => {
-        roleMap.set(member.id, { id: role.id, label: role.label });
+  const filteredWorkspaceMembers = !searchFilter
+    ? role.workspaceMembers
+    : role.workspaceMembers.filter((member) => {
+        const searchTerm = searchFilter.toLowerCase();
+        const firstName = member.name.firstName?.toLowerCase() || '';
+        const lastName = member.name.lastName?.toLowerCase() || '';
+        const email = member.userEmail?.toLowerCase() || '';
+
+        return (
+          firstName.includes(searchTerm) ||
+          lastName.includes(searchTerm) ||
+          email.includes(searchTerm)
+        );
       });
-    });
-    return roleMap;
-  }, [rolesData?.getRoles]);
-
-  const filteredWorkspaceMembers = useMemo(() => {
-    if (!searchFilter) return role.workspaceMembers;
-
-    const searchTerm = searchFilter.toLowerCase();
-    return role.workspaceMembers.filter((member) => {
-      const firstName = member.name.firstName?.toLowerCase() || '';
-      const lastName = member.name.lastName?.toLowerCase() || '';
-      const email = member.userEmail?.toLowerCase() || '';
-
-      return (
-        firstName.includes(searchTerm) ||
-        lastName.includes(searchTerm) ||
-        email.includes(searchTerm)
-      );
-    });
-  }, [role.workspaceMembers, searchFilter]);
 
   const handleModalClose = () => {
     setModalMode(null);
@@ -216,7 +213,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
       </StyledBottomSection>
 
       {modalMode && selectedWorkspaceMember && (
-        <RoleAssignmentModal
+        <RoleAssignmentConfirmationModal
           mode={modalMode}
           selectedWorkspaceMember={selectedWorkspaceMember}
           isOpen={true}
