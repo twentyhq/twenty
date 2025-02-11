@@ -49,6 +49,7 @@ export class DataSeedDemoWorkspaceService {
         await this.workspaceManagerService.initDemo(workspaceId);
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
 
       return;

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared';
+
 type CacheKey = `${string}-${string}`;
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
@@ -12,13 +14,19 @@ export class CacheManager<T> {
   ): Promise<T | null> {
     const [workspaceId] = cacheKey.split('-');
 
-    if (this.cache.has(cacheKey)) {
-      return this.cache.get(cacheKey)!;
+    const cachedValue = this.cache.get(cacheKey);
+
+    if (isDefined(cachedValue)) {
+      return cachedValue;
     }
 
     for (const key of this.cache.keys()) {
       if (key.startsWith(`${workspaceId}-`)) {
-        await onDelete?.(this.cache.get(key)!);
+        const cachedValue = this.cache.get(key);
+
+        if (cachedValue) {
+          await onDelete?.(cachedValue);
+        }
         this.cache.delete(key);
       }
     }
@@ -38,8 +46,10 @@ export class CacheManager<T> {
     cacheKey: CacheKey,
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<void> {
-    if (this.cache.has(cacheKey)) {
-      await onDelete?.(this.cache.get(cacheKey)!);
+    const cachedValue = this.cache.get(cacheKey);
+
+    if (isDefined(cachedValue)) {
+      await onDelete?.(cachedValue);
       this.cache.delete(cacheKey);
     }
   }

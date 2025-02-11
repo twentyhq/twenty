@@ -89,6 +89,7 @@ export class WorkspaceMigrationRunnerService {
 
       await queryRunner.commitTransaction();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error executing migration', error);
       await queryRunner.rollbackTransaction();
       throw error;
