@@ -45,7 +45,9 @@ export const SettingsAdminWorkspaceContent = ({
   const [impersonate] = useImpersonateMutation();
 
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const userLookupResult = useRecoilValue(userLookupResultState);
+  const [userLookupResult, setUserLookupResult] = useRecoilState(
+    userLookupResultState,
+  );
 
   const handleImpersonate = async (workspaceId: string) => {
     if (!userLookupResult?.user.id) {
@@ -62,7 +64,7 @@ export const SettingsAdminWorkspaceContent = ({
       onCompleted: async (data) => {
         const { loginToken, workspace } = data.impersonate;
         const isCurrentWorkspace = workspace.id === activeWorkspace?.id;
-
+        setUserLookupResult(null);
         if (isCurrentWorkspace) {
           await executeImpersonationAuth(loginToken.token);
           return;

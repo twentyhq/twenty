@@ -11,7 +11,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
@@ -60,12 +60,13 @@ export const SettingsAdminGeneral = () => {
   const { activeTabId, setActiveTabId } = useTabList(
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
-  const setUserLookupResult = useSetRecoilState(userLookupResultState);
+  const [userLookupResult, setUserLookupResult] = useRecoilState(
+    userLookupResultState,
+  );
   const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 
   const [userLookup] = useUserLookupAdminPanelMutation();
 
-  const userLookupResult = useRecoilValue(userLookupResultState);
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
   const handleSearch = async () => {
