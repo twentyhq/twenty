@@ -85,7 +85,7 @@ export const DefaultEdge: Story = {
                 position: { x: 500, y: 100 },
                 data: {
                   nodeType: 'create-step',
-                  parentNodeId: 'create-step-1',
+                  parentNodeId: 'action-1',
                 },
               },
             ],
