@@ -270,11 +270,7 @@ const TextInputV2Component = (
           )}
         </StyledTrailingIconContainer>
       </StyledInputContainer>
-      <StyledErrorContainer>
-        {error && !noErrorHelper && (
-          <InputErrorHelper>{error}</InputErrorHelper>
-        )}
-      </StyledErrorContainer>
+      <InputErrorHelper isVisible={!noErrorHelper}>{error}</InputErrorHelper>
     </StyledContainer>
   );
 };
