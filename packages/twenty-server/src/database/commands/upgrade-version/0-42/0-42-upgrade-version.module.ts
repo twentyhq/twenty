@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AddContextToActorCompositeTypeCommand } from 'src/database/commands/upgrade-version/0-41/0-41-add-context-to-actor-composite-type';
-import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-41/0-41-migrate-relations-to-field-metadata.command';
-import { RemoveDuplicateMcmasCommand } from 'src/database/commands/upgrade-version/0-41/0-41-remove-duplicate-mcmas';
-import { SeedWorkflowViewsCommand } from 'src/database/commands/upgrade-version/0-41/0-41-seed-workflow-views.command';
-import { UpgradeTo0_41Command } from 'src/database/commands/upgrade-version/0-41/0-41-upgrade-version.command';
+import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -35,11 +31,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
   providers: [
     SyncWorkspaceLoggerService,
     SyncWorkspaceMetadataCommand,
-    SeedWorkflowViewsCommand,
-    UpgradeTo0_41Command,
-    MigrateRelationsToFieldMetadataCommand,
-    AddContextToActorCompositeTypeCommand,
-    RemoveDuplicateMcmasCommand,
+    LimitAmountOfViewFieldCommand,
   ],
 })
-export class UpgradeTo0_41CommandModule {}
+export class UpgradeTo0_42CommandModule {}

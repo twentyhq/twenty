@@ -16,7 +16,7 @@ import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
-  name: 'upgrade-0.41:limit-amount-of-view-field',
+  name: 'upgrade-0.42:limit-amount-of-view-field',
   description: 'Limit amount of view field.',
 })
 export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner {
