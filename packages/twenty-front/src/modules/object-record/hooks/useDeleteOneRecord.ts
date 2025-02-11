@@ -58,8 +58,9 @@ export const useDeleteOneRecord = ({
       const currentTimestamp = new Date().toISOString();
       const computedOptimisticRecord = {
         ...cachedRecord,
-        ...{ id: idToDelete, deletedAt: currentTimestamp },
-        ...{ __typename: getObjectTypename(objectMetadataItem.nameSingular) },
+        id: idToDelete,
+        deletedAt: currentTimestamp,
+        __typename: getObjectTypename(objectMetadataItem.nameSingular),
       };
       const optimisticRecordNode = getRecordNodeFromRecord<ObjectRecord>({
         record: computedOptimisticRecord,

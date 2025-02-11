@@ -82,10 +82,8 @@ export const useUpdateOneRecord = <
     const computedOptimisticRecord = {
       ...cachedRecord,
       ...optimisticRecordInput,
-      ...{
-        id: idToUpdate,
-        __typename: getObjectTypename(objectMetadataItem.nameSingular),
-      },
+      id: idToUpdate,
+      __typename: getObjectTypename(objectMetadataItem.nameSingular),
     };
     const optimisticRecordWithConnection =
       getRecordNodeFromRecord<ObjectRecord>({
