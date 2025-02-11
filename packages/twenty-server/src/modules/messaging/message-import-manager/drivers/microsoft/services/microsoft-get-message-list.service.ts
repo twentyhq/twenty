@@ -38,9 +38,9 @@ export class MicrosoftGetMessageListService {
   public async getFullMessageListForFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'refreshToken' | 'id'
     >,
-    folders: MessageFolderWorkspaceEntity[],
+    folders: Pick<MessageFolderWorkspaceEntity, 'id' | 'name'>[],
   ): Promise<GetFullMessageListForFoldersResponse[]> {
     const result: GetFullMessageListForFoldersResponse[] = [];
 
@@ -62,7 +62,7 @@ export class MicrosoftGetMessageListService {
   public async getFullMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'refreshToken' | 'id'
     >,
     folderName: MessageFolderName,
   ): Promise<GetFullMessageListResponse> {
