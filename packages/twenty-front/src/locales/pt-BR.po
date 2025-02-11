@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 20:02\n"
+"PO-Revision-Date: 2025-02-11 22:02\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -33,7 +33,7 @@ msgstr "{name}"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
 msgid "{workspaceMemberName} will be unassigned from the following role:"
-msgstr ""
+msgstr "{workspaceMemberName} ser\\u00e1 desvinculado do seguinte cargo:"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -80,7 +80,7 @@ msgstr "Contas"
 
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
-msgstr ""
+msgstr "A\\u00e7\\u00f5es"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
@@ -145,7 +145,7 @@ msgstr "Adicionado {beautifiedCreatedAt}"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
-msgstr ""
+msgstr "Afric\\u00e2ner"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
@@ -211,7 +211,7 @@ msgstr "Aparência"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "Arabic"
-msgstr ""
+msgstr "\\u00c1rabe"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
@@ -219,7 +219,7 @@ msgstr "Tem certeza de que deseja alterar o intervalo de cobrança?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
 msgid "Are you sure you want to assign this role?"
-msgstr ""
+msgstr "Voc\\u00ea tem certeza que deseja atribuir este cargo?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
@@ -228,7 +228,7 @@ msgstr "Ascendente"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
 msgid "Assign {workspaceMemberName}?"
-msgstr ""
+msgstr "Atribuir a {workspaceMemberName}?"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:125
 msgid "Assign roles to specify each member's access permissions"
@@ -236,7 +236,7 @@ msgstr "Atribuir funções para especificar as permissões de acesso de cada mem
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:199
 msgid "Assign to member"
-msgstr ""
+msgstr "Atribuir ao membro"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:161
 msgid "Assigned members"
@@ -328,7 +328,7 @@ msgstr "Cancelar sua assinatura"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Catalan"
-msgstr ""
+msgstr "Catal\\u00e3o"
 
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
@@ -382,7 +382,7 @@ msgstr "Configure suas configurações de e-mail e calendário."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmar"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
@@ -504,7 +504,7 @@ msgstr "Personalize a segurança do seu espaço de trabalho"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
 msgid "Czech"
-msgstr ""
+msgstr "Tcheco"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
@@ -516,7 +516,7 @@ msgstr "Zona de Perigo"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
-msgstr ""
+msgstr "Dinamarqu\\u00eas"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -672,7 +672,7 @@ msgstr "Domínio"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Dutch"
-msgstr ""
+msgstr "Holand\\u00eas"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
@@ -869,7 +869,7 @@ msgstr "Filtros"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Finnish"
-msgstr ""
+msgstr "Finland\\u00eas"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
@@ -928,11 +928,11 @@ msgstr "Conceda ao suporte da Twenty acesso temporário ao seu workspace para qu
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
-msgstr ""
+msgstr "Grego"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebraico"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
@@ -944,7 +944,7 @@ msgstr "Como voc\\u00ea ser\\u00e1 identificado no aplicativo."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
 msgid "Hungarian"
-msgstr ""
+msgstr "H\\u00fangaro"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -988,7 +988,7 @@ msgstr "Provedor de autenticação inválido"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:48
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
+msgstr "Domínio personalizado inválido. Domínios personalizados devem ter menos de 256 caracteres, não podem ser endereços IP, não podem conter espaços, não podem conter caracteres especiais como _~`!@#$%^*()=+{}[]|\\;:'\",<>/? e não podem começar ou terminar com o caractere '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
@@ -1217,19 +1217,19 @@ msgstr "Nenhuma conta conectada"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
 msgid "No members assigned to this role yet"
-msgstr ""
+msgstr "Nenhum membro foi atribu\\u00eddo a este cargo ainda"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
 msgid "No members matching this search"
-msgstr ""
+msgstr "Nenhum membro corresponde a esta pesquisa"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
 msgid "No members matching your search"
-msgstr ""
+msgstr "Nenhum membro corresponde \\u00e0 sua pesquisa"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
 msgid "No more members to add"
-msgstr ""
+msgstr "N\\u00e3o h\\u00e1 mais membros para adicionar"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1241,7 +1241,7 @@ msgstr "Nenhuma versão de workflow ainda"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
 msgid "Norwegian"
-msgstr ""
+msgstr "Noruegu\\u00eas"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
@@ -1344,7 +1344,7 @@ msgstr "Digite {confirmationText} para confirmar que deseja excluir este webhook
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
-msgstr ""
+msgstr "Polon\\u00eas"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
@@ -1424,7 +1424,7 @@ msgstr "Remover"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
 msgid "Remove {workspaceMemberName}?"
-msgstr ""
+msgstr "Remover {workspaceMemberName}?"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1458,7 +1458,7 @@ msgstr "Funções"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
 msgid "Romanian"
-msgstr ""
+msgstr "Romeno"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
@@ -1466,7 +1466,7 @@ msgstr "Execute um workflow e retorne aqui para visualizar suas execuções"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
 msgid "Russian"
-msgstr ""
+msgstr "Russo"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
@@ -1484,7 +1484,7 @@ msgstr "Pesquisar um campo..."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "Search a member"
-msgstr ""
+msgstr "Pesquisar um membro"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
@@ -1545,7 +1545,7 @@ msgstr "Envie um e-mail de convite para sua equipe"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
 msgid "Serbian (Cyrillic)"
-msgstr ""
+msgstr "S\\u00e9rvio (Cir\\u00edlico)"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin Panel"
@@ -1640,7 +1640,7 @@ msgstr "Suporte"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
 msgid "Swedish"
-msgstr ""
+msgstr "Sueco"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
@@ -1728,7 +1728,7 @@ msgstr "Essa ação não pode ser desfeita. Isso excluirá permanentemente todo 
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
 msgid "This member will be unassigned from this role."
-msgstr ""
+msgstr "Este membro ser\\u00e1 desvinculado deste cargo."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
@@ -1740,7 +1740,7 @@ msgstr "Esta Fun\\u00e7\\u00e3o possui as seguintes permiss\\u00f5es."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:162
 msgid "This role is assigned to these workspace members."
-msgstr ""
+msgstr "Este cargo est\\u00e1 atribu\\u00eddo aos seguintes membros do espa\\u00e7o de trabalho."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1764,7 +1764,7 @@ msgstr "O tipo de gatilho deve ser Manual - quando nenhum registro é selecionad
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
 msgid "Turkish"
-msgstr ""
+msgstr "Turco"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
@@ -1777,7 +1777,7 @@ msgstr "Digite qualquer coisa"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ucraniano"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
@@ -1834,7 +1834,7 @@ msgstr "Valores"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"

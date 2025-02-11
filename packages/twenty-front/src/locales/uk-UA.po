@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 20:02\n"
+"PO-Revision-Date: 2025-02-11 22:02\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -33,7 +33,7 @@ msgstr "{name}"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
 msgid "{workspaceMemberName} will be unassigned from the following role:"
-msgstr ""
+msgstr "{workspaceMemberName} буде позбавлений наступної ролі:"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -80,7 +80,7 @@ msgstr "Аккаунти"
 
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
-msgstr ""
+msgstr "Дії"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
@@ -145,7 +145,7 @@ msgstr "Додано {beautifiedCreatedAt}"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
-msgstr ""
+msgstr "Африкаанс"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
@@ -211,7 +211,7 @@ msgstr "Зовнішній вигляд"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "Arabic"
-msgstr ""
+msgstr "Арабська"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
@@ -219,7 +219,7 @@ msgstr "Ви впевнені, що хочете змінити періодич
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
 msgid "Are you sure you want to assign this role?"
-msgstr ""
+msgstr "Ви впевнені, що хочете призначити цю роль?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
@@ -228,7 +228,7 @@ msgstr "За зростанням"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
 msgid "Assign {workspaceMemberName}?"
-msgstr ""
+msgstr "Призначити {workspaceMemberName}?"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:125
 msgid "Assign roles to specify each member's access permissions"
@@ -236,7 +236,7 @@ msgstr "Призначте ролі для визначення дозволів
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:199
 msgid "Assign to member"
-msgstr ""
+msgstr "Призначити члену"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:161
 msgid "Assigned members"
@@ -328,7 +328,7 @@ msgstr "Скасувати підписку"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Catalan"
-msgstr ""
+msgstr "Каталонська"
 
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
@@ -382,7 +382,7 @@ msgstr "Налаштуйте налаштування електронної п�
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 msgid "Confirm"
-msgstr ""
+msgstr "Підтвердити"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
@@ -504,7 +504,7 @@ msgstr "Налаштуйте безпеку свого робочого прос
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
 msgid "Czech"
-msgstr ""
+msgstr "Чеська"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
@@ -516,7 +516,7 @@ msgstr "Небезпечна зона"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
-msgstr ""
+msgstr "Данська"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -700,7 +700,7 @@ msgstr "\n"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Dutch"
-msgstr ""
+msgstr "Голландська"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
@@ -729,7 +729,7 @@ msgstr "\n"
 
 #: src/pages/settings/SettingsBilling.tsx:146
 msgid "Edit payment method, see your invoices and more"
-msgstr ""
+msgstr "Редагувати спосіб оплати, переглядати свої рахунки та більше"
 
 #: src/pages/settings/SettingsWorkspace.tsx:52
 msgid "Edit your subdomain name or set a custom domain."
@@ -812,15 +812,15 @@ msgstr "\n"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
 msgid "Error deleting api key: {err}"
-msgstr ""
+msgstr "Помилка видалення API-ключа: {err}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
 msgid "Error regenerating api key: {err}"
-msgstr ""
+msgstr "Помилка регенерації API-ключа: {err}"
 
 #: src/pages/settings/SettingsBilling.tsx:124
 msgid "Error while switching subscription {to}."
-msgstr ""
+msgstr "Помилка під час переходу на підписку {to}."
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:67
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
@@ -933,7 +933,7 @@ msgstr "Фільтри"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Finnish"
-msgstr ""
+msgstr "Фінська"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
@@ -992,11 +992,11 @@ msgstr "Надайте службі підтримки Twenty тимчасови
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
-msgstr ""
+msgstr "Грецька"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
-msgstr ""
+msgstr "Іврит"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
@@ -1008,7 +1008,7 @@ msgstr "Як вас будуть ідентифікувати в додатку.
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
 msgid "Hungarian"
-msgstr ""
+msgstr "Угорська"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -1052,7 +1052,7 @@ msgstr "Недійсний провайдер авторизації"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:48
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
+msgstr "Недійсний власний домен. Власні домени повинні бути коротшими за 256 символів, не можуть бути IP-адресами, не можуть містити пробіли, не можуть містити спеціальні символи такі як _~`!@#$%^*()=+{}[]|\\;:'\",<>/? та не можуть починатися або закінчуватися символом '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
@@ -1281,19 +1281,19 @@ msgstr "Немає підключеного акаунту"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
 msgid "No members assigned to this role yet"
-msgstr ""
+msgstr "Немає членів, призначених до цієї ролі"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
 msgid "No members matching this search"
-msgstr ""
+msgstr "Немає членів, які відповідають цьому пошуку"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
 msgid "No members matching your search"
-msgstr ""
+msgstr "Немає членів, які відповідають вашому пошуку"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
 msgid "No more members to add"
-msgstr ""
+msgstr "Немає більше членів для додавання"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1305,7 +1305,7 @@ msgstr "Версій Workflow поки що немає"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
 msgid "Norwegian"
-msgstr ""
+msgstr "Норвезька"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
@@ -1408,7 +1408,7 @@ msgstr "Будь ласка, введіть {confirmationText}, щоб підт�
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
-msgstr ""
+msgstr "Польська"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
@@ -1488,7 +1488,7 @@ msgstr "Видалити"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
 msgid "Remove {workspaceMemberName}?"
-msgstr ""
+msgstr "Видалити {workspaceMemberName}?"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1522,7 +1522,7 @@ msgstr "Ролі"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
 msgid "Romanian"
-msgstr ""
+msgstr "Румунська"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
@@ -1530,7 +1530,7 @@ msgstr "Запустіть workflow і поверніться сюди, щоб �
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
 msgid "Russian"
-msgstr ""
+msgstr "Російська"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
@@ -1548,7 +1548,7 @@ msgstr "Пошук поля..."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "Search a member"
-msgstr ""
+msgstr "Пошук члена"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
@@ -1609,7 +1609,7 @@ msgstr "Надішліть запрошення на електронну адр
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
 msgid "Serbian (Cyrillic)"
-msgstr ""
+msgstr "Сербська (кирилиця)"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin Panel"
@@ -1704,7 +1704,7 @@ msgstr "Підтримка"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
 msgid "Swedish"
-msgstr ""
+msgstr "Шведська"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
@@ -1792,7 +1792,7 @@ msgstr "Цю дію не можна відмінити. Це назавжди в
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
 msgid "This member will be unassigned from this role."
-msgstr ""
+msgstr "Цей член буде позбавлений цієї ролі."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
@@ -1804,7 +1804,7 @@ msgstr "Цій ролі присвоєні наступні дозволи."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:162
 msgid "This role is assigned to these workspace members."
-msgstr ""
+msgstr "Ця роль призначена цим членам робочого простору."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1828,7 +1828,7 @@ msgstr "Тип тригера повинен бути Ручний - коли н
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
 msgid "Turkish"
-msgstr ""
+msgstr "Турецька"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
@@ -1841,7 +1841,7 @@ msgstr "Наберіть щось"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
 msgid "Ukrainian"
-msgstr ""
+msgstr "Українська"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
@@ -1898,7 +1898,7 @@ msgstr "Значення"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
 msgid "Vietnamese"
-msgstr ""
+msgstr "В'єтнамська"
 
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
