@@ -1070,6 +1070,7 @@ export type Object = {
   createdAt: Scalars['DateTime'];
   dataSourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
   fields: ObjectFieldsConnection;
   fieldsList: Array<Field>;
   icon?: Maybe<Scalars['String']>;

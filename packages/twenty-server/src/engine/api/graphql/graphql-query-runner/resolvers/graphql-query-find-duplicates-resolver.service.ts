@@ -23,7 +23,6 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { settings } from 'src/engine/constants/settings';
-import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -158,13 +157,12 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
       return {};
     }
 
-    const criteriaCollection = this.getApplicableDuplicateCriteriaCollection(
-      objectMetadataItemWithFieldMaps,
-    );
+    const criteriaCollection =
+      objectMetadataItemWithFieldMaps.duplicateCriteria || [];
 
     const conditions = records.flatMap((record) => {
       const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
-        criteria.columnNames.every((columnName) => {
+        criteria.every((columnName) => {
           const value = record[columnName] as string | undefined;
 
           return (
@@ -176,7 +174,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
       return criteriaWithMatchingArgs.map((criteria) => {
         const condition = {};
 
-        criteria.columnNames.forEach((columnName) => {
+        criteria.forEach((columnName) => {
           condition[columnName] = { eq: record[columnName] };
         });
 
@@ -195,16 +193,6 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
     }
 
     return filter;
-  }
-
-  private getApplicableDuplicateCriteriaCollection(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  ) {
-    return DUPLICATE_CRITERIA_COLLECTION.filter(
-      (duplicateCriteria) =>
-        duplicateCriteria.objectName ===
-        objectMetadataItemWithFieldMaps.nameSingular,
-    );
   }
 
   async validate(

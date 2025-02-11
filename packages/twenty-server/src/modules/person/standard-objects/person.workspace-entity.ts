@@ -15,6 +15,7 @@ import {
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -62,6 +63,11 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
 })
+@WorkspaceDuplicateCriteria([
+  ['nameFirstName', 'nameLastName'],
+  ['linkedinLinkPrimaryLinkUrl'],
+  ['email'],
+])
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.name,

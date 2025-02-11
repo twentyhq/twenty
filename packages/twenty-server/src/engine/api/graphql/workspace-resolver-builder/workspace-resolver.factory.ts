@@ -9,6 +9,7 @@ import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-res
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
 import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
+import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
@@ -45,6 +46,7 @@ export class WorkspaceResolverFactory {
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
     private readonly searchResolverFactory: SearchResolverFactory,
+    private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
   ) {}
 
   async create(
@@ -92,11 +94,18 @@ export class WorkspaceResolverFactory {
           throw new Error(`Unknown query resolver type: ${methodName}`);
         }
 
-        resolvers.Query[resolverName] = resolverFactory.create({
-          authContext,
-          objectMetadataMaps,
-          objectMetadataItemWithFieldMaps: objectMetadata,
-        });
+        if (
+          this.workspaceResolverBuilderService.shouldAllowResolver(
+            objectMetadata,
+            methodName,
+          )
+        ) {
+          resolvers.Query[resolverName] = resolverFactory.create({
+            authContext,
+            objectMetadataMaps,
+            objectMetadataItemWithFieldMaps: objectMetadata,
+          });
+        }
       }
 
       // Generate mutation resolvers
