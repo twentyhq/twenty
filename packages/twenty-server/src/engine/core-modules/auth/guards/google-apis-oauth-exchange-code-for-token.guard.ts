@@ -36,10 +36,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         );
       }
 
-      new GoogleAPIsOauthExchangeCodeForTokenStrategy(
-        this.environmentService,
-        {},
-      );
+      new GoogleAPIsOauthExchangeCodeForTokenStrategy(this.environmentService);
 
       setRequestExtraParams(request, {
         transientToken: state.transientToken,
