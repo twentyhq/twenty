@@ -21,12 +21,6 @@ const StyledIconWrapper = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTextContainerWithEllipsis = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
