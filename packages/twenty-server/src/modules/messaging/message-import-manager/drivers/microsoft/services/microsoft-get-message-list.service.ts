@@ -118,9 +118,9 @@ export class MicrosoftGetMessageListService {
       // so we create the folders INBOX and SENTITEMS
       // and fill the INBOX with the previous sync cursor
       // and for sentitms, we do the full message list fetch
-      console.warn(
-        `Message channel ${messageChannel.id} has no message folders, most probably a first time`,
-      );
+      // console.warn(
+      //   `Message channel ${messageChannel.id} has no message folders, most probably a first time`,
+      // );
 
       const messageFolderRepository =
         await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
