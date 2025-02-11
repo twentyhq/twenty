@@ -73,7 +73,7 @@ export class RootTypeFactory {
     for (const objectMetadata of objectMetadataCollection) {
       for (const methodName of workspaceResolverMethodNames) {
         if (
-          this.workspaceResolverBuilderService.shouldAllowResolver(
+          this.workspaceResolverBuilderService.shouldBuildResolver(
             objectMetadata,
             methodName,
           )

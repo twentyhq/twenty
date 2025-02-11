@@ -5,6 +5,7 @@ import { RecordDetailRecordsList } from '@/object-record/record-show/record-deta
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
+import { isDefined } from 'twenty-shared';
 
 export const RecordDetailDuplicatesSection = ({
   objectRecordId,
@@ -20,7 +21,7 @@ export const RecordDetailDuplicatesSection = ({
   const { results: queryResults } = useFindDuplicateRecords({
     objectRecordIds: [objectRecordId],
     objectNameSingular,
-    skip: !objectMetadataItem.duplicateCriteria,
+    skip: !isDefined(objectMetadataItem.duplicateCriteria),
   });
 
   if (!queryResults || !queryResults[0] || queryResults[0].length === 0)

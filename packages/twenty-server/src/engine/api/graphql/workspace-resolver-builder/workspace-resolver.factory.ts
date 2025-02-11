@@ -95,7 +95,7 @@ export class WorkspaceResolverFactory {
         }
 
         if (
-          this.workspaceResolverBuilderService.shouldAllowResolver(
+          this.workspaceResolverBuilderService.shouldBuildResolver(
             objectMetadata,
             methodName,
           )
