@@ -102,7 +102,6 @@ describe('AdminPanelService', () => {
             getWorkspaceUrls: jest.fn().mockReturnValue({
               customUrl: undefined,
               subdomainUrl: 'https://twenty.twenty.com',
-              isCustomDomainEnabled: false,
             }),
           },
         },

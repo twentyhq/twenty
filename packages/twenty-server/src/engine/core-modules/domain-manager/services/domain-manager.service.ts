@@ -16,7 +16,7 @@ import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceUrlBuilderComponentsType } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 
 @Injectable()
 export class DomainManagerService {
@@ -79,7 +79,7 @@ export class DomainManagerService {
   }: {
     emailVerificationToken: string;
     email: string;
-    workspace: WorkspaceUrlBuilderComponentsType;
+    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
   }) {
     return this.buildWorkspaceURL({
       workspace,
@@ -93,7 +93,7 @@ export class DomainManagerService {
     pathname,
     searchParams,
   }: {
-    workspace: WorkspaceUrlBuilderComponentsType;
+    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
@@ -148,7 +148,7 @@ export class DomainManagerService {
 
   computeRedirectErrorUrl(
     errorMessage: string,
-    workspace: WorkspaceUrlBuilderComponentsType,
+    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
   ) {
     const url = this.buildWorkspaceURL({
       workspace,
@@ -397,11 +397,29 @@ export class DomainManagerService {
     return url.toString();
   }
 
+  getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+    workspace?: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType | null,
+  ) {
+    if (!workspace) {
+      return {
+        subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      };
+    }
+
+    if (!workspace.isCustomDomainEnabled) {
+      return {
+        subdomain: workspace.subdomain,
+      };
+    }
+
+    return workspace;
+  }
+
   getWorkspaceUrls({
     subdomain,
     customDomain,
     isCustomDomainEnabled,
-  }: WorkspaceUrlBuilderComponentsType) {
+  }: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType) {
     return {
       customUrl:
         isCustomDomainEnabled && customDomain

@@ -262,15 +262,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   async getCustomDomainDetailsAndToggleIsCustomDomainEnabled(
     workspace: Workspace,
   ) {
-    if (!workspace.customDomain) return undefined;
+    if (!workspace.customDomain) return;
 
     const result = await this.domainManagerService.getCustomDomainDetails(
       workspace.customDomain,
     );
 
-    if (!result) {
-      return undefined;
-    }
+    if (!result) return;
 
     const isCustomDomainWorking = result.records.some(
       ({ status }) => status !== 'success',
