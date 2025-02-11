@@ -1,7 +1,7 @@
 import { EDGE_GRAY_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constants/EdgeGrayCircleMarkedId';
 import { EDGE_GREEN_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constants/EdgeGreenCircleMarkedId';
 import { EDGE_GREEN_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerId';
-import { EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerWidth';
+import { EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH_PX } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerWidthPx';
 import { EDGE_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeRoundedArrowMarkerId';
 import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
 import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
@@ -29,8 +29,8 @@ export const WorkflowDiagramCustomMarkers = () => {
         <marker
           id={EDGE_GREEN_ROUNDED_ARROW_MARKER_ID}
           markerHeight={5}
-          markerWidth={EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH}
-          refX={EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH / 2}
+          markerWidth={EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH_PX}
+          refX={EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH_PX / 2}
           refY={2.5}
         >
           <path

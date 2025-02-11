@@ -1,4 +1,4 @@
-import { EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerWidth';
+import { EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH_PX } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerWidthPx';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -47,7 +47,7 @@ export const WorkflowDiagramSuccessEdge = ({
           variant="small"
           style={{
             position: 'absolute',
-            transform: `translate(0, -50%) translate(${labelX}px, ${labelY}px) translateX(${EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH / 2 + 3}px)`,
+            transform: `translate(0, -50%) translate(${labelX}px, ${labelY}px) translateX(${EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH_PX / 2 + 3}px)`,
             pointerEvents: 'all',
           }}
           className="nodrag nopan"
