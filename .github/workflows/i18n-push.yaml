@@ -1,4 +1,4 @@
-name: 'Extract and upload translations'
+name: 'Extract translations when there is a push to main, and upload them to Crowdin'
 
 on:
   workflow_dispatch:
@@ -21,7 +21,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
-          ref: ${{ github.head_ref || github.ref_name }}
+          ref: i18n
+
+      - name: Merge main into i18n
+        run: |
+          git fetch origin main
+          git checkout i18n
+          git merge main
 
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
@@ -36,31 +42,27 @@ jobs:
           npx nx run twenty-front:lingui:extract
 
       - name: Check and commit any files created
+        id: check_changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
           git add .
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: extract translations"
-            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+            git push origin HEAD:i18n
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Compile translations
-        id: compile_translations
-        run: |
-          npx nx run twenty-server:lingui:compile
-          npx nx run twenty-emails:lingui:compile
-          npx nx run twenty-front:lingui:compile
-        continue-on-error: true
-
       - name: Upload missing translations
-        if: ${{ steps.compile_translations.outcome == 'failure' }}
+        if: steps.check_changes.outputs.changes_detected == 'true'
         uses: crowdin/github-action@v2
         with:
           upload_sources: true
           upload_translations: true
           download_translations: false
-          localization_branch_name: chore/translations
+          localization_branch_name: i18n
           base_url: 'https://twenty.api.crowdin.com'
         env:
           # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
@@ -68,3 +70,9 @@ jobs:
 
           # Visit https://crowdin.com/settings#api-key to create this token
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Create a pull request
+        if: steps.check_changes.outputs.changes_detected == 'true'
+        run: gh pr create -B main -H i18n --title 'i18n - translations' --body 'Created by Github action' || true
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

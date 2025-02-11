@@ -1,6 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { DEMO_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/demo/users';
+import { SOURCE_LOCALE } from 'twenty-shared';
 
 export const DEMO_SEED_WORKSPACE_MEMBER_IDS = {
   NOAH: '20202020-0687-4c41-b707-ed1bfca972a2',
@@ -30,7 +31,7 @@ export const seedWorkspaceMemberWithDemoData = async (
         id: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
         nameFirstName: 'Noah',
         nameLastName: 'A',
-        locale: 'en',
+        locale: SOURCE_LOCALE,
         colorScheme: 'Light',
         userEmail: 'noah@demo.dev',
         userId: DEMO_SEED_USER_IDS.NOAH,
@@ -39,7 +40,7 @@ export const seedWorkspaceMemberWithDemoData = async (
         id: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
         nameFirstName: 'Hugo',
         nameLastName: 'I',
-        locale: 'en',
+        locale: SOURCE_LOCALE,
         colorScheme: 'Light',
         userEmail: 'hugo@demo.dev',
         userId: DEMO_SEED_USER_IDS.HUGO,
@@ -48,7 +49,7 @@ export const seedWorkspaceMemberWithDemoData = async (
         id: DEMO_SEED_WORKSPACE_MEMBER_IDS.TIM,
         nameFirstName: 'Tim',
         nameLastName: 'Apple',
-        locale: 'en',
+        locale: SOURCE_LOCALE,
         colorScheme: 'Light',
         userEmail: 'tim@apple.dev',
         userId: DEMO_SEED_USER_IDS.TIM,

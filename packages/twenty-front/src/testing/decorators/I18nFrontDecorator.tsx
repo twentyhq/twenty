@@ -1,12 +1,13 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Decorator } from '@storybook/react';
+import { SOURCE_LOCALE } from 'twenty-shared';
 import { messages as enMessages } from '../../locales/generated/en';
 
 i18n.load({
-  en: enMessages,
+  [SOURCE_LOCALE]: enMessages,
 });
-i18n.activate('en');
+i18n.activate(SOURCE_LOCALE);
 
 export const I18nFrontDecorator: Decorator = (Story) => {
   return (
