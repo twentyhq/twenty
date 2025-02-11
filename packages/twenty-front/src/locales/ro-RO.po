@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 16:02\n"
+"PO-Revision-Date: 2025-02-11 20:02\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -33,7 +33,7 @@ msgstr "{name}"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
 msgid "{workspaceMemberName} will be unassigned from the following role:"
-msgstr ""
+msgstr "{workspaceMemberName} va fi retras din următorul rol:"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -82,7 +82,7 @@ msgstr "Conturi"
 
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
-msgstr ""
+msgstr "Acțiuni"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
@@ -151,7 +151,7 @@ msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
-msgstr ""
+msgstr "Africană"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
@@ -225,7 +225,7 @@ msgstr "Aspect"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "Arabic"
-msgstr ""
+msgstr "Arabă"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
@@ -233,7 +233,7 @@ msgstr "Sunteți sigur că doriți să schimbați intervalul de facturare?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
 msgid "Are you sure you want to assign this role?"
-msgstr ""
+msgstr "Sunteți sigur că doriți să atribuiți acest rol?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
@@ -242,7 +242,7 @@ msgstr "Ascendent"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
 msgid "Assign {workspaceMemberName}?"
-msgstr ""
+msgstr "Atribuiți lui {workspaceMemberName}?"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:125
 msgid "Assign roles to specify each member's access permissions"
@@ -250,7 +250,7 @@ msgstr "Atribuiți roluri pentru a specifica permisiunile de acces ale fiecărui
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:199
 msgid "Assign to member"
-msgstr ""
+msgstr "Atribuie membrului"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:161
 msgid "Assigned members"
@@ -342,7 +342,7 @@ msgstr "Anulează abonamentul"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Catalan"
-msgstr ""
+msgstr "Catalană"
 
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
@@ -400,7 +400,7 @@ msgstr "Configurați setările de e-mail și calendar."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmă"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
@@ -526,7 +526,7 @@ msgstr "Personalizează securitatea spațiului tău de lucru"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
 msgid "Czech"
-msgstr ""
+msgstr "Cehă"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
@@ -539,7 +539,7 @@ msgstr "Zonă periculoasă"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
-msgstr ""
+msgstr "Daneză"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Dark"
@@ -706,7 +706,7 @@ msgstr "Domeniu"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Dutch"
-msgstr ""
+msgstr "Olandeză"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
@@ -905,7 +905,7 @@ msgstr "Filtre"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Finnish"
-msgstr ""
+msgstr "Finlandeză"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
@@ -964,11 +964,11 @@ msgstr "Acordați suport Twenty acces temporar la spațiul dvs. de lucru pentru 
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
-msgstr ""
+msgstr "Greacă"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
-msgstr ""
+msgstr "Ebraică"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
@@ -980,7 +980,7 @@ msgstr "Cum veți fi identificat în aplicație."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
 msgid "Hungarian"
-msgstr ""
+msgstr "Maghiară"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -1025,7 +1025,7 @@ msgstr "Furnizor de autentificare invalid"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:48
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
+msgstr "Domeniu personalizat invalid. Domeniile personalizate trebuie să fie mai scurte de 256 de caractere, nu pot fi adrese IP, nu pot conține spații, nu pot conține caractere speciale precum _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? și nu trebuie să înceapă sau să se termine cu caracterul '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
@@ -1275,19 +1275,19 @@ msgstr "Niciun cont conectat"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
 msgid "No members assigned to this role yet"
-msgstr ""
+msgstr "Niciun membru nu a fost încă asignat acestui rol"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
 msgid "No members matching this search"
-msgstr ""
+msgstr "Niciun membru care să corespundă acestei căutări"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
 msgid "No members matching your search"
-msgstr ""
+msgstr "Niciun membru care să corespundă căutării dumneavoastră"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
 msgid "No more members to add"
-msgstr ""
+msgstr "Nu mai există membri de adăugat"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1299,7 +1299,7 @@ msgstr "Nicio versiune de workflow încă"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
 msgid "Norwegian"
-msgstr ""
+msgstr "Norvegiană"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
@@ -1409,7 +1409,7 @@ msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
-msgstr ""
+msgstr "Poloneză"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
@@ -1489,7 +1489,7 @@ msgstr "Elimină"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
 msgid "Remove {workspaceMemberName}?"
-msgstr ""
+msgstr "Eliminați {workspaceMemberName}?"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1523,7 +1523,7 @@ msgstr "Roluri"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
 msgid "Romanian"
-msgstr ""
+msgstr "Română"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
@@ -1531,7 +1531,7 @@ msgstr "Rulează un workflow și întoarce-te aici pentru a vedea execuțiile ac
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
 msgid "Russian"
-msgstr ""
+msgstr "Rusă"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
@@ -1549,7 +1549,7 @@ msgstr "Caută un câmp..."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "Search a member"
-msgstr ""
+msgstr "Caută un membru"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
@@ -1610,7 +1610,7 @@ msgstr "Trimite un email de invitație echipei tale"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
 msgid "Serbian (Cyrillic)"
-msgstr ""
+msgstr "Sârbă (Chirilic)"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
@@ -1714,7 +1714,7 @@ msgstr "Suport"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
 msgid "Swedish"
-msgstr ""
+msgstr "Suedeză"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
@@ -1810,7 +1810,7 @@ msgstr "Această acțiune nu poate fi anulată. Acest lucru va șterge definitiv
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
 msgid "This member will be unassigned from this role."
-msgstr ""
+msgstr "Acest membru va fi retras din acest rol."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
@@ -1822,7 +1822,7 @@ msgstr "Acest Rol are următoarele permisiuni."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:162
 msgid "This role is assigned to these workspace members."
-msgstr ""
+msgstr "Acest rol este atribuit acestor membri ai spațiului de lucru."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1846,7 +1846,7 @@ msgstr "Tipul declanșatorului trebuie să fie Manual - când nicio înregistrar
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
 msgid "Turkish"
-msgstr ""
+msgstr "Turcă"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
@@ -1859,7 +1859,7 @@ msgstr "Tastează orice"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ucraineană"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
@@ -1917,7 +1917,7 @@ msgstr "Valori"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnameză"
 
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"

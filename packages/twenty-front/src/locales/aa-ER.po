@@ -5,123 +5,121 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: da\n"
+"Language: aa\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-02-11 20:02\n"
 "Last-Translator: \n"
-"Language-Team: Danish\n"
+"Language-Team: Afar\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
 "X-Crowdin-Project-ID: 1\n"
-"X-Crowdin-Language: da\n"
+"X-Crowdin-Language: aa\n"
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
 msgid "{aggregateLabel} of {fieldLabel}"
-msgstr "{aggregateLabel} af {fieldLabel}"
+msgstr "crwdns45:0{aggregateLabel}crwdnd45:0{fieldLabel}crwdne45:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
 msgid "{apiKeyName} API Key"
-msgstr "{apiKeyName} API-nøgle"
+msgstr "crwdns47:0{apiKeyName}crwdne47:0"
 
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:40
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
 msgid "{name}"
-msgstr "{name}"
+msgstr "crwdns49:0{name}crwdne49:0"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
 msgid "{workspaceMemberName} will be unassigned from the following role:"
-msgstr "{workspaceMemberName} vil blive fjernet fra f\\u00f8lgende rolle:"
+msgstr "crwdns1783:0{workspaceMemberName}crwdne1783:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
-msgstr "1 000 workflow node eksekveringer"
+msgstr "crwdns51:0crwdne51:0"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:63
 msgid "12h ({hour12Label})"
-msgstr "12 timer ({hour12Label})"
+msgstr "crwdns53:0{hour12Label}crwdne53:0"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:198
 msgid "2. Configure field"
-msgstr "2. Konfigurer felt"
+msgstr "crwdns55:0crwdne55:0"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
 msgid "24h ({hour24Label})"
-msgstr "24 timer ({hour24Label})"
+msgstr "crwdns57:0{hour24Label}crwdne57:0"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr "Et delt miljø, hvor du vil kunne administrere dine kunde relationer sammen med dit team."
+msgstr "crwdns59:0crwdne59:0"
 
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
-msgstr "Afbryd"
+msgstr "crwdns61:0crwdne61:0"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
 msgid "About"
-msgstr "Om"
+msgstr "crwdns63:0crwdne63:0"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:40
 #: src/pages/settings/accounts/SettingsAccounts.tsx:46
 msgid "Account"
-msgstr "Konto"
+msgstr "crwdns65:0crwdne65:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:321
 #: src/modules/settings/profile/components/DeleteAccount.tsx:45
 msgid "Account Deletion"
-msgstr "Konto Sletning"
+msgstr "crwdns67:0crwdne67:0"
 
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
 msgid "Accounts"
-msgstr "Konti"
+msgstr "crwdns69:0crwdne69:0"
 
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
-msgstr "Handlinger"
+msgstr "crwdns1785:0crwdne1785:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
 msgid "Activate"
-msgstr "Aktivér"
+msgstr "crwdns71:0crwdne71:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:67
 msgid "Activate Workflow"
-msgstr "Aktivér Arbejdsproces"
+msgstr "crwdns73:0crwdne73:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:190
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
 msgid "Active"
-msgstr "Aktiv"
+msgstr "crwdns75:0crwdne75:0"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:51
 msgid "Active API keys created by you or your team."
-msgstr "Aktive API-nøgler oprettet af dig eller dit team."
+msgstr "crwdns77:0crwdne77:0"
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx:38
 msgid "Add"
-msgstr "Tilføj"
+msgstr "crwdns79:0crwdne79:0"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
 msgid "Add Field"
-msgstr "Tilføj Felt"
+msgstr "crwdns81:0crwdne81:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
 msgid "Add object"
-msgstr "Tilføj objekt"
+msgstr "crwdns83:0crwdne83:0"
 
 #: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
 msgid "Add SSO Identity Provider"
-msgstr "Tilføj SSO Identitetsudbyder"
+msgstr "crwdns85:0crwdne85:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
 msgid "Add to blocklist"
-msgstr "Tilføj til blokeringsliste"
+msgstr "crwdns87:0crwdne87:0"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:68
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:79
@@ -135,292 +133,276 @@ msgstr "Tilføj til blokeringsliste"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:70
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
 msgid "Add to favorites"
-msgstr "Tilføj til favoritter"
+msgstr "crwdns89:0crwdne89:0"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:16
 msgid "Add your first {objectLabel}"
-msgstr "Tilføj din første {objectLabel}"
+msgstr "crwdns91:0{objectLabel}crwdne91:0"
 
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
 msgid "Added {beautifiedCreatedAt}"
-msgstr "Tilføjet {beautifiedCreatedAt}"
-
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
-msgid "Advanced filter"
-msgstr ""
+msgstr "crwdns93:0{beautifiedCreatedAt}crwdne93:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
-msgstr "Afrikaans"
+msgstr "crwdns1787:0crwdne1787:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
-msgstr "Alle"
+msgstr "crwdns95:0crwdne95:0"
 
 #: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
 msgid "All ({relationRecordsCount})"
-msgstr "Alle ({relationRecordsCount})"
+msgstr "crwdns97:0{relationRecordsCount}crwdne97:0"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:124
 msgid "All roles"
-msgstr "Alle roller"
+msgstr "crwdns99:0crwdne99:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
 msgid "Allow logins through Google's single sign-on functionality."
-msgstr "Tillad logins gennem Googles single sign-on funktionalitet."
+msgstr "crwdns101:0crwdne101:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
 msgid "Allow logins through Microsoft's single sign-on functionality."
-msgstr "Tillad logins gennem Microsofts single sign-on funktionalitet."
+msgstr "crwdns103:0crwdne103:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
 msgid "Allow the invitation of new users by sharing an invite link."
-msgstr "Tillad invitation af nye brugere ved at dele et invitationslink."
+msgstr "crwdns105:0crwdne105:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
 msgid "Allow users to sign in with an email and password."
-msgstr "Tillad brugere at logge ind med en e-mail og password."
+msgstr "crwdns107:0crwdne107:0"
 
 #: src/pages/auth/PasswordReset.tsx:162
 msgid "An error occurred while updating password"
-msgstr "En fejl opstod under opdatering af password"
+msgstr "crwdns109:0crwdne109:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:158
 msgid "An optional description"
-msgstr "En valgfri beskrivelse"
+msgstr "crwdns111:0crwdne111:0"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
 msgid "and"
-msgstr "og"
+msgstr "crwdns113:0crwdne113:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
 msgid "API & Webhooks"
-msgstr "API & Webhooks"
+msgstr "crwdns115:0crwdne115:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
 msgid "API Key"
-msgstr "API-nøgle"
+msgstr "crwdns117:0crwdne117:0"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "API keys"
-msgstr "API-nøgler"
+msgstr "crwdns119:0crwdne119:0"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
 msgid "API Name"
-msgstr "API-navn"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
-msgid "API Name (Plural)"
-msgstr ""
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
-msgid "API Name (Singular)"
-msgstr ""
+msgstr "crwdns121:0crwdne121:0"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
-msgstr "Udseende"
+msgstr "crwdns123:0crwdne123:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "Arabic"
-msgstr "Arabisk"
+msgstr "crwdns1789:0crwdne1789:0"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
-msgstr "Er du sikker på, at du vil ændre din faktureringsperiode?"
+msgstr "crwdns125:0crwdne125:0"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
 msgid "Are you sure you want to assign this role?"
-msgstr "Er du sikker p\\u00e5, at du vil tildele denne rolle?"
+msgstr "crwdns1791:0crwdne1791:0"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Ascending"
-msgstr "Stigende"
+msgstr "crwdns127:0crwdne127:0"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
 msgid "Assign {workspaceMemberName}?"
-msgstr "Tildele {workspaceMemberName}?"
+msgstr "crwdns1793:0{workspaceMemberName}crwdne1793:0"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:125
 msgid "Assign roles to specify each member's access permissions"
-msgstr "Tildel roller for at specificere hver medlems adgangstilladelser"
+msgstr "crwdns129:0crwdne129:0"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:199
 msgid "Assign to member"
-msgstr "Tildel til medlem"
+msgstr "crwdns1795:0crwdne1795:0"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:161
 msgid "Assigned members"
-msgstr "Tildelte medlemmer"
+msgstr "crwdns131:0crwdne131:0"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:134
 msgid "Assigned to"
-msgstr "Tildelt til"
+msgstr "crwdns133:0crwdne133:0"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:74
 msgid "Assignment"
-msgstr "Tildeling"
+msgstr "crwdns135:0crwdne135:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
 msgid "At least 8 characters long."
-msgstr "Mindst 8 tegn lang."
+msgstr "crwdns137:0crwdne137:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
-msgstr "Mindst én godkendelsesmetode skal være aktiveret"
+msgstr "crwdns139:0crwdne139:0"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:63
 msgid "Authentication"
-msgstr "Godkendelse"
+msgstr "crwdns141:0crwdne141:0"
 
 #: src/pages/auth/Authorize.tsx:127
 msgid "Authorize"
-msgstr "Autoriser"
+msgstr "crwdns143:0crwdne143:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
 msgid "Average"
-msgstr "Gennemsnit"
+msgstr "crwdns145:0crwdne145:0"
 
 #: src/pages/not-found/NotFound.tsx:58
 msgid "Back to content"
-msgstr "Tilbage til indhold"
+msgstr "crwdns147:0crwdne147:0"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Billing"
-msgstr "Fakturering"
+msgstr "crwdns149:0crwdne149:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
 msgid "Blocklist"
-msgstr "Blokeringsliste"
+msgstr "crwdns151:0crwdne151:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:210
 msgid "Book a Call"
-msgstr "Book et opkald"
+msgstr "crwdns153:0crwdne153:0"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
 msgid "By using Twenty, you agree to the"
-msgstr "Ved at bruge Twenty accepterer du"
+msgstr "crwdns155:0crwdne155:0"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
 msgid "Calculate"
-msgstr "Beregn"
+msgstr "crwdns157:0crwdne157:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
 msgid "Calendar"
-msgstr "Kalender"
+msgstr "crwdns159:0crwdne159:0"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
 msgid "Calendars"
-msgstr "Kalendere"
+msgstr "crwdns161:0crwdne161:0"
 
 #: src/pages/auth/Authorize.tsx:124
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:152
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
 msgid "Cancel"
-msgstr "Annuller"
+msgstr "crwdns163:0crwdne163:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:152
 msgid "Cancel anytime"
-msgstr "Annuller når som helst"
+msgstr "crwdns165:0crwdne165:0"
 
 #: src/pages/settings/SettingsBilling.tsx:176
 msgid "Cancel Plan"
-msgstr "Annuller abonnement"
+msgstr "crwdns167:0crwdne167:0"
 
 #: src/pages/settings/SettingsBilling.tsx:171
 msgid "Cancel your subscription"
-msgstr "Annuller dit abonnement"
+msgstr "crwdns169:0crwdne169:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Catalan"
-msgstr "Catalansk"
+msgstr "crwdns1797:0crwdne1797:0"
 
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
-msgstr "Skift <b>{to}</b>"
+msgstr "crwdns171:0{to}crwdne171:0"
 
 #: src/pages/auth/PasswordReset.tsx:246
 #: src/modules/settings/profile/components/ChangePassword.tsx:52
 #: src/modules/settings/profile/components/ChangePassword.tsx:58
 msgid "Change Password"
-msgstr "Skift kodeord"
+msgstr "crwdns173:0crwdne173:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
 msgid "Chinese — Simplified"
-msgstr "Kinesisk — Forenklet"
+msgstr "crwdns175:0crwdne175:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
 msgid "Chinese — Traditional"
-msgstr "Kinesisk — Traditionelt"
+msgstr "crwdns177:0crwdne177:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:187
 msgid "Choose an object"
-msgstr "Vælg et objekt"
-
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
-msgid "Choose the fields that will identify your records"
-msgstr ""
+msgstr "crwdns179:0crwdne179:0"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
-msgstr "Vælg din udbyder"
+msgstr "crwdns181:0crwdne181:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:147
 msgid "Choose your Trial"
-msgstr "Vælg din prøveperiode"
+msgstr "crwdns183:0crwdne183:0"
 
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
-msgstr "Luk"
+msgstr "crwdns185:0crwdne185:0"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
-msgstr "Konfigurer en SSO-forbindelse"
+msgstr "crwdns187:0crwdne187:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:58
 msgid "Configure and customize your calendar preferences."
-msgstr "Konfigurer og tilpas dine kalenderpræferencer."
+msgstr "crwdns189:0crwdne189:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
-msgstr "Konfigurer, hvordan datoer vises i hele appen"
+msgstr "crwdns191:0crwdne191:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
 msgid "Configure your emails and calendar settings."
-msgstr "Konfigurer dine e-mails og kalenderindstillinger."
+msgstr "crwdns193:0crwdne193:0"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 msgid "Confirm"
-msgstr "Bekr\\u00e6ft"
+msgstr "crwdns1799:0crwdne1799:0"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
-msgstr "Tilslut en ny konto til dit arbejdsområde"
+msgstr "crwdns195:0crwdne195:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:61
 msgid "Connect with Google"
-msgstr "Forbind med Google"
+msgstr "crwdns197:0crwdne197:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:70
 msgid "Connect with Microsoft"
-msgstr "Forbind med Microsoft"
+msgstr "crwdns199:0crwdne199:0"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:56
 msgid "Connected accounts"
-msgstr "Forbundne konti"
+msgstr "crwdns201:0crwdne201:0"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
-msgstr "Kontekst"
+msgstr "crwdns203:0crwdne203:0"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 #: src/pages/onboarding/CreateWorkspace.tsx:154
@@ -428,171 +410,156 @@ msgstr "Kontekst"
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:92
 msgid "Continue"
-msgstr "Fortsæt"
+msgstr "crwdns205:0crwdne205:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:75
 msgid "Continue with Email"
-msgstr "Fortsæt med e-mail"
+msgstr "crwdns207:0crwdne207:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
 msgid "Continue with Google"
-msgstr "Fortsæt med Google"
+msgstr "crwdns209:0crwdne209:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
 msgid "Continue with Microsoft"
-msgstr "Fortsæt med Microsoft"
+msgstr "crwdns211:0crwdne211:0"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
-msgstr "Kopilot"
+msgstr "crwdns213:0crwdne213:0"
 
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
-msgstr "Kopier invitationslink"
-
-#: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
-msgid "Copy link"
-msgstr ""
+msgstr "crwdns215:0crwdne215:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
-msgstr "Kopiér denne nøgle, da den ikke vil være synlig igen"
+msgstr "crwdns217:0crwdne217:0"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
 msgid "Count"
-msgstr "Antal"
+msgstr "crwdns219:0crwdne219:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
 msgid "Count all"
-msgstr "Tæl alle"
+msgstr "crwdns221:0crwdne221:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
 msgid "Count empty"
-msgstr "Tæl tomme"
+msgstr "crwdns223:0crwdne223:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
 msgid "Count not empty"
-msgstr "Tæl ikke-tomme"
+msgstr "crwdns225:0crwdne225:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
 msgid "Count unique values"
-msgstr "Tæl unikke værdier"
+msgstr "crwdns227:0crwdne227:0"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
 msgid "Create a workflow and return here to view its versions"
-msgstr "Opret en arbejdsproces og vend tilbage hertil for at se dens versioner"
+msgstr "crwdns229:0crwdne229:0"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
-msgstr "Opret API nøgle"
+msgstr "crwdns231:0crwdne231:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
 msgid "Create new record"
-msgstr "Opret ny post"
+msgstr "crwdns233:0crwdne233:0"
 
 #: src/pages/onboarding/CreateProfile.tsx:154
 msgid "Create profile"
-msgstr "Opret profil"
+msgstr "crwdns235:0crwdne235:0"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:200
 msgid "Create Role"
-msgstr "Opret Rolle"
+msgstr "crwdns237:0crwdne237:0"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:73
 msgid "Create Webhook"
-msgstr "Opret Webhook"
+msgstr "crwdns239:0crwdne239:0"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:113
 msgid "Create your workspace"
-msgstr "Opret dit arbejdsområde"
+msgstr "crwdns241:0crwdne241:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
-msgstr "Tilpassede objekter"
+msgstr "crwdns243:0crwdne243:0"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
 msgid "Customise the fields available in the {objectLabelSingular} views."
-msgstr "Tilpas de felter, der er tilgængelige i {objectLabelSingular} visningerne."
+msgstr "crwdns245:0{objectLabelSingular}crwdne245:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
-msgstr "Tilpas domæne"
+msgstr "crwdns247:0crwdne247:0"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:64
 msgid "Customize your workspace security"
-msgstr "Tilpas din arbejdsplads' sikkerhed"
+msgstr "crwdns249:0crwdne249:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
 msgid "Czech"
-msgstr "Tjekkisk"
+msgstr "crwdns1801:0crwdne1801:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
 msgid "Danger zone"
-msgstr "Risikoområde"
+msgstr "crwdns251:0crwdne251:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
-msgstr "Dansk"
-
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
-msgid "Dark"
-msgstr ""
+msgstr "crwdns1803:0crwdne1803:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
 msgid "Data model"
-msgstr "Datamodel"
+msgstr "crwdns253:0crwdne253:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
 msgid "Data type"
-msgstr "Datatype"
+msgstr "crwdns255:0crwdne255:0"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
 msgid "Date"
-msgstr "Dato"
+msgstr "crwdns257:0crwdne257:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
-msgstr "Dato og tid"
+msgstr "crwdns259:0crwdne259:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
-msgstr "Deaktiver"
+msgstr "crwdns261:0crwdne261:0"
 
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:117
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
-msgstr "Deaktiver \"Synkronisér Objekters Etiketter og API Navne\" for at sætte et brugerdefineret API navn"
-
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
-msgid "Deactivate object"
-msgstr ""
+msgstr "crwdns263:0crwdne263:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
-msgstr "Deaktiver dette felt"
+msgstr "crwdns265:0crwdne265:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:82
 msgid "Deactivate Workflow"
-msgstr "Deaktiver Workflow"
+msgstr "crwdns267:0crwdne267:0"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
-msgstr "Definer navnet og beskrivelsen af dit objekt"
+msgstr "crwdns269:0crwdne269:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:252
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
@@ -608,130 +575,129 @@ msgstr "Definer navnet og beskrivelsen af dit objekt"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
 msgid "Delete"
-msgstr "Slet"
+msgstr "crwdns271:0crwdne271:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:332
 #: src/modules/settings/profile/components/DeleteAccount.tsx:37
 #: src/modules/settings/profile/components/DeleteAccount.tsx:53
 msgid "Delete account"
-msgstr "Slet konto"
+msgstr "crwdns273:0crwdne273:0"
 
 #: src/modules/settings/profile/components/DeleteAccount.tsx:30
 msgid "Delete account and all the associated data"
-msgstr "Slet konto og alle de tilknyttede data"
+msgstr "crwdns275:0crwdne275:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
 msgid "Delete API key"
-msgstr "Slet API nøgle"
+msgstr "crwdns277:0crwdne277:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
 msgid "Delete record"
-msgstr "Slet post"
+msgstr "crwdns279:0crwdne279:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
 msgid "Delete records"
-msgstr "Slet poster"
+msgstr "crwdns281:0crwdne281:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:247
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
-msgstr "Slet denne integration"
+msgstr "crwdns283:0crwdne283:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:261
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:269
 msgid "Delete webhook"
-msgstr "Slet webhook"
+msgstr "crwdns285:0crwdne285:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
 msgid "Delete workflow"
-msgstr "Slet arbejdsproces"
+msgstr "crwdns287:0crwdne287:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
 msgid "Delete workflows"
-msgstr "Slet arbejdsprocesser"
+msgstr "crwdns289:0crwdne289:0"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
 msgid "Delete workspace"
-msgstr "Slet arbejdsområde"
+msgstr "crwdns291:0crwdne291:0"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
 msgid "Delete your whole workspace"
-msgstr "Slet hele dit arbejdsområde"
+msgstr "crwdns293:0crwdne293:0"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Descending"
-msgstr "Faldende"
+msgstr "crwdns295:0crwdne295:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
-msgstr "Beskrivelse"
+msgstr "crwdns297:0crwdne297:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:254
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:296
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:155
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:193
 msgid "Destroy"
-msgstr "Ødelæg"
+msgstr "crwdns299:0crwdne299:0"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:36
 #: src/pages/settings/developers/SettingsDevelopers.tsx:43
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
 msgid "Developers"
-msgstr "Udviklere"
+msgstr "crwdns301:0crwdne301:0"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:97
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:98
 msgid "Discard Draft"
-msgstr "Kassér kladde"
+msgstr "crwdns303:0crwdne303:0"
 
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
 msgid "Display as relative date"
-msgstr "Vis som relativ dato"
+msgstr "crwdns305:0crwdne305:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
 #: src/pages/settings/workspace/SettingsDomain.tsx:185
 #: src/pages/settings/workspace/SettingsDomain.tsx:195
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 msgid "Domain"
-msgstr "Domæne"
+msgstr "crwdns307:0crwdne307:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Dutch"
-msgstr "Hollandsk"
+msgstr "crwdns1805:0crwdne1805:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
 msgid "E.g. backoffice integration"
-msgstr "F.eks. backoffice-integration"
+msgstr "crwdns309:0crwdne309:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
 msgid "Earliest"
-msgstr "Tidligste"
+msgstr "crwdns311:0crwdne311:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
 msgid "Earliest date"
-msgstr "Tidligste dato"
+msgstr "crwdns313:0crwdne313:0"
 
 #: src/pages/settings/SettingsBilling.tsx:158
 msgid "Edit billing interval"
-msgstr "Rediger faktureringsinterval"
+msgstr "crwdns315:0crwdne315:0"
 
 #: src/pages/settings/SettingsBilling.tsx:146
 msgid "Edit payment method, see your invoices and more"
-msgstr "Rediger betalingsmetode, se dine fakturaer og mere"
+msgstr "crwdns317:0crwdne317:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:52
 msgid "Edit your subdomain name or set a custom domain."
-msgstr "Rediger dit underdomænenavn eller sæt et brugerdefineret domæne."
+msgstr "crwdns319:0crwdne319:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:180
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:256
@@ -739,80 +705,78 @@ msgstr "Rediger dit underdomænenavn eller sæt et brugerdefineret domæne."
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:21
 #: src/pages/auth/PasswordReset.tsx:206
 msgid "Email"
-msgstr "E-mail"
+msgstr "crwdns321:0crwdne321:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:89
 msgid "Email integration"
-msgstr "E-mailintegration"
+msgstr "crwdns323:0crwdne323:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:55
 msgid "Email or domain is already in blocklist"
-msgstr "E-mail eller domæne er allerede på blokeringslisten"
+msgstr "crwdns325:0crwdne325:0"
 
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
-msgstr "E-mails"
+msgstr "crwdns327:0crwdne327:0"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
 msgid "employees"
-msgstr "medarbejdere"
+msgstr "crwdns329:0crwdne329:0"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
 msgid "Employees"
-msgstr "Medarbejdere"
+msgstr "crwdns331:0crwdne331:0"
 
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
 msgid "Empty"
-msgstr "Tom"
+msgstr "crwdns333:0crwdne333:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:141
 msgid "Endpoint URL"
-msgstr "Endpoint-URL"
+msgstr "crwdns335:0crwdne335:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "English"
-msgstr "Engelsk"
+msgstr "crwdns337:0crwdne337:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:157
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
-msgstr "Nyd en {withCreditCardTrialPeriodDuration}-dages gratis prøveperiode"
+msgstr "crwdns339:0{withCreditCardTrialPeriodDuration}crwdne339:0"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:51
 msgid "Enterprise"
-msgstr "Virksomhed"
+msgstr "crwdns341:0crwdne341:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
 msgid "Error deleting api key: {err}"
-msgstr "Fejl ved sletning af API-nøgle: {err}"
+msgstr "crwdns343:0{err}crwdne343:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
 msgid "Error regenerating api key: {err}"
-msgstr "Fejl ved regenerering af API-nøgle: {err}"
+msgstr "crwdns345:0{err}crwdne345:0"
 
 #: src/pages/settings/SettingsBilling.tsx:124
 msgid "Error while switching subscription {to}."
-msgstr "Fejl under skift af abonnement {to}."
+msgstr "crwdns347:0{to}crwdne347:0"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:67
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
-msgstr "Etablér webhook-endepunkter til notifikationer om asynkrone begivenheder."
+msgstr "crwdns349:0crwdne349:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
 msgid "Exclude the following people and domains from my email sync"
-msgstr "Udeluk følgende personer og domæner fra min e-mailsynkronisering"
+msgstr "crwdns351:0crwdne351:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:162
 msgid "Existing objects"
-msgstr "Eksisterende objekter"
+msgstr "crwdns353:0crwdne353:0"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx:36
 msgid "Exit Settings"
-msgstr "Forlad indstillinger"
+msgstr "crwdns355:0crwdne355:0"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
 #~ msgid "Expected selected node to be a create step node."
@@ -822,19 +786,19 @@ msgstr "Forlad indstillinger"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
-msgstr "Erfaring"
+msgstr "crwdns357:0crwdne357:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:219
 msgid "Expiration"
-msgstr "Udløb"
+msgstr "crwdns359:0crwdne359:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:126
 msgid "Expiration Date"
-msgstr "Udløbsdato"
+msgstr "crwdns361:0crwdne361:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:259
 msgid "Expires in"
-msgstr "Udløber om"
+msgstr "crwdns363:0crwdne363:0"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:78
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:136
@@ -849,18 +813,18 @@ msgstr "Udløber om"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:89
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:102
 msgid "Export"
-msgstr "Eksport"
+msgstr "crwdns365:0crwdne365:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:135
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:87
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
 msgid "Export records"
-msgstr "Eksportér poster"
+msgstr "crwdns367:0crwdne367:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
 msgid "Export to PDF"
-msgstr "Eksportér til PDF"
+msgstr "crwdns369:0crwdne369:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:148
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:100
@@ -868,304 +832,290 @@ msgstr "Eksportér til PDF"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
 msgid "Export view"
-msgstr "Eksportér visning"
+msgstr "crwdns371:0crwdne371:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
 msgid "Export Workflows"
-msgstr "Eksportér arbejdsprocesser"
+msgstr "crwdns373:0crwdne373:0"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
-msgstr "Favoritter"
+msgstr "crwdns375:0crwdne375:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
 msgid "Field type"
-msgstr "Felttype"
+msgstr "crwdns377:0crwdne377:0"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:97
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
-msgstr "Felter"
+msgstr "crwdns379:0crwdne379:0"
 
 #: src/testing/mock-data/tableData.ts:22
 msgid "Fields Count"
-msgstr "Antal felter"
+msgstr "crwdns381:0crwdne381:0"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
 #: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
-msgstr "Filtrér"
+msgstr "crwdns383:0crwdne383:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:171
 msgid "Filters"
-msgstr "Filtre"
+msgstr "crwdns385:0crwdne385:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Finnish"
-msgstr "Finsk"
+msgstr "crwdns1807:0crwdne1807:0"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
-msgstr "Fornavn"
+msgstr "crwdns387:0crwdne387:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
 msgid "Forgot your password?"
-msgstr "Glemt din adgangskode?"
+msgstr "crwdns389:0crwdne389:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
 msgid "French"
-msgstr "Fransk"
+msgstr "crwdns391:0crwdne391:0"
 
 #: src/pages/settings/SettingsBilling.tsx:47
 msgid "from monthly to yearly"
-msgstr "fra månedligt til årligt"
+msgstr "crwdns393:0crwdne393:0"
 
 #: src/pages/settings/SettingsBilling.tsx:54
 msgid "from yearly to monthly"
-msgstr "fra årligt til månedligt"
+msgstr "crwdns395:0crwdne395:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:87
 msgid "Full access"
-msgstr "Fuld adgang"
+msgstr "crwdns397:0crwdne397:0"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
 msgid "Functions"
-msgstr "Funktioner"
+msgstr "crwdns399:0crwdne399:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
 #: src/pages/settings/workspace/SettingsDomain.tsx:192
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
-msgstr "Generelt"
+msgstr "crwdns401:0crwdne401:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
 msgid "German"
-msgstr "Tysk"
+msgstr "crwdns403:0crwdne403:0"
 
 #: src/pages/onboarding/InviteTeam.tsx:184
 msgid "Get the most out of your workspace by inviting your team."
-msgstr "Få mest muligt ud af din arbejdsplads ved at invitere dit team."
+msgstr "crwdns405:0crwdne405:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:148
 msgid "Get your subscription"
-msgstr "Få dit abonnement"
+msgstr "crwdns407:0crwdne407:0"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
-msgstr "Globalt"
+msgstr "crwdns409:0crwdne409:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:65
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr "Giv Twenty support midlertidig adgang til din arbejdsplads, så vi kan fejlfinde problemer eller gendanne indhold på dine vegne. Du kan tilbagekalde adgangen til enhver tid."
+msgstr "crwdns411:0crwdne411:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
-msgstr "Gr\\u00e6sk"
+msgstr "crwdns1809:0crwdne1809:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
-msgstr "Hebraisk"
+msgstr "crwdns1811:0crwdne1811:0"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
-msgstr "Skjul"
+msgstr "crwdns413:0crwdne413:0"
 
 #: src/pages/onboarding/CreateProfile.tsx:157
 msgid "How you'll be identified on the app."
-msgstr "Hvordan du identificeres i appen."
+msgstr "crwdns415:0crwdne415:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
 msgid "Hungarian"
-msgstr "Ungarsk"
+msgstr "crwdns1813:0crwdne1813:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
 msgid "Icon and Name"
-msgstr "Ikon og navn"
+msgstr "crwdns417:0crwdne417:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
 msgid "Identifier"
-msgstr "Identifikator"
+msgstr "crwdns419:0crwdne419:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
-msgstr "Hvis du har mistet denne nøgle, kan du generere den igen, men vær opmærksom på, at alle script, der anvender denne nøgle, skal opdateres. Venligst indtast \"{confirmationValue}\" for at bekræfte."
+msgstr "crwdns421:0{confirmationValue}crwdne421:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:215
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
 msgid "Inactive"
-msgstr "Inaktiv"
+msgstr "crwdns423:0crwdne423:0"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:109
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
 msgid "Indexes"
-msgstr "Indekser"
+msgstr "crwdns425:0crwdne425:0"
 
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:118
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
-msgstr "Input skal være i camelCase og må ikke starte med et tal"
+msgstr "crwdns427:0crwdne427:0"
 
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
 msgid "Instances"
-msgstr "Instanser"
+msgstr "crwdns429:0crwdne429:0"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
 msgid "Integrations"
-msgstr "Integrationer"
+msgstr "crwdns431:0crwdne431:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
 msgid "Invalid auth provider"
-msgstr "Ugyldig godkendelsesudbyder"
+msgstr "crwdns433:0crwdne433:0"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:48
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Ugyldigt brugerdefineret dom\\u00e6ne. Brugerdefinerede dom\\u00e6ner skal v\\u00e6re kortere end 256 tegn i længden, kan ikke v\\u00e6re IP-adresser, kan ikke indeholde mellemrum, kan ikke indeholde s\\u00e6rlige tegn såsom _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? og kan ikke begynde eller slutte med et '-' tegn."
+msgstr "crwdns1815:0crwdne1815:0"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
-msgstr "Ugyldig e-mail"
+msgstr "crwdns435:0crwdne435:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:44
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:50
 msgid "Invalid email or domain"
-msgstr "Ugyldig e-mail eller domæne"
+msgstr "crwdns437:0crwdne437:0"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:166
 msgid "Invalid form values"
-msgstr "Ugyldige formularværdier"
-
-#: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
-msgid "Invite"
-msgstr ""
+msgstr "crwdns439:0crwdne439:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
-msgstr "Invitér via e-mail"
+msgstr "crwdns441:0crwdne441:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:157
 msgid "Invite by link"
-msgstr "Invitér via link"
+msgstr "crwdns443:0crwdne443:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
 msgid "Invite by Link"
-msgstr "Invitér via Link"
+msgstr "crwdns445:0crwdne445:0"
 
 #: src/pages/onboarding/InviteTeam.tsx:152
 msgid "Invite link sent to email addresses"
-msgstr "Invite link sendt til e-mailadresser"
+msgstr "crwdns447:0crwdne447:0"
 
 #: src/pages/onboarding/InviteTeam.tsx:181
 msgid "Invite your team"
-msgstr "Invitér dit team"
+msgstr "crwdns449:0crwdne449:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:129
 msgid "Italian"
-msgstr "Italiensk"
+msgstr "crwdns451:0crwdne451:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:133
 msgid "Japanese"
-msgstr "Japansk"
+msgstr "crwdns453:0crwdne453:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:137
 msgid "Korean"
-msgstr "Koreansk"
+msgstr "crwdns455:0crwdne455:0"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
 msgid "Lab"
-msgstr "Laboratorie"
+msgstr "crwdns457:0crwdne457:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Language"
-msgstr "Sprog"
+msgstr "crwdns459:0crwdne459:0"
 
 #: src/pages/onboarding/CreateProfile.tsx:202
 msgid "Last Name"
-msgstr "Efternavn"
+msgstr "crwdns461:0crwdne461:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
 msgid "Latest"
-msgstr "Seneste"
+msgstr "crwdns463:0crwdne463:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
 msgid "Latest date"
-msgstr "Seneste dato"
-
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
-msgid "Light"
-msgstr ""
+msgstr "crwdns465:0crwdne465:0"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
-#: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
 msgid "Link copied to clipboard"
-msgstr "Link kopieret til udklipsholder"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
-msgid "Listings"
-msgstr ""
+msgstr "crwdns467:0crwdne467:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
-msgstr "Log ud"
+msgstr "crwdns469:0crwdne469:0"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
 msgid "Logout"
-msgstr "Logud"
+msgstr "crwdns471:0crwdne471:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:167
 msgid "Manage Members"
-msgstr "Administrer medlemmer"
+msgstr "crwdns473:0crwdne473:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:168
 msgid "Manage the members of your space here"
-msgstr "Administrer medlemmerne af dit rum her"
+msgstr "crwdns475:0crwdne475:0"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:57
 msgid "Manage your internet accounts."
-msgstr "Administrer dine internetkonti."
+msgstr "crwdns477:0crwdne477:0"
 
 #: src/pages/settings/SettingsBilling.tsx:145
 msgid "Manage your subscription"
-msgstr "Administrer dit abonnement"
+msgstr "crwdns479:0crwdne479:0"
 
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:69
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:60
 msgid "Mark as done"
-msgstr "Marker som udført"
+msgstr "crwdns481:0crwdne481:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:13
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:13
 msgid "Max"
-msgstr "Maks"
+msgstr "crwdns483:0crwdne483:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
 msgid "Members"
-msgstr "Medlemmer"
+msgstr "crwdns485:0crwdne485:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
 msgid "Min"
-msgstr "Min."
+msgstr "crwdns487:0crwdne487:0"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
 msgid "More options"
-msgstr "Flere muligheder"
+msgstr "crwdns489:0crwdne489:0"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
 msgid "Move left"
-msgstr "Flyt til venstre"
+msgstr "crwdns491:0crwdne491:0"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
 msgid "Move right"
-msgstr "Flyt til højre"
+msgstr "crwdns493:0crwdne493:0"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
@@ -1181,85 +1131,77 @@ msgstr "Flyt til højre"
 #: src/pages/onboarding/CreateProfile.tsx:166
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
-msgstr "Navn"
+msgstr "crwdns495:0crwdne495:0"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:49
 msgid "Name can not be empty"
-msgstr "Navnet kan ikke være tomt"
-
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
-msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr ""
+msgstr "crwdns497:0crwdne497:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
-msgstr "Navn på din API-nøgle"
+msgstr "crwdns499:0crwdne499:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:44
 msgid "Name of your workspace"
-msgstr "Navn på dit arbejdsområde"
+msgstr "crwdns501:0crwdne501:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:181
 msgid "Navigate to next record"
-msgstr "Navigér til næste post"
+msgstr "crwdns503:0crwdne503:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:95
 msgid "Navigate to next version"
-msgstr "Naviger til næste version"
+msgstr "crwdns505:0crwdne505:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:184
 msgid "Navigate to next workflow"
-msgstr "Naviger til næste workflow"
+msgstr "crwdns507:0crwdne507:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:65
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:170
 msgid "Navigate to previous record"
-msgstr "Naviger til forrige post"
+msgstr "crwdns509:0crwdne509:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:85
 msgid "Navigate to previous version"
-msgstr "Naviger til forrige version"
+msgstr "crwdns511:0crwdne511:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:174
 msgid "Navigate to previous workflow"
-msgstr "Naviger til forrige workflow"
+msgstr "crwdns513:0crwdne513:0"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
-msgstr "Ny"
+msgstr "crwdns515:0crwdne515:0"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
-msgstr "Ny konto"
-
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
-msgid "New Field"
-msgstr ""
+msgstr "crwdns517:0crwdne517:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
-msgstr "Ny nøgle"
+msgstr "crwdns519:0crwdne519:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
 msgid "New Key"
-msgstr "Ny Nøgle"
+msgstr "crwdns521:0crwdne521:0"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:66
 msgid "New Object"
-msgstr "Nyt Objekt"
+msgstr "crwdns523:0crwdne523:0"
 
 #: src/pages/auth/PasswordReset.tsx:233
 msgid "New Password"
-msgstr "Nyt Password"
+msgstr "crwdns525:0crwdne525:0"
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx:27
 #: src/modules/ui/layout/page/components/PageAddButton.tsx:29
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:58
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:46
 msgid "New record"
-msgstr "Ny post"
+msgstr "crwdns527:0crwdne527:0"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:52
 #~ msgid "New Role"
@@ -1271,145 +1213,138 @@ msgstr "Ny post"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
 msgid "No connected account"
-msgstr "Ingen tilknyttet konto"
+msgstr "crwdns531:0crwdne531:0"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
 msgid "No members assigned to this role yet"
-msgstr "Ingen medlemmer tildelt denne rolle endnu"
+msgstr "crwdns1817:0crwdne1817:0"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
 msgid "No members matching this search"
-msgstr "Ingen medlemmer matcher denne s\\u00f8gning"
+msgstr "crwdns1819:0crwdne1819:0"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
 msgid "No members matching your search"
-msgstr "Ingen medlemmer matcher din s\\u00f8gning"
+msgstr "crwdns1821:0crwdne1821:0"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
 msgid "No more members to add"
-msgstr "Ikke flere medlemmer at tilf\\u00f8je"
+msgstr "crwdns1823:0crwdne1823:0"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
-msgstr "Ingen workflow kørsler endnu"
+msgstr "crwdns533:0crwdne533:0"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
 msgid "No workflow versions yet"
-msgstr "Ingen workflow versioner endnu"
+msgstr "crwdns535:0crwdne535:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
 msgid "Norwegian"
-msgstr "Norsk"
+msgstr "crwdns1825:0crwdne1825:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
-msgstr "Ikke tom"
+msgstr "crwdns537:0crwdne537:0"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
-msgstr "Objekt"
+msgstr "crwdns539:0crwdne539:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
-msgstr "Objekter"
+msgstr "crwdns541:0crwdne541:0"
 
 #: src/pages/not-found/NotFound.tsx:47
 msgid "Off the beaten path"
-msgstr "Uden for alfarvej"
+msgstr "crwdns543:0crwdne543:0"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
-msgstr "Åbnet"
+msgstr "crwdns545:0crwdne545:0"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
-msgstr "Muligheder"
+msgstr "crwdns547:0crwdne547:0"
 
 #: src/pages/onboarding/InviteTeam.tsx:213
 msgid "or"
-msgstr "eller"
+msgstr "crwdns549:0crwdne549:0"
 
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
 msgid "Other"
-msgstr "Andet"
+msgstr "crwdns551:0crwdne551:0"
 
 #: src/pages/not-found/NotFound.tsx:41
 msgid "Page Not Found"
-msgstr "Side ikke fundet"
+msgstr "crwdns553:0crwdne553:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
 msgid "Password"
-msgstr "Adgangskode"
+msgstr "crwdns555:0crwdne555:0"
 
 #: src/pages/auth/PasswordReset.tsx:146
 msgid "Password has been updated"
-msgstr "Password er blevet opdateret"
+msgstr "crwdns557:0crwdne557:0"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
-msgstr "Link til password nulstilling er blevet sendt til emailadressen"
+msgstr "crwdns559:0crwdne559:0"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
 msgid "Percent"
-msgstr "Procent"
+msgstr "crwdns561:0crwdne561:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
 msgid "Percent empty"
-msgstr "Procent tom"
+msgstr "crwdns563:0crwdne563:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
 msgid "Percent not empty"
-msgstr "Procent ikke tom"
+msgstr "crwdns565:0crwdne565:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:253
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
 msgid "Permanently destroy record"
-msgstr "Permanent slet post"
+msgstr "crwdns567:0crwdne567:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
 msgid "Permanently destroy records"
-msgstr "Permanent slet poster"
+msgstr "crwdns569:0crwdne569:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
 msgid "Permanently destroy workflows"
-msgstr "Permanent slet workflows"
+msgstr "crwdns571:0crwdne571:0"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
 #: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
-msgstr "Tilladelser"
+msgstr "crwdns573:0crwdne573:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
-msgstr "Billede"
+msgstr "crwdns575:0crwdne575:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
 msgid "Please enter a valid URL"
-msgstr "Indtast venligst en gyldig URL"
+msgstr "crwdns577:0crwdne577:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
-msgstr "Indtast venligst \"{confirmationValue}\" for at bekræfte, at du ønsker at slette denne API-nøgle. Vær opmærksom på, at ethvert script, der bruger denne nøgle, vil stoppe med at fungere."
+msgstr "crwdns579:0{confirmationValue}crwdne579:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
-msgstr "Indtast venligst {confirmationText} for at bekræfte, at du ønsker at slette denne webhook."
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
-msgid "Plural"
-msgstr ""
+msgstr "crwdns581:0{confirmationText}crwdne581:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
-msgstr "Polsk"
+msgstr "crwdns1827:0crwdne1827:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
@@ -1417,11 +1352,11 @@ msgstr "Polsk"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:153
 msgid "Portuguese — Brazil"
-msgstr "Portugisisk — Brasilien"
+msgstr "crwdns583:0crwdne583:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:149
 msgid "Portuguese — Portugal"
-msgstr "Portugisisk — Portugal"
+msgstr "crwdns585:0crwdne585:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
 #~ msgid "Portuguese (Brazil)"
@@ -1434,62 +1369,62 @@ msgstr "Portugisisk — Portugal"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
 msgid "Preview"
-msgstr "Forhåndsvisning"
+msgstr "crwdns587:0crwdne587:0"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
 msgid "Privacy Policy"
-msgstr "Privatlivspolitik"
+msgstr "crwdns589:0crwdne589:0"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
 msgid "Profile"
-msgstr "Profil"
+msgstr "crwdns591:0crwdne591:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:191
 msgid "Pseudo-English"
-msgstr "Pseudo-Engelsk"
+msgstr "crwdns593:0crwdne593:0"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx:9
 msgid "Read documentation"
-msgstr "Læs dokumentation"
+msgstr "crwdns595:0crwdne595:0"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:53
 msgid "Receive an email containing password update link"
-msgstr "Modtag en e-mail med link til opdatering af kodeord"
+msgstr "crwdns597:0crwdne597:0"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
-msgstr "Optag valg"
+msgstr "crwdns599:0crwdne599:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
 msgid "Regenerate an API key"
-msgstr "Regenerer en API nøgle"
+msgstr "crwdns601:0crwdne601:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
 msgid "Regenerate key"
-msgstr "Regenerer nøgle"
+msgstr "crwdns603:0crwdne603:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
 msgid "Regenerate Key"
-msgstr "Regenerer Nøgle"
+msgstr "crwdns605:0crwdne605:0"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
 msgid "Releases"
-msgstr "Udgivelser"
+msgstr "crwdns607:0crwdne607:0"
 
 #: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx:72
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 #: src/modules/ui/input/components/ImageInput.tsx:172
 msgid "Remove"
-msgstr "Fjern"
+msgstr "crwdns609:0crwdne609:0"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
 msgid "Remove {workspaceMemberName}?"
-msgstr "Fjern {workspaceMemberName}?"
+msgstr "crwdns1829:0{workspaceMemberName}crwdne1829:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1501,320 +1436,303 @@ msgstr "Fjern {workspaceMemberName}?"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:85
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:47
 msgid "Remove from favorites"
-msgstr "Fjern fra favoritter"
+msgstr "crwdns611:0crwdne611:0"
 
 #: src/pages/auth/PasswordReset.tsx:177
 msgid "Reset Password"
-msgstr "Nulstil Kodeord"
+msgstr "crwdns613:0crwdne613:0"
 
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:47
 msgid "Reset to"
-msgstr "Nulstil til"
+msgstr "crwdns615:0crwdne615:0"
 
 #: src/modules/command-menu/hooks/useSearchRecords.tsx:245
 msgid "Results"
-msgstr "Resultater"
+msgstr "crwdns617:0crwdne617:0"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:112
 #: src/pages/settings/roles/SettingsRoles.tsx:118
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
 msgid "Roles"
-msgstr "Roller"
+msgstr "crwdns619:0crwdne619:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
 msgid "Romanian"
-msgstr "Rum\\u00e6nsk"
+msgstr "crwdns1831:0crwdne1831:0"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
-msgstr "Kør en arbejdsproces og vend tilbage hertil for at se dens eksekveringer"
+msgstr "crwdns621:0crwdne621:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
 msgid "Russian"
-msgstr "Russisk"
+msgstr "crwdns1833:0crwdne1833:0"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
 msgid "Search"
-msgstr "Søg"
+msgstr "crwdns623:0crwdne623:0"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Search ''{commandMenuSearch}'' with..."
-msgstr "Søg ''{commandMenuSearch}'' med..."
+msgstr "crwdns625:0{commandMenuSearch}crwdne625:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
-msgstr "Søg i et felt..."
+msgstr "crwdns627:0crwdne627:0"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "Search a member"
-msgstr "S\\u00f8g et medlem"
+msgstr "crwdns1835:0crwdne1835:0"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
-msgstr "Søg i et indeks..."
+msgstr "crwdns629:0crwdne629:0"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
 msgid "Search fields"
-msgstr "Søg felter"
+msgstr "crwdns631:0crwdne631:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:166
 msgid "Search for an object..."
-msgstr "Søg efter et objekt..."
+msgstr "crwdns633:0crwdne633:0"
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
 msgid "Search records"
-msgstr "Søg poster"
+msgstr "crwdns635:0crwdne635:0"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
 msgid "Security"
-msgstr "Sikkerhed"
+msgstr "crwdns637:0crwdne637:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:112
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:113
 msgid "See active version"
-msgstr "Se aktiv version"
+msgstr "crwdns639:0crwdne639:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:55
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:56
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:127
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:128
 msgid "See runs"
-msgstr "Se kørsler"
+msgstr "crwdns641:0crwdne641:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:70
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:143
 msgid "See versions"
-msgstr "Se versioner"
+msgstr "crwdns643:0crwdne643:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:69
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:142
 msgid "See versions history"
-msgstr "Se versionshistorik"
+msgstr "crwdns645:0crwdne645:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:172
 msgid "Select the events you wish to send to this endpoint"
-msgstr "Vælg de begivenheder du ønsker at sende til dette endepunkt"
+msgstr "crwdns647:0crwdne647:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
 msgid "Select your preferred language"
-msgstr "Vælg dit foretrukne sprog"
+msgstr "crwdns649:0crwdne649:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:245
 msgid "Send an invite email to your team"
-msgstr "Send en invitationsemail til dit team"
+msgstr "crwdns651:0crwdne651:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
 msgid "Serbian (Cyrillic)"
-msgstr "Serbisk (Cyrillisk)"
+msgstr "crwdns1837:0crwdne1837:0"
 
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
-msgid "Server Admin"
-msgstr ""
-
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
-msgstr "Serveradministratorpanel"
+msgstr "crwdns653:0crwdne653:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
 msgid "Set email visibility, manage your blocklist and more."
-msgstr "Indstil synlighed af e-mail, administrer din blokeringsliste og mere."
+msgstr "crwdns655:0crwdne655:0"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 msgid "Set the name of your domain"
-msgstr "Indstil navnet på dit domæne"
+msgstr "crwdns657:0crwdne657:0"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:37
 msgid "Set the name of your subdomain"
-msgstr "Indstil navnet på dit underdomæne"
+msgstr "crwdns659:0crwdne659:0"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
-msgstr "Indstillinger"
+msgstr "crwdns661:0crwdne661:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
-msgstr "Del dette link for at invitere brugere til at deltage i dit arbejdsområde"
+msgstr "crwdns663:0crwdne663:0"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
 msgid "Should changing a field's label also change the API name?"
-msgstr "Skal det at ændre et felts etiket også ændre API-navnet?"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
-msgid "Should changing an object's label also change the API?"
-msgstr ""
+msgstr "crwdns665:0crwdne665:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
-msgstr "Log ind"
+msgstr "crwdns667:0crwdne667:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:89
 msgid "Sign up"
-msgstr "Tilmeld dig"
+msgstr "crwdns669:0crwdne669:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
 msgid "Single sign-on (SSO)"
-msgstr "Enkelt logon (SSO)"
+msgstr "crwdns671:0crwdne671:0"
 
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
-msgstr "Spring over"
+msgstr "crwdns673:0crwdne673:0"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
 msgid "Sort"
-msgstr "Sorter"
+msgstr "crwdns675:0crwdne675:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:169
 msgid "Spanish"
-msgstr "Spansk"
+msgstr "crwdns677:0crwdne677:0"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:47
 msgid "SSO"
-msgstr "SSO"
+msgstr "crwdns679:0crwdne679:0"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:36
 msgid "Subdomain"
-msgstr "Underdomæne"
+msgstr "crwdns681:0crwdne681:0"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:111
 #: src/pages/settings/workspace/SettingsDomain.tsx:138
 msgid "Subdomain already taken"
-msgstr "Underdomænet er allerede taget"
+msgstr "crwdns683:0crwdne683:0"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:39
 msgid "Subdomain can not be longer than 30 characters"
-msgstr "Underdomænet må ikke være længere end 30 tegn"
+msgstr "crwdns685:0crwdne685:0"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:38
 msgid "Subdomain can not be shorter than 3 characters"
-msgstr "Underdomænet må ikke være kortere end 3 tegn"
+msgstr "crwdns687:0crwdne687:0"
 
 #: src/pages/settings/SettingsBilling.tsx:120
 msgid "Subscription has been switched {to}"
-msgstr "Abonnementet er blevet skiftet {to}"
+msgstr "crwdns689:0{to}crwdne689:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
 msgid "Sum"
-msgstr "Sum"
+msgstr "crwdns691:0crwdne691:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:63
 msgid "Support"
-msgstr "Support"
+msgstr "crwdns693:0crwdne693:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
 msgid "Swedish"
-msgstr "Svensk"
+msgstr "crwdns1839:0crwdne1839:0"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
-msgstr "Skift {from}"
+msgstr "crwdns695:0{from}crwdne695:0"
 
 #: src/pages/settings/SettingsBilling.tsx:163
 msgid "Switch {to}"
-msgstr "Skift {to}"
+msgstr "crwdns697:0{to}crwdne697:0"
 
 #: src/pages/settings/SettingsBilling.tsx:187
 msgid "Switch billing {to}"
-msgstr "Skift fakturering {to}"
+msgstr "crwdns699:0{to}crwdne699:0"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
-msgstr "Synkroniser feltetiket og API-navn"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
-msgid "Synchronize Objects Labels and API Names"
-msgstr ""
-
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
-msgid "System settings"
-msgstr ""
+msgstr "crwdns701:0crwdne701:0"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
-msgstr "Systemindstillinger - {systemDateFormatLabel}"
+msgstr "crwdns703:0{systemDateFormatLabel}crwdne703:0"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
 msgid "System Settings - {systemTimeFormatLabel}"
-msgstr "Systemindstillinger - {systemTimeFormatLabel}"
+msgstr "crwdns705:0{systemTimeFormatLabel}crwdne705:0"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
 msgid "Terms of Service"
-msgstr "Servicevilkår"
+msgstr "crwdns707:0crwdne707:0"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:158
 msgid "Test"
-msgstr "Test"
+msgstr "crwdns709:0crwdne709:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:157
 msgid "Test Workflow"
-msgstr "Testarbejdsproces"
+msgstr "crwdns711:0crwdne711:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
 msgid "The description of this field"
-msgstr "Beskrivelsen af dette felt"
+msgstr "crwdns713:0crwdne713:0"
 
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
-msgstr "Den e-mail, der er tilknyttet din konto"
+msgstr "crwdns715:0crwdne715:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:209
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:240
 msgid "The name and icon of this field"
-msgstr "Navnet og ikonet på dette felt"
+msgstr "crwdns717:0crwdne717:0"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:129
 msgid "The name of your organization"
-msgstr "Navnet på din organisation"
+msgstr "crwdns719:0crwdne719:0"
 
 #: src/pages/not-found/NotFound.tsx:50
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
-msgstr "Siden, du leder efter, er enten forsvundet eller har aldrig eksisteret. Lad os få dig tilbage på sporet"
+msgstr "crwdns721:0crwdne721:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:229
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:252
 msgid "The values of this field"
-msgstr "Værdierne i dette felt"
+msgstr "crwdns723:0crwdne723:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
-msgstr "Værdierne i dette felt skal være unikke"
+msgstr "crwdns725:0crwdne725:0"
 
 #: src/pages/auth/PasswordReset.tsx:139
 msgid "There was an error while updating password."
-msgstr "Der opstod en fejl under opdatering af adgangskoden."
+msgstr "crwdns727:0crwdne727:0"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
-msgstr "Der var et problem"
+msgstr "crwdns729:0crwdne729:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:323
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
-msgstr "Denne handling kan ikke fortrydes. Dette vil permanent slette denne bruger og fjerne dem fra alle deres tildelinger."
+msgstr "crwdns731:0crwdne731:0"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
-msgstr "Denne handling kan ikke fortrydes. Dette vil permanent slette hele dit arbejdsområde. <0/> Venligst indtast din e-mail for at bekræfte."
+msgstr "crwdns733:0crwdne733:0"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
 msgid "This member will be unassigned from this role."
-msgstr "Dette medlem vil blive fjernet fra denne rolle."
+msgstr "crwdns1841:0crwdne1841:0"
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
-msgstr "Denne rolle har følgende tilladelser."
+msgstr "crwdns735:0crwdne735:0"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
@@ -1822,126 +1740,125 @@ msgstr "Denne rolle har følgende tilladelser."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:162
 msgid "This role is assigned to these workspace members."
-msgstr "Denne rolle er tildelt disse arbejdsomr\\u00e5demedlemmer."
+msgstr "crwdns1843:0crwdne1843:0"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
-msgstr "Tidsformat"
+msgstr "crwdns739:0crwdne739:0"
 
 #: src/pages/settings/SettingsBilling.tsx:53
 msgid "to monthly"
-msgstr "til månedligt"
+msgstr "crwdns741:0crwdne741:0"
 
 #: src/pages/settings/SettingsBilling.tsx:46
 msgid "to yearly"
-msgstr "til årligt"
+msgstr "crwdns743:0crwdne743:0"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:56
 msgid "Trigger Type"
-msgstr "Udløsertype"
+msgstr "crwdns745:0crwdne745:0"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:60
 msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "Udløsertypen skal være manuel - når ingen <b>post</b>er er valgt"
+msgstr "crwdns747:0crwdne747:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
 msgid "Turkish"
-msgstr "Tyrkisk"
+msgstr "crwdns1845:0crwdne1845:0"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
-msgstr "Type"
+msgstr "crwdns749:0crwdne749:0"
 
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
 msgid "Type anything"
-msgstr "Skriv noget"
+msgstr "crwdns751:0crwdne751:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
 msgid "Ukrainian"
-msgstr "Ukrainsk"
+msgstr "crwdns1847:0crwdne1847:0"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
 msgid "Unique"
-msgstr "Unik"
+msgstr "crwdns753:0crwdne753:0"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:80
 msgid "Unknown error"
-msgstr "Ukendt fejl"
+msgstr "crwdns755:0crwdne755:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
-msgstr "Ubegrænsede kontakter"
+msgstr "crwdns757:0crwdne757:0"
 
 #: src/modules/ui/input/components/ImageInput.tsx:164
 msgid "Upload"
-msgstr "Upload"
+msgstr "crwdns759:0crwdne759:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:145
 msgid "URL"
-msgstr "URL"
+msgstr "crwdns761:0crwdne761:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:40
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:41
 msgid "Use as draft"
-msgstr "Brug som kladde"
+msgstr "crwdns763:0crwdne763:0"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:41
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
-msgstr "Brug bogstav, tal og bindestreg kun. Start og afslut med et bogstav eller et tal"
+msgstr "crwdns765:0crwdne765:0"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:16
 msgid "Use our API or add your first {objectLabel} manually"
-msgstr "Brug vores API eller tilføj din første {objectLabel} manuelt"
+msgstr "crwdns767:0{objectLabel}crwdne767:0"
 
 #: src/pages/settings/SettingsProfile.tsx:22
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
 msgid "User"
-msgstr "Bruger"
+msgstr "crwdns769:0crwdne769:0"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:51
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:106
 msgid "User is not logged in"
-msgstr "Bruger er ikke logget ind"
+msgstr "crwdns771:0crwdne771:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:223
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:228
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:251
 msgid "Values"
-msgstr "Værdier"
+msgstr "crwdns773:0crwdne773:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
 msgid "Vietnamese"
-msgstr "Vietnamesisk"
+msgstr "crwdns1849:0crwdne1849:0"
 
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
-msgstr "Se faktureringsdetaljer"
+msgstr "crwdns775:0crwdne775:0"
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx:35
 msgid "Visualize"
-msgstr "Visualiser"
+msgstr "crwdns777:0crwdne777:0"
 
 #: src/modules/ui/input/components/ImageInput.tsx:177
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
-msgstr "Vi understøtter dine kvadratiske PNG'er, JPEG'er og GIF'er på under 10MB"
+msgstr "crwdns779:0crwdne779:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:142
 msgid "We will send POST requests to this endpoint for every new event"
-msgstr "Vi sender POST-anmodninger til dette endpoint for hver ny begivenhed"
+msgstr "crwdns781:0crwdne781:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
 msgid "Webhook"
-msgstr "Webhook"
+msgstr "crwdns783:0crwdne783:0"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Webhooks"
-msgstr "Webhooks"
+msgstr "crwdns785:0crwdne785:0"
 
 #: src/pages/auth/SignInUp.tsx:43
 #~ msgid "Welcome to"
@@ -1949,19 +1866,19 @@ msgstr "Webhooks"
 
 #: src/pages/auth/SignInUp.tsx:76
 msgid "Welcome to {workspaceName}"
-msgstr "Velkommen til {workspaceName}"
+msgstr "crwdns787:0{workspaceName}crwdne787:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
-msgstr "Når API-nøglen udløber."
+msgstr "crwdns789:0crwdne789:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
 msgid "When the key will be disabled"
-msgstr "Når nøglen vil blive deaktiveret"
+msgstr "crwdns791:0crwdne791:0"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:58
 msgid "Workflow cannot be tested"
-msgstr "Arbejdsprocessen kan ikke testes"
+msgstr "crwdns793:0crwdne793:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
@@ -1977,58 +1894,57 @@ msgstr "Arbejdsprocessen kan ikke testes"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:148
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
-msgstr "Arbejdsområde"
+msgstr "crwdns795:0crwdne795:0"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
 msgid "Workspace Deletion"
-msgstr "Arbejdsområdesletning"
+msgstr "crwdns797:0crwdne797:0"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:123
 msgid "Workspace logo"
-msgstr "Arbejdsområdets logo"
+msgstr "crwdns799:0crwdne799:0"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:128
 msgid "Workspace name"
-msgstr "Arbejdsområdets navn"
+msgstr "crwdns801:0crwdne801:0"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:220
 msgid "Write a description"
-msgstr "Skriv en beskrivelse"
+msgstr "crwdns803:0crwdne803:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:120
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
-msgstr "ja"
+msgstr "crwdns805:0crwdne805:0"
 
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
-msgstr "Du vil blive opkrævet straks for hele året."
+msgstr "crwdns807:0crwdne807:0"
 
 #: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."
-msgstr "Din kreditsaldo vil blive brugt til at betale de månedlige regninger."
+msgstr "crwdns809:0crwdne809:0"
 
 #: src/pages/settings/SettingsProfile.tsx:36
 msgid "Your name as it will be displayed"
-msgstr "Dit navn som det vil blive vist"
+msgstr "crwdns811:0crwdne811:0"
 
 #: src/pages/onboarding/CreateProfile.tsx:167
 msgid "Your name as it will be displayed on the app"
-msgstr "Dit navn som det vil blive vist i appen"
+msgstr "crwdns813:0crwdne813:0"
 
 #: src/pages/auth/SignInUp.tsx:73
 msgid "Your Workspace"
-msgstr "Dit arbejdsområde"
+msgstr "crwdns815:0crwdne815:0"
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
-msgstr "Dit arbejdsområde vil blive deaktiveret"
+msgstr "crwdns817:0crwdne817:0"
+

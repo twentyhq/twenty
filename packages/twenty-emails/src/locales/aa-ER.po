@@ -5,34 +5,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: af\n"
+"Language: aa\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 22:02\n"
+"PO-Revision-Date: 2025-02-11 18:02\n"
 "Last-Translator: \n"
-"Language-Team: Afrikaans\n"
+"Language-Team: Afar\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
 "X-Crowdin-Project-ID: 1\n"
-"X-Crowdin-Language: af\n"
+"X-Crowdin-Language: aa\n"
 "X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
 "X-Crowdin-File-ID: 27\n"
 
 #: src/emails/send-invite-link.email.tsx:57
 msgid "Accept invite"
-msgstr "Aanvaar uitnodiging"
+msgstr "crwdns1:0crwdne1:0"
 
 #: src/emails/clean-suspended-workspace.email.tsx:33
 msgid "All data in this workspace has been permanently deleted."
-msgstr "Alle data in hierdie werkruimte is permanent verwyder."
+msgstr "crwdns3:0crwdne3:0"
 
 #: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
-msgstr "Bevestig jou e-posadres"
+msgstr "crwdns5:0crwdne5:0"
 
 #: src/emails/password-update-notify.email.tsx:46
 msgid "Connect to Twenty"
-msgstr "Konnekteer met Twenty"
+msgstr "crwdns7:0crwdne7:0"
 
 #: src/emails/password-update-notify.email.tsx:24
 #~ msgid "Dear"
@@ -40,59 +40,59 @@ msgstr "Konnekteer met Twenty"
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
-msgstr "Liewe {userName}"
+msgstr "crwdns9:0{userName}crwdne9:0"
 
 #: src/emails/send-invite-link.email.tsx:50
 msgid "has invited you to join a workspace called "
-msgstr "het jou genooi om aan te sluit by 'n werkruimte genaamd "
+msgstr "crwdns11:0crwdne11:0"
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Hello"
-msgstr "Hallo"
+msgstr "crwdns13:0crwdne13:0"
 
 #: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "As jy nie hierdie verandering geïnisieer het nie, kontak asseblief jou werkruimte-eienaar dadelik."
+msgstr "crwdns15:0crwdne15:0"
 
 #: src/emails/warn-suspended-workspace.email.tsx:46
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "As jy wil voortgaan om Twenty te gebruik, moet asseblief jou intekening binne die volgende {remainingDays} {dayOrDays} opdateer."
+msgstr "crwdns17:0{remainingDays}crwdnd17:0{dayOrDays}crwdne17:0"
 
 #: src/emails/clean-suspended-workspace.email.tsx:36
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "As jy Twenty weer wil gebruik, kan jy 'n nuwe werkruimte skep."
+msgstr "crwdns19:0crwdne19:0"
 
 #: src/emails/warn-suspended-workspace.email.tsx:34
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "Dit blyk dat jou werkruimte <0>{workspaceDisplayName}</0> vir {daysSinceInactive} dae opgeskort is."
+msgstr "crwdns21:0{workspaceDisplayName}crwdnd21:0{daysSinceInactive}crwdne21:0"
 
 #: src/emails/send-invite-link.email.tsx:42
 msgid "Join your team on Twenty"
-msgstr "Sluit aan by jou span op Twenty"
+msgstr "crwdns23:0crwdne23:0"
 
 #: src/emails/password-update-notify.email.tsx:29
 msgid "Password updated"
-msgstr "Wagwoord opgedateer"
+msgstr "crwdns25:0crwdne25:0"
 
 #: src/emails/password-reset-link.email.tsx:24
 msgid "Reset"
-msgstr "Stel terug"
+msgstr "crwdns27:0crwdne27:0"
 
 #: src/emails/password-reset-link.email.tsx:23
 msgid "Reset your password 🗝"
-msgstr "Stel jou wagwoord terug 🗝"
+msgstr "crwdns29:0crwdne29:0"
 
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-msgstr "Dankie dat jy registreer het vir 'n rekening op Twenty! Voordat ons begin, moet ons net bevestig dat dit jy is. Klik bo om jou e-posadres te verifieer."
+msgstr "crwdns31:0crwdne31:0"
 
 #: src/emails/warn-suspended-workspace.email.tsx:40
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "Die werkruimte sal gedeaktiveer word in {remainingDays} {dayOrDays}, en al sy data sal verwyder word."
+msgstr "crwdns33:0{remainingDays}crwdnd33:0{dayOrDays}crwdne33:0"
 
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Dit is 'n bevestiging dat die wagwoord vir jou rekening ({email}) suksesvol verander is op {formattedDate}."
+msgstr "crwdns35:0{email}crwdnd35:0{formattedDate}crwdne35:0"
 
 #: src/emails/password-update-notify.email.tsx:36
 #~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
@@ -100,7 +100,7 @@ msgstr "Dit is 'n bevestiging dat die wagwoord vir jou rekening ({email}) sukses
 
 #: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Hierdie skakel is slegs geldig vir die volgende {duration}. Indien die skakel nie werk nie, kan jy die aanmeldverifiëringskakel direk gebruik:"
+msgstr "crwdns37:0{duration}crwdne37:0"
 
 #: src/emails/password-reset-link.email.tsx:28
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
@@ -108,13 +108,13 @@ msgstr "Hierdie skakel is slegs geldig vir die volgende {duration}. Indien die s
 
 #: src/emails/warn-suspended-workspace.email.tsx:53
 msgid "Update your subscription"
-msgstr "Opdateer jou intekening"
+msgstr "crwdns39:0crwdne39:0"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
-msgstr "Verifieer E-pos"
+msgstr "crwdns41:0crwdne41:0"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "Jou werkruimte <0>{workspaceDisplayName}</0> is verwyder aangesien jou intekening {inactiveDaysBeforeDelete} dae gelede verval het."
+msgstr "crwdns43:0{workspaceDisplayName}crwdnd43:0{inactiveDaysBeforeDelete}crwdne43:0"
 
