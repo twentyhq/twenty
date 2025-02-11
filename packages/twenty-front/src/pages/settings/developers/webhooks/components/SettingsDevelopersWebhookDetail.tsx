@@ -75,6 +75,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const {
     formData,
+    title,
     loading,
     isTargetUrlValid,
     updateWebhook,
@@ -120,7 +121,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={formData.targetUrl}
+      title={title}
       reserveTitleSpace
       links={[
         {

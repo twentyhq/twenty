@@ -12,6 +12,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isValidUrl } from '~/utils/url/isValidUrl';
+import { getUrlHostname } from '~/utils/url/getUrlHostname';
 
 type WebhookFormData = {
   targetUrl: string;
@@ -31,6 +32,7 @@ export const useWebhookUpdateForm = ({
 
   const [isCreated, setIsCreated] = useState(!isCreationMode);
   const [loading, setLoading] = useState(!isCreationMode);
+  const [title, setTitle] = useState(isCreationMode ? 'New Webhook' : '');
 
   const [formData, setFormData] = useState<WebhookFormData>({
     targetUrl: '',
@@ -101,7 +103,13 @@ export const useWebhookUpdateForm = ({
   const validateData = (data: Partial<WebhookFormData>) => {
     if (isDefined(data?.targetUrl)) {
       const trimmedUrl = data.targetUrl.trim();
-      setIsTargetUrlValid(isValidUrl(trimmedUrl));
+      const isTargetUrlValid = isValidUrl(trimmedUrl);
+      setIsTargetUrlValid(isTargetUrlValid);
+      if (isTargetUrlValid) {
+        setTitle(
+          getUrlHostname(trimmedUrl, { keepPath: true }) || 'New Webhook',
+        );
+      }
     }
   };
 
@@ -169,12 +177,16 @@ export const useWebhookUpdateForm = ({
         operations,
         secret: data.secret,
       });
+      setTitle(
+        getUrlHostname(data.targetUrl, { keepPath: true }) || 'New Webhook',
+      );
       setLoading(false);
     },
   });
 
   return {
     formData,
+    title,
     isTargetUrlValid,
     updateWebhook,
     updateOperation,
