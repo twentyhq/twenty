@@ -609,8 +609,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return fieldMetadata[labelKey] ?? '';
     }
 
-    i18n.activate(locale);
-
     const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');
     const translatedMessage = i18n._(messageId);
 

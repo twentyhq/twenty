@@ -30,6 +30,7 @@ import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.e
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
+import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
@@ -87,6 +88,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceInvitationModule,
     EmailVerificationModule,
     GuardRedirectModule,
+    HealthModule,
   ],
   controllers: [
     GoogleAuthController,

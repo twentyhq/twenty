@@ -5,7 +5,7 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowExecutorModule } from 'src/modules/workflow/workflow-executor/workflow-executor.module';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-run.workspace-service';
+import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 @Module({
@@ -14,12 +14,9 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
     WorkflowExecutorModule,
     ThrottlerModule,
     BillingModule,
+    WorkflowRunModule,
   ],
-  providers: [
-    WorkflowRunnerWorkspaceService,
-    WorkflowRunWorkspaceService,
-    RunWorkflowJob,
-  ],
+  providers: [WorkflowRunnerWorkspaceService, RunWorkflowJob],
   exports: [WorkflowRunnerWorkspaceService],
 })
 export class WorkflowRunnerModule {}

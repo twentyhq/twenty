@@ -40,10 +40,13 @@ export class ActivityQueryResultGetterHandler
     try {
       blocknote = JSON.parse(blocknoteJson);
     } catch (error) {
+      blocknote = [];
       // TODO: Remove this once we have removed the old rich text
+      // eslint-disable-next-line no-console
       console.warn(
         `Failed to parse body for activity ${activity.id} in workspace ${workspaceId}, for rich text version ${isRichTextV2Enabled ? 'v2' : 'v1'}`,
       );
+      // eslint-disable-next-line no-console
       console.warn(blocknoteJson);
     }
 

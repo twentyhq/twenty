@@ -459,7 +459,7 @@ export class AuthService {
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({

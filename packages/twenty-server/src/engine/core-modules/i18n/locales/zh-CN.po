@@ -1,0 +1,2248 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-29 18:14+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: zh\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
+"Last-Translator: \n"
+"Language-Team: Chinese Simplified\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
+"X-Crowdin-File-ID: 31\n"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
+msgid "(System) View Fields"
+msgstr "(系统) 视图字段"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
+msgid "(System) View Filter Groups"
+msgstr "(系统) 视图过滤组"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
+msgid "(System) View Filters"
+msgstr "(系统) 视图过滤器"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
+msgid "(System) View Groups"
+msgstr "(系统) 视图组"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
+msgid "(System) View Sorts"
+msgstr "(系统) 视图排序"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:33
+msgid "(System) Views"
+msgstr "(系统) 视图"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:55
+msgid "A company"
+msgstr "公司"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:30
+msgid "A connected account"
+msgstr "关联账户"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
+msgid "A favorite that can be accessed from the left menu"
+msgstr "可从左侧菜单访问的收藏"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:24
+msgid "A Folder of favorites"
+msgstr "收藏夹"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
+msgid "A group of related messages (e.g. email thread, chat thread)"
+msgstr "一组相关消息（如电子邮件线程、聊天线程）"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
+msgid "A message sent or received through a messaging channel (email, chat, etc.)"
+msgstr "通过消息渠道（电子邮件、聊天等）发送或接收的消息"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:46
+msgid "A note"
+msgstr "笔记"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
+msgid "A note target"
+msgstr "笔记目标"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+msgid "A person"
+msgstr "个人"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:48
+msgid "A task"
+msgstr "任务"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
+msgid "A task target"
+msgstr "任务目标"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:20
+msgid "A webhook"
+msgstr "Webhook"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
+msgid "A workflow"
+msgstr "工作流"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
+msgid "A workflow event listener"
+msgstr "工作流事件监听器"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
+msgid "A workflow run"
+msgstr "工作流运行"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
+msgid "A workflow version"
+msgstr "工作流版本"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
+msgid "A workspace member"
+msgstr "工作区成员"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:58
+msgid "Access Token"
+msgstr "访问令牌"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
+#: src/modules/company/standard-objects/company.workspace-entity.ts:176
+msgid "Account Owner"
+msgstr "账户所有者"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:169
+msgid "Account owner for companies"
+msgstr "公司账户所有者"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:168
+msgid "Account Owner For Companies"
+msgstr "公司账户所有者"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:123
+msgid "Address"
+msgstr "地址"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:264
+msgid "Address (deprecated) "
+msgstr "地址（已弃用）"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:124
+msgid "Address of the company"
+msgstr "公司地址"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:265
+msgid "Address of the company - deprecated in favor of new address field"
+msgstr "公司地址 - 已弃用，改用新地址字段"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:189
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
+msgid "Aggregate operation"
+msgstr "汇总操作"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:35
+msgid "Aggregated / filtered event to be displayed on the timeline"
+msgstr "时间轴上显示的汇总/筛选事件"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:69
+msgid "Amount"
+msgstr "金额"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:19
+msgid "An API key"
+msgstr "API 密钥"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:32
+msgid "An attachment"
+msgstr "附件"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:24
+msgid "An audit log of actions performed in the system"
+msgstr "系统中执行操作的审计日志"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:20
+msgid "An event related to user behavior"
+msgstr "与用户行为相关的事件"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:50
+msgid "An opportunity"
+msgstr "机会"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:114
+msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
+msgstr "年度经常性收入：公司的实际或估计年收入"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
+msgid "API Key"
+msgstr "API 密钥"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:18
+msgid "API Keys"
+msgstr "API 密钥"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
+msgid "ApiKey expiration date"
+msgstr "API 密钥过期日期"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
+msgid "ApiKey name"
+msgstr "API 密钥名称"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
+msgid "ApiKey revocation date"
+msgstr "API 密钥撤销日期"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:113
+msgid "ARR"
+msgstr "ARR"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
+msgid "Assigned tasks"
+msgstr "分配的任务"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:168
+msgid "Assignee"
+msgstr "受托人"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
+msgid "Associated User Id"
+msgstr "关联用户 ID"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:30
+msgid "Attachment"
+msgstr "附件"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:70
+msgid "Attachment author"
+msgstr "附件作者"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:129
+msgid "Attachment company"
+msgstr "附件公司"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:52
+msgid "Attachment full path"
+msgstr "附件完整路径"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:43
+msgid "Attachment name"
+msgstr "附件名称"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:99
+msgid "Attachment note"
+msgstr "附件备注"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:144
+msgid "Attachment opportunity"
+msgstr "附件机会"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:114
+msgid "Attachment person"
+msgstr "附件联系人"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:84
+msgid "Attachment task"
+msgstr "附件任务"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:61
+msgid "Attachment type"
+msgstr "附件类型"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:156
+#: src/modules/person/standard-objects/person.workspace-entity.ts:238
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
+#: src/modules/note/standard-objects/note.workspace-entity.ts:118
+#: src/modules/company/standard-objects/company.workspace-entity.ts:239
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
+#: src/engine/twenty-orm/custom.workspace-entity.ts:118
+msgid "Attachments"
+msgstr "附件"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
+msgid "Attachments created by the workspace member"
+msgstr "工作区成员创建的附件"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:240
+msgid "Attachments linked to the company"
+msgstr "与公司关联的附件"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:239
+msgid "Attachments linked to the contact."
+msgstr "与联系人关联的附件。"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:200
+msgid "Attachments linked to the opportunity"
+msgstr "与机会关联的附件"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:123
+msgid "Attachments tied to the {label}"
+msgstr "与 {label} 关联的附件"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
+msgid "Audit Log"
+msgstr "审计日志"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:255
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:23
+msgid "Audit Logs"
+msgstr "审计日志"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:256
+msgid "Audit Logs linked to the workspace member"
+msgstr "与工作区成员关联的审计日志"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
+msgid "Auth failed at"
+msgstr "认证失败于"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
+msgid "Author"
+msgstr "作者"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:180
+msgid "Authored attachments"
+msgstr "已创作的附件"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
+msgid "Automatically create People records when receiving or sending emails"
+msgstr "接收或发送电子邮件时自动创建人员记录"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
+msgid "Automatically create records for people you participated with in an event."
+msgstr "自动为您参与活动的人员创建记录。"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:146
+msgid "Avatar"
+msgstr "头像"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:117
+msgid "Avatar Url"
+msgstr "头像网址"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:18
+msgid "Behavioral Event"
+msgstr "行为事件"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:19
+msgid "Behavioral Events"
+msgstr "行为事件"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:216
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:22
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:24
+msgid "Blocklist"
+msgstr "黑名单"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:217
+msgid "Blocklisted handles"
+msgstr "被屏蔽的账号"
+
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:23
+msgid "Blocklists"
+msgstr "黑名单"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:77
+#: src/modules/task/standard-objects/task.workspace-entity.ts:87
+#: src/modules/note/standard-objects/note.workspace-entity.ts:75
+#: src/modules/note/standard-objects/note.workspace-entity.ts:85
+msgid "Body"
+msgstr "正文"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
+msgid "Cached record name"
+msgstr "缓存记录名称"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:74
+msgid "Calendar Channel"
+msgstr "日历频道"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:23
+msgid "Calendar Channel Event Association"
+msgstr "日历频道事件关联"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:155
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:156
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:322
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:323
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:24
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:25
+msgid "Calendar Channel Event Associations"
+msgstr "日历频道事件关联"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:139
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:140
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:75
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:76
+msgid "Calendar Channels"
+msgstr "日历频道"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:27
+msgid "Calendar event"
+msgstr "日历事件"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:32
+msgid "Calendar event participant"
+msgstr "日历事件参与者"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:33
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:34
+msgid "Calendar event participants"
+msgstr "日历事件参与者"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
+#: src/modules/person/standard-objects/person.workspace-entity.ts:262
+#: src/modules/person/standard-objects/person.workspace-entity.ts:263
+msgid "Calendar Event Participants"
+msgstr "日历事件参与者"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:28
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:29
+msgid "Calendar events"
+msgstr "日历事件"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:55
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:56
+msgid "Channel ID"
+msgstr "频道 ID"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:136
+msgid "Channel Type"
+msgstr "频道类型"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:137
+msgid "City"
+msgstr "城市"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:79
+msgid "Close date"
+msgstr "关闭日期"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:97
+msgid "Color Scheme"
+msgstr "配色方案"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:108
+msgid "Compact View"
+msgstr "紧凑视图"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:54
+msgid "Companies"
+msgstr "公司"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
+#: src/modules/person/standard-objects/person.workspace-entity.ts:177
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:148
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:65
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:88
+#: src/modules/company/standard-objects/company.workspace-entity.ts:53
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
+msgid "Company"
+msgstr "公司"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:144
+msgid "Company record position"
+msgstr "公司记录位置"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:135
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:136
+msgid "Conference Solution"
+msgstr "会议解决方案"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:359
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:360
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:28
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:307
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:308
+msgid "Connected Account"
+msgstr "连接账户"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:192
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:193
+msgid "Connected accounts"
+msgstr "连接账户"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:29
+msgid "Connected Accounts"
+msgstr "连接账户"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:170
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:221
+msgid "Contact auto creation policy"
+msgstr "联系人自动创建策略"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:147
+msgid "Contact’s avatar"
+msgstr "联系人的头像"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:138
+msgid "Contact’s city"
+msgstr "联系人所在城市"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:178
+msgid "Contact’s company"
+msgstr "联系人的公司"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:80
+msgid "Contact’s Emails"
+msgstr "联系人的电子邮件"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:110
+msgid "Contact’s job title"
+msgstr "联系人的职位"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:90
+msgid "Contact’s Linkedin account"
+msgstr "联系人的 Linkedin 账户"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:70
+msgid "Contact’s name"
+msgstr "联系人姓名"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:119
+msgid "Contact’s phone number"
+msgstr "联系人的电话号码"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:129
+msgid "Contact’s phone numbers"
+msgstr "联系人的电话号码"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:100
+msgid "Contact’s X/Twitter account"
+msgstr "联系人的 X/Twitter 账户"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
+#: src/modules/task/standard-objects/task.workspace-entity.ts:136
+#: src/modules/person/standard-objects/person.workspace-entity.ts:167
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
+#: src/modules/note/standard-objects/note.workspace-entity.ts:98
+#: src/modules/company/standard-objects/company.workspace-entity.ts:154
+#: src/engine/twenty-orm/custom.workspace-entity.ts:61
+msgid "Created by"
+msgstr "创建者"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:44
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:45
+#: src/engine/twenty-orm/base.workspace-entity.ts:26
+#: src/engine/twenty-orm/base.workspace-entity.ts:27
+msgid "Creation date"
+msgstr "创建日期"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
+msgid "Creation DateTime"
+msgstr "创建日期时间"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:278
+msgid "Date format"
+msgstr "日期格式"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:53
+msgid "Date when the record was deleted"
+msgstr "记录删除日期"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:52
+msgid "Deleted at"
+msgstr "删除于"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:109
+msgid "Describes if the view is in compact mode"
+msgstr "描述视图是否处于紧凑模式"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:109
+msgid "Description"
+msgstr "描述"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:48
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:66
+msgid "Direction"
+msgstr "方向"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:62
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:63
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:54
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:55
+msgid "Display Name"
+msgstr "显示名称"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:59
+msgid "Display Value"
+msgstr "显示值"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:73
+msgid "Domain Name"
+msgstr "域名"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:100
+msgid "Due Date"
+msgstr "到期日"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:79
+msgid "Emails"
+msgstr "电子邮件"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:83
+msgid "Employees"
+msgstr "员工"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:78
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:79
+msgid "End Date"
+msgstr "结束日期"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
+msgid "Event company"
+msgstr "事件公司"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
+msgid "Event context"
+msgstr "事件上下文"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
+msgid "Event details"
+msgstr "事件详情"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
+msgid "Event external ID"
+msgstr "事件外部 ID"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
+msgid "Event ID"
+msgstr "事件 ID"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
+msgid "Event Listeners"
+msgstr "事件监听器"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:48
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
+msgid "Event name"
+msgstr "事件名称"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
+msgid "Event name/type"
+msgstr "事件名称/类型"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
+msgid "Event note"
+msgstr "事件备注"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
+msgid "Event opportunity"
+msgstr "事件机会"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
+msgid "Event Participants"
+msgstr "事件参与者"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
+msgid "Event person"
+msgstr "事件联系人"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
+msgid "Event task"
+msgstr "事件任务"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
+msgid "Event workflow"
+msgstr "事件工作流程"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
+msgid "Event workflow run"
+msgstr "事件工作流程运行"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
+msgid "Event workflow version"
+msgstr "事件工作流程版本"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
+msgid "Event workspace member"
+msgstr "事件工作区成员"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
+#: src/modules/person/standard-objects/person.workspace-entity.ts:276
+msgid "Events"
+msgstr "事件"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:277
+msgid "Events linked to the person"
+msgstr "与联系人关联的事件"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
+msgid "Events linked to the workspace member"
+msgstr "与工作区成员关联的事件"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
+msgid "Exclude group emails"
+msgstr "排除群组电子邮件"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
+msgid "Exclude non professional emails"
+msgstr "排除非专业电子邮件"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
+msgid "Executed by"
+msgstr "执行者"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
+msgid "Expiration date"
+msgstr "到期日期"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
+msgid "Favorite"
+msgstr "收藏"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
+msgid "Favorite company"
+msgstr "收藏公司"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
+msgid "Favorite Folder"
+msgstr "收藏夹"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
+msgid "Favorite folder position"
+msgstr "收藏夹位置"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
+msgid "Favorite Folders"
+msgstr "收藏夹"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
+msgid "Favorite note"
+msgstr "收藏备注"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
+msgid "Favorite opportunity"
+msgstr "收藏机会"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
+msgid "Favorite person"
+msgstr "收藏联系人"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
+msgid "Favorite position"
+msgstr "收藏位置"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
+msgid "Favorite task"
+msgstr "收藏任务"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
+msgid "Favorite view"
+msgstr "收藏视图"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
+msgid "Favorite workflow"
+msgstr "收藏工作流程"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
+msgid "Favorite workflow run"
+msgstr "收藏工作流程运行"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
+msgid "Favorite workflow version"
+msgstr "收藏工作流程版本"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
+msgid "Favorite workspace member"
+msgstr "收藏工作区成员"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
+#: src/modules/view/standard-objects/view.workspace-entity.ts:177
+#: src/modules/task/standard-objects/task.workspace-entity.ts:197
+#: src/modules/person/standard-objects/person.workspace-entity.ts:226
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
+#: src/modules/note/standard-objects/note.workspace-entity.ts:143
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
+#: src/modules/company/standard-objects/company.workspace-entity.ts:226
+#: src/engine/twenty-orm/custom.workspace-entity.ts:101
+msgid "Favorites"
+msgstr "收藏"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
+msgid "Favorites in this folder"
+msgstr "此文件夹中的收藏"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:227
+msgid "Favorites linked to the company"
+msgstr "与公司相关的收藏"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:227
+msgid "Favorites linked to the contact"
+msgstr "与联系人相关的收藏"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:144
+msgid "Favorites linked to the note"
+msgstr "与备注相关的收藏"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:165
+msgid "Favorites linked to the opportunity"
+msgstr "与机会相关的收藏"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:198
+msgid "Favorites linked to the task"
+msgstr "与任务相关的收藏"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:178
+msgid "Favorites linked to the view"
+msgstr "与视图相关的收藏"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
+msgid "Favorites linked to the workflow"
+msgstr "与工作流程相关的收藏"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+msgid "Favorites linked to the workflow run"
+msgstr "与工作流程运行相关的收藏"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
+msgid "Favorites linked to the workflow version"
+msgstr "与工作流程版本相关的收藏"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
+msgid "Favorites linked to the workspace member"
+msgstr "与工作区成员相关的收藏"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:106
+msgid "Favorites tied to the {label}"
+msgstr "与 {label} 相关的收藏"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:34
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:45
+msgid "Field Metadata Id"
+msgstr "字段元数据 ID"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:262
+#: src/modules/view/standard-objects/view.workspace-entity.ts:263
+msgid "Field metadata used for aggregate operation"
+msgstr "用于聚合操作的字段元数据"
+
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:6
+msgid "Field used for full-text search"
+msgstr "用于全文搜索的字段"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:51
+msgid "Field Value"
+msgstr "字段值"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
+msgid "Folder for Message Channel"
+msgstr "消息通道文件夹"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
+msgid "Folder name"
+msgstr "文件夹名称"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:51
+msgid "Full path"
+msgstr "完整路径"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:52
+msgid "Group by this field value"
+msgstr "按此字段值分组"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
+msgid "handle"
+msgstr "处理"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:53
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:54
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:126
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:127
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:45
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:46
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:86
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:87
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:34
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:35
+msgid "Handle"
+msgstr "句柄"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:95
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:96
+msgid "Handle Aliases"
+msgstr "句柄别名"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:40
+msgid "Header message Id"
+msgstr "消息头 ID"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:126
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:127
+msgid "iCal UID"
+msgstr "iCal UID"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:79
+msgid "Icon"
+msgstr "图标"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:133
+msgid "ICP"
+msgstr "ICP"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:14
+#: src/engine/twenty-orm/base.workspace-entity.ts:15
+msgid "Id"
+msgstr "ID"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:134
+msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
+msgstr "理想客户简介：说明该公司是否是最适合和最有价值的客户"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:78
+msgid "If the event is related to a particular object"
+msgstr "如果事件与特定对象相关"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:48
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:49
+msgid "Is canceled"
+msgstr "是否取消"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:160
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:161
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
+msgid "Is Contact Auto Creation Enabled"
+msgstr "是否启用联系人自动创建"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
+msgid "Is Full Day"
+msgstr "是否全天"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
+msgid "Is Organizer"
+msgstr "是否组织者"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:258
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:259
+msgid "Is Sync Enabled"
+msgstr "是否启用同步"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:109
+msgid "Job Title"
+msgstr "职位"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:68
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:53
+msgid "Json object to provide context (user, device, workspace, etc.)"
+msgstr "提供上下文（用户、设备、工作区等）的 Json 对象"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
+msgid "Json object to provide output of the workflow run"
+msgstr "提供工作流程运行输出的 Json 对象"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
+msgid "Json object to provide steps"
+msgstr "提供步骤的 Json 对象"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
+msgid "Json object to provide trigger"
+msgstr "提供触发器的 Json 对象"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:64
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:58
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:43
+msgid "Json value for event details"
+msgstr "事件详细信息的 Json 值"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:87
+msgid "kanbanfieldMetadataId"
+msgstr "kanbanfieldMetadataId"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:68
+msgid "Key"
+msgstr "键"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:107
+msgid "Language"
+msgstr "语言"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
+msgid "Last published Version Id"
+msgstr "最近发布的版本 ID"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
+msgid "Last sync cursor"
+msgstr "上次同步光标"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:239
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:240
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:277
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:278
+msgid "Last sync date"
+msgstr "上次同步日期"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:76
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:77
+msgid "Last sync history ID"
+msgstr "上次同步历史 ID"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:40
+msgid "Last time the record was changed"
+msgstr "记录上次更改时间"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:39
+msgid "Last update"
+msgstr "最后更新"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:93
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:94
+msgid "Linked Object Metadata Id"
+msgstr "关联对象元数据 ID"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:192
+msgid "Linked Opportunities"
+msgstr "关联机会"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:74
+msgid "Linked Record cached name"
+msgstr "关联记录缓存名称"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:83
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:84
+msgid "Linked Record id"
+msgstr "关联记录 ID"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:89
+#: src/modules/company/standard-objects/company.workspace-entity.ts:93
+msgid "Linkedin"
+msgstr "Linkedin"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:193
+msgid "List of opportunities for which that person is the point of contact"
+msgstr "该联系人负责的机会列表"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:117
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:118
+msgid "Location"
+msgstr "位置"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:60
+msgid "Logical Operator"
+msgstr "逻辑运算符"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:61
+msgid "Logical operator for the filter group"
+msgstr "过滤组的逻辑运算符"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
+msgid "Meet Link"
+msgstr "会议链接"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:72
+msgid "Message"
+msgstr "消息"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:41
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:42
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:84
+msgid "Message Channel"
+msgstr "消息通道"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:105
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:374
+msgid "Message Channel Association"
+msgstr "消息通道关联"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:91
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:92
+msgid "Message Channel Id"
+msgstr "消息通道 ID"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:29
+msgid "Message Channel Message Association"
+msgstr "消息通道消息关联"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:30
+msgid "Message Channel Message Associations"
+msgstr "消息通道消息关联"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:85
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:86
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:128
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:129
+msgid "Message Channels"
+msgstr "消息通道"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:67
+msgid "Message Direction"
+msgstr "消息方向"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:45
+msgid "Message External Id"
+msgstr "消息外部 ID"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:21
+msgid "Message Folder"
+msgstr "消息文件夹"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:22
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:388
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:389
+msgid "Message Folders"
+msgstr "消息文件夹"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:106
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:107
+msgid "Message Id"
+msgstr "消息 ID"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:41
+msgid "Message id from the message header"
+msgstr "消息头中的消息 ID"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:46
+msgid "Message id from the messaging provider"
+msgstr "消息提供商的消息 ID"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:25
+msgid "Message Participant"
+msgstr "消息参与者"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
+#: src/modules/person/standard-objects/person.workspace-entity.ts:249
+#: src/modules/person/standard-objects/person.workspace-entity.ts:250
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:93
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:94
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:27
+msgid "Message Participants"
+msgstr "消息参与者"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:31
+msgid "Message Synced with a Message Channel"
+msgstr "与消息通道同步的消息"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:23
+msgid "Message Thread"
+msgstr "消息线程"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:77
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:78
+msgid "Message Thread Id"
+msgstr "消息线程 ID"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:24
+msgid "Message Threads"
+msgstr "消息线程"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:29
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:34
+msgid "Messages"
+msgstr "消息"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
+msgid "Messages from the channel."
+msgstr "来自通道的消息"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
+msgid "Messages from the thread."
+msgstr "来自线程的消息"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
+msgid "Messaging provider access token"
+msgstr "消息提供商访问令牌"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
+msgid "Messaging provider refresh token"
+msgstr "消息提供商刷新令牌"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:75
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:62
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
+#: src/modules/view/standard-objects/view.workspace-entity.ts:43
+#: src/modules/person/standard-objects/person.workspace-entity.ts:69
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:60
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:32
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:43
+#: src/modules/company/standard-objects/company.workspace-entity.ts:64
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:42
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:29
+#: src/engine/twenty-orm/custom.workspace-entity.ts:40
+#: src/engine/twenty-orm/custom.workspace-entity.ts:41
+msgid "Name"
+msgstr "名称"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
+msgid "Name of the favorite folder"
+msgstr "收藏夹名称"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
+msgid "Name of the workflow run"
+msgstr "工作流程运行名称"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
+#: src/modules/note/standard-objects/note.workspace-entity.ts:44
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
+msgid "Note"
+msgstr "备注"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:119
+msgid "Note attachments"
+msgstr "备注附件"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:76
+#: src/modules/note/standard-objects/note.workspace-entity.ts:86
+msgid "Note body"
+msgstr "备注正文"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:56
+msgid "Note record position"
+msgstr "备注记录位置"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
+msgid "Note Target"
+msgstr "备注目标"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:107
+msgid "Note targets"
+msgstr "备注目标"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:26
+msgid "Note Targets"
+msgstr "备注目标"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:67
+msgid "Note title"
+msgstr "备注标题"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:215
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
+#: src/modules/note/standard-objects/note.workspace-entity.ts:45
+#: src/modules/company/standard-objects/company.workspace-entity.ts:203
+#: src/engine/twenty-orm/custom.workspace-entity.ts:69
+msgid "Notes"
+msgstr "备注"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:74
+msgid "Notes tied to the {label}"
+msgstr "与 {label} 相关的备注"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:204
+msgid "Notes tied to the company"
+msgstr "与公司相关的备注"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:216
+msgid "Notes tied to the contact"
+msgstr "与联系人相关的备注"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
+msgid "Notes tied to the opportunity"
+msgstr "与机会相关的备注"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
+msgid "NoteTarget company"
+msgstr "备注目标公司"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
+msgid "NoteTarget note"
+msgstr "备注目标备注"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
+msgid "NoteTarget opportunity"
+msgstr "备注目标机会"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
+msgid "NoteTarget person"
+msgstr "备注目标联系人"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:84
+msgid "Number of employees in the company"
+msgstr "公司员工人数"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
+msgid "Object id"
+msgstr "对象 ID"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
+msgid "Object metadata id"
+msgstr "对象元数据 ID"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:51
+msgid "Object Metadata Id"
+msgstr "对象元数据 ID"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:63
+msgid "Object name"
+msgstr "对象名称"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
+msgid "Operand"
+msgstr "操作数"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
+msgid "Operation"
+msgstr "操作"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
+msgid "Operations"
+msgstr "操作"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
+#: src/modules/company/standard-objects/company.workspace-entity.ts:214
+msgid "Opportunities"
+msgstr "机会"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:215
+msgid "Opportunities linked to the company."
+msgstr "与公司相关的机会"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:48
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:80
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:118
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:143
+msgid "Opportunity"
+msgstr "机会"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:70
+msgid "Opportunity amount"
+msgstr "机会金额"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:80
+msgid "Opportunity close date"
+msgstr "机会结束日期"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:149
+msgid "Opportunity company"
+msgstr "机会公司"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
+msgid "Opportunity point of contact"
+msgstr "机会联系人"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
+msgid "Opportunity probability"
+msgstr "机会概率"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
+msgid "Opportunity record position"
+msgstr "机会记录位置"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
+msgid "Opportunity stage"
+msgstr "机会阶段"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:190
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:97
+msgid "Optional aggregate operation"
+msgstr "可选聚合操作"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
+msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
+msgstr "用于计算 Webhook 负载 HMAC 签名的可选密钥。此密钥在 Twenty 和 Webhook 用户之间共享，用于验证 Webhook 请求。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
+msgid "Output"
+msgstr "输出"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:52
+msgid "Parent View Filter Group"
+msgstr "父视图筛选组"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:51
+msgid "Parent View Filter Group Id"
+msgstr "父视图筛选组 ID"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:58
+#: src/modules/company/standard-objects/company.workspace-entity.ts:164
+msgid "People"
+msgstr "人员"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:165
+msgid "People linked to the company."
+msgstr "与公司相关的人员"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
+#: src/modules/person/standard-objects/person.workspace-entity.ts:57
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:50
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:85
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:86
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:73
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:123
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:124
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:113
+msgid "Person"
+msgstr "人员"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:157
+msgid "Person record Position"
+msgstr "人员记录位置"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:118
+msgid "Phone"
+msgstr "电话"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:128
+msgid "Phones"
+msgstr "电话"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
+msgid "Point of Contact"
+msgstr "联系人"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/view/standard-objects/view.workspace-entity.ts:98
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
+#: src/modules/task/standard-objects/task.workspace-entity.ts:57
+#: src/modules/person/standard-objects/person.workspace-entity.ts:156
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
+#: src/modules/note/standard-objects/note.workspace-entity.ts:55
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
+#: src/modules/company/standard-objects/company.workspace-entity.ts:143
+#: src/engine/twenty-orm/custom.workspace-entity.ts:49
+#: src/engine/twenty-orm/custom.workspace-entity.ts:50
+msgid "Position"
+msgstr "职位"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:90
+msgid "Position in the parent view filter group"
+msgstr "在父视图筛选组中的位置"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
+msgid "Position in the view filter group"
+msgstr "在视图筛选组中的位置"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
+msgid "Position in view filter group"
+msgstr "在视图筛选组中的位置"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
+msgid "Preferred color scheme"
+msgstr "首选配色方案"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
+msgid "Preferred language"
+msgstr "首选语言"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
+msgid "Probability"
+msgstr "概率"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:49
+msgid "provider"
+msgstr "提供者"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
+msgid "Received At"
+msgstr "接收时间"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
+msgid "Record id"
+msgstr "记录 ID"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:45
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:46
+msgid "Recurring Event ID"
+msgstr "重复事件 ID"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
+msgid "Refresh Token"
+msgstr "刷新令牌"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
+msgid "Related user email address"
+msgstr "相关用户邮箱地址"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:144
+#: src/modules/note/standard-objects/note.workspace-entity.ts:106
+msgid "Relations"
+msgstr "关系"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:73
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:74
+msgid "Response Status"
+msgstr "响应状态"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:47
+msgid "Revocation date"
+msgstr "撤销日期"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:37
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:38
+msgid "Role"
+msgstr "角色"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:121
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:142
+msgid "Runs"
+msgstr "运行"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
+msgid "Scopes"
+msgstr "范围"
+
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
+msgid "Search vector"
+msgstr "搜索向量"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:69
+msgid "Secret"
+msgstr "密钥"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:64
+msgid "Size"
+msgstr "大小"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
+msgid "Stage"
+msgstr "阶段"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
+msgid "Start Date"
+msgstr "开始日期"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:110
+msgid "Status"
+msgstr "状态"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:87
+msgid "Statuses"
+msgstr "状态"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:49
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:50
+msgid "Subject"
+msgstr "主题"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:51
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:52
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:268
+msgid "Sync Cursor"
+msgstr "同步游标"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
+msgid "Sync Cursor. Used for syncing events from the calendar provider"
+msgstr "同步游标。用于从日历提供程序同步事件"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:137
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:138
+msgid "Sync stage"
+msgstr "同步阶段"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:339
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:340
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
+msgid "Sync stage started at"
+msgstr "同步阶段开始于"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:95
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:96
+msgid "Sync status"
+msgstr "同步状态"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:30
+msgid "Target Url"
+msgstr "目标 URL"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
+#: src/modules/task/standard-objects/task.workspace-entity.ts:46
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
+msgid "Task"
+msgstr "任务"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:169
+msgid "Task assignee"
+msgstr "任务负责人"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:157
+msgid "Task attachments"
+msgstr "任务附件"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:78
+#: src/modules/task/standard-objects/task.workspace-entity.ts:88
+msgid "Task body"
+msgstr "任务内容"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:101
+msgid "Task due date"
+msgstr "任务截止日期"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:58
+msgid "Task record position"
+msgstr "任务记录位置"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:111
+msgid "Task status"
+msgstr "任务状态"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:25
+msgid "Task Target"
+msgstr "任务目标"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:145
+msgid "Task targets"
+msgstr "任务目标"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
+msgid "Task Targets"
+msgstr "任务目标"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:69
+msgid "Task title"
+msgstr "任务标题"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:47
+#: src/modules/person/standard-objects/person.workspace-entity.ts:204
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
+#: src/modules/company/standard-objects/company.workspace-entity.ts:192
+#: src/engine/twenty-orm/custom.workspace-entity.ts:85
+msgid "Tasks"
+msgstr "任务"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:146
+msgid "Tasks assigned to the workspace member"
+msgstr "分配给工作区成员的任务"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:90
+msgid "Tasks tied to the {label}"
+msgstr "与 {label} 相关的任务"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:193
+msgid "Tasks tied to the company"
+msgstr "与公司相关的任务"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:205
+msgid "Tasks tied to the contact"
+msgstr "与联系人相关的任务"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
+msgid "Tasks tied to the opportunity"
+msgstr "与机会相关的任务"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:66
+msgid "TaskTarget company"
+msgstr "任务目标公司"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
+msgid "TaskTarget opportunity"
+msgstr "任务目标机会"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
+msgid "TaskTarget person"
+msgstr "任务目标人员"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:36
+msgid "TaskTarget task"
+msgstr "任务目标任务"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
+msgid "Text"
+msgstr "文本"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
+msgid "The account handle (email, username, phone number, etc.)"
+msgstr "账户名称（电子邮件、用户名、电话号码等）"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
+msgid "The account provider"
+msgstr "账户提供商"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:94
+msgid "The company Linkedin account"
+msgstr "公司 Linkedin 账户"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:65
+msgid "The company name"
+msgstr "公司名称"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:104
+msgid "The company Twitter/X account"
+msgstr "公司 Twitter/X 账户"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:74
+msgid "The company website URL. We use this url to fetch the company icon"
+msgstr "公司网站 URL。我们使用该网址获取公司图标"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
+#: src/modules/task/standard-objects/task.workspace-entity.ts:138
+#: src/modules/person/standard-objects/person.workspace-entity.ts:169
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
+#: src/modules/note/standard-objects/note.workspace-entity.ts:100
+#: src/modules/company/standard-objects/company.workspace-entity.ts:156
+#: src/engine/twenty-orm/custom.workspace-entity.ts:63
+msgid "The creator of the record"
+msgstr "记录创建者"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
+msgid "The current statuses of the workflow versions"
+msgstr "工作流版本的当前状态"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
+msgid "The date the message was received"
+msgstr "消息接收日期"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
+msgid "The executor of the workflow"
+msgstr "工作流执行者"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
+msgid "The folder this favorite belongs to"
+msgstr "此收藏夹所属文件夹"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:61
+msgid "The opportunity name"
+msgstr "机会名称"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:35
+msgid "The workflow event listener name"
+msgstr "工作流事件监听器名称"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
+msgid "The workflow last published version id"
+msgstr "工作流最后发布的版本 ID"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
+msgid "The workflow name"
+msgstr "工作流名称"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:76
+msgid "The workflow version name"
+msgstr "工作流版本名称"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:105
+msgid "The workflow version status"
+msgstr "工作流版本状态"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:56
+msgid "Thread External Id"
+msgstr "线程外部 ID"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
+msgid "Thread id from the messaging provider"
+msgstr "消息提供商的线程 ID"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
+msgid "Throttle Failure Count"
+msgstr "节流失败计数"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
+msgid "Time format"
+msgstr "时间格式"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:268
+msgid "Time zone"
+msgstr "时区"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:198
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
+#: src/modules/task/standard-objects/task.workspace-entity.ts:185
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
+#: src/modules/note/standard-objects/note.workspace-entity.ts:131
+#: src/modules/company/standard-objects/company.workspace-entity.ts:251
+#: src/engine/twenty-orm/custom.workspace-entity.ts:134
+msgid "Timeline Activities"
+msgstr "时间线活动"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:252
+msgid "Timeline Activities linked to the company"
+msgstr "与公司相关的时间线活动"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:132
+msgid "Timeline Activities linked to the note."
+msgstr "与笔记相关的时间线活动。"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
+msgid "Timeline Activities linked to the opportunity."
+msgstr "与机会相关的时间线活动。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
+msgid "Timeline activities linked to the run"
+msgstr "与运行相关的时间线活动"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:186
+msgid "Timeline Activities linked to the task."
+msgstr "与任务相关的时间线活动。"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
+msgid "Timeline activities linked to the version"
+msgstr "与版本相关的时间线活动"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:156
+msgid "Timeline activities linked to the workflow"
+msgstr "与工作流相关的时间线活动"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:139
+msgid "Timeline Activities tied to the {label}"
+msgstr "与 {label} 相关的时间线活动"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
+msgid "Timeline Activity"
+msgstr "时间线活动"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:68
+#: src/modules/note/standard-objects/note.workspace-entity.ts:66
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
+msgid "Title"
+msgstr "标题"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:59
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:135
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:60
+msgid "Type"
+msgstr "类型"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:98
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:99
+msgid "Update DateTime"
+msgstr "更新时间"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:126
+msgid "User Email"
+msgstr "用户邮箱"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:135
+msgid "User Id"
+msgstr "用户 ID"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:270
+msgid "User time zone"
+msgstr "用户时区"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:279
+msgid "User's preferred date format"
+msgstr "用户首选日期格式"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:315
+msgid "User's preferred time format"
+msgstr "用户首选时间格式"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
+msgid "Value"
+msgstr "值"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
+msgid "Version status"
+msgstr "版本状态"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:94
+msgid "Version steps"
+msgstr "版本步骤"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:84
+msgid "Version trigger"
+msgstr "版本触发器"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:110
+msgid "Versions"
+msgstr "版本"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:31
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:57
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:70
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:67
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:38
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:39
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:85
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:208
+msgid "View"
+msgstr "视图"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
+msgid "View Field"
+msgstr "视图字段"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
+msgid "View Field position"
+msgstr "视图字段位置"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
+msgid "View Field related view"
+msgstr "相关视图"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
+msgid "View Field size"
+msgstr "视图字段大小"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
+msgid "View Field target field"
+msgstr "视图字段目标"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
+msgid "View Field visibility"
+msgstr "视图字段可见性"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:117
+#: src/modules/view/standard-objects/view.workspace-entity.ts:118
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
+msgid "View Fields"
+msgstr "视图字段"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
+msgid "View Filter"
+msgstr "视图过滤器"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
+msgid "View Filter Display Value"
+msgstr "视图过滤器显示值"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
+msgid "View Filter Group"
+msgstr "视图过滤器组"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
+msgid "View Filter Group Id"
+msgstr "视图过滤器组 ID"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:153
+#: src/modules/view/standard-objects/view.workspace-entity.ts:154
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
+msgid "View Filter Groups"
+msgstr "视图过滤器组"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
+msgid "View Filter operand"
+msgstr "视图过滤器操作数"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
+msgid "View Filter related view"
+msgstr "视图过滤器相关视图"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
+msgid "View Filter target field"
+msgstr "视图过滤器目标字段"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
+msgid "View Filter value"
+msgstr "视图过滤器值"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:141
+#: src/modules/view/standard-objects/view.workspace-entity.ts:142
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
+msgid "View Filters"
+msgstr "视图过滤器"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
+msgid "View Group"
+msgstr "视图组"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
+msgid "View Group related view"
+msgstr "视图组相关视图"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
+msgid "View Group target field"
+msgstr "视图组目标字段"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
+msgid "View Group visibility"
+msgstr "视图组可见性"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:129
+#: src/modules/view/standard-objects/view.workspace-entity.ts:130
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
+msgid "View Groups"
+msgstr "视图组"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:80
+msgid "View icon"
+msgstr "视图图标"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:88
+msgid "View Kanban column field"
+msgstr "视图看板列字段"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:69
+msgid "View key"
+msgstr "视图密钥"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:44
+msgid "View name"
+msgstr "视图名称"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:99
+msgid "View position"
+msgstr "视图位置"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
+msgid "View Sort"
+msgstr "视图排序"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
+msgid "View Sort direction"
+msgstr "视图排序方向"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
+msgid "View Sort related view"
+msgstr "视图排序相关视图"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
+msgid "View Sort target field"
+msgstr "视图排序目标字段"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:165
+#: src/modules/view/standard-objects/view.workspace-entity.ts:166
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
+msgid "View Sorts"
+msgstr "视图排序"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:52
+msgid "View target object"
+msgstr "视图目标对象"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:60
+msgid "View type"
+msgstr "视图类型"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:32
+msgid "Views"
+msgstr "视图"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:186
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:187
+msgid "Visibility"
+msgstr "可见性"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
+msgid "Visible"
+msgstr "可见"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
+msgid "Webhook"
+msgstr "Webhook"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
+msgid "Webhook operation"
+msgstr "Webhook 操作"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
+msgid "Webhook operations"
+msgstr "Webhook 操作"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
+msgid "Webhook target url"
+msgstr "Webhook 目标网址"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
+msgid "Webhooks"
+msgstr "Webhooks"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
+msgid "Workflow"
+msgstr "工作流"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
+msgid "Workflow event listeners linked to the workflow."
+msgstr "与工作流相关的事件监听器。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+msgid "Workflow linked to the run."
+msgstr "与运行相关的工作流。"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
+msgid "Workflow record position"
+msgstr "工作流记录位置"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
+msgid "Workflow Run"
+msgstr "工作流运行"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
+msgid "Workflow run ended at"
+msgstr "工作流运行结束于"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+msgid "Workflow run position"
+msgstr "工作流运行位置"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
+msgid "Workflow run started at"
+msgstr "工作流运行开始于"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
+msgid "Workflow run status"
+msgstr "工作流运行状态"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
+msgid "Workflow Runs"
+msgstr "工作流运行"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
+msgid "Workflow runs linked to the version."
+msgstr "与版本相关的工作流运行。"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
+msgid "Workflow runs linked to the workflow."
+msgstr "与工作流相关的工作流运行。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
+msgid "Workflow version"
+msgstr "工作流版本"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
+msgid "Workflow Version"
+msgstr "工作流版本"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
+msgid "Workflow version linked to the run."
+msgstr "与运行相关的工作流版本。"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
+msgid "Workflow version position"
+msgstr "工作流版本位置"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
+msgid "Workflow Versions"
+msgstr "工作流版本"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
+msgid "Workflow versions linked to the workflow."
+msgstr "与工作流相关的工作流版本。"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
+msgid "WorkflowEventListener"
+msgstr "工作流事件监听器"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
+msgid "WorkflowEventListener workflow"
+msgstr "工作流事件监听器"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
+msgid "WorkflowEventListeners"
+msgstr "工作流事件监听器"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
+msgid "Workflows"
+msgstr "工作流"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
+msgid "WorkflowVersion"
+msgstr "工作流版本"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
+msgid "WorkflowVersion workflow"
+msgstr "工作流版本工作流"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
+msgid "Workspace member"
+msgstr "工作区成员"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:90
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:100
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:58
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:138
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:139
+msgid "Workspace Member"
+msgstr "工作区成员"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:118
+msgid "Workspace member avatar"
+msgstr "工作区成员头像"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
+msgid "Workspace member name"
+msgstr "工作区成员名称"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
+msgid "Workspace Members"
+msgstr "工作区成员"
+
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
+msgid "WorkspaceMember"
+msgstr "工作区成员"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:99
+#: src/modules/company/standard-objects/company.workspace-entity.ts:103
+msgid "X"
+msgstr "X"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:177
+msgid "Your team member responsible for managing the company account"
+msgstr "负责管理公司账户的团队成员"
+
