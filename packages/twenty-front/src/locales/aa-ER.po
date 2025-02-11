@@ -8,7 +8,7 @@ msgstr ""
 "Language: aa\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 18:02\n"
+"PO-Revision-Date: 2025-02-11 20:02\n"
 "Last-Translator: \n"
 "Language-Team: Afar\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -97,7 +97,7 @@ msgstr "crwdns73:0crwdne73:0"
 msgid "Active"
 msgstr "crwdns75:0crwdne75:0"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:71
+#: src/pages/settings/developers/SettingsDevelopers.tsx:51
 msgid "Active API keys created by you or your team."
 msgstr "crwdns77:0crwdne77:0"
 
@@ -179,7 +179,7 @@ msgstr "crwdns107:0crwdne107:0"
 msgid "An error occurred while updating password"
 msgstr "crwdns109:0crwdne109:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:151
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:158
 msgid "An optional description"
 msgstr "crwdns111:0crwdne111:0"
 
@@ -197,7 +197,7 @@ msgstr "crwdns115:0crwdne115:0"
 msgid "API Key"
 msgstr "crwdns117:0crwdne117:0"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:70
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "API keys"
 msgstr "crwdns119:0crwdne119:0"
 
@@ -348,7 +348,7 @@ msgstr "crwdns175:0crwdne175:0"
 msgid "Chinese — Traditional"
 msgstr "crwdns177:0crwdne177:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:180
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:187
 msgid "Choose an object"
 msgstr "crwdns179:0crwdne179:0"
 
@@ -461,7 +461,7 @@ msgstr "crwdns227:0crwdne227:0"
 msgid "Create a workflow and return here to view its versions"
 msgstr "crwdns229:0crwdne229:0"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:77
+#: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
 msgstr "crwdns231:0crwdne231:0"
 
@@ -478,7 +478,7 @@ msgstr "crwdns235:0crwdne235:0"
 msgid "Create Role"
 msgstr "crwdns237:0crwdne237:0"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:93
+#: src/pages/settings/developers/SettingsDevelopers.tsx:73
 msgid "Create Webhook"
 msgstr "crwdns239:0crwdne239:0"
 
@@ -506,7 +506,7 @@ msgstr "crwdns249:0crwdne249:0"
 msgid "Czech"
 msgstr "crwdns1801:0crwdne1801:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
@@ -561,7 +561,7 @@ msgstr "crwdns267:0crwdne267:0"
 msgid "Define the name and description of your object"
 msgstr "crwdns269:0crwdne269:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:245
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:252
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
@@ -600,13 +600,13 @@ msgstr "crwdns279:0crwdne279:0"
 msgid "Delete records"
 msgstr "crwdns281:0crwdne281:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:240
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:247
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
 msgstr "crwdns283:0crwdne283:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:262
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:261
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:269
 msgid "Delete webhook"
 msgstr "crwdns285:0crwdne285:0"
 
@@ -632,7 +632,7 @@ msgstr "crwdns293:0crwdne293:0"
 msgid "Descending"
 msgstr "crwdns295:0crwdne295:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
@@ -645,9 +645,9 @@ msgstr "crwdns297:0crwdne297:0"
 msgid "Destroy"
 msgstr "crwdns299:0crwdne299:0"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:56
-#: src/pages/settings/developers/SettingsDevelopers.tsx:63
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:125
+#: src/pages/settings/developers/SettingsDevelopers.tsx:36
+#: src/pages/settings/developers/SettingsDevelopers.tsx:43
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
 msgid "Developers"
@@ -734,7 +734,7 @@ msgstr "crwdns331:0crwdne331:0"
 msgid "Empty"
 msgstr "crwdns333:0crwdne333:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:134
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:141
 msgid "Endpoint URL"
 msgstr "crwdns335:0crwdne335:0"
 
@@ -762,7 +762,7 @@ msgstr "crwdns345:0{err}crwdne345:0"
 msgid "Error while switching subscription {to}."
 msgstr "crwdns347:0{to}crwdne347:0"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:87
+#: src/pages/settings/developers/SettingsDevelopers.tsx:67
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "crwdns349:0crwdne349:0"
 
@@ -863,7 +863,7 @@ msgstr "crwdns381:0crwdne381:0"
 msgid "Filter"
 msgstr "crwdns383:0crwdne383:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:164
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:171
 msgid "Filters"
 msgstr "crwdns385:0crwdne385:0"
 
@@ -1330,7 +1330,7 @@ msgstr "crwdns573:0crwdne573:0"
 msgid "Picture"
 msgstr "crwdns575:0crwdne575:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:143
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
 msgid "Please enter a valid URL"
 msgstr "crwdns577:0crwdne577:0"
 
@@ -1338,7 +1338,7 @@ msgstr "crwdns577:0crwdne577:0"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "crwdns579:0{confirmationValue}crwdne579:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:256
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "crwdns581:0{confirmationText}crwdne581:0"
 
@@ -1531,7 +1531,7 @@ msgstr "crwdns643:0crwdne643:0"
 msgid "See versions history"
 msgstr "crwdns645:0crwdne645:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:165
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:172
 msgid "Select the events you wish to send to this endpoint"
 msgstr "crwdns647:0crwdne647:0"
 
@@ -1796,7 +1796,7 @@ msgstr "crwdns757:0crwdne757:0"
 msgid "Upload"
 msgstr "crwdns759:0crwdne759:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:138
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:145
 msgid "URL"
 msgstr "crwdns761:0crwdne761:0"
 
@@ -1848,15 +1848,15 @@ msgstr "crwdns777:0crwdne777:0"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "crwdns779:0crwdne779:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:142
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "crwdns781:0crwdne781:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
 msgid "Webhook"
 msgstr "crwdns783:0crwdne783:0"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:86
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Webhooks"
 msgstr "crwdns785:0crwdne785:0"
 
@@ -1888,8 +1888,8 @@ msgstr "crwdns793:0crwdne793:0"
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
-#: src/pages/settings/developers/SettingsDevelopers.tsx:60
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:121
+#: src/pages/settings/developers/SettingsDevelopers.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
@@ -1915,11 +1915,11 @@ msgid "Workspace name"
 msgstr "crwdns801:0crwdne801:0"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx:40
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:154
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
 msgid "Write a description"
 msgstr "crwdns803:0crwdne803:0"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:113
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:120
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr "crwdns805:0crwdne805:0"

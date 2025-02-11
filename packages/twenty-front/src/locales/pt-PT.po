@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 18:02\n"
+"PO-Revision-Date: 2025-02-11 20:02\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -33,7 +33,7 @@ msgstr "{name}"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
 msgid "{workspaceMemberName} will be unassigned from the following role:"
-msgstr ""
+msgstr "{workspaceMemberName} ser\\u00e1 desvinculado do seguinte cargo:"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -80,7 +80,7 @@ msgstr "Contas"
 
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
-msgstr ""
+msgstr "A\\u00e7\\u00f5es"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
@@ -97,7 +97,7 @@ msgstr "Ativar Workflow"
 msgid "Active"
 msgstr "Ativo"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:71
+#: src/pages/settings/developers/SettingsDevelopers.tsx:51
 msgid "Active API keys created by you or your team."
 msgstr "Chaves API ativas criadas por si ou pela sua equipa."
 
@@ -145,7 +145,7 @@ msgstr "Adicionado {beautifiedCreatedAt}"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
-msgstr ""
+msgstr "Afric\\u00e2ner"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
@@ -179,7 +179,7 @@ msgstr "Permitir que os utilizadores iniciem sessão com um e-mail e uma palavra
 msgid "An error occurred while updating password"
 msgstr "Ocorreu um erro ao atualizar a palavra-passe"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:151
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:158
 msgid "An optional description"
 msgstr "Descrição opcional"
 
@@ -197,7 +197,7 @@ msgstr "API e Webhooks"
 msgid "API Key"
 msgstr "Chave API"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:70
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "API keys"
 msgstr "Chaves API"
 
@@ -211,7 +211,7 @@ msgstr "Aparência"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "Arabic"
-msgstr ""
+msgstr "\\u00c1rabe"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
@@ -219,7 +219,7 @@ msgstr "Tem a certeza de que pretende alterar o seu intervalo de faturação?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
 msgid "Are you sure you want to assign this role?"
-msgstr ""
+msgstr "Tem certeza de que deseja atribuir este cargo?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
@@ -228,7 +228,7 @@ msgstr "Ascendente"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
 msgid "Assign {workspaceMemberName}?"
-msgstr ""
+msgstr "Atribuir a {workspaceMemberName}?"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:125
 msgid "Assign roles to specify each member's access permissions"
@@ -236,7 +236,7 @@ msgstr "Atribuir papéis para especificar as permissões de acesso de cada membr
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:199
 msgid "Assign to member"
-msgstr ""
+msgstr "Atribuir ao membro"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:161
 msgid "Assigned members"
@@ -328,7 +328,7 @@ msgstr "Cancelar a sua subscrição"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Catalan"
-msgstr ""
+msgstr "Catal\\u00e3o"
 
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
@@ -348,7 +348,7 @@ msgstr "Chinês - Simplificado"
 msgid "Chinese — Traditional"
 msgstr "Chinês - Tradicional"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:180
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:187
 msgid "Choose an object"
 msgstr "Escolher um objeto"
 
@@ -382,7 +382,7 @@ msgstr "Configure as definições de e-mail e calendário."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmar"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
@@ -461,7 +461,7 @@ msgstr "Contar valores únicos"
 msgid "Create a workflow and return here to view its versions"
 msgstr "Crie um workflow e volte aqui para ver as suas versões"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:77
+#: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
 msgstr "Criar chave API"
 
@@ -478,7 +478,7 @@ msgstr "Criar perfil"
 msgid "Create Role"
 msgstr "Criar Função"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:93
+#: src/pages/settings/developers/SettingsDevelopers.tsx:73
 msgid "Create Webhook"
 msgstr "Criar Webhook"
 
@@ -504,9 +504,9 @@ msgstr "Personalize a segurança do seu espaço de trabalho"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
 msgid "Czech"
-msgstr ""
+msgstr "Tcheco"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
@@ -516,7 +516,7 @@ msgstr "Zona de perigo"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
-msgstr ""
+msgstr "Dinamarqu\\u00eas"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -561,7 +561,7 @@ msgstr "Desativar Workflow"
 msgid "Define the name and description of your object"
 msgstr "Defina o nome e a descrição do seu objeto"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:245
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:252
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
@@ -600,13 +600,13 @@ msgstr "Eliminar registo"
 msgid "Delete records"
 msgstr "Eliminar registos"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:240
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:247
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
 msgstr "Eliminar esta integração"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:262
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:261
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:269
 msgid "Delete webhook"
 msgstr "Eliminar webhook"
 
@@ -632,7 +632,7 @@ msgstr "Eliminar todo o seu espaço de trabalho"
 msgid "Descending"
 msgstr "Descendente"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
@@ -645,9 +645,9 @@ msgstr "Descrição"
 msgid "Destroy"
 msgstr "Destruir"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:56
-#: src/pages/settings/developers/SettingsDevelopers.tsx:63
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:125
+#: src/pages/settings/developers/SettingsDevelopers.tsx:36
+#: src/pages/settings/developers/SettingsDevelopers.tsx:43
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
 msgid "Developers"
@@ -672,7 +672,7 @@ msgstr "Domínio"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Dutch"
-msgstr ""
+msgstr "Holand\\u00eas"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
@@ -734,7 +734,7 @@ msgstr "Funcionários"
 msgid "Empty"
 msgstr "Vazio"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:134
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:141
 msgid "Endpoint URL"
 msgstr "URL do Endpoint"
 
@@ -762,7 +762,7 @@ msgstr "Erro ao regenerar a chave API: {err}"
 msgid "Error while switching subscription {to}."
 msgstr "Erro ao mudar a subscrição {to}."
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:87
+#: src/pages/settings/developers/SettingsDevelopers.tsx:67
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Estabeleça endpoints Webhook para notificações de eventos assíncronos."
 
@@ -863,13 +863,13 @@ msgstr "Contagem de Campos"
 msgid "Filter"
 msgstr "Filtro"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:164
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:171
 msgid "Filters"
 msgstr "Filtros"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Finnish"
-msgstr ""
+msgstr "Finland\\u00eas"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
@@ -928,11 +928,11 @@ msgstr "Conceda ao suporte do Twenty acesso temporário ao seu espaço de trabal
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
-msgstr ""
+msgstr "Grego"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebraico"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
@@ -944,7 +944,7 @@ msgstr "Como você será identificado no aplicativo."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
 msgid "Hungarian"
-msgstr ""
+msgstr "H\\u00fangaro"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -988,7 +988,7 @@ msgstr "Fornecedor de autenticação inválido"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:48
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
+msgstr "Domínio personalizado inválido. Domínios personalizados devem ter menos de 256 caracteres, não podem ser endereços IP, não podem conter espaços, não podem conter caracteres especiais como _~`!@#$%^*()=+{}[]|\\;:'\",<>/? e não podem começar ou terminar com o caractere '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
@@ -1217,19 +1217,19 @@ msgstr "Nenhuma conta conectada"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
 msgid "No members assigned to this role yet"
-msgstr ""
+msgstr "Ainda n\\u00e3o h\\u00e1 membros atribu\\u00eddos a este cargo"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
 msgid "No members matching this search"
-msgstr ""
+msgstr "Nenhum membro corresponde a esta pesquisa"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
 msgid "No members matching your search"
-msgstr ""
+msgstr "Nenhum membro corresponde \\u00e0 sua pesquisa"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
 msgid "No more members to add"
-msgstr ""
+msgstr "N\\u00e3o h\\u00e1 mais membros para adicionar"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1241,7 +1241,7 @@ msgstr "Ainda não há versões de workflow"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
 msgid "Norwegian"
-msgstr ""
+msgstr "Noruegu\\u00eas"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
@@ -1330,7 +1330,7 @@ msgstr "Permissões"
 msgid "Picture"
 msgstr "Imagem"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:143
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
 msgid "Please enter a valid URL"
 msgstr "Introduza um URL válido"
 
@@ -1338,13 +1338,13 @@ msgstr "Introduza um URL válido"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Digite \"{confirmationValue}\" para confirmar que deseja excluir esta chave API. Tenha em atenção que qualquer script que utilize esta chave deixará de funcionar."
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:256
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Digite {confirmationText} para confirmar que deseja eliminar este webhook."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
-msgstr ""
+msgstr "Polon\\u00eas"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
@@ -1424,7 +1424,7 @@ msgstr "Remover"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
 msgid "Remove {workspaceMemberName}?"
-msgstr ""
+msgstr "Remover {workspaceMemberName}?"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1458,7 +1458,7 @@ msgstr "Funções"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
 msgid "Romanian"
-msgstr ""
+msgstr "Romeno"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
@@ -1466,7 +1466,7 @@ msgstr "Execute um workflow e volte aqui para ver as suas execuções"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
 msgid "Russian"
-msgstr ""
+msgstr "Russo"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
@@ -1484,7 +1484,7 @@ msgstr "Pesquisar um campo..."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "Search a member"
-msgstr ""
+msgstr "Pesquisar um membro"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
@@ -1531,7 +1531,7 @@ msgstr "Ver versões"
 msgid "See versions history"
 msgstr "Ver histórico de versões"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:165
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:172
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Selecione os eventos que deseja enviar para este endpoint"
 
@@ -1545,7 +1545,7 @@ msgstr "Enviar um convite por e-mail à sua equipa"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
 msgid "Serbian (Cyrillic)"
-msgstr ""
+msgstr "S\\u00e9rvio (Cir\\u00edlico)"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin Panel"
@@ -1640,7 +1640,7 @@ msgstr "Suporte"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
 msgid "Swedish"
-msgstr ""
+msgstr "Sueco"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
@@ -1728,7 +1728,7 @@ msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente todo
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
 msgid "This member will be unassigned from this role."
-msgstr ""
+msgstr "Este membro ser\\u00e1 desvinculado deste cargo."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
 msgid "This Role has the following permissions."
@@ -1740,7 +1740,7 @@ msgstr "Esta Função possui as seguintes permissões."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:162
 msgid "This role is assigned to these workspace members."
-msgstr ""
+msgstr "Este cargo est\\u00e1 atribu\\u00eddo a estes membros do espa\\u00e7o de trabalho."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1764,7 +1764,7 @@ msgstr "O tipo de trigger deve ser Manual - quando nenhum registo está selecion
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
 msgid "Turkish"
-msgstr ""
+msgstr "Turco"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
@@ -1777,7 +1777,7 @@ msgstr "Digite qualquer coisa"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ucraniano"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
@@ -1796,7 +1796,7 @@ msgstr "Contactos ilimitados"
 msgid "Upload"
 msgstr "Carregar"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:138
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:145
 msgid "URL"
 msgstr "URL"
 
@@ -1834,7 +1834,7 @@ msgstr "Valores"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
@@ -1848,15 +1848,15 @@ msgstr "Visualizar"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Suportamos PNGs, JPEGs e GIFs quadrados até 10MB"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:142
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Enviaremos pedidos POST para este endpoint para cada novo evento"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
 msgid "Webhook"
 msgstr "Webhook"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:86
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -1888,8 +1888,8 @@ msgstr "O workflow não pode ser testado"
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
-#: src/pages/settings/developers/SettingsDevelopers.tsx:60
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:121
+#: src/pages/settings/developers/SettingsDevelopers.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
@@ -1915,11 +1915,11 @@ msgid "Workspace name"
 msgstr "Nome do espaço de trabalho"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx:40
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:154
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
 msgid "Write a description"
 msgstr "Escreva uma descrição"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:113
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:120
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr "sim"

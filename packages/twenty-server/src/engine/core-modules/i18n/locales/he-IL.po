@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 18:02\n"
+"PO-Revision-Date: 2025-02-11 20:02\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -20,242 +20,242 @@ msgstr ""
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
 msgid "(System) View Fields"
-msgstr ""
+msgstr "(מערכת) שדות תצוגה"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
 msgid "(System) View Filter Groups"
-msgstr ""
+msgstr "(מערכת) קבוצות סינון לתצוגה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
 msgid "(System) View Filters"
-msgstr ""
+msgstr "(מערכת) מסנני תצוגה"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
 msgid "(System) View Groups"
-msgstr ""
+msgstr "(מערכת) קבוצות תצוגה"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
 msgid "(System) View Sorts"
-msgstr ""
+msgstr "(מערכת) מיוני תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:33
 msgid "(System) Views"
-msgstr ""
+msgstr "(מערכת) תצוגות"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:55
 msgid "A company"
-msgstr ""
+msgstr "חברה"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:30
 msgid "A connected account"
-msgstr ""
+msgstr "חשבון מחובר"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
 msgid "A favorite that can be accessed from the left menu"
-msgstr ""
+msgstr "מועדף שניתן לגשת אליו מהתפריט השמאלי"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:24
 msgid "A Folder of favorites"
-msgstr ""
+msgstr "תיקיית מועדפים"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
 msgid "A group of related messages (e.g. email thread, chat thread)"
-msgstr ""
+msgstr "קבוצה של הודעות קשורות (לדוגמא, שרשור אימייל, שרשור צ'אט)"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
-msgstr ""
+msgstr "הודעה שנשלחה או נתקבלה דרך ערוץ ההודעות (אימייל, צ'אט, וכו')"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "A note"
-msgstr ""
+msgstr "הערה"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
 msgid "A note target"
-msgstr ""
+msgstr "מטרת הערה"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:59
 msgid "A person"
-msgstr ""
+msgstr "אדם"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:48
 msgid "A task"
-msgstr ""
+msgstr "משימה"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
 msgid "A task target"
-msgstr ""
+msgstr "מטרת משימה"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:20
 msgid "A webhook"
-msgstr ""
+msgstr "Webhook"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
 msgid "A workflow"
-msgstr ""
+msgstr "Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
 msgid "A workflow event listener"
-msgstr ""
+msgstr "מאזין לאירועי Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
 msgid "A workflow run"
-msgstr ""
+msgstr "הפעלת Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
 msgid "A workflow version"
-msgstr ""
+msgstr "גרסת Workflow"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
 msgid "A workspace member"
-msgstr ""
+msgstr "חבר בסביבת עבודה"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:58
 msgid "Access Token"
-msgstr ""
+msgstr "אסימון גישה"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
 #: src/modules/company/standard-objects/company.workspace-entity.ts:176
 msgid "Account Owner"
-msgstr ""
+msgstr "בעלים של חשבון"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:169
 msgid "Account owner for companies"
-msgstr ""
+msgstr "בעלים של חשבון עבור חברות"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:168
 msgid "Account Owner For Companies"
-msgstr ""
+msgstr "בעלים של חשבון עבור חברות"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:123
 msgid "Address"
-msgstr ""
+msgstr "כתובת"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:264
 msgid "Address (deprecated) "
-msgstr ""
+msgstr "כתובת (מיושן) "
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:124
 msgid "Address of the company"
-msgstr ""
+msgstr "כתובת של החברה"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:265
 msgid "Address of the company - deprecated in favor of new address field"
-msgstr ""
+msgstr "כתובת של החברה - מיושן לטובת שדה כתובת חדש"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:189
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
 msgid "Aggregate operation"
-msgstr ""
+msgstr "פעולת אגרגציה"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:35
 msgid "Aggregated / filtered event to be displayed on the timeline"
-msgstr ""
+msgstr "אירוע מצטבר / מסונן שיוצג בציר הזמן"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:69
 msgid "Amount"
-msgstr ""
+msgstr "סכום"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:19
 msgid "An API key"
-msgstr ""
+msgstr "מפתח API"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:32
 msgid "An attachment"
-msgstr ""
+msgstr "קובץ מצורף"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:24
 msgid "An audit log of actions performed in the system"
-msgstr ""
+msgstr "יומן רישום של פעולות שבוצעו במערכת"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:20
 msgid "An event related to user behavior"
-msgstr ""
+msgstr "אירוע שקשור להתנהגות משתמש"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:50
 msgid "An opportunity"
-msgstr ""
+msgstr "הזדמנות"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:114
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
-msgstr ""
+msgstr "הכנסה חוזרת שנתית: ההכנסה השנתית הממשית או המשוערת של החברה"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
 msgid "API Key"
-msgstr ""
+msgstr "מפתח API"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:18
 msgid "API Keys"
-msgstr ""
+msgstr "מפתחות API"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
 msgid "ApiKey expiration date"
-msgstr ""
+msgstr "תאריך תפוגת מפתח ה-API"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
 msgid "ApiKey name"
-msgstr ""
+msgstr "שם מפתח ה-API"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
 msgid "ApiKey revocation date"
-msgstr ""
+msgstr "תאריך ביטול מפתח ה-API"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:113
 msgid "ARR"
-msgstr ""
+msgstr "הכנסה מחזורית"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
 msgid "Assigned tasks"
-msgstr ""
+msgstr "משימות שהוקצו"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:168
 msgid "Assignee"
-msgstr ""
+msgstr "המוקצה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
 msgid "Associated User Id"
-msgstr ""
+msgstr "מזהה המשתמש המקושר"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:30
 msgid "Attachment"
-msgstr ""
+msgstr "קובץ מצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:70
 msgid "Attachment author"
-msgstr ""
+msgstr "מחבר הקובץ המצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:129
 msgid "Attachment company"
-msgstr ""
+msgstr "חברת הקובץ המצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:52
 msgid "Attachment full path"
-msgstr ""
+msgstr "נתיב מלא של הקובץ המצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:43
 msgid "Attachment name"
-msgstr ""
+msgstr "שם הקובץ המצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:99
 msgid "Attachment note"
-msgstr ""
+msgstr "הערה לקובץ המצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:144
 msgid "Attachment opportunity"
-msgstr ""
+msgstr "הזדמנות הקובץ המצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:114
 msgid "Attachment person"
-msgstr ""
+msgstr "אדם הקובץ המצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:84
 msgid "Attachment task"
-msgstr ""
+msgstr "משימת הקובץ המצורף"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:61
 msgid "Attachment type"
-msgstr ""
+msgstr "סוג הקובץ המצורף"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:156
 #: src/modules/person/standard-objects/person.workspace-entity.ts:238
@@ -265,53 +265,53 @@ msgstr ""
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
 msgid "Attachments"
-msgstr ""
+msgstr "קבצים מצורפים"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
 msgid "Attachments created by the workspace member"
-msgstr ""
+msgstr "קבצים מצורפים שנוצרו על ידי חבר במרחב העבודה"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:240
 msgid "Attachments linked to the company"
-msgstr ""
+msgstr "קבצים מצורפים המקושרים לחברה"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:239
 msgid "Attachments linked to the contact."
-msgstr ""
+msgstr "קבצים מצורפים המקושרים לאיש קשר."
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:200
 msgid "Attachments linked to the opportunity"
-msgstr ""
+msgstr "קבצים מצורפים המקושרים להזדמנות"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:123
 msgid "Attachments tied to the {label}"
-msgstr ""
+msgstr "קבצים מצורפים אשר קשורים ל{label}"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
 msgid "Audit Log"
-msgstr ""
+msgstr "יומן ביקורת"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:255
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:23
 msgid "Audit Logs"
-msgstr ""
+msgstr "יומני ביקורת"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:256
 msgid "Audit Logs linked to the workspace member"
-msgstr ""
+msgstr "יומני ביקורת המקושרים לחבר מרחב העבודה"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
 msgid "Auth failed at"
-msgstr ""
+msgstr "אימות נכשל ב"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
 msgid "Author"
-msgstr ""
+msgstr "מחבר"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:180
 msgid "Authored attachments"
-msgstr ""
+msgstr "קבצים מצורפים שנכתבו"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
 msgid "Automatically create People records when receiving or sending emails"
@@ -319,56 +319,56 @@ msgstr ""
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
 msgid "Automatically create records for people you participated with in an event."
-msgstr ""
+msgstr "יצירה אוטומטית של רשומות עבור אנשים שהשתתפת איתם באירוע."
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:146
 msgid "Avatar"
-msgstr ""
+msgstr "אווטאר"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:117
 msgid "Avatar Url"
-msgstr ""
+msgstr "כתובת אתר של אווטאר"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:18
 msgid "Behavioral Event"
-msgstr ""
+msgstr "אירוע התנהגותי"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:19
 msgid "Behavioral Events"
-msgstr ""
+msgstr "אירועים התנהגותיים"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:216
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:22
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:24
 msgid "Blocklist"
-msgstr ""
+msgstr "רשימת חסימה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:217
 msgid "Blocklisted handles"
-msgstr ""
+msgstr "מזהים שנחסמו"
 
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:23
 msgid "Blocklists"
-msgstr ""
+msgstr "רשימות חסימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:77
 #: src/modules/task/standard-objects/task.workspace-entity.ts:87
 #: src/modules/note/standard-objects/note.workspace-entity.ts:75
 #: src/modules/note/standard-objects/note.workspace-entity.ts:85
 msgid "Body"
-msgstr ""
+msgstr "גוף"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
 msgid "Cached record name"
-msgstr ""
+msgstr "שם הרישום המטמון"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:74
 msgid "Calendar Channel"
-msgstr ""
+msgstr "ערוץ הלוח שנה"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:23
 msgid "Calendar Channel Event Association"
-msgstr ""
+msgstr "האגוד של ערוץ הלוח שנה"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:155
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:156
@@ -377,68 +377,68 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:24
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:25
 msgid "Calendar Channel Event Associations"
-msgstr ""
+msgstr "האגודות של אירועי ערוץ הלוח שנה"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:139
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:140
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:75
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:76
 msgid "Calendar Channels"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:27
 msgid "Calendar event"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:32
 msgid "Calendar event participant"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:33
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:34
 msgid "Calendar event participants"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
 #: src/modules/person/standard-objects/person.workspace-entity.ts:262
 #: src/modules/person/standard-objects/person.workspace-entity.ts:263
 msgid "Calendar Event Participants"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:28
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:29
 msgid "Calendar events"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:55
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:56
 msgid "Channel ID"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:136
 msgid "Channel Type"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:137
 msgid "City"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:79
 msgid "Close date"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:97
 msgid "Color Scheme"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:108
 msgid "Compact View"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:54
 msgid "Companies"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
@@ -449,16 +449,16 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:53
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
 msgid "Company"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:144
 msgid "Company record position"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:135
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:136
 msgid "Conference Solution"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:359
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:360
@@ -466,66 +466,66 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:307
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:308
 msgid "Connected Account"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:192
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:193
 msgid "Connected accounts"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:29
 msgid "Connected Accounts"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:170
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:221
 msgid "Contact auto creation policy"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:147
 msgid "Contact’s avatar"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:138
 msgid "Contact’s city"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:178
 msgid "Contact’s company"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:80
 msgid "Contact’s Emails"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:110
 msgid "Contact’s job title"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:90
 msgid "Contact’s Linkedin account"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:70
 msgid "Contact’s name"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:119
 msgid "Contact’s phone number"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:129
 msgid "Contact’s phone numbers"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:100
 msgid "Contact’s X/Twitter account"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
 msgid "Context"
-msgstr ""
+msgstr "הקשר"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
@@ -535,109 +535,109 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:154
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:44
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:45
 #: src/engine/twenty-orm/base.workspace-entity.ts:26
 #: src/engine/twenty-orm/base.workspace-entity.ts:27
 msgid "Creation date"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
 msgid "Creation DateTime"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:278
 msgid "Date format"
-msgstr ""
+msgstr "\\"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:53
 msgid "Date when the record was deleted"
-msgstr ""
+msgstr "\\"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:52
 msgid "Deleted at"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:109
 msgid "Describes if the view is in compact mode"
-msgstr ""
+msgstr "מתאר אם התצוגה נמצאת במצב קומפקטי"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:109
 msgid "Description"
-msgstr ""
+msgstr "תיאור"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:48
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:66
 msgid "Direction"
-msgstr ""
+msgstr "כיוון"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:62
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:63
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:54
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:55
 msgid "Display Name"
-msgstr ""
+msgstr "שם תצוגה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:59
 msgid "Display Value"
-msgstr ""
+msgstr "ערך תצוגה"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:73
 msgid "Domain Name"
-msgstr ""
+msgstr "שם דומיין"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:100
 msgid "Due Date"
-msgstr ""
+msgstr "תאריך יעד"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:79
 msgid "Emails"
-msgstr ""
+msgstr "אימיילים"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:83
 msgid "Employees"
-msgstr ""
+msgstr "עובדים"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:78
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:79
 msgid "End Date"
-msgstr ""
+msgstr "תאריך סיום"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
 msgid "Event company"
-msgstr ""
+msgstr "חברה באירוע"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
 msgid "Event context"
-msgstr ""
+msgstr "הקשר אירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
 msgid "Event details"
-msgstr ""
+msgstr "פרטי אירוע"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
 msgid "Event external ID"
-msgstr ""
+msgstr "מזהה חיצוני של אירוע"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
 msgid "Event ID"
-msgstr ""
+msgstr "מזהה אירוע"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
 msgid "Event Listeners"
-msgstr ""
+msgstr "מאזיני אירועים"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
@@ -645,142 +645,142 @@ msgstr ""
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
 msgid "Event name"
-msgstr ""
+msgstr "שם אירוע"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
 msgid "Event name/type"
-msgstr ""
+msgstr "שם/סוג אירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
 msgid "Event note"
-msgstr ""
+msgstr "הערה לאירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
 msgid "Event opportunity"
-msgstr ""
+msgstr "הזדמנות באירוע"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
 msgid "Event Participants"
-msgstr ""
+msgstr "משתתפי אירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
 msgid "Event person"
-msgstr ""
+msgstr "אדם באירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
 msgid "Event task"
-msgstr ""
+msgstr "משימה באירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
 msgid "Event workflow"
-msgstr ""
+msgstr "תהליך עבודה באירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
 msgid "Event workflow run"
-msgstr ""
+msgstr "הפעלת תהליך עבודה באירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
 msgid "Event workflow version"
-msgstr ""
+msgstr "גרסת תהליך עבודה של אירוע"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
 msgid "Event workspace member"
-msgstr ""
+msgstr "חבר חלל עבודה באירוע"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
 #: src/modules/person/standard-objects/person.workspace-entity.ts:276
 msgid "Events"
-msgstr ""
+msgstr "אירועים"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:277
 msgid "Events linked to the person"
-msgstr ""
+msgstr "אירועים הקשורים לאדם"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
 msgid "Events linked to the workspace member"
-msgstr ""
+msgstr "אירועים הקשורים לחבר חלל עבודה"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
 msgid "Exclude group emails"
-msgstr ""
+msgstr "התעלם מכתובות דוא\"ל קבוצתיות"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
 msgid "Exclude non professional emails"
-msgstr ""
+msgstr "התעלם מכתובות דוא\"ל לא מקצועיות"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
 msgid "Executed by"
-msgstr ""
+msgstr "נתבע על ידי"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
 msgid "Expiration date"
-msgstr ""
+msgstr "\"תאריך תפוגה\""
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
 msgid "Favorite"
-msgstr ""
+msgstr "מועדף"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
 msgid "Favorite company"
-msgstr ""
+msgstr "חברה מועדפת"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
 msgid "Favorite Folder"
-msgstr ""
+msgstr "תיקייה מועדפת"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
 msgid "Favorite folder position"
-msgstr ""
+msgstr "מיקום תיקייה מועדפת"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
 msgid "Favorite Folders"
-msgstr ""
+msgstr "תיקיות מועדפות"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
 msgid "Favorite note"
-msgstr ""
+msgstr "הערה מועדפת"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
 msgid "Favorite opportunity"
-msgstr ""
+msgstr "הזדמנות מועדפת"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
 msgid "Favorite person"
-msgstr ""
+msgstr "איש קשר מועדף"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
 msgid "Favorite position"
-msgstr ""
+msgstr "תפקיד מועדף"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
 msgid "Favorite task"
-msgstr ""
+msgstr "משימה מועדפת"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
 msgid "Favorite view"
-msgstr ""
+msgstr "תצוגה מועדפת"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
 msgid "Favorite workflow"
-msgstr ""
+msgstr "תהליך עבודה מועדף"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
 msgid "Favorite workflow run"
-msgstr ""
+msgstr "הרצת תהליך עבודה מועדפת"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
 msgid "Favorite workflow version"
-msgstr ""
+msgstr "גרסת תהליך עבודה מועדפת"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
 msgid "Favorite workspace member"
-msgstr ""
+msgstr "חבר בסביבת העבודה המועדף"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
@@ -796,95 +796,95 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:226
 #: src/engine/twenty-orm/custom.workspace-entity.ts:101
 msgid "Favorites"
-msgstr ""
+msgstr "מועדפים"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
 msgid "Favorites in this folder"
-msgstr ""
+msgstr "מועדפים בתיקיה זו"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:227
 msgid "Favorites linked to the company"
-msgstr ""
+msgstr "מועדפים הקשורים לחברה"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:227
 msgid "Favorites linked to the contact"
-msgstr ""
+msgstr "מועדפים הקשורים לאיש קשר"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:144
 msgid "Favorites linked to the note"
-msgstr ""
+msgstr "מועדפים הקשורים להערה"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:165
 msgid "Favorites linked to the opportunity"
-msgstr ""
+msgstr "מועדפים הקשורים להזדמנות"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:198
 msgid "Favorites linked to the task"
-msgstr ""
+msgstr "מועדפים הקשורים למשימה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:178
 msgid "Favorites linked to the view"
-msgstr ""
+msgstr "מועדפים הקשורים לתצוגה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
 msgid "Favorites linked to the workflow"
-msgstr ""
+msgstr "מועדפים הקשורים לתהליך עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
 msgid "Favorites linked to the workflow run"
-msgstr ""
+msgstr "מועדפים הקשורים להרצת תהליך עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
 msgid "Favorites linked to the workflow version"
-msgstr ""
+msgstr "מועדפים הקשורים לגרסת תהליך עבודה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
 msgid "Favorites linked to the workspace member"
-msgstr ""
+msgstr "מועדפים הקשורים לחבר בסביבת העבודה"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:106
 msgid "Favorites tied to the {label}"
-msgstr ""
+msgstr "מועדפים המקושרים ל-{label}"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:34
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:45
 msgid "Field Metadata Id"
-msgstr ""
+msgstr "מזהה המטא-דאטה של השדה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:262
 #: src/modules/view/standard-objects/view.workspace-entity.ts:263
 msgid "Field metadata used for aggregate operation"
-msgstr ""
+msgstr "השדה שמשמש לפעולת אגריגציה"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts:6
 msgid "Field used for full-text search"
-msgstr ""
+msgstr "שדה המשמש לחיפוש טקסט מלא"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:51
 msgid "Field Value"
-msgstr ""
+msgstr "ערך השדה"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
 msgid "Folder for Message Channel"
-msgstr ""
+msgstr "תיקיה עבור ערוץ הודעות"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
 msgid "Folder name"
-msgstr ""
+msgstr "שם התיקיה"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:51
 msgid "Full path"
-msgstr ""
+msgstr "נתיב מלא"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:52
 msgid "Group by this field value"
-msgstr ""
+msgstr "לקבץ על פי ערך שדה זה"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
 msgid "handle"
-msgstr ""
+msgstr "ידית"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:53
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:54
@@ -897,34 +897,34 @@ msgstr ""
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:34
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:35
 msgid "Handle"
-msgstr ""
+msgstr "ידית"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:95
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:96
 msgid "Handle Aliases"
-msgstr ""
+msgstr "כינויים לידית"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:40
 msgid "Header message Id"
-msgstr ""
+msgstr "מזהה הודעה ראשית"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:126
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:127
 msgid "iCal UID"
-msgstr ""
+msgstr "מזהה iCal"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:79
 msgid "Icon"
-msgstr ""
+msgstr "סמל"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:133
 msgid "ICP"
-msgstr ""
+msgstr "מספר זיהוי מוסדי לאינטרנט"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:14
 #: src/engine/twenty-orm/base.workspace-entity.ts:15
 msgid "Id"
-msgstr ""
+msgstr "מזהה"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:134
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
@@ -937,40 +937,40 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:48
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:49
 msgid "Is canceled"
-msgstr ""
+msgstr "מבוטל"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:160
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:161
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
 msgid "Is Contact Auto Creation Enabled"
-msgstr ""
+msgstr "יצירת איש קשר אוטומטית פעילה"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
 msgid "Is Full Day"
-msgstr ""
+msgstr "האירוע ממשך יום שלם"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
 msgid "Is Organizer"
-msgstr ""
+msgstr "מארגן האירוע"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:258
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:259
 msgid "Is Sync Enabled"
-msgstr ""
+msgstr "סנכרון מופעל"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:109
 msgid "Job Title"
-msgstr ""
+msgstr "תיאור משרה"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:68
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:53
 msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr ""
+msgstr "אובייקט Json לספק הקשר (משתמש, מכשיר, סביבת עבודה וכו')"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
 msgid "Json object to provide output of the workflow run"
@@ -992,15 +992,15 @@ msgstr ""
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:87
 msgid "kanbanfieldMetadataId"
-msgstr ""
+msgstr "מזהה Metadata של שדה קנבן"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:68
 msgid "Key"
-msgstr ""
+msgstr "מפתח"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:107
 msgid "Language"
-msgstr ""
+msgstr "שפה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
 msgid "Last published Version Id"
@@ -1009,32 +1009,32 @@ msgstr ""
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
 msgid "Last sync cursor"
-msgstr ""
+msgstr "סמן סנכרון אחרון"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:239
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:240
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:277
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:278
 msgid "Last sync date"
-msgstr ""
+msgstr "תאריך סנכרון אחרון"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:76
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:77
 msgid "Last sync history ID"
-msgstr ""
+msgstr "מזהה היסטוריית סנכרון אחרון"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:40
 msgid "Last time the record was changed"
-msgstr ""
+msgstr "הפעם האחרונה בה הרשומה הוחלפה"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:39
 msgid "Last update"
-msgstr ""
+msgstr "עדכון אחרון"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:93
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:94
 msgid "Linked Object Metadata Id"
-msgstr ""
+msgstr "מזהה Metadata של אובייקט מקושר"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:192
 msgid "Linked Opportunities"
@@ -1042,17 +1042,17 @@ msgstr ""
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:74
 msgid "Linked Record cached name"
-msgstr ""
+msgstr "שם מטמון של רשומה מקושרת"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:83
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:84
 msgid "Linked Record id"
-msgstr ""
+msgstr "מזהה רשומה מקושרת"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:89
 #: src/modules/company/standard-objects/company.workspace-entity.ts:93
 msgid "Linkedin"
-msgstr ""
+msgstr "לינקדין"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:193
 msgid "List of opportunities for which that person is the point of contact"
@@ -1061,7 +1061,7 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:117
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:118
 msgid "Location"
-msgstr ""
+msgstr "מיקום"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:60
 msgid "Logical Operator"
@@ -1069,84 +1069,84 @@ msgstr ""
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:61
 msgid "Logical operator for the filter group"
-msgstr ""
+msgstr "אופרטור לוגי לקבוצת הפילטר"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
 msgid "Meet Link"
-msgstr ""
+msgstr "לינק לפגישה"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:72
 msgid "Message"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:41
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:42
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:84
 msgid "Message Channel"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:105
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:374
 msgid "Message Channel Association"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:91
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:92
 msgid "Message Channel Id"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:29
 msgid "Message Channel Message Association"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:30
 msgid "Message Channel Message Associations"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:85
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:86
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:128
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:129
 msgid "Message Channels"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:67
 msgid "Message Direction"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:45
 msgid "Message External Id"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:21
 msgid "Message Folder"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:22
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:388
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:389
 msgid "Message Folders"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:106
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:107
 msgid "Message Id"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:41
 msgid "Message id from the message header"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:46
 msgid "Message id from the messaging provider"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:25
 msgid "Message Participant"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
@@ -1157,46 +1157,46 @@ msgstr ""
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:27
 msgid "Message Participants"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:31
 msgid "Message Synced with a Message Channel"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:23
 msgid "Message Thread"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:77
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:78
 msgid "Message Thread Id"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:24
 msgid "Message Threads"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:29
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:34
 msgid "Messages"
-msgstr ""
+msgstr "הודעות"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
 msgid "Messages from the channel."
-msgstr ""
+msgstr "הודעות מהערוץ."
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
 msgid "Messages from the thread."
-msgstr ""
+msgstr "הודעות מהשרשור."
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
 msgid "Messaging provider access token"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
 msgid "Messaging provider refresh token"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
@@ -1214,15 +1214,15 @@ msgstr ""
 #: src/engine/twenty-orm/custom.workspace-entity.ts:40
 #: src/engine/twenty-orm/custom.workspace-entity.ts:41
 msgid "Name"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
 msgid "Name of the favorite folder"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
 msgid "Name of the workflow run"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
 #: src/modules/note/standard-objects/note.workspace-entity.ts:44
@@ -1230,36 +1230,36 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:119
 msgid "Note attachments"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:76
 #: src/modules/note/standard-objects/note.workspace-entity.ts:86
 msgid "Note body"
-msgstr ""
+msgstr "\\"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:56
 msgid "Note record position"
-msgstr ""
+msgstr "מיקום רישום ההערה"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
 msgid "Note Target"
-msgstr ""
+msgstr "מטרת ההערה"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:107
 msgid "Note targets"
-msgstr ""
+msgstr "יעדי ההערה"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:26
 msgid "Note Targets"
-msgstr ""
+msgstr "יעדים להערה"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:67
 msgid "Note title"
-msgstr ""
+msgstr "כותרת ההערה"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:215
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
@@ -1267,83 +1267,83 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:203
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
-msgstr ""
+msgstr "הערות"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:74
 msgid "Notes tied to the {label}"
-msgstr ""
+msgstr "הערות הקשורות ל{label}"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:204
 msgid "Notes tied to the company"
-msgstr ""
+msgstr "הערות הקשורות לחברה"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:216
 msgid "Notes tied to the contact"
-msgstr ""
+msgstr "הערות הקשורות לאיש קשר"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
 msgid "Notes tied to the opportunity"
-msgstr ""
+msgstr "הערות הקשורות להזדמנות"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
 msgid "NoteTarget company"
-msgstr ""
+msgstr "NoteTarget חברה"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
 msgid "NoteTarget note"
-msgstr ""
+msgstr "NoteTarget הערה"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
 msgid "NoteTarget opportunity"
-msgstr ""
+msgstr "NoteTarget הזדמנות"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
 msgid "NoteTarget person"
-msgstr ""
+msgstr "NoteTarget אדם"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:84
 msgid "Number of employees in the company"
-msgstr ""
+msgstr "מספר העובדים בחברה"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
 msgid "Object id"
-msgstr ""
+msgstr "מזהה האובייקט"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
 msgid "Object metadata id"
-msgstr ""
+msgstr "מזהה מטא-נתונים של אובייקט"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:51
 msgid "Object Metadata Id"
-msgstr ""
+msgstr "מזהה מטא-נתונים של אובייקט"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:63
 msgid "Object name"
-msgstr ""
+msgstr "שם האובייקט"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
 msgid "Operand"
-msgstr ""
+msgstr "אופרנד"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
 msgid "Operation"
-msgstr ""
+msgstr "פעולה"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
 msgid "Operations"
-msgstr ""
+msgstr "פעולות"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
 #: src/modules/company/standard-objects/company.workspace-entity.ts:214
 msgid "Opportunities"
-msgstr ""
+msgstr "הזדמנויות"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:215
 msgid "Opportunities linked to the company."
-msgstr ""
+msgstr "הזדמנויות הקשורות לחברה."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
@@ -1352,65 +1352,65 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:118
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:143
 msgid "Opportunity"
-msgstr ""
+msgstr "הזדמנות"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:70
 msgid "Opportunity amount"
-msgstr ""
+msgstr "סכום ההזדמנות"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:80
 msgid "Opportunity close date"
-msgstr ""
+msgstr "תאריך סגירת ההזדמנות"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:149
 msgid "Opportunity company"
-msgstr ""
+msgstr "חברה של ההזדמנות"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
 msgid "Opportunity point of contact"
-msgstr ""
+msgstr "איש קשר מרכזי של ההזדמנות"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
 msgid "Opportunity probability"
-msgstr ""
+msgstr "הסיכוי של ההזדמנות"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
 msgid "Opportunity record position"
-msgstr ""
+msgstr "מיקום רישום ההזדמנות"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
 msgid "Opportunity stage"
-msgstr ""
+msgstr "שלב ההזדמנות"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:190
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:97
 msgid "Optional aggregate operation"
-msgstr ""
+msgstr "אגרגציה אופציונלית של פעולה"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr ""
+msgstr "סוד אופציונלי המשמש לחישוב חתימת HMAC עבור משאבות webhook. סוד זה מתואם בין Twenty וצרכן ה-webhook כדי לאמת בקשות webhook."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
 msgid "Output"
-msgstr ""
+msgstr "פלט"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:52
 msgid "Parent View Filter Group"
-msgstr ""
+msgstr "קבוצת סינון תצוגת אב"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:51
 msgid "Parent View Filter Group Id"
-msgstr ""
+msgstr "מזהה קבוצת סינון תצוגת אב"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:58
 #: src/modules/company/standard-objects/company.workspace-entity.ts:164
 msgid "People"
-msgstr ""
+msgstr "אנשים"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:165
 msgid "People linked to the company."
-msgstr ""
+msgstr "אנשים הקשורים לחברה."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
@@ -1423,23 +1423,23 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:124
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:113
 msgid "Person"
-msgstr ""
+msgstr "אדם"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:157
 msgid "Person record Position"
-msgstr ""
+msgstr "תיק אישי תפקיד"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:118
 msgid "Phone"
-msgstr ""
+msgstr "טלפון"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:128
 msgid "Phones"
-msgstr ""
+msgstr "טלפונים"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
 msgid "Point of Contact"
-msgstr ""
+msgstr "איש קשר"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
@@ -1457,156 +1457,156 @@ msgstr ""
 #: src/engine/twenty-orm/custom.workspace-entity.ts:49
 #: src/engine/twenty-orm/custom.workspace-entity.ts:50
 msgid "Position"
-msgstr ""
+msgstr "תפקיד"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:90
 msgid "Position in the parent view filter group"
-msgstr ""
+msgstr "מיקום בקבוצת מסנני הצגה עליונים"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
 msgid "Position in the view filter group"
-msgstr ""
+msgstr "מיקום בקבוצת מסנני ההצגה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
 msgid "Position in view filter group"
-msgstr ""
+msgstr "מיקום בקבוצת מסנני ההצגה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
 msgid "Preferred color scheme"
-msgstr ""
+msgstr "''"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
 msgid "Preferred language"
-msgstr ""
+msgstr "שפה מועדפת"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
 msgid "Probability"
-msgstr ""
+msgstr "סבירות"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:49
 msgid "provider"
-msgstr ""
+msgstr "ספק"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
 msgid "Received At"
-msgstr ""
+msgstr "תאריך קבלה"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
 msgid "Record id"
-msgstr ""
+msgstr "מזהה רישום"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:45
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:46
 msgid "Recurring Event ID"
-msgstr ""
+msgstr "מזהה אירוע חוזר"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
 msgid "Refresh Token"
-msgstr ""
+msgstr "אסימון רענון"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
 msgid "Related user email address"
-msgstr ""
+msgstr "כתובת דוא\"ל של המשתמש הקשור"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:144
 #: src/modules/note/standard-objects/note.workspace-entity.ts:106
 msgid "Relations"
-msgstr ""
+msgstr "יחסים"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:73
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:74
 msgid "Response Status"
-msgstr ""
+msgstr "מצב תגובה"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:47
 msgid "Revocation date"
-msgstr ""
+msgstr "תאריך ביטול"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:37
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:38
 msgid "Role"
-msgstr ""
+msgstr "תפקיד"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:121
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:142
 msgid "Runs"
-msgstr ""
+msgstr "ריצות"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
 msgid "Scopes"
-msgstr ""
+msgstr "טווחי הרשאה"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
 msgid "Search vector"
-msgstr ""
+msgstr "וקטור חיפוש"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:69
 msgid "Secret"
-msgstr ""
+msgstr "סוד"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:64
 msgid "Size"
-msgstr ""
+msgstr "גודל"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
 msgid "Stage"
-msgstr ""
+msgstr "שלב"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
 msgid "Start Date"
-msgstr ""
+msgstr "תאריך התחלה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:110
 msgid "Status"
-msgstr ""
+msgstr "מצב"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:87
 msgid "Statuses"
-msgstr ""
+msgstr "מצבים"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:49
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:50
 msgid "Subject"
-msgstr ""
+msgstr "נושא"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:51
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:52
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:268
 msgid "Sync Cursor"
-msgstr ""
+msgstr "אינדיקטור סנכרון"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr ""
+msgstr "אינדיקטור סנכרון. משמש לסנכרון אירועים מספקי היומן"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:137
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:138
 msgid "Sync stage"
-msgstr ""
+msgstr "שלב סינכרון"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:339
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:340
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
 msgid "Sync stage started at"
-msgstr ""
+msgstr "שלב סינכרון התחיל ב"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:95
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:96
 msgid "Sync status"
-msgstr ""
+msgstr "סטטוס סינכרון"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:30
 msgid "Target Url"
-msgstr ""
+msgstr "כתובת יעד"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
 #: src/modules/task/standard-objects/task.workspace-entity.ts:46
@@ -1614,48 +1614,48 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
 msgid "Task"
-msgstr ""
+msgstr "משימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:169
 msgid "Task assignee"
-msgstr ""
+msgstr "ממונה על המשימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:157
 msgid "Task attachments"
-msgstr ""
+msgstr "קבצים מצורפים למשימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:78
 #: src/modules/task/standard-objects/task.workspace-entity.ts:88
 msgid "Task body"
-msgstr ""
+msgstr "תוכן המשימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:101
 msgid "Task due date"
-msgstr ""
+msgstr "תאריך הסיום של המשימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:58
 msgid "Task record position"
-msgstr ""
+msgstr "מקום התיעוד של המשימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:111
 msgid "Task status"
-msgstr ""
+msgstr "סטטוס המשימה"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:25
 msgid "Task Target"
-msgstr ""
+msgstr "יעד משימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:145
 msgid "Task targets"
-msgstr ""
+msgstr "יעדי המשימה"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
 msgid "Task Targets"
-msgstr ""
+msgstr "יעדי המשימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:69
 msgid "Task title"
-msgstr ""
+msgstr "כותרת המשימה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:47
 #: src/modules/person/standard-objects/person.workspace-entity.ts:204
@@ -1663,72 +1663,72 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:192
 #: src/engine/twenty-orm/custom.workspace-entity.ts:85
 msgid "Tasks"
-msgstr ""
+msgstr "משימות"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:146
 msgid "Tasks assigned to the workspace member"
-msgstr ""
+msgstr "משימות שהוקצו לחבר במרחב העבודה"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:90
 msgid "Tasks tied to the {label}"
-msgstr ""
+msgstr "משימות שקשורות ל{label}"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:193
 msgid "Tasks tied to the company"
-msgstr ""
+msgstr "משימות שקשורות לחברה"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:205
 msgid "Tasks tied to the contact"
-msgstr ""
+msgstr "משימות שקשורות לאיש קשר"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
 msgid "Tasks tied to the opportunity"
-msgstr ""
+msgstr "משימות שקשורות להזדמנות"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:66
 msgid "TaskTarget company"
-msgstr ""
+msgstr "יעד משימת חברה"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
 msgid "TaskTarget opportunity"
-msgstr ""
+msgstr "יעד משימת הזדמנות"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
 msgid "TaskTarget person"
-msgstr ""
+msgstr "יעד משימת אדם"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:36
 msgid "TaskTarget task"
-msgstr ""
+msgstr "יעד משימת משימה"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
 msgid "Text"
-msgstr ""
+msgstr "טקסט"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
 msgid "The account handle (email, username, phone number, etc.)"
-msgstr ""
+msgstr "מזהה החשבון (דוא\"ל, שם משתמש, מספר טלפון וכו')"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
 msgid "The account provider"
-msgstr ""
+msgstr "ספק החשבון"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:94
 msgid "The company Linkedin account"
-msgstr ""
+msgstr "חשבון הלינקדין של החברה"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:65
 msgid "The company name"
-msgstr ""
+msgstr "שם החברה"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:104
 msgid "The company Twitter/X account"
-msgstr ""
+msgstr "חשבון ה-Twitter/X של החברה"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:74
 msgid "The company website URL. We use this url to fetch the company icon"
-msgstr ""
+msgstr "כתובת האתר של החברה. אנחנו משתמשים בכתובת זו כדי לאחזר את סמל החברה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
 #: src/modules/task/standard-objects/task.workspace-entity.ts:138
@@ -1738,70 +1738,70 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
-msgstr ""
+msgstr "יוצר הרשומה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
 msgid "The current statuses of the workflow versions"
-msgstr ""
+msgstr "המצבים הנוכחיים של גרסאות הזרימות"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
 msgid "The date the message was received"
-msgstr ""
+msgstr "תאריך קבלת ההודעה"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
 msgid "The executor of the workflow"
-msgstr ""
+msgstr "ביצוע הזרימה"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
 msgid "The folder this favorite belongs to"
-msgstr ""
+msgstr "התיקייה של המועדפים שאליה הוא שייך"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:61
 msgid "The opportunity name"
-msgstr ""
+msgstr "שם ההזדמנות"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:35
 msgid "The workflow event listener name"
-msgstr ""
+msgstr "שם מאזין לאירוע תהליך העבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
 msgid "The workflow last published version id"
-msgstr ""
+msgstr "מזהה של הגרסה האחרונה שפורסמה של תהליך העבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
 msgid "The workflow name"
-msgstr ""
+msgstr "שם תהליך העבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:76
 msgid "The workflow version name"
-msgstr ""
+msgstr "שם גרסת תהליך העבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:105
 msgid "The workflow version status"
-msgstr ""
+msgstr "סטטוס גרסת תהליך העבודה"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:56
 msgid "Thread External Id"
-msgstr ""
+msgstr "מזהה חיצוני של שיחה"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
 msgid "Thread id from the messaging provider"
-msgstr ""
+msgstr "מזהה שיחה מספק המסרים"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
 msgid "Throttle Failure Count"
-msgstr ""
+msgstr "מספר ניסיונות כשל בדיקת מהירות"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
 msgid "Time format"
-msgstr ""
+msgstr "פורמט זמן"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:268
 msgid "Time zone"
-msgstr ""
+msgstr "אזור זמן"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
@@ -1813,101 +1813,101 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:251
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
-msgstr ""
+msgstr "פעילויות ציר זמנים"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:252
 msgid "Timeline Activities linked to the company"
-msgstr ""
+msgstr "פעילויות ציר זמנים הקשורות לחברה"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:132
 msgid "Timeline Activities linked to the note."
-msgstr ""
+msgstr "פעילויות ציר זמנים הקשורות להערה."
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
 msgid "Timeline Activities linked to the opportunity."
-msgstr ""
+msgstr "פעילויות ציר זמנים הקשורות להזדמנות."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
 msgid "Timeline activities linked to the run"
-msgstr ""
+msgstr "פעילויות ציר זמנים הקשורות לריצה"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:186
 msgid "Timeline Activities linked to the task."
-msgstr ""
+msgstr "פעילויות ציר זמנים הקשורות למשימה."
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
 msgid "Timeline activities linked to the version"
-msgstr ""
+msgstr "פעילויות ציר זמנים הקשורות לגרסה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:156
 msgid "Timeline activities linked to the workflow"
-msgstr ""
+msgstr "פעילויות ציר זמנים הקשורות לתהליך עבודה"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:139
 msgid "Timeline Activities tied to the {label}"
-msgstr ""
+msgstr "פעילויות ציר זמנים הקשורות ל{label}"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
 msgid "Timeline Activity"
-msgstr ""
+msgstr "פעילות בציר זמנים"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:68
 #: src/modules/note/standard-objects/note.workspace-entity.ts:66
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
 msgid "Title"
-msgstr ""
+msgstr "כותרת"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:59
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:135
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:60
 msgid "Type"
-msgstr ""
+msgstr "סוג"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:98
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:99
 msgid "Update DateTime"
-msgstr ""
+msgstr "תאריך ושעה של עדכון"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:126
 msgid "User Email"
-msgstr ""
+msgstr "דואר אלקטרוני של משתמש"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:135
 msgid "User Id"
-msgstr ""
+msgstr "מזהה משתמש"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:270
 msgid "User time zone"
-msgstr ""
+msgstr "אזור זמן של המשתמש"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:279
 msgid "User's preferred date format"
-msgstr ""
+msgstr "פורמט התאריך המועדף על המשתמש"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:315
 msgid "User's preferred time format"
-msgstr ""
+msgstr "פורמט הזמן המועדף על המשתמש"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
 msgid "Value"
-msgstr ""
+msgstr "ערך"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
 msgid "Version status"
-msgstr ""
+msgstr "סטטוס הגרסה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:94
 msgid "Version steps"
-msgstr ""
+msgstr "שלבי הגרסה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:84
 msgid "Version trigger"
-msgstr ""
+msgstr "מאפשר התראה של הגרסה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:110
 msgid "Versions"
-msgstr ""
+msgstr "גרסאות"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:31
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:57
@@ -1918,191 +1918,191 @@ msgstr ""
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:85
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:208
 msgid "View"
-msgstr ""
+msgstr "תצוגה"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
 msgid "View Field"
-msgstr ""
+msgstr "שדה תצוגה"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
 msgid "View Field position"
-msgstr ""
+msgstr "מיקום שדה התצוגה"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
 msgid "View Field related view"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
 msgid "View Field size"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
 msgid "View Field target field"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
 msgid "View Field visibility"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:117
 #: src/modules/view/standard-objects/view.workspace-entity.ts:118
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
 msgid "View Fields"
-msgstr ""
+msgstr "תצוגות שדה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
 msgid "View Filter"
-msgstr ""
+msgstr "סינון תצוגה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
 msgid "View Filter Display Value"
-msgstr ""
+msgstr "ערך תצוגה של סינון"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
 msgid "View Filter Group"
-msgstr ""
+msgstr "קבוצת סינון תצוגה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
 msgid "View Filter Group Id"
-msgstr ""
+msgstr "מזהה קבוצת סינון תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:153
 #: src/modules/view/standard-objects/view.workspace-entity.ts:154
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
 msgid "View Filter Groups"
-msgstr ""
+msgstr "קבוצות סינון תצוגה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
 msgid "View Filter operand"
-msgstr ""
+msgstr "אופרנד סינון תצוגה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
 msgid "View Filter related view"
-msgstr ""
+msgstr "קשור לתצוגת סינון"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
 msgid "View Filter target field"
-msgstr ""
+msgstr "שדה יעד של סינון תצוגה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
 msgid "View Filter value"
-msgstr ""
+msgstr "ערך סינון תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:141
 #: src/modules/view/standard-objects/view.workspace-entity.ts:142
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
 msgid "View Filters"
-msgstr ""
+msgstr "סינוני תצוגה"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
 msgid "View Group"
-msgstr ""
+msgstr "קבוצת תצוגה"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
 msgid "View Group related view"
-msgstr ""
+msgstr "קשור לתצוגת קבוצה"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
 msgid "View Group target field"
-msgstr ""
+msgstr "שדה יעד של קבוצת תצוגה"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
 msgid "View Group visibility"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:129
 #: src/modules/view/standard-objects/view.workspace-entity.ts:130
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
 msgid "View Groups"
-msgstr ""
+msgstr "קבוצות תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:80
 msgid "View icon"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:88
 msgid "View Kanban column field"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:69
 msgid "View key"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:44
 msgid "View name"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:99
 msgid "View position"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
 msgid "View Sort"
-msgstr ""
+msgstr "מיון תצוגה"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
 msgid "View Sort direction"
-msgstr ""
+msgstr "כיוון מיון תצוגה"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
 msgid "View Sort related view"
-msgstr ""
+msgstr "קשור למיון תצוגה"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
 msgid "View Sort target field"
-msgstr ""
+msgstr "שדה יעד של מיון תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:165
 #: src/modules/view/standard-objects/view.workspace-entity.ts:166
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
 msgid "View Sorts"
-msgstr ""
+msgstr "מיוני תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:52
 msgid "View target object"
-msgstr ""
+msgstr "אוביקט יעד של תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:60
 msgid "View type"
-msgstr ""
+msgstr "סוג תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:32
 msgid "Views"
-msgstr ""
+msgstr "תצוגות"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:186
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:187
 msgid "Visibility"
-msgstr ""
+msgstr "\t"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
 msgid "Visible"
-msgstr ""
+msgstr "נראה"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
 msgid "Webhook"
-msgstr ""
+msgstr "וובהוק"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
 msgid "Webhook operation"
-msgstr ""
+msgstr "פעולת Webhook"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
 msgid "Webhook operations"
-msgstr ""
+msgstr "פעולות Webhook"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
 msgid "Webhook target url"
-msgstr ""
+msgstr "כתובת יעד של Webhook"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
 msgid "Webhooks"
-msgstr ""
+msgstr "וובהוקים"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
@@ -2113,107 +2113,107 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
 msgid "Workflow"
-msgstr ""
+msgstr "Workflows"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
 msgid "Workflow event listeners linked to the workflow."
-msgstr ""
+msgstr "מאזיני אירועים בזרימת עבודה מקושרים לזרימת העבודה."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
 msgid "Workflow linked to the run."
-msgstr ""
+msgstr "זרימת עבודה מקושרת להרצה."
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
 msgid "Workflow record position"
-msgstr ""
+msgstr "מיקום רישום זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
 msgid "Workflow Run"
-msgstr ""
+msgstr "הרצת זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
 msgid "Workflow run ended at"
-msgstr ""
+msgstr "הרצת זרימת עבודה הסתיימה ב"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
 msgid "Workflow run position"
-msgstr ""
+msgstr "מיקום הרצת זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
 msgid "Workflow run started at"
-msgstr ""
+msgstr "הרצת זרימת עבודה התחילה ב"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
 msgid "Workflow run status"
-msgstr ""
+msgstr "סטטוס הרצת זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
 msgid "Workflow Runs"
-msgstr ""
+msgstr "הרצאות זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
 msgid "Workflow runs linked to the version."
-msgstr ""
+msgstr "הרצאות זרימת עבודה מקושרות לגרסה."
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
 msgid "Workflow runs linked to the workflow."
-msgstr ""
+msgstr "הרצאות זרימת עבודה מקושרות לזרימת העבודה."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
 msgid "Workflow version"
-msgstr ""
+msgstr "גרסת זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
 msgid "Workflow Version"
-msgstr ""
+msgstr "גרסת זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
 msgid "Workflow version linked to the run."
-msgstr ""
+msgstr "גרסת זרימת עבודה מקושרת להרצה."
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
 msgid "Workflow version position"
-msgstr ""
+msgstr "מיקום גרסת זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
 msgid "Workflow Versions"
-msgstr ""
+msgstr "גרסאות זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
 msgid "Workflow versions linked to the workflow."
-msgstr ""
+msgstr "גרסאות זרימת עבודה מקושרות לזרימת העבודה."
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
 msgid "WorkflowEventListener"
-msgstr ""
+msgstr "מאזין לאירוע זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
 msgid "WorkflowEventListener workflow"
-msgstr ""
+msgstr "מאזיני אירוע בזרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
 msgid "WorkflowEventListeners"
-msgstr ""
+msgstr "מאזיני אירוע זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
 msgid "Workflows"
-msgstr ""
+msgstr "זרימות עבודה"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
 msgid "WorkflowVersion"
-msgstr ""
+msgstr "גרסת זרימת עבודה"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
 msgid "WorkflowVersion workflow"
-msgstr ""
+msgstr "גרסת זרימת עבודה"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
 msgid "Workspace member"
-msgstr ""
+msgstr "חבר סביבת עבודה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
@@ -2223,31 +2223,31 @@ msgstr ""
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:138
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:139
 msgid "Workspace Member"
-msgstr ""
+msgstr "חבר סביבת עבודה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:118
 msgid "Workspace member avatar"
-msgstr ""
+msgstr "סמל חבר סביבת עבודה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
 msgid "Workspace member name"
-msgstr ""
+msgstr "שם חבר סביבת עבודה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
 msgid "Workspace Members"
-msgstr ""
+msgstr "חברי סביבת עבודה"
 
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
 msgid "WorkspaceMember"
-msgstr ""
+msgstr "חבר בסדנה"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:99
 #: src/modules/company/standard-objects/company.workspace-entity.ts:103
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:177
 msgid "Your team member responsible for managing the company account"
-msgstr ""
+msgstr "חבר הצוות שלך אחראי על ניהול חשבון החברה"
 

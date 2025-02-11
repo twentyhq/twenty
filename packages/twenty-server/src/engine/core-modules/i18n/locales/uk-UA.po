@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-11 18:02\n"
+"PO-Revision-Date: 2025-02-11 20:02\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -525,7 +525,7 @@ msgstr "Обліковий запис X/Twitter контакту"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
 msgid "Context"
-msgstr ""
+msgstr "Контекст"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
@@ -610,34 +610,34 @@ msgstr "Дата закінчення"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
 msgid "Event company"
-msgstr ""
+msgstr "Компанія-організатор подій"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
 msgid "Event context"
-msgstr ""
+msgstr "Контекст події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
 msgid "Event details"
-msgstr ""
+msgstr "Деталі події"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
 msgid "Event external ID"
-msgstr ""
+msgstr "Зовнішній ID події"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
 msgid "Event ID"
-msgstr ""
+msgstr "ID події"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
 msgid "Event Listeners"
-msgstr ""
+msgstr "Слухачі подій"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
@@ -645,50 +645,50 @@ msgstr ""
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
 msgid "Event name"
-msgstr ""
+msgstr "Назва події"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
 msgid "Event name/type"
-msgstr ""
+msgstr "Назва/тип події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
 msgid "Event note"
-msgstr ""
+msgstr "Примітка до події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
 msgid "Event opportunity"
-msgstr ""
+msgstr "Можливості події"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
 msgid "Event Participants"
-msgstr ""
+msgstr "Учасники події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
 msgid "Event person"
-msgstr ""
+msgstr "Особа на події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
 msgid "Event task"
-msgstr ""
+msgstr "Завдання події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
 msgid "Event workflow"
-msgstr ""
+msgstr "Робочий процес події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
 msgid "Event workflow run"
-msgstr ""
+msgstr "Виконання робочого процесу події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
 msgid "Event workflow version"
-msgstr ""
+msgstr "Версія робочого процесу події"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
 msgid "Event workspace member"
-msgstr ""
+msgstr "Член робочого простору події"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
 #: src/modules/person/standard-objects/person.workspace-entity.ts:276
@@ -697,29 +697,29 @@ msgstr "Події"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:277
 msgid "Events linked to the person"
-msgstr ""
+msgstr "Події пов'язані з особою"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
 msgid "Events linked to the workspace member"
-msgstr ""
+msgstr "Події пов'язані з членом робочого простору"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
 msgid "Exclude group emails"
-msgstr ""
+msgstr "Не враховувати групові електронні адреси"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
 msgid "Exclude non professional emails"
-msgstr ""
+msgstr "Не враховувати не професійні електронні адреси"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
 msgid "Executed by"
-msgstr ""
+msgstr "Виконав"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
 msgid "Expiration date"
-msgstr ""
+msgstr "Дата закінчення строку дії"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
 msgid "Favorite"
@@ -727,16 +727,16 @@ msgstr "Улюблене"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
 msgid "Favorite company"
-msgstr ""
+msgstr "Улюблена компанія"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
 msgid "Favorite Folder"
-msgstr ""
+msgstr "Улюблена папка"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
 msgid "Favorite folder position"
-msgstr ""
+msgstr "Позиція улюбленої папки"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
 msgid "Favorite Folders"
@@ -868,7 +868,7 @@ msgstr "Значення поля"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
 msgid "Folder for Message Channel"
-msgstr ""
+msgstr "Папка для каналу повідомлень"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
 msgid "Folder name"
@@ -974,21 +974,21 @@ msgstr "JSON об'єкт для надання контексту (корист�
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
 msgid "Json object to provide output of the workflow run"
-msgstr ""
+msgstr "Json-об'єкт для виходу виконання робочого процесу"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
 msgid "Json object to provide steps"
-msgstr ""
+msgstr "Json-об'єкт для надання кроків"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
 msgid "Json object to provide trigger"
-msgstr ""
+msgstr "Json-об'єкт для надання тригера"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:64
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:58
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:43
 msgid "Json value for event details"
-msgstr ""
+msgstr "Json-значення для деталей події"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:87
 msgid "kanbanfieldMetadataId"
