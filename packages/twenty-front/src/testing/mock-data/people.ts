@@ -20,11 +20,10 @@ export const getPersonObjectMetadaItem = () => {
   return personObjectMetadataItem;
 };
 
-export const getRandomPersonRecord = (overrides?: Partial<ObjectRecord>) => {
+export const getPersonRecord = (overrides?: Partial<ObjectRecord>) => {
   const personRecords = getPeopleMock();
-  const randomIndex = Math.floor(Math.random() * personRecords.length);
   return {
-    ...personRecords[randomIndex],
+    ...personRecords[0],
     ...overrides,
   };
 };

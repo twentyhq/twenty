@@ -5,9 +5,9 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import {
-  query,
-  responseData,
-  variables,
+    query,
+    responseData,
+    variables,
 } from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
@@ -17,8 +17,8 @@ import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/jest';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
-  getPersonObjectMetadaItem,
-  getRandomPersonRecord,
+    getPersonObjectMetadaItem,
+    getPersonRecord,
 } from '~/testing/mock-data/people';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
@@ -47,7 +47,7 @@ describe('useDeleteOneRecord', () => {
     },
   ];
   const defaultMocks = getDefaultMocks();
-  const personRecord = getRandomPersonRecord({
+  const personRecord = getPersonRecord({
     id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9',
     deletedAt: null,
   });
