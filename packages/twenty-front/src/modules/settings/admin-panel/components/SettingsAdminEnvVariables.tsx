@@ -36,8 +36,6 @@ const StyledShowMoreButton = styled(Button)<{ isSelected?: boolean }>`
   `}
 `;
 
-const StyledEnvVariablesDescription = styled.div``;
-
 export const SettingsAdminEnvVariables = () => {
   const { data: environmentVariables } = useGetEnvironmentVariablesGroupedQuery(
     {
@@ -68,11 +66,11 @@ export const SettingsAdminEnvVariables = () => {
 
   return (
     <>
-      <StyledEnvVariablesDescription>
+      <Section>
         These are only the server values. Ensure your worker environment has the
         same variables and values, this is required for asynchronous tasks like
         email sync.
-      </StyledEnvVariablesDescription>
+      </Section>
       <Section>
         {visibleGroups.map((group) => (
           <StyledGroupContainer key={group.name}>
