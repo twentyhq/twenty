@@ -268,8 +268,8 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
-                  properties
                   petId
+                  properties
                   surveyResultId
                   taskId
                   updatedAt

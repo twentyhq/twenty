@@ -269,9 +269,70 @@ mutation UpdateOneFavorite(
       }
     }
     personId
-    position
     pet {
       __typename
+      age
+      averageCostOfKibblePerMonth {
+        amountMicros
+        currencyCode
+      }
+      bio
+      birthday
+      comments
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      extraData
+      id
+      interestingFacts
+      isGoodWithKids
+      location {
+        addressStreet1
+        addressStreet2
+        addressCity
+        addressState
+        addressCountry
+        addressPostcode
+        addressLat
+        addressLng
+      }
+      makesOwnerThinkOf {
+        firstName
+        lastName
+      }
+      name
+      pictures {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      position
+      soundSwag
+      species
+      traits
+      updatedAt
+      vetEmail {
+        primaryEmail
+        additionalEmails
+      }
+      vetPhone {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+    }
+    petId
+    position
+    surveyResult {
+      __typename
+      averageEstimatedNumberOfAtomsInTheUniverse
+      comments
       createdAt
       createdBy {
         source
@@ -282,22 +343,11 @@ mutation UpdateOneFavorite(
       deletedAt
       id
       name
+      participants
+      percentageOfCompletion
       position
-      updatedAt
-    }
-    petId
-    surveyResult {
-      __typename
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        context
-      }
-      id
-      name
-      position
+      score
+      shortNotes
       updatedAt
     }
     surveyResultId
@@ -329,6 +379,8 @@ mutation UpdateOneFavorite(
       icon
       id
       isCompact
+      kanbanAggregateOperation
+      kanbanAggregateOperationFieldMetadataId
       kanbanFieldMetadataId
       key
       name
@@ -341,6 +393,12 @@ mutation UpdateOneFavorite(
     workflow {
       __typename
       createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
       deletedAt
       id
       lastPublishedVersionId
@@ -352,6 +410,7 @@ mutation UpdateOneFavorite(
     workflowId
     workflowRun {
       __typename
+      context
       createdAt
       createdBy {
         source
@@ -689,6 +748,8 @@ export const mocks = [
               icon
               id
               isCompact
+              kanbanAggregateOperation
+              kanbanAggregateOperationFieldMetadataId
               kanbanFieldMetadataId
               key
               name
@@ -701,6 +762,12 @@ export const mocks = [
             workflow {
               __typename
               createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+                context
+              }
               deletedAt
               id
               lastPublishedVersionId
@@ -712,6 +779,7 @@ export const mocks = [
             workflowId
             workflowRun {
               __typename
+              context
               createdAt
               createdBy {
                 source
