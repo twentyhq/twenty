@@ -16,10 +16,7 @@ export class GoogleAPIsOauthCommonStrategy extends PassportStrategy(
   Strategy,
   'google-apis',
 ) {
-  constructor(
-    environmentService: EnvironmentService,
-    scopeConfig: GoogleAPIScopeConfig,
-  ) {
+  constructor(environmentService: EnvironmentService) {
     const scopes = getGoogleApisOauthScopes();
 
     super({
