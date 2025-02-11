@@ -11,6 +11,10 @@ const task: Task = {
   status: 'DONE',
   title: 'Test',
   body: 'Test',
+  bodyV2: {
+    blocknote: 'Test',
+    markdown: 'Test',
+  },
   dueAt: '2024-03-15T07:33:14.212Z',
   createdAt: '2024-03-15T07:33:14.212Z',
   updatedAt: '2024-03-15T07:33:14.212Z',

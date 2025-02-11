@@ -7,6 +7,7 @@ import {
   FieldFullNameValue,
   FieldLinksValue,
   FieldPhonesValue,
+  FieldRichTextV2Value,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
@@ -18,6 +19,7 @@ import {
   IllustrationIconMap,
   IllustrationIconPhone,
   IllustrationIconSetting,
+  IllustrationIconText,
   IllustrationIconUser,
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -185,4 +187,19 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       context: { provider: ConnectedAccountProvider.GOOGLE },
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
+  [FieldMetadataType.RICH_TEXT_V2]: {
+    label: 'Rich Text',
+    Icon: IllustrationIconText,
+    subFields: ['blocknote', 'markdown'],
+    filterableSubFields: [],
+    labelBySubField: {
+      blocknote: 'BlockNote',
+      markdown: 'Markdown',
+    },
+    exampleValue: {
+      blocknote: '[{"type":"heading","content":"Hello"}]',
+      markdown: '# Hello',
+    },
+    category: 'Basic',
+  } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextV2Value>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;
