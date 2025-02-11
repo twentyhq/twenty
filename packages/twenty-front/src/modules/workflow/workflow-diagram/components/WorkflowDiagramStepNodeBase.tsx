@@ -150,15 +150,13 @@ const StyledStepNodeLabel = styled.div<{
 `;
 
 export const StyledHandle = styled(Handle)`
-  background-color: ${({ theme }) => theme.grayScale.gray25};
-  border: none;
-  width: ${NODE_HANDLE_WIDTH_PX}px;
   height: ${NODE_HANDLE_HEIGHT_PX}px;
+  width: ${NODE_HANDLE_WIDTH_PX}px;
 `;
 
 const StyledSourceHandle = styled(StyledHandle)`
-  background-color: ${({ theme }) => theme.border.color.strong};
   left: ${NODE_ICON_WIDTH + NODE_ICON_LEFT_MARGIN + NODE_BORDER_WIDTH}px;
+  visibility: hidden;
 `;
 
 const StyledTargetHandle = styled(StyledSourceHandle)`
