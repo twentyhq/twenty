@@ -8,7 +8,7 @@ export const getPeopleMock = (): ObjectRecord[] => {
   return peopleMock;
 };
 
-export const getPersonObjectMetadaItem = () => {
+export const getPersonObjectMetadataItem = () => {
   const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
     (item) => item.nameSingular === 'person',
   );

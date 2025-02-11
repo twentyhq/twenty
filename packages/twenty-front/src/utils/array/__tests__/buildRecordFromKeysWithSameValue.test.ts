@@ -1,6 +1,6 @@
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
-describe('recordFromArrayWithValue', () => {
+describe('buildRecordFromKeysWithSameValue', () => {
   test.each([
     { array: [], expected: {}, arg: undefined },
     {
@@ -13,8 +13,11 @@ describe('recordFromArrayWithValue', () => {
       expected: { foo: true, bar: true },
       arg: true,
     },
-  ])('.recordFromArrayWithValue($array, $arg)', ({ array, arg, expected }) => {
-    const result = buildRecordFromKeysWithSameValue(array, arg);
-    expect(result).toEqual(expected);
-  });
+  ])(
+    '.buildRecordFromKeysWithSameValue($array, $arg)',
+    ({ array, arg, expected }) => {
+      const result = buildRecordFromKeysWithSameValue(array, arg);
+      expect(result).toEqual(expected);
+    },
+  );
 });

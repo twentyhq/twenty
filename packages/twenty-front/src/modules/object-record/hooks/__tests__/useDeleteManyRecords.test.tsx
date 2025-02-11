@@ -17,7 +17,7 @@ import { InMemoryCache } from '@apollo/client';
 import { MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { getPersonObjectMetadaItem } from '~/testing/mock-data/people';
+import { getPersonObjectMetadataItem } from '~/testing/mock-data/people';
 const getDefaultMocks = (
   overrides?: Partial<MockedResponse>,
 ): MockedResponse[] => [
@@ -40,7 +40,7 @@ const mockRefetchAggregateQueries = jest.fn();
 (useRefetchAggregateQueries as jest.Mock).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
-const objectMetadataItem = getPersonObjectMetadaItem();
+const objectMetadataItem = getPersonObjectMetadataItem();
 const objectMetadataItems = [objectMetadataItem];
 const expectedCachedRecordsWithDeletedAt = personRecords.map(
   (personRecord) => ({
@@ -122,7 +122,7 @@ describe('useDeleteManyRecords', () => {
         }),
       );
     });
-    it('1. Should handle optimistic behavior after many successfull records deletion', async () => {
+    it('1. Should handle optimistic behavior after many successful records deletion', async () => {
       const apolloMocks = getDefaultMocks();
       const { result } = renderHook(
         () => useDeleteManyRecords({ objectNameSingular: 'person' }),
@@ -192,7 +192,7 @@ describe('useDeleteManyRecords', () => {
           await result.current.deleteManyRecords({
             recordIdsToDelete: personIds,
           });
-          expect(true).toBe(false);
+          fail('Should have thrown an error');
         } catch (e) {
           expect(e).toMatchInlineSnapshot(
             `[ApolloError: Internal server error]`,

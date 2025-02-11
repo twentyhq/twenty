@@ -17,7 +17,7 @@ import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/jest';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
-  getPersonObjectMetadaItem,
+  getPersonObjectMetadataItem,
   getPersonRecord,
 } from '~/testing/mock-data/people';
 
@@ -51,7 +51,7 @@ describe('useDeleteOneRecord', () => {
     id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9',
     deletedAt: null,
   });
-  const objectMetadataItem = getPersonObjectMetadaItem();
+  const objectMetadataItem = getPersonObjectMetadataItem();
   const objectMetadataItems = [objectMetadataItem];
   const assertCachedRecordMatch = (expectedRecord: ObjectRecord) => {
     const cachedRecord = getRecordFromCache({
@@ -159,9 +159,7 @@ describe('useDeleteOneRecord', () => {
       await act(async () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
-          expect(false).toEqual(
-            'Should never occur expected function to throw',
-          );
+          fail('Should have thrown an error');
         } catch (e) {
           assertCachedRecordIsNull();
         }
@@ -268,9 +266,7 @@ describe('useDeleteOneRecord', () => {
       await act(async () => {
         try {
           await result.current.deleteOneRecord(personRecord.id);
-          expect(false).toEqual(
-            'Should never occur, expected function to throw',
-          );
+          fail('Should have thrown an error');
         } catch (e) {
           const personRecordWithDeletedAt = {
             ...personRecord,
