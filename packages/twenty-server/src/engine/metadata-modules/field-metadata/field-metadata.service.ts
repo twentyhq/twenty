@@ -907,7 +907,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       where: { objectMetadataId: In(objectMetadataIds), workspaceId },
     });
 
-    return objectMetadataIds.map((objectMetadataId) => fieldMetadataItems.filter(
+    return objectMetadataIds.map((objectMetadataId) =>
+      fieldMetadataItems.filter(
         (fieldMetadataItem) =>
           fieldMetadataItem.objectMetadataId === objectMetadataId,
       ),
