@@ -111,7 +111,7 @@ export const WorkflowEditTriggerCronForm = ({
             placeholder="0 */1 * * *"
             error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
             onBlur={onBlur}
-            hint="Format: [Second] [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
+            hint="Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
             readonly={triggerOptions.readonly}
             defaultValue={trigger.settings.pattern}
             onPersist={(newPattern: string) => {
