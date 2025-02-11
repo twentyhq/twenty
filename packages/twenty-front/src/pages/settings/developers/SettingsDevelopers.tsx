@@ -10,7 +10,6 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -30,7 +29,6 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
 
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
-  const navigate = useNavigateSettings();
   const { t } = useLingui();
 
   return (
