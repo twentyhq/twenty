@@ -95,7 +95,7 @@ export const useCreateOneRecord = <
         computeReferences: false,
       });
 
-      if (optimisticRecordNode !== null) {
+      if (skipPostOptmisticEffect === false && optimisticRecordNode !== null) {
         triggerCreateRecordsOptimisticEffect({
           cache: apolloClient.cache,
           objectMetadataItem,
