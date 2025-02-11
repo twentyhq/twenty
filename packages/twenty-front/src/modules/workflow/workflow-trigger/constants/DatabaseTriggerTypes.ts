@@ -10,7 +10,7 @@ export const DATABASE_TRIGGER_TYPES: Array<{
   {
     defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
     type: 'DATABASE_EVENT',
-    icon: 'IconPlus',
+    icon: 'IconPlaylistAdd',
     event: 'created',
   },
   {

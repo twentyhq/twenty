@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-02-11 16:02\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -522,6 +522,11 @@ msgstr "Các số điện thoại của liên hệ"
 msgid "Contact’s X/Twitter account"
 msgstr "Tài khoản Twitter của liên hệ"
 
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+msgid "Context"
+msgstr ""
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
 #: src/modules/person/standard-objects/person.workspace-entity.ts:167
@@ -780,7 +785,7 @@ msgstr "Thành viên không gian làm việc Ưa thích"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
 #: src/modules/task/standard-objects/task.workspace-entity.ts:197
 #: src/modules/person/standard-objects/person.workspace-entity.ts:226
@@ -825,7 +830,7 @@ msgstr "Ưa thích liên kết với chế độ xem"
 msgid "Favorites linked to the workflow"
 msgstr "Ưa thích liên kết với Quy trình làm việc"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
 msgid "Favorites linked to the workflow run"
 msgstr "Ưa thích liên kết với lượt chạy Quy trình làm việc"
 
@@ -1438,7 +1443,7 @@ msgstr "Điểm liên hệ"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:156
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
@@ -1800,7 +1805,7 @@ msgstr "Múi giờ"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:198
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:208
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
 #: src/modules/task/standard-objects/task.workspace-entity.ts:185
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
@@ -1822,7 +1827,7 @@ msgstr "Hoạt động trong dòng thời gian liên kết với ghi chú."
 msgid "Timeline Activities linked to the opportunity."
 msgstr "Hoạt động trong dòng thời gian liên kết với cơ hội."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
 msgid "Timeline activities linked to the run"
 msgstr "Hoạt động trong dòng thời gian liên kết với cuộc chạy"
 
@@ -2101,7 +2106,7 @@ msgstr "Webhooks"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:182
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
@@ -2114,7 +2119,7 @@ msgstr "Workflows"
 msgid "Workflow event listeners linked to the workflow."
 msgstr "Các bộ nghe sự kiện quy trình làm việc đã được liên kết với quy trình."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
 msgid "Workflow linked to the run."
 msgstr "Quy trình làm việc đã được liên kết với lần chạy."
 
@@ -2132,7 +2137,7 @@ msgstr "Lần chạy quy trình"
 msgid "Workflow run ended at"
 msgstr "Lần chạy quy trình kết thúc lúc"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
 msgid "Workflow run position"
 msgstr "Vị trí lần chạy quy trình"
 
@@ -2158,7 +2163,7 @@ msgstr "Các lần chạy quy trình được liên kết với phiên bản."
 msgid "Workflow runs linked to the workflow."
 msgstr "Các lần chạy quy trình được liên kết với quy trình."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
 msgid "Workflow version"
 msgstr "Phiên bản quy trình"
 
@@ -2166,7 +2171,7 @@ msgstr "Phiên bản quy trình"
 msgid "Workflow Version"
 msgstr "Phiên Bản Quy Trình"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
 msgid "Workflow version linked to the run."
 msgstr "Phiên bản quy trình được liên kết với lần chạy."
 

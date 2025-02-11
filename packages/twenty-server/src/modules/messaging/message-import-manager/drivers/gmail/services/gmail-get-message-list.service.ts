@@ -146,6 +146,7 @@ export class GmailGetMessageListService {
     return {
       messageExternalIds: messagesAddedFiltered,
       messageExternalIdsToDelete: messagesDeleted,
+      previousSyncCursor: syncCursor,
       nextSyncCursor,
     };
   }

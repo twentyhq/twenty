@@ -47,3 +47,5 @@ export type WorkflowDiagramNodeType =
   | 'default'
   | 'empty-trigger'
   | 'create-step';
+
+export type WorkflowDiagramEdgeType = 'default' | 'success';

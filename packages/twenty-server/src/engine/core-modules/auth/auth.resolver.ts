@@ -2,7 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsFeatures, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
@@ -354,7 +354,7 @@ export class AuthResolver {
     return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
-      context.req.headers['x-locale'] || 'en',
+      context.req.headers['x-locale'] || SOURCE_LOCALE,
     );
   }
 
@@ -372,7 +372,7 @@ export class AuthResolver {
     await this.authService.updatePassword(
       id,
       newPassword,
-      context.req.headers['x-locale'] || 'en',
+      context.req.headers['x-locale'] || SOURCE_LOCALE,
     );
 
     return await this.resetPasswordService.invalidatePasswordResetToken(id);

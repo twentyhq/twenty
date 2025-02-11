@@ -74,7 +74,8 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   type
                   updatedAt
@@ -107,8 +108,9 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   position
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   viewId
@@ -143,7 +145,8 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   updatedAt
                 }
               }
@@ -242,7 +245,8 @@ const companyMocks = [
                   id
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   updatedAt
                 }
@@ -264,8 +268,9 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   properties
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   workflowId

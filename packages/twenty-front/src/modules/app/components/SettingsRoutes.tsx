@@ -267,12 +267,14 @@ type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
+  isPermissionsEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
+  isPermissionsEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -308,8 +310,15 @@ export const SettingsRoutes = ({
         element={<SettingsObjectDetailPage />}
       />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
-      <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
-      <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
+      {isPermissionsEnabled && (
+        <>
+          <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
+          <Route
+            path={SettingsPath.RoleDetail}
+            element={<SettingsRoleEdit />}
+          />
+        </>
+      )}
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
