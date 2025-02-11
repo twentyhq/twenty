@@ -101,10 +101,14 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    for (const workspaceId of workspaceIds) {
+    for (const [index, workspaceId] of workspaceIds.entries()) {
       try {
         await this.execute(workspaceId, options?.dryRun);
-        this.logger.verbose(`Processed workspace: ${workspaceId}`);
+        this.logger.verbose(
+          `Processed workspace: ${workspaceId} (${index + 1}/${
+            workspaceIds.length
+          })`,
+        );
       } catch (error) {
         this.logger.error(`Error for workspace: ${workspaceId}`, error);
       }
