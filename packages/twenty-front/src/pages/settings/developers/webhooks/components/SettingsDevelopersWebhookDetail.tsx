@@ -1,7 +1,7 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import {
   Button,
   H2Title,
@@ -33,6 +33,7 @@ import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
+import { isDefined } from 'twenty-shared';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -68,8 +69,13 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const { webhookId = '' } = useParams();
 
+  const [searchParams] = useSearchParams();
+
+  const isCreationMode = isDefined(searchParams.get('creationMode'));
+
   const {
     formData,
+    title,
     loading,
     isTargetUrlValid,
     updateWebhook,
@@ -78,6 +84,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
     deleteWebhook,
   } = useWebhookUpdateForm({
     webhookId,
+    isCreationMode,
   });
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
@@ -114,7 +121,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={formData.targetUrl}
+      title={title}
       reserveTitleSpace
       links={[
         {
@@ -220,7 +227,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
             fullWidth
           />
         </Section>
-        {isAnalyticsEnabled && isAnalyticsV2Enabled && (
+        {!isCreationMode && isAnalyticsEnabled && isAnalyticsV2Enabled && (
           <AnalyticsGraphDataInstanceContext.Provider
             value={{ instanceId: `webhook-${webhookId}-analytics` }}
           >
