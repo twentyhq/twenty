@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-02-11 16:02\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -522,6 +522,11 @@ msgstr "أرقام هواتف جهة الاتصال"
 msgid "Contact’s X/Twitter account"
 msgstr "حساب جهة الاتصال على تويتر"
 
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+msgid "Context"
+msgstr ""
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
 #: src/modules/person/standard-objects/person.workspace-entity.ts:167
@@ -780,7 +785,7 @@ msgstr "عضو مفضل في المساحة العملية"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
 #: src/modules/task/standard-objects/task.workspace-entity.ts:197
 #: src/modules/person/standard-objects/person.workspace-entity.ts:226
@@ -825,7 +830,7 @@ msgstr "المفضلات المرتبطة بالعرض"
 msgid "Favorites linked to the workflow"
 msgstr "المفضلات المرتبطة بسير العمل"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
 msgid "Favorites linked to the workflow run"
 msgstr "المفضلات المرتبطة بتشغيل سير العمل"
 
@@ -1438,7 +1443,7 @@ msgstr "نقطة الاتصال"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:156
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
@@ -1800,7 +1805,7 @@ msgstr "المنطقة الزمنية"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:198
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:208
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
 #: src/modules/task/standard-objects/task.workspace-entity.ts:185
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
@@ -1822,7 +1827,7 @@ msgstr "أنشطة الجدول الزمني المرتبطة بالملاحظة
 msgid "Timeline Activities linked to the opportunity."
 msgstr "أنشطة الجدول الزمني المرتبطة بالفرصة."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
 msgid "Timeline activities linked to the run"
 msgstr "أنشطة الجدول الزمني المرتبطة بالتشغيل"
 
@@ -2101,7 +2106,7 @@ msgstr "ويب هوكس"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:182
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
@@ -2114,7 +2119,7 @@ msgstr "سير العمل"
 msgid "Workflow event listeners linked to the workflow."
 msgstr "مستمعون لأحداث سير العمل مرتبطون بسير العمل."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
 msgid "Workflow linked to the run."
 msgstr "سير العمل المرتبط بالتشغيل."
 
@@ -2132,7 +2137,7 @@ msgstr "تشغيل سير العمل"
 msgid "Workflow run ended at"
 msgstr "انتهاء تشغيل سير العمل في"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
 msgid "Workflow run position"
 msgstr "موضع تشغيل سير العمل"
 
@@ -2158,7 +2163,7 @@ msgstr "عمليات تشغيل سير العمل المرتبطة بالنسخ�
 msgid "Workflow runs linked to the workflow."
 msgstr "عمليات تشغيل سير العمل المرتبطة بسير العمل."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
 msgid "Workflow version"
 msgstr "نسخة سير العمل"
 
@@ -2166,7 +2171,7 @@ msgstr "نسخة سير العمل"
 msgid "Workflow Version"
 msgstr "نسخة سير العمل"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
 msgid "Workflow version linked to the run."
 msgstr "نسخة سير العمل المرتبطة بالتشغيل."
 
