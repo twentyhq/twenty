@@ -19,9 +19,7 @@ export const ContextStoreViewIdEffect = ({
 }) => {
   const { viewIdQueryParam } = useViewFromQueryParams();
 
-  const { records: viewsOnCurrentObject } = usePrefetchedData<View>(
-    PrefetchKey.AllViews,
-  );
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -44,6 +42,9 @@ export const ContextStoreViewIdEffect = ({
   );
 
   useEffect(() => {
+    const viewsOnCurrentObject = views.filter(
+      (view) => view.objectMetadataId === objectMetadataItemId?.id,
+    );
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
 
     if (isUndefined(viewIdQueryParam) && isDefined(lastVisitedViewId)) {
@@ -92,12 +93,13 @@ export const ContextStoreViewIdEffect = ({
   }, [
     isLastVisitedObjectMetadataItemDifferent,
     lastVisitedViewId,
+    objectMetadataItemId?.id,
     objectNamePlural,
     setContextStoreCurrentViewId,
     setLastVisitedObjectMetadataItem,
     setLastVisitedView,
     viewIdQueryParam,
-    viewsOnCurrentObject,
+    views,
   ]);
 
   return <></>;

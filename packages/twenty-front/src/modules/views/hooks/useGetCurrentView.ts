@@ -31,6 +31,7 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
+  console.log('currentViewId');
   const currentViewId = useRecoilComponentValueV2(
     currentViewIdComponentState,
     instanceId,

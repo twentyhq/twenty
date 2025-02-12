@@ -7,6 +7,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useLocation } from 'react-router-dom';
@@ -22,6 +23,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
+  const { viewIdQueryParam } = useViewFromQueryParams();
+
   const objectMetadataViews = getObjectMetadataItemViews(
     objectMetadataItem.id,
     views,
@@ -35,7 +38,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     objectMetadataItem.id,
   );
 
-  const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
+  const viewId =
+    viewIdQueryParam ?? lastVisitedViewId ?? objectMetadataViews[0]?.id;
 
   const navigationPath = getAppPath(
     AppPath.RecordIndexPage,
