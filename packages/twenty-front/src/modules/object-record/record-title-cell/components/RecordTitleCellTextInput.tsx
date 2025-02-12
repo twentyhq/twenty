@@ -5,6 +5,7 @@ import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useRef } from 'react';
+import { isDefined } from 'twenty-shared';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 type RecordTitleCellTextInputProps = {
@@ -54,6 +55,12 @@ export const RecordTitleCellTextInput = ({
     hotkeyScope,
   });
 
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (isDefined(draftValue)) {
+      event.target.select();
+    }
+  };
+
   return (
     <TextInputV2
       autoGrow
@@ -61,7 +68,7 @@ export const RecordTitleCellTextInput = ({
       value={draftValue ?? ''}
       onChange={handleChange}
       placeholder={fieldDefinition.label}
-      //onFocus={handleFocus}
+      onFocus={handleFocus}
       autoFocus
     />
   );
