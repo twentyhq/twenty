@@ -151,7 +151,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
     return duplicateConnections;
   }
 
-  private buildDuplicateConditions(
+  buildDuplicateConditions(
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
     records?: Partial<ObjectRecord>[] | undefined,
     filteringByExistingRecordId?: string,
