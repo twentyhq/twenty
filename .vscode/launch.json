@@ -78,16 +78,9 @@
       "cwd": "${workspaceFolder}/packages/twenty-server",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "autoAttachChildProcesses": true,
-      "sourceMaps": true,
       "env": {
-        "NODE_OPTIONS": "--enable-source-maps",
         "NODE_ENV": "test"
       },
-      "skipFiles": [
-        "<node_internals>/**",
-        "**/node_modules/**"
-      ]
     }
   ]
 }
