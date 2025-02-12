@@ -50,7 +50,6 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log('>>>>>>>>>>>>>> STEP 0');
     const request = context.switchToHttp().getRequest<Request>();
 
     let identityProvider:
@@ -67,12 +66,9 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
         );
       }
 
-      console.log('>>>>>>>>>>>>>> STEP 1');
-
       identityProvider = await this.sSOService.findSSOIdentityProviderById(
         state.identityProviderId,
       );
-      console.log('>>>>>>>>>>>>>> STEP 2');
 
       if (!identityProvider) {
         throw new AuthException(
@@ -89,7 +85,6 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      console.log('>>>>>>>>>>>>>>', err);
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
