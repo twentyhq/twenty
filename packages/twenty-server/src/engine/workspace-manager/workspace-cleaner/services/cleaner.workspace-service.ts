@@ -175,9 +175,10 @@ export class CleanerWorkspaceService {
   async sendCleaningEmail(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
     workspaceDisplayName: string,
+    daysSinceInactive: number,
   ) {
     const emailData = {
-      inactiveDaysBeforeDelete: this.inactiveDaysBeforeDelete,
+      daysSinceInactive: daysSinceInactive,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName,
     };
@@ -199,6 +200,7 @@ export class CleanerWorkspaceService {
 
   async informWorkspaceMembersAndDeleteWorkspace(
     workspace: Workspace,
+    daysSinceInactive: number,
     dryRun: boolean,
   ) {
     const workspaceMembers =
@@ -223,6 +225,7 @@ export class CleanerWorkspaceService {
         await this.sendCleaningEmail(
           workspaceMember,
           workspace.displayName || '',
+          daysSinceInactive,
         );
       }
 
@@ -263,6 +266,7 @@ export class CleanerWorkspaceService {
         ) {
           await this.informWorkspaceMembersAndDeleteWorkspace(
             workspace,
+            workspaceInactivity,
             dryRun,
           );
           deletedWorkspacesCount++;
