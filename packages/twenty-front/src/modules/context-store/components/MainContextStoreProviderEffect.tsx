@@ -1,3 +1,4 @@
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
@@ -37,7 +38,19 @@ export const MainContextStoreProviderEffect = ({
       mainContextStoreComponentInstanceId,
     );
 
+  const [
+    contextStoreCurrentObjectMetadataId,
+    setContextStoreCurrentObjectMetadataId,
+  ] = useRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
+    mainContextStoreComponentInstanceId,
+  );
+
   useEffect(() => {
+    if (contextStoreCurrentObjectMetadataId !== objectMetadataItem.id) {
+      setContextStoreCurrentObjectMetadataId(objectMetadataItem.id);
+    }
+
     if (
       mainContextStoreComponentInstanceIdToSet !==
       mainContextStoreComponentInstanceId
@@ -63,6 +76,7 @@ export const MainContextStoreProviderEffect = ({
       setContextStoreCurrentViewId(viewId);
     }
   }, [
+    contextStoreCurrentObjectMetadataId,
     contextStoreCurrentViewId,
     lastVisitedObjectMetadataItemId,
     lastVisitedViewId,
@@ -70,6 +84,7 @@ export const MainContextStoreProviderEffect = ({
     mainContextStoreComponentInstanceIdToSet,
     objectMetadataItem,
     objectMetadataItem.namePlural,
+    setContextStoreCurrentObjectMetadataId,
     setContextStoreCurrentViewId,
     setLastVisitedObjectMetadataItem,
     setLastVisitedView,

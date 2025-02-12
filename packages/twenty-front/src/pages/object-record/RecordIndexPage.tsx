@@ -75,7 +75,7 @@ export const RecordIndexPage = () => {
     <PageContainer>
       <ContextStoreComponentInstanceContext.Provider
         value={{
-          instanceId: recordIndexId,
+          instanceId: mainContextStoreComponentInstanceId,
         }}
       >
         <RecordIndexContextProvider

@@ -69,7 +69,6 @@ export const MainContextStoreProvider = () => {
   const viewId = getViewId(viewIdQueryParam, indexView, lastVisitedViewId);
 
   const mainContextStoreComponentInstanceId = `${pageName}-${objectMetadataItem?.namePlural}-${viewId}`;
-  console.log(mainContextStoreComponentInstanceId);
 
   if (
     !isDefined(pageName) ||
