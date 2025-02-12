@@ -176,7 +176,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(sendMock).toHaveBeenCalled();
   });
-  it('should do nothing if nothing change', async () => {
+  it('should do nothing if nothing changes', async () => {
     const req = {
       headers: { 'cf-webhook-auth': 'correct-secret' },
       body: { data: { data: { hostname: 'nothing-change.com' } } },

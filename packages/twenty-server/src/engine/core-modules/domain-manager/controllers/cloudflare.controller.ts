@@ -1,7 +1,9 @@
 import { Controller, Post, Req, Res, UseFilters } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Response } from 'express';
+import { timingSafeEqual } from 'crypto';
+
+import { Response, Request } from 'express';
 import { Repository } from 'typeorm';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
@@ -27,14 +29,18 @@ export class CloudflareController {
   ) {}
 
   @Post('custom-hostname-webhooks')
-  async customHostnameWebhooks(@Req() req: any, @Res() res: Response) {
+  async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
     const cloudflareWebhookSecret = this.environmentService.get(
       'CLOUDFLARE_WEBHOOK_SECRET',
     );
 
     if (
       cloudflareWebhookSecret &&
-      req.headers['cf-webhook-auth'] !== cloudflareWebhookSecret
+      (typeof req.headers['cf-webhook-auth'] !== 'string' ||
+        timingSafeEqual(
+          Buffer.from(req.headers['cf-webhook-auth']),
+          Buffer.from(cloudflareWebhookSecret),
+        ))
     ) {
       throw new DomainManagerException(
         'Invalid secret',
