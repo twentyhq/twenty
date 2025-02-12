@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared';
 
@@ -60,6 +60,8 @@ export type WorkflowVersionBatchDelete = {
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowStatusesUpdateJob {
+  protected readonly logger = new Logger(WorkflowStatusesUpdateJob.name);
+
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
@@ -172,6 +174,9 @@ export class WorkflowStatusesUpdateJob {
             // applied between draft and lastPublished version.
             // If no change have been applied, we just use the same
             // serverless function version
+            this.logger.warn(
+              `Error while publishing serverless function '${step.settings.input.serverlessFunctionId}': ${e}`,
+            );
           }
 
           const serverlessFunction =
@@ -186,6 +191,8 @@ export class WorkflowStatusesUpdateJob {
             serverlessFunction.latestVersion;
 
           newStep.settings = newStepSettings;
+
+          this.logger.log(`New step computed for code step -> ${newStep}`);
         }
         newSteps.push(newStep);
       }
