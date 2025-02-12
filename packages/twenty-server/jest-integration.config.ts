@@ -30,7 +30,31 @@ const jestConfig: JestConfigWithTsJest = {
     enableGlobally: true,
   },
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.(t|j)s$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: false,
+            decorators: true,
+          },
+          transform: {
+            decoratorMetadata: true,
+          },
+          experimental: {
+            plugins: [
+              [
+                '@lingui/swc-plugin',
+                {
+                  stripNonEssentialFields: false,
+                },
+              ],
+            ],
+          },
+        },
+      },
+    ],
   },
   globals: {
     APP_PORT: 4000,

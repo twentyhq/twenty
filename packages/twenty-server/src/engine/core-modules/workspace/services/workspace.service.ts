@@ -158,7 +158,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.setCustomDomain(workspace, payload.customDomain);
       customDomainRegistered = true;
     }
-
     const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IsPermissionsEnabled,
       workspace.id,
