@@ -34,7 +34,8 @@ export const RecordTitleCellDisplayMode = () => {
 
   return (
     <StyledButton onClick={() => openInlineCell()}>
-      {recordValue?.name ?? fieldDefinition.label}
+      {recordValue?.[fieldDefinition.metadata.fieldName] ||
+        fieldDefinition.label}
     </StyledButton>
   );
 };
