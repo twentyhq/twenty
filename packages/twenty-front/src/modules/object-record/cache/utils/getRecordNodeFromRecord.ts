@@ -45,15 +45,13 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   }
 
   const nestedRecord = Object.fromEntries(
-    Object.entries(record)
-      .map(([fieldName, value]) => {
+    objectMetadataItem.fields
+      .map((field) => {
+        const fieldName = field.name;
+        const value = record[fieldName];
         if (isDefined(recordGqlFields) && !recordGqlFields[fieldName]) {
           return undefined;
         }
-
-        const field = objectMetadataItem.fields.find(
-          (field) => field.name === fieldName,
-        );
 
         if (isUndefined(field)) {
           return undefined;
@@ -79,7 +77,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             getRecordConnectionFromRecords({
               objectMetadataItems,
               objectMetadataItem: oneToManyObjectMetadataItem,
-              records: value as ObjectRecord[],
+              records: (value || []) as ObjectRecord[],
               recordGqlFields:
                 recordGqlFields?.[fieldName] === true ||
                 isUndefined(recordGqlFields?.[fieldName])
@@ -144,7 +142,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             ];
           }
           default: {
-            return [fieldName, value];
+            return [fieldName, value || null];
           }
         }
       })

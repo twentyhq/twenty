@@ -27,10 +27,6 @@ const StyledTable = styled.table`
   border-spacing: 0;
   table-layout: fixed;
   width: 100%;
-
-  .footer-sticky tr:nth-last-child(2) td {
-    border-bottom-color: ${({ theme }) => theme.background.transparent};
-  }
 `;
 
 export const RecordTable = () => {
