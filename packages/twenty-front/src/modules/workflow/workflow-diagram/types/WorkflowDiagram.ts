@@ -59,7 +59,10 @@ export type WorkflowDiagramNodeData =
   | WorkflowDiagramCreateStepNodeData
   | WorkflowDiagramEmptyTriggerNodeData;
 
-export type WorkflowRunDiagramNodeData = WorkflowDiagramStepNodeData;
+export type WorkflowRunDiagramNodeData = Exclude<
+  WorkflowDiagramStepNodeData,
+  'runStatus'
+> & { runStatus: WorkflowDiagramRunStatus };
 
 export type WorkflowDiagramNodeType =
   | 'default'

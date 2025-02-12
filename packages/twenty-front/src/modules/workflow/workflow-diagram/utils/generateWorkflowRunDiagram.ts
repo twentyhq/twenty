@@ -105,7 +105,7 @@ export const generateWorkflowRunDiagram = ({
         name: step.name,
         isLeafNode: false,
         runStatus,
-      } satisfies WorkflowDiagramStepNodeData,
+      },
       position: {
         x: xPos,
         y: yPos,
