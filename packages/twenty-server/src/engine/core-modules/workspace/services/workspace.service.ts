@@ -169,6 +169,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         payload,
         userWorkspaceId,
       });
+
+      await this.validateWorkspacePermissions({
+        payload,
+        userWorkspaceId,
+      });
     }
 
     try {
@@ -297,10 +302,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     userWorkspaceId?: string;
   }) {
     if (
-      isDefined(payload.isGoogleAuthEnabled) ||
-      isDefined(payload.isMicrosoftAuthEnabled) ||
-      isDefined(payload.isPasswordAuthEnabled) ||
-      isDefined(payload.isPublicInviteLinkEnabled)
+      'isGoogleAuthEnabled' in payload ||
+      'isMicrosoftAuthEnabled' in payload ||
+      'isPasswordAuthEnabled' in payload ||
+      'isPublicInviteLinkEnabled' in payload
     ) {
       if (!userWorkspaceId) {
         throw new Error('Missing userWorkspaceId in authContext');
@@ -310,6 +315,38 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           _setting: SettingsFeatures.SECURITY,
+        });
+
+      if (!userHasPermission) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+    }
+  }
+
+  private async validateWorkspacePermissions({
+    payload,
+    userWorkspaceId,
+  }: {
+    payload: Partial<Workspace>;
+    userWorkspaceId?: string;
+  }) {
+    if (
+      'displayName' in payload ||
+      'subdomain' in payload ||
+      'customDomain' in payload ||
+      'logo' in payload
+    ) {
+      if (!userWorkspaceId) {
+        throw new Error('Missing userWorkspaceId in authContext');
+      }
+
+      const userHasPermission =
+        await this.permissionsService.userHasWorkspaceSettingPermission({
+          userWorkspaceId,
+          _setting: SettingsFeatures.WORKSPACE,
         });
 
       if (!userHasPermission) {
