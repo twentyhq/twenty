@@ -124,7 +124,7 @@ describe('generateWorkflowRunDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
@@ -303,7 +303,7 @@ describe('generateWorkflowRunDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
@@ -508,7 +508,7 @@ describe('generateWorkflowRunDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
@@ -672,7 +672,7 @@ describe('generateWorkflowRunDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
@@ -879,7 +879,7 @@ describe('generateWorkflowRunDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
