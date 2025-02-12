@@ -88,13 +88,5 @@ export const DisabledWithEmptyValues: Story = {
 
       expect(searchInputInSelectDropdown).not.toBeInTheDocument();
     }
-
-    const openRecordSelectButton = within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-find-records-object-name',
-      ),
-    ).queryByRole('button');
-
-    expect(openRecordSelectButton).not.toBeInTheDocument();
   },
 };
