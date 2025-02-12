@@ -1,36 +1,37 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-42/0-42-fix-body-v2-view-field-position.command';
 import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
+import { UpgradeTo0_42Command } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.command';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
-import { SyncWorkspaceLoggerService } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.service';
-import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
-import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace], 'core'),
-    TypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
-    TypeORMModule,
-    DataSourceModule,
-    ObjectMetadataModule,
-    WorkspaceSyncMetadataCommandsModule,
-    WorkspaceSyncMetadataModule,
-    WorkspaceHealthModule,
-    WorkspaceDataSourceModule,
+    TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
+    TypeOrmModule.forFeature(
+      [ObjectMetadataEntity, FieldMetadataEntity],
+      'metadata',
+    ),
+    WorkspaceMigrationRunnerModule,
+    WorkspaceMigrationModule,
     WorkspaceMetadataVersionModule,
+    WorkspaceDataSourceModule,
+    FeatureFlagModule,
   ],
   providers: [
-    SyncWorkspaceLoggerService,
-    SyncWorkspaceMetadataCommand,
+    UpgradeTo0_42Command,
+    MigrateRichTextFieldCommand,
+    FixBodyV2ViewFieldPositionCommand,
     LimitAmountOfViewFieldCommand,
   ],
 })
