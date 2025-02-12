@@ -39,7 +39,7 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    workspace: Pick<Workspace, 'subdomain' | 'hostname'>,
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -83,7 +83,7 @@ export class EmailVerificationService {
 
   async resendEmailVerificationToken(
     email: string,
-    workspace: Pick<Workspace, 'subdomain' | 'hostname'>,
+    workspace: Pick<Workspace, 'subdomain' | 'customDomain'>,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(

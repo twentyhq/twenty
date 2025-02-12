@@ -124,7 +124,6 @@ export const RecordShowPageWorkflowHeader = ({
 
             return deactivateWorkflowVersion({
               workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-              workflowId: workflowWithCurrentVersion.id,
             });
           }}
         />

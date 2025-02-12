@@ -139,7 +139,7 @@ export const FormNumberFieldInput = ({
       </FormFieldInputRowContainer>
 
       {hint ? <InputHint>{hint}</InputHint> : null}
-      {error && <InputErrorHelper>{error}</InputErrorHelper>}
+      <InputErrorHelper>{error}</InputErrorHelper>
     </FormFieldInputContainer>
   );
 };

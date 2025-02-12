@@ -161,7 +161,7 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEnterpriseKey
-        hostname
+        customDomain
         workspaceUrls {
           subdomainUrl
           customUrl
@@ -190,7 +190,7 @@ export const queries = {
           logo
           displayName
           subdomain
-          hostname
+          customDomain
           workspaceUrls {
             subdomainUrl
             customUrl
@@ -209,6 +209,7 @@ export const queries = {
       colorScheme
       avatarUrl
       locale
+      userEmail
       timeZone
       dateFormat
       timeFormat
@@ -308,7 +309,7 @@ export const responseData = {
       },
       workspaceMembers: [],
       currentUserWorkspace: {
-        settingsPermissions: ['DATA_MODEL']
+        settingsPermissions: ['DATA_MODEL'],
       },
       currentWorkspace: {
         id: 'test-workspace-id',
@@ -323,7 +324,7 @@ export const responseData = {
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,
         subdomain: 'test',
-        hostname: null,
+        customDomain: null,
         workspaceUrls: {
           customUrl: undefined,
           subdomainUrl: 'https://test.twenty.com/',

@@ -12,4 +12,5 @@ export interface Settings {
     maxFileSize: `${number}MB`;
   };
   minLengthOfStringForDuplicateCheck: number;
+  maxVisibleViewFields: number;
 }

@@ -10,6 +10,7 @@ export type ObjectMetadataItem = Omit<
   | 'dataSourceId'
   | 'indexMetadatas'
   | 'labelIdentifierFieldMetadataId'
+  | 'fieldsList'
 > & {
   __typename?: string;
   fields: FieldMetadataItem[];

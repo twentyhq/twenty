@@ -48,6 +48,7 @@ export class WorkspaceSchemaFactory {
     );
 
     if (isNewRelationEnabled) {
+      // eslint-disable-next-line no-console
       console.log(
         chalk.yellow('🚧 New relation schema generation is enabled 🚧'),
       );
@@ -84,6 +85,7 @@ export class WorkspaceSchemaFactory {
       (isNewRelationEnabled !== cachedIsNewRelationEnabled &&
         cachedIsNewRelationEnabled !== undefined)
     ) {
+      // eslint-disable-next-line no-console
       console.log(
         chalk.yellow('Recomputing due to new relation feature flag'),
         {

@@ -128,6 +128,12 @@ export type FieldRawJsonMetadata = {
   settings?: null;
 };
 
+export type FieldRichTextV2Metadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+  settings?: null;
+};
+
 export type FieldRichTextMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -212,7 +218,9 @@ export type FieldMetadata =
   | FieldAddressMetadata
   | FieldActorMetadata
   | FieldArrayMetadata
-  | FieldTsVectorMetadata;
+  | FieldTsVectorMetadata
+  | FieldRichTextV2Metadata
+  | FieldRichTextMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
@@ -263,6 +271,11 @@ export type FieldRelationValue<
 
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
+
+export type FieldRichTextV2Value = {
+  blocknote: string | null;
+  markdown: string | null;
+};
 
 export type FieldRichTextValue = null | string;
 

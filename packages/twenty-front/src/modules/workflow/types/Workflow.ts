@@ -55,6 +55,13 @@ export type WorkflowDeleteRecordActionSettings = BaseWorkflowActionSettings & {
   };
 };
 
+export type WorkflowFindRecordsActionSettings = BaseWorkflowActionSettings & {
+  input: {
+    objectName: string;
+    limit?: number;
+  };
+};
+
 type BaseWorkflowAction = {
   id: string;
   name: string;
@@ -86,12 +93,18 @@ export type WorkflowDeleteRecordAction = BaseWorkflowAction & {
   settings: WorkflowDeleteRecordActionSettings;
 };
 
+export type WorkflowFindRecordsAction = BaseWorkflowAction & {
+  type: 'FIND_RECORDS';
+  settings: WorkflowFindRecordsActionSettings;
+};
+
 export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowSendEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
-  | WorkflowDeleteRecordAction;
+  | WorkflowDeleteRecordAction
+  | WorkflowFindRecordsAction;
 
 export type WorkflowActionType = WorkflowAction['type'];
 

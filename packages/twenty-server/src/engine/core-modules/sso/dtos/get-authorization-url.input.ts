@@ -2,7 +2,7 @@
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsOptional, IsBoolean, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class GetAuthorizationUrlInput {

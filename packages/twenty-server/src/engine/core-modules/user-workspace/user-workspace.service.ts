@@ -2,7 +2,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined } from 'twenty-shared';
+import { isDefined, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -78,7 +78,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         user.id,
         user.email,
         user.defaultAvatarUrl ?? '',
-        user.locale ?? 'en',
+        user.locale ?? SOURCE_LOCALE,
       ],
     );
     const workspaceMember = await workspaceDataSource?.query(
@@ -182,7 +182,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
       id: userWorkspace.workspaceId,
       displayName: userWorkspace.workspace.displayName,
-      workspaceUrls: this.domainManagerService.getworkspaceUrls(
+      workspaceUrls: this.domainManagerService.getWorkspaceUrls(
         userWorkspace.workspace,
       ),
       logo: userWorkspace.workspace.logo,

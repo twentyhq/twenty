@@ -9,6 +9,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
@@ -67,6 +68,8 @@ type FormInput = {
 };
 
 export const WorkspaceInviteTeam = () => {
+  const { t } = useLingui();
+
   const { enqueueSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
@@ -136,7 +139,7 @@ export const WorkspaceInviteTeam = () => {
           Icon={IconSend}
           variant="primary"
           accent="blue"
-          title="Invite"
+          title={t`Invite`}
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}
         />
