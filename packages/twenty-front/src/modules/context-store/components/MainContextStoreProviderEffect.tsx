@@ -72,7 +72,6 @@ export const MainContextStoreProviderEffect = ({
     }
 
     if (contextStoreCurrentViewId !== viewId) {
-      console.log('contextStoreCurrentViewId', contextStoreCurrentViewId);
       setContextStoreCurrentViewId(viewId);
     }
   }, [
