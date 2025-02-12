@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 02:23\n"
+"PO-Revision-Date: 2025-02-12 07:13\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -60,7 +60,6 @@ msgid "Abort"
 msgstr "בטל"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
 msgid "About"
 msgstr "אודות"
 
@@ -74,7 +73,6 @@ msgstr "חשבון"
 msgid "Account Deletion"
 msgstr "מחיקת חשבון"
 
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
 msgid "Accounts"
@@ -145,10 +143,6 @@ msgstr "Add your first {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "נוסף ב-{beautifiedCreatedAt}"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
-msgid "Advanced filter"
-msgstr ""
-
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
 msgstr "אפריקאנס"
@@ -210,14 +204,6 @@ msgstr "מפתחות API"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
 msgid "API Name"
 msgstr "שם API"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
-msgid "API Name (Plural)"
-msgstr ""
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
-msgid "API Name (Singular)"
-msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -366,10 +352,6 @@ msgstr "סינית — מסורתית"
 msgid "Choose an object"
 msgstr "בחר אובייקט"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
-msgid "Choose the fields that will identify your records"
-msgstr ""
-
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
 msgstr "בחר את ספק השירות שלך"
@@ -390,7 +372,7 @@ msgstr "הגדר חיבור SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "הגדר והתאם אישית את העדפות לוח השנה שלך."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "הגדר כיצד מוצגים תאריכים ברחבי האפליקציה"
 
@@ -449,10 +431,6 @@ msgstr "קו-טייס"
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "העתק קישור להזמנה"
-
-#: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
-msgid "Copy link"
-msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -533,17 +511,12 @@ msgstr "צ'כית"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
 msgid "Danger zone"
 msgstr "אזור סיכון"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
 msgstr "דנית"
-
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
-msgid "Dark"
-msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -562,25 +535,19 @@ msgstr "סוג נתונים"
 msgid "Date"
 msgstr "תאריך"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "תאריך ושעה"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "השבת"
 
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:117
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "השבת \"סנכרן תוויות עצמים ושמות API\" כדי להגדיר שם API מותאם אישית"
-
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
-msgid "Deactivate object"
-msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -683,7 +650,6 @@ msgstr "הרוס"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
 msgid "Developers"
 msgstr "מפתחים"
 
@@ -749,8 +715,6 @@ msgstr "אינטגרציית דוא\"ל"
 msgid "Email or domain is already in blocklist"
 msgstr "דוא\"ל או תחום כבר נמצאים ברשימת החסימה"
 
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
@@ -883,7 +847,7 @@ msgid "Field type"
 msgstr "סוג שדה"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:97
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
@@ -1000,11 +964,10 @@ msgstr "אם איבדת את המפתח הזה, תוכל לחולל אותו מ�
 msgid "Inactive"
 msgstr "לא פעיל"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:109
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
 msgid "Indexes"
 msgstr "אינדקסים"
 
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:118
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "הקלט חייב להיות בגמל-קייס ולא יכול להתחיל במספר"
@@ -1039,10 +1002,6 @@ msgstr "דוא\"ל או דומיין לא חוקי"
 #: src/pages/settings/workspace/SettingsDomain.tsx:166
 msgid "Invalid form values"
 msgstr "ערכים לא חוקיים בטופס"
-
-#: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
-msgid "Invite"
-msgstr ""
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1080,7 +1039,7 @@ msgstr "קוריאנית"
 msgid "Lab"
 msgstr "מעבדה"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Language"
 msgstr "שפה"
 
@@ -1096,18 +1055,9 @@ msgstr "האחרון"
 msgid "Latest date"
 msgstr "התאריך האחרון"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
-msgid "Light"
-msgstr ""
-
 #: src/pages/onboarding/InviteTeam.tsx:127
-#: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
 msgid "Link copied to clipboard"
 msgstr "הקישור הועתק ללוח הגזירים"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
-msgid "Listings"
-msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1187,10 +1137,6 @@ msgstr "שם"
 msgid "Name can not be empty"
 msgstr "שם לא יכול להיות ריק"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
-msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr ""
-
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
@@ -1233,10 +1179,6 @@ msgstr "חדש"
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "חשבון חדש"
-
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
-msgid "New Field"
-msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1311,7 +1253,6 @@ msgstr "אובייקט"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
@@ -1325,7 +1266,6 @@ msgstr "מחוץ למסלול המוכר"
 msgid "Opened"
 msgstr "נפתח"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "אפשרויות"
@@ -1334,7 +1274,6 @@ msgstr "אפשרויות"
 msgid "or"
 msgstr "או"
 
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
 msgid "Other"
 msgstr "אחר"
@@ -1402,10 +1341,6 @@ msgstr "אנא הקלד את הערך \"{confirmationValue}\" כדי לאשר ש
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "אנא הקלד {confirmationText} כדי לאשר שברצונך למחוק את ה-Webhook הזה."
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
-msgid "Plural"
-msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1600,7 +1535,7 @@ msgstr "\\"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "\\"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
 msgid "Select your preferred language"
 msgstr "\\"
 
@@ -1612,12 +1547,7 @@ msgstr "\\"
 msgid "Serbian (Cyrillic)"
 msgstr "סרבית (קירילית)"
 
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
-msgid "Server Admin"
-msgstr ""
-
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "\\"
 
@@ -1634,7 +1564,7 @@ msgid "Set the name of your subdomain"
 msgstr "\\"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
@@ -1648,10 +1578,6 @@ msgstr "\\"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
 msgid "Should changing a field's label also change the API name?"
 msgstr "האם שינוי תווית שדה צריך גם לשנות את שם ה-API?"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
-msgid "Should changing an object's label also change the API?"
-msgstr ""
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1731,14 +1657,6 @@ msgstr "שינוי חיוב {to}"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "\\"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
-msgid "Synchronize Objects Labels and API Names"
-msgstr ""
-
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
-msgid "System settings"
-msgstr ""
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1897,7 +1815,6 @@ msgstr "השתמש ב-API שלנו או הוסף את ה{objectLabel} הראשו
 
 #: src/pages/settings/SettingsProfile.tsx:22
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
-#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
@@ -1933,7 +1850,7 @@ msgstr "אנחנו תומכים ב-PNGs ריבועיים, JPEGs ו-GIFs עד 10M
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:142
 msgid "We will send POST requests to this endpoint for every new event"
-msgstr "=======>>>>>>> main"
+msgstr "נשלח בקשות POST לכתובת זו עבור כל אירוע חדש"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
 msgid "Webhook"
@@ -1977,7 +1894,6 @@ msgstr "לא ניתן לבדוק את ה-Workflow"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:148
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
@@ -2000,7 +1916,6 @@ msgstr "שם סביבת העבודה"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:220
 msgid "Write a description"
 msgstr "כתוב תיאור"
 
@@ -2031,8 +1946,5 @@ msgstr "המרחב האישי שלך"
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
-msgstr ""
+msgstr "המרחב האישי שלך יהפוך ללא פעיל"
 
-#: src/pages/settings/SettingsBilling.tsx:172
-#~ msgid "Your workspace will be disabled<<<<<<< HEAD"
-#~ msgstr "המרחב האישי שלך יהפוך ללא פעיל>>>>>>> main"
