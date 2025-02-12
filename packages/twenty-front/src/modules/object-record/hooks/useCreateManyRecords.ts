@@ -26,7 +26,7 @@ type PartialObjectRecordWithId = Partial<ObjectRecord> & {
 type useCreateManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
-  skipPostOptmisticEffect?: boolean;
+  skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
 };
 
@@ -35,7 +35,7 @@ export const useCreateManyRecords = <
 >({
   objectNameSingular,
   recordGqlFields,
-  skipPostOptmisticEffect = false,
+  skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
 }: useCreateManyRecordsProps) => {
   const apolloClient = useApolloClient();
@@ -135,7 +135,7 @@ export const useCreateManyRecords = <
         update: (cache, { data }) => {
           const records = data?.[mutationResponseField];
 
-          if (!isDefined(records?.length) || skipPostOptmisticEffect) return;
+          if (!isDefined(records?.length) || skipPostOptimisticEffect) return;
 
           triggerCreateRecordsOptimisticEffect({
             cache,

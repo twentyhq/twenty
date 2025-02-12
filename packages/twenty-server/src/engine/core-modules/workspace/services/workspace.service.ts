@@ -4,13 +4,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
+import {
+  isDefined,
+  SettingsFeatures,
+  WorkspaceActivationStatus,
+} from 'twenty-shared';
 import { Repository } from 'typeorm';
 
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -22,10 +29,14 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -47,6 +58,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly permissionsService: PermissionsService,
   ) {
     super(workspaceRepository);
   }
@@ -114,7 +126,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  async updateWorkspaceById(payload: Partial<Workspace> & { id: string }) {
+  async updateWorkspaceById({
+    payload,
+    userWorkspaceId,
+  }: {
+    payload: Partial<Workspace> & { id: string };
+    userWorkspaceId?: string;
+  }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
     });
@@ -139,6 +157,18 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     ) {
       await this.setCustomDomain(workspace, payload.customDomain);
       customDomainRegistered = true;
+    }
+
+    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsPermissionsEnabled,
+      workspace.id,
+    );
+
+    if (permissionsEnabled) {
+      await this.validateSecurityPermissions({
+        payload,
+        userWorkspaceId,
+      });
     }
 
     try {
@@ -257,5 +287,37 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
 
     return !existingWorkspace;
+  }
+
+  private async validateSecurityPermissions({
+    payload,
+    userWorkspaceId,
+  }: {
+    payload: Partial<Workspace>;
+    userWorkspaceId?: string;
+  }) {
+    if (
+      isDefined(payload.isGoogleAuthEnabled) ||
+      isDefined(payload.isMicrosoftAuthEnabled) ||
+      isDefined(payload.isPasswordAuthEnabled) ||
+      isDefined(payload.isPublicInviteLinkEnabled)
+    ) {
+      if (!userWorkspaceId) {
+        throw new Error('Missing userWorkspaceId in authContext');
+      }
+
+      const userHasPermission =
+        await this.permissionsService.userHasWorkspaceSettingPermission({
+          userWorkspaceId,
+          _setting: SettingsFeatures.SECURITY,
+        });
+
+      if (!userHasPermission) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+    }
   }
 }

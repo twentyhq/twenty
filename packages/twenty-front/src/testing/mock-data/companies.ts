@@ -1,7 +1,20 @@
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+
 export const getCompaniesMock = () => {
   return companiesQueryResult.companies.edges.map((edge) => edge.node);
 };
 
+export const getCompanyObjectMetadataItem = () => {
+  const companyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'company',
+  );
+
+  if (!companyObjectMetadataItem) {
+    throw new Error('Company object metadata item not found');
+  }
+
+  return companyObjectMetadataItem;
+};
 export const getCompanyDuplicateMock = () => {
   return {
     ...companiesQueryResult.companies.edges[0].node,

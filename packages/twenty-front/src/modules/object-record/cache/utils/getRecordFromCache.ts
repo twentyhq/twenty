@@ -7,6 +7,7 @@ import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from 'twenty-shared';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type GetRecordFromCacheArgs = {
@@ -53,7 +54,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
     returnPartialData: true,
   });
 
-  if (isUndefinedOrNull(record)) {
+  if (isUndefinedOrNull(record) || isEmptyObject(record)) {
     return null;
   }
 

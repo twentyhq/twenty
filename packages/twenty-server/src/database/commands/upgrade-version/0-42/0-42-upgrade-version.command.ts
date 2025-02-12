@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
 import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-42/0-42-fix-body-v2-view-field-position.command';
+import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -19,6 +20,7 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly migrateRichTextFieldCommand: MigrateRichTextFieldCommand,
     private readonly fixBodyV2ViewFieldPositionCommand: FixBodyV2ViewFieldPositionCommand,
+    private readonly limitAmountOfViewFieldCommand: LimitAmountOfViewFieldCommand,
   ) {
     super(workspaceRepository);
   }
@@ -37,6 +39,12 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
     );
 
     await this.fixBodyV2ViewFieldPositionCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
+    await this.limitAmountOfViewFieldCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,

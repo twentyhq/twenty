@@ -188,6 +188,7 @@ export const WorkflowEditActionFormSendEmail = ({
           iconColor={theme.color.blue}
           initialTitle={headerTitle}
           headerType="Email"
+          disabled={actionOptions.readonly}
         />
         <WorkflowStepBody>
           <Select

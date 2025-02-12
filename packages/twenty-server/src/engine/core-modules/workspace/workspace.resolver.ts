@@ -17,6 +17,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -32,26 +33,30 @@ import {
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
-import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
 @Resolver(() => Workspace)
-@UseFilters(GraphqlValidationExceptionFilter)
+@UseFilters(
+  GraphqlValidationExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+)
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
@@ -98,11 +103,15 @@ export class WorkspaceResolver {
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
-        ...data,
-        id: workspace.id,
+        payload: {
+          ...data,
+          id: workspace.id,
+        },
+        userWorkspaceId,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);

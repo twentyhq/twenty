@@ -74,7 +74,7 @@ describe('getWorkflowVersionDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Record is created",
         "nodeType": "trigger",
@@ -143,7 +143,7 @@ describe('getWorkflowVersionDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",

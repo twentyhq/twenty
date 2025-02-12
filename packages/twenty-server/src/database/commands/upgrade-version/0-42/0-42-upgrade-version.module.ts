@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-42/0-42-fix-body-v2-view-field-position.command';
+import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
 import { UpgradeTo0_42Command } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.command';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -31,6 +32,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     UpgradeTo0_42Command,
     MigrateRichTextFieldCommand,
     FixBodyV2ViewFieldPositionCommand,
+    LimitAmountOfViewFieldCommand,
   ],
 })
 export class UpgradeTo0_42CommandModule {}
