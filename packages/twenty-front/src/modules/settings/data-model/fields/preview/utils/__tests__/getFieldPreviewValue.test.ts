@@ -24,7 +24,10 @@ describe('getFieldPreviewValue', () => {
     }
 
     // When
-    const result = getFieldPreviewValue({ fieldMetadataItem });
+    const result = getFieldPreviewValue({
+      fieldMetadataItem,
+      workspaceMemberId: undefined,
+    });
 
     // Then
     expect(result).toBe(false);
@@ -42,7 +45,10 @@ describe('getFieldPreviewValue', () => {
     }
 
     // When
-    const result = getFieldPreviewValue({ fieldMetadataItem });
+    const result = getFieldPreviewValue({
+      fieldMetadataItem,
+      workspaceMemberId: undefined,
+    });
 
     // Then
     expect(result).toBe(2000);
@@ -63,7 +69,10 @@ describe('getFieldPreviewValue', () => {
     }
 
     // When
-    const result = getFieldPreviewValue({ fieldMetadataItem });
+    const result = getFieldPreviewValue({
+      fieldMetadataItem,
+      workspaceMemberId: undefined,
+    });
 
     // Then
     expect(result).toBeNull();

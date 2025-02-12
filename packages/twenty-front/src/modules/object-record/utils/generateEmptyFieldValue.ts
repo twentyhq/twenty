@@ -6,12 +6,15 @@ import {
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
-// Should strictly type to each FieldValue
-// Refactor using generic to get strictly type safety on this
-export const generateEmptyFieldValue = (
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>,
-) => {
-  console.log(fieldMetadataItem)
+export type GenerateEmptyFieldValueArgs = {
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>;
+  workspaceMemberId: string | undefined;
+};
+// TODO strictly type each fieldValue following their FieldMetadataType
+export const generateEmptyFieldValue = ({
+  fieldMetadataItem,
+  workspaceMemberId,
+}: GenerateEmptyFieldValueArgs) => {
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.TEXT: {
       return '';
@@ -98,10 +101,10 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.ACTOR: {
       return {
         source: 'MANUAL',
-        workspaceMemberId: undefined,
+        workspaceMemberId: workspaceMemberId ?? null,
         name: '',
-        context: undefined,
-      } satisfies FieldActorValue; // Should be FieldActorDraftValue or not ?
+        context: null,
+      } satisfies FieldActorValue;
     }
     case FieldMetadataType.PHONES: {
       return {

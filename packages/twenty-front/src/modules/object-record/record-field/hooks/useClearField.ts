@@ -1,11 +1,12 @@
 import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSetRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FieldContext } from '../contexts/FieldContext';
 
 export const useClearField = () => {
@@ -16,6 +17,8 @@ export const useClearField = () => {
   } = useContext(FieldContext);
 
   const [updateRecord] = useUpdateRecord();
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const setRecordFieldValue = useSetRecordFieldValue();
 
@@ -42,7 +45,10 @@ export const useClearField = () => {
 
         const fieldName = fieldDefinition.metadata.fieldName;
 
-        const emptyFieldValue = generateEmptyFieldValue(foundFieldMetadataItem);
+        const emptyFieldValue = generateEmptyFieldValue({
+          fieldMetadataItem: foundFieldMetadataItem,
+          workspaceMemberId: currentWorkspaceMember?.id,
+        });
 
         set(
           recordStoreFamilySelector({ recordId, fieldName }),
@@ -60,7 +66,13 @@ export const useClearField = () => {
           },
         });
       },
-    [recordId, fieldDefinition, updateRecord, setRecordFieldValue],
+    [
+      recordId,
+      fieldDefinition,
+      currentWorkspaceMember,
+      updateRecord,
+      setRecordFieldValue,
+    ],
   );
 
   return clearField;

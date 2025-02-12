@@ -4,14 +4,22 @@ import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFiel
 import { v4 } from 'uuid';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
-export const generateDefaultFieldValue = (
-  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue' | 'type'>,
-) => {
+type GenerateEmptyFieldValueArgs = {
+  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue' | 'type'>;
+  workspaceMemberId: string | undefined;
+};
+export const generateDefaultFieldValue = ({
+  fieldMetadataItem,
+  workspaceMemberId,
+}: GenerateEmptyFieldValueArgs) => {
   const defaultValue = isFieldValueEmpty({
     fieldValue: fieldMetadataItem.defaultValue,
     fieldDefinition: fieldMetadataItem,
   })
-    ? generateEmptyFieldValue(fieldMetadataItem)
+    ? generateEmptyFieldValue({
+        fieldMetadataItem,
+        workspaceMemberId,
+      })
     : stripSimpleQuotesFromString(fieldMetadataItem.defaultValue);
 
   switch (defaultValue) {
@@ -22,4 +30,5 @@ export const generateDefaultFieldValue = (
     default:
       return defaultValue;
   }
+  ///
 };

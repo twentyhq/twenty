@@ -5,11 +5,14 @@ import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSetti
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { isDefined } from 'twenty-shared';
 
+type getFieldPreviewValueArgs = {
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'defaultValue'>;
+  workspaceMemberId: string | undefined;
+};
 export const getFieldPreviewValue = ({
   fieldMetadataItem,
-}: {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'defaultValue'>;
-}) => {
+  workspaceMemberId,
+}: getFieldPreviewValueArgs) => {
   if (!isFieldTypeSupportedInSettings(fieldMetadataItem.type)) return null;
 
   if (
@@ -18,7 +21,10 @@ export const getFieldPreviewValue = ({
       fieldValue: fieldMetadataItem.defaultValue,
     })
   ) {
-    return generateDefaultFieldValue(fieldMetadataItem);
+    return generateDefaultFieldValue({
+      fieldMetadataItem,
+      workspaceMemberId,
+    });
   }
 
   const fieldTypeConfig = getSettingsFieldTypeConfig(fieldMetadataItem.type);
