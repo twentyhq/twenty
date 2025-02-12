@@ -39,7 +39,12 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<
   Pick<
     TextInputV2ComponentProps,
-    'LeftIcon' | 'error' | 'sizeVariant' | 'width' | 'inheritFontStyles'
+    | 'LeftIcon'
+    | 'error'
+    | 'sizeVariant'
+    | 'width'
+    | 'inheritFontStyles'
+    | 'autoGrow'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -60,12 +65,20 @@ const StyledInput = styled.input<
   height: ${({ sizeVariant }) =>
     sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   outline: none;
-  padding: ${({ theme, sizeVariant }) =>
-    sizeVariant === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
-  padding-left: ${({ theme, LeftIcon }) =>
-    LeftIcon ? `calc(${theme.spacing(3)} + 16px)` : theme.spacing(2)};
+  padding: ${({ theme, sizeVariant, autoGrow }) =>
+    autoGrow
+      ? '0'
+      : sizeVariant === 'sm'
+        ? `${theme.spacing(2)} 0`
+        : theme.spacing(2)};
+  padding-left: ${({ theme, LeftIcon, autoGrow }) =>
+    autoGrow
+      ? '0'
+      : LeftIcon
+        ? `calc(${theme.spacing(3)} + 16px)`
+        : theme.spacing(2)};
   width: ${({ theme, width }) =>
-    width ? `calc(${width}px + ${theme.spacing(5)})` : '100%'};
+    width ? `calc(${width}px + ${theme.spacing(0.5)})` : '100%'};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -186,6 +199,7 @@ const TextInputV2Component = forwardRef<
       sizeVariant = 'md',
       inheritFontStyles = false,
       dataTestId,
+      autoGrow = false,
     },
     ref,
   ) => {
@@ -256,6 +270,7 @@ const TextInputV2Component = forwardRef<
               error,
               sizeVariant,
               inheritFontStyles,
+              autoGrow,
             }}
           />
 
