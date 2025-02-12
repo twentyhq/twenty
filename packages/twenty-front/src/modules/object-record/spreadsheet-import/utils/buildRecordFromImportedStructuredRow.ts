@@ -16,10 +16,16 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
-export const buildRecordFromImportedStructuredRow = (
-  importedStructuredRow: ImportedStructuredRow<any>,
-  fields: FieldMetadataItem[],
-) => {
+type BuildRecordFromImportedStructuredRowArgs = {
+  importedStructuredRow: ImportedStructuredRow<any>;
+  fields: FieldMetadataItem[];
+  workspaceMemberId: string | undefined;
+};
+export const buildRecordFromImportedStructuredRow = ({
+  fields,
+  importedStructuredRow,
+  workspaceMemberId,
+}: BuildRecordFromImportedStructuredRowArgs) => {
   const recordToBuild: Record<string, any> = {};
 
   const {
@@ -219,10 +225,10 @@ export const buildRecordFromImportedStructuredRow = (
         break;
       case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
-          source: 'IMPORT', // Shouldn't this be the user that imported everthing ? IMPORT should be a additional metadata ?
-          workspaceMemberId: undefined, // Could be retrieved ?
+          source: 'IMPORT',
+          workspaceMemberId: workspaceMemberId ?? null,
           name: '',
-          context: {},
+          context: null,
         } satisfies FieldActorValue;
         break;
       case FieldMetadataType.ARRAY:

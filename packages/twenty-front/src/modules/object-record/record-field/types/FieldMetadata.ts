@@ -281,11 +281,11 @@ export type FieldRichTextValue = null | string;
 
 export type FieldActorValue = {
   source: string;
-  workspaceMemberId?: string;
+  workspaceMemberId: string | null;
   name: string;
-  context?: {
+  context: {
     provider?: ConnectedAccountProvider;
-  };
+  } | null;
 };
 
 export type FieldArrayValue = string[];
