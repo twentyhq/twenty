@@ -10,6 +10,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -48,6 +49,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
@@ -90,21 +92,22 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const fromId = uuidV4();
     const toId = uuidV4();
 
-    await this.fieldMetadataRepository.save([
-      this.createFieldMetadataForRelationMetadata(
-        relationMetadataInput,
-        'from',
-        isCustom,
-        fromId,
-      ),
-      this.createFieldMetadataForRelationMetadata(
-        relationMetadataInput,
-        'to',
-        isCustom,
-        toId,
-      ),
-      this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
-    ]);
+    const createdRelationFieldsMetadata =
+      await this.fieldMetadataRepository.save([
+        this.createFieldMetadataForRelationMetadata(
+          relationMetadataInput,
+          'from',
+          isCustom,
+          fromId,
+        ),
+        this.createFieldMetadataForRelationMetadata(
+          relationMetadataInput,
+          'to',
+          isCustom,
+          toId,
+        ),
+        this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
+      ]);
 
     const createdRelationMetadata = await super.createOne({
       ...relationMetadataInput,
@@ -121,13 +124,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const toObjectMetadata =
       objectMetadataMap[relationMetadataInput.toObjectMetadataId];
 
-    const foreignKeyFieldMetadata = await this.fieldMetadataRepository.findOne({
-      where: {
-        name: columnName,
-        objectMetadataId: relationMetadataInput.toObjectMetadataId,
-        workspaceId: relationMetadataInput.workspaceId,
-      },
-    });
+    const foreignKeyFieldMetadata = createdRelationFieldsMetadata.find(
+      (fieldMetadata) => fieldMetadata.type === FieldMetadataType.UUID,
+    );
 
     if (!foreignKeyFieldMetadata) {
       throw new RelationMetadataException(
@@ -215,13 +214,17 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     objectMetadataMap: { [key: string]: ObjectMetadataEntity },
     relationDirection: 'from' | 'to',
   ) {
-    const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({
-      where: {
-        name: relationMetadataInput[`${relationDirection}Name`],
-        objectMetadataId:
-          relationMetadataInput[`${relationDirection}ObjectMetadataId`],
-      },
-    });
+    const fieldAlreadyExists =
+      await this.fieldMetadataService.findOneWithinWorkspace(
+        relationMetadataInput.workspaceId,
+        {
+          where: {
+            name: relationMetadataInput[`${relationDirection}Name`],
+            objectMetadataId:
+              relationMetadataInput[`${relationDirection}ObjectMetadataId`],
+          },
+        },
+      );
 
     if (fieldAlreadyExists) {
       throw new RelationMetadataException(
@@ -413,11 +416,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     await super.deleteOne(id);
 
     // TODO: Move to a cdc scheduler
-    await this.fieldMetadataRepository.delete([
-      relationMetadata.fromFieldMetadataId,
-      relationMetadata.toFieldMetadataId,
-      foreignKeyFieldMetadata.id,
-    ]);
+    await this.fieldMetadataService.deleteMany({
+      id: {
+        in: [
+          relationMetadata.fromFieldMetadataId,
+          relationMetadata.toFieldMetadataId,
+          foreignKeyFieldMetadata.id,
+        ],
+      },
+    });
 
     const columnName = `${camelCase(relationMetadata.toFieldMetadata.name)}Id`;
     const objectTargetTable = computeObjectTargetTable(
