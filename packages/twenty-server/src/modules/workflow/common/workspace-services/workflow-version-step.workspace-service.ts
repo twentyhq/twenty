@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { isDefined } from 'twenty-shared';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
@@ -182,6 +182,26 @@ export class WorkflowVersionStepWorkspaceService {
             input: {
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecordId: '',
+            },
+          },
+        };
+      }
+      case WorkflowActionType.FIND_RECORDS: {
+        const activeObjectMetadataItem =
+          await this.objectMetadataRepository.findOne({
+            where: { workspaceId, isActive: true, isSystem: false },
+          });
+
+        return {
+          id: newStepId,
+          name: 'Search Records',
+          type: WorkflowActionType.FIND_RECORDS,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              objectName: activeObjectMetadataItem?.nameSingular || '',
+              limit: 1,
             },
           },
         };

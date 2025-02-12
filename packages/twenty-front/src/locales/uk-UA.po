@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 07:13\n"
+"PO-Revision-Date: 2025-02-12 10:03\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -60,6 +60,7 @@ msgid "Abort"
 msgstr "Скасувати"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
 msgid "About"
 msgstr "Про"
 
@@ -73,6 +74,7 @@ msgstr "Аккаунт"
 msgid "Account Deletion"
 msgstr "Видалення аккаунту"
 
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
 msgid "Accounts"
@@ -143,6 +145,10 @@ msgstr "Додайте ваш перший {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Додано {beautifiedCreatedAt}"
 
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+msgid "Advanced filter"
+msgstr "Розширений фільтр"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
 msgstr "Африкаанс"
@@ -204,6 +210,14 @@ msgstr "API-ключі"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
 msgid "API Name"
 msgstr "Назва API"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
+msgid "API Name (Plural)"
+msgstr "Назва API (множина)"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
+msgid "API Name (Singular)"
+msgstr "Назва API (однина)"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -352,6 +366,10 @@ msgstr "Китайська — традиційна"
 msgid "Choose an object"
 msgstr "Виберіть об'єкт"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+msgid "Choose the fields that will identify your records"
+msgstr "Виберіть поля, які будуть ідентифікувати ваші записи"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
 msgstr "Виберіть провайдера"
@@ -372,7 +390,7 @@ msgstr "Сконфігуруйте з'єднання SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "Налаштувати та настроїти уподобання вашого календаря."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
 msgid "Configure how dates are displayed across the app"
 msgstr "Налаштуйте відображення дат у додатку"
 
@@ -431,6 +449,10 @@ msgstr "Штурман"
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "Скопіювати посилання на запрошення"
+
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
+msgid "Copy link"
+msgstr "Копіювати посилання"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -511,12 +533,17 @@ msgstr "Чеська"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
 msgid "Danger zone"
 msgstr "Небезпечна зона"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
 msgstr "Данська"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+msgid "Dark"
+msgstr "Темна"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -535,19 +562,25 @@ msgstr "Тип даних"
 msgid "Date"
 msgstr "Дата"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
 msgid "Date and time"
 msgstr "Дата та час"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Деактивувати"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:117
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Деактивуйте \"Синхронізувати назви об'єктів та API-імена\" для установки користувацького API-імені"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+msgid "Deactivate object"
+msgstr "Деактивувати об'єкт"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -670,6 +703,7 @@ msgstr "\n"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
 msgid "Developers"
 msgstr "\n"
 "              \n"
@@ -759,6 +793,8 @@ msgstr "\n"
 "              \n"
 "              Електронна пошта або домен вже знаходяться в списку заблокованих"
 
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
@@ -911,7 +947,7 @@ msgid "Field type"
 msgstr "Тип поля"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:97
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
@@ -1028,10 +1064,11 @@ msgstr "Якщо ви втратили цей ключ, ви можете йог
 msgid "Inactive"
 msgstr "Неактивний"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:109
 msgid "Indexes"
 msgstr "Індекси"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:118
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "Вхідні дані мають бути у camelCase та не можуть починатися з цифри"
@@ -1066,6 +1103,10 @@ msgstr "Недійсна електронна адреса або домен"
 #: src/pages/settings/workspace/SettingsDomain.tsx:166
 msgid "Invalid form values"
 msgstr "Недійсні значення форми"
+
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
+msgid "Invite"
+msgstr "Запросити"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1103,7 +1144,7 @@ msgstr "Корейська"
 msgid "Lab"
 msgstr "Лабораторія"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
 msgid "Language"
 msgstr "Мова"
 
@@ -1119,9 +1160,18 @@ msgstr "Останні"
 msgid "Latest date"
 msgstr "Остання дата"
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+msgid "Light"
+msgstr "Світла"
+
 #: src/pages/onboarding/InviteTeam.tsx:127
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
 msgid "Link copied to clipboard"
 msgstr "Посилання скопійовано в буфер обміну"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
+msgid "Listings"
+msgstr "Списки"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1201,6 +1251,10 @@ msgstr "Ім'я"
 msgid "Name can not be empty"
 msgstr "Ім'я не може бути порожнім"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+msgstr "Назва в однині <b>(</b>наприклад, 'Рахунок') та множині <b>(</b>наприклад, 'Рахунки')."
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
@@ -1243,6 +1297,10 @@ msgstr "Новий"
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Новий акаунт"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
+msgid "New Field"
+msgstr "Нове поле"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1317,6 +1375,7 @@ msgstr "Об'єкт"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
@@ -1330,6 +1389,7 @@ msgstr "Не по традиційному шляху"
 msgid "Opened"
 msgstr "Відкрився"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Опції"
@@ -1338,6 +1398,7 @@ msgstr "Опції"
 msgid "or"
 msgstr "або"
 
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
 msgid "Other"
 msgstr "Інший"
@@ -1405,6 +1466,10 @@ msgstr "Будь ласка, введіть \\\"{confirmationValue}\\\" для �
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Будь ласка, введіть {confirmationText}, щоб підтвердити видалення цього webhook."
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
+msgid "Plural"
+msgstr "Множина"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1599,7 +1664,7 @@ msgstr "Переглянути історію версій"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Оберіть події, які хочете надіслати до цього кінцевого пункту"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
 msgid "Select your preferred language"
 msgstr "Оберіть бажану мову"
 
@@ -1611,7 +1676,12 @@ msgstr "Надішліть запрошення на електронну адр
 msgid "Serbian (Cyrillic)"
 msgstr "Сербська (кирилиця)"
 
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+msgid "Server Admin"
+msgstr "Адміністратор сервера"
+
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "Панель адміністратора сервера"
 
@@ -1628,7 +1698,7 @@ msgid "Set the name of your subdomain"
 msgstr "Встановіть назву вашого субдомену"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
@@ -1642,6 +1712,10 @@ msgstr "Поділіться цим посиланням, щоб запроси�
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
 msgid "Should changing a field's label also change the API name?"
 msgstr "Чи повинна зміна мітки поля також змінювати API-назву?"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
+msgid "Should changing an object's label also change the API?"
+msgstr "Чи повинна зміна мітки об'єкта також змінювати API?"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1721,6 +1795,14 @@ msgstr "Змінити біллінг {to}"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "Синхронізувати мітку поля та API-назву"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
+msgid "Synchronize Objects Labels and API Names"
+msgstr "Синхронізація міток об'єктів та назв API"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+msgid "System settings"
+msgstr "Системні налаштування"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1879,6 +1961,7 @@ msgstr "Скористайтеся нашим API або додайте ваш �
 
 #: src/pages/settings/SettingsProfile.tsx:22
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
@@ -1958,6 +2041,7 @@ msgstr "Неможливо протестувати процес роботи"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:148
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
@@ -1980,6 +2064,7 @@ msgstr "Назва працевлаштування"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:220
 msgid "Write a description"
 msgstr "Написати опис"
 
