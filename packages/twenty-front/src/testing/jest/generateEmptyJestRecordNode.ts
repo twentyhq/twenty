@@ -7,13 +7,11 @@ type GenerateEmptyJestRecordNodeArgs = {
   objectNameSingular: string;
   input: Record<string, unknown>;
   withDepthOneRelation?: boolean;
-  workspaceMemberId?: string;
 };
 export const generateEmptyJestRecordNode = ({
   objectNameSingular,
   input,
   withDepthOneRelation = false,
-  workspaceMemberId,
 }: GenerateEmptyJestRecordNodeArgs) => {
   const objectMetadataItem = generatedMockObjectMetadataItems.find(
     (item) => item.nameSingular === objectNameSingular,
@@ -28,7 +26,6 @@ export const generateEmptyJestRecordNode = ({
   const prefilledRecord = prefillRecord({
     objectMetadataItem,
     input,
-    workspaceMemberId,
   });
 
   return getRecordNodeFromRecord({
