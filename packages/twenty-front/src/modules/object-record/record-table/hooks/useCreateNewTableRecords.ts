@@ -5,6 +5,7 @@ import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-ce
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { shouldRedirectToShowPageOnCreation } from '@/object-record/utils/shouldRedirectToShowPageOnCreation';
 import { AppPath } from '@/types/AppPath';
@@ -59,6 +60,8 @@ export const useCreateNewTableRecord = ({
 
   const navigate = useNavigateApp();
 
+  const { openRecordTitleCell } = useRecordTitleCell();
+
   const createNewTableRecord = async () => {
     const recordId = v4();
 
@@ -76,12 +79,22 @@ export const useCreateNewTableRecord = ({
           objectRecordId: recordId,
         });
 
+        openRecordTitleCell({
+          recordId,
+          fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
+        });
+
         return;
       }
 
       await createOneRecord({ id: recordId });
 
       openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
+
+      openRecordTitleCell({
+        recordId,
+        fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
+      });
 
       return;
     }
