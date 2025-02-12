@@ -33,6 +33,11 @@ export function WorkspaceEntity(
       'workspace:gate-metadata-args',
       target,
     );
+    const duplicateCriteria = TypedReflect.getMetadata(
+      'workspace:duplicate-criteria-metadata-args',
+      target,
+    );
+
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
     metadataArgsStorage.addEntities({
@@ -51,6 +56,7 @@ export function WorkspaceEntity(
       isAuditLogged,
       isSystem,
       gate,
+      duplicateCriteria,
     });
   };
 }
