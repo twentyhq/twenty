@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 07:13\n"
+"PO-Revision-Date: 2025-02-12 10:03\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -60,6 +60,7 @@ msgid "Abort"
 msgstr "Afbreken"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
 msgid "About"
 msgstr "Over"
 
@@ -73,6 +74,7 @@ msgstr "Account"
 msgid "Account Deletion"
 msgstr "Accountverwijdering"
 
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
 msgid "Accounts"
@@ -143,6 +145,10 @@ msgstr "Voeg uw eerste {objectLabel} toe"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Toegevoegd {beautifiedCreatedAt}"
 
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+msgid "Advanced filter"
+msgstr "Geavanceerd filter"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
 msgstr "Afrikaans"
@@ -204,6 +210,14 @@ msgstr "API-sleutels"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
 msgid "API Name"
 msgstr "API Naam"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
+msgid "API Name (Plural)"
+msgstr "API-naam (meervoud)"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
+msgid "API Name (Singular)"
+msgstr "API-naam (enkelvoud)"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -352,6 +366,10 @@ msgstr "Chinees — Traditioneel"
 msgid "Choose an object"
 msgstr "Kies een object"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+msgid "Choose the fields that will identify your records"
+msgstr "Kies de velden die uw records zullen identificeren"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
 msgstr "Kies uw provider"
@@ -372,7 +390,7 @@ msgstr "Configureer een SSO-verbinding"
 msgid "Configure and customize your calendar preferences."
 msgstr "Configureer en pas uw kalendervoorkeuren aan."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
 msgid "Configure how dates are displayed across the app"
 msgstr "Stel in hoe datums in de app worden weergegeven"
 
@@ -431,6 +449,10 @@ msgstr "Copiloot"
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "Uitnodigingslink kopiëren"
+
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
+msgid "Copy link"
+msgstr "Kopieer link"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -511,12 +533,17 @@ msgstr "Tsjechisch"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
 msgid "Danger zone"
 msgstr "Gevaarzone"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
 msgstr "Deens"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+msgid "Dark"
+msgstr "Donker"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -535,19 +562,25 @@ msgstr "Gegevenstype"
 msgid "Date"
 msgstr "Datum"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
 msgid "Date and time"
 msgstr "Datum en tijd"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Deactiveren"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:117
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Schakel \"Synchroniseer objectlabels en API-namen\" uit om een aangepaste API-naam in te stellen"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+msgid "Deactivate object"
+msgstr "Object deactiveren"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -650,6 +683,7 @@ msgstr "Vernietigen"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
 msgid "Developers"
 msgstr "Ontwikkelaars"
 
@@ -715,6 +749,8 @@ msgstr "E-mailintegratie"
 msgid "Email or domain is already in blocklist"
 msgstr "E-mail of domein staat al in de blokkeerlijst"
 
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
@@ -847,7 +883,7 @@ msgid "Field type"
 msgstr "Veldtype"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:97
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
@@ -964,10 +1000,11 @@ msgstr "Als je deze sleutel bent verloren, kun je hem opnieuw genereren, maar we
 msgid "Inactive"
 msgstr "Inactief"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:109
 msgid "Indexes"
 msgstr "Indexen"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:118
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "Input moet camelCase zijn en mag niet met een nummer beginnen"
@@ -1002,6 +1039,10 @@ msgstr "Ongeldig e-mailadres of domein"
 #: src/pages/settings/workspace/SettingsDomain.tsx:166
 msgid "Invalid form values"
 msgstr "''"
+
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
+msgid "Invite"
+msgstr "Uitnodigen"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1039,7 +1080,7 @@ msgstr "Koreaans"
 msgid "Lab"
 msgstr "''"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
 msgid "Language"
 msgstr "Taal"
 
@@ -1055,9 +1096,18 @@ msgstr "Meest recent"
 msgid "Latest date"
 msgstr "Meest recente datum"
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+msgid "Light"
+msgstr "Licht"
+
 #: src/pages/onboarding/InviteTeam.tsx:127
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
 msgid "Link copied to clipboard"
 msgstr "Link gekopieerd naar klembord"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
+msgid "Listings"
+msgstr "Lijsten"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1137,6 +1187,10 @@ msgstr "Naam"
 msgid "Name can not be empty"
 msgstr "Naam mag niet leeg zijn"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+msgstr "Naam in zowel enkelvoudige (bijv. 'Factuur') als meervoudige (bijv. 'Facturen') vormen."
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
@@ -1179,6 +1233,10 @@ msgstr "Nieuw"
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Nieuwe account"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
+msgid "New Field"
+msgstr "Nieuw veld"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1253,6 +1311,7 @@ msgstr "Object"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
@@ -1266,6 +1325,7 @@ msgstr "Buiten de gebaande paden"
 msgid "Opened"
 msgstr "Geopend"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opties"
@@ -1274,6 +1334,7 @@ msgstr "Opties"
 msgid "or"
 msgstr "of"
 
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
 msgid "Other"
 msgstr "Overige"
@@ -1341,6 +1402,10 @@ msgstr "Typ alstublieft \"{confirmationValue}\" om te bevestigen dat u deze API-
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Typ alstublieft {confirmationText} om te bevestigen dat u deze webhook wilt verwijderen."
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
+msgid "Plural"
+msgstr "Meervoud"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1535,7 +1600,7 @@ msgstr "Bekijk versiegeschiedenis"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Selecteer de gebeurtenissen die je naar dit eindpunt wilt sturen"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
 msgid "Select your preferred language"
 msgstr "Selecteer je voorkeurstaal"
 
@@ -1547,7 +1612,12 @@ msgstr "Stuur een uitnodigingsmail naar je team"
 msgid "Serbian (Cyrillic)"
 msgstr "Servisch (Cyrillisch)"
 
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+msgid "Server Admin"
+msgstr "Serverbeheerder"
+
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "Serverbeheer Paneel"
 
@@ -1564,7 +1634,7 @@ msgid "Set the name of your subdomain"
 msgstr "Stel de naam van je subdomein in"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
@@ -1578,6 +1648,10 @@ msgstr "Deel deze link om gebruikers uit te nodigen voor uw werkruimte"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
 msgid "Should changing a field's label also change the API name?"
 msgstr "Moet het wijzigen van het label van een veld ook de API-naam wijzigen?"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
+msgid "Should changing an object's label also change the API?"
+msgstr "Moet het wijzigen van een objectlabel ook de API wijzigen?"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1657,6 +1731,14 @@ msgstr "Wissel facturatie naar {to}"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "Synchroniseer veldlabel en API-naam"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
+msgid "Synchronize Objects Labels and API Names"
+msgstr "Synchroniseer objectlabels en API-namen"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+msgid "System settings"
+msgstr "Systeeminstellingen"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1815,6 +1897,7 @@ msgstr "Gebruik onze API of voeg uw eerste {objectLabel} handmatig toe"
 
 #: src/pages/settings/SettingsProfile.tsx:22
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
@@ -1894,6 +1977,7 @@ msgstr "Workflow kan niet worden getest"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:148
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
@@ -1916,6 +2000,7 @@ msgstr "Naam van de werkruimte"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:220
 msgid "Write a description"
 msgstr "Schrijf een beschrijving"
 

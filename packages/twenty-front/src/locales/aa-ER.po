@@ -8,7 +8,7 @@ msgstr ""
 "Language: aa\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 07:13\n"
+"PO-Revision-Date: 2025-02-12 10:03\n"
 "Last-Translator: \n"
 "Language-Team: Afar\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -60,6 +60,7 @@ msgid "Abort"
 msgstr "crwdns61:0crwdne61:0"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
 msgid "About"
 msgstr "crwdns63:0crwdne63:0"
 
@@ -73,6 +74,7 @@ msgstr "crwdns65:0crwdne65:0"
 msgid "Account Deletion"
 msgstr "crwdns67:0crwdne67:0"
 
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
 msgid "Accounts"
@@ -143,6 +145,10 @@ msgstr "crwdns91:0{objectLabel}crwdne91:0"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "crwdns93:0{beautifiedCreatedAt}crwdne93:0"
 
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+msgid "Advanced filter"
+msgstr "crwdns3979:0crwdne3979:0"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
 msgstr "crwdns1787:0crwdne1787:0"
@@ -204,6 +210,14 @@ msgstr "crwdns119:0crwdne119:0"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
 msgid "API Name"
 msgstr "crwdns121:0crwdne121:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
+msgid "API Name (Plural)"
+msgstr "crwdns3981:0crwdne3981:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
+msgid "API Name (Singular)"
+msgstr "crwdns3983:0crwdne3983:0"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -352,6 +366,10 @@ msgstr "crwdns177:0crwdne177:0"
 msgid "Choose an object"
 msgstr "crwdns179:0crwdne179:0"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+msgid "Choose the fields that will identify your records"
+msgstr "crwdns3985:0crwdne3985:0"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
 msgstr "crwdns181:0crwdne181:0"
@@ -372,7 +390,7 @@ msgstr "crwdns187:0crwdne187:0"
 msgid "Configure and customize your calendar preferences."
 msgstr "crwdns189:0crwdne189:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
 msgid "Configure how dates are displayed across the app"
 msgstr "crwdns191:0crwdne191:0"
 
@@ -431,6 +449,10 @@ msgstr "crwdns213:0crwdne213:0"
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "crwdns215:0crwdne215:0"
+
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
+msgid "Copy link"
+msgstr "crwdns3987:0crwdne3987:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -511,12 +533,17 @@ msgstr "crwdns1801:0crwdne1801:0"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
 msgid "Danger zone"
 msgstr "crwdns251:0crwdne251:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Danish"
 msgstr "crwdns1803:0crwdne1803:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+msgid "Dark"
+msgstr "crwdns3989:0crwdne3989:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -535,19 +562,25 @@ msgstr "crwdns255:0crwdne255:0"
 msgid "Date"
 msgstr "crwdns257:0crwdne257:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
 msgid "Date and time"
 msgstr "crwdns259:0crwdne259:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "crwdns261:0crwdne261:0"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:117
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "crwdns263:0crwdne263:0"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+msgid "Deactivate object"
+msgstr "crwdns3991:0crwdne3991:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -650,6 +683,7 @@ msgstr "crwdns299:0crwdne299:0"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
 msgid "Developers"
 msgstr "crwdns301:0crwdne301:0"
 
@@ -715,6 +749,8 @@ msgstr "crwdns323:0crwdne323:0"
 msgid "Email or domain is already in blocklist"
 msgstr "crwdns325:0crwdne325:0"
 
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
@@ -847,7 +883,7 @@ msgid "Field type"
 msgstr "crwdns377:0crwdne377:0"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:97
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
@@ -964,10 +1000,11 @@ msgstr "crwdns421:0{confirmationValue}crwdne421:0"
 msgid "Inactive"
 msgstr "crwdns423:0crwdne423:0"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:109
 msgid "Indexes"
 msgstr "crwdns425:0crwdne425:0"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:118
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "crwdns427:0crwdne427:0"
@@ -1002,6 +1039,10 @@ msgstr "crwdns437:0crwdne437:0"
 #: src/pages/settings/workspace/SettingsDomain.tsx:166
 msgid "Invalid form values"
 msgstr "crwdns439:0crwdne439:0"
+
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
+msgid "Invite"
+msgstr "crwdns3993:0crwdne3993:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1039,7 +1080,7 @@ msgstr "crwdns455:0crwdne455:0"
 msgid "Lab"
 msgstr "crwdns457:0crwdne457:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
 msgid "Language"
 msgstr "crwdns459:0crwdne459:0"
 
@@ -1055,9 +1096,18 @@ msgstr "crwdns463:0crwdne463:0"
 msgid "Latest date"
 msgstr "crwdns465:0crwdne465:0"
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+msgid "Light"
+msgstr "crwdns3995:0crwdne3995:0"
+
 #: src/pages/onboarding/InviteTeam.tsx:127
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
 msgid "Link copied to clipboard"
 msgstr "crwdns467:0crwdne467:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
+msgid "Listings"
+msgstr "crwdns3997:0crwdne3997:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1137,6 +1187,10 @@ msgstr "crwdns495:0crwdne495:0"
 msgid "Name can not be empty"
 msgstr "crwdns497:0crwdne497:0"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+msgstr "crwdns3999:0crwdne3999:0"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
@@ -1179,6 +1233,10 @@ msgstr "crwdns515:0crwdne515:0"
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "crwdns517:0crwdne517:0"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
+msgid "New Field"
+msgstr "crwdns4001:0crwdne4001:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1253,6 +1311,7 @@ msgstr "crwdns539:0crwdne539:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
@@ -1266,6 +1325,7 @@ msgstr "crwdns543:0crwdne543:0"
 msgid "Opened"
 msgstr "crwdns545:0crwdne545:0"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "crwdns547:0crwdne547:0"
@@ -1274,6 +1334,7 @@ msgstr "crwdns547:0crwdne547:0"
 msgid "or"
 msgstr "crwdns549:0crwdne549:0"
 
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
 msgid "Other"
 msgstr "crwdns551:0crwdne551:0"
@@ -1341,6 +1402,10 @@ msgstr "crwdns579:0{confirmationValue}crwdne579:0"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "crwdns581:0{confirmationText}crwdne581:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
+msgid "Plural"
+msgstr "crwdns4003:0crwdne4003:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1535,7 +1600,7 @@ msgstr "crwdns645:0crwdne645:0"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "crwdns647:0crwdne647:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
 msgid "Select your preferred language"
 msgstr "crwdns649:0crwdne649:0"
 
@@ -1547,7 +1612,12 @@ msgstr "crwdns651:0crwdne651:0"
 msgid "Serbian (Cyrillic)"
 msgstr "crwdns1837:0crwdne1837:0"
 
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+msgid "Server Admin"
+msgstr "crwdns4005:0crwdne4005:0"
+
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "crwdns653:0crwdne653:0"
 
@@ -1564,7 +1634,7 @@ msgid "Set the name of your subdomain"
 msgstr "crwdns659:0crwdne659:0"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
@@ -1578,6 +1648,10 @@ msgstr "crwdns663:0crwdne663:0"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
 msgid "Should changing a field's label also change the API name?"
 msgstr "crwdns665:0crwdne665:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
+msgid "Should changing an object's label also change the API?"
+msgstr "crwdns4007:0crwdne4007:0"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1657,6 +1731,14 @@ msgstr "crwdns699:0{to}crwdne699:0"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "crwdns701:0crwdne701:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
+msgid "Synchronize Objects Labels and API Names"
+msgstr "crwdns4009:0crwdne4009:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+msgid "System settings"
+msgstr "crwdns4011:0crwdne4011:0"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1815,6 +1897,7 @@ msgstr "crwdns767:0{objectLabel}crwdne767:0"
 
 #: src/pages/settings/SettingsProfile.tsx:22
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
@@ -1894,6 +1977,7 @@ msgstr "crwdns793:0crwdne793:0"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:148
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
@@ -1916,6 +2000,7 @@ msgstr "crwdns801:0crwdne801:0"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:220
 msgid "Write a description"
 msgstr "crwdns803:0crwdne803:0"
 
