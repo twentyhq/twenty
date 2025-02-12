@@ -179,7 +179,9 @@ export class WorkflowStatusesUpdateJob {
               e.code !==
               ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED
             ) {
-              throw e;
+              this.logger.error(
+                `Error while publishing serverless function '${step.settings.input.serverlessFunctionId}': ${e}`,
+              );
             }
           }
 
