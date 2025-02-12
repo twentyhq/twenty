@@ -28,7 +28,9 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     identityProviderId: string;
   } {
     if (request.params.identityProviderId) {
-      return request.params.identityProviderId;
+      return {
+        identityProviderId: request.params.identityProviderId,
+      };
     }
 
     if (
@@ -48,6 +50,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('>>>>>>>>>>>>>> STEP 0');
     const request = context.switchToHttp().getRequest<Request>();
 
     let identityProvider:
@@ -57,9 +60,19 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     try {
       const state = this.getStateByRequest(request);
 
+      if (!state.identityProviderId) {
+        throw new AuthException(
+          'identityProviderId missing',
+          AuthExceptionCode.INVALID_DATA,
+        );
+      }
+
+      console.log('>>>>>>>>>>>>>> STEP 1');
+
       identityProvider = await this.sSOService.findSSOIdentityProviderById(
         state.identityProviderId,
       );
+      console.log('>>>>>>>>>>>>>> STEP 2');
 
       if (!identityProvider) {
         throw new AuthException(
@@ -67,7 +80,6 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
           AuthExceptionCode.INVALID_DATA,
         );
       }
-
       const issuer = await Issuer.discover(identityProvider.issuer);
 
       new OIDCAuthStrategy(
@@ -77,6 +89,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
+      console.log('>>>>>>>>>>>>>>', err);
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
