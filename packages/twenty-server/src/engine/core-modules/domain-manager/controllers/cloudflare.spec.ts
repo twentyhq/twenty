@@ -64,21 +64,6 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       module.get<DomainManagerService>(DomainManagerService);
   });
 
-  it('should throw an error if the webhook secret does not match', async () => {
-    const req = {
-      headers: { 'cf-webhook-auth': 'wrong-secret' },
-      body: { data: { data: { hostname: 'example.com' } } },
-    } as unknown as Request;
-
-    const res = {} as Response;
-
-    jest.spyOn(environmentService, 'get').mockReturnValue('correct-secret');
-
-    await expect(controller.customHostnameWebhooks(req, res)).rejects.toThrow(
-      'Invalid secret',
-    );
-  });
-
   it('should handle exception and return status 200 if hostname is missing', async () => {
     const req = {
       headers: { 'cf-webhook-auth': 'correct-secret' },

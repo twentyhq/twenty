@@ -1,7 +1,12 @@
-import { Controller, Post, Req, Res, UseFilters } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Req,
+  Res,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { timingSafeEqual } from 'crypto';
 
 import { Response, Request } from 'express';
 import { Repository } from 'typeorm';
@@ -15,7 +20,7 @@ import {
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
 import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manager/guards/cloudflare-secret.guard';
 
 @Controller('cloudflare')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -25,29 +30,11 @@ export class CloudflareController {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly environmentService: EnvironmentService,
   ) {}
 
   @Post('custom-hostname-webhooks')
+  @UseGuards(CloudflareSecretMatchGuard)
   async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
-    const cloudflareWebhookSecret = this.environmentService.get(
-      'CLOUDFLARE_WEBHOOK_SECRET',
-    );
-
-    if (
-      cloudflareWebhookSecret &&
-      (typeof req.headers['cf-webhook-auth'] !== 'string' ||
-        timingSafeEqual(
-          Buffer.from(req.headers['cf-webhook-auth']),
-          Buffer.from(cloudflareWebhookSecret),
-        ))
-    ) {
-      throw new DomainManagerException(
-        'Invalid secret',
-        DomainManagerExceptionCode.INVALID_INPUT_DATA,
-      );
-    }
-
     if (!req.body?.data?.data?.hostname) {
       handleException(
         new DomainManagerException(
