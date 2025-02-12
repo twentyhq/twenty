@@ -1,8 +1,10 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
@@ -16,12 +18,15 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
     objectMetadataItem,
   });
 
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const createManyRecordsInCache = (recordsToCreate: Partial<T>[]) => {
     const recordsWithId = recordsToCreate
       .map((record) => {
         return prefillRecord<T>({
           input: record,
           objectMetadataItem,
+          workspaceMemberId: currentWorkspaceMember?.id,
         });
       })
       .filter(isDefined);

@@ -1,5 +1,10 @@
 import { isNull } from '@sniptt/guards';
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
@@ -12,6 +17,7 @@ import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
@@ -83,6 +89,8 @@ export const ActivityTargetInlineCellEditMode = ({
     useCreateManyRecordsInCache<NoteTarget | TaskTarget>({
       objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     });
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const handleSubmit = useRecoilCallback(
     ({ snapshot }) =>
@@ -181,6 +189,7 @@ export const ActivityTargetInlineCellEditMode = ({
           const newActivityTarget = prefillRecord<NoteTarget | TaskTarget>({
             objectMetadataItem: objectMetadataItemActivityTarget,
             input: newActivityTargetInput,
+            workspaceMemberId: currentWorkspaceMember?.id,
           });
 
           activityTargetsAfterUpdate.push(newActivityTarget);

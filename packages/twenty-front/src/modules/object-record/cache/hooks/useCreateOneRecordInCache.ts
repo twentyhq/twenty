@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
@@ -22,12 +23,13 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   });
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const apolloClient = useApolloClient();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   return (record: ObjectRecord) => {
     const recordGqlFields = generateDepthOneRecordGqlFields({
       objectMetadataItem,
-      record
-    })
+      record,
+    });
     const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
@@ -44,6 +46,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
     const prefilledRecord = prefillRecord({
       objectMetadataItem,
       input: record,
+      workspaceMemberId: currentWorkspaceMember?.id,
     });
 
     const recordToCreateWithNestedConnections = getRecordNodeFromRecord({
