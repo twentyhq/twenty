@@ -209,9 +209,7 @@ export const SettingsDomain = () => {
       <SettingsPageContainer>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
-          {(!currentWorkspace?.customDomain || !isCustomDomainEnabled) && (
-            <SettingsSubdomain />
-          )}
+          <SettingsSubdomain />
           {isCustomDomainEnabled && (
             <>
               <SettingsCustomDomainEffect />
