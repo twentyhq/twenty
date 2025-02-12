@@ -25,7 +25,7 @@ const StyledButton = styled('button')`
   }
 `;
 
-export const RecordTitleCellDisplayMode = () => {
+export const RecordTitleCellSingleTextDisplayMode = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const recordValue = useRecordValue(recordId);

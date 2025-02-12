@@ -8,7 +8,7 @@ import { useRef } from 'react';
 import { isDefined } from 'twenty-shared';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
-type RecordTitleCellTextInputProps = {
+type RecordTitleCellTextFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -16,13 +16,13 @@ type RecordTitleCellTextInputProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const RecordTitleCellTextInput = ({
+export const RecordTitleCellTextFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
-}: RecordTitleCellTextInputProps) => {
+}: RecordTitleCellTextFieldInputProps) => {
   const { fieldDefinition, draftValue, hotkeyScope, setDraftValue } =
     useTextField();
 

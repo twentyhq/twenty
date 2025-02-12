@@ -1,8 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { ExpandableInput } from '@/ui/input/components/ExpandableInput';
-import { ExpandableInputInstanceContext } from '@/ui/input/states/contexts/ExpandableInputInstanceContext';
 import styled from '@emotion/styled';
 import { capitalize } from 'twenty-shared';
 
@@ -67,7 +65,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      <ExpandableInputInstanceContext.Provider
+      {/* <ExpandableInputInstanceContext.Provider
         value={{
           instanceId: objectRecordId,
         }}
@@ -79,7 +77,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
           onSubmit={handleSubmit}
           hotkeyScope="editable-breadcrumb-item"
         />
-      </ExpandableInputInstanceContext.Provider>
+      </ExpandableInputInstanceContext.Provider> */}
     </StyledEditableTitleContainer>
   );
 };

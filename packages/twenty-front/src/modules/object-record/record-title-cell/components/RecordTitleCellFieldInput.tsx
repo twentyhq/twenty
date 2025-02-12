@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 
-import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
@@ -8,7 +7,8 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
-import { RecordTitleCellTextInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextInput';
+import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';
+import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
 
 type RecordTitleCellFieldInputProps = {
   recordFieldInputdId: string;
@@ -40,7 +40,7 @@ export const RecordTitleCellFieldInput = ({
       recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
     >
       {isFieldText(fieldDefinition) ? (
-        <RecordTitleCellTextInput
+        <RecordTitleCellTextFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
@@ -48,7 +48,7 @@ export const RecordTitleCellFieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldFullName(fieldDefinition) ? (
-        <FullNameFieldInput
+        <RecordTitleFullNameFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

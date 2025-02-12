@@ -14,7 +14,7 @@ import { useInlineCell } from '../../record-inline-cell/hooks/useInlineCell';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { RecordTitleCellContainer } from '@/object-record/record-title-cell/components/RecordTitleCellContainer';
-import { RecordTitleCellDisplayMode } from '@/object-record/record-title-cell/components/RecordTitleCellDisplayMode';
+import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
@@ -125,7 +125,7 @@ export const RecordTitleCell = ({ loading }: RecordTitleCellProps) => {
         isReadOnly={isFieldReadOnly}
       />
     ),
-    displayModeContent: <RecordTitleCellDisplayMode />,
+    displayModeContent: <RecordTitleCellFieldDisplay />,
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
