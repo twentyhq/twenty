@@ -6,19 +6,16 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 
 type GenerateEmptyFieldValueArgs = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue' | 'type'>;
-  workspaceMemberId: string | undefined;
 };
 export const generateDefaultFieldValue = ({
   fieldMetadataItem,
-  workspaceMemberId,
 }: GenerateEmptyFieldValueArgs) => {
   const defaultValue = isFieldValueEmpty({
     fieldValue: fieldMetadataItem.defaultValue,
     fieldDefinition: fieldMetadataItem,
   })
     ? generateEmptyFieldValue({
-        fieldMetadataItem,
-        workspaceMemberId,
+        fieldMetadataItem
       })
     : stripSimpleQuotesFromString(fieldMetadataItem.defaultValue);
 
@@ -30,5 +27,4 @@ export const generateDefaultFieldValue = ({
     default:
       return defaultValue;
   }
-  ///
 };

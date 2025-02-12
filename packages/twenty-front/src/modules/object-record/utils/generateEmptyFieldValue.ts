@@ -8,12 +8,10 @@ import {
 
 export type GenerateEmptyFieldValueArgs = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>;
-  workspaceMemberId: string | undefined;
 };
 // TODO strictly type each fieldValue following their FieldMetadataType
 export const generateEmptyFieldValue = ({
   fieldMetadataItem,
-  workspaceMemberId,
 }: GenerateEmptyFieldValueArgs) => {
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.TEXT: {
@@ -101,7 +99,7 @@ export const generateEmptyFieldValue = ({
     case FieldMetadataType.ACTOR: {
       return {
         source: 'MANUAL',
-        workspaceMemberId: workspaceMemberId ?? null,
+        workspaceMemberId: null,
         name: '',
         context: null,
       } satisfies FieldActorValue;

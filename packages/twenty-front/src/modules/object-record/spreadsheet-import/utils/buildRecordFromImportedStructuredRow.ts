@@ -19,12 +19,10 @@ import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyTo
 type BuildRecordFromImportedStructuredRowArgs = {
   importedStructuredRow: ImportedStructuredRow<any>;
   fields: FieldMetadataItem[];
-  workspaceMemberId: string | undefined;
 };
 export const buildRecordFromImportedStructuredRow = ({
   fields,
   importedStructuredRow,
-  workspaceMemberId,
 }: BuildRecordFromImportedStructuredRowArgs) => {
   const recordToBuild: Record<string, any> = {};
 
@@ -226,9 +224,9 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
           source: 'IMPORT',
-          workspaceMemberId: workspaceMemberId ?? null,
+          workspaceMemberId: null,
           name: '',
-          context: null,
+          context: {},
         } satisfies FieldActorValue;
         break;
       case FieldMetadataType.ARRAY:

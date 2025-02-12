@@ -7,11 +7,9 @@ import { isDefined } from 'twenty-shared';
 
 type getFieldPreviewValueArgs = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'defaultValue'>;
-  workspaceMemberId: string | undefined;
 };
 export const getFieldPreviewValue = ({
   fieldMetadataItem,
-  workspaceMemberId,
 }: getFieldPreviewValueArgs) => {
   if (!isFieldTypeSupportedInSettings(fieldMetadataItem.type)) return null;
 
@@ -23,7 +21,6 @@ export const getFieldPreviewValue = ({
   ) {
     return generateDefaultFieldValue({
       fieldMetadataItem,
-      workspaceMemberId,
     });
   }
 

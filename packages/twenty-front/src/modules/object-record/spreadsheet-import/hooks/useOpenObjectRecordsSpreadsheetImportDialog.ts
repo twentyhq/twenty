@@ -1,4 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
@@ -7,7 +6,6 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilValue } from 'recoil';
 import {
   FieldMetadataType,
   RelationDefinitionType,
@@ -22,8 +20,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
@@ -63,7 +59,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             buildRecordFromImportedStructuredRow({
               importedStructuredRow: record,
               fields: availableFieldMetadataItems,
-              workspaceMemberId: currentWorkspaceMember?.id,
             });
 
           return fieldMapping;

@@ -1,4 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -9,7 +8,6 @@ import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils
 import { getMultiSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getMultiSelectFieldPreviewValue';
 import { getPhonesFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { getSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getSelectFieldPreviewValue';
-import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type UseFieldPreviewParams = {
@@ -26,7 +24,6 @@ export const useFieldPreviewValue = ({
   relationObjectMetadataItem,
   skip,
 }: UseFieldPreviewParams) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const relationFieldPreviewValue = useRelationFieldPreviewValue({
     relationObjectMetadataItem: relationObjectMetadataItem ?? {
       fields: [],
@@ -58,7 +55,6 @@ export const useFieldPreviewValue = ({
     default:
       return getFieldPreviewValue({
         fieldMetadataItem,
-        workspaceMemberId: currentWorkspaceMember?.id,
       });
   }
 };

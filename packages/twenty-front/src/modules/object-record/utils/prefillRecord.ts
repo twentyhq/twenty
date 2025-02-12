@@ -10,12 +10,10 @@ import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
 type PrefillRecordArgs = {
   objectMetadataItem: ObjectMetadataItem;
   input: Record<string, unknown>;
-  workspaceMemberId: string | undefined;
 };
 export const prefillRecord = <T extends ObjectRecord>({
   objectMetadataItem,
   input,
-  workspaceMemberId,
 }: PrefillRecordArgs) => {
   return Object.fromEntries(
     objectMetadataItem.fields
@@ -30,7 +28,7 @@ export const prefillRecord = <T extends ObjectRecord>({
         }
 
         const fieldValue = isUndefined(inputValue)
-          ? generateDefaultFieldValue({ fieldMetadataItem, workspaceMemberId })
+          ? generateDefaultFieldValue({ fieldMetadataItem })
           : inputValue;
         return [fieldMetadataItem.name, fieldValue];
       })

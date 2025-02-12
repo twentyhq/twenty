@@ -26,7 +26,6 @@ describe('getFieldPreviewValue', () => {
     // When
     const result = getFieldPreviewValue({
       fieldMetadataItem,
-      workspaceMemberId: undefined,
     });
 
     // Then
@@ -47,7 +46,6 @@ describe('getFieldPreviewValue', () => {
     // When
     const result = getFieldPreviewValue({
       fieldMetadataItem,
-      workspaceMemberId: undefined,
     });
 
     // Then
@@ -71,7 +69,6 @@ describe('getFieldPreviewValue', () => {
     // When
     const result = getFieldPreviewValue({
       fieldMetadataItem,
-      workspaceMemberId: undefined,
     });
 
     // Then

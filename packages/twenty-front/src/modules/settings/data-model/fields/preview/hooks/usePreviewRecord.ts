@@ -1,11 +1,9 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { pascalCase } from '~/utils/string/pascalCase';
@@ -29,7 +27,6 @@ export const usePreviewRecord = ({
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
   const skip = skipFromProps || !labelIdentifierFieldMetadataItem;
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { records } = useFindManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     limit: 1,
@@ -55,7 +52,6 @@ export const usePreviewRecord = ({
       ? objectMetadataItem.labelSingular
       : getFieldPreviewValue({
           fieldMetadataItem: labelIdentifierFieldMetadataItem,
-          workspaceMemberId: currentWorkspaceMember?.id,
         });
 
   const placeholderRecord = {
