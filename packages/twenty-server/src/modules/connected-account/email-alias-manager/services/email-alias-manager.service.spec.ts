@@ -79,7 +79,7 @@ describe('Email Alias Manager Service', () => {
       };
 
       const expectedAliases =
-        'betrand2@domain.onmicrosoft.com,betrand3@otherdomain.com';
+        'bertrand2@domain.onmicrosoft.com,bertrand3@otherdomain.com';
 
       jest.spyOn(microsoftEmailAliasManagerService, 'getHandleAliases');
 

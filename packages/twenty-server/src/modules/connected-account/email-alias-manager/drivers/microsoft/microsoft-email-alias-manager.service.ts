@@ -17,7 +17,10 @@ export class MicrosoftEmailAliasManagerService {
 
     const response = await microsoftClient
       .api('/me?$select=proxyAddresses')
-      .get();
+      .get()
+      .catch((error) => {
+        throw new Error(`Failed to fetch email aliases: ${error.message}`);
+      });
 
     const proxyAddresses = response.proxyAddresses;
 
