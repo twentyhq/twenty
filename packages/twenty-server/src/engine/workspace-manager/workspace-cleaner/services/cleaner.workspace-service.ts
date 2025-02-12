@@ -237,25 +237,32 @@ export class CleanerWorkspaceService {
     let deletedWorkspacesCount = 0;
 
     for (const workspace of workspaces) {
-      const workspaceInactivity =
-        await this.computeWorkspaceBillingInactivity(workspace);
+      try {
+        const workspaceInactivity =
+          await this.computeWorkspaceBillingInactivity(workspace);
 
-      if (
-        workspaceInactivity &&
-        workspaceInactivity > this.inactiveDaysBeforeDelete &&
-        deletedWorkspacesCount <= this.maxNumberOfWorkspacesDeletedPerExecution
-      ) {
-        await this.informWorkspaceMembersAndDeleteWorkspace(workspace);
-        deletedWorkspacesCount++;
+        if (
+          workspaceInactivity &&
+          workspaceInactivity > this.inactiveDaysBeforeDelete &&
+          deletedWorkspacesCount <=
+            this.maxNumberOfWorkspacesDeletedPerExecution
+        ) {
+          await this.informWorkspaceMembersAndDeleteWorkspace(workspace);
+          deletedWorkspacesCount++;
 
-        continue;
-      }
-      if (
-        workspaceInactivity &&
-        workspaceInactivity > this.inactiveDaysBeforeWarn &&
-        workspaceInactivity <= this.inactiveDaysBeforeDelete
-      ) {
-        await this.warnWorkspaceMembers(workspace, workspaceInactivity);
+          continue;
+        }
+        if (
+          workspaceInactivity &&
+          workspaceInactivity > this.inactiveDaysBeforeWarn &&
+          workspaceInactivity <= this.inactiveDaysBeforeDelete
+        ) {
+          await this.warnWorkspaceMembers(workspace, workspaceInactivity);
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error while processing workspace ${workspace.id} ${workspace.displayName}: ${error}`,
+        );
       }
     }
     this.logger.log(`batchWarnOrCleanSuspendedWorkspaces done!`);
