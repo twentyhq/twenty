@@ -6,6 +6,8 @@ import {
   GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
 import { GRAPHQL_TYPENAME_KEY } from '@/object-record/constants/GraphqlTypenameKey';
+import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -41,6 +43,8 @@ export const computeOptimisticRecordFromInput = ({
 
   const optimisticRecord: Partial<ObjectRecord> = {};
   for (const fieldMetadataItem of objectMetadataItem.fields) {
+    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
+
     if (isFieldUuid(fieldMetadataItem)) {
       const isRelationFieldId = objectMetadataItem.fields.some(
         ({ type, relationDefinition }) => {
@@ -65,10 +69,22 @@ export const computeOptimisticRecordFromInput = ({
       }
     }
 
+    if (isFieldActor(fieldMetadataItem) && isDefined(recordInputFieldValue)) {
+      // could be retrieved from a util ?
+      const defaultValue: FieldActorValue = {
+        context: {},
+        name: '', // could be optimiscally retrieved
+        source: "",
+        workspaceMemberId: null, // could be optimistically retrieve
+      };
+      optimisticRecord[fieldMetadataItem.name] = {
+        ...defaultValue,
+        ...recordInputFieldValue as FieldActorValue // TODO
+      };
+      continue;
+    }
+
     const isRelationField = isFieldRelation(fieldMetadataItem);
-
-    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
-
     if (!isRelationField) {
       if (!isDefined(recordInputFieldValue)) {
         continue;

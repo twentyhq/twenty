@@ -37,7 +37,6 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
             objectMetadataItems,
             objectMetadataItem,
             computeReferences: true,
-            isForInsertion: true,
             recordGqlFields,
           })}
         `;

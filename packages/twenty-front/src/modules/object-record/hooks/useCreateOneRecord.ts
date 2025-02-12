@@ -79,8 +79,15 @@ export const useCreateOneRecord = <
       cache: apolloClient.cache,
       objectMetadataItem,
       objectMetadataItems,
-      recordInput: { ...recordInput, id: idForCreation },
+      recordInput: {
+        ...recordInput,
+        id: idForCreation,
+        createdBy: {
+          source: 'MANUAL',
+        },
+      },
     });
+    debugger;
     const recordCreatedInCache = createOneRecordInCache({
       ...optimisticRecordInput,
       id: idForCreation,

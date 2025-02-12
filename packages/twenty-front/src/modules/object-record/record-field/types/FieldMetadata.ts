@@ -280,7 +280,7 @@ export type FieldRichTextV2Value = {
 export type FieldRichTextValue = null | string;
 
 export type FieldActorValue = {
-  source: string;
+  source: string; // TODO strictly type
   workspaceMemberId: string | null;
   name: string;
   context: {
