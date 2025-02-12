@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared';
-import { Avatar } from 'twenty-ui';
+import { MenuItemAvatar } from 'twenty-ui';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 
 const StyledEmptyState = styled.div`
@@ -13,24 +13,6 @@ const StyledEmptyState = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: flex-start;
   padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledWorkspaceMemberItem = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
-  gap: ${({ theme }) => theme.spacing(2)};
-  min-width: ${({ theme }) => theme.spacing(45)};
-  padding: ${({ theme }) => theme.spacing(2)};
-
-  &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
-  }
-`;
-
-const StyledWorkspaceMemberName = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 type RoleWorkspaceMemberPickerDropdownContentProps = {
@@ -63,21 +45,17 @@ export const RoleWorkspaceMemberPickerDropdownContent = ({
   return (
     <>
       {filteredWorkspaceMembers.map((workspaceMember) => (
-        <StyledWorkspaceMemberItem
+        <MenuItemAvatar
           key={workspaceMember.id}
           onClick={() => onSelect(workspaceMember)}
-          aria-label={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-        >
-          <Avatar
-            type="rounded"
-            size="md"
-            placeholderColorSeed={workspaceMember.id}
-            placeholder={workspaceMember.name.firstName ?? ''}
-          />
-          <StyledWorkspaceMemberName>
-            {workspaceMember.name.firstName} {workspaceMember.name.lastName}
-          </StyledWorkspaceMemberName>
-        </StyledWorkspaceMemberItem>
+          avatar={{
+            type: 'rounded',
+            size: 'md',
+            placeholder: workspaceMember.name.firstName ?? '',
+            placeholderColorSeed: workspaceMember.id,
+          }}
+          text={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+        />
       ))}
     </>
   );
