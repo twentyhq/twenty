@@ -23,9 +23,11 @@ type RecordTitleCellFieldInputProps = {
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
   isReadOnly?: boolean;
+  sizeVariant?: 'sm' | 'md';
 };
 
 export const RecordTitleCellFieldInput = ({
+  sizeVariant,
   recordFieldInputdId,
   onEnter,
   onEscape,
@@ -46,6 +48,7 @@ export const RecordTitleCellFieldInput = ({
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
+          sizeVariant={sizeVariant}
         />
       ) : isFieldFullName(fieldDefinition) ? (
         <RecordTitleFullNameFieldInput
@@ -54,6 +57,7 @@ export const RecordTitleCellFieldInput = ({
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
+          sizeVariant={sizeVariant}
         />
       ) : (
         <></>

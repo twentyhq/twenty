@@ -4,7 +4,7 @@ import { useRecordValue } from '@/object-record/record-store/contexts/RecordFiel
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 
-const StyledButton = styled('button')`
+const StyledSpan = styled.span`
   align-items: center;
   background: inherit;
   border: none;
@@ -13,9 +13,7 @@ const StyledButton = styled('button')`
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.md};
-  height: 20px;
+  padding: ${({ theme }) => theme.spacing(0, 1)};
   overflow: hidden;
   text-decoration: none;
   text-overflow: ellipsis;
@@ -33,9 +31,9 @@ export const RecordTitleCellSingleTextDisplayMode = () => {
   const { openInlineCell } = useInlineCell();
 
   return (
-    <StyledButton onClick={() => openInlineCell()}>
+    <StyledSpan onClick={() => openInlineCell()}>
       {recordValue?.[fieldDefinition.metadata.fieldName] ||
         fieldDefinition.label}
-    </StyledButton>
+    </StyledSpan>
   );
 };

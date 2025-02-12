@@ -39,7 +39,7 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<
   Pick<
     TextInputV2ComponentProps,
-    'LeftIcon' | 'error' | 'sizeVariant' | 'width'
+    'LeftIcon' | 'error' | 'sizeVariant' | 'width' | 'inheritFontStyles'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -51,8 +51,12 @@ const StyledInput = styled.input<
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-grow: 1;
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-family: ${({ theme, inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : theme.font.family};
+  font-size: ${({ theme, inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : theme.font.size.md};
+  font-weight: ${({ theme, inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : theme.font.weight.regular};
   height: ${({ sizeVariant }) =>
     sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   outline: none;
@@ -147,6 +151,7 @@ export type TextInputV2ComponentProps = Omit<
   onBlur?: FocusEventHandler<HTMLInputElement>;
   dataTestId?: string;
   sizeVariant?: TextInputV2Size;
+  inheritFontStyles?: boolean;
 };
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
@@ -178,7 +183,8 @@ const TextInputV2Component = forwardRef<
       LeftIcon,
       autoComplete,
       maxLength,
-      sizeVariant = 'lg',
+      sizeVariant = 'md',
+      inheritFontStyles = false,
       dataTestId,
     },
     ref,
@@ -249,6 +255,7 @@ const TextInputV2Component = forwardRef<
               maxLength,
               error,
               sizeVariant,
+              inheritFontStyles,
             }}
           />
 
@@ -283,27 +290,29 @@ const TextInputV2Component = forwardRef<
 const TextInputV2WithAutoGrowWrapper = forwardRef<
   HTMLInputElement,
   TextInputV2WithAutoGrowWrapperProps
->((props, ref) => (
-  <>
-    {props.autoGrow ? (
-      <ComputeNodeDimensions node={props.value || props.placeholder}>
-        {(nodeDimensions) => (
-          <TextInputV2Component
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...props}
-            ref={ref}
-            width={nodeDimensions?.width}
-          />
-        )}
-      </ComputeNodeDimensions>
-    ) : (
-      <TextInputV2Component
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...props}
-        ref={ref}
-      />
-    )}
-  </>
-));
+>((props, ref) => {
+  return (
+    <>
+      {props.autoGrow ? (
+        <ComputeNodeDimensions node={props.value || props.placeholder}>
+          {(nodeDimensions) => (
+            <TextInputV2Component
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...props}
+              ref={ref}
+              width={nodeDimensions?.width}
+            />
+          )}
+        </ComputeNodeDimensions>
+      ) : (
+        <TextInputV2Component
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...props}
+          ref={ref}
+        />
+      )}
+    </>
+  );
+});
 
 export const TextInputV2 = TextInputV2WithAutoGrowWrapper;

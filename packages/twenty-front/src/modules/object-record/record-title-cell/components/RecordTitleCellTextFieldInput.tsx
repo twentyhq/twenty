@@ -14,9 +14,11 @@ type RecordTitleCellTextFieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
+  sizeVariant?: 'sm' | 'md';
 };
 
 export const RecordTitleCellTextFieldInput = ({
+  sizeVariant,
   onEnter,
   onEscape,
   onClickOutside,
@@ -64,7 +66,8 @@ export const RecordTitleCellTextFieldInput = ({
   return (
     <TextInputV2
       autoGrow
-      sizeVariant="sm"
+      sizeVariant={sizeVariant}
+      inheritFontStyles
       value={draftValue ?? ''}
       onChange={handleChange}
       placeholder={fieldDefinition.label}

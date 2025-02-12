@@ -11,7 +11,7 @@ type ComputeNodeDimensionsProps = {
 
 const StyledNodeWrapper = styled.span`
   pointer-events: none;
-  position: fixed;
+  position: absolute;
   visibility: hidden;
 `;
 

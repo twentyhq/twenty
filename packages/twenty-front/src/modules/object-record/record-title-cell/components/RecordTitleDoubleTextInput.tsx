@@ -33,6 +33,7 @@ type RecordTitleDoubleTextInputProps = {
   ) => void;
   onChange?: (newDoubleTextValue: FieldDoubleText) => void;
   onPaste?: (newDoubleTextValue: FieldDoubleText) => void;
+  sizeVariant?: 'sm' | 'md';
 };
 
 export const RecordTitleDoubleTextInput = ({
@@ -48,6 +49,7 @@ export const RecordTitleDoubleTextInput = ({
   onTab,
   onChange,
   onPaste,
+  sizeVariant,
 }: RecordTitleDoubleTextInputProps) => {
   const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
   const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
@@ -174,8 +176,9 @@ export const RecordTitleDoubleTextInput = ({
     <StyledContainer ref={containerRef}>
       <TextInputV2
         autoGrow
-        sizeVariant="sm"
+        sizeVariant={sizeVariant}
         autoComplete="off"
+        inheritFontStyles
         autoFocus
         onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
           if (isDefined(firstInternalValue)) {
@@ -199,8 +202,9 @@ export const RecordTitleDoubleTextInput = ({
       />
       <TextInputV2
         autoGrow
-        sizeVariant="sm"
+        sizeVariant={sizeVariant}
         autoComplete="off"
+        inheritFontStyles
         onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
           if (isDefined(secondInternalValue)) {
             event.target.select();

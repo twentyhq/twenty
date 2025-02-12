@@ -1,39 +1,37 @@
 import { useContext } from 'react';
-import { useIcons } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
-import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 
 import { useInlineCell } from '../../record-inline-cell/hooks/useInlineCell';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { RecordTitleCellContainer } from '@/object-record/record-title-cell/components/RecordTitleCellContainer';
+import {
+  RecordTitleCellContext,
+  RecordTitleCellContextProps,
+} from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useRecoilCallback } from 'recoil';
-import {
-  RecordInlineCellContext,
-  RecordInlineCellContextProps,
-} from '../../record-inline-cell/components/RecordInlineCellContext';
 
 type RecordTitleCellProps = {
   readonly?: boolean;
   loading?: boolean;
+  sizeVariant?: 'sm' | 'md';
 };
 
-export const RecordTitleCell = ({ loading }: RecordTitleCellProps) => {
-  const { fieldDefinition, recordId, isCentered, isDisplayModeFixHeight } =
-    useContext(FieldContext);
-  const buttonIcon = useGetButtonIcon();
+export const RecordTitleCell = ({
+  loading,
+  sizeVariant,
+}: RecordTitleCellProps) => {
+  const { fieldDefinition, recordId } = useContext(FieldContext);
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
@@ -94,21 +92,7 @@ export const RecordTitleCell = ({ loading }: RecordTitleCellProps) => {
     [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
   );
 
-  const { getIcon } = useIcons();
-
-  const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    readonly: isFieldReadOnly,
-    buttonIcon: buttonIcon,
-    customEditHotkeyScope: isFieldRelation(fieldDefinition)
-      ? { scope: RelationPickerHotkeyScope.RelationPicker }
-      : undefined,
-    IconLabel: fieldDefinition.iconName
-      ? getIcon(fieldDefinition.iconName)
-      : undefined,
-    label: fieldDefinition.label,
-    labelWidth: fieldDefinition.labelWidth,
-    showLabel: fieldDefinition.showLabel,
-    isCentered,
+  const RecordTitleCellContextValue: RecordTitleCellContextProps = {
     editModeContent: (
       <RecordTitleCellFieldInput
         recordFieldInputdId={getRecordFieldInputId(
@@ -123,19 +107,19 @@ export const RecordTitleCell = ({ loading }: RecordTitleCellProps) => {
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
         isReadOnly={isFieldReadOnly}
+        sizeVariant={sizeVariant}
       />
     ),
     displayModeContent: <RecordTitleCellFieldDisplay />,
-    isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
   };
 
   return (
     <FieldFocusContextProvider>
-      <RecordInlineCellContext.Provider value={RecordInlineCellContextValue}>
+      <RecordTitleCellContext.Provider value={RecordTitleCellContextValue}>
         <RecordTitleCellContainer />
-      </RecordInlineCellContext.Provider>
+      </RecordTitleCellContext.Provider>
     </FieldFocusContextProvider>
   );
 };
