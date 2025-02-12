@@ -3,7 +3,6 @@ import { useTextField } from '@/object-record/record-field/meta-types/hooks/useT
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useRef } from 'react';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
@@ -56,16 +55,14 @@ export const RecordTitleCellTextInput = ({
   });
 
   return (
-    <FieldInputContainer>
-      <TextInputV2
-        autoGrow
-        sizeVariant="sm"
-        value={draftValue ?? ''}
-        onChange={handleChange}
-        placeholder={fieldDefinition.metadata.placeHolder}
-        //onFocus={handleFocus}
-        autoFocus
-      />
-    </FieldInputContainer>
+    <TextInputV2
+      autoGrow
+      sizeVariant="sm"
+      value={draftValue ?? ''}
+      onChange={handleChange}
+      placeholder={fieldDefinition.label}
+      //onFocus={handleFocus}
+      autoFocus
+    />
   );
 };
