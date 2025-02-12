@@ -58,12 +58,16 @@ export class MessagingMessageService {
       });
 
       if (existingMessage) {
-        await messageChannelMessageAssociationRepository.insert(
+        await messageChannelMessageAssociationRepository.upsert(
           {
             messageChannelId,
             messageId: existingMessage.id,
             messageExternalId: message.externalId,
             messageThreadExternalId: message.messageThreadExternalId,
+          },
+          {
+            conflictPaths: ['messageChannelId', 'messageId'],
+            indexPredicate: '"deletedAt" IS NULL',
           },
           transactionManager,
         );

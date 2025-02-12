@@ -8,7 +8,6 @@ import {
   getFormDefaultValuesFromConnection,
 } from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -17,7 +16,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { H2Title, Info } from 'twenty-ui';
 import { z } from 'zod';
 import {
@@ -25,6 +23,8 @@ import {
   RemoteTable,
   RemoteTableStatus,
 } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationEditDatabaseConnectionContent = ({
   connection,
@@ -38,7 +38,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
   tables: RemoteTable[];
 }) => {
   const { enqueueSnackBar } = useSnackBar();
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
 
   const editConnectionSchema = getEditionSchemaForForm(databaseKey);
   type SettingsIntegrationEditConnectionFormValues = z.infer<
@@ -56,12 +56,12 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
 
   const { updateOneDatabaseConnection } = useUpdateOneDatabaseConnection();
 
-  const settingsIntegrationsPagePath = getSettingsPagePath(
+  const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
 
   const hasSyncedTables = tables?.some(
-    (table) => table?.status === RemoteTableStatus.Synced,
+    (table) => table?.status === RemoteTableStatus.SYNCED,
   );
 
   const { isDirty, isValid } = formConfig.formState;
@@ -82,9 +82,10 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
         id: connection?.id ?? '',
       });
 
-      navigate(
-        `${settingsIntegrationsPagePath}/${databaseKey}/${connection?.id}`,
-      );
+      navigate(SettingsPath.IntegrationDatabaseConnection, {
+        databaseKey,
+        connectionId: connection?.id,
+      });
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -116,7 +117,9 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             onCancel={() =>
-              navigate(`${settingsIntegrationsPagePath}/${databaseKey}`)
+              navigate(SettingsPath.IntegrationDatabase, {
+                databaseKey,
+              })
             }
             onSave={handleSave}
           />

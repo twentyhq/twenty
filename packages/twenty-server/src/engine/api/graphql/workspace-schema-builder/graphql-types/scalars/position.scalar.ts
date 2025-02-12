@@ -1,5 +1,7 @@
 import { GraphQLScalarType, Kind } from 'graphql';
 
+import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+
 type PositionType = 'first' | 'last' | number;
 
 const isValidStringPosition = (value: string): boolean =>
@@ -13,7 +15,9 @@ const checkPosition = (value: any): PositionType => {
     return value;
   }
 
-  throw new Error('Invalid position found');
+  throw new ValidationError(
+    `Invalid position value: '${value}'. Position must be 'first', 'last', or a number`,
+  );
 };
 
 export const PositionScalarType = new GraphQLScalarType({
@@ -34,6 +38,6 @@ export const PositionScalarType = new GraphQLScalarType({
       return parseFloat(ast.value);
     }
 
-    throw new Error('Invalid position found');
+    throw new ValidationError('Invalid position value');
   },
 });

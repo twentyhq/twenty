@@ -5,6 +5,7 @@ declare module '@jest/types' {
     interface ConfigGlobals {
       APP_PORT: number;
       ACCESS_TOKEN: string;
+      EXPIRED_ACCESS_TOKEN: string;
     }
   }
 }
@@ -12,6 +13,7 @@ declare module '@jest/types' {
 declare global {
   const APP_PORT: number;
   const ACCESS_TOKEN: string;
+  const EXPIRED_ACCESS_TOKEN: string;
 }
 
 export {};

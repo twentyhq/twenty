@@ -1,3 +1,9 @@
+import {
+  PERSON_1_ID,
+  PERSON_2_ID,
+  PERSON_3_ID,
+} from 'test/integration/constants/mock-person-ids.constants';
+import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
@@ -10,25 +16,6 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-
-const PERSON_1_ID = '777a8457-eb2d-40ac-a707-551b615b6987';
-const PERSON_2_ID = '777a8457-eb2d-40ac-a707-551b615b6988';
-const PERSON_3_ID = '777a8457-eb2d-40ac-a707-551b615b6989';
-
-const PERSON_GQL_FIELDS = `
-    id
-    city
-    jobTitle
-    avatarUrl
-    intro
-    searchVector
-    name {
-      firstName
-      lastName
-    }   
-    createdAt
-    deletedAt
-`;
 
 describe('people resolvers (integration)', () => {
   it('1. should create and return people', async () => {

@@ -10,6 +10,7 @@ type HorizontalSeparatorProps = {
 const StyledSeparator = styled.div<HorizontalSeparatorProps>`
   background-color: ${({ theme, color }) => color ?? theme.border.color.medium};
   height: ${({ visible }) => (visible ? '1px' : 0)};
+  flex-shrink: 0;
   margin-bottom: ${({ theme, noMargin }) => (noMargin ? 0 : theme.spacing(3))};
   margin-top: ${({ theme, noMargin }) => (noMargin ? 0 : theme.spacing(3))};
   width: 100%;

@@ -8,6 +8,8 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
+import { FormProvider } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { ActionLink, HorizontalSeparator } from 'twenty-ui';
 
@@ -20,9 +22,14 @@ export const SignInUpWorkspaceScopeForm = () => {
   const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
 
   const { form } = useSignInUpForm();
+
   const { handleResetPassword } = useHandleResetPassword();
 
   const { signInUpStep } = useSignInUp(form);
+
+  if (!workspaceAuthProviders) {
+    return null;
+  }
 
   return (
     <>
@@ -37,14 +44,18 @@ export const SignInUpWorkspaceScopeForm = () => {
           workspaceAuthProviders.microsoft ||
           workspaceAuthProviders.sso.length > 0) &&
         workspaceAuthProviders.password ? (
-          <HorizontalSeparator visible />
+          <HorizontalSeparator />
         ) : null}
-
-        {workspaceAuthProviders.password && <SignInUpWithCredentials />}
+        {workspaceAuthProviders.password && (
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          <FormProvider {...form}>
+            <SignInUpWithCredentials />
+          </FormProvider>
+        )}
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
-          Forgot your password?
+          <Trans>Forgot your password?</Trans>
         </ActionLink>
       )}
     </>

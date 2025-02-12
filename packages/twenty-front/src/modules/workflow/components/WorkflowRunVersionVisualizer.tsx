@@ -1,7 +1,7 @@
-import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
-import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
-import { isDefined } from 'twenty-ui';
+import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
+import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizerEffect';
+import { isDefined } from 'twenty-shared';
 
 export const WorkflowRunVersionVisualizer = ({
   workflowRunId,

@@ -153,6 +153,20 @@
       "configurations": {
         "ci": {}
       }
+    },
+    "lingui:extract": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui extract --overwrite"
+      }
+    },
+    "lingui:compile": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui compile --typescript"
+      }
     }
   }
 }

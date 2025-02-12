@@ -1,4 +1,5 @@
 import { QueryFailedError } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
@@ -17,7 +18,6 @@ import {
   TimeoutError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { isDefined } from 'src/utils/is-defined';
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,

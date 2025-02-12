@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
+import { isDefined } from 'twenty-shared';
 import Settings from '~/options/Settings';
 import Sidepanel from '~/options/Sidepanel';
-import { isDefined } from '~/utils/isDefined';
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('');

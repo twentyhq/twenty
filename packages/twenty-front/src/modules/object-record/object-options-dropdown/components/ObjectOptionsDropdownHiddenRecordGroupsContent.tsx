@@ -13,7 +13,6 @@ import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-gr
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -22,9 +21,11 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const {
+    viewType,
     currentContentId,
     recordIndexId,
     objectMetadataItem,
@@ -47,15 +48,13 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
       viewBarId: recordIndexId,
+      viewType,
     });
 
-  const viewGroupSettingsUrl = getSettingsPagePath(
-    SettingsPath.ObjectFieldEdit,
-    {
-      objectSlug: objectNamePlural,
-      fieldSlug: recordGroupFieldMetadata?.name ?? '',
-    },
-  );
+  const viewGroupSettingsUrl = getSettingsPath(SettingsPath.ObjectFieldEdit, {
+    objectNamePlural,
+    fieldName: recordGroupFieldMetadata?.name ?? '',
+  });
 
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(

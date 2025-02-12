@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 
 import { THEME_COMMON } from '@ui/theme';
 
-import { isDefined } from '@ui/utilities';
+import { isDefined } from 'twenty-shared';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
 const spacing4 = THEME_COMMON.spacing(4);
@@ -76,17 +76,20 @@ export const OverflowingTextWithTooltip = ({
   text,
   isTooltipMultiline,
   displayedMaxRows,
+  hideTooltip,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
+  hideTooltip?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
   const textRef = useRef<HTMLDivElement>(null);
 
   const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
+  const [shouldRenderTooltip, setShouldRenderTooltip] = useState(false);
 
   const handleMouseEnter = () => {
     const isOverflowing =
@@ -96,10 +99,12 @@ export const OverflowingTextWithTooltip = ({
         : false;
 
     setIsTitleOverflowing(isOverflowing);
+    setShouldRenderTooltip(true);
   };
 
   const handleMouseLeave = () => {
     setIsTitleOverflowing(false);
+    setShouldRenderTooltip(false);
   };
 
   const handleTooltipClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -135,17 +140,19 @@ export const OverflowingTextWithTooltip = ({
           {text}
         </StyledOverflowingText>
       )}
-      {isTitleOverflowing &&
+      {shouldRenderTooltip &&
+        isTitleOverflowing &&
         createPortal(
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
               offset={5}
-              isOpen
+              hidden={!isTitleOverflowing || hideTooltip}
               noArrow
               place="bottom"
               positionStrategy="absolute"
               delay={TooltipDelay.mediumDelay}
+              isOpen={true}
             >
               {isTooltipMultiline ? (
                 <Styledpre>{text}</Styledpre>

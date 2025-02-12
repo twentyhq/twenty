@@ -1,3 +1,4 @@
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 type TextDisplayProps = {
@@ -5,10 +6,14 @@ type TextDisplayProps = {
   displayedMaxRows?: number;
 };
 
-export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => (
-  <OverflowingTextWithTooltip
-    text={text}
-    displayedMaxRows={displayedMaxRows}
-    isTooltipMultiline={true}
-  />
-);
+export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {
+  const { isInlineCellInEditMode } = useInlineCell();
+  return (
+    <OverflowingTextWithTooltip
+      text={text}
+      displayedMaxRows={displayedMaxRows}
+      isTooltipMultiline={true}
+      hideTooltip={isInlineCellInEditMode}
+    />
+  );
+};

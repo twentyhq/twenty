@@ -1,4 +1,5 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
@@ -13,13 +14,18 @@ export const useUpdateViewAggregate = () => {
       kanbanAggregateOperation,
     }: {
       kanbanAggregateOperationFieldMetadataId: string | null;
-      kanbanAggregateOperation: AGGREGATE_OPERATIONS | null;
-    }) =>
+      kanbanAggregateOperation: ExtendedAggregateOperations | null;
+    }) => {
+      const convertedKanbanAggregateOperation =
+        convertExtendedAggregateOperationToAggregateOperation(
+          kanbanAggregateOperation,
+        );
       updateView({
         id: currentViewId,
         kanbanAggregateOperationFieldMetadataId,
-        kanbanAggregateOperation,
-      }),
+        kanbanAggregateOperation: convertedKanbanAggregateOperation,
+      });
+    },
     [currentViewId, updateView],
   );
 

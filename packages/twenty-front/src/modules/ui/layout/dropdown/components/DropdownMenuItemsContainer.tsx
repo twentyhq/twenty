@@ -51,6 +51,7 @@ export const DropdownMenuItemsContainer = ({
     <StyledDropdownMenuItemsExternalContainer
       hasMaxHeight={hasMaxHeight}
       className={className}
+      role="listbox"
     >
       {hasMaxHeight ? (
         <StyledScrollWrapper
@@ -71,10 +72,12 @@ export const DropdownMenuItemsContainer = ({
     <ScrollWrapper
       contextProviderName="dropdownMenuItemsContainer"
       componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+      heightMode="fit-content"
     >
       <StyledDropdownMenuItemsExternalContainer
         hasMaxHeight={hasMaxHeight}
         className={className}
+        role="listbox"
       >
         <StyledDropdownMenuItemsInternalContainer>
           {children}

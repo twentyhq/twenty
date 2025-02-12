@@ -44,6 +44,10 @@
       "name": "tools/eslint-rules",
       "path": "../tools/eslint-rules"
     },
+    {
+      "name": "packages/twenty-e2e-testing",
+      "path": "../packages/twenty-e2e-testing"
+    }
   ],
   "settings": {
     "editor.formatOnSave": false,

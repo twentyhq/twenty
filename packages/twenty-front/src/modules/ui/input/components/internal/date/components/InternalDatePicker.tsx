@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import ReactDatePicker from 'react-datepicker';
-import { Key } from 'ts-key-enum';
 import {
   IconCalendarX,
   MenuItemLeftContent,
@@ -9,7 +8,7 @@ import {
 } from 'twenty-ui';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
@@ -271,7 +270,7 @@ const StyledButton = styled(MenuItemLeftContent)`
   justify-content: start;
 `;
 
-type InternalDatePickerProps = {
+type DateTimePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
   date: Date | null;
@@ -284,7 +283,7 @@ type InternalDatePickerProps = {
     start: Date;
     end: Date;
   };
-  onMouseSelect?: (date: Date | null) => void;
+  onClose?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;
   onRelativeDateChange?: (
     relativeDate: {
@@ -301,22 +300,19 @@ type InternalDatePickerProps = {
   onClear?: () => void;
 };
 
-export const InternalDatePicker = ({
+export const DateTimePicker = ({
   date,
   onChange,
-  onMouseSelect,
-  onEnter,
-  onEscape,
+  onClose,
   clearable = true,
   isDateTimeInput,
-  keyboardEventsDisabled,
   onClear,
   isRelative,
   relativeDate,
   onRelativeDateChange,
   highlightedDateRange,
   hideHeaderInput,
-}: InternalDatePickerProps) => {
+}: DateTimePickerProps) => {
   const internalDate = date ?? new Date();
 
   const { timeZone } = useContext(UserContext);
@@ -340,34 +336,9 @@ export const InternalDatePicker = ({
     closeDropdown();
   };
 
-  const handleMouseSelect = (newDate: Date) => {
+  const handleClose = (newDate: Date) => {
     closeDropdowns();
-    onMouseSelect?.(newDate);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isDefined(keyboardEventsDisabled) && keyboardEventsDisabled) {
-      return;
-    }
-
-    switch (event.key) {
-      case Key.Enter: {
-        event.stopPropagation();
-        event.preventDefault();
-
-        closeDropdowns();
-        onEnter?.(internalDate);
-        break;
-      }
-      case Key.Escape: {
-        event.stopPropagation();
-        event.preventDefault();
-
-        closeDropdowns();
-        onEscape?.(internalDate);
-        break;
-      }
-    }
+    onClose?.(newDate);
   };
 
   const handleChangeMonth = (month: number) => {
@@ -425,7 +396,7 @@ export const InternalDatePicker = ({
       })
       .toJSDate();
 
-    handleMouseSelect?.(dateParsed);
+    handleClose?.(dateParsed);
   };
 
   const dateWithoutTime = DateTime.fromJSDate(internalDate)
@@ -469,7 +440,7 @@ export const InternalDatePicker = ({
   const selectedDates = isRelative ? highlightedDates : [dateToUse];
 
   return (
-    <StyledContainer onKeyDown={handleKeyDown} calendarDisabled={isRelative}>
+    <StyledContainer calendarDisabled={isRelative}>
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
           open={true}

@@ -211,7 +211,7 @@ export const relationFromManyFieldDisplayMock = {
       objectMetadataNameSingular: 'person',
       options: null,
     },
-    type: FieldMetadataType.Relation,
+    type: FieldMetadataType.RELATION,
     iconName: 'IconUsers',
     defaultValue: null,
     editButtonIcon: {

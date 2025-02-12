@@ -9,6 +9,5 @@ export type RecordGqlOperationVariables = {
   cursorFilter?: {
     cursor: string;
     cursorDirection: QueryCursorDirection;
-    limit: number;
   };
 };

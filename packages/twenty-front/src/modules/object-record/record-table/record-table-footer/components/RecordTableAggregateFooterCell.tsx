@@ -9,8 +9,9 @@ import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 const COLUMN_MIN_WIDTH = 104;
 
-const StyledColumnFooterCell = styled.th<{
+const StyledColumnFooterCell = styled.td<{
   columnWidth: number;
+  isFirstCell?: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.primary};
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -34,6 +35,7 @@ const StyledColumnFooterCell = styled.th<{
     };
     `;
   }};
+  height: 32px;
 
   user-select: none;
   overflow: auto;
@@ -73,6 +75,8 @@ export const RecordTableAggregateFooterCell = ({
         tableColumnsByKey[fieldMetadataId].size + 24,
         COLUMN_MIN_WIDTH,
       )}
+      colSpan={isFirstCell ? 2 : undefined}
+      isFirstCell={isFirstCell}
     >
       <StyledColumnFootContainer>
         <RecordTableColumnFooterWithDropdown

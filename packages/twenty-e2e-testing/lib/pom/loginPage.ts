@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 export class LoginPage {
   private readonly loginWithGoogleButton: Locator;
@@ -35,7 +35,7 @@ export class LoginPage {
       name: 'Continue with Google',
     });
     this.loginWithEmailButton = page.getByRole('button', {
-      name: 'Continue With Email',
+      name: 'Continue with Email',
     });
     this.termsOfServiceLink = page.getByRole('link', {
       name: 'Terms of Service',
@@ -98,6 +98,8 @@ export class LoginPage {
   }
 
   async typeEmail(email: string) {
+    await expect(this.emailField).toBeVisible();
+
     await this.emailField.fill(email);
   }
 

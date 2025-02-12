@@ -3,6 +3,8 @@ import { Maybe } from 'graphql-yoga';
 import { ObjMap } from 'graphql/jsutils/ObjMap';
 import { ASTNode, Kind, ValueNode } from 'graphql/language';
 
+import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+
 const parseLiteral = (
   ast: ValueNode,
   variables?: Maybe<ObjMap<unknown>>,
@@ -25,7 +27,7 @@ const parseLiteral = (
     case Kind.VARIABLE:
       return variables ? variables[ast.name.value] : undefined;
     default:
-      throw new TypeError(
+      throw new ValidationError(
         `JSONStringify cannot represent value: ${JSON.stringify(ast)}`,
       );
   }
@@ -54,7 +56,7 @@ const parseJSON = (value: string): object => {
   try {
     return JSON.parse(value);
   } catch (e) {
-    throw new TypeError(`Value is not valid JSON: ${value}`);
+    throw new ValidationError(`Value is not valid JSON: ${value}`);
   }
 };
 

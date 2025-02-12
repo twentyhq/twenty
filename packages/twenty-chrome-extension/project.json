@@ -8,7 +8,8 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist"
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "start": {
       "executor": "nx:run-commands",

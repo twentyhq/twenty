@@ -4,7 +4,7 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "builder": "swc",
-    "typeCheck": true,
+    "typeCheck": false,
     "assets": [
       {
         "include": "**/serverless/drivers/constants/base-typescript-project/**",

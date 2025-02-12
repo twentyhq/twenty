@@ -17,25 +17,29 @@ import { useSearchRecordGroupField } from '@/object-record/object-options-dropdo
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { getIcon } = useIcons();
 
   const {
+    viewType,
     currentContentId,
     recordIndexId,
     objectMetadataItem,
     onContentChange,
+    resetContent,
     closeDropdown,
   } = useOptionsDropdown();
 
@@ -47,7 +51,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const recordGroupFieldMetadataItem = useRecoilComponentValueV2(
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
   );
 
@@ -64,10 +68,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     viewBarComponentId: recordIndexId,
   });
 
-  const newFieldSettingsUrl = getSettingsPagePath(
-    SettingsPath.ObjectNewFieldSelect,
+  const newSelectFieldSettingsUrl = getSettingsPath(
+    SettingsPath.ObjectNewFieldConfigure,
     {
-      objectSlug: objectNamePlural,
+      objectNamePlural,
+    },
+    {
+      fieldType: FieldMetadataType.SELECT,
     },
   );
 
@@ -101,7 +108,11 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     <>
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
-        onClick={() => onContentChange('recordGroups')}
+        onClick={() =>
+          isDefined(recordGroupFieldMetadata)
+            ? onContentChange('recordGroups')
+            : resetContent()
+        }
       >
         Group by
       </DropdownMenuHeader>
@@ -112,15 +123,17 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         onChange={(event) => setRecordGroupFieldSearchInput(event.target.value)}
       />
       <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          text="None"
-          selected={!isDefined(recordGroupFieldMetadataItem)}
-          onClick={handleResetRecordGroupField}
-        />
+        {viewType === ViewType.Table && (
+          <MenuItemSelect
+            text="None"
+            selected={!isDefined(recordGroupFieldMetadata)}
+            onClick={handleResetRecordGroupField}
+          />
+        )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItemSelect
             key={fieldMetadataItem.id}
-            selected={fieldMetadataItem.id === recordGroupFieldMetadataItem?.id}
+            selected={fieldMetadataItem.id === recordGroupFieldMetadata?.id}
             onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={fieldMetadataItem.label}
@@ -130,7 +143,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <UndecoratedLink
-          to={newFieldSettingsUrl}
+          to={newSelectFieldSettingsUrl}
           onClick={() => {
             setNavigationMemorizedUrl(location.pathname + location.search);
             closeDropdown();

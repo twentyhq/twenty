@@ -9,7 +9,7 @@ import {
   ClickOutsideMode,
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { workflowReactFlowRefState } from '@/workflow/states/workflowReactFlowRefState';
+import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -42,6 +42,7 @@ export const RightDrawerContainer = ({
       rightDrawerRef,
       ...(workflowReactFlowRef ? [workflowReactFlowRef] : []),
     ],
+    excludeClassNames: ['confirmation-modal'],
     listenerId: RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
     callback: useRecoilCallback(
       ({ snapshot, set }) =>

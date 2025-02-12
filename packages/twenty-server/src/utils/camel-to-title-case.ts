@@ -1,4 +1,4 @@
-import { capitalize } from 'src/utils/capitalize';
+import { capitalize } from 'twenty-shared';
 
 export const camelToTitleCase = (camelCaseText: string) =>
   capitalize(camelCaseText)

@@ -8,25 +8,25 @@ import {
   IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconFlask,
   IconFunction,
   IconHierarchy2,
   IconKey,
+  IconLock,
   IconMail,
-  IconPoint,
   IconRocket,
   IconServer,
   IconSettings,
   IconUserCircle,
   IconUsers,
-  MAIN_COLORS,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { useExpandedAnimation } from '@/settings/hooks/useExpandedAnimation';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
   NavigationDrawerItem,
@@ -35,12 +35,12 @@ import {
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import styled from '@emotion/styled';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationItem = {
   label: string;
@@ -50,57 +50,37 @@ type SettingsNavigationItem = {
   matchSubPages?: boolean;
 };
 
-const StyledIconContainer = styled.div`
-  position: absolute;
-  left: ${({ theme }) => theme.spacing(-5)};
-  height: 100%;
-  display: flex;
-  align-items: center;
-`;
-
-const StyledContainer = styled.div`
-  position: relative;
-`;
-
-const StyledIconPoint = styled(IconPoint)`
-  margin-right: 0;
-`;
-
 export const SettingsNavigationDrawerItems = () => {
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-  const {
-    contentRef: securityRef,
-    motionAnimationVariants: securityAnimationVariants,
-  } = useExpandedAnimation(isAdvancedModeEnabled);
-  const {
-    contentRef: developersRef,
-    motionAnimationVariants: developersAnimationVariants,
-  } = useExpandedAnimation(isAdvancedModeEnabled);
   const { signOut } = useAuth();
 
+  const { t } = useLingui();
+
   const billing = useRecoilValue(billingState);
-  const isFunctionSettingsEnabled = useIsFeatureEnabled(
-    'IS_FUNCTION_SETTINGS_ENABLED',
+  const isPermissionsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPermissionsEnabled,
   );
-  const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
-  const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
-  const isBillingPageEnabled =
-    billing?.isBillingEnabled && !isFreeAccessEnabled;
+
+  // We want to disable this serverless function setting menu but keep the code
+  // for now
+  const isFunctionSettingsEnabled = false;
+
+  const isBillingPageEnabled = billing?.isBillingEnabled;
 
   const currentUser = useRecoilValue(currentUserState);
   const isAdminPageEnabled = currentUser?.canImpersonate;
+  const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
   // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
   const accountSubSettings: SettingsNavigationItem[] = [
     {
-      label: 'Emails',
+      label: t`Emails`,
       path: SettingsPath.AccountsEmails,
       Icon: IconMail,
       indentationLevel: 2,
     },
     {
-      label: 'Calendars',
+      label: t`Calendars`,
       path: SettingsPath.AccountsCalendars,
       Icon: IconCalendarEvent,
       indentationLevel: 2,
@@ -108,7 +88,7 @@ export const SettingsNavigationDrawerItems = () => {
   ];
 
   const selectedIndex = accountSubSettings.findIndex((accountSubSetting) => {
-    const href = getSettingsPagePath(accountSubSetting.path);
+    const href = getSettingsPath(accountSubSetting.path);
     const pathName = resolvePath(href).pathname;
 
     return matchPath(
@@ -123,20 +103,20 @@ export const SettingsNavigationDrawerItems = () => {
   return (
     <>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="User" />
+        <NavigationDrawerSectionTitle label={t`User`} />
         <SettingsNavigationDrawerItem
-          label="Profile"
+          label={t`Profile`}
           path={SettingsPath.ProfilePage}
           Icon={IconUserCircle}
         />
         <SettingsNavigationDrawerItem
-          label="Experience"
-          path={SettingsPath.Appearance}
+          label={t`Experience`}
+          path={SettingsPath.Experience}
           Icon={IconColorSwatch}
         />
         <NavigationDrawerItemGroup>
           <SettingsNavigationDrawerItem
-            label="Accounts"
+            label={t`Accounts`}
             path={SettingsPath.Accounts}
             Icon={IconAt}
             matchSubPages={false}
@@ -158,132 +138,94 @@ export const SettingsNavigationDrawerItems = () => {
         </NavigationDrawerItemGroup>
       </NavigationDrawerSection>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Workspace" />
+        <NavigationDrawerSectionTitle label={t`Workspace`} />
         <SettingsNavigationDrawerItem
-          label="General"
+          label={t`General`}
           path={SettingsPath.Workspace}
           Icon={IconSettings}
         />
         <SettingsNavigationDrawerItem
-          label="Members"
+          label={t`Members`}
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
-            label="Billing"
+            label={t`Billing`}
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
           />
         )}
+        {isPermissionsEnabled && (
+          <SettingsNavigationDrawerItem
+            label={t`Roles`}
+            path={SettingsPath.Roles}
+            Icon={IconLock}
+          />
+        )}
         <SettingsNavigationDrawerItem
-          label="Data model"
+          label={t`Data model`}
           path={SettingsPath.Objects}
           Icon={IconHierarchy2}
         />
         <SettingsNavigationDrawerItem
-          label="Integrations"
+          label={t`Integrations`}
           path={SettingsPath.Integrations}
           Icon={IconApps}
         />
-        {isCRMMigrationEnabled && (
+        <AdvancedSettingsWrapper navigationDrawerItem={true}>
           <SettingsNavigationDrawerItem
-            label="CRM Migration"
-            path={SettingsPath.CRMMigration}
-            Icon={IconCode}
+            label={t`Security`}
+            path={SettingsPath.Security}
+            Icon={IconKey}
           />
-        )}
-        <AnimatePresence>
-          {isAdvancedModeEnabled && (
-            <motion.div
-              ref={securityRef}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              variants={securityAnimationVariants}
-            >
-              <StyledContainer>
-                <StyledIconContainer>
-                  <StyledIconPoint
-                    size={12}
-                    color={MAIN_COLORS.yellow}
-                    fill={MAIN_COLORS.yellow}
-                  />
-                </StyledIconContainer>
-                <SettingsNavigationDrawerItem
-                  label="Security"
-                  path={SettingsPath.Security}
-                  Icon={IconKey}
-                />
-              </StyledContainer>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        </AdvancedSettingsWrapper>
       </NavigationDrawerSection>
 
-      <AnimatePresence>
-        {isAdvancedModeEnabled && (
-          <motion.div
-            ref={developersRef}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={developersAnimationVariants}
-          >
-            <NavigationDrawerSection>
-              <NavigationDrawerSectionTitle label="Developers" />
-              <StyledContainer>
-                <StyledIconContainer>
-                  <StyledIconPoint
-                    size={12}
-                    color={MAIN_COLORS.yellow}
-                    fill={MAIN_COLORS.yellow}
-                  />
-                </StyledIconContainer>
-
-                <SettingsNavigationDrawerItem
-                  label="API & Webhooks"
-                  path={SettingsPath.Developers}
-                  Icon={IconCode}
-                />
-              </StyledContainer>
-              {isFunctionSettingsEnabled && (
-                <StyledContainer>
-                  <StyledIconContainer>
-                    <StyledIconPoint
-                      size={12}
-                      color={MAIN_COLORS.yellow}
-                      fill={MAIN_COLORS.yellow}
-                    />
-                  </StyledIconContainer>
-
-                  <SettingsNavigationDrawerItem
-                    label="Functions"
-                    path={SettingsPath.ServerlessFunctions}
-                    Icon={IconFunction}
-                  />
-                </StyledContainer>
-              )}
-            </NavigationDrawerSection>
-          </motion.div>
-        )}
-      </AnimatePresence>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Other" />
+        <AdvancedSettingsWrapper hideIcon>
+          <NavigationDrawerSectionTitle label={t`Developers`} />
+        </AdvancedSettingsWrapper>
+        <AdvancedSettingsWrapper navigationDrawerItem={true}>
+          <SettingsNavigationDrawerItem
+            label={t`API & Webhooks`}
+            path={SettingsPath.Developers}
+            Icon={IconCode}
+          />
+        </AdvancedSettingsWrapper>
+        {isFunctionSettingsEnabled && (
+          <AdvancedSettingsWrapper navigationDrawerItem={true}>
+            <SettingsNavigationDrawerItem
+              label={t`Functions`}
+              path={SettingsPath.ServerlessFunctions}
+              Icon={IconFunction}
+            />
+          </AdvancedSettingsWrapper>
+        )}
+      </NavigationDrawerSection>
+      <NavigationDrawerSection>
+        <NavigationDrawerSectionTitle label={t`Other`} />
         {isAdminPageEnabled && (
           <SettingsNavigationDrawerItem
-            label="Server Admin Panel"
+            label={t`Server Admin`}
             path={SettingsPath.AdminPanel}
             Icon={IconServer}
           />
         )}
+        {labPublicFeatureFlags?.length > 0 && (
+          <SettingsNavigationDrawerItem
+            label={t`Lab`}
+            path={SettingsPath.Lab}
+            Icon={IconFlask}
+          />
+        )}
         <SettingsNavigationDrawerItem
-          label="Releases"
+          label={t`Releases`}
           path={SettingsPath.Releases}
           Icon={IconRocket}
         />
         <NavigationDrawerItem
-          label="Logout"
+          label={t`Logout`}
           onClick={signOut}
           Icon={IconDoorEnter}
         />

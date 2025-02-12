@@ -1,6 +1,7 @@
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { i18n } from '@lingui/core';
 
 type RecordIndexActionMenuBarEntryProps = {
   entry: ActionMenuEntry;
@@ -33,7 +34,7 @@ export const RecordIndexActionMenuBarEntry = ({
   return (
     <StyledButton onClick={() => entry.onClick?.()}>
       {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
-      <StyledButtonLabel>{entry.label}</StyledButtonLabel>
+      <StyledButtonLabel>{i18n._(entry.label)}</StyledButtonLabel>
     </StyledButton>
   );
 };

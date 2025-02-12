@@ -1,7 +1,7 @@
-import { Readable } from 'stream';
 import fs from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
+import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
 import {
@@ -18,14 +18,13 @@ import {
   S3,
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
+import { isDefined } from 'twenty-shared';
 
+import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
-
-import { isDefined } from 'src/utils/is-defined';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;

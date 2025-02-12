@@ -1,38 +1,40 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { AppPath } from '@/types/AppPath';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import qs from 'qs';
-import { useNavigate } from 'react-router-dom';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const useSeeVersionsWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useSeeVersionsWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
+
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-    const navigate = useNavigate();
+    const navigateApp = useNavigateApp();
 
     const shouldBeRegistered = isDefined(workflowWithCurrentVersion);
 
     const onClick = () => {
-      if (!shouldBeRegistered) {
-        return;
-      }
+      if (!shouldBeRegistered) return;
 
-      const filterQueryParams = {
-        filter: {
-          workflow: {
-            [ViewFilterOperand.Is]: {
-              selectedRecordIds: [workflowWithCurrentVersion.id],
+      navigateApp(
+        AppPath.RecordIndexPage,
+        {
+          objectNamePlural: CoreObjectNamePlural.WorkflowVersion,
+        },
+        {
+          filter: {
+            workflow: {
+              [ViewFilterOperand.Is]: {
+                selectedRecordIds: [workflowWithCurrentVersion.id],
+              },
             },
           },
         },
-      };
-      const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowVersion}?${qs.stringify(
-        filterQueryParams,
-      )}`;
-
-      navigate(filterLinkHref);
+      );
     };
 
     return {

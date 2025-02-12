@@ -1,13 +1,14 @@
-import { FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldsAvailableByAggregateOperation';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
 
-export const initializeAvailableFieldsForAggregateOperationMap =
-  (): AvailableFieldsForAggregateOperation => {
-    return Object.keys(FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION).reduce(
-      (acc, operation) => ({
-        ...acc,
-        [operation]: [],
-      }),
-      {},
-    );
-  };
+export const initializeAvailableFieldsForAggregateOperationMap = (
+  aggregateOperations: ExtendedAggregateOperations[],
+): AvailableFieldsForAggregateOperation => {
+  return aggregateOperations.reduce(
+    (acc, operation) => ({
+      ...acc,
+      [operation]: [],
+    }),
+    {},
+  );
+};

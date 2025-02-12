@@ -16,8 +16,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsObjectDetailPage,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:objectSlug',
-    routeParams: { ':objectSlug': 'companies' },
+    routePath: '/settings/objects/:objectNamePlural',
+    routeParams: { ':objectNamePlural': 'companies' },
   },
   parameters: {
     msw: graphqlMocks,
@@ -36,7 +36,7 @@ export const StandardObject: Story = {
 
 export const CustomObject: Story = {
   args: {
-    routeParams: { ':objectSlug': 'my-customs' },
+    routeParams: { ':objectNamePlural': 'myCustoms' },
   },
 };
 

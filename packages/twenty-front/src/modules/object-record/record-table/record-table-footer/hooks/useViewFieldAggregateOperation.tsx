@@ -1,6 +1,7 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useContext } from 'react';
@@ -18,13 +19,19 @@ export const useViewFieldAggregateOperation = () => {
     );
   const { updateViewFieldRecords } = usePersistViewFieldRecords();
   const updateViewFieldAggregateOperation = (
-    aggregateOperation: AGGREGATE_OPERATIONS | null,
+    aggregateOperation: ExtendedAggregateOperations | null,
   ) => {
     if (!currentViewField) {
       throw new Error('ViewField not found');
     }
     updateViewFieldRecords([
-      { ...currentViewField, aggregateOperation: aggregateOperation },
+      {
+        ...currentViewField,
+        aggregateOperation:
+          convertExtendedAggregateOperationToAggregateOperation(
+            aggregateOperation,
+          ),
+      },
     ]);
   };
 

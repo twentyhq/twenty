@@ -47,7 +47,7 @@ describe('getFieldPreviewValue', () => {
     // Then
     expect(result).toBe(2000);
     expect(result).toBe(
-      getSettingsFieldTypeConfig(FieldMetadataType.Number).exampleValue,
+      getSettingsFieldTypeConfig(FieldMetadataType.NUMBER).exampleValue,
     );
   });
 

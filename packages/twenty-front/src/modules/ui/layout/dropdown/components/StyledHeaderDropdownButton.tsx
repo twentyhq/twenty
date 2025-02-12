@@ -8,8 +8,6 @@ type StyledDropdownButtonProps = {
 export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProps>`
   font-family: inherit;
   align-items: center;
-  background: ${({ theme, isUnfolded }) =>
-    isUnfolded ? theme.background.transparent.light : theme.background.primary};
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ isActive, theme }) =>
@@ -22,6 +20,9 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
 
   padding-right: ${({ theme }) => theme.spacing(2)};
   user-select: none;
+
+  background: ${({ theme, isUnfolded }) =>
+    isUnfolded ? theme.background.transparent.light : theme.background.primary};
 
   &:hover {
     background: ${({ theme, isUnfolded }) =>

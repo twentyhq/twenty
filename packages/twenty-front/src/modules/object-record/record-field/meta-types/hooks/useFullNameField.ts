@@ -16,7 +16,7 @@ export const useFullNameField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.FullName,
+    FieldMetadataType.FULL_NAME,
     isFieldFullName,
     fieldDefinition,
   );

@@ -15,8 +15,8 @@ import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameS
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { activityTargetObjectRecordFamilyState } from '@/object-record/record-field/states/activityTargetObjectRecordFamilyState';
 import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
 import {
@@ -54,17 +54,15 @@ export const ActivityTargetInlineCellEditMode = ({
     }),
   );
 
-  const { createManyRecords: createManyActivityTargets } = useCreateManyRecords<
+  const { createOneRecord: createOneActivityTarget } = useCreateOneRecord<
     NoteTarget | TaskTarget
   >({
     objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
   });
 
-  const { deleteManyRecords: deleteManyActivityTargets } = useDeleteManyRecords(
-    {
-      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
-    },
-  );
+  const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({
+    objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
+  });
 
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
@@ -168,36 +166,21 @@ export const ActivityTargetInlineCellEditMode = ({
           );
 
           const newActivityTargetId = v4();
-          const fieldName = record.objectMetadataItem.nameSingular;
           const fieldNameWithIdSuffix = getActivityTargetObjectFieldIdName({
             nameSingular: record.objectMetadataItem.nameSingular,
           });
 
+          const newActivityTargetInput = {
+            id: newActivityTargetId,
+            ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+              ? { taskId: activity.id }
+              : { noteId: activity.id }),
+            [fieldNameWithIdSuffix]: recordId,
+          };
+
           const newActivityTarget = prefillRecord<NoteTarget | TaskTarget>({
             objectMetadataItem: objectMetadataItemActivityTarget,
-            input: {
-              id: newActivityTargetId,
-              taskId:
-                activityObjectNameSingular === CoreObjectNameSingular.Task
-                  ? activity.id
-                  : null,
-              task:
-                activityObjectNameSingular === CoreObjectNameSingular.Task
-                  ? activity
-                  : null,
-              noteId:
-                activityObjectNameSingular === CoreObjectNameSingular.Note
-                  ? activity.id
-                  : null,
-              note:
-                activityObjectNameSingular === CoreObjectNameSingular.Note
-                  ? activity
-                  : null,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              [fieldName]: record.record,
-              [fieldNameWithIdSuffix]: recordId,
-            },
+            input: newActivityTargetInput,
           });
 
           activityTargetsAfterUpdate.push(newActivityTarget);
@@ -215,7 +198,7 @@ export const ActivityTargetInlineCellEditMode = ({
               },
             });
           } else {
-            await createManyActivityTargets([newActivityTarget]);
+            await createOneActivityTarget(newActivityTargetInput);
           }
 
           set(activityTargetObjectRecordFamilyState(recordId), {
@@ -252,7 +235,7 @@ export const ActivityTargetInlineCellEditMode = ({
               },
             });
           } else {
-            await deleteManyActivityTargets([activityTargetToDeleteId]);
+            await deleteOneActivityTarget(activityTargetToDeleteId);
           }
 
           set(activityTargetObjectRecordFamilyState(recordId), {
@@ -263,9 +246,9 @@ export const ActivityTargetInlineCellEditMode = ({
     [
       activity,
       activityTargetWithTargetRecords,
-      createManyActivityTargets,
+      createOneActivityTarget,
       createManyActivityTargetsInCache,
-      deleteManyActivityTargets,
+      deleteOneActivityTarget,
       isActivityInCreateMode,
       objectMetadataItemActivityTarget,
       recordPickerInstanceId,

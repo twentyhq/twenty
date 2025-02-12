@@ -8,3 +8,7 @@ export const isWorkEmail = (email: string) => {
     return false;
   }
 };
+
+export const isWorkDomain = (domain: string) => {
+  return !emailProvidersSet.has(domain);
+};

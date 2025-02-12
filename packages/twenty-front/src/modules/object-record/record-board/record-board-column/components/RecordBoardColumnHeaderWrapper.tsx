@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -32,7 +32,6 @@ export const RecordBoardColumnHeaderWrapper = ({
       value={{
         columnId,
         columnDefinition: recordGroupDefinition,
-        recordCount: recordIdsByGroup.length,
         recordIds: recordIdsByGroup,
       }}
     >

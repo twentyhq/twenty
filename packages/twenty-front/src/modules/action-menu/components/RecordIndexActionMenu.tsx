@@ -1,6 +1,7 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
+import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
+import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { RecordIndexActionMenuButtons } from '@/action-menu/components/RecordIndexActionMenuButtons';
@@ -14,16 +15,19 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsMobile } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
 
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
   );
 
   const isMobile = useIsMobile();
@@ -51,7 +55,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
             },
           }}
         >
-          {isPageHeaderV2Enabled ? (
+          {isCommandMenuV2Enabled ? (
             <>{!isMobile && <RecordIndexActionMenuButtons />}</>
           ) : (
             <RecordIndexActionMenuBar />
@@ -60,7 +64,10 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
           <ActionMenuConfirmationModals />
           <RecordIndexActionMenuEffect />
           <RecordActionMenuEntriesSetter />
-          {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+          <RecordAgnosticActionMenuEntriesSetter />
+          {isWorkflowEnabled && (
+            <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+          )}
         </ActionMenuContext.Provider>
       )}
     </>

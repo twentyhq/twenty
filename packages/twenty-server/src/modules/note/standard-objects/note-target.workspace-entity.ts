@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -20,9 +22,9 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.noteTarget,
   namePlural: 'noteTargets',
-  labelSingular: 'Note Target',
-  labelPlural: 'Note Targets',
-  description: 'A note target',
+  labelSingular: msg`Note Target`,
+  labelPlural: msg`Note Targets`,
+  description: msg`A note target`,
   icon: STANDARD_OBJECT_ICONS.noteTarget,
 })
 @WorkspaceIsSystem()
@@ -30,8 +32,8 @@ export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_TARGET_STANDARD_FIELD_IDS.note,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Note',
-    description: 'NoteTarget note',
+    label: msg`Note`,
+    description: msg`NoteTarget note`,
     icon: 'IconNotes',
     inverseSideTarget: () => NoteWorkspaceEntity,
     inverseSideFieldKey: 'noteTargets',
@@ -45,8 +47,8 @@ export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_TARGET_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
-    description: 'NoteTarget person',
+    label: msg`Person`,
+    description: msg`NoteTarget person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'noteTargets',
@@ -60,8 +62,8 @@ export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_TARGET_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Company',
-    description: 'NoteTarget company',
+    label: msg`Company`,
+    description: msg`NoteTarget company`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'noteTargets',
@@ -75,8 +77,8 @@ export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_TARGET_STANDARD_FIELD_IDS.opportunity,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Opportunity',
-    description: 'NoteTarget opportunity',
+    label: msg`Opportunity`,
+    description: msg`NoteTarget opportunity`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'noteTargets',

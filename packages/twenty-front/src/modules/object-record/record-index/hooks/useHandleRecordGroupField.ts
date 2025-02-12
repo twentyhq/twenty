@@ -61,6 +61,8 @@ export const useHandleRecordGroupField = ({
             (option) =>
               !existingGroupKeys.has(`${fieldMetadataItem.id}:${option.value}`),
           )
+          // Alphabetically sort the options by default
+          .sort((a, b) => a.value.localeCompare(b.value))
           .map(
             (option, index) =>
               ({
@@ -92,7 +94,7 @@ export const useHandleRecordGroupField = ({
         );
 
         if (viewGroupsToCreate.length > 0) {
-          await createViewGroupRecords(viewGroupsToCreate, view);
+          await createViewGroupRecords({ viewGroupsToCreate, viewId: view.id });
         }
 
         if (viewGroupsToDelete.length > 0) {

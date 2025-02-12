@@ -17,12 +17,14 @@ export const InformationBanner = ({
   buttonTitle,
   buttonIcon,
   buttonOnClick,
+  isButtonDisabled = false,
 }: {
   message: string;
   variant?: BannerVariant;
   buttonTitle?: string;
   buttonIcon?: IconComponent;
   buttonOnClick?: () => void;
+  isButtonDisabled?: boolean;
 }) => {
   return (
     <StyledBanner variant={variant}>
@@ -35,6 +37,7 @@ export const InformationBanner = ({
           size="small"
           inverted
           onClick={buttonOnClick}
+          disabled={isButtonDisabled}
         />
       )}
     </StyledBanner>

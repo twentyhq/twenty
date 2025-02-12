@@ -1,5 +1,6 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
+import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
+import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordShowActionMenuButtons } from '@/action-menu/components/RecordShowActionMenuButtons';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -9,6 +10,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBaseHeader';
 
 export const RecordShowActionMenu = ({
@@ -28,10 +30,12 @@ export const RecordShowActionMenu = ({
     contextStoreCurrentObjectMetadataIdComponentState,
   );
 
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
   );
 
   // TODO: refactor RecordShowPageBaseHeader to use the context store
@@ -45,7 +49,7 @@ export const RecordShowActionMenu = ({
             onActionExecutedCallback: () => {},
           }}
         >
-          {isPageHeaderV2Enabled ? (
+          {isCommandMenuV2Enabled ? (
             <RecordShowActionMenuButtons />
           ) : (
             <RecordShowPageBaseHeader
@@ -60,7 +64,10 @@ export const RecordShowActionMenu = ({
           )}
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
-          {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+          <RecordAgnosticActionMenuEntriesSetter />
+          {isWorkflowEnabled && (
+            <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+          )}
         </ActionMenuContext.Provider>
       )}
     </>

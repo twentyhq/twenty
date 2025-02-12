@@ -85,7 +85,6 @@ describe('useAddToFavoritesSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useAddToFavoritesSingleRecordAction({
-          recordId: peopleMock[1].id,
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {
@@ -100,7 +99,6 @@ describe('useAddToFavoritesSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useAddToFavoritesSingleRecordAction({
-          recordId: peopleMock[0].id,
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {
@@ -115,7 +113,6 @@ describe('useAddToFavoritesSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useAddToFavoritesSingleRecordAction({
-          recordId: peopleMock[1].id,
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {

@@ -1,12 +1,16 @@
-import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
+import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 const convertFieldRatingValueToNumber = (
   rating: Exclude<FieldRatingValue, null>,
 ): string => {
@@ -30,24 +34,22 @@ export const convertRatingToRatingValue = (rating: number) => {
 };
 
 export const ObjectFilterDropdownRatingInput = () => {
-  const {
-    selectedOperandInDropdownState,
-    filterDefinitionUsedInDropdownState,
-    selectedFilterState,
-    selectFilter,
-  } = useFilterDropdown();
-
-  const filterDefinitionUsedInDropdown = useRecoilValue(
-    filterDefinitionUsedInDropdownState,
-  );
-  const selectedOperandInDropdown = useRecoilValue(
-    selectedOperandInDropdownState,
+  const selectedOperandInDropdown = useRecoilComponentValueV2(
+    selectedOperandInDropdownComponentState,
   );
 
-  const selectedFilter = useRecoilValue(selectedFilterState);
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
+  );
+
+  const selectedFilter = useRecoilComponentValueV2(
+    selectedFilterComponentState,
+  );
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   return (
-    filterDefinitionUsedInDropdown &&
+    fieldMetadataItemUsedInDropdown &&
     selectedOperandInDropdown && (
       <DropdownMenuItemsContainer>
         <RatingInput
@@ -57,13 +59,17 @@ export const ObjectFilterDropdownRatingInput = () => {
               return;
             }
 
-            selectFilter?.({
+            const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
+              field: fieldMetadataItemUsedInDropdown,
+            });
+
+            applyRecordFilter?.({
               id: selectedFilter?.id ? selectedFilter.id : v4(),
-              fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+              fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
               value: convertFieldRatingValueToNumber(newValue),
               operand: selectedOperandInDropdown,
               displayValue: convertFieldRatingValueToNumber(newValue),
-              definition: filterDefinitionUsedInDropdown,
+              definition: filterDefinition,
               viewFilterGroupId: selectedFilter?.viewFilterGroupId,
             });
           }}

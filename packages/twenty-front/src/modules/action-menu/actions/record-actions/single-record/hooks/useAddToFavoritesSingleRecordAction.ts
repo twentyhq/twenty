@@ -1,13 +1,16 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isNull } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
-export const useAddToFavoritesSingleRecordAction: SingleRecordActionHookWithObjectMetadataItem =
-  ({ recordId, objectMetadataItem }) => {
+export const useAddToFavoritesSingleRecordAction: ActionHookWithObjectMetadataItem =
+  ({ objectMetadataItem }) => {
+    const recordId = useSelectedRecordIdOrThrow();
+
     const { sortedFavorites: favorites } = useFavorites();
 
     const { createFavorite } = useCreateFavorite();

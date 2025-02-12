@@ -10,12 +10,8 @@ export type GoogleAPIScopeConfig = {
 
 @Injectable()
 export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStrategy {
-  constructor(
-    environmentService: EnvironmentService,
-    scopeConfig: GoogleAPIScopeConfig,
-    isGmailSendEmailScopeEnabled = false,
-  ) {
-    super(environmentService, scopeConfig, isGmailSendEmailScopeEnabled);
+  constructor(environmentService: EnvironmentService) {
+    super(environmentService);
   }
 
   authenticate(req: any, options: any) {

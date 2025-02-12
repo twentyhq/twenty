@@ -11,14 +11,14 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { capitalize, isDefined } from 'twenty-shared';
 import {
   IconComponent,
+  Label,
   MOBILE_VIEWPORT,
   Pill,
   TablerIconsProps,
 } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
-import { capitalize } from '~/utils/string/capitalize';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -46,7 +46,7 @@ export type NavigationDrawerItemProps = {
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
   'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDragging'
-> & { isNavigationDrawerExpanded: boolean };
+> & { isNavigationDrawerExpanded: boolean; hasRightOptions: boolean };
 
 const StyledItem = styled('button', {
   shouldForwardProp: (prop) =>
@@ -80,7 +80,8 @@ const StyledItem = styled('button', {
 
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
+  padding-right: ${({ theme, hasRightOptions }) =>
+    hasRightOptions ? theme.spacing(0.5) : theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
 
   margin-top: ${({ indentationLevel }) =>
@@ -91,7 +92,7 @@ const StyledItem = styled('button', {
   width: ${(props) =>
     !props.isNavigationDrawerExpanded
       ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(5.5)})`
-      : `calc(100% - ${props.theme.spacing(2)})`};
+      : `calc(100% - ${props.theme.spacing(1.5)})`};
 
   ${({ isDragging }) =>
     isDragging &&
@@ -132,16 +133,15 @@ const StyledLabelParent = styled.div`
   text-overflow: clip;
 `;
 const StyledEllipsisContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const StyledItemLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
+
 const StyledItemObjectName = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -163,13 +163,16 @@ const StyledItemCount = styled.span`
 
 const StyledKeyBoardShortcut = styled.span`
   align-items: center;
-  border-radius: 4px;
-  color: ${({ theme }) => theme.font.color.light};
   display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(4)};
   justify-content: center;
-  letter-spacing: 1px;
-  margin-left: auto;
-  visibility: hidden;
+  width: ${({ theme }) => theme.spacing(4)};
+
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.strong};
+  background: ${({ theme }) => theme.background.transparent.lighter};
 `;
 
 const StyledNavigationDrawerItemContainer = styled.div`
@@ -284,6 +287,7 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         isDragging={isDragging}
+        hasRightOptions={!!rightOptions}
       >
         <StyledItemElementsContainer>
           {showBreadcrumb && (
@@ -338,7 +342,7 @@ export const NavigationDrawerItem = ({
           {keyboard && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <StyledKeyBoardShortcut className="keyboard-shortcuts">
-                {keyboard}
+                <Label>{keyboard}</Label>
               </StyledKeyBoardShortcut>
             </NavigationDrawerAnimatedCollapseWrapper>
           )}

@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from '@ui/utilities/state/utils/createState';
 import { UserExists } from '~/generated/graphql';
 
 export const availableSSOIdentityProvidersForAuthState = createState<

@@ -7,15 +7,22 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { isDefined } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -26,22 +33,19 @@ import {
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
-import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { Workspace } from './workspace.entity';
@@ -49,7 +53,10 @@ import { Workspace } from './workspace.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 @Resolver(() => Workspace)
-@UseFilters(GraphqlValidationExceptionFilter)
+@UseFilters(
+  GraphqlValidationExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+)
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
@@ -59,6 +66,9 @@ export class WorkspaceResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly featureFlagService: FeatureFlagService,
+    @InjectRepository(BillingSubscription, 'core')
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   @Query(() => Workspace)
@@ -93,11 +103,15 @@ export class WorkspaceResolver {
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     try {
-      return this.workspaceService.updateWorkspaceById({
-        ...data,
-        id: workspace.id,
+      return await this.workspaceService.updateWorkspaceById({
+        payload: {
+          ...data,
+          id: workspace.id,
+        },
+        userWorkspaceId,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
@@ -134,10 +148,38 @@ export class WorkspaceResolver {
     return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
+  @ResolveField(() => [FeatureFlag], { nullable: true })
+  async featureFlags(@Parent() workspace: Workspace): Promise<FeatureFlag[]> {
+    const featureFlags = await this.featureFlagService.getWorkspaceFeatureFlags(
+      workspace.id,
+    );
+
+    return featureFlags.filter((flag) =>
+      Object.values(FeatureFlagKey).includes(flag.key),
+    );
+  }
+
   @Mutation(() => Workspace)
-  @UseGuards(DemoEnvGuard, WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
+  }
+
+  @ResolveField(() => [BillingSubscription])
+  async billingSubscriptions(
+    @Parent() workspace: Workspace,
+  ): Promise<BillingSubscription[] | undefined> {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return [];
+    }
+
+    try {
+      return this.billingSubscriptionRepository.find({
+        where: { workspaceId: workspace.id },
+      });
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+    }
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })
@@ -178,25 +220,36 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
-  hasValidEntrepriseKey(): boolean {
+  hasValidEnterpriseKey(): boolean {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
+  @ResolveField(() => workspaceUrls)
+  workspaceUrls(@Parent() workspace: Workspace) {
+    return this.domainManagerService.getWorkspaceUrls(workspace);
+  }
+
+  @Query(() => CustomDomainDetails, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard)
+  async getCustomDomainDetails(
+    @AuthWorkspace() { customDomain }: Workspace,
+  ): Promise<CustomDomainDetails | undefined> {
+    if (!customDomain) return undefined;
+
+    return await this.domainManagerService.getCustomDomainDetails(customDomain);
+  }
+
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
+  async getPublicWorkspaceDataByDomain(
+    @OriginHeader() origin: string,
+  ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
       const workspace =
         await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
           origin,
         );
 
-      workspaceValidator.assertIsDefinedOrThrow(
-        workspace,
-        new WorkspaceException(
-          'Workspace not found',
-          WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-        ),
-      );
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       let workspaceLogoWithToken = '';
 
@@ -224,7 +277,7 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        subdomain: workspace.subdomain,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

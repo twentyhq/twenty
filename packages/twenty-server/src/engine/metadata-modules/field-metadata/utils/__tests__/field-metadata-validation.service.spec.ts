@@ -1,7 +1,8 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataException } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
 describe('FieldMetadataValidationService', () => {

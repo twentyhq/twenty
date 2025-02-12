@@ -1,21 +1,19 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { AppPath } from '@/types/AppPath';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
-import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
+import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { useSetRecoilState } from 'recoil';
-import {
-  Button,
-  IconPencil,
-  IconPlayerStop,
-  IconPower,
-  isDefined,
-} from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { Button, IconPencil, IconPlayerStop, IconPower } from 'twenty-ui';
+
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const RecordShowPageWorkflowVersionHeader = ({
   workflowVersionId,
@@ -72,11 +70,14 @@ export const RecordShowPageWorkflowVersionHeader = ({
 
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
+  const { createDraftFromWorkflowVersion } =
+    useCreateDraftFromWorkflowVersion();
 
   const setOpenOverrideWorkflowDraftConfirmationModal = useSetRecoilState(
     openOverrideWorkflowDraftConfirmationModalState,
   );
+
+  const navigate = useNavigateApp();
 
   return (
     <>
@@ -90,12 +91,14 @@ export const RecordShowPageWorkflowVersionHeader = ({
             if (hasAlreadyDraftVersion) {
               setOpenOverrideWorkflowDraftConfirmationModal(true);
             } else {
-              await createNewWorkflowVersion({
+              await createDraftFromWorkflowVersion({
                 workflowId: workflowVersion.workflow.id,
-                name: `v${workflowVersion.workflow.versions.length + 1}`,
-                status: 'DRAFT',
-                trigger: workflowVersion.trigger,
-                steps: workflowVersion.steps,
+                workflowVersionIdToCopy: workflowVersion.id,
+              });
+
+              navigate(AppPath.RecordShowPage, {
+                objectNameSingular: CoreObjectNameSingular.Workflow,
+                objectRecordId: workflowVersion.workflow.id,
               });
             }
           }}
@@ -123,19 +126,17 @@ export const RecordShowPageWorkflowVersionHeader = ({
           Icon={IconPlayerStop}
           disabled={isWaitingForWorkflowVersion}
           onClick={() => {
-            return deactivateWorkflowVersion(workflowVersion.id);
+            return deactivateWorkflowVersion({
+              workflowVersionId: workflowVersion.id,
+            });
           }}
         />
       ) : null}
 
       {isDefined(workflowVersion) && isDefined(draftWorkflowVersion) ? (
         <OverrideWorkflowDraftConfirmationModal
-          draftWorkflowVersionId={draftWorkflowVersion.id}
           workflowId={workflowVersion.workflowId}
-          workflowVersionUpdateInput={{
-            steps: workflowVersion.steps,
-            trigger: workflowVersion.trigger,
-          }}
+          workflowVersionIdToCopy={workflowVersionId}
         />
       ) : null}
     </>

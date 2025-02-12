@@ -1,11 +1,12 @@
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Controller, useFormContext } from 'react-hook-form';
-import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
-import { StyledText } from 'twenty-ui';
-import { useTheme } from '@emotion/react';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { motion } from 'framer-motion';
+import { Controller, useFormContext } from 'react-hook-form';
+import { StyledText } from 'twenty-ui';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;
@@ -22,6 +23,7 @@ export const SignInUpPasswordField = ({
   showErrors: boolean;
   signInUpMode: SignInUpMode;
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const form = useFormContext<Form>();
 
@@ -55,7 +57,7 @@ export const SignInUpPasswordField = ({
             />
             {signInUpMode === SignInUpMode.SignUp && (
               <StyledText
-                text={'At least 8 characters long.'}
+                text={t`At least 8 characters long.`}
                 color={theme.font.color.secondary}
               />
             )}

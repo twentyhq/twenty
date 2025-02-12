@@ -38,7 +38,7 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
-          401,
+          403,
         );
       case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
       case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
@@ -46,7 +46,7 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
-          403,
+          401,
         );
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       default:

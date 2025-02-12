@@ -1,7 +1,7 @@
 import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
-import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
+import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -10,7 +10,8 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
-import { isDefined, MenuItem } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { MenuItem } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   flex: 1;
@@ -56,7 +57,7 @@ export const AdvancedFilterViewFilterOperandSelect = ({
   };
 
   const operandsForFilterType = isDefined(filter?.definition)
-    ? getOperandsForFilterDefinition(filter.definition)
+    ? getRecordFilterOperandsForRecordFilterDefinition(filter.definition)
     : [];
 
   if (isDisabled === true) {

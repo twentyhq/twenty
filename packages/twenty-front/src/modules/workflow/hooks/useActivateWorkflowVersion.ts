@@ -1,24 +1,24 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useApolloClient, useMutation } from '@apollo/client';
 
+import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { ACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/activateWorkflowVersion';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { isDefined } from 'twenty-shared';
 import {
   ActivateWorkflowVersionMutation,
   ActivateWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
 
 export const useActivateWorkflowVersion = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
   const [mutate] = useMutation<
     ActivateWorkflowVersionMutation,
     ActivateWorkflowVersionMutationVariables
   >(ACTIVATE_WORKFLOW_VERSION, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
@@ -56,7 +56,29 @@ export const useActivateWorkflowVersion = () => {
             item.workflowId === workflowId,
         );
 
-        for (const workflowVersion of allWorkflowVersions) {
+        const previousActiveWorkflowVersions = allWorkflowVersions.filter(
+          (version) =>
+            version.status === 'ACTIVE' && version.id !== workflowVersionId,
+        );
+
+        const newlyActiveWorkflowVersion = allWorkflowVersions.find(
+          (version) => version.id === workflowVersionId,
+        );
+
+        if (isDefined(newlyActiveWorkflowVersion)) {
+          triggerUpdateRecordOptimisticEffect({
+            cache: apolloClient.cache,
+            objectMetadataItem: objectMetadataItemWorkflowVersion,
+            currentRecord: newlyActiveWorkflowVersion,
+            updatedRecord: {
+              ...newlyActiveWorkflowVersion,
+              status: 'ACTIVE',
+            },
+            objectMetadataItems: [objectMetadataItemWorkflowVersion],
+          });
+        }
+
+        for (const workflowVersion of previousActiveWorkflowVersions) {
           apolloClient.cache.modify({
             id: apolloClient.cache.identify(workflowVersion),
             fields: {
@@ -67,6 +89,17 @@ export const useActivateWorkflowVersion = () => {
                   : workflowVersion.status;
               },
             },
+          });
+
+          triggerUpdateRecordOptimisticEffect({
+            cache: apolloClient.cache,
+            objectMetadataItem: objectMetadataItemWorkflowVersion,
+            currentRecord: workflowVersion,
+            updatedRecord: {
+              ...workflowVersion,
+              status: 'ARCHIVED',
+            },
+            objectMetadataItems: [objectMetadataItemWorkflowVersion],
           });
         }
       },

@@ -1,6 +1,7 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isNonEmptyString } from '@sniptt/guards';
 import { AvatarChip, AvatarChipVariant, ChipSize } from 'twenty-ui';
 
 export type RecordIdentifierChipProps = {
@@ -27,6 +28,11 @@ export const RecordIdentifierChip = ({
 
   const { Icon: LeftIcon, IconColor: LeftIconColor } =
     useGetStandardObjectIcon(objectNameSingular);
+
+  if (!isNonEmptyString(recordChipData.name.trim())) {
+    return null;
+  }
+
   return (
     <AvatarChip
       placeholderColorSeed={record.id}

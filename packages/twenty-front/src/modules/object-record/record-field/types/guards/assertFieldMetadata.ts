@@ -23,6 +23,7 @@ import {
   FieldRawJsonMetadata,
   FieldRelationMetadata,
   FieldRichTextMetadata,
+  FieldRichTextV2Metadata,
   FieldSelectMetadata,
   FieldTextMetadata,
   FieldUuidMetadata,
@@ -68,15 +69,17 @@ type AssertFieldMetadataFunction = <
                                       ? FieldAddressMetadata
                                       : E extends 'RAW_JSON'
                                         ? FieldRawJsonMetadata
-                                        : E extends 'RICH_TEXT'
-                                          ? FieldRichTextMetadata
-                                          : E extends 'ACTOR'
-                                            ? FieldActorMetadata
-                                            : E extends 'ARRAY'
-                                              ? FieldArrayMetadata
-                                              : E extends 'PHONES'
-                                                ? FieldPhonesMetadata
-                                                : never,
+                                        : E extends 'RICH_TEXT_V2'
+                                          ? FieldRichTextV2Metadata
+                                          : E extends 'RICH_TEXT'
+                                            ? FieldRichTextMetadata
+                                            : E extends 'ACTOR'
+                                              ? FieldActorMetadata
+                                              : E extends 'ARRAY'
+                                                ? FieldArrayMetadata
+                                                : E extends 'PHONES'
+                                                  ? FieldPhonesMetadata
+                                                  : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

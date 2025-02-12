@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -21,6 +23,12 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
 
     switch (exception.code) {
       case BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          404,
+        );
+      case BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

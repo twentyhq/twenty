@@ -1,5 +1,7 @@
+import { lingui } from '@lingui/vite-plugin';
 import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
+import { APP_LOCALES } from 'twenty-shared';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -9,7 +11,12 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/packages/twenty-emails',
 
   plugins: [
-    react(),
+    react({
+      plugins: [['@lingui/swc-plugin', {}]],
+    }),
+    lingui({
+      configPath: path.resolve(__dirname, './lingui.config.ts'),
+    }),
     tsconfigPaths(),
     dts({
       entryRoot: 'src',
@@ -26,16 +33,20 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     lib: {
-      // Could also be a dictionary or array of multiple entry points.
-      entry: 'src/index.ts',
+      entry: {
+        index: 'src/index.ts',
+        ...Object.values(APP_LOCALES).reduce(
+          (acc, locale) => ({
+            ...acc,
+            [`locales/generated/${locale}`]: `src/locales/generated/${locale}.ts`,
+          }),
+          {},
+        ),
+      },
       name: 'twenty-emails',
-      fileName: 'index',
-      // Change this to the formats you want to support.
-      // Don't forget to update your package.json as well.
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      // External packages that should not be bundled into your library.
       external: ['react', 'react-dom', 'react/jsx-runtime'],
     },
   },

@@ -3,12 +3,12 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { isDefined } from '~/utils/isDefined';
-import { InternalDatePicker } from '../InternalDatePicker';
+import { isDefined } from 'twenty-shared';
+import { DateTimePicker } from '../InternalDatePicker';
 
-const meta: Meta<typeof InternalDatePicker> = {
+const meta: Meta<typeof DateTimePicker> = {
   title: 'UI/Input/Internal/InternalDatePicker',
-  component: InternalDatePicker,
+  component: DateTimePicker,
   decorators: [ComponentDecorator],
   argTypes: {
     date: { control: 'date' },
@@ -17,7 +17,7 @@ const meta: Meta<typeof InternalDatePicker> = {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [, updateArgs] = useArgs();
     return (
-      <InternalDatePicker
+      <DateTimePicker
         date={isDefined(date) ? new Date(date) : new Date()}
         onChange={(newDate) => updateArgs({ date: newDate })}
       />
@@ -27,7 +27,7 @@ const meta: Meta<typeof InternalDatePicker> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof InternalDatePicker>;
+type Story = StoryObj<typeof DateTimePicker>;
 
 export const Default: Story = {};
 
@@ -51,13 +51,13 @@ export const WithOpenMonthSelect: Story = {
       'October',
       'November',
       'December',
-    ].forEach((monthLabel) =>
-      expect(canvas.getByText(monthLabel)).toBeInTheDocument(),
+    ].forEach(async (monthLabel) =>
+      expect(await canvas.findByText(monthLabel)).toBeInTheDocument(),
     );
 
-    await userEvent.click(canvas.getByText('February'));
+    await userEvent.click(await canvas.findByText('February'));
 
-    expect(canvas.getByText('February')).toBeInTheDocument();
+    expect(await canvas.findByText('February')).toBeInTheDocument();
   },
 };
 
@@ -69,12 +69,12 @@ export const WithOpenYearSelect: Story = {
 
     await userEvent.click(yearSelect);
 
-    ['2024', '2025', '2026'].forEach((yearLabel) =>
-      expect(canvas.getByText(yearLabel)).toBeInTheDocument(),
+    ['2024', '2025', '2026'].forEach(async (yearLabel) =>
+      expect(await canvas.findByText(yearLabel)).toBeInTheDocument(),
     );
 
-    await userEvent.click(canvas.getByText('2024'));
+    await userEvent.click(await canvas.findByText('2024'));
 
-    expect(canvas.getByText('2024')).toBeInTheDocument();
+    expect(await canvas.findByText('2024')).toBeInTheDocument();
   },
 };

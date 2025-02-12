@@ -4,6 +4,7 @@ import { ReadonlyDeep } from 'type-fest';
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { FieldMetadataType } from 'twenty-shared';
 
 export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   // Is modal visible.
@@ -122,6 +123,8 @@ export type Field<T extends string> = {
   fieldValidationDefinitions?: FieldValidationDefinition[];
   // Field entry component, default: Input
   fieldType: SpreadsheetImportFieldType;
+  // Field metadata type
+  fieldMetadataType: FieldMetadataType;
   // UI-facing values shown to user as field examples pre-upload phase
   example?: string;
 };

@@ -1,11 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Trans, useLingui } from '@lingui/react/macro';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
-import { getImageAbsoluteURI } from 'twenty-shared';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -105,6 +106,7 @@ export const ImageInput = ({
   disabled = false,
   className,
 }: ImageInputProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   const onUploadButtonClick = () => {
@@ -151,7 +153,7 @@ export const ImageInput = ({
               Icon={IconX}
               onClick={onAbort}
               variant="secondary"
-              title="Abort"
+              title={t`Abort`}
               disabled={!pictureURI || disabled}
             />
           ) : (
@@ -159,7 +161,7 @@ export const ImageInput = ({
               Icon={IconUpload}
               onClick={onUploadButtonClick}
               variant="secondary"
-              title="Upload"
+              title={t`Upload`}
               disabled={disabled}
             />
           )}
@@ -167,12 +169,12 @@ export const ImageInput = ({
             Icon={IconTrash}
             onClick={onRemove}
             variant="secondary"
-            title="Remove"
+            title={t`Remove`}
             disabled={!pictureURI || disabled}
           />
         </StyledButtonContainer>
         <StyledText>
-          We support your best PNGs, JPEGs and GIFs portraits under 10MB
+          <Trans>We support your square PNGs, JPEGs and GIFs under 10MB</Trans>
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

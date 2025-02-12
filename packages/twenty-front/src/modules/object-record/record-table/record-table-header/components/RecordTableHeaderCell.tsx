@@ -89,6 +89,10 @@ const StyledColumnHeadContainer = styled.div`
   justify-content: space-between;
   position: relative;
   z-index: 1;
+
+  & > :first-of-type {
+    flex: 1;
+  }
 `;
 
 const StyledHeaderIcon = styled.div`
@@ -197,7 +201,10 @@ export const RecordTableHeaderCell = ({
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
-  const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
+  const { createNewTableRecord } = useCreateNewTableRecord({
+    objectMetadataItem,
+    recordTableId,
+  });
 
   const handlePlusButtonClick = () => {
     createNewTableRecord();

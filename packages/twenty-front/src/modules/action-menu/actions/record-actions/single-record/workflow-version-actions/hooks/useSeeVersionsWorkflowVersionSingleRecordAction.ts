@@ -1,21 +1,47 @@
-import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { AppPath } from '@/types/AppPath';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const useSeeVersionsWorkflowVersionSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
+
     const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
 
-    if (!isDefined(workflowVersion)) {
-      throw new Error('Workflow version not found');
-    }
+    const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+      workflowVersion?.workflowId,
+    );
 
-    const { shouldBeRegistered, onClick } =
-      useSeeVersionsWorkflowSingleRecordAction({
-        recordId: workflowVersion.workflow.id,
-      });
+    const navigateApp = useNavigateApp();
+
+    const shouldBeRegistered = isDefined(workflowWithCurrentVersion);
+
+    const onClick = () => {
+      if (!shouldBeRegistered) return;
+
+      navigateApp(
+        AppPath.RecordIndexPage,
+        {
+          objectNamePlural: CoreObjectNamePlural.WorkflowVersion,
+        },
+        {
+          filter: {
+            workflow: {
+              [ViewFilterOperand.Is]: {
+                selectedRecordIds: [workflowWithCurrentVersion.id],
+              },
+            },
+          },
+        },
+      );
+    };
 
     return {
       shouldBeRegistered,

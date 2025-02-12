@@ -13,7 +13,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockDefaultWorkspace,
+  mockCurrentWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
@@ -32,7 +32,7 @@ const RelationWorkspaceSetterEffect = () => {
   );
 
   useEffect(() => {
-    setCurrentWorkspace(mockDefaultWorkspace);
+    setCurrentWorkspace(mockCurrentWorkspace);
     setCurrentWorkspaceMember(mockedWorkspaceMemberData);
   }, [setCurrentWorkspace, setCurrentWorkspaceMember]);
 
@@ -61,7 +61,7 @@ const RelationToOneFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'relation',
           label: 'Relation',
-          type: FieldMetadataType.Relation,
+          type: FieldMetadataType.RELATION,
           iconName: 'IconLink',
           metadata: {
             fieldName: 'Relation',
@@ -139,8 +139,9 @@ export const Submit: Story = {
       timeout: 3000,
     });
 
+    await userEvent.click(item);
+
     await waitFor(() => {
-      userEvent.click(item);
       expect(submitJestFn).toHaveBeenCalledTimes(1);
     });
   },

@@ -1,8 +1,8 @@
 import { getDefaultFunctionInputFromInputSchema } from '@/serverless-functions/utils/getDefaultFunctionInputFromInputSchema';
 import { getFunctionInputSchema } from '@/serverless-functions/utils/getFunctionInputSchema';
-import { FunctionInput } from '@/workflow/types/FunctionInput';
+import { FunctionInput } from '@/workflow/workflow-steps/workflow-actions/types/FunctionInput';
 import { isObject } from '@sniptt/guards';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const getFunctionInputFromSourceCode = (
   sourceCode?: string,

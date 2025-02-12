@@ -1,7 +1,7 @@
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
+import { isDefined } from 'twenty-shared';
 import { Status } from 'twenty-ui';
 import { RemoteTableStatus } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 type SettingsIntegrationDatabaseConnectionSyncStatusProps = {
   connectionId: string;
@@ -25,7 +25,7 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
   }
 
   const syncedTables = tables.filter(
-    (table) => table.status === RemoteTableStatus.Synced,
+    (table) => table.status === RemoteTableStatus.SYNCED,
   );
 
   const updatesAvailable = tables.some(

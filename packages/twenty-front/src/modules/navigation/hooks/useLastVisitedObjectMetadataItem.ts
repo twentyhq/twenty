@@ -1,11 +1,13 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { lastVisitedObjectMetadataItemIdStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemIdStateSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { AppPath } from '@/types/AppPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const useLastVisitedObjectMetadataItem = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -20,7 +22,7 @@ export const useLastVisitedObjectMetadataItem = () => {
     useRecoilState(lastVisitedObjectMetadataItemIdState);
 
   const {
-    findActiveObjectMetadataItemBySlug,
+    findActiveObjectMetadataItemByNamePlural,
     alphaSortedActiveObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
 
@@ -44,14 +46,16 @@ export const useLastVisitedObjectMetadataItem = () => {
     if (isDeactivateDefault) {
       setLastVisitedObjectMetadataItemId(newFallbackObjectMetadataItem.id);
       setNavigationMemorizedUrl(
-        `/objects/${newFallbackObjectMetadataItem.namePlural}`,
+        getAppPath(AppPath.RecordIndexPage, {
+          objectNamePlural: newFallbackObjectMetadataItem.namePlural,
+        }),
       );
     }
   };
 
   const setLastVisitedObjectMetadataItem = (objectNamePlural: string) => {
     const fallbackObjectMetadataItem =
-      findActiveObjectMetadataItemBySlug(objectNamePlural);
+      findActiveObjectMetadataItemByNamePlural(objectNamePlural);
 
     if (isDefined(fallbackObjectMetadataItem)) {
       setLastVisitedObjectMetadataItemId(fallbackObjectMetadataItem.id);

@@ -7,6 +7,7 @@ import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/C
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -15,14 +16,18 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
+const StyledInnerContainer = styled.div`
+  height: 100%;
+`;
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
-  const { toggleCommandMenu } = useCommandMenu();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
@@ -34,19 +39,23 @@ export const MainNavigationDrawerItems = () => {
     navigationDrawerExpandedMemorizedState,
   );
 
+  const { t } = useLingui();
+
+  const { openRecordsSearchPage } = useCommandMenu();
+
   return (
     <>
       {!isMobile && (
         <StyledMainSection>
           <NavigationDrawerItem
-            label="Search"
+            label={t`Search`}
             Icon={IconSearch}
-            onClick={toggleCommandMenu}
-            keyboard={['⌘', 'K']}
+            onClick={openRecordsSearchPage}
+            keyboard={['/']}
           />
           <NavigationDrawerItem
-            label="Settings"
-            to={'/settings/profile'}
+            label={t`Settings`}
+            to={getSettingsPath(SettingsPath.ProfilePage)}
             onClick={() => {
               setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
               setIsNavigationDrawerExpanded(true);
@@ -60,12 +69,14 @@ export const MainNavigationDrawerItems = () => {
         contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-navigation-drawer`}
         defaultEnableXScroll={false}
-        scrollHide={true}
+        scrollbarVariant="no-padding"
       >
-        <NavigationDrawerOpenedSection />
-        <CurrentWorkspaceMemberFavoritesFolders />
-        <WorkspaceFavorites />
-        <RemoteNavigationDrawerSection />
+        <StyledInnerContainer>
+          <NavigationDrawerOpenedSection />
+          <CurrentWorkspaceMemberFavoritesFolders />
+          <WorkspaceFavorites />
+          <RemoteNavigationDrawerSection />
+        </StyledInnerContainer>
       </ScrollWrapper>
     </>
   );

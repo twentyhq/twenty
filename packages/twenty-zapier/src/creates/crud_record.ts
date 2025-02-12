@@ -1,8 +1,8 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
+import { capitalize } from 'twenty-shared';
 import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
 import { listRecordIdsKey } from '../triggers/list_record_ids';
-import { capitalize } from '../utils/capitalize';
 import { computeInputFields } from '../utils/computeInputFields';
 import { InputData } from '../utils/data.types';
 import handleQueryParams from '../utils/handleQueryParams';

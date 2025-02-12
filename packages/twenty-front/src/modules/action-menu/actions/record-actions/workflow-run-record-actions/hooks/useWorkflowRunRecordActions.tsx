@@ -7,13 +7,13 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
+import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
+import { msg } from '@lingui/core/macro';
 
 import { useRecoilValue } from 'recoil';
-import { IconSettingsAutomation, isDefined } from 'twenty-ui';
-import { capitalize } from '~/utils/string/capitalize';
-
+import { capitalize, isDefined } from 'twenty-shared';
+import { IconSettingsAutomation } from 'twenty-ui';
 export const useWorkflowRunRecordActions = ({
   objectMetadataItem,
 }: {
@@ -38,10 +38,10 @@ export const useWorkflowRunRecordActions = ({
     recordStoreFamilyState(selectedRecordId),
   );
 
-  const { records: activeWorkflowVersions } = useAllActiveWorkflowVersions({
-    objectMetadataItem,
-    triggerType: 'MANUAL',
-  });
+  const { records: activeWorkflowVersions } =
+    useActiveWorkflowVersionsWithManualTrigger({
+      objectMetadataItem,
+    });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
@@ -62,7 +62,7 @@ export const useWorkflowRunRecordActions = ({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.RecordSelection,
-        label: name,
+        label: msg`${name}`, // eslint-disable-line lingui/no-single-variables-to-translate
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {
@@ -72,7 +72,6 @@ export const useWorkflowRunRecordActions = ({
 
           await runWorkflowVersion({
             workflowVersionId: activeWorkflowVersion.id,
-            workflowName: name,
             payload: selectedRecord,
           });
         },

@@ -19,12 +19,27 @@ export interface MessageQueueDriver {
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
     options?: MessageQueueWorkerOptions,
   );
-  addCron<T extends MessageQueueJobData | undefined>(
-    queueName: MessageQueue,
-    jobName: string,
-    data: T,
-    options?: QueueCronJobOptions,
-  );
-  removeCron(queueName: MessageQueue, jobName: string, pattern?: string);
+  addCron<T extends MessageQueueJobData | undefined>({
+    queueName,
+    jobName,
+    data,
+    options,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    data: T;
+    options: QueueCronJobOptions;
+    jobId?: string;
+  });
+  removeCron({
+    queueName,
+    jobName,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobId?: string;
+  });
   register?(queueName: MessageQueue): void;
 }

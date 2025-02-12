@@ -100,9 +100,7 @@ export const MessageThreadSubscribersDropdownButton = ({
           )}
         </DropdownMenu>
       }
-      dropdownHotkeyScope={{
-        scope: MESSAGE_THREAD_SUBSCRIBER_DROPDOWN_ID,
-      }}
+      dropdownHotkeyScope={{ scope: MESSAGE_THREAD_SUBSCRIBER_DROPDOWN_ID }}
     />
   );
 };

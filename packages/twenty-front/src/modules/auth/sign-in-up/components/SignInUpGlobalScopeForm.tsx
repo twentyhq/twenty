@@ -21,11 +21,13 @@ import {
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -48,6 +50,10 @@ export const SignInUpGlobalScopeForm = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
+
+  const isRequestingCaptchaToken = useRecoilValue(
+    isRequestingCaptchaTokenState,
+  );
 
   const { enqueueSnackBar } = useSnackBar();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -87,9 +93,13 @@ export const SignInUpGlobalScopeForm = () => {
         if (response.__typename === 'UserExists') {
           if (response.availableWorkspaces.length >= 1) {
             const workspace = response.availableWorkspaces[0];
-            return redirectToWorkspaceDomain(workspace.subdomain, pathname, {
-              email: form.getValues('email'),
-            });
+            return redirectToWorkspaceDomain(
+              getWorkspaceUrl(workspace.workspaceUrls),
+              pathname,
+              {
+                email: form.getValues('email'),
+              },
+            );
           }
         }
         if (response.__typename === 'UserNotExists') {
@@ -100,26 +110,35 @@ export const SignInUpGlobalScopeForm = () => {
     });
   };
 
+  const onEmailChange = (email: string) => {
+    if (email !== form.getValues('email')) {
+      setSignInUpStep(SignInUpStep.Email);
+    }
+  };
+
   return (
     <>
       <StyledContentContainer>
         {authProviders.google && <SignInUpWithGoogle />}
         {authProviders.microsoft && <SignInUpWithMicrosoft />}
         {(authProviders.google || authProviders.microsoft) && (
-          <HorizontalSeparator visible />
+          <HorizontalSeparator />
         )}
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
-            <SignInUpEmailField showErrors={showErrors} />
+            <SignInUpEmailField
+              showErrors={showErrors}
+              onInputChange={onEmailChange}
+            />
             {signInUpStep === SignInUpStep.Password && (
               <SignInUpPasswordField
                 showErrors={showErrors}
                 signInUpMode={signInUpMode}
               />
             )}
-
             <MainButton
+              disabled={isRequestingCaptchaToken}
               title={
                 signInUpStep === SignInUpStep.Password ? 'Sign Up' : 'Continue'
               }

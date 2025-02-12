@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
-import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
+import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
@@ -14,9 +14,10 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
-import { VisibilityHidden } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
+import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -24,17 +25,23 @@ type FormMultiSelectFieldInputProps = {
   options: SelectOption[];
   onPersist: (value: FieldMultiSelectValue | string) => void;
   VariablePicker?: VariablePickerComponent;
+  readonly?: boolean;
+  placeholder?: string;
+  testId?: string;
 };
 
-const StyledDisplayModeContainer = styled.button`
-  width: 100%;
+const StyledDisplayModeReadonlyContainer = styled.div`
   align-items: center;
-  display: flex;
-  cursor: pointer;
-  border: none;
   background: transparent;
+  border: none;
+  display: flex;
   font-family: inherit;
   padding-inline: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+`;
+
+const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
+  cursor: pointer;
 
   &:hover,
   &[data-open='true'] {
@@ -48,14 +55,24 @@ const StyledSelectInputContainer = styled.div`
   top: ${({ theme }) => theme.spacing(8)};
 `;
 
+const StyledPlaceholder = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  width: 100%;
+`;
+
 export const FormMultiSelectFieldInput = ({
   label,
   defaultValue,
   options,
   onPersist,
   VariablePicker,
+  readonly,
+  placeholder,
+  testId,
 }: FormMultiSelectFieldInputProps) => {
   const inputId = useId();
+  const theme = useTheme();
 
   const hotkeyScope = MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID;
 
@@ -158,32 +175,57 @@ export const FormMultiSelectFieldInput = ({
         )
       : undefined;
 
+  const placeholderText = placeholder ?? label;
+
   return (
-    <FormFieldInputContainer>
+    <FormFieldInputContainer testId={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
-            <StyledDisplayModeContainer
-              data-open={draftValue.editingMode === 'edit'}
-              onClick={handleDisplayModeClick}
-            >
-              <VisibilityHidden>Edit</VisibilityHidden>
-
-              {isDefined(selectedOptions) ? (
-                <MultiSelectDisplay
-                  values={selectedNames}
-                  options={selectedOptions}
+            readonly ? (
+              <StyledDisplayModeReadonlyContainer>
+                {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
+                  <MultiSelectDisplay
+                    values={selectedNames}
+                    options={selectedOptions}
+                  />
+                ) : (
+                  <StyledPlaceholder />
+                )}
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.light}
                 />
-              ) : null}
-            </StyledDisplayModeContainer>
+              </StyledDisplayModeReadonlyContainer>
+            ) : (
+              <StyledDisplayModeContainer
+                data-open={draftValue.editingMode === 'edit'}
+                onClick={handleDisplayModeClick}
+              >
+                <VisibilityHidden>Edit</VisibilityHidden>
+
+                {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
+                  <MultiSelectDisplay
+                    values={selectedNames}
+                    options={selectedOptions}
+                  />
+                ) : (
+                  <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
+                )}
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
+              </StyledDisplayModeContainer>
+            )
           ) : (
-            <VariableChip
+            <VariableChipStandalone
               rawVariableName={draftValue.value}
-              onRemove={handleUnlinkVariable}
+              onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
         </FormFieldInputInputContainer>
@@ -202,7 +244,7 @@ export const FormMultiSelectFieldInput = ({
             )}
         </StyledSelectInputContainer>
 
-        {VariablePicker && (
+        {VariablePicker && !readonly && (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}

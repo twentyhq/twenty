@@ -53,7 +53,7 @@ const AddressInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'text',
           label: 'Address',
-          type: FieldMetadataType.Address,
+          type: FieldMetadataType.ADDRESS,
           iconName: 'IconTag',
           metadata: {
             fieldName: 'Address',

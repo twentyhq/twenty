@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { capitalize } from 'twenty-shared';
+
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
-import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class FindDuplicatesQueryFactory {

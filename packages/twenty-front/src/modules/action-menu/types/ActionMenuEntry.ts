@@ -1,5 +1,6 @@
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ConfirmationModalProps } from '@/ui/layout/modal/components/ConfirmationModal';
+import { MessageDescriptor } from '@lingui/core';
 import { MouseEvent, ReactElement } from 'react';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
@@ -11,19 +12,21 @@ export enum ActionMenuEntryType {
 export enum ActionMenuEntryScope {
   Global = 'Global',
   RecordSelection = 'RecordSelection',
+  Object = 'Object',
 }
 
 export type ActionMenuEntry = {
   type: ActionMenuEntryType;
   scope: ActionMenuEntryScope;
   key: string;
-  label: string;
-  shortLabel?: string;
+  label: MessageDescriptor;
+  shortLabel?: MessageDescriptor;
   position: number;
   Icon: IconComponent;
   isPinned?: boolean;
   accent?: MenuItemAccent;
-  availableOn?: ActionAvailableOn[];
+  availableOn?: ActionViewType[];
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   ConfirmationModal?: ReactElement<ConfirmationModalProps>;
+  hotKeys?: string[];
 };

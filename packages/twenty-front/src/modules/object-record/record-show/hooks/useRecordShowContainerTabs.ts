@@ -16,7 +16,8 @@ import {
   IconPrinter,
   IconSettings,
 } from 'twenty-ui';
-import { FeatureFlag, FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -149,7 +150,7 @@ export const useRecordShowContainerTabs = (
             ifMobile: false,
             ifDesktop: false,
             ifInRightDrawer: false,
-            ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
             ifRequiredObjectsInactive: [],
             ifRelationsMissing: [],
           },
@@ -169,7 +170,7 @@ export const useRecordShowContainerTabs = (
             ifMobile: false,
             ifDesktop: false,
             ifInRightDrawer: false,
-            ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
             ifRequiredObjectsInactive: [],
             ifRelationsMissing: [],
           },
@@ -188,7 +189,7 @@ export const useRecordShowContainerTabs = (
             ifMobile: false,
             ifDesktop: false,
             ifInRightDrawer: false,
-            ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
             ifRequiredObjectsInactive: [],
             ifRelationsMissing: [],
           },
@@ -202,7 +203,7 @@ export const useRecordShowContainerTabs = (
             ifMobile: false,
             ifDesktop: false,
             ifInRightDrawer: false,
-            ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
             ifRequiredObjectsInactive: [],
             ifRelationsMissing: [],
           },
@@ -251,7 +252,7 @@ export const useRecordShowContainerTabs = (
           hide.ifFeaturesDisabled.length > 0 &&
           !hide.ifFeaturesDisabled.every((flagKey) => {
             return !!currentWorkspace?.featureFlags?.find(
-              (flag: FeatureFlag) => flag.key === flagKey && flag.value,
+              (flag) => flag.key === flagKey && flag.value,
             );
           });
 
@@ -268,7 +269,7 @@ export const useRecordShowContainerTabs = (
           !hide.ifRelationsMissing.every((rel) =>
             objectMetadataItem.fields.some(
               (field) =>
-                field.type === FieldMetadataType.Relation &&
+                field.type === FieldMetadataType.RELATION &&
                 field.name === rel &&
                 field.isActive,
             ),

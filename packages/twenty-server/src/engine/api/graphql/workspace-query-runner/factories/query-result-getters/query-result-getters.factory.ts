@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared';
+
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
@@ -16,10 +18,11 @@ import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/works
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { isDefined } from 'src/utils/is-defined';
+import { isRelationFieldMetadata } from 'src/engine/utils/is-relation-field-metadata.util';
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
@@ -31,7 +34,10 @@ export class QueryResultGettersFactory {
   );
   private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
-  constructor(private readonly fileService: FileService) {
+  constructor(
+    private readonly fileService: FileService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {
     this.initializeHandlers();
   }
 
@@ -43,8 +49,20 @@ export class QueryResultGettersFactory {
         'workspaceMember',
         new WorkspaceMemberQueryResultGetterHandler(this.fileService),
       ],
-      ['note', new ActivityQueryResultGetterHandler(this.fileService)],
-      ['task', new ActivityQueryResultGetterHandler(this.fileService)],
+      [
+        'note',
+        new ActivityQueryResultGetterHandler(
+          this.fileService,
+          this.featureFlagService,
+        ),
+      ],
+      [
+        'task',
+        new ActivityQueryResultGetterHandler(
+          this.fileService,
+          this.featureFlagService,
+        ),
+      ],
     ]);
   }
 
@@ -119,6 +137,11 @@ export class QueryResultGettersFactory {
   ): Promise<ObjectRecord> {
     const objectMetadataMapItem = objectMetadataMaps.byId[objectMetadataItemId];
 
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
+    );
+
     const handler = this.getHandler(objectMetadataMapItem.nameSingular);
 
     const relationFields = Object.keys(record)
@@ -127,9 +150,7 @@ export class QueryResultGettersFactory {
           objectMetadataMapItem.fieldsByName[recordFieldName],
       )
       .filter(isDefined)
-      .filter((fieldMetadata) =>
-        isRelationFieldMetadataType(fieldMetadata.type),
-      );
+      .filter((fieldMetadata) => isRelationFieldMetadata(fieldMetadata));
 
     const relationFieldsProcessedMap = {} as Record<
       string,
@@ -137,38 +158,53 @@ export class QueryResultGettersFactory {
     >;
 
     for (const relationField of relationFields) {
-      const relationMetadata =
-        relationField.fromRelationMetadata ?? relationField.toRelationMetadata;
+      if (!isNewRelationEnabled) {
+        const relationMetadata =
+          relationField.fromRelationMetadata ??
+          relationField.toRelationMetadata;
 
-      if (!isDefined(relationMetadata)) {
-        throw new Error('Relation metadata is not defined');
+        if (!isDefined(relationMetadata)) {
+          throw new Error('Relation metadata is not defined');
+        }
+
+        // TODO: computing this by taking the opposite of the current object metadata id
+        // is really less than ideal. This should be computed based on the relation metadata
+        // But right now it is too complex with the current structure and / or lack of utils
+        // around the possible combinations with relation metadata from / to + MANY_TO_ONE / ONE_TO_MANY
+        const relationObjectMetadataItemId =
+          relationMetadata.fromObjectMetadataId === objectMetadataItemId
+            ? relationMetadata.toObjectMetadataId
+            : relationMetadata.fromObjectMetadataId;
+
+        const relationObjectMetadataItem =
+          objectMetadataMaps.byId[relationObjectMetadataItemId];
+
+        if (!isDefined(relationObjectMetadataItem)) {
+          throw new Error(
+            `Object metadata not found for id ${relationObjectMetadataItemId}`,
+          );
+        }
+
+        relationFieldsProcessedMap[relationField.name] =
+          await this.processQueryResultField(
+            record[relationField.name],
+            relationObjectMetadataItem.id,
+            objectMetadataMaps,
+            workspaceId,
+          );
+      } else {
+        if (!isDefined(relationField.relationTargetObjectMetadataId)) {
+          throw new Error('Relation target object metadata id is not defined');
+        }
+
+        relationFieldsProcessedMap[relationField.name] =
+          await this.processQueryResultField(
+            record[relationField.name],
+            relationField.relationTargetObjectMetadataId,
+            objectMetadataMaps,
+            workspaceId,
+          );
       }
-
-      // TODO: computing this by taking the opposite of the current object metadata id
-      // is really less than ideal. This should be computed based on the relation metadata
-      // But right now it is too complex with the current structure and / or lack of utils
-      // around the possible combinations with relation metadata from / to + MANY_TO_ONE / ONE_TO_MANY
-      const relationObjectMetadataItemId =
-        relationMetadata.fromObjectMetadataId === objectMetadataItemId
-          ? relationMetadata.toObjectMetadataId
-          : relationMetadata.fromObjectMetadataId;
-
-      const relationObjectMetadataItem =
-        objectMetadataMaps.byId[relationObjectMetadataItemId];
-
-      if (!isDefined(relationObjectMetadataItem)) {
-        throw new Error(
-          `Object metadata not found for id ${relationObjectMetadataItemId}`,
-        );
-      }
-
-      relationFieldsProcessedMap[relationField.name] =
-        await this.processQueryResultField(
-          record[relationField.name],
-          relationObjectMetadataItem.id,
-          objectMetadataMaps,
-          workspaceId,
-        );
     }
 
     const objectRecordProcessedWithoutRelationFields = await handler.handle(

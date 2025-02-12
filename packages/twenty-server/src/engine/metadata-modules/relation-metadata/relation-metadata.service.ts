@@ -3,15 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import camelCase from 'lodash.camelcase';
+import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -36,7 +34,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { isDefined } from 'src/utils/is-defined';
 
 import {
   RelationMetadataEntity,
@@ -186,7 +183,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       objectMetadataMap[relationMetadataInput.toObjectMetadataId] === undefined
     ) {
       throw new RelationMetadataException(
-        'Can\t find an existing object matching with fromObjectMetadataId or toObjectMetadataId',
+        "Can't find an existing object matching with fromObjectMetadataId or toObjectMetadataId",
         RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
       );
     }

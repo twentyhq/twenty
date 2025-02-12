@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { gmail_v1 as gmailV1 } from 'googleapis';
+import { isDefined } from 'twenty-shared';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
@@ -19,7 +20,6 @@ import {
   GetPartialMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { assertNotNull } from 'src/utils/assert';
-import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GmailGetMessageListService {
@@ -32,7 +32,7 @@ export class GmailGetMessageListService {
   public async getFullMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'refreshToken' | 'id' | 'handle'
     >,
   ): Promise<GetFullMessageListResponse> {
     const gmailClient =
@@ -146,6 +146,7 @@ export class GmailGetMessageListService {
     return {
       messageExternalIds: messagesAddedFiltered,
       messageExternalIdsToDelete: messagesDeleted,
+      previousSyncCursor: syncCursor,
       nextSyncCursor,
     };
   }

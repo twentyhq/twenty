@@ -8,6 +8,7 @@ import {
 } from '@ui/testing';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBar, SnackBarVariant } from '../SnackBar';
 
 const meta: Meta<typeof SnackBar> = {
@@ -19,8 +20,8 @@ const meta: Meta<typeof SnackBar> = {
     icon: { control: false },
   },
   args: {
-    title: 'Lorem ipsum',
-    message:
+    message: 'Lorem ipsum',
+    detailedMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec eros tincidunt lacinia.',
     onCancel: undefined,
     onClose: fn(),
@@ -33,7 +34,7 @@ export default meta;
 type Story = StoryObj<typeof SnackBar>;
 
 export const Default: Story = {
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, I18nFrontDecorator],
   parameters: {
     chromatic: { disableSnapshot: true },
   },
@@ -43,7 +44,7 @@ export const Catalog: CatalogStory<Story, typeof SnackBar> = {
   args: {
     onCancel: fn(),
   },
-  decorators: [CatalogDecorator],
+  decorators: [CatalogDecorator, I18nFrontDecorator],
   parameters: {
     catalog: {
       dimensions: [

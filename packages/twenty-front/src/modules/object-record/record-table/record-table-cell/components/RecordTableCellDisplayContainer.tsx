@@ -1,3 +1,4 @@
+import { Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
 import { Ref } from 'react';
 
@@ -21,12 +22,18 @@ const StyledInnerContainer = styled.div`
   white-space: nowrap;
 `;
 
+const StyledEmptyPlaceholderField = withTheme(styled.div<{ theme: Theme }>`
+  color: ${({ theme }) => theme.font.color.light};
+  padding-left: 4px;
+`);
+
 export type EditableCellDisplayContainerProps = {
   softFocus?: boolean;
   onClick?: () => void;
   scrollRef?: Ref<HTMLDivElement>;
   isHovered?: boolean;
   onContextMenu?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  placeholderForEmptyCell?: string;
 };
 
 export const RecordTableCellDisplayContainer = ({
@@ -35,6 +42,7 @@ export const RecordTableCellDisplayContainer = ({
   onClick,
   scrollRef,
   onContextMenu,
+  placeholderForEmptyCell,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
   <StyledOuterContainer
     data-testid={
@@ -45,6 +53,12 @@ export const RecordTableCellDisplayContainer = ({
     hasSoftFocus={softFocus}
     onContextMenu={onContextMenu}
   >
-    <StyledInnerContainer>{children}</StyledInnerContainer>
+    {placeholderForEmptyCell ? (
+      <StyledEmptyPlaceholderField>
+        {'Set ' + placeholderForEmptyCell}
+      </StyledEmptyPlaceholderField>
+    ) : (
+      <StyledInnerContainer>{children}</StyledInnerContainer>
+    )}
   </StyledOuterContainer>
 );

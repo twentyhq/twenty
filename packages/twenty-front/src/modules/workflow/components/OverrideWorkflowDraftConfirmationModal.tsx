@@ -1,43 +1,42 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
+import { AppPath } from '@/types/AppPath';
 import {
   ConfirmationModal,
   StyledCenteredButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const OverrideWorkflowDraftConfirmationModal = ({
-  draftWorkflowVersionId,
-  workflowVersionUpdateInput,
   workflowId,
+  workflowVersionIdToCopy,
 }: {
-  draftWorkflowVersionId: string;
-  workflowVersionUpdateInput: Pick<WorkflowVersion, 'trigger' | 'steps'>;
   workflowId: string;
+  workflowVersionIdToCopy: string;
 }) => {
   const [
     openOverrideWorkflowDraftConfirmationModal,
     setOpenOverrideWorkflowDraftConfirmationModal,
   ] = useRecoilState(openOverrideWorkflowDraftConfirmationModalState);
 
-  const { updateOneRecord: updateOneWorkflowVersion } =
-    useUpdateOneRecord<WorkflowVersion>({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
+  const { createDraftFromWorkflowVersion } =
+    useCreateDraftFromWorkflowVersion();
 
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   const handleOverrideDraft = async () => {
-    await updateOneWorkflowVersion({
-      idToUpdate: draftWorkflowVersionId,
-      updateOneRecordInput: workflowVersionUpdateInput,
+    await createDraftFromWorkflowVersion({
+      workflowId,
+      workflowVersionIdToCopy,
     });
 
-    navigate(buildShowPageURL(CoreObjectNameSingular.Workflow, workflowId));
+    navigate(AppPath.RecordShowPage, {
+      objectNameSingular: CoreObjectNameSingular.Workflow,
+      objectRecordId: workflowId,
+    });
   };
 
   return (
@@ -51,10 +50,10 @@ export const OverrideWorkflowDraftConfirmationModal = ({
         deleteButtonText={'Override Draft'}
         AdditionalButtons={
           <StyledCenteredButton
-            to={buildShowPageURL(
-              CoreObjectNameSingular.WorkflowVersion,
-              draftWorkflowVersionId,
-            )}
+            to={getAppPath(AppPath.RecordShowPage, {
+              objectNameSingular: CoreObjectNameSingular.Workflow,
+              objectRecordId: workflowId,
+            })}
             onClick={() => {
               setOpenOverrideWorkflowDraftConfirmationModal(false);
             }}

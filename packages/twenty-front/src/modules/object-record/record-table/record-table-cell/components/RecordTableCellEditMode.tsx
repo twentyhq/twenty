@@ -9,7 +9,7 @@ const StyledEditableCellEditModeContainer = styled.div<RecordTableCellEditModePr
   height: 100%;
   position: absolute;
   width: calc(100% + 2px);
-  z-index: 1;
+  z-index: 6;
 `;
 
 export type RecordTableCellEditModeProps = {

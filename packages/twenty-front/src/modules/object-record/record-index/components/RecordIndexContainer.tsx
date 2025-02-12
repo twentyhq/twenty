@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectOptionsDropdown } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdown';
@@ -7,7 +8,6 @@ import { RecordIndexBoardContainer } from '@/object-record/record-index/componen
 import { RecordIndexBoardDataLoader } from '@/object-record/record-index/components/RecordIndexBoardDataLoader';
 import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardDataLoaderEffect';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
-import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
@@ -26,11 +26,14 @@ import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActio
 import { ContextStoreCurrentViewTypeEffect } from '@/context-store/components/ContextStoreCurrentViewTypeEffect';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { useFilterDefinitionsFromFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterDefinitionsFromFilterableFieldMetadataItems';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
+import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
+import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewField } from '@/views/types/ViewField';
@@ -42,6 +45,7 @@ import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGrou
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -73,7 +77,7 @@ export const RecordIndexContainer = () => {
 
   const setRecordGroup = useSetRecordGroup(recordIndexId);
 
-  const { columnDefinitions, filterDefinitions, sortDefinitions } =
+  const { columnDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const setRecordIndexViewFilterGroups = useSetRecoilState(
@@ -124,6 +128,9 @@ export const RecordIndexContainer = () => {
         }
 
         for (const viewField of viewFields) {
+          const viewFieldMetadataType = objectMetadataItem.fields?.find(
+            (field) => field.id === viewField.fieldMetadataId,
+          )?.type;
           const aggregateOperationForViewField = snapshot
             .getLoadable(
               viewFieldAggregateOperationState({
@@ -132,17 +139,29 @@ export const RecordIndexContainer = () => {
             )
             .getValue();
 
-          if (aggregateOperationForViewField !== viewField.aggregateOperation) {
+          const convertedViewFieldAggregateOperation = isDefined(
+            viewField.aggregateOperation,
+          )
+            ? convertAggregateOperationToExtendedAggregateOperation(
+                viewField.aggregateOperation,
+                viewFieldMetadataType,
+              )
+            : viewField.aggregateOperation;
+
+          if (
+            aggregateOperationForViewField !==
+            convertedViewFieldAggregateOperation
+          ) {
             set(
               viewFieldAggregateOperationState({
                 viewFieldId: viewField.id,
               }),
-              viewField.aggregateOperation,
+              convertedViewFieldAggregateOperation,
             );
           }
         }
       },
-    [columnDefinitions, setTableColumns],
+    [columnDefinitions, objectMetadataItem.fields, setTableColumns],
   );
 
   const onViewGroupsChange = useCallback(
@@ -161,8 +180,11 @@ export const RecordIndexContainer = () => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+  const { filterDefinitions } =
+    useFilterDefinitionsFromFilterableFieldMetadataItems();
+
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
@@ -219,8 +241,18 @@ export const RecordIndexContainer = () => {
                 setRecordIndexViewKanbanFieldMetadataIdState(
                   view.kanbanFieldMetadataId,
                 );
+                const kanbanAggregateOperationFieldMetadataType =
+                  objectMetadataItem.fields?.find(
+                    (field) =>
+                      field.id === view.kanbanAggregateOperationFieldMetadataId,
+                  )?.type;
                 setRecordIndexViewKanbanAggregateOperationState({
-                  operation: view.kanbanAggregateOperation,
+                  operation: isDefined(view.kanbanAggregateOperation)
+                    ? convertAggregateOperationToExtendedAggregateOperation(
+                        view.kanbanAggregateOperation,
+                        kanbanAggregateOperationFieldMetadataType,
+                      )
+                    : view.kanbanAggregateOperation,
                   fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
                 });
                 setRecordIndexIsCompactModeActive(view.isCompact);
@@ -255,7 +287,7 @@ export const RecordIndexContainer = () => {
               <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
             </StyledContainerWithPadding>
           )}
-          {!isPageHeaderV2Enabled && (
+          {!isCommandMenuV2Enabled && (
             <RecordIndexActionMenu indexId={recordIndexId} />
           )}
         </RecordFieldValueSelectorContextProvider>

@@ -15,7 +15,7 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
@@ -33,7 +33,7 @@ export const RecordTableCellSoftFocusMode = ({
   editModeContent,
   nonEditModeContent,
 }: RecordTableCellSoftFocusModeProps) => {
-  const { columnIndex } = useContext(RecordTableCellContext);
+  const { columnIndex, columnDefinition } = useContext(RecordTableCellContext);
   const { recordId } = useContext(FieldContext);
 
   const { onActionMenuDropdownOpened } = useRecordTableBodyContextOrThrow();
@@ -128,7 +128,11 @@ export const RecordTableCellSoftFocusMode = ({
   };
 
   const handleButtonClick = () => {
-    handleClick();
+    if (!isFieldInputOnly && isFirstColumn) {
+      openTableCell(undefined, false, true);
+    } else {
+      openTableCell();
+    }
     /*
     Disabling sidepanel access for now, TODO: launch
     if (!isFieldInputOnly) {
@@ -148,12 +152,12 @@ export const RecordTableCellSoftFocusMode = ({
     : customButtonIcon;
 
   const showButton =
-    isDefined(buttonIcon) &&
-    !editModeContentOnly &&
-    (!isFirstColumn || !isEmpty) &&
-    !isFieldReadOnly;
+    isDefined(buttonIcon) && !editModeContentOnly && !isFieldReadOnly;
 
   const dontShowContent = isEmpty && isFieldReadOnly;
+
+  const showPlaceholder =
+    !editModeContentOnly && !isFieldReadOnly && isFirstColumn && isEmpty;
 
   return (
     <>
@@ -162,6 +166,9 @@ export const RecordTableCellSoftFocusMode = ({
         scrollRef={scrollRef}
         softFocus
         onContextMenu={handleActionMenuDropdown}
+        placeholderForEmptyCell={
+          showPlaceholder ? columnDefinition.label : undefined
+        }
       >
         {dontShowContent ? (
           <></>
