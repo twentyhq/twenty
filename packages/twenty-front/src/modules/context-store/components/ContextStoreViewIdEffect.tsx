@@ -4,7 +4,7 @@ import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { View } from '@/views/types/View';
 import { isUndefined } from '@sniptt/guards';
@@ -36,17 +36,18 @@ export const ContextStoreViewIdEffect = ({
     objectMetadataItemId?.id,
     lastVisitedObjectMetadataItemId,
   );
-  const setContextStoreCurrentViewId = useSetRecoilComponentStateV2(
-    contextStoreCurrentViewIdComponentState,
-    objectNamePlural,
+  const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
+    useRecoilComponentStateV2(
+      contextStoreCurrentViewIdComponentState,
+      objectNamePlural,
+    );
+
+  const viewsOnCurrentObject = views.filter(
+    (view) => view.objectMetadataId === objectMetadataItemId?.id,
   );
+  const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
 
   useEffect(() => {
-    const viewsOnCurrentObject = views.filter(
-      (view) => view.objectMetadataId === objectMetadataItemId?.id,
-    );
-    const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
-
     if (isUndefined(viewIdQueryParam) && isDefined(lastVisitedViewId)) {
       if (isLastVisitedObjectMetadataItemDifferent) {
         setLastVisitedObjectMetadataItem(objectNamePlural);
@@ -55,7 +56,9 @@ export const ContextStoreViewIdEffect = ({
           viewId: lastVisitedViewId,
         });
       }
-      setContextStoreCurrentViewId(lastVisitedViewId);
+      if (contextStoreCurrentViewId !== lastVisitedViewId) {
+        setContextStoreCurrentViewId(lastVisitedViewId);
+      }
       return;
     }
 
@@ -69,7 +72,9 @@ export const ContextStoreViewIdEffect = ({
           viewId: viewIdQueryParam,
         });
       }
-      setContextStoreCurrentViewId(viewIdQueryParam);
+      if (contextStoreCurrentViewId !== viewIdQueryParam) {
+        setContextStoreCurrentViewId(viewIdQueryParam);
+      }
       return;
     }
 
@@ -83,7 +88,9 @@ export const ContextStoreViewIdEffect = ({
           viewId: indexView.id,
         });
       }
-      setContextStoreCurrentViewId(indexView.id);
+      if (contextStoreCurrentViewId !== indexView.id) {
+        setContextStoreCurrentViewId(indexView.id);
+      }
       return;
     }
 
@@ -91,9 +98,10 @@ export const ContextStoreViewIdEffect = ({
       setContextStoreCurrentViewId(null);
     };
   }, [
+    contextStoreCurrentViewId,
+    indexView,
     isLastVisitedObjectMetadataItemDifferent,
     lastVisitedViewId,
-    objectMetadataItemId?.id,
     objectNamePlural,
     setContextStoreCurrentViewId,
     setLastVisitedObjectMetadataItem,
