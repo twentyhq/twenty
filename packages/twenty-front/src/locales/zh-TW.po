@@ -56,6 +56,10 @@ msgstr "24小時 ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "一個共享環境，您與您的團隊可以在此管理客戶關係。"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "與每個物件互動的能力"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "中止"
@@ -81,6 +85,8 @@ msgstr "刪除帳戶"
 msgid "Accounts"
 msgstr "帳戶"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "操作"
@@ -249,11 +255,11 @@ msgstr "指派 {workspaceMemberName}？"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "分配角色以指定每個成員的訪問權限"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "指派給成員"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "分配成員"
 
@@ -1173,6 +1179,8 @@ msgstr "向右移動"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1275,20 +1283,28 @@ msgid "No connected account"
 msgstr "無連接帳戶"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "這個角色尚未分配成員"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "沒有符合此搜尋的成員"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "沒有符合你搜尋的成員"
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "沒有更多成員可以添加"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "沒有更多成員可以指派"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "沒有結果"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1310,6 +1326,7 @@ msgstr "非空"
 msgid "Object"
 msgstr "對象"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1383,7 +1400,6 @@ msgid "Permanently destroy workflows"
 msgstr "永久銷毀工作流程"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "權限"
 
@@ -1548,7 +1564,7 @@ msgstr "用\"'{commandMenuSearch}'\"搜索..."
 msgid "Search a field..."
 msgstr "搜索字段..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "搜索成員"
 
@@ -1635,12 +1651,17 @@ msgid "Set the name of your subdomain"
 msgstr "設置您的子域名"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "設置"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "設定權限"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1814,14 +1835,14 @@ msgid "This member will be unassigned from this role."
 msgstr "這個成員將不再被指派此角色。"
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "此角色具有以下權限。"
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "這個角色已被指派給這些工作區成員。"
 
@@ -1849,6 +1870,7 @@ msgstr "觸發類型應為手動 - 當未選擇記錄時"
 msgid "Turkish"
 msgstr "土耳其語"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
