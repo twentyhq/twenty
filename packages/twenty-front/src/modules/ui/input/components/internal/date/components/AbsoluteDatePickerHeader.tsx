@@ -28,8 +28,8 @@ const years = Array.from(
 
 type AbsoluteDatePickerHeaderProps = {
   date: Date;
-  month?: number;
-  year?: number;
+  month: number;
+  year: number;
   onChange?: (date: Date | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;

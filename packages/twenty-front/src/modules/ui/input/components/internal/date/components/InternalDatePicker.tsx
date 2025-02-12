@@ -428,29 +428,29 @@ export const DateTimePicker = ({
     })
     .toJSDate();
 
-  const onChangeMonth = (month: number) => {
+  const handleChangeMonth = (month: number) => {
     setDatePickerMonth(month);
   };
 
-  const onChangeYear = (year: number) => {
+  const handleChangeYear = (year: number) => {
     setDatePickerYear(year);
   };
 
-  const onSubtractMonth = () => {
+  const handleSubtractMonth = () => {
     if (datePickerMonth === 0) {
-      onChangeMonth(11);
-      setDatePickerYear(datePickerYear - 1);
+      handleChangeMonth(11);
+      handleChangeYear(datePickerYear - 1);
     } else {
-      onChangeMonth(datePickerMonth - 1);
+      handleChangeMonth(datePickerMonth - 1);
     }
   };
 
-  const onAddMonth = () => {
+  const handleAddMonth = () => {
     if (datePickerMonth === 11) {
-      onChangeMonth(0);
-      setDatePickerYear(datePickerYear + 1);
+      handleChangeMonth(0);
+      handleChangeYear(datePickerYear + 1);
     } else {
-      onChangeMonth(datePickerMonth + 1);
+      handleChangeMonth(datePickerMonth + 1);
     }
   };
 
@@ -489,10 +489,10 @@ export const DateTimePicker = ({
                 onChange={onChange}
                 month={datePickerMonth}
                 year={datePickerYear}
-                onChangeMonth={onChangeMonth}
-                onChangeYear={onChangeYear}
-                onAddMonth={onAddMonth}
-                onSubtractMonth={onSubtractMonth}
+                onChangeMonth={handleChangeMonth}
+                onChangeYear={handleChangeYear}
+                onAddMonth={handleAddMonth}
+                onSubtractMonth={handleSubtractMonth}
                 prevMonthButtonDisabled={prevMonthButtonDisabled}
                 nextMonthButtonDisabled={nextMonthButtonDisabled}
                 isDateTimeInput={isDateTimeInput}
