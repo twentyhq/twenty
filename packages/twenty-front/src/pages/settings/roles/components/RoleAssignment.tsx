@@ -6,7 +6,15 @@ import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { Button, H2Title, IconPlus, IconSearch, Section } from 'twenty-ui';
+import {
+  AppTooltip,
+  Button,
+  H2Title,
+  IconPlus,
+  IconSearch,
+  Section,
+  TooltipDelay,
+} from 'twenty-ui';
 import { Role, WorkspaceMember } from '~/generated-metadata/graphql';
 import {
   GetRolesDocument,
@@ -180,13 +188,6 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
               onRemove={() => handleRemoveClick(workspaceMember)}
             />
           ))}
-          {filteredWorkspaceMembers.length === 0 && (
-            <StyledEmptyText>
-              {searchFilter
-                ? t`No members matching your search`
-                : t`No members assigned to this role yet`}
-            </StyledEmptyText>
-          )}
         </Table>
       </Section>
       <StyledBottomSection hasRows={filteredWorkspaceMembers.length > 0}>
@@ -194,12 +195,23 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
           dropdownId="role-member-select"
           dropdownHotkeyScope={{ scope: 'roleAssignment' }}
           clickableComponent={
-            <Button
-              Icon={IconPlus}
-              title={t`Assign to member`}
-              variant="secondary"
-              size="small"
-            />
+            <>
+              <div id="assign-member">
+                <Button
+                  Icon={IconPlus}
+                  title={t`Assign to member`}
+                  variant="secondary"
+                  size="small"
+                  disabled={!filteredWorkspaceMembers.length}
+                />
+              </div>
+              <AppTooltip
+                anchorSelect="#assign-member"
+                content={t`No more members to assign`}
+                delay={TooltipDelay.noDelay}
+                hidden={filteredWorkspaceMembers.length > 0}
+              />
+            </>
           }
           dropdownComponents={
             <RoleWorkspaceMemberPickerDropdown

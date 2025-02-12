@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared';
 import { Avatar } from 'twenty-ui';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 
@@ -49,13 +50,13 @@ export const RoleWorkspaceMemberPickerDropdownContent = ({
     return null;
   }
 
-  if (!filteredWorkspaceMembers?.length) {
+  if (
+    !filteredWorkspaceMembers?.length &&
+    isDefined(searchFilter) &&
+    searchFilter.length > 0
+  ) {
     return (
-      <StyledEmptyState>
-        {searchFilter
-          ? t`No members matching this search`
-          : t`No more members to add`}
-      </StyledEmptyState>
+      <StyledEmptyState>{t`No members matching this search`}</StyledEmptyState>
     );
   }
 

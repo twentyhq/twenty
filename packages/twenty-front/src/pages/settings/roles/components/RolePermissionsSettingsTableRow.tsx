@@ -3,28 +3,14 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Checkbox } from 'twenty-ui';
-import { RolePermissionsObjectPermission } from '~/pages/settings/roles/types/RolePermissionsObjectPermission';
-
-const StyledIconWrapper = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.color.blue10};
-  border: 1px solid ${({ theme }) => theme.color.blue30};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledIcon = styled.div`
-  align-items: center;
-  display: flex;
-  color: ${({ theme }) => theme.color.blue};
-  justify-content: center;
-`;
+import { RolePermissionsSettingPermission } from '~/pages/settings/roles/types/RolePermissionsSettingPermission';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
+`;
+
+const StyledType = styled(StyledLabel)`
+  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 const StyledPermissionCell = styled(TableCell)`
@@ -47,21 +33,21 @@ const StyledTableRow = styled(TableRow)`
   display: flex;
 `;
 
-type RolePermissionsObjectsTableRowProps = {
-  permission: RolePermissionsObjectPermission;
+type RolePermissionsSettingsTableRowProps = {
+  permission: RolePermissionsSettingPermission;
 };
 
-export const RolePermissionsObjectsTableRow = ({
+export const RolePermissionsSettingsTableRow = ({
   permission,
-}: RolePermissionsObjectsTableRowProps) => {
+}: RolePermissionsSettingsTableRowProps) => {
   return (
     <Table>
       <StyledTableRow key={permission.key}>
         <StyledPermissionCell>
-          <StyledIconWrapper>
-            <StyledIcon>{permission.icon}</StyledIcon>
-          </StyledIconWrapper>
           <StyledLabel>{permission.label}</StyledLabel>
+        </StyledPermissionCell>
+        <StyledPermissionCell>
+          <StyledType>{permission.type}</StyledType>
         </StyledPermissionCell>
         <StyledCheckboxCell>
           <Checkbox checked={permission.value} disabled />
