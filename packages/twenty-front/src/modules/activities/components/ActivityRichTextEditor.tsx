@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client';
+import { PartialBlock } from '@blocknote/core';
 import { useCreateBlockNote } from '@blocknote/react';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
@@ -183,9 +184,29 @@ export const ActivityRichTextEditor = ({
       isNonEmptyString(blocknote) &&
       blocknote !== '{}'
     ) {
-      return JSON.parse(blocknote);
+      let parsedBody: PartialBlock[] | undefined = undefined;
+
+      // TODO: Remove this once we have removed the old rich text
+      try {
+        parsedBody = JSON.parse(blocknote);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Failed to parse body for activity ${activityId}, for rich text version ${isRichTextV2Enabled ? 'v2' : 'v1'}`,
+        );
+        // eslint-disable-next-line no-console
+        console.warn(blocknote);
+      }
+
+      if (isArray(parsedBody) && parsedBody.length === 0) {
+        return undefined;
+      }
+
+      return parsedBody;
     }
-  }, [activity, isRichTextV2Enabled]);
+
+    return undefined;
+  }, [activity, isRichTextV2Enabled, activityId]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
     const { attachmentAbsoluteURL } = await handleUploadAttachment(file);

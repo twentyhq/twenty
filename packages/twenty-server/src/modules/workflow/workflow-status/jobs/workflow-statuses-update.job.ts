@@ -195,6 +195,8 @@ export class WorkflowStatusesUpdateJob {
             serverlessFunction.latestVersion;
 
           newStep.settings = newStepSettings;
+
+          this.logger.log(`New step computed for code step -> ${newStep}`);
         }
         newSteps.push(newStep);
       }
