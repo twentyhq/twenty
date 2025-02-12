@@ -60,6 +60,27 @@
       "cwd": "${workspaceFolder}",
       "internalConsoleOptions": "neverOpen",
       "envFile": "${workspaceFolder}/packages/twenty-e2e-testing/.env"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Integration Test File",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "nx",
+        "run",
+        "twenty-server:jest",
+        "--",
+        "--config",
+        "./jest-integration.config.ts",
+        "${relativeFile}"
+      ],
+      "cwd": "${workspaceFolder}/packages/twenty-server",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "test"
+      },
     }
   ]
 }

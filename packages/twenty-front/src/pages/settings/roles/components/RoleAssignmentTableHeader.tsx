@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
 const StyledTableHeaderRow = styled(Table)`
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 type RoleAssignmentTableHeaderProps = {
