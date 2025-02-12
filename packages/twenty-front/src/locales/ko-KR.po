@@ -57,6 +57,10 @@ msgid "A shared environment where you will be able to manage your customer relat
 msgstr "\\\n"
 "팀과 함께 고객 관계를 관리할 수 있는 공유 환경입니다."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "각 객체와 상호작용할 수 있는 능력"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "중단"
@@ -82,6 +86,8 @@ msgstr "계정 삭제"
 msgid "Accounts"
 msgstr "계정"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "작업"
@@ -250,11 +256,11 @@ msgstr "{workspaceMemberName}님에게 할당하시겠습니까?"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "각 구성원의 접근 권한을 지정하려면 역할을 할당하세요"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "멤버에게 할당"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "할당된 멤버"
 
@@ -1174,6 +1180,8 @@ msgstr "오른쪽으로 이동"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1276,20 +1284,28 @@ msgid "No connected account"
 msgstr "연결된 계정 없음"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "이 역할에 아직 할당된 멤버가 없습니다"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "검색과 일치하는 멤버가 없습니다"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "\"검색과 일치하는 멤버가 없습니다\""
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "더 추가할 멤버가 없습니다"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "지정할 멤버가 더 이상 없습니다"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "결과 없음"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1311,6 +1327,7 @@ msgstr "비어 있지 않음"
 msgid "Object"
 msgstr "개체"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1384,7 +1401,6 @@ msgid "Permanently destroy workflows"
 msgstr "워크플로 영구 삭제"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "권한"
 
@@ -1549,7 +1565,7 @@ msgstr "''{commandMenuSearch}''으로 검색..."
 msgid "Search a field..."
 msgstr "필드 검색..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "멤버 검색"
 
@@ -1636,12 +1652,17 @@ msgid "Set the name of your subdomain"
 msgstr "하위 도메인 이름 설정"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "설정"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "설정 권한"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1815,14 +1836,14 @@ msgid "This member will be unassigned from this role."
 msgstr "이 멤버는 이 역할에서 재할당 해제됩니다."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "이 역할은 다음과 같은 권한을 가지고 있습니다."
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "이 역할은 이 워크스페이스 멤버들에게 할당되었습니다."
 
@@ -1850,6 +1871,7 @@ msgstr "트리거 유형은 수동이어야 합니다 - 선택된 레코드가 �
 msgid "Turkish"
 msgstr "터키어"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"

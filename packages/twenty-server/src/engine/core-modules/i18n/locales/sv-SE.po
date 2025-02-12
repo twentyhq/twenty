@@ -43,7 +43,7 @@ msgstr "(System) Visa Sorteringar"
 msgid "(System) Views"
 msgstr "(System) Vyer"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:55
+#: src/modules/company/standard-objects/company.workspace-entity.ts:56
 msgid "A company"
 msgstr "Ett företag"
 
@@ -75,7 +75,7 @@ msgstr "En anteckning"
 msgid "A note target"
 msgstr "En anteckningsmål"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+#: src/modules/person/standard-objects/person.workspace-entity.ts:60
 msgid "A person"
 msgstr "En person"
 
@@ -117,7 +117,7 @@ msgstr "Åtkomsttoken"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
-#: src/modules/company/standard-objects/company.workspace-entity.ts:176
+#: src/modules/company/standard-objects/company.workspace-entity.ts:178
 msgid "Account Owner"
 msgstr "Kontoinnehavare"
 
@@ -129,19 +129,19 @@ msgstr "Kontoinnehavare för företag"
 msgid "Account Owner For Companies"
 msgstr "Kontoinnehavare För Företag"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:123
+#: src/modules/company/standard-objects/company.workspace-entity.ts:125
 msgid "Address"
 msgstr "Adress"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:264
+#: src/modules/company/standard-objects/company.workspace-entity.ts:266
 msgid "Address (deprecated) "
 msgstr "Adress (föråldrad) "
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:124
+#: src/modules/company/standard-objects/company.workspace-entity.ts:126
 msgid "Address of the company"
 msgstr "Adressen till företaget"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:265
+#: src/modules/company/standard-objects/company.workspace-entity.ts:267
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Adress till f\"oretaget - f\"or\"aldrad till f\"orm\"an f\"or nytt adressf\"alt"
 
@@ -178,7 +178,7 @@ msgstr "En händelse relaterad till användarbeteende"
 msgid "An opportunity"
 msgstr "En affärsmöjlighet"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:114
+#: src/modules/company/standard-objects/company.workspace-entity.ts:116
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Återkommande Årlig Inkomst: Det faktiska eller uppskattade årliga inkomsten hos företaget"
 
@@ -202,7 +202,7 @@ msgstr "API-nyckelns namn"
 msgid "ApiKey revocation date"
 msgstr "API-nyckelns återkallningsdatum"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:113
+#: src/modules/company/standard-objects/company.workspace-entity.ts:115
 msgid "ARR"
 msgstr "ARR"
 
@@ -259,10 +259,10 @@ msgid "Attachment type"
 msgstr "Bilagans typ"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:156
-#: src/modules/person/standard-objects/person.workspace-entity.ts:238
+#: src/modules/person/standard-objects/person.workspace-entity.ts:244
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
 #: src/modules/note/standard-objects/note.workspace-entity.ts:118
-#: src/modules/company/standard-objects/company.workspace-entity.ts:239
+#: src/modules/company/standard-objects/company.workspace-entity.ts:241
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
 msgid "Attachments"
@@ -272,11 +272,11 @@ msgstr "Bilagor"
 msgid "Attachments created by the workspace member"
 msgstr "Bilagor skapade av arbetsytans medlem"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:240
+#: src/modules/company/standard-objects/company.workspace-entity.ts:242
 msgid "Attachments linked to the company"
 msgstr "Bilagor kopplade till företaget"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:239
+#: src/modules/person/standard-objects/person.workspace-entity.ts:245
 msgid "Attachments linked to the contact."
 msgstr "Bilagor kopplade till kontakten."
 
@@ -322,7 +322,7 @@ msgstr "Skapa automatiskt personposter när du tar emot eller skickar e-post"
 msgid "Automatically create records for people you participated with in an event."
 msgstr "Skapa automatiskt poster för personer du deltagit med i en händelse."
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:146
+#: src/modules/person/standard-objects/person.workspace-entity.ts:152
 msgid "Avatar"
 msgstr "Avatar"
 
@@ -402,8 +402,8 @@ msgstr "Deltagare i kalenderhändelser"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
-#: src/modules/person/standard-objects/person.workspace-entity.ts:262
-#: src/modules/person/standard-objects/person.workspace-entity.ts:263
+#: src/modules/person/standard-objects/person.workspace-entity.ts:268
+#: src/modules/person/standard-objects/person.workspace-entity.ts:269
 msgid "Calendar Event Participants"
 msgstr "Deltagare i kalenderhändelser"
 
@@ -421,7 +421,7 @@ msgstr "Kanals-ID"
 msgid "Channel Type"
 msgstr "Kanalstyp"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:137
+#: src/modules/person/standard-objects/person.workspace-entity.ts:143
 msgid "City"
 msgstr "Stad"
 
@@ -437,22 +437,22 @@ msgstr "Färgschema"
 msgid "Compact View"
 msgstr "Kompakt vy"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:54
+#: src/modules/company/standard-objects/company.workspace-entity.ts:55
 msgid "Companies"
 msgstr "Företag"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
-#: src/modules/person/standard-objects/person.workspace-entity.ts:177
+#: src/modules/person/standard-objects/person.workspace-entity.ts:183
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:148
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:65
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:88
-#: src/modules/company/standard-objects/company.workspace-entity.ts:53
+#: src/modules/company/standard-objects/company.workspace-entity.ts:54
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
 msgid "Company"
 msgstr "Företag"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:144
+#: src/modules/company/standard-objects/company.workspace-entity.ts:146
 msgid "Company record position"
 msgstr "Position för företagspost"
 
@@ -483,43 +483,43 @@ msgstr "Anslutna konton"
 msgid "Contact auto creation policy"
 msgstr "Policy för automatisk kontakt skapande"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:147
+#: src/modules/person/standard-objects/person.workspace-entity.ts:153
 msgid "Contact’s avatar"
 msgstr "Kontaktens avatar"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:138
+#: src/modules/person/standard-objects/person.workspace-entity.ts:144
 msgid "Contact’s city"
 msgstr "Kontaktens stad"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:178
+#: src/modules/person/standard-objects/person.workspace-entity.ts:184
 msgid "Contact’s company"
 msgstr "Kontaktens företag"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:80
+#: src/modules/person/standard-objects/person.workspace-entity.ts:86
 msgid "Contact’s Emails"
 msgstr "Kontaktens e-postadresser"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:110
+#: src/modules/person/standard-objects/person.workspace-entity.ts:116
 msgid "Contact’s job title"
 msgstr "Kontaktens jobbtitel"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:90
+#: src/modules/person/standard-objects/person.workspace-entity.ts:96
 msgid "Contact’s Linkedin account"
 msgstr "Kontaktens Linkedin-konto"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:70
+#: src/modules/person/standard-objects/person.workspace-entity.ts:76
 msgid "Contact’s name"
 msgstr "Kontaktens namn"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:119
+#: src/modules/person/standard-objects/person.workspace-entity.ts:125
 msgid "Contact’s phone number"
 msgstr "Kontaktens telefonnummer"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:129
+#: src/modules/person/standard-objects/person.workspace-entity.ts:135
 msgid "Contact’s phone numbers"
 msgstr "Kontaktens telefonnummer"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:100
+#: src/modules/person/standard-objects/person.workspace-entity.ts:106
 msgid "Contact’s X/Twitter account"
 msgstr "Kontaktens X/Twitter-konto"
 
@@ -530,10 +530,10 @@ msgstr "Sammanhang"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
-#: src/modules/person/standard-objects/person.workspace-entity.ts:167
+#: src/modules/person/standard-objects/person.workspace-entity.ts:173
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
 #: src/modules/note/standard-objects/note.workspace-entity.ts:98
-#: src/modules/company/standard-objects/company.workspace-entity.ts:154
+#: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
 msgstr "Skapad av"
@@ -588,7 +588,7 @@ msgstr "Visningsnamn"
 msgid "Display Value"
 msgstr "Visningsvärde"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:73
+#: src/modules/company/standard-objects/company.workspace-entity.ts:75
 msgid "Domain Name"
 msgstr "Domännamn"
 
@@ -596,11 +596,11 @@ msgstr "Domännamn"
 msgid "Due Date"
 msgstr "Förfallodatum"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:79
+#: src/modules/person/standard-objects/person.workspace-entity.ts:85
 msgid "Emails"
 msgstr "E-postadresser"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:83
+#: src/modules/company/standard-objects/company.workspace-entity.ts:85
 msgid "Employees"
 msgstr "Anställda"
 
@@ -692,11 +692,11 @@ msgid "Event workspace member"
 msgstr "Händelsens arbetsområdesmedlem"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
-#: src/modules/person/standard-objects/person.workspace-entity.ts:276
+#: src/modules/person/standard-objects/person.workspace-entity.ts:282
 msgid "Events"
 msgstr "Händelser"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:277
+#: src/modules/person/standard-objects/person.workspace-entity.ts:283
 msgid "Events linked to the person"
 msgstr "Händelser länkade till personen"
 
@@ -789,12 +789,12 @@ msgstr "Favorit arbetsplatsmedlem"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
 #: src/modules/task/standard-objects/task.workspace-entity.ts:197
-#: src/modules/person/standard-objects/person.workspace-entity.ts:226
+#: src/modules/person/standard-objects/person.workspace-entity.ts:232
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
 #: src/modules/note/standard-objects/note.workspace-entity.ts:143
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
-#: src/modules/company/standard-objects/company.workspace-entity.ts:226
+#: src/modules/company/standard-objects/company.workspace-entity.ts:228
 #: src/engine/twenty-orm/custom.workspace-entity.ts:101
 msgid "Favorites"
 msgstr "Favoriter"
@@ -803,11 +803,11 @@ msgstr "Favoriter"
 msgid "Favorites in this folder"
 msgstr "Favoriter i denna mapp"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:227
+#: src/modules/company/standard-objects/company.workspace-entity.ts:229
 msgid "Favorites linked to the company"
 msgstr "Favoriter länkade till företaget"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:227
+#: src/modules/person/standard-objects/person.workspace-entity.ts:233
 msgid "Favorites linked to the contact"
 msgstr "Favoriter länkade till kontakten"
 
@@ -918,7 +918,7 @@ msgstr "iCal UID"
 msgid "Icon"
 msgstr "Ikon"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:133
+#: src/modules/company/standard-objects/company.workspace-entity.ts:135
 msgid "ICP"
 msgstr "ICP"
 
@@ -927,7 +927,7 @@ msgstr "ICP"
 msgid "Id"
 msgstr "Id"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:134
+#: src/modules/company/standard-objects/company.workspace-entity.ts:136
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideal kundprofil: Anger om f\\u00f6retaget \\u00e4r den mest l\\u00e4mpliga och v\\u00e4rdefulla kunden f\\u00f6r dig"
 
@@ -964,7 +964,7 @@ msgstr "\\u00c4r organisat\\u00f6r"
 msgid "Is Sync Enabled"
 msgstr "\\u00c4r synkronisering aktiverad"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:109
+#: src/modules/person/standard-objects/person.workspace-entity.ts:115
 msgid "Job Title"
 msgstr "Arbetstitel"
 
@@ -1037,7 +1037,7 @@ msgstr "Senaste uppdatering"
 msgid "Linked Object Metadata Id"
 msgstr "Linked Object Metadata Id"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:192
+#: src/modules/person/standard-objects/person.workspace-entity.ts:198
 msgid "Linked Opportunities"
 msgstr "L\\u00e4nkade M\\u00f6jligheter"
 
@@ -1050,12 +1050,12 @@ msgstr "Cachenamn f\\u00f6r l\\u00e4nkad post"
 msgid "Linked Record id"
 msgstr "Linked Record id"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:89
-#: src/modules/company/standard-objects/company.workspace-entity.ts:93
+#: src/modules/person/standard-objects/person.workspace-entity.ts:95
+#: src/modules/company/standard-objects/company.workspace-entity.ts:95
 msgid "Linkedin"
 msgstr "LinkedIn"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:193
+#: src/modules/person/standard-objects/person.workspace-entity.ts:199
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "Lista \\u00f6ver m\\u00f6jligheter f\\u00f6r vilka personen \\u00e4r kontaktpunkt"
 
@@ -1151,8 +1151,8 @@ msgstr "Meddelandedeltagare"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
-#: src/modules/person/standard-objects/person.workspace-entity.ts:249
-#: src/modules/person/standard-objects/person.workspace-entity.ts:250
+#: src/modules/person/standard-objects/person.workspace-entity.ts:255
+#: src/modules/person/standard-objects/person.workspace-entity.ts:256
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:93
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:94
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
@@ -1205,11 +1205,11 @@ msgstr "Uppdateringstoken fr\\u00e5n meddelandeleverant\\u00f6ren"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:62
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
 #: src/modules/view/standard-objects/view.workspace-entity.ts:43
-#: src/modules/person/standard-objects/person.workspace-entity.ts:69
+#: src/modules/person/standard-objects/person.workspace-entity.ts:75
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:60
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:32
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:43
-#: src/modules/company/standard-objects/company.workspace-entity.ts:64
+#: src/modules/company/standard-objects/company.workspace-entity.ts:66
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:42
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:29
 #: src/engine/twenty-orm/custom.workspace-entity.ts:40
@@ -1262,10 +1262,10 @@ msgstr "Målobjekt för anteckningar"
 msgid "Note title"
 msgstr "Anteckningstitel"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:215
+#: src/modules/person/standard-objects/person.workspace-entity.ts:221
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
 #: src/modules/note/standard-objects/note.workspace-entity.ts:45
-#: src/modules/company/standard-objects/company.workspace-entity.ts:203
+#: src/modules/company/standard-objects/company.workspace-entity.ts:205
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
 msgstr "Anteckningar"
@@ -1274,11 +1274,11 @@ msgstr "Anteckningar"
 msgid "Notes tied to the {label}"
 msgstr "Anteckningar knutna till {label}"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:204
+#: src/modules/company/standard-objects/company.workspace-entity.ts:206
 msgid "Notes tied to the company"
 msgstr "Anteckningar knutna till företaget"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:216
+#: src/modules/person/standard-objects/person.workspace-entity.ts:222
 msgid "Notes tied to the contact"
 msgstr "Anteckningar knutna till kontakten"
 
@@ -1302,7 +1302,7 @@ msgstr "Anteckningsmål affärsmöjlighet"
 msgid "NoteTarget person"
 msgstr "Anteckningsmål person"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:84
+#: src/modules/company/standard-objects/company.workspace-entity.ts:86
 msgid "Number of employees in the company"
 msgstr "Antal anställda i företaget"
 
@@ -1338,11 +1338,11 @@ msgid "Operations"
 msgstr "Operationer"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
-#: src/modules/company/standard-objects/company.workspace-entity.ts:214
+#: src/modules/company/standard-objects/company.workspace-entity.ts:216
 msgid "Opportunities"
 msgstr "Affärsmöjligheter"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:215
+#: src/modules/company/standard-objects/company.workspace-entity.ts:217
 msgid "Opportunities linked to the company."
 msgstr "Affärsmöjligheter kopplade till företaget."
 
@@ -1404,18 +1404,18 @@ msgstr "Överordnad filtergrupp för vy"
 msgid "Parent View Filter Group Id"
 msgstr "Id för överordnad filtergrupp för vy"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:58
-#: src/modules/company/standard-objects/company.workspace-entity.ts:164
+#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+#: src/modules/company/standard-objects/company.workspace-entity.ts:166
 msgid "People"
 msgstr "Personer"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:165
+#: src/modules/company/standard-objects/company.workspace-entity.ts:167
 msgid "People linked to the company."
 msgstr "Personer kopplade till företaget."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
-#: src/modules/person/standard-objects/person.workspace-entity.ts:57
+#: src/modules/person/standard-objects/person.workspace-entity.ts:58
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:50
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:85
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:86
@@ -1426,15 +1426,15 @@ msgstr "Personer kopplade till företaget."
 msgid "Person"
 msgstr "Person"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:157
+#: src/modules/person/standard-objects/person.workspace-entity.ts:163
 msgid "Person record Position"
 msgstr "Personpost position"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:118
+#: src/modules/person/standard-objects/person.workspace-entity.ts:124
 msgid "Phone"
 msgstr "Telefon"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:128
+#: src/modules/person/standard-objects/person.workspace-entity.ts:134
 msgid "Phones"
 msgstr "Telefoner"
 
@@ -1449,12 +1449,12 @@ msgstr "Kontaktperson"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
 #: src/modules/task/standard-objects/task.workspace-entity.ts:57
-#: src/modules/person/standard-objects/person.workspace-entity.ts:156
+#: src/modules/person/standard-objects/person.workspace-entity.ts:162
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
 #: src/modules/note/standard-objects/note.workspace-entity.ts:55
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
-#: src/modules/company/standard-objects/company.workspace-entity.ts:143
+#: src/modules/company/standard-objects/company.workspace-entity.ts:145
 #: src/engine/twenty-orm/custom.workspace-entity.ts:49
 #: src/engine/twenty-orm/custom.workspace-entity.ts:50
 msgid "Position"
@@ -1661,9 +1661,9 @@ msgid "Task title"
 msgstr "Uppgiftstitel"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:47
-#: src/modules/person/standard-objects/person.workspace-entity.ts:204
+#: src/modules/person/standard-objects/person.workspace-entity.ts:210
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
-#: src/modules/company/standard-objects/company.workspace-entity.ts:192
+#: src/modules/company/standard-objects/company.workspace-entity.ts:194
 #: src/engine/twenty-orm/custom.workspace-entity.ts:85
 msgid "Tasks"
 msgstr "Uppgifter"
@@ -1676,11 +1676,11 @@ msgstr "Uppgifter tilldelade arbetsutrymmets medlem"
 msgid "Tasks tied to the {label}"
 msgstr "Uppgifter kopplade till {label}"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:193
+#: src/modules/company/standard-objects/company.workspace-entity.ts:195
 msgid "Tasks tied to the company"
 msgstr "Uppgifter kopplade till företaget"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:205
+#: src/modules/person/standard-objects/person.workspace-entity.ts:211
 msgid "Tasks tied to the contact"
 msgstr "Uppgifter kopplade till kontakten"
 
@@ -1717,28 +1717,28 @@ msgstr "Kontohanteraren (e-post, användarnamn, telefonnummer, etc.)"
 msgid "The account provider"
 msgstr "Kontoleverantören"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:94
+#: src/modules/company/standard-objects/company.workspace-entity.ts:96
 msgid "The company Linkedin account"
 msgstr "Företagets Linkedin-konto"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:65
+#: src/modules/company/standard-objects/company.workspace-entity.ts:67
 msgid "The company name"
 msgstr "Företagsnamnet"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:104
+#: src/modules/company/standard-objects/company.workspace-entity.ts:106
 msgid "The company Twitter/X account"
 msgstr "Företagets Twitter/X-konto"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:74
+#: src/modules/company/standard-objects/company.workspace-entity.ts:76
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "Företagets webbplats-URL. Vi använder denna url för att hämta företagets ikon"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
 #: src/modules/task/standard-objects/task.workspace-entity.ts:138
-#: src/modules/person/standard-objects/person.workspace-entity.ts:169
+#: src/modules/person/standard-objects/person.workspace-entity.ts:175
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
 #: src/modules/note/standard-objects/note.workspace-entity.ts:100
-#: src/modules/company/standard-objects/company.workspace-entity.ts:156
+#: src/modules/company/standard-objects/company.workspace-entity.ts:158
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
 msgstr "Skaparen av posten"
@@ -1813,12 +1813,12 @@ msgstr "Tidszon"
 #: src/modules/task/standard-objects/task.workspace-entity.ts:185
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
 #: src/modules/note/standard-objects/note.workspace-entity.ts:131
-#: src/modules/company/standard-objects/company.workspace-entity.ts:251
+#: src/modules/company/standard-objects/company.workspace-entity.ts:253
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
 msgstr "Aktiviteter i tidslinjen"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:252
+#: src/modules/company/standard-objects/company.workspace-entity.ts:254
 msgid "Timeline Activities linked to the company"
 msgstr "Aktiviteter i tidslinjen kopplade till företaget"
 
@@ -2245,12 +2245,12 @@ msgstr "Arbetsytemedlemmar"
 msgid "WorkspaceMember"
 msgstr "Arbetsytemedlem"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:99
-#: src/modules/company/standard-objects/company.workspace-entity.ts:103
+#: src/modules/person/standard-objects/person.workspace-entity.ts:105
+#: src/modules/company/standard-objects/company.workspace-entity.ts:105
 msgid "X"
 msgstr "X"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:177
+#: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Ditt teammedlem ansvarig för att hantera företagskontot"
 

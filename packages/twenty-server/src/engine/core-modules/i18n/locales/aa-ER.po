@@ -8,7 +8,8 @@ msgstr ""
 "Language: aa\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 07:13\n"
+"PO-Revision-Date: 2025-01-01 00:00
+"
 "Last-Translator: \n"
 "Language-Team: Afar\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -42,7 +43,7 @@ msgstr "crwdns827:0crwdne827:0"
 msgid "(System) Views"
 msgstr "crwdns829:0crwdne829:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:55
+#: src/modules/company/standard-objects/company.workspace-entity.ts:56
 msgid "A company"
 msgstr "crwdns831:0crwdne831:0"
 
@@ -74,7 +75,7 @@ msgstr "crwdns843:0crwdne843:0"
 msgid "A note target"
 msgstr "crwdns845:0crwdne845:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+#: src/modules/person/standard-objects/person.workspace-entity.ts:60
 msgid "A person"
 msgstr "crwdns847:0crwdne847:0"
 
@@ -116,7 +117,7 @@ msgstr "crwdns865:0crwdne865:0"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
-#: src/modules/company/standard-objects/company.workspace-entity.ts:176
+#: src/modules/company/standard-objects/company.workspace-entity.ts:178
 msgid "Account Owner"
 msgstr "crwdns867:0crwdne867:0"
 
@@ -128,19 +129,19 @@ msgstr "crwdns869:0crwdne869:0"
 msgid "Account Owner For Companies"
 msgstr "crwdns871:0crwdne871:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:123
+#: src/modules/company/standard-objects/company.workspace-entity.ts:125
 msgid "Address"
 msgstr "crwdns873:0crwdne873:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:264
+#: src/modules/company/standard-objects/company.workspace-entity.ts:266
 msgid "Address (deprecated) "
 msgstr "crwdns875:0crwdne875:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:124
+#: src/modules/company/standard-objects/company.workspace-entity.ts:126
 msgid "Address of the company"
 msgstr "crwdns877:0crwdne877:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:265
+#: src/modules/company/standard-objects/company.workspace-entity.ts:267
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "crwdns879:0crwdne879:0"
 
@@ -177,7 +178,7 @@ msgstr "crwdns893:0crwdne893:0"
 msgid "An opportunity"
 msgstr "crwdns895:0crwdne895:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:114
+#: src/modules/company/standard-objects/company.workspace-entity.ts:116
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "crwdns897:0crwdne897:0"
 
@@ -201,7 +202,7 @@ msgstr "crwdns905:0crwdne905:0"
 msgid "ApiKey revocation date"
 msgstr "crwdns907:0crwdne907:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:113
+#: src/modules/company/standard-objects/company.workspace-entity.ts:115
 msgid "ARR"
 msgstr "crwdns909:0crwdne909:0"
 
@@ -258,10 +259,10 @@ msgid "Attachment type"
 msgstr "crwdns935:0crwdne935:0"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:156
-#: src/modules/person/standard-objects/person.workspace-entity.ts:238
+#: src/modules/person/standard-objects/person.workspace-entity.ts:244
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
 #: src/modules/note/standard-objects/note.workspace-entity.ts:118
-#: src/modules/company/standard-objects/company.workspace-entity.ts:239
+#: src/modules/company/standard-objects/company.workspace-entity.ts:241
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
 msgid "Attachments"
@@ -271,11 +272,11 @@ msgstr "crwdns937:0crwdne937:0"
 msgid "Attachments created by the workspace member"
 msgstr "crwdns939:0crwdne939:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:240
+#: src/modules/company/standard-objects/company.workspace-entity.ts:242
 msgid "Attachments linked to the company"
 msgstr "crwdns941:0crwdne941:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:239
+#: src/modules/person/standard-objects/person.workspace-entity.ts:245
 msgid "Attachments linked to the contact."
 msgstr "crwdns943:0crwdne943:0"
 
@@ -321,7 +322,7 @@ msgstr "crwdns961:0crwdne961:0"
 msgid "Automatically create records for people you participated with in an event."
 msgstr "crwdns963:0crwdne963:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:146
+#: src/modules/person/standard-objects/person.workspace-entity.ts:152
 msgid "Avatar"
 msgstr "crwdns965:0crwdne965:0"
 
@@ -401,8 +402,8 @@ msgstr "crwdns995:0crwdne995:0"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
-#: src/modules/person/standard-objects/person.workspace-entity.ts:262
-#: src/modules/person/standard-objects/person.workspace-entity.ts:263
+#: src/modules/person/standard-objects/person.workspace-entity.ts:268
+#: src/modules/person/standard-objects/person.workspace-entity.ts:269
 msgid "Calendar Event Participants"
 msgstr "crwdns997:0crwdne997:0"
 
@@ -420,7 +421,7 @@ msgstr "crwdns1001:0crwdne1001:0"
 msgid "Channel Type"
 msgstr "crwdns1003:0crwdne1003:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:137
+#: src/modules/person/standard-objects/person.workspace-entity.ts:143
 msgid "City"
 msgstr "crwdns1005:0crwdne1005:0"
 
@@ -436,22 +437,22 @@ msgstr "crwdns1009:0crwdne1009:0"
 msgid "Compact View"
 msgstr "crwdns1011:0crwdne1011:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:54
+#: src/modules/company/standard-objects/company.workspace-entity.ts:55
 msgid "Companies"
 msgstr "crwdns1013:0crwdne1013:0"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
-#: src/modules/person/standard-objects/person.workspace-entity.ts:177
+#: src/modules/person/standard-objects/person.workspace-entity.ts:183
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:148
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:65
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:88
-#: src/modules/company/standard-objects/company.workspace-entity.ts:53
+#: src/modules/company/standard-objects/company.workspace-entity.ts:54
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
 msgid "Company"
 msgstr "crwdns1015:0crwdne1015:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:144
+#: src/modules/company/standard-objects/company.workspace-entity.ts:146
 msgid "Company record position"
 msgstr "crwdns1017:0crwdne1017:0"
 
@@ -482,43 +483,43 @@ msgstr "crwdns1025:0crwdne1025:0"
 msgid "Contact auto creation policy"
 msgstr "crwdns1027:0crwdne1027:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:147
+#: src/modules/person/standard-objects/person.workspace-entity.ts:153
 msgid "Contact’s avatar"
 msgstr "crwdns1029:0crwdne1029:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:138
+#: src/modules/person/standard-objects/person.workspace-entity.ts:144
 msgid "Contact’s city"
 msgstr "crwdns1031:0crwdne1031:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:178
+#: src/modules/person/standard-objects/person.workspace-entity.ts:184
 msgid "Contact’s company"
 msgstr "crwdns1033:0crwdne1033:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:80
+#: src/modules/person/standard-objects/person.workspace-entity.ts:86
 msgid "Contact’s Emails"
 msgstr "crwdns1035:0crwdne1035:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:110
+#: src/modules/person/standard-objects/person.workspace-entity.ts:116
 msgid "Contact’s job title"
 msgstr "crwdns1037:0crwdne1037:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:90
+#: src/modules/person/standard-objects/person.workspace-entity.ts:96
 msgid "Contact’s Linkedin account"
 msgstr "crwdns1039:0crwdne1039:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:70
+#: src/modules/person/standard-objects/person.workspace-entity.ts:76
 msgid "Contact’s name"
 msgstr "crwdns1041:0crwdne1041:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:119
+#: src/modules/person/standard-objects/person.workspace-entity.ts:125
 msgid "Contact’s phone number"
 msgstr "crwdns1043:0crwdne1043:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:129
+#: src/modules/person/standard-objects/person.workspace-entity.ts:135
 msgid "Contact’s phone numbers"
 msgstr "crwdns1045:0crwdne1045:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:100
+#: src/modules/person/standard-objects/person.workspace-entity.ts:106
 msgid "Contact’s X/Twitter account"
 msgstr "crwdns1047:0crwdne1047:0"
 
@@ -529,10 +530,10 @@ msgstr "crwdns1781:0crwdne1781:0"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
-#: src/modules/person/standard-objects/person.workspace-entity.ts:167
+#: src/modules/person/standard-objects/person.workspace-entity.ts:173
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
 #: src/modules/note/standard-objects/note.workspace-entity.ts:98
-#: src/modules/company/standard-objects/company.workspace-entity.ts:154
+#: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
 msgstr "crwdns1049:0crwdne1049:0"
@@ -587,7 +588,7 @@ msgstr "crwdns1067:0crwdne1067:0"
 msgid "Display Value"
 msgstr "crwdns1069:0crwdne1069:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:73
+#: src/modules/company/standard-objects/company.workspace-entity.ts:75
 msgid "Domain Name"
 msgstr "crwdns1071:0crwdne1071:0"
 
@@ -595,11 +596,11 @@ msgstr "crwdns1071:0crwdne1071:0"
 msgid "Due Date"
 msgstr "crwdns1073:0crwdne1073:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:79
+#: src/modules/person/standard-objects/person.workspace-entity.ts:85
 msgid "Emails"
 msgstr "crwdns1075:0crwdne1075:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:83
+#: src/modules/company/standard-objects/company.workspace-entity.ts:85
 msgid "Employees"
 msgstr "crwdns1077:0crwdne1077:0"
 
@@ -691,11 +692,11 @@ msgid "Event workspace member"
 msgstr "crwdns1113:0crwdne1113:0"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
-#: src/modules/person/standard-objects/person.workspace-entity.ts:276
+#: src/modules/person/standard-objects/person.workspace-entity.ts:282
 msgid "Events"
 msgstr "crwdns1115:0crwdne1115:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:277
+#: src/modules/person/standard-objects/person.workspace-entity.ts:283
 msgid "Events linked to the person"
 msgstr "crwdns1117:0crwdne1117:0"
 
@@ -788,12 +789,12 @@ msgstr "crwdns1157:0crwdne1157:0"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
 #: src/modules/task/standard-objects/task.workspace-entity.ts:197
-#: src/modules/person/standard-objects/person.workspace-entity.ts:226
+#: src/modules/person/standard-objects/person.workspace-entity.ts:232
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
 #: src/modules/note/standard-objects/note.workspace-entity.ts:143
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
-#: src/modules/company/standard-objects/company.workspace-entity.ts:226
+#: src/modules/company/standard-objects/company.workspace-entity.ts:228
 #: src/engine/twenty-orm/custom.workspace-entity.ts:101
 msgid "Favorites"
 msgstr "crwdns1159:0crwdne1159:0"
@@ -802,11 +803,11 @@ msgstr "crwdns1159:0crwdne1159:0"
 msgid "Favorites in this folder"
 msgstr "crwdns1161:0crwdne1161:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:227
+#: src/modules/company/standard-objects/company.workspace-entity.ts:229
 msgid "Favorites linked to the company"
 msgstr "crwdns1163:0crwdne1163:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:227
+#: src/modules/person/standard-objects/person.workspace-entity.ts:233
 msgid "Favorites linked to the contact"
 msgstr "crwdns1165:0crwdne1165:0"
 
@@ -917,7 +918,7 @@ msgstr "crwdns1209:0crwdne1209:0"
 msgid "Icon"
 msgstr "crwdns1211:0crwdne1211:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:133
+#: src/modules/company/standard-objects/company.workspace-entity.ts:135
 msgid "ICP"
 msgstr "crwdns1213:0crwdne1213:0"
 
@@ -926,7 +927,7 @@ msgstr "crwdns1213:0crwdne1213:0"
 msgid "Id"
 msgstr "crwdns1215:0crwdne1215:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:134
+#: src/modules/company/standard-objects/company.workspace-entity.ts:136
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "crwdns1217:0crwdne1217:0"
 
@@ -963,7 +964,7 @@ msgstr "crwdns1227:0crwdne1227:0"
 msgid "Is Sync Enabled"
 msgstr "crwdns1229:0crwdne1229:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:109
+#: src/modules/person/standard-objects/person.workspace-entity.ts:115
 msgid "Job Title"
 msgstr "crwdns1231:0crwdne1231:0"
 
@@ -1036,7 +1037,7 @@ msgstr "crwdns1259:0crwdne1259:0"
 msgid "Linked Object Metadata Id"
 msgstr "crwdns1261:0crwdne1261:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:192
+#: src/modules/person/standard-objects/person.workspace-entity.ts:198
 msgid "Linked Opportunities"
 msgstr "crwdns1263:0crwdne1263:0"
 
@@ -1049,12 +1050,12 @@ msgstr "crwdns1265:0crwdne1265:0"
 msgid "Linked Record id"
 msgstr "crwdns1267:0crwdne1267:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:89
-#: src/modules/company/standard-objects/company.workspace-entity.ts:93
+#: src/modules/person/standard-objects/person.workspace-entity.ts:95
+#: src/modules/company/standard-objects/company.workspace-entity.ts:95
 msgid "Linkedin"
 msgstr "crwdns1269:0crwdne1269:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:193
+#: src/modules/person/standard-objects/person.workspace-entity.ts:199
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "crwdns1271:0crwdne1271:0"
 
@@ -1150,8 +1151,8 @@ msgstr "crwdns1309:0crwdne1309:0"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
-#: src/modules/person/standard-objects/person.workspace-entity.ts:249
-#: src/modules/person/standard-objects/person.workspace-entity.ts:250
+#: src/modules/person/standard-objects/person.workspace-entity.ts:255
+#: src/modules/person/standard-objects/person.workspace-entity.ts:256
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:93
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:94
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
@@ -1204,11 +1205,11 @@ msgstr "crwdns1329:0crwdne1329:0"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:62
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
 #: src/modules/view/standard-objects/view.workspace-entity.ts:43
-#: src/modules/person/standard-objects/person.workspace-entity.ts:69
+#: src/modules/person/standard-objects/person.workspace-entity.ts:75
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:60
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:32
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:43
-#: src/modules/company/standard-objects/company.workspace-entity.ts:64
+#: src/modules/company/standard-objects/company.workspace-entity.ts:66
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:42
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:29
 #: src/engine/twenty-orm/custom.workspace-entity.ts:40
@@ -1261,10 +1262,10 @@ msgstr "crwdns1349:0crwdne1349:0"
 msgid "Note title"
 msgstr "crwdns1351:0crwdne1351:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:215
+#: src/modules/person/standard-objects/person.workspace-entity.ts:221
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
 #: src/modules/note/standard-objects/note.workspace-entity.ts:45
-#: src/modules/company/standard-objects/company.workspace-entity.ts:203
+#: src/modules/company/standard-objects/company.workspace-entity.ts:205
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
 msgstr "crwdns1353:0crwdne1353:0"
@@ -1273,11 +1274,11 @@ msgstr "crwdns1353:0crwdne1353:0"
 msgid "Notes tied to the {label}"
 msgstr "crwdns1355:0{label}crwdne1355:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:204
+#: src/modules/company/standard-objects/company.workspace-entity.ts:206
 msgid "Notes tied to the company"
 msgstr "crwdns1357:0crwdne1357:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:216
+#: src/modules/person/standard-objects/person.workspace-entity.ts:222
 msgid "Notes tied to the contact"
 msgstr "crwdns1359:0crwdne1359:0"
 
@@ -1301,7 +1302,7 @@ msgstr "crwdns1367:0crwdne1367:0"
 msgid "NoteTarget person"
 msgstr "crwdns1369:0crwdne1369:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:84
+#: src/modules/company/standard-objects/company.workspace-entity.ts:86
 msgid "Number of employees in the company"
 msgstr "crwdns1371:0crwdne1371:0"
 
@@ -1337,11 +1338,11 @@ msgid "Operations"
 msgstr "crwdns1385:0crwdne1385:0"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
-#: src/modules/company/standard-objects/company.workspace-entity.ts:214
+#: src/modules/company/standard-objects/company.workspace-entity.ts:216
 msgid "Opportunities"
 msgstr "crwdns1387:0crwdne1387:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:215
+#: src/modules/company/standard-objects/company.workspace-entity.ts:217
 msgid "Opportunities linked to the company."
 msgstr "crwdns1389:0crwdne1389:0"
 
@@ -1403,18 +1404,18 @@ msgstr "crwdns1413:0crwdne1413:0"
 msgid "Parent View Filter Group Id"
 msgstr "crwdns1415:0crwdne1415:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:58
-#: src/modules/company/standard-objects/company.workspace-entity.ts:164
+#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+#: src/modules/company/standard-objects/company.workspace-entity.ts:166
 msgid "People"
 msgstr "crwdns1417:0crwdne1417:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:165
+#: src/modules/company/standard-objects/company.workspace-entity.ts:167
 msgid "People linked to the company."
 msgstr "crwdns1419:0crwdne1419:0"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
-#: src/modules/person/standard-objects/person.workspace-entity.ts:57
+#: src/modules/person/standard-objects/person.workspace-entity.ts:58
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:50
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:85
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:86
@@ -1425,15 +1426,15 @@ msgstr "crwdns1419:0crwdne1419:0"
 msgid "Person"
 msgstr "crwdns1421:0crwdne1421:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:157
+#: src/modules/person/standard-objects/person.workspace-entity.ts:163
 msgid "Person record Position"
 msgstr "crwdns1423:0crwdne1423:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:118
+#: src/modules/person/standard-objects/person.workspace-entity.ts:124
 msgid "Phone"
 msgstr "crwdns1425:0crwdne1425:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:128
+#: src/modules/person/standard-objects/person.workspace-entity.ts:134
 msgid "Phones"
 msgstr "crwdns1427:0crwdne1427:0"
 
@@ -1448,12 +1449,12 @@ msgstr "crwdns1429:0crwdne1429:0"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
 #: src/modules/task/standard-objects/task.workspace-entity.ts:57
-#: src/modules/person/standard-objects/person.workspace-entity.ts:156
+#: src/modules/person/standard-objects/person.workspace-entity.ts:162
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
 #: src/modules/note/standard-objects/note.workspace-entity.ts:55
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
-#: src/modules/company/standard-objects/company.workspace-entity.ts:143
+#: src/modules/company/standard-objects/company.workspace-entity.ts:145
 #: src/engine/twenty-orm/custom.workspace-entity.ts:49
 #: src/engine/twenty-orm/custom.workspace-entity.ts:50
 msgid "Position"
@@ -1658,9 +1659,9 @@ msgid "Task title"
 msgstr "crwdns1517:0crwdne1517:0"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:47
-#: src/modules/person/standard-objects/person.workspace-entity.ts:204
+#: src/modules/person/standard-objects/person.workspace-entity.ts:210
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
-#: src/modules/company/standard-objects/company.workspace-entity.ts:192
+#: src/modules/company/standard-objects/company.workspace-entity.ts:194
 #: src/engine/twenty-orm/custom.workspace-entity.ts:85
 msgid "Tasks"
 msgstr "crwdns1519:0crwdne1519:0"
@@ -1673,11 +1674,11 @@ msgstr "crwdns1521:0crwdne1521:0"
 msgid "Tasks tied to the {label}"
 msgstr "crwdns1523:0{label}crwdne1523:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:193
+#: src/modules/company/standard-objects/company.workspace-entity.ts:195
 msgid "Tasks tied to the company"
 msgstr "crwdns1525:0crwdne1525:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:205
+#: src/modules/person/standard-objects/person.workspace-entity.ts:211
 msgid "Tasks tied to the contact"
 msgstr "crwdns1527:0crwdne1527:0"
 
@@ -1714,28 +1715,28 @@ msgstr "crwdns1541:0crwdne1541:0"
 msgid "The account provider"
 msgstr "crwdns1543:0crwdne1543:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:94
+#: src/modules/company/standard-objects/company.workspace-entity.ts:96
 msgid "The company Linkedin account"
 msgstr "crwdns1545:0crwdne1545:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:65
+#: src/modules/company/standard-objects/company.workspace-entity.ts:67
 msgid "The company name"
 msgstr "crwdns1547:0crwdne1547:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:104
+#: src/modules/company/standard-objects/company.workspace-entity.ts:106
 msgid "The company Twitter/X account"
 msgstr "crwdns1549:0crwdne1549:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:74
+#: src/modules/company/standard-objects/company.workspace-entity.ts:76
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "crwdns1551:0crwdne1551:0"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
 #: src/modules/task/standard-objects/task.workspace-entity.ts:138
-#: src/modules/person/standard-objects/person.workspace-entity.ts:169
+#: src/modules/person/standard-objects/person.workspace-entity.ts:175
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
 #: src/modules/note/standard-objects/note.workspace-entity.ts:100
-#: src/modules/company/standard-objects/company.workspace-entity.ts:156
+#: src/modules/company/standard-objects/company.workspace-entity.ts:158
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
 msgstr "crwdns1553:0crwdne1553:0"
@@ -1810,12 +1811,12 @@ msgstr "crwdns1583:0crwdne1583:0"
 #: src/modules/task/standard-objects/task.workspace-entity.ts:185
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
 #: src/modules/note/standard-objects/note.workspace-entity.ts:131
-#: src/modules/company/standard-objects/company.workspace-entity.ts:251
+#: src/modules/company/standard-objects/company.workspace-entity.ts:253
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
 msgstr "crwdns1585:0crwdne1585:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:252
+#: src/modules/company/standard-objects/company.workspace-entity.ts:254
 msgid "Timeline Activities linked to the company"
 msgstr "crwdns1587:0crwdne1587:0"
 
@@ -2242,12 +2243,12 @@ msgstr "crwdns1773:0crwdne1773:0"
 msgid "WorkspaceMember"
 msgstr "crwdns1775:0crwdne1775:0"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:99
-#: src/modules/company/standard-objects/company.workspace-entity.ts:103
+#: src/modules/person/standard-objects/person.workspace-entity.ts:105
+#: src/modules/company/standard-objects/company.workspace-entity.ts:105
 msgid "X"
 msgstr "crwdns1777:0crwdne1777:0"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:177
+#: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "crwdns1779:0crwdne1779:0"
 

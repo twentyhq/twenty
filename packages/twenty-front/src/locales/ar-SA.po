@@ -56,6 +56,10 @@ msgstr "24 ساعة ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "بيئة مشتركة حيث يمكنك التحكم في علاقات العملاء مع فريقك."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "القدرة على التفاعل مع كل كائن"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "إلغاء"
@@ -81,6 +85,8 @@ msgstr "حذف الحساب"
 msgid "Accounts"
 msgstr "الحسابات"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "الإجراءات"
@@ -249,11 +255,11 @@ msgstr "تعيين {workspaceMemberName}؟"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "قم بتعيين الأدوار لتحديد أذونات الوصول لكل عضو"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "التعيين لعضو"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "الأعضاء المعينون"
 
@@ -1173,6 +1179,8 @@ msgstr "نقل إلى اليمين"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1275,20 +1283,28 @@ msgid "No connected account"
 msgstr "لا يوجد حساب متصل"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "لم يتم تعيين أي أعضاء بهذا الدور بعد"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "لا يوجد أعضاء يطابقون هذا البحث"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "لا يوجد أعضاء يطابقون بحثك"
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "لا يوجد المزيد من الأعضاء لإضافتهم"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "لا يوجد المزيد من الأعضاء لتعيينهم"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "لا توجد نتائج"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1310,6 +1326,7 @@ msgstr "ليس فارغاً"
 msgid "Object"
 msgstr "كائن"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1383,7 +1400,6 @@ msgid "Permanently destroy workflows"
 msgstr "تدمير عمليات العمل نهائيًا"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "الصلاحيات"
 
@@ -1548,7 +1564,7 @@ msgstr "ابحث عن ''{commandMenuSearch}'' بواسطة..."
 msgid "Search a field..."
 msgstr "ابحث عن حقل..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "ابحث عن عضو"
 
@@ -1635,12 +1651,17 @@ msgid "Set the name of your subdomain"
 msgstr "\\\\"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "\\\\u0627\\\\u0644\\\\u0625\\\\u0639\\\\u062f\\\\u0627\\\\u062f\\\\u0627\\\\u062a"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "أذونات الإعدادات"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1814,14 +1835,14 @@ msgid "This member will be unassigned from this role."
 msgstr "سيتم إلغاء تعيين هذا العضو من هذا الدور."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "لدى هذا الدور الأذونات التالية."
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "تم تعيين هذا الدور لهؤلاء أعضاء الفضاء العمل."
 
@@ -1849,6 +1870,7 @@ msgstr "يجب أن يكون نوع المُشغل يدويّاً - عندما �
 msgid "Turkish"
 msgstr "التركية"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"

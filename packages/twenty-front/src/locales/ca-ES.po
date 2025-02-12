@@ -56,6 +56,10 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Un entorn compartit on podreu gestionar les vostres relacions amb els clients amb el vostre equip."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "Capacitat per interactuar amb cada objecte"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "Avorta"
@@ -81,6 +85,8 @@ msgstr "Eliminació de compte"
 msgid "Accounts"
 msgstr "Comptes"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "Accions"
@@ -249,11 +255,11 @@ msgstr "Assignar {workspaceMemberName}?"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Assigneu rols per especificar els permisos d'accés de cada membre"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "Assignar al membre"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "Membres assignats"
 
@@ -1173,6 +1179,8 @@ msgstr "Moure a la dreta"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1275,20 +1283,28 @@ msgid "No connected account"
 msgstr "Cap compte connectat"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "No hi ha membres assignats a aquest rol encara"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "No s'han trobat membres que coincideixin amb aquesta cerca"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "No s'han trobat membres que coincideixin amb la vostra cerca"
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "No hi ha més membres per afegir"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "No hi ha més membres per assignar"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "Cap resultat"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1310,6 +1326,7 @@ msgstr "No buit"
 msgid "Object"
 msgstr "Objecte"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1383,7 +1400,6 @@ msgid "Permanently destroy workflows"
 msgstr "Destruir permanentment els workflows"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "Permisos"
 
@@ -1548,7 +1564,7 @@ msgstr "Cerca ''{commandMenuSearch}'' amb..."
 msgid "Search a field..."
 msgstr "Cerca un camp..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "Buscar un membre"
 
@@ -1635,12 +1651,17 @@ msgid "Set the name of your subdomain"
 msgstr "Estableix el nom del teu subdomini"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "Configuració"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "Permisos de configuració"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1814,14 +1835,14 @@ msgid "This member will be unassigned from this role."
 msgstr "Aquest membre serà desassignat d'aquest rol."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "Aquest Rol té els següents permisos."
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "Aquest rol està assignat a aquests membres de l'espai de treball."
 
@@ -1849,6 +1870,7 @@ msgstr "El tipus de desencadenador hauria de ser Manual - quan cap registre(s) e
 msgid "Turkish"
 msgstr "Turc"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
