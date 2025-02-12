@@ -7,8 +7,7 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { RightDrawerTitleRecordInlineCell } from '@/object-record/record-right-drawer/components/RightDrawerTitleRecordInlineCell';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { ExpandableInput } from '@/ui/input/components/ExpandableInput';
-import { ExpandableInputInstanceContext } from '@/ui/input/states/contexts/ExpandableInputInstanceContext';
+import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -101,18 +100,7 @@ export const SummaryCard = ({
           }}
         >
           {isCommandMenuV2Enabled ? (
-            <ExpandableInputInstanceContext.Provider
-              value={{
-                instanceId: objectRecordId,
-              }}
-            >
-              <ExpandableInput
-                defaultValue={recordFromStore.name}
-                placeholder="Enter a name"
-                onSubmit={() => {}}
-                hotkeyScope={InlineCellHotkeyScope.InlineCell}
-              />
-            </ExpandableInputInstanceContext.Provider>
+            <RecordTitleCell />
           ) : isInRightDrawer ? (
             <RightDrawerTitleRecordInlineCell />
           ) : (
