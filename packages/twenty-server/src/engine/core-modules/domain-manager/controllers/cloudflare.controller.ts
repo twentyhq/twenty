@@ -42,7 +42,7 @@ export class CloudflareController {
       );
     }
 
-    if (!req.body.data.data.hostname) {
+    if (!req.body?.data?.data?.hostname) {
       handleException(
         new DomainManagerException(
           'Hostname missing',
