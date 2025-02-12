@@ -1,4 +1,3 @@
-import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
@@ -41,18 +40,16 @@ export const RolePermissionsSettingsTableRow = ({
   permission,
 }: RolePermissionsSettingsTableRowProps) => {
   return (
-    <Table>
-      <StyledTableRow key={permission.key}>
-        <StyledPermissionCell>
-          <StyledLabel>{permission.label}</StyledLabel>
-        </StyledPermissionCell>
-        <StyledPermissionCell>
-          <StyledType>{permission.type}</StyledType>
-        </StyledPermissionCell>
-        <StyledCheckboxCell>
-          <Checkbox checked={permission.value} disabled />
-        </StyledCheckboxCell>
-      </StyledTableRow>
-    </Table>
+    <StyledTableRow key={permission.key}>
+      <StyledPermissionCell>
+        <StyledLabel>{permission.label}</StyledLabel>
+      </StyledPermissionCell>
+      <StyledPermissionCell>
+        <StyledType>{permission.type}</StyledType>
+      </StyledPermissionCell>
+      <StyledCheckboxCell>
+        <Checkbox checked={permission.value} disabled />
+      </StyledCheckboxCell>
+    </StyledTableRow>
   );
 };

@@ -54,15 +54,19 @@ export const RoleWorkspaceMemberPickerDropdown = ({
         onChange={handleSearchFilterChange}
         placeholder="Search"
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <RoleWorkspaceMemberPickerDropdownContent
-          loading={loading}
-          searchFilter={searchFilter}
-          filteredWorkspaceMembers={filteredWorkspaceMembers}
-          onSelect={onSelect}
-        />
-      </DropdownMenuItemsContainer>
+      {(filteredWorkspaceMembers?.length > 0 || !searchFilter) && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer>
+            <RoleWorkspaceMemberPickerDropdownContent
+              loading={loading}
+              searchFilter={searchFilter}
+              filteredWorkspaceMembers={filteredWorkspaceMembers}
+              onSelect={onSelect}
+            />
+          </DropdownMenuItemsContainer>
+        </>
+      )}
     </DropdownMenu>
   );
 };

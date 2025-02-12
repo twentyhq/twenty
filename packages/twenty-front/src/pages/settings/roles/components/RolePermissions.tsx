@@ -1,6 +1,13 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconEye, IconPencil, IconTrash, Section } from 'twenty-ui';
+import {
+  H2Title,
+  IconEye,
+  IconPencil,
+  IconTrash,
+  IconTrashX,
+  Section,
+} from 'twenty-ui';
 import { Role, SettingsFeatures } from '~/generated-metadata/graphql';
 import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/components/RolePermissionsObjectsTableHeader';
 import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/components/RolePermissionsSettingsTableHeader';
@@ -37,7 +44,7 @@ export const RolePermissions = ({ role }: { role: Role }) => {
     {
       key: 'destroyRecords',
       label: 'Destroy Records on All Objects',
-      icon: <IconTrash size={14} />,
+      icon: <IconTrashX size={14} />,
       value: true,
     },
   ];
@@ -92,7 +99,7 @@ export const RolePermissions = ({ role }: { role: Role }) => {
       <Section>
         <H2Title
           title={t`Objects`}
-          description={t`Ability to interact with each objects`}
+          description={t`Ability to interact with each object`}
         />
         <RolePermissionsObjectsTableHeader allPermissions={true} />
         {objectPermissionsConfig.map((permission) => (
