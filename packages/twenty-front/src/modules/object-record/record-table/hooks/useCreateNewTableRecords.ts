@@ -9,7 +9,6 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { shouldRedirectToShowPageOnCreation } from '@/object-record/utils/shouldRedirectToShowPageOnCreation';
 import { AppPath } from '@/types/AppPath';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useOpenExpandableInput } from '@/ui/navigation/bread-crumb/hooks/useOpenEditableBreadCrumbItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -60,8 +59,6 @@ export const useCreateNewTableRecord = ({
 
   const navigate = useNavigateApp();
 
-  const { openExpandableInput } = useOpenExpandableInput();
-
   const createNewTableRecord = async () => {
     const recordId = v4();
 
@@ -85,7 +82,6 @@ export const useCreateNewTableRecord = ({
       await createOneRecord({ id: recordId });
 
       openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
-      openExpandableInput(recordId);
 
       return;
     }
