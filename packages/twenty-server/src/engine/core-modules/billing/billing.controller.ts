@@ -63,6 +63,8 @@ export class BillingController {
     } catch (error) {
       if (error instanceof BillingException) {
         res.status(404).end();
+      } else {
+        res.status(500).end();
       }
     }
   }

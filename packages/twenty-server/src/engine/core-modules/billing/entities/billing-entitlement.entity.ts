@@ -54,6 +54,7 @@ export class BillingEntitlement {
     (billingCustomer) => billingCustomer.billingEntitlements,
     {
       onDelete: 'CASCADE',
+      createForeignKeyConstraints: false,
     },
   )
   @JoinColumn({
