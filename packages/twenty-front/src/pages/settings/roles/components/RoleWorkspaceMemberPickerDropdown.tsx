@@ -60,7 +60,6 @@ export const RoleWorkspaceMemberPickerDropdown = ({
           <DropdownMenuItemsContainer>
             <RoleWorkspaceMemberPickerDropdownContent
               loading={loading}
-              searchFilter={searchFilter}
               filteredWorkspaceMembers={filteredWorkspaceMembers}
               onSelect={onSelect}
             />
