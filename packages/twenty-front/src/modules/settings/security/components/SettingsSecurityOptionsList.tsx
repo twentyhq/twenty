@@ -123,6 +123,12 @@ export const SettingsSecurityOptionsList = () => {
     }
   };
 
+  const providersEnabledCount = [
+    currentWorkspace?.isGoogleAuthEnabled,
+    currentWorkspace?.isMicrosoftAuthEnabled,
+    currentWorkspace?.isPasswordAuthEnabled,
+  ].filter(Boolean).length;
+
   return (
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
@@ -136,6 +142,10 @@ export const SettingsSecurityOptionsList = () => {
                 checked={currentWorkspace.isGoogleAuthEnabled}
                 advancedMode
                 divider
+                disabled={
+                  providersEnabledCount <= 1 &&
+                  currentWorkspace.isGoogleAuthEnabled
+                }
                 onChange={() => toggleAuthMethod('google')}
               />
             )}
@@ -147,6 +157,10 @@ export const SettingsSecurityOptionsList = () => {
                 checked={currentWorkspace.isMicrosoftAuthEnabled}
                 advancedMode
                 divider
+                disabled={
+                  providersEnabledCount <= 1 &&
+                  currentWorkspace.isMicrosoftAuthEnabled
+                }
                 onChange={() => toggleAuthMethod('microsoft')}
               />
             )}
@@ -157,6 +171,10 @@ export const SettingsSecurityOptionsList = () => {
                 description={t`Allow users to sign in with an email and password.`}
                 checked={currentWorkspace.isPasswordAuthEnabled}
                 advancedMode
+                disabled={
+                  providersEnabledCount <= 1 &&
+                  currentWorkspace.isPasswordAuthEnabled
+                }
                 onChange={() => toggleAuthMethod('password')}
               />
             )}
