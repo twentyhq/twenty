@@ -59,7 +59,7 @@ export const ViewBar = ({
         <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
         <ViewBarSortEffect />
         <QueryParamsFiltersEffect />
-        <QueryParamsViewIdEffect objectNamePlural={objectNamePlural} />
+        <QueryParamsViewIdEffect />
 
         <ViewBarPageTitle viewBarId={viewBarId} />
         <TopBar
