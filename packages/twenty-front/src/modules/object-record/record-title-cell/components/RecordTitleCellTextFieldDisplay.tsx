@@ -9,15 +9,14 @@ const StyledSpan = styled.span`
   background: inherit;
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-sizing: content-box;
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
-  padding: ${({ theme }) => theme.spacing(0, 1)};
   overflow: hidden;
   text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
+  height: 28px;
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }

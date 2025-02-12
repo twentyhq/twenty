@@ -9,7 +9,7 @@ export const RecordTitleCellFieldDisplay = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
   return (
-    <div>
+    <>
       {isFieldText(fieldDefinition) ? (
         <RecordTitleCellSingleTextDisplayMode />
       ) : isFieldFullName(fieldDefinition) ? (
@@ -17,6 +17,6 @@ export const RecordTitleCellFieldDisplay = () => {
       ) : (
         <></>
       )}
-    </div>
+    </>
   );
 };

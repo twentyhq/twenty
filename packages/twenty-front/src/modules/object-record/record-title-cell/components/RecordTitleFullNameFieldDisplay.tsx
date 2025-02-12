@@ -14,7 +14,7 @@ const StyledSpan = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
+  height: 28px;
   overflow: hidden;
   text-decoration: none;
   text-overflow: ellipsis;
