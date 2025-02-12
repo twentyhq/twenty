@@ -13,15 +13,17 @@ import { currentViewIdComponentState } from '@/views/states/currentViewIdCompone
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '../useApplyCurrentViewFiltersToCurrentRecordFilters';
 
 jest.mock('@/prefetch/hooks/usePrefetchedData');
 
+const mockObjectMetadataItemNameSingular = 'company';
+
 describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
   const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'company',
+    (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
   );
 
   if (!isDefined(mockObjectMetadataItem)) {
@@ -76,7 +78,11 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
               currentViewIdComponentState.atomFamily({
@@ -129,7 +135,11 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
               currentViewIdComponentState.atomFamily({
@@ -174,7 +184,11 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
               currentViewIdComponentState.atomFamily({
