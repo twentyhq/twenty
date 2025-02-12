@@ -1,10 +1,10 @@
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   ChangeEvent,
   FocusEventHandler,
-  ForwardedRef,
   InputHTMLAttributes,
   forwardRef,
   useId,
@@ -19,7 +19,6 @@ import {
 } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
@@ -152,147 +151,159 @@ export type TextInputV2ComponentProps = Omit<
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
 
-const TextInputV2Component = (
-  {
-    className,
-    label,
-    value,
-    onChange,
-    onFocus,
-    onBlur,
-    onKeyDown,
-    fullWidth,
-    width,
-    error,
-    noErrorHelper = false,
-    required,
-    type,
-    autoFocus,
-    placeholder,
-    disabled,
-    tabIndex,
-    RightIcon,
-    LeftIcon,
-    autoComplete,
-    maxLength,
-    sizeVariant = 'lg',
-    dataTestId,
-  }: TextInputV2ComponentProps,
-  // eslint-disable-next-line @nx/workspace-component-props-naming
-  ref: ForwardedRef<HTMLInputElement>,
-): JSX.Element => {
-  const theme = useTheme();
+const TextInputV2Component = forwardRef<
+  HTMLInputElement,
+  TextInputV2ComponentProps
+>(
+  (
+    {
+      className,
+      label,
+      value,
+      onChange,
+      onFocus,
+      onBlur,
+      onKeyDown,
+      fullWidth,
+      width,
+      error,
+      noErrorHelper = false,
+      required,
+      type,
+      autoFocus,
+      placeholder,
+      disabled,
+      tabIndex,
+      RightIcon,
+      LeftIcon,
+      autoComplete,
+      maxLength,
+      sizeVariant = 'lg',
+      dataTestId,
+    },
+    ref,
+  ) => {
+    const theme = useTheme();
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const combinedRef = useCombinedRefs(ref, inputRef);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const combinedRef = useCombinedRefs(ref, inputRef);
 
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
 
-  const handleTogglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    const handleTogglePasswordVisibility = () => {
+      setPasswordVisible(!passwordVisible);
+    };
 
-  const handleFocus: FocusEventHandler<HTMLInputElement> = (event) => {
-    setIsFocused(true);
-    onFocus?.(event);
-  };
+    const handleFocus: FocusEventHandler<HTMLInputElement> = (event) => {
+      setIsFocused(true);
+      onFocus?.(event);
+    };
 
-  const handleBlur: FocusEventHandler<HTMLInputElement> = (event) => {
-    setIsFocused(false);
-    onBlur?.(event);
-  };
+    const handleBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+      setIsFocused(false);
+      onBlur?.(event);
+    };
 
-  const inputId = useId();
+    const inputId = useId();
 
-  return (
-    <StyledContainer className={className} fullWidth={fullWidth ?? false}>
-      {label && (
-        <InputLabel htmlFor={inputId}>
-          {label + (required ? '*' : '')}
-        </InputLabel>
-      )}
-      <StyledInputContainer>
-        {!!LeftIcon && (
-          <StyledLeftIconContainer sizeVariant={sizeVariant}>
-            <StyledTrailingIcon isFocused={isFocused}>
-              <LeftIcon size={theme.icon.size.md} />
-            </StyledTrailingIcon>
-          </StyledLeftIconContainer>
+    return (
+      <StyledContainer className={className} fullWidth={fullWidth ?? false}>
+        {label && (
+          <InputLabel htmlFor={inputId}>
+            {label + (required ? '*' : '')}
+          </InputLabel>
         )}
-
-        <StyledInput
-          id={inputId}
-          width={width}
-          data-testid={dataTestId}
-          autoComplete={autoComplete || 'off'}
-          ref={combinedRef}
-          tabIndex={tabIndex ?? 0}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          type={passwordVisible ? 'text' : type}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange?.(
-              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-            );
-          }}
-          onKeyDown={onKeyDown}
-          {...{
-            autoFocus,
-            disabled,
-            placeholder,
-            required,
-            value,
-            LeftIcon,
-            maxLength,
-            error,
-            sizeVariant,
-          }}
-        />
-
-        <StyledTrailingIconContainer {...{ error }}>
-          {!error && type === INPUT_TYPE_PASSWORD && (
-            <StyledTrailingIcon
-              onClick={handleTogglePasswordVisibility}
-              data-testid="reveal-password-button"
-            >
-              {passwordVisible ? (
-                <IconEyeOff size={theme.icon.size.md} />
-              ) : (
-                <IconEye size={theme.icon.size.md} />
-              )}
-            </StyledTrailingIcon>
+        <StyledInputContainer>
+          {!!LeftIcon && (
+            <StyledLeftIconContainer sizeVariant={sizeVariant}>
+              <StyledTrailingIcon isFocused={isFocused}>
+                <LeftIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            </StyledLeftIconContainer>
           )}
-          {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
-            <StyledTrailingIcon>
-              <RightIcon size={theme.icon.size.md} />
-            </StyledTrailingIcon>
-          )}
-        </StyledTrailingIconContainer>
-      </StyledInputContainer>
-      {error && !noErrorHelper && (
-        <StyledErrorHelper>{error}</StyledErrorHelper>
-      )}
-    </StyledContainer>
-  );
-};
 
-const TextInputV2WithAutoGrowWrapper = (
-  props: TextInputV2WithAutoGrowWrapperProps,
-) => (
+          <StyledInput
+            id={inputId}
+            width={width}
+            data-testid={dataTestId}
+            autoComplete={autoComplete || 'off'}
+            ref={combinedRef}
+            tabIndex={tabIndex ?? 0}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            type={passwordVisible ? 'text' : type}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              onChange?.(
+                turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+              );
+            }}
+            onKeyDown={onKeyDown}
+            {...{
+              autoFocus,
+              disabled,
+              placeholder,
+              required,
+              value,
+              LeftIcon,
+              maxLength,
+              error,
+              sizeVariant,
+            }}
+          />
+
+          <StyledTrailingIconContainer {...{ error }}>
+            {!error && type === INPUT_TYPE_PASSWORD && (
+              <StyledTrailingIcon
+                onClick={handleTogglePasswordVisibility}
+                data-testid="reveal-password-button"
+              >
+                {passwordVisible ? (
+                  <IconEyeOff size={theme.icon.size.md} />
+                ) : (
+                  <IconEye size={theme.icon.size.md} />
+                )}
+              </StyledTrailingIcon>
+            )}
+            {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
+              <StyledTrailingIcon>
+                <RightIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            )}
+          </StyledTrailingIconContainer>
+        </StyledInputContainer>
+        {error && !noErrorHelper && (
+          <StyledErrorHelper>{error}</StyledErrorHelper>
+        )}
+      </StyledContainer>
+    );
+  },
+);
+
+const TextInputV2WithAutoGrowWrapper = forwardRef<
+  HTMLInputElement,
+  TextInputV2WithAutoGrowWrapperProps
+>((props, ref) => (
   <>
     {props.autoGrow ? (
       <ComputeNodeDimensions node={props.value || props.placeholder}>
         {(nodeDimensions) => (
-          // eslint-disable-next-line
-          <TextInputV2Component {...props} width={nodeDimensions?.width} />
+          <TextInputV2Component
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...props}
+            ref={ref}
+            width={nodeDimensions?.width}
+          />
         )}
       </ComputeNodeDimensions>
     ) : (
-      // eslint-disable-next-line
-      <TextInputV2Component {...props} />
+      <TextInputV2Component
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...props}
+        ref={ref}
+      />
     )}
   </>
-);
+));
 
-export const TextInputV2 = forwardRef(TextInputV2WithAutoGrowWrapper);
+export const TextInputV2 = TextInputV2WithAutoGrowWrapper;

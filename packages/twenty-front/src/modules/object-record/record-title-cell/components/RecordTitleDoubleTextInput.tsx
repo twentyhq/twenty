@@ -177,7 +177,12 @@ export const RecordTitleDoubleTextInput = ({
         sizeVariant="sm"
         autoComplete="off"
         autoFocus
-        onFocus={() => setFocusPosition('left')}
+        onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
+          if (isDefined(firstInternalValue)) {
+            event.target.select();
+          }
+          setFocusPosition('left');
+        }}
         ref={firstValueInputRef}
         placeholder={firstValuePlaceholder}
         value={firstInternalValue}
@@ -196,7 +201,12 @@ export const RecordTitleDoubleTextInput = ({
         autoGrow
         sizeVariant="sm"
         autoComplete="off"
-        onFocus={() => setFocusPosition('right')}
+        onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
+          if (isDefined(secondInternalValue)) {
+            event.target.select();
+          }
+          setFocusPosition('right');
+        }}
         ref={secondValueInputRef}
         placeholder={secondValuePlaceholder}
         value={secondInternalValue}
