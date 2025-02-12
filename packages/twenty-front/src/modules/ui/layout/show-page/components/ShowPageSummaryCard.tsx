@@ -31,7 +31,6 @@ export const StyledShowPageSummaryCard = styled.div<{
   isMobile: boolean;
 }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   gap: ${({ theme, isMobile }) =>
