@@ -1,7 +1,6 @@
-import { isUndefined } from '@sniptt/guards';
-
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RelationDefinitionType,
@@ -9,18 +8,21 @@ import {
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
+type MapFieldMetadataToGraphQLQueryArgs = {
+  objectMetadataItems: ObjectMetadataItem[];
+  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
+  relationrecordFields?: Record<string, any>;
+  computeReferences?: boolean;
+  isForInsertion?: boolean; // Name not incredible
+};
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
   relationrecordFields,
   computeReferences = false,
-}: {
-  objectMetadataItems: ObjectMetadataItem[];
-  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
-  relationrecordFields?: Record<string, any>;
-  computeReferences?: boolean;
-}): any => {
+  isForInsertion = false,
+}: MapFieldMetadataToGraphQLQueryArgs): any => {
   const fieldType = field.type;
 
   const fieldIsSimpleValue = [
@@ -136,12 +138,20 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.ACTOR) {
+    if (isForInsertion) {
+      return `${field.name}
+{
+    source
+    context
+}`;
+    }
+
     return `${field.name}
 {
     source
+    context
     workspaceMemberId
     name
-    context
 }`;
   }
 

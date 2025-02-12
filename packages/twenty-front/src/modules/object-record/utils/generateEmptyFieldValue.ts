@@ -1,5 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldActorForInsertionValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import {
   FieldMetadataType,
@@ -99,10 +99,8 @@ export const generateEmptyFieldValue = ({
     case FieldMetadataType.ACTOR: {
       return {
         source: 'MANUAL',
-        workspaceMemberId: null,
-        name: '',
-        context: null,
-      } satisfies FieldActorValue;
+        context: {},
+      } satisfies FieldActorForInsertionValue;
     }
     case FieldMetadataType.PHONES: {
       return {

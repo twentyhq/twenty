@@ -288,6 +288,8 @@ export type FieldActorValue = {
   } | null;
 };
 
+export type FieldActorForInsertionValue = Pick<FieldActorValue, 'context' | 'source'>
+
 export type FieldArrayValue = string[];
 
 export type PhoneRecord = {

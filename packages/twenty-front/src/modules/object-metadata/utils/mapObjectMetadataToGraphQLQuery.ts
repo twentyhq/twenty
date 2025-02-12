@@ -2,19 +2,22 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
 
+type MapObjectMetadataToGraphQLQueryArgs = {
+  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
+  recordGqlFields?: Record<string, any>;
+  computeReferences?: boolean;
+  isRootLevel?: boolean;
+  isForInsertion?: boolean;
+};
 export const mapObjectMetadataToGraphQLQuery = ({
   objectMetadataItems,
   objectMetadataItem,
   recordGqlFields,
   computeReferences = false,
   isRootLevel = true,
-}: {
-  objectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
-  recordGqlFields?: Record<string, any>;
-  computeReferences?: boolean;
-  isRootLevel?: boolean;
-}): any => {
+  isForInsertion = false,
+}: MapObjectMetadataToGraphQLQueryArgs): string => {
   const fieldsThatShouldBeQueried =
     objectMetadataItem?.fields
       .filter((field) => field.isActive)
@@ -37,6 +40,7 @@ __typename
 ${fieldsThatShouldBeQueried
   .map((field) => {
     return mapFieldMetadataToGraphQLQuery({
+      isForInsertion,
       objectMetadataItems,
       field,
       relationrecordFields:
