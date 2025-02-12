@@ -35,7 +35,13 @@ export const SettingsExperience = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title title={t`Appearance`} />
-          <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
+          <ColorSchemePicker
+            value={colorScheme}
+            onChange={setColorScheme}
+            lightLabel={t`Light`}
+            darkLabel={t`Dark`}
+            systemLabel={t`System settings`}
+          />
         </Section>
         <Section>
           <H2Title
