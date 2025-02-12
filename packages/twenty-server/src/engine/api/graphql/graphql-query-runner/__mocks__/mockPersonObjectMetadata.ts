@@ -1,9 +1,11 @@
 import { FieldMetadataType } from 'twenty-shared';
 
+import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { WorkspaceEntityDuplicateCriteria } from '../../workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 
-export const mockPersonObjectMetadata = (duplicateCriteria: WorkspaceEntityDuplicateCriteria[]): ObjectMetadataItemWithFieldMaps => ({
+export const mockPersonObjectMetadata = (
+  duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
+): ObjectMetadataItemWithFieldMaps => ({
   id: '',
   standardId: '',
   nameSingular: 'person',
