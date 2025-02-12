@@ -18,6 +18,33 @@ const jestConfig: JestConfigWithTsJest = {
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
   testTimeout: 15000,
   maxWorkers: 1,
+  transform: {
+    '^.+\\.(t|j)s$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: false,
+            decorators: true,
+          },
+          transform: {
+            decoratorMetadata: true,
+          },
+          experimental: {
+            plugins: [
+              [
+                '@lingui/swc-plugin',
+                {
+                  stripNonEssentialFields: false,
+                },
+              ],
+            ],
+          },
+        },
+      },
+    ],
+  },
   moduleNameMapper: {
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
       prefix: '<rootDir>/../..',
@@ -28,9 +55,6 @@ const jestConfig: JestConfigWithTsJest = {
   },
   fakeTimers: {
     enableGlobally: true,
-  },
-  transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
   },
   globals: {
     APP_PORT: 4000,
