@@ -23,7 +23,8 @@ describe('attachmentsResolver (e2e)', () => {
                 personId
                 companyId
                 opportunityId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -64,7 +65,8 @@ describe('attachmentsResolver (e2e)', () => {
           expect(attachments).toHaveProperty('personId');
           expect(attachments).toHaveProperty('companyId');
           expect(attachments).toHaveProperty('opportunityId');
-          expect(attachments).toHaveProperty('rocketId');
+          expect(attachments).toHaveProperty('petId');
+          expect(attachments).toHaveProperty('surveyResultId');
         }
       });
   });

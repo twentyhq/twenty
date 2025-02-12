@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
 import { NextFunction, Request, Response } from 'express';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
 
 @Injectable()
 export class I18nMiddleware implements NestMiddleware {
@@ -12,7 +12,7 @@ export class I18nMiddleware implements NestMiddleware {
     if (locale && Object.values(APP_LOCALES).includes(locale)) {
       i18n.activate(locale);
     } else {
-      i18n.activate('en');
+      i18n.activate(SOURCE_LOCALE);
     }
 
     next();

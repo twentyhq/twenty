@@ -13,13 +13,13 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   objectMetadataItems,
   objectMetadataItem,
   cache,
-  recordGqlFields = undefined,
+  recordGqlFields,
   record,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   cache: ApolloCache<object>;
-  recordGqlFields?: Record<string, any>;
+  recordGqlFields: Record<string, boolean>;
   record: T;
 }) => {
   if (isUndefinedOrNull(objectMetadataItem)) {

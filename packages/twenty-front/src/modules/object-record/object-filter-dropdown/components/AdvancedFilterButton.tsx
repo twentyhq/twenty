@@ -10,6 +10,7 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
@@ -41,6 +42,8 @@ export const StyledPill = styled(Pill)`
 
 export const AdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
+
+  const { t } = useLingui();
 
   const { openDropdown: openAdvancedFilterDropdown } = useDropdown(
     ADVANCED_FILTER_DROPDOWN_ID,
@@ -126,7 +129,7 @@ export const AdvancedFilterButton = () => {
   return (
     <StyledContainer>
       <StyledMenuItemSelect onClick={handleClick}>
-        <MenuItemLeftContent LeftIcon={IconFilter} text="Advanced filter" />
+        <MenuItemLeftContent LeftIcon={IconFilter} text={t`Advanced filter`} />
         {advancedFilterQuerySubFilterCount > 0 && (
           <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
         )}

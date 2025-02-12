@@ -13,11 +13,16 @@ export const RECORD_ACTIONS: Array<{
   {
     label: 'Update Record',
     type: 'UPDATE_RECORD',
-    icon: 'IconRefreshDot',
+    icon: 'IconReload',
   },
   {
     label: 'Delete Record',
     type: 'DELETE_RECORD',
     icon: 'IconTrash',
+  },
+  {
+    label: 'Search Records',
+    type: 'FIND_RECORDS',
+    icon: 'IconSearch',
   },
 ];
