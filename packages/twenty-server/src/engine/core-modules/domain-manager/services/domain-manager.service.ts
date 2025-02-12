@@ -256,7 +256,7 @@ export class DomainManagerService {
         type: 'dv',
         settings: {
           http2: 'on',
-          min_tls_version: '1.0',
+          min_tls_version: '1.2',
           tls_1_3: 'on',
           ciphers: ['ECDHE-RSA-AES128-GCM-SHA256', 'AES128-SHA'],
           early_hints: 'on',
