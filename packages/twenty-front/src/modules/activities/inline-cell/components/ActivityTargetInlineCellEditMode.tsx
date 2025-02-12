@@ -259,6 +259,7 @@ export const ActivityTargetInlineCellEditMode = ({
       createManyActivityTargetsInCache,
       deleteOneActivityTarget,
       isActivityInCreateMode,
+      currentWorkspaceMember,
       objectMetadataItemActivityTarget,
       recordPickerInstanceId,
       upsertActivity,
