@@ -1,8 +1,11 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import styled from '@emotion/styled';
-import { capitalize } from 'twenty-shared';
+import { FieldMetadataType, capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
@@ -39,21 +42,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
     },
   });
 
-  const { updateOneRecord } = useUpdateOneRecord({
+  const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
-    recordGqlFields: {
-      [labelIdentifierFieldMetadataItem?.name ?? 'name']: true,
-    },
+    objectRecordId,
+    recordFromStore: record ?? null,
   });
-
-  const handleSubmit = (value: string) => {
-    updateOneRecord({
-      idToUpdate: objectRecordId,
-      updateOneRecordInput: {
-        name: value,
-      },
-    });
-  };
 
   if (loading) {
     return null;
@@ -65,19 +58,31 @@ export const ObjectRecordShowPageBreadcrumb = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      {/* <ExpandableInputInstanceContext.Provider
+      <FieldContext.Provider
         value={{
-          instanceId: objectRecordId,
+          recordId: objectRecordId,
+          recoilScopeId: objectRecordId + labelIdentifierFieldMetadataItem?.id,
+          isLabelIdentifier: false,
+          fieldDefinition: {
+            type:
+              labelIdentifierFieldMetadataItem?.type || FieldMetadataType.TEXT,
+            iconName: '',
+            fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
+            label: labelIdentifierFieldMetadataItem?.label || '',
+            metadata: {
+              fieldName: labelIdentifierFieldMetadataItem?.name || '',
+              objectMetadataNameSingular: objectNameSingular,
+            },
+            defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
+          },
+          useUpdateRecord: useUpdateOneObjectRecordMutation,
+          hotkeyScope: InlineCellHotkeyScope.InlineCell,
+          isCentered: false,
+          isDisplayModeFixHeight: true,
         }}
       >
-        <ExpandableInput
-          defaultValue={record?.name ?? ''}
-          noValuePlaceholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
-          placeholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
-          onSubmit={handleSubmit}
-          hotkeyScope="editable-breadcrumb-item"
-        />
-      </ExpandableInputInstanceContext.Provider> */}
+        <RecordTitleCell />
+      </FieldContext.Provider>
     </StyledEditableTitleContainer>
   );
 };
