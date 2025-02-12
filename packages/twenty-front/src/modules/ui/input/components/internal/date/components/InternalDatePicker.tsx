@@ -8,7 +8,6 @@ import {
 } from 'twenty-ui';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isDefined } from 'twenty-shared';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
@@ -19,7 +18,7 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
 export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
@@ -341,36 +340,6 @@ export const DateTimePicker = ({
     onClose?.(newDate);
   };
 
-  const handleChangeMonth = (month: number) => {
-    const newDate = new Date(internalDate);
-    newDate.setMonth(month);
-    onChange?.(newDate);
-  };
-
-  const handleAddMonth = () => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .plus({ months: 1 })
-      .toJSDate();
-
-    onChange?.(dateParsed);
-  };
-
-  const handleSubtractMonth = () => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .minus({ months: 1 })
-      .toJSDate();
-
-    onChange?.(dateParsed);
-  };
-
-  const handleChangeYear = (year: number) => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .set({ year: year })
-      .toJSDate();
-
-    onChange?.(dateParsed);
-  };
-
   const handleDateChange = (date: Date) => {
     const dateParsed = DateTime.fromJSDate(internalDate, {
       zone: isDateTimeInput ? timeZone : 'local',
@@ -439,6 +408,52 @@ export const DateTimePicker = ({
 
   const selectedDates = isRelative ? highlightedDates : [dateToUse];
 
+  const [datePickerMonth, setDatePickerMonth] = useState(
+    endOfDayInLocalTimezone.getMonth(),
+  );
+
+  const [datePickerYear, setDatePickerYear] = useState(
+    endOfDayInLocalTimezone.getFullYear(),
+  );
+
+  const openToDate = DateTime.now()
+    .set({
+      day: dateParsed.get('day'),
+      month: datePickerMonth + 1,
+      year: datePickerYear,
+      hour: 23,
+      minute: 59,
+      second: 59,
+      millisecond: 999,
+    })
+    .toJSDate();
+
+  const onChangeMonth = (month: number) => {
+    setDatePickerMonth(month);
+  };
+
+  const onChangeYear = (year: number) => {
+    setDatePickerYear(year);
+  };
+
+  const onSubtractMonth = () => {
+    if (datePickerMonth === 0) {
+      onChangeMonth(11);
+      setDatePickerYear(datePickerYear - 1);
+    } else {
+      onChangeMonth(datePickerMonth - 1);
+    }
+  };
+
+  const onAddMonth = () => {
+    if (datePickerMonth === 11) {
+      onChangeMonth(0);
+      setDatePickerYear(datePickerYear + 1);
+    } else {
+      onChangeMonth(datePickerMonth + 1);
+    }
+  };
+
   return (
     <StyledContainer calendarDisabled={isRelative}>
       <div className={clearable ? 'clearable ' : ''}>
@@ -446,7 +461,7 @@ export const DateTimePicker = ({
           open={true}
           selected={dateToUse}
           selectedDates={selectedDates}
-          openToDate={isDefined(dateToUse) ? dateToUse : undefined}
+          openToDate={openToDate}
           disabledKeyboardNavigation
           onChange={handleDateChange as any}
           customInput={
@@ -472,10 +487,12 @@ export const DateTimePicker = ({
               <AbsoluteDatePickerHeader
                 date={internalDate}
                 onChange={onChange}
-                onChangeMonth={handleChangeMonth}
-                onChangeYear={handleChangeYear}
-                onAddMonth={handleAddMonth}
-                onSubtractMonth={handleSubtractMonth}
+                month={datePickerMonth}
+                year={datePickerYear}
+                onChangeMonth={onChangeMonth}
+                onChangeYear={onChangeYear}
+                onAddMonth={onAddMonth}
+                onSubtractMonth={onSubtractMonth}
                 prevMonthButtonDisabled={prevMonthButtonDisabled}
                 nextMonthButtonDisabled={nextMonthButtonDisabled}
                 isDateTimeInput={isDateTimeInput}

@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { DateTime } from 'luxon';
 import { IconChevronLeft, IconChevronRight, LightIconButton } from 'twenty-ui';
 
 import { Select } from '@/ui/input/components/Select';
@@ -29,6 +28,8 @@ const years = Array.from(
 
 type AbsoluteDatePickerHeaderProps = {
   date: Date;
+  month?: number;
+  year?: number;
   onChange?: (date: Date | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
@@ -43,6 +44,8 @@ type AbsoluteDatePickerHeaderProps = {
 
 export const AbsoluteDatePickerHeader = ({
   date,
+  month,
+  year,
   onChange,
   onChangeMonth,
   onChangeYear,
@@ -54,18 +57,6 @@ export const AbsoluteDatePickerHeader = ({
   timeZone,
   hideInput = false,
 }: AbsoluteDatePickerHeaderProps) => {
-  const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
-    day: date.getDate(),
-    month: date.getMonth() + 1,
-    year: date.getFullYear(),
-    hour: 23,
-    minute: 59,
-    second: 59,
-    millisecond: 999,
-  });
-
-  const endOfDayInLocalTimezone = endOfDayDateTimeInLocalTimezone.toJSDate();
-
   return (
     <>
       {!hideInput && (
@@ -82,13 +73,13 @@ export const AbsoluteDatePickerHeader = ({
           dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
           options={getMonthSelectOptions()}
           onChange={onChangeMonth}
-          value={endOfDayInLocalTimezone.getMonth()}
+          value={month}
           fullWidth
         />
         <Select
           dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
           onChange={onChangeYear}
-          value={endOfDayInLocalTimezone.getFullYear()}
+          value={year}
           options={years}
           fullWidth
         />
