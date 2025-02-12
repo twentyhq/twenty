@@ -6,6 +6,7 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -14,8 +15,8 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -84,6 +85,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: ExceptionHandlerService,
+          useValue: {},
+        },
+        {
+          provide: PermissionsService,
           useValue: {},
         },
       ],
