@@ -1,8 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { WorkspaceEntityDuplicateCriteria } from '../../workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 
-export const mockPersonObjectMetadata: ObjectMetadataItemWithFieldMaps = {
+export const mockPersonObjectMetadata = (duplicateCriteria: WorkspaceEntityDuplicateCriteria[]): ObjectMetadataItemWithFieldMaps => ({
   id: '',
   standardId: '',
   nameSingular: 'person',
@@ -16,11 +17,7 @@ export const mockPersonObjectMetadata: ObjectMetadataItemWithFieldMaps = {
   isActive: true,
   isSystem: false,
   isAuditLogged: true,
-  duplicateCriteria: [
-    ['nameFirstName', 'nameLastName', 'jobTitle'],
-    ['linkedinLinkPrimaryLinkUrl'],
-    ['emailsPrimaryEmail'],
-  ],
+  duplicateCriteria: duplicateCriteria,
   fromRelations: [],
   toRelations: [],
   labelIdentifierFieldMetadataId: '',
@@ -91,4 +88,4 @@ export const mockPersonObjectMetadata: ObjectMetadataItemWithFieldMaps = {
       workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     },
   },
-};
+});

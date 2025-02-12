@@ -53,26 +53,15 @@ describe('GraphqlQueryFindDuplicatesResolverService', () => {
   });
 
   describe('buildDuplicateConditions', () => {
-    it('should build conditions based on duplicate criteria', () => {
+    it('should build conditions based on duplicate criteria from composite field', () => {
       const duplicateConditons = service.buildDuplicateConditions(
-        mockPersonObjectMetadata,
+        mockPersonObjectMetadata([['emailsPrimaryEmail']]),
         mockPersonRecords,
         'recordId',
       );
 
       expect(duplicateConditons).toEqual({
         or: [
-          {
-            nameFirstName: {
-              eq: 'Testfirst',
-            },
-            nameLastName: {
-              eq: 'Testlast',
-            },
-            jobTitle: {
-              eq: 'Test job',
-            },
-          },
           {
             emailsPrimaryEmail: {
               eq: 'test@test.fr',
@@ -83,6 +72,36 @@ describe('GraphqlQueryFindDuplicatesResolverService', () => {
           neq: 'recordId',
         },
       });
+    });
+
+    it('should build conditions based on duplicate criteria from basic field', () => {
+      const duplicateConditons = service.buildDuplicateConditions(
+        mockPersonObjectMetadata([['jobTitle']]),
+        mockPersonRecords,
+        'recordId',
+      );
+
+      expect(duplicateConditons).toEqual({
+        or: [
+          {
+            jobTitle: {
+              eq: 'Test job',
+            },
+          },
+        ],
+        id: {
+          neq: 'recordId',
+        },
+      });
+    });
+
+    it('should not build conditions based on duplicate criteria if record value is null or too small and without recordId filter', () => {
+      const duplicateConditons = service.buildDuplicateConditions(
+        mockPersonObjectMetadata([['linkedinLinkPrimaryLinkUrl']]),
+        mockPersonRecords,
+      );
+
+      expect(duplicateConditons).toEqual({});
     });
   });
 });
