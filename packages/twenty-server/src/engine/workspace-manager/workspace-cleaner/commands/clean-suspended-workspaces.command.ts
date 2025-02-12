@@ -26,8 +26,11 @@ export class CleanSuspendedWorkspacesCommand extends ActiveWorkspacesCommandRunn
     _options: BaseCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
+    const { dryRun } = _options;
+
     await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
       workspaceIds,
+      dryRun,
     );
   }
 }

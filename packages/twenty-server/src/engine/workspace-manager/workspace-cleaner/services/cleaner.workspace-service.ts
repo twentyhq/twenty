@@ -124,7 +124,11 @@ export class CleanerWorkspaceService {
     });
   }
 
-  async warnWorkspaceMembers(workspace: Workspace, daysSinceInactive: number) {
+  async warnWorkspaceMembers(
+    workspace: Workspace,
+    daysSinceInactive: number,
+    dryRun: boolean,
+  ) {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
@@ -150,19 +154,21 @@ export class CleanerWorkspaceService {
         .join(', ')}']`,
     );
 
-    for (const workspaceMember of workspaceMembers) {
-      await this.userVarsService.set({
-        userId: workspaceMember.userId,
-        workspaceId: workspace.id,
-        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
-        value: true,
-      });
+    if (!dryRun) {
+      for (const workspaceMember of workspaceMembers) {
+        await this.userVarsService.set({
+          userId: workspaceMember.userId,
+          workspaceId: workspace.id,
+          key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+          value: true,
+        });
 
-      await this.sendWarningEmail(
-        workspaceMember,
-        workspace.displayName,
-        daysSinceInactive,
-      );
+        await this.sendWarningEmail(
+          workspaceMember,
+          workspace.displayName,
+          daysSinceInactive,
+        );
+      }
     }
   }
 
@@ -191,7 +197,10 @@ export class CleanerWorkspaceService {
     });
   }
 
-  async informWorkspaceMembersAndDeleteWorkspace(workspace: Workspace) {
+  async informWorkspaceMembersAndDeleteWorkspace(
+    workspace: Workspace,
+    dryRun: boolean,
+  ) {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
@@ -203,20 +212,22 @@ export class CleanerWorkspaceService {
         .join(', ')}']`,
     );
 
-    for (const workspaceMember of workspaceMembers) {
-      await this.userVarsService.delete({
-        userId: workspaceMember.userId,
-        workspaceId: workspace.id,
-        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
-      });
+    if (!dryRun) {
+      for (const workspaceMember of workspaceMembers) {
+        await this.userVarsService.delete({
+          userId: workspaceMember.userId,
+          workspaceId: workspace.id,
+          key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+        });
 
-      await this.sendCleaningEmail(
-        workspaceMember,
-        workspace.displayName || '',
-      );
+        await this.sendCleaningEmail(
+          workspaceMember,
+          workspace.displayName || '',
+        );
+      }
+
+      await this.workspaceService.deleteWorkspace(workspace.id);
     }
-
-    await this.workspaceService.deleteWorkspace(workspace.id);
     this.logger.log(
       `Cleaning Workspace ${workspace.id} ${workspace.displayName}`,
     );
@@ -224,8 +235,11 @@ export class CleanerWorkspaceService {
 
   async batchWarnOrCleanSuspendedWorkspaces(
     workspaceIds: string[],
+    dryRun = false,
   ): Promise<void> {
-    this.logger.log(`batchWarnOrCleanSuspendedWorkspaces running...`);
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
+    );
 
     const workspaces = await this.workspaceRepository.find({
       where: {
@@ -247,7 +261,10 @@ export class CleanerWorkspaceService {
           deletedWorkspacesCount <=
             this.maxNumberOfWorkspacesDeletedPerExecution
         ) {
-          await this.informWorkspaceMembersAndDeleteWorkspace(workspace);
+          await this.informWorkspaceMembersAndDeleteWorkspace(
+            workspace,
+            dryRun,
+          );
           deletedWorkspacesCount++;
 
           continue;
@@ -257,7 +274,11 @@ export class CleanerWorkspaceService {
           workspaceInactivity > this.inactiveDaysBeforeWarn &&
           workspaceInactivity <= this.inactiveDaysBeforeDelete
         ) {
-          await this.warnWorkspaceMembers(workspace, workspaceInactivity);
+          await this.warnWorkspaceMembers(
+            workspace,
+            workspaceInactivity,
+            dryRun,
+          );
         }
       } catch (error) {
         this.logger.error(
@@ -265,6 +286,8 @@ export class CleanerWorkspaceService {
         );
       }
     }
-    this.logger.log(`batchWarnOrCleanSuspendedWorkspaces done!`);
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces done!`,
+    );
   }
 }
