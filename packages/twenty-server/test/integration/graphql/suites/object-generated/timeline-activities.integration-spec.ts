@@ -29,7 +29,8 @@ describe('timelineActivitiesResolver (e2e)', () => {
                 workflowId
                 workflowVersionId
                 workflowRunId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -76,7 +77,8 @@ describe('timelineActivitiesResolver (e2e)', () => {
           expect(timelineActivities).toHaveProperty('workflowId');
           expect(timelineActivities).toHaveProperty('workflowVersionId');
           expect(timelineActivities).toHaveProperty('workflowRunId');
-          expect(timelineActivities).toHaveProperty('rocketId');
+          expect(timelineActivities).toHaveProperty('petId');
+          expect(timelineActivities).toHaveProperty('surveyResultId');
         }
       });
   });

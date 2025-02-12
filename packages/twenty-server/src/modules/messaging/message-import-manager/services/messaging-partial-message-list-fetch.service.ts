@@ -15,6 +15,7 @@ import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
+import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
 @Injectable()
@@ -31,6 +32,7 @@ export class MessagingPartialMessageListFetchService {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
+    private readonly messagingCursorService: MessagingCursorService,
   ) {}
 
   public async processMessageListFetch(
@@ -57,17 +59,79 @@ export class MessagingPartialMessageListFetchService {
         },
       );
 
-      const syncCursor = messageChannel.syncCursor;
-
-      const { messageExternalIds, messageExternalIdsToDelete, nextSyncCursor } =
-        await this.messagingGetMessageListService.getPartialMessageList(
-          connectedAccount,
-          syncCursor,
+      const partialMessageLists =
+        await this.messagingGetMessageListService.getPartialMessageLists(
+          messageChannel,
         );
 
-      if (syncCursor === nextSyncCursor) {
+      for (const partialMessageList of partialMessageLists) {
+        const {
+          messageExternalIds,
+          messageExternalIdsToDelete,
+          previousSyncCursor,
+          nextSyncCursor,
+          folderId,
+        } = partialMessageList;
+
+        const isPartialImportFinished = this.isPartialImportFinished(
+          previousSyncCursor,
+          nextSyncCursor,
+        );
+
+        if (isPartialImportFinished) {
+          this.logger.log(
+            `Partial message list import done on message channel ${messageChannel.id} in folder ${folderId} for workspace ${workspaceId} and account ${connectedAccount.id}`,
+          );
+          continue;
+        }
+
+        await this.cacheStorage.setAdd(
+          `messages-to-import:${workspaceId}:${messageChannel.id}`,
+          messageExternalIds,
+        );
+
         this.logger.log(
-          `Partial message list import done with history ${syncCursor} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
+          `Added ${messageExternalIds.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        );
+
+        const messageChannelMessageAssociationRepository =
+          await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            'messageChannelMessageAssociation',
+          );
+
+        if (messageExternalIdsToDelete.length) {
+          await messageChannelMessageAssociationRepository.delete({
+            messageChannelId: messageChannel.id,
+            messageExternalId: In(messageExternalIdsToDelete),
+          });
+
+          await this.messagingMessageCleanerService.cleanWorkspaceThreads(
+            workspaceId,
+          );
+        }
+
+        this.logger.log(
+          `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        );
+
+        await this.messagingCursorService.updateCursor(
+          messageChannel,
+          nextSyncCursor,
+          folderId,
+        );
+      }
+
+      const isPartialImportFinishedForAllFolders = partialMessageLists.every(
+        (partialMessageList) =>
+          this.isPartialImportFinished(
+            partialMessageList.previousSyncCursor,
+            partialMessageList.nextSyncCursor,
+          ),
+      );
+
+      if (isPartialImportFinishedForAllFolders) {
+        this.logger.log(
+          `Partial message list import done on message channel ${messageChannel.id} entirely for workspace ${workspaceId} and account ${connectedAccount.id}`,
         );
 
         await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
@@ -75,46 +139,6 @@ export class MessagingPartialMessageListFetchService {
         );
 
         return;
-      }
-
-      await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:${messageChannel.id}`,
-        messageExternalIds,
-      );
-
-      this.logger.log(
-        `Added ${messageExternalIds.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
-      );
-
-      const messageChannelMessageAssociationRepository =
-        await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-          'messageChannelMessageAssociation',
-        );
-
-      if (messageExternalIdsToDelete.length) {
-        await messageChannelMessageAssociationRepository.delete({
-          messageChannelId: messageChannel.id,
-          messageExternalId: In(messageExternalIdsToDelete),
-        });
-
-        await this.messagingMessageCleanerService.cleanWorkspaceThreads(
-          workspaceId,
-        );
-      }
-
-      this.logger.log(
-        `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
-      );
-
-      if (!syncCursor || nextSyncCursor > syncCursor) {
-        await messageChannelRepository.update(
-          {
-            id: messageChannel.id,
-          },
-          {
-            syncCursor: nextSyncCursor,
-          },
-        );
       }
 
       await this.messageChannelSyncStatusService.scheduleMessagesImport([
@@ -128,5 +152,12 @@ export class MessagingPartialMessageListFetchService {
         workspaceId,
       );
     }
+  }
+
+  private isPartialImportFinished(
+    previousSyncCursor: string,
+    nextSyncCursor: string,
+  ): boolean {
+    return previousSyncCursor === nextSyncCursor;
   }
 }

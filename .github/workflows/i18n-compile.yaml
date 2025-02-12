@@ -3,6 +3,8 @@ name: 'Compile translations'
 on:
   push:
     branches: ['i18n']
+  pull_request:
+    branches: ['i18n']
   workflow_dispatch:
 
 concurrency:
@@ -43,6 +45,6 @@ jobs:
           git config --global user.email 'github-actions@twenty.com'
           git add .
           if ! git diff --staged --quiet --exit-code; then
-            git commit -m "chore: compile translations"
+            git commit -m "chore: compile translations [skip ci]"
             git push origin HEAD:i18n
           fi

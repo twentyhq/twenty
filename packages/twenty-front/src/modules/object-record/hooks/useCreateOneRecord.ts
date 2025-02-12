@@ -23,7 +23,7 @@ import { isDefined } from 'twenty-shared';
 type useCreateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
-  skipPostOptmisticEffect?: boolean;
+  skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
 };
 
@@ -32,7 +32,7 @@ export const useCreateOneRecord = <
 >({
   objectNameSingular,
   recordGqlFields,
-  skipPostOptmisticEffect = false,
+  skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
@@ -95,7 +95,7 @@ export const useCreateOneRecord = <
         computeReferences: false,
       });
 
-      if (optimisticRecordNode !== null) {
+      if (skipPostOptimisticEffect === false && optimisticRecordNode !== null) {
         triggerCreateRecordsOptimisticEffect({
           cache: apolloClient.cache,
           objectMetadataItem,
@@ -117,7 +117,7 @@ export const useCreateOneRecord = <
         },
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
-          if (skipPostOptmisticEffect === false && isDefined(record)) {
+          if (skipPostOptimisticEffect === false && isDefined(record)) {
             triggerCreateRecordsOptimisticEffect({
               cache,
               objectMetadataItem,

@@ -66,7 +66,8 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             noteId
             opportunityId
             personId
-            rocketId
+            petId
+            surveyResultId
             taskId
             type
             updatedAt
@@ -173,8 +174,9 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             noteId
             opportunityId
             personId
+            petId
             position
-            rocketId
+            surveyResultId
             taskId
             updatedAt
             viewId
@@ -225,7 +227,8 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             noteId
             opportunityId
             personId
-            rocketId
+            petId
+            surveyResultId
             updatedAt
           }
         }
@@ -275,7 +278,8 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             id
             opportunityId
             personId
-            rocketId
+            petId
+            surveyResultId
             taskId
             updatedAt
           }
@@ -297,8 +301,9 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             noteId
             opportunityId
             personId
+            petId
             properties
-            rocketId
+            surveyResultId
             taskId
             updatedAt
             workflowId
