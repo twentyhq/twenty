@@ -95,13 +95,31 @@ describe('GraphqlQueryFindDuplicatesResolverService', () => {
       });
     });
 
-    it('should not build conditions based on duplicate criteria if record value is null or too small and without recordId filter', () => {
+    it('should not build conditions based on duplicate criteria if record value is null or too small', () => {
       const duplicateConditons = service.buildDuplicateConditions(
         mockPersonObjectMetadata([['linkedinLinkPrimaryLinkUrl']]),
         mockPersonRecords,
+        'recordId',
       );
 
       expect(duplicateConditons).toEqual({});
+    });
+
+    it('should build conditions based on duplicate criteria and without recordId filter', () => {
+      const duplicateConditons = service.buildDuplicateConditions(
+        mockPersonObjectMetadata([['jobTitle']]),
+        mockPersonRecords,
+      );
+
+      expect(duplicateConditons).toEqual({
+        or: [
+          {
+            jobTitle: {
+              eq: 'Test job',
+            },
+          },
+        ],
+      });
     });
   });
 });
