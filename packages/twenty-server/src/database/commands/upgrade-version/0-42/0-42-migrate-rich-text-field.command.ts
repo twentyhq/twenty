@@ -99,6 +99,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         this.logger.log(
           chalk.yellow('No RICH_TEXT fields found in this workspace'),
         );
+
         return;
       }
 
@@ -128,7 +129,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     }
   }
 
-  private async enableRichTextV2FeatureFlag(workspaceId: string): Promise<void> {
+  private async enableRichTextV2FeatureFlag(
+    workspaceId: string,
+  ): Promise<void> {
     await this.featureFlagRepository.upsert(
       {
         workspaceId,
@@ -164,6 +167,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       this.logger.log(
         `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
       );
+
       return;
     }
 
