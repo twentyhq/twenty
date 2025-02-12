@@ -118,7 +118,9 @@ export const generateWorkflowRunDiagram = ({
       parentRunStatus: runStatus,
       xPos,
       yPos: yPos + 150,
-      skippedExecution: runStatus === 'failure' || runStatus === 'running',
+      skippedExecution: skippedExecution
+        ? true
+        : runStatus === 'failure' || runStatus === 'running',
     });
   };
 
