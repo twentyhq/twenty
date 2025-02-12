@@ -5,10 +5,15 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, Section } from 'twenty-ui';
 import { useGetCustomDomainDetailsQuery } from '~/generated/graphql';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
+import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
   display: flex;
+`;
+
+const StyledRecordsWrapper = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsCustomDomain = () => {
@@ -22,7 +27,10 @@ export const SettingsCustomDomain = () => {
 
   return (
     <Section>
-      <H2Title title={t`Domain`} description={t`Set the name of your domain`} />
+      <H2Title
+        title={t`Custom Domain`}
+        description={t`Set the name of your custom domain and configure your DNS records.`}
+      />
       <StyledDomainFormWrapper>
         <Controller
           name="customDomain"
@@ -41,9 +49,18 @@ export const SettingsCustomDomain = () => {
       {getCustomDomainDetailsData?.getCustomDomainDetails &&
         getValues('customDomain') ===
           getCustomDomainDetailsData?.getCustomDomainDetails?.customDomain && (
-          <SettingsCustomDomainRecords
-            records={getCustomDomainDetailsData.getCustomDomainDetails.records}
-          />
+          <StyledRecordsWrapper>
+            <SettingsCustomDomainRecordsStatus
+              records={
+                getCustomDomainDetailsData.getCustomDomainDetails.records
+              }
+            />
+            <SettingsCustomDomainRecords
+              records={
+                getCustomDomainDetailsData.getCustomDomainDetails.records
+              }
+            />
+          </StyledRecordsWrapper>
         )}
     </Section>
   );
