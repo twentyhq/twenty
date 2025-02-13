@@ -20,6 +20,7 @@ import {
 import { getStatusCombinationFromArray } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-array.util';
 import { getStatusCombinationFromUpdate } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-update.util';
 import { getWorkflowStatusesFromCombination } from 'src/modules/workflow/workflow-status/utils/get-statuses-from-combination.util';
+import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -174,9 +175,14 @@ export class WorkflowStatusesUpdateJob {
             // applied between draft and lastPublished version.
             // If no change have been applied, we just use the same
             // serverless function version
-            this.logger.warn(
-              `Error while publishing serverless function '${step.settings.input.serverlessFunctionId}': ${e}`,
-            );
+            if (
+              e.code !==
+              ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED
+            ) {
+              this.logger.error(
+                `Error while publishing serverless function '${step.settings.input.serverlessFunctionId}': ${e}`,
+              );
+            }
           }
 
           const serverlessFunction =

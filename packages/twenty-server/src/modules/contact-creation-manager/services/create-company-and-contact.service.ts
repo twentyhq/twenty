@@ -77,6 +77,7 @@ export class CreateCompanyAndContactService {
     }
 
     const alreadyCreatedContacts = await personRepository.find({
+      withDeleted: true,
       where: {
         emails: { primaryEmail: Any(uniqueHandles) },
       },
