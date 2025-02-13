@@ -286,7 +286,7 @@ type FieldActorSource =
   | 'CALENDAR'
   | 'MANUAL'
   | 'SYSTEM'
-  | 'WORKFLOW'; // TODO find already existing
+  | 'WORKFLOW';
 
 export type FieldActorValue = {
   source: FieldActorSource;

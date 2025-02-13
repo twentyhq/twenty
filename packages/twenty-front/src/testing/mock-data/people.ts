@@ -26,7 +26,7 @@ export const getPersonFieldMetadataItem = (
   objectMetadaItem = getPersonObjectMetadataItem(),
 ) => {
   const result = objectMetadaItem.fields.find(
-    (field) => field.type === FieldMetadataType.ACTOR,
+    (field) => field.type === fieldMetadataType,
   );
   if (!result) {
     throw new Error(
