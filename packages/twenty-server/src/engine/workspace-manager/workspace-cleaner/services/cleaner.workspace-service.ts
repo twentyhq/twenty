@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
+import { differenceInDays } from 'date-fns';
 import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
@@ -68,9 +69,9 @@ export class CleanerWorkspaceService {
           order: { updatedAt: 'DESC' },
         });
 
-      const daysSinceBillingInactivity = Math.floor(
-        (new Date().getTime() - lastSubscription.updatedAt.getTime()) /
-          MILLISECONDS_IN_ONE_DAY,
+      const daysSinceBillingInactivity = differenceInDays(
+        new Date(),
+        lastSubscription.updatedAt,
       );
 
       return daysSinceBillingInactivity;
@@ -144,14 +145,14 @@ export class CleanerWorkspaceService {
 
     if (workspaceMembersWarned) {
       this.logger.log(
-        `Workspace ${workspace.id} ${workspace.displayName} already warned`,
+        `${dryRun ? 'DRY RUN - ' : ''}Workspace ${workspace.id} ${workspace.displayName} already warned`,
       );
 
       return;
     }
 
     this.logger.log(
-      `Sending ${workspace.id} ${
+      `${dryRun ? 'DRY RUN - ' : ''}Sending ${workspace.id} ${
         workspace.displayName
       } suspended since ${daysSinceInactive} days emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.userId)
@@ -211,7 +212,7 @@ export class CleanerWorkspaceService {
       await this.userService.loadWorkspaceMembers(workspace);
 
     this.logger.log(
-      `Sending workspace ${workspace.id} ${
+      `${dryRun ? 'DRY RUN - ' : ''}Sending workspace ${workspace.id} ${
         workspace.displayName
       } deletion emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.userId)
@@ -236,7 +237,7 @@ export class CleanerWorkspaceService {
       await this.workspaceService.deleteWorkspace(workspace.id, true);
     }
     this.logger.log(
-      `Soft deleting Workspace ${workspace.id} ${workspace.displayName}`,
+      `${dryRun ? 'DRY RUN - ' : ''}Soft deleting Workspace ${workspace.id} ${workspace.displayName}`,
     );
   }
 
@@ -263,10 +264,14 @@ export class CleanerWorkspaceService {
         const workspaceInactivity =
           await this.computeWorkspaceBillingInactivity(workspace);
 
+        const daysSinceSoftDeleted = differenceInDays(
+          new Date(),
+          workspace.deletedAt || new Date(),
+        );
+
         if (
-          workspaceInactivity &&
-          workspace.deletedAt &&
-          workspaceInactivity > this.inactiveDaysBeforeDelete
+          daysSinceSoftDeleted >
+          this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete
         ) {
           this.logger.log(
             `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,

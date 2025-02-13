@@ -1,6 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import chalk from 'chalk';
 import { Command, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
@@ -62,12 +61,8 @@ export class CleanSuspendedWorkspacesCommand extends BaseCommandRunner {
         ? this.workspaceIds
         : await this.fetchSuspendedWorkspaceIds();
 
-    if (options.dryRun) {
-      this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
-    }
-
     this.logger.log(
-      `Cleaning ${activeWorkspaceIds.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${activeWorkspaceIds.length} suspended workspaces`,
     );
 
     await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
