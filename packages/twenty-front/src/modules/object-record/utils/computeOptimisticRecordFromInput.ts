@@ -69,20 +69,26 @@ export const computeOptimisticRecordFromInput = ({
       }
 
       // Does util already exists ?
-      // Not great is a side effect
-      // const isRecordPrimaryKey = fieldMetadataItem.name === 'id';
-      // if (isRecordPrimaryKey && isDefined(recordInputFieldValue)) {
-      //   const defaultCreatedByValue: FieldActorValue = {
-      //     context: {},
-      //     name: '', // could be optimiscally retrieved
-      //     source: 'MANUAL',
-      //     workspaceMemberId: null, // could be optimistically retrieve
-      //   };
+      const isRecordPrimaryKey = fieldMetadataItem.name === 'id';
+      if (isRecordPrimaryKey && isDefined(recordInputFieldValue)) {
+        const createdByRecordInputValue = recordInput['createdBy'];
+        if (!isDefined(createdByRecordInputValue)) {
+          throw new Error("Should never occur, encountered record primary mutation but createdBy is missing from record input")
+        };
 
-      //   optimisticRecord[fieldMetadataItem.name] = recordInputFieldValue;
-      //   optimisticRecord["createdBy"] = defaultCreatedByValue;
-      //   continue
-      // }
+        const defaultCreatedByValue: FieldActorValue = {
+          context: {},
+          name: '', // could be optimiscally retrieved
+          source: 'MANUAL',
+          workspaceMemberId: null, // could be optimistically retrieve
+        };
+        optimisticRecord[fieldMetadataItem.name] = recordInputFieldValue;
+        optimisticRecord["createdBy"] = {
+          ...defaultCreatedByValue,
+          ...createdByRecordInputValue
+        };
+        continue
+      }
     }
 
     // Is it required ?

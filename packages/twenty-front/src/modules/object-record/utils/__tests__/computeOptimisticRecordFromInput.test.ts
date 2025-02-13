@@ -1,6 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
 import { InMemoryCache } from '@apollo/client';
@@ -46,7 +47,7 @@ describe('computeOptimisticRecordFromInput', () => {
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         city: 'Paris',
-        createdBy: actorFieldDefaultValue
+        createdBy: actorFieldDefaultValue,
       },
       cache,
     });
@@ -62,7 +63,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
   });
 
-  it.skip('should generate correct optimistic record createdBy when recordInput contains id', () => {
+  it('should generate correct optimistic record createdBy when recordInput contains id', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getPersonObjectMetadataItem();
     const result = computeOptimisticRecordFromInput({
@@ -70,12 +71,16 @@ describe('computeOptimisticRecordFromInput', () => {
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         id: '20202020-058c-4591-a7d7-50a75af6d1e6',
+        createdBy: {
+          source: "MANUAL",
+          context: {}
+        } satisfies FieldActorForInputValue
       },
       cache,
     });
 
     expect(result).toEqual({
-      city: 'Paris',
+      id: '20202020-058c-4591-a7d7-50a75af6d1e6',
       createdBy: {
         context: {},
         name: '',
@@ -83,6 +88,23 @@ describe('computeOptimisticRecordFromInput', () => {
         workspaceMemberId: null,
       },
     });
+  });
+
+  it('should throw an error if recordInput has `id` but no `createdBy` entry', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
+    expect(() =>
+      computeOptimisticRecordFromInput({
+        objectMetadataItems: generatedMockObjectMetadataItems,
+        objectMetadataItem: personObjectMetadataItem,
+        recordInput: {
+          id: '20202020-058c-4591-a7d7-50a75af6d1e6',
+        },
+        cache,
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `"Should never occur, encountered record primary mutation but createdBy is missing from record input"`,
+    );
   });
 
   it('should generate correct optimistic record if relation field is present but cache is empty', () => {

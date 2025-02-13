@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
-  FieldActorForInsertionValue,
+  FieldActorForInputValue,
   FieldAddressValue,
   FieldEmailsValue,
   FieldLinksValue,
@@ -225,7 +225,7 @@ export const buildRecordFromImportedStructuredRow = ({
         recordToBuild[field.name] = {
           source: 'IMPORT',
           context: {},
-        } satisfies FieldActorForInsertionValue;
+        } satisfies FieldActorForInputValue;
         break;
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.MULTI_SELECT: {

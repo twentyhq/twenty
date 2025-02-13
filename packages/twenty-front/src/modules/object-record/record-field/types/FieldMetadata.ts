@@ -279,7 +279,14 @@ export type FieldRichTextV2Value = {
 
 export type FieldRichTextValue = null | string;
 
-type FieldActorSource = 'API' | 'IMPORT' | 'EMAIL' | 'CALENDAR' | 'MANUAL' | 'SYSTEM' | 'WORKFLOW'; // TODO find already existing
+type FieldActorSource =
+  | 'API'
+  | 'IMPORT'
+  | 'EMAIL'
+  | 'CALENDAR'
+  | 'MANUAL'
+  | 'SYSTEM'
+  | 'WORKFLOW'; // TODO find already existing
 
 export type FieldActorValue = {
   source: FieldActorSource;
@@ -290,7 +297,7 @@ export type FieldActorValue = {
   } | null;
 };
 
-export type FieldActorForInsertionValue = Pick<
+export type FieldActorForInputValue = Pick<
   FieldActorValue,
   'context' | 'source'
 >;
