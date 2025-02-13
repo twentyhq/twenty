@@ -18,7 +18,7 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
 export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
@@ -453,6 +453,14 @@ export const DateTimePicker = ({
       handleChangeMonth(datePickerMonth + 1);
     }
   };
+
+  useEffect(() => {
+    const month = dateParsed.get('month');
+    const year = dateParsed.get('year');
+
+    setDatePickerMonth(month - 1);
+    setDatePickerYear(year);
+  }, [internalDate]);
 
   return (
     <StyledContainer calendarDisabled={isRelative}>
