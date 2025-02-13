@@ -24,8 +24,9 @@ const StyledEditableTitlePrefix = styled.div`
 `;
 
 const StyledTitle = styled.div`
-  overflow: hidden;
   max-width: 100%;
+  overflow: hidden;
+  padding-right: ${({ theme }) => theme.spacing(1)};
   width: fit-content;
 `;
 
