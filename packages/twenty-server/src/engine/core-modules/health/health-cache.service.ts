@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { HealthCheckService } from '@nestjs/terminus';
-import { InjectDataSource } from '@nestjs/typeorm';
-
-import { DataSource } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -15,7 +12,6 @@ import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators
 import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/health-counter-cache-keys.type';
 import { MessageChannelSyncJobByStatusCounter } from 'src/engine/core-modules/health/types/health-metrics.types';
 import { HealthSystem } from 'src/engine/core-modules/health/types/health-system.types';
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -27,9 +23,6 @@ export class HealthCacheService {
     @InjectCacheStorage(CacheStorageNamespace.EngineHealth)
     private readonly cacheStorage: CacheStorageService,
     private readonly environmentService: EnvironmentService,
-    private readonly redisClient: RedisClientService,
-    @InjectDataSource('core')
-    private readonly dataSource: DataSource,
     private readonly health: HealthCheckService,
     private readonly databaseHealth: DatabaseHealthIndicator,
     private readonly redisHealth: RedisHealthIndicator,

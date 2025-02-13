@@ -1,5 +1,19 @@
-import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-export type MessageChannelSyncJobByStatusCounter = {
-  [key in MessageChannelSyncStatus]?: number;
-};
+@ObjectType()
+export class MessageChannelSyncJobByStatusCounter {
+  @Field(() => Number, { nullable: true })
+  NOT_SYNCED?: number;
+
+  @Field(() => Number, { nullable: true })
+  ONGOING?: number;
+
+  @Field(() => Number, { nullable: true })
+  ACTIVE?: number;
+
+  @Field(() => Number, { nullable: true })
+  FAILED_INSUFFICIENT_PERMISSIONS?: number;
+
+  @Field(() => Number, { nullable: true })
+  FAILED_UNKNOWN?: number;
+}
