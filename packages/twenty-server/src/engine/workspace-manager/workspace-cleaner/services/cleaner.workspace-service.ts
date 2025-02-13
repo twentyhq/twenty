@@ -208,6 +208,16 @@ export class CleanerWorkspaceService {
     daysSinceInactive: number,
     dryRun: boolean,
   ) {
+    if (workspace.deletedAt) {
+      this.logger.log(
+        `${dryRun ? 'DRY RUN - ' : ''}Workspace ${workspace.id} ${
+          workspace.displayName
+        } already soft deleted`,
+      );
+
+      return;
+    }
+
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
@@ -276,11 +286,10 @@ export class CleanerWorkspaceService {
           this.logger.log(
             `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
           );
-          if (dryRun) {
-            continue;
+          if (!dryRun) {
+            await this.workspaceService.deleteWorkspace(workspace.id);
           }
 
-          await this.workspaceService.deleteWorkspace(workspace.id);
           continue;
         }
         if (

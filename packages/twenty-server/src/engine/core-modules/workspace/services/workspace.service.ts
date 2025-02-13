@@ -263,12 +263,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     id: string,
     withMetadataSchemaAndUserWorkspaceDeletion = true,
   ) {
-    const workspace = await this.workspaceRepository.findOneBy({ id });
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id },
+      withDeleted: true,
+    });
 
     assert(workspace, 'Workspace not found');
 
     if (!withMetadataSchemaAndUserWorkspaceDeletion) {
       await this.userWorkspaceRepository.softDelete({ workspaceId: id });
+      await this.workspaceRepository.softDelete({ id });
 
       return workspace;
     }
