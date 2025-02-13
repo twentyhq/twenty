@@ -1,18 +1,23 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
 import { getCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPersonObjectMetadataItem } from '~/testing/mock-data/people';
+import { mockCurrentWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 describe('computeOptimisticRecordFromInput', () => {
+  const currentWorkspaceMember = mockCurrentWorkspaceMembers[0];
+  const currentWorkspaceMemberFullname = `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`;
   it('should generate correct optimistic record if no relation field is present', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
       objectMetadataItems: generatedMockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -26,11 +31,69 @@ describe('computeOptimisticRecordFromInput', () => {
     });
   });
 
+  it('should generate correct optimistic record with actor field', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
+    const actorFieldValueForInput: FieldActorForInputValue = {
+      context: {},
+      source: 'API',
+    };
+    const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
+      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: {
+        city: 'Paris',
+        createdBy: actorFieldValueForInput,
+      },
+      cache,
+    });
+
+    expect(result).toEqual({
+      city: 'Paris',
+      createdBy: {
+        context: {},
+        name: currentWorkspaceMemberFullname,
+        source: 'API',
+        workspaceMemberId: currentWorkspaceMember.id,
+      },
+    });
+  });
+
+  it('should generate correct optimistic record createdBy when recordInput contains id', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
+    const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
+      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: {
+        id: '20202020-058c-4591-a7d7-50a75af6d1e6',
+        createdBy: {
+          source: 'SYSTEM',
+          context: {},
+        } satisfies FieldActorForInputValue,
+      },
+      cache,
+    });
+
+    expect(result).toEqual({
+      id: '20202020-058c-4591-a7d7-50a75af6d1e6',
+      createdBy: {
+        context: {},
+        name: currentWorkspaceMemberFullname,
+        source: 'SYSTEM',
+        workspaceMemberId: currentWorkspaceMember.id,
+      },
+    });
+  });
+
   it('should generate correct optimistic record if relation field is present but cache is empty', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
       objectMetadataItems: generatedMockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -73,6 +136,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
 
     const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
       objectMetadataItems: generatedMockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -117,6 +181,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
 
     const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
       objectMetadataItems: generatedMockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -136,6 +201,7 @@ describe('computeOptimisticRecordFromInput', () => {
     const personObjectMetadataItem = getPersonObjectMetadataItem();
 
     const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
       objectMetadataItems: generatedMockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
@@ -156,6 +222,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     expect(() =>
       computeOptimisticRecordFromInput({
+        currentWorkspaceMember,
         objectMetadataItems: generatedMockObjectMetadataItems,
         objectMetadataItem: personObjectMetadataItem,
         recordInput: {
@@ -167,7 +234,7 @@ describe('computeOptimisticRecordFromInput', () => {
         cache,
       }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadaItem person"`,
+      `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadataItem person"`,
     );
   });
 
@@ -177,6 +244,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     expect(() =>
       computeOptimisticRecordFromInput({
+        currentWorkspaceMember,
         objectMetadataItems: generatedMockObjectMetadataItems,
         objectMetadataItem: personObjectMetadataItem,
         recordInput: {
@@ -196,6 +264,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     expect(() =>
       computeOptimisticRecordFromInput({
+        currentWorkspaceMember,
         objectMetadataItems: generatedMockObjectMetadataItems,
         objectMetadataItem: personObjectMetadataItem,
         recordInput: {
