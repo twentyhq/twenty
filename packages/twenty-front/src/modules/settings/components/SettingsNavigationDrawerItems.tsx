@@ -27,6 +27,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
+import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
   NavigationDrawerItem,
@@ -39,7 +40,7 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey, SettingsFeatures } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationItem = {
@@ -59,6 +60,8 @@ export const SettingsNavigationDrawerItems = () => {
   const isPermissionsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsEnabled,
   );
+
+  const settingsPermissionMap = useSettingsPermissionMap();
 
   // We want to disable this serverless function setting menu but keep the code
   // for now
@@ -156,13 +159,14 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCurrencyDollar}
           />
         )}
-        {isPermissionsEnabled && (
-          <SettingsNavigationDrawerItem
-            label={t`Roles`}
-            path={SettingsPath.Roles}
-            Icon={IconLock}
-          />
-        )}
+        {isPermissionsEnabled &&
+          settingsPermissionMap[SettingsFeatures.ROLES] && (
+            <SettingsNavigationDrawerItem
+              label={t`Roles`}
+              path={SettingsPath.Roles}
+              Icon={IconLock}
+            />
+          )}
         <SettingsNavigationDrawerItem
           label={t`Data model`}
           path={SettingsPath.Objects}

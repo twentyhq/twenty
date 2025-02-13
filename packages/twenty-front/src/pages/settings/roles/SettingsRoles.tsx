@@ -23,7 +23,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   FeatureFlagKey,
   SettingsFeatures,
@@ -109,9 +109,11 @@ export const SettingsRoles = () => {
     SettingsFeatures.ROLES,
   );
 
-  if (!isPermissionsEnabled || !hasRolesSettingsPermission) {
-    return null;
-  }
+  useEffect(() => {
+    if (!isPermissionsEnabled || !hasRolesSettingsPermission) {
+      navigateSettings(SettingsPath.ProfilePage);
+    }
+  }, [navigateSettings, isPermissionsEnabled, hasRolesSettingsPermission]);
 
   const handleRoleClick = (roleId: string) => {
     navigateSettings(SettingsPath.RoleDetail, { roleId });

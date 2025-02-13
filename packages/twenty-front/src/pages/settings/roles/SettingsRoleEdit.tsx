@@ -11,11 +11,17 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { useGetRolesQuery } from '~/generated/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  SettingsFeatures,
+  useGetRolesQuery,
+} from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { RolePermissions } from '~/pages/settings/roles/components/RolePermissions';
 import { RoleSettings } from '~/pages/settings/roles/components/RoleSettings';
@@ -59,6 +65,20 @@ export const SettingsRoleEdit = () => {
   const { activeTabId } = useTabList(
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
+
+  const isPermissionsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPermissionsEnabled,
+  );
+
+  const hasRolesSettingsPermission = useHasSettingsPermission(
+    SettingsFeatures.ROLES,
+  );
+
+  useEffect(() => {
+    if (!isPermissionsEnabled || !hasRolesSettingsPermission) {
+      navigateSettings(SettingsPath.ProfilePage);
+    }
+  }, [navigateSettings, isPermissionsEnabled, hasRolesSettingsPermission]);
 
   useEffect(() => {
     if (!rolesLoading && !role) {
