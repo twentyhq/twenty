@@ -53,6 +53,8 @@ export const useFieldPreviewValue = ({
     case FieldMetadataType.PHONES:
       return getPhonesFieldPreviewValue({ fieldMetadataItem });
     default:
-      return getFieldPreviewValue({ fieldMetadataItem });
+      return getFieldPreviewValue({
+        fieldMetadataItem,
+      });
   }
 };

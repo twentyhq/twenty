@@ -181,7 +181,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       context: 'Context',
     },
     exampleValue: {
-      source: 'source',
+      source: 'IMPORT',
       name: 'name',
       workspaceMemberId: 'id',
       context: { provider: ConnectedAccountProvider.GOOGLE },

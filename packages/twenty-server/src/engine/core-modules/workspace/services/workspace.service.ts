@@ -161,6 +161,31 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       customDomainRegistered = true;
     }
 
+    const authProvidersBySystem = {
+      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+    };
+
+    if (payload.isGoogleAuthEnabled && !authProvidersBySystem.google) {
+      throw new WorkspaceException(
+        'Google auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+    if (payload.isMicrosoftAuthEnabled && !authProvidersBySystem.microsoft) {
+      throw new WorkspaceException(
+        'Microsoft auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+    if (payload.isPasswordAuthEnabled && !authProvidersBySystem.password) {
+      throw new WorkspaceException(
+        'Password auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+
     const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IsPermissionsEnabled,
       workspace.id,
