@@ -45,7 +45,7 @@ export const HorizontalSeparator = ({
     {text ? (
       <StyledSeparatorContainer noMargin={noMargin}>
         <StyledLine visible={visible} />
-        {text && (
+        (
           <Label>
             <StyledText>{text}</StyledText>
           </Label>
