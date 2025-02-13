@@ -74,9 +74,10 @@ export const computeOptimisticRecordFromInput = ({
     }
 
     if (isFieldActor(fieldMetadataItem) && isDefined(recordInputFieldValue)) {
-      const defaultActorFieldValue = buildOptimisticActorFieldValueFromCurrentWorkspaceMember(
-        currentWorkspaceMember,
-      );
+      const defaultActorFieldValue =
+        buildOptimisticActorFieldValueFromCurrentWorkspaceMember(
+          currentWorkspaceMember,
+        );
       optimisticRecord[fieldMetadataItem.name] = {
         ...defaultActorFieldValue,
         ...(recordInputFieldValue as FieldActorValue),
