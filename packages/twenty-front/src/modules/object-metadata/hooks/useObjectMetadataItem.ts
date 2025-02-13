@@ -1,10 +1,9 @@
-import { useRecoilValue } from 'recoil';
-
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
-import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';

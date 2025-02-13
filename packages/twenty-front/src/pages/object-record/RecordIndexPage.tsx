@@ -31,7 +31,6 @@ const StyledIndexContainer = styled.div`
 `;
 
 export const RecordIndexPage = () => {
-
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
