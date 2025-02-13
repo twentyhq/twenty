@@ -5,7 +5,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 
 @ObjectType()
-export class GetAuthorizationUrlOutput {
+export class GetAuthorizationUrlForSSOOutput {
   @Field(() => String)
   authorizationURL: string;
 
