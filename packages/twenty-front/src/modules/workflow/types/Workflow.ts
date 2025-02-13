@@ -206,7 +206,7 @@ export type WorkflowRun = {
   __typename: 'WorkflowRun';
   id: string;
   workflowVersionId: string;
-  output: WorkflowRunOutput;
+  output: WorkflowRunOutput | null;
 };
 
 export type Workflow = {
