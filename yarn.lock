@@ -40964,16 +40964,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-intersection-observer@npm:^9.5.2":
-  version: 9.13.0
-  resolution: "react-intersection-observer@npm:9.13.0"
+"react-intersection-observer@npm:^9.15.1":
+  version: 9.15.1
+  resolution: "react-intersection-observer@npm:9.15.1"
   peerDependencies:
-    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 10c0/7e446b763edc0d9e5642c03c0a151fa6e25fd91c7d004b8af918b0ec9a01f0c252909c13c6fbf95d331e7064bbe1d5668ed788610acab400ce38063d82f9e1b3
+  checksum: 10c0/ac2ce7093aef2d6cc3ec9ddd88b8e3f54a7320d867170433a12014f881400553517b3304c4e7bd7b666a44dbd42e94472e5cffdfa45356c9e17d3a0a1ba02b3a
   languageName: node
   linkType: hard
 
@@ -46289,7 +46289,7 @@ __metadata:
     react-hotkeys-hook: "npm:^4.4.4"
     react-icons: "npm:^4.12.0"
     react-imask: "npm:^7.6.0"
-    react-intersection-observer: "npm:^9.5.2"
+    react-intersection-observer: "npm:^9.15.1"
     react-loading-skeleton: "npm:^3.3.1"
     react-phone-number-input: "npm:^3.3.4"
     react-responsive: "npm:^9.0.2"
