@@ -1,10 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import chalk from 'chalk';
+import { Command, Option } from 'nest-commander';
+import { WorkspaceActivationStatus } from 'twenty-shared';
+import { In, Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
-import { BaseCommandOptions } from 'src/database/commands/base.command';
+import {
+  BaseCommandOptions,
+  BaseCommandRunner,
+} from 'src/database/commands/base.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
@@ -12,24 +16,62 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
   name: 'workspace:clean',
   description: 'Clean suspended workspace',
 })
-export class CleanSuspendedWorkspacesCommand extends ActiveWorkspacesCommandRunner {
+export class CleanSuspendedWorkspacesCommand extends BaseCommandRunner {
+  private workspaceIds: string[] = [];
+
   constructor(
     private readonly cleanerWorkspaceService: CleanerWorkspaceService,
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
   ) {
-    super(workspaceRepository);
+    super();
   }
 
-  async executeActiveWorkspacesCommand(
-    _passedParam: string[],
-    _options: BaseCommandOptions,
-    workspaceIds: string[],
+  @Option({
+    flags: '-w, --workspace-id [workspace_id]',
+    description:
+      'workspace id. Command runs on all suspended workspaces if not provided',
+    required: false,
+  })
+  parseWorkspaceId(val: string): string[] {
+    this.workspaceIds.push(val);
+
+    return this.workspaceIds;
+  }
+
+  async fetchSuspendedWorkspaceIds(): Promise<string[]> {
+    const suspendedWorkspaces = await this.workspaceRepository.find({
+      select: ['id'],
+      where: {
+        activationStatus: In([WorkspaceActivationStatus.SUSPENDED]),
+      },
+      withDeleted: true,
+    });
+
+    return suspendedWorkspaces.map((workspace) => workspace.id);
+  }
+
+  override async executeBaseCommand(
+    _passedParams: string[],
+    options: BaseCommandOptions,
   ): Promise<void> {
-    const { dryRun } = _options;
+    const { dryRun } = options;
+
+    const activeWorkspaceIds =
+      this.workspaceIds.length > 0
+        ? this.workspaceIds
+        : await this.fetchSuspendedWorkspaceIds();
+
+    if (options.dryRun) {
+      this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
+    }
+
+    this.logger.log(
+      `Cleaning ${activeWorkspaceIds.length} suspended workspaces`,
+    );
 
     await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
-      workspaceIds,
+      this.workspaceIds,
       dryRun,
     );
   }
