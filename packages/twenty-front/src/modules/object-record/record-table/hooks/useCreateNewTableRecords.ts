@@ -79,10 +79,10 @@ export const useCreateNewTableRecord = ({
           objectRecordId: recordId,
         });
 
-        openRecordTitleCell({
-          recordId,
-          fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
-        });
+        // TODO: we should open the record title cell here but because
+        // we are redirecting to the record show page, the hotkey scope will
+        // be overridden by the hotkey scope on mount. We need to deprecate
+        // the useHotkeyScopeOnMount hook.
 
         return;
       }
