@@ -6,12 +6,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
-
-export type RecordGqlFields = { [k: string]: boolean | RecordGqlFields };
-export const isRecordGqlFieldsNode = (
-  recordGql: RecordGqlFields | boolean | undefined,
-): recordGql is RecordGqlFields => typeof recordGql !== 'boolean';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];

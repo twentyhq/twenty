@@ -1,10 +1,8 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  RecordGqlFields,
-  isRecordGqlFieldsNode,
-  mapFieldMetadataToGraphQLQuery,
-} from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
+import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];

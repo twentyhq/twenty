@@ -1,1 +1,3 @@
-export type RecordGqlFields = Record<string, any>;
+export type RecordGqlFields = {
+  [k: string]: boolean | RecordGqlFields | undefined;
+};
