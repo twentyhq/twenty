@@ -13,11 +13,6 @@ import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentif
 export const useObjectMetadataItem = ({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
-  // if (!objectNameSingular) { // objectNameSingular is empty, if non-existant object provided
-  //   return {
-  //     objectMetadataItem: null,
-  //   };
-  // }
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectName: objectNameSingular,

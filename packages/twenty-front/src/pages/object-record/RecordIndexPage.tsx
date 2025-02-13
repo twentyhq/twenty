@@ -49,11 +49,6 @@ export const RecordIndexPage = () => {
     objectNameSingular,
   });
 
-  // if (!isDefined(objectMetadataItem)) {
-  //   window.location.href = AppPath.NotFound;
-  //   return null;
-  // }
-
   const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
     recordIndexId,
