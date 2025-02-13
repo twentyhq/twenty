@@ -79,6 +79,7 @@ const StyledInput = styled.input<
         : theme.spacing(2)};
   width: ${({ theme, width }) =>
     width ? `calc(${width}px + ${theme.spacing(0.5)})` : '100%'};
+  max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -204,7 +205,6 @@ const TextInputV2Component = forwardRef<
     ref,
   ) => {
     const theme = useTheme();
-
     const inputRef = useRef<HTMLInputElement>(null);
     const combinedRef = useCombinedRefs(ref, inputRef);
 

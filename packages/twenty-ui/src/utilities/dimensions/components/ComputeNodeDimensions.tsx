@@ -11,15 +11,19 @@ type ComputeNodeDimensionsProps = {
 
 const StyledNodeWrapper = styled.span`
   pointer-events: none;
-  position: absolute;
   visibility: hidden;
+`;
+
+const StyledDiv = styled.div`
+  max-width: 100%;
+  position: relative;
 `;
 
 export const ComputeNodeDimensions = ({
   children,
   node = children(undefined),
 }: ComputeNodeDimensionsProps) => {
-  const nodeWrapperRef = useRef<HTMLSpanElement>(null);
+  const nodeWrapperRef = useRef<HTMLDivElement>(null);
   const [nodeDimensions, setNodeDimensions] = useState<
     | {
         width: number;
@@ -45,9 +49,11 @@ export const ComputeNodeDimensions = ({
   }, [nodeWrapperRef]);
 
   return (
-    <>
-      <StyledNodeWrapper ref={nodeWrapperRef}>{node}</StyledNodeWrapper>
-      {nodeDimensions && children(nodeDimensions)}
-    </>
+    <StyledDiv ref={nodeWrapperRef}>
+      <StyledNodeWrapper>{node}</StyledNodeWrapper>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
+        {nodeDimensions && children(nodeDimensions)}
+      </div>
+    </StyledDiv>
   );
 };

@@ -12,9 +12,13 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 
 const StyledContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  width: 100%;
   gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: center;
+  width: 100%;
+`;
+
+const StyledTextInputWrapper = styled.div`
+  max-width: 50%;
 `;
 
 type RecordTitleDoubleTextInputProps = {
@@ -174,54 +178,58 @@ export const RecordTitleDoubleTextInput = ({
 
   return (
     <StyledContainer ref={containerRef}>
-      <TextInputV2
-        autoGrow
-        sizeVariant={sizeVariant}
-        autoComplete="off"
-        inheritFontStyles
-        autoFocus
-        onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
-          if (isDefined(firstInternalValue)) {
-            event.target.select();
+      <StyledTextInputWrapper>
+        <TextInputV2
+          autoGrow
+          sizeVariant={sizeVariant}
+          autoComplete="off"
+          inheritFontStyles
+          autoFocus
+          onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
+            if (isDefined(firstInternalValue)) {
+              event.target.select();
+            }
+            setFocusPosition('left');
+          }}
+          ref={firstValueInputRef}
+          placeholder={firstValuePlaceholder}
+          value={firstInternalValue}
+          onChange={(text: string) => {
+            handleChange(
+              turnIntoEmptyStringIfWhitespacesOnly(text),
+              secondInternalValue,
+            );
+          }}
+          onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
+            handleOnPaste(event)
           }
-          setFocusPosition('left');
-        }}
-        ref={firstValueInputRef}
-        placeholder={firstValuePlaceholder}
-        value={firstInternalValue}
-        onChange={(text: string) => {
-          handleChange(
-            turnIntoEmptyStringIfWhitespacesOnly(text),
-            secondInternalValue,
-          );
-        }}
-        onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
-          handleOnPaste(event)
-        }
-        onClick={handleClickToPreventParentClickEvents}
-      />
-      <TextInputV2
-        autoGrow
-        sizeVariant={sizeVariant}
-        autoComplete="off"
-        inheritFontStyles
-        onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
-          if (isDefined(secondInternalValue)) {
-            event.target.select();
-          }
-          setFocusPosition('right');
-        }}
-        ref={secondValueInputRef}
-        placeholder={secondValuePlaceholder}
-        value={secondInternalValue}
-        onChange={(text: string) => {
-          handleChange(
-            firstInternalValue,
-            turnIntoEmptyStringIfWhitespacesOnly(text),
-          );
-        }}
-        onClick={handleClickToPreventParentClickEvents}
-      />
+          onClick={handleClickToPreventParentClickEvents}
+        />
+      </StyledTextInputWrapper>
+      <StyledTextInputWrapper>
+        <TextInputV2
+          autoGrow
+          sizeVariant={sizeVariant}
+          autoComplete="off"
+          inheritFontStyles
+          onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
+            if (isDefined(secondInternalValue)) {
+              event.target.select();
+            }
+            setFocusPosition('right');
+          }}
+          ref={secondValueInputRef}
+          placeholder={secondValuePlaceholder}
+          value={secondInternalValue}
+          onChange={(text: string) => {
+            handleChange(
+              firstInternalValue,
+              turnIntoEmptyStringIfWhitespacesOnly(text),
+            );
+          }}
+          onClick={handleClickToPreventParentClickEvents}
+        />
+      </StyledTextInputWrapper>
     </StyledContainer>
   );
 };
