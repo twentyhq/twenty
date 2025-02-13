@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
-import { Nullable } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 
-import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { useRecoilValue } from 'recoil';
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
 import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldMetadataItemsAsSortDefinitions';
 
 export const useColumnDefinitionsFromFieldMetadata = (
-  objectMetadataItem?: Nullable<ObjectMetadataItem>,
+  objectMetadataItem: ObjectMetadataItem,
 ) => {
   const activeFieldMetadataItems = useMemo(
     () =>
@@ -23,8 +23,11 @@ export const useColumnDefinitionsFromFieldMetadata = (
     [objectMetadataItem],
   );
 
-  const { filterableFieldMetadataItems } =
-    useFilterableFieldMetadataItemsInRecordIndexContext();
+  const filterableFieldMetadataItems = useRecoilValue(
+    availableFieldMetadataItemsForFilterFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
 
   const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
     fields: activeFieldMetadataItems,

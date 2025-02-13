@@ -1,5 +1,4 @@
 import { renderHook } from '@testing-library/react';
-import { Nullable } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
@@ -49,29 +48,13 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 });
 
 describe('useColumnDefinitionsFromFieldMetadata', () => {
-  it('should return empty definitions if no object is passed', () => {
-    const { result } = renderHook(
-      (objectMetadataItem?: Nullable<ObjectMetadataItem>) => {
-        return useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
-
-    expect(Array.isArray(result.current.columnDefinitions)).toBe(true);
-    expect(Array.isArray(result.current.sortDefinitions)).toBe(true);
-    expect(result.current.columnDefinitions.length).toBe(0);
-    expect(result.current.sortDefinitions.length).toBe(0);
-  });
-
   it('should return expected definitions', () => {
     const companyObjectMetadata = generatedMockObjectMetadataItems.find(
       (item) => item.nameSingular === 'company',
     );
 
     const { result } = renderHook(
-      (objectMetadataItem?: Nullable<ObjectMetadataItem>) => {
+      (objectMetadataItem: ObjectMetadataItem) => {
         return useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
       },
       {
