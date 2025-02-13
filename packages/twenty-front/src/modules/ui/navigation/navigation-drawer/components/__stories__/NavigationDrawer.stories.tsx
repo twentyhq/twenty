@@ -35,6 +35,7 @@ import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
@@ -50,6 +51,7 @@ const meta: Meta<typeof NavigationDrawer> = {
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
     PrefetchLoadedDecorator,
+    I18nFrontDecorator,
     (Story) => {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,

@@ -1,5 +1,5 @@
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { ViewFilter } from '../types/ViewFilter';
@@ -26,6 +26,8 @@ export const mapViewFiltersToFilters = (
         viewFilterGroupId: viewFilter.viewFilterGroupId,
         positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
         definition: viewFilter.definition ?? availableFilterDefinition,
+        label: viewFilter.definition?.label ?? availableFilterDefinition.label,
+        type: viewFilter.definition?.type ?? availableFilterDefinition.type,
       };
     })
     .filter(isDefined);

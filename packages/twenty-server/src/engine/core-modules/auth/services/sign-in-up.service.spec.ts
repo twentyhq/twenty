@@ -12,7 +12,7 @@ import {
   ExistingUserOrPartialUserWithPicture,
   SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -21,6 +21,11 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
 jest.mock('src/utils/image', () => {
   return {
@@ -75,6 +80,7 @@ describe('SignInUpService', () => {
           provide: UserWorkspaceService,
           useValue: {
             addUserToWorkspace: jest.fn(),
+            checkUserWorkspaceExists: jest.fn(),
             create: jest.fn(),
           },
         },
@@ -247,5 +253,63 @@ describe('SignInUpService', () => {
     expect(UserRepository.create).toHaveBeenCalled();
     expect(UserRepository.save).toHaveBeenCalled();
     expect(fileUploadService.uploadImage).toHaveBeenCalled();
+  });
+
+  it('should handle signIn on workspace in pending state', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      workspace: {
+        id: 'workspaceId',
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      } as Workspace,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'existingUser',
+        existingUser: { email: 'test@example.com' } as User,
+      },
+    };
+
+    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspace')
+      .mockResolvedValue({} as User);
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockResolvedValue({} as UserWorkspace);
+
+    const result = await service.signInUp(params);
+
+    expect(result.workspace).toEqual(params.workspace);
+    expect(result.user).toBeDefined();
+    expect(userWorkspaceService.addUserToWorkspace).toHaveBeenCalled();
+  });
+
+  it('should throw - handle signUp on workspace in pending state', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      workspace: {
+        id: 'workspaceId',
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      } as Workspace,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'existingUser',
+        existingUser: { email: 'test@example.com' } as User,
+      },
+    };
+
+    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockResolvedValue(null);
+
+    await expect(() => service.signInUp(params)).rejects.toThrow(
+      new AuthException(
+        'User is not part of the workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
   });
 });

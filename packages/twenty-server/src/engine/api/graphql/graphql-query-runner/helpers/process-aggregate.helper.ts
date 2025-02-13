@@ -1,10 +1,13 @@
+import { Injectable } from '@nestjs/common';
+
 import { SelectQueryBuilder } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
-import { isDefined } from 'src/utils/is-defined';
 
+@Injectable()
 export class ProcessAggregateHelper {
   public addSelectedAggregatedFieldsQueriesToQueryBuilder = ({
     selectedAggregatedFields,

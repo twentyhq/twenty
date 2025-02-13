@@ -74,7 +74,8 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   type
                   updatedAt
@@ -86,6 +87,7 @@ const companyMocks = [
               source
               workspaceMemberId
               name
+              context
             }
             deletedAt
             domainName {
@@ -106,8 +108,9 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   position
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   viewId
@@ -142,7 +145,8 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   updatedAt
                 }
               }
@@ -162,6 +166,7 @@ const companyMocks = [
                     source
                     workspaceMemberId
                     name
+                    context
                   }
                   deletedAt
                   id
@@ -185,6 +190,7 @@ const companyMocks = [
                     source
                     workspaceMemberId
                     name
+                    context
                   }
                   deletedAt
                   emails {
@@ -239,7 +245,8 @@ const companyMocks = [
                   id
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   updatedAt
                 }
@@ -261,8 +268,9 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   properties
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   workflowId

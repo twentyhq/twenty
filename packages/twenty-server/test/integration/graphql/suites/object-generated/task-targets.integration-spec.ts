@@ -18,7 +18,8 @@ describe('taskTargetsResolver (e2e)', () => {
                 personId
                 companyId
                 opportunityId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -54,7 +55,8 @@ describe('taskTargetsResolver (e2e)', () => {
           expect(taskTargets).toHaveProperty('personId');
           expect(taskTargets).toHaveProperty('companyId');
           expect(taskTargets).toHaveProperty('opportunityId');
-          expect(taskTargets).toHaveProperty('rocketId');
+          expect(taskTargets).toHaveProperty('petId');
+          expect(taskTargets).toHaveProperty('surveyResultId');
         }
       });
   });

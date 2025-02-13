@@ -21,7 +21,7 @@ import { getCombinedViewFilterGroups } from '@/views/utils/getCombinedViewFilter
 import { getCombinedViewFilters } from '@/views/utils/getCombinedViewFilters';
 import { getCombinedViewSorts } from '@/views/utils/getCombinedViewSorts';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useGetCurrentView = (viewBarInstanceId?: string) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(

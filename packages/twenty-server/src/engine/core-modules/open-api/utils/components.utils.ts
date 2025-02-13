@@ -266,6 +266,19 @@ const getSchemaComponentsProperties = ({
           type: 'object',
         };
         break;
+      case FieldMetadataType.RICH_TEXT_V2:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            blocknote: {
+              type: 'string',
+            },
+            markdown: {
+              type: 'string',
+            },
+          },
+        };
+        break;
       default:
         itemProperty = getFieldProperties(field.type);
         break;

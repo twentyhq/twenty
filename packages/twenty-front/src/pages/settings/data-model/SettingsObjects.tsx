@@ -104,19 +104,14 @@ export const SettingsObjects = () => {
     [inactiveObjectMetadataItems, totalCountByObjectMetadataItemNamePlural],
   );
 
-  const tableMetadata = useMemo(
-    () => GET_SETTINGS_OBJECT_TABLE_METADATA(t),
-    [t],
-  );
-
   const sortedActiveObjectSettingsItems = useSortedArray(
     activeObjectSettingsArray,
-    tableMetadata,
+    GET_SETTINGS_OBJECT_TABLE_METADATA,
   );
 
   const sortedInactiveObjectSettingsItems = useSortedArray(
     inactiveObjectSettingsArray,
-    tableMetadata,
+    GET_SETTINGS_OBJECT_TABLE_METADATA,
   );
 
   const filteredActiveObjectSettingsItems = useMemo(
@@ -175,15 +170,17 @@ export const SettingsObjects = () => {
 
             <Table>
               <StyledObjectTableRow>
-                {tableMetadata.fields.map(
+                {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
                   (settingsObjectsTableMetadataField) => (
                     <SortableTableHeader
                       key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
-                      label={settingsObjectsTableMetadataField.fieldLabel}
-                      tableId={tableMetadata.tableId}
+                      label={t(settingsObjectsTableMetadataField.fieldLabel)}
+                      tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
                       align={settingsObjectsTableMetadataField.align}
-                      initialSort={tableMetadata.initialSort}
+                      initialSort={
+                        GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort
+                      }
                     />
                   ),
                 )}

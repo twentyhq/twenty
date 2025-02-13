@@ -12,6 +12,8 @@ import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRe
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewField } from '@/views/types/ViewField';
+import { isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared';
 
 export const usePersistViewFieldRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -93,10 +95,13 @@ export const usePersistViewFieldRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['updateViewField'];
-              if (!record) return;
-              const cachedRecord = getRecordFromCache<ViewField>(record.id);
+              if (!isDefined(record)) return;
 
-              if (!cachedRecord) return;
+              const cachedRecord = getRecordFromCache<ViewField>(
+                record.id,
+                cache,
+              );
+              if (isNull(cachedRecord)) return;
 
               triggerUpdateRecordOptimisticEffect({
                 cache,

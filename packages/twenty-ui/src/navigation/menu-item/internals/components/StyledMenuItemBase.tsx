@@ -2,6 +2,8 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { isUndefined } from '@sniptt/guards';
+
+import { IconCheck } from '@ui/display';
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -41,7 +43,11 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
     (disabled || isHoverBackgroundDisabled) ?? HOVER_BACKGROUND};
 
   ${({ theme, accent, disabled }) => {
-    const isDisabled = !isUndefined(disabled) && disabled !== false;
+    if (!isUndefined(disabled) && disabled !== false) {
+      return css`
+        color: ${theme.font.color.tertiary};
+      `;
+    }
 
     switch (accent) {
       case 'danger': {
@@ -50,20 +56,17 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
           &:hover {
             background: ${theme.background.transparent.danger};
           }
-          ${isDisabled && `opacity: 0.4;`}
         `;
       }
       case 'placeholder': {
         return css`
           color: ${theme.font.color.tertiary};
-          ${isDisabled && `opacity: 0.4;`}
         `;
       }
       case 'default':
       default: {
         return css`
           color: ${theme.font.color.secondary};
-          ${isDisabled && `opacity: 0.4;`}
         `;
       }
     }
@@ -158,4 +161,9 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
         return 'pointer';
     }
   }};
+`;
+
+export const StyledMenuItemIconCheck = styled(IconCheck)`
+  flex-shrink: 0;
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;

@@ -5,6 +5,7 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { IconCalendarEvent } from 'twenty-ui';
 
 export const useOpenCalendarEventRightDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
@@ -13,7 +14,10 @@ export const useOpenCalendarEventRightDrawer = () => {
 
   const openCalendarEventRightDrawer = (calendarEventId: string) => {
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    openRightDrawer(RightDrawerPages.ViewCalendarEvent);
+    openRightDrawer(RightDrawerPages.ViewCalendarEvent, {
+      title: 'Calendar Event',
+      Icon: IconCalendarEvent,
+    });
     setViewableRecordId(calendarEventId);
   };
 

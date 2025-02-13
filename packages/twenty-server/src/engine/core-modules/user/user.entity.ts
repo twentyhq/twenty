@@ -27,7 +27,7 @@ registerEnumType(OnboardingStatus, {
 });
 
 @Entity({ name: 'user', schema: 'core' })
-@ObjectType('User')
+@ObjectType()
 @Index('UQ_USER_EMAIL', ['email'], {
   unique: true,
   where: '"deletedAt" IS NULL',
@@ -81,6 +81,10 @@ export class User {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
+  @Field(() => String, { nullable: false })
+  @Column({ nullable: false, default: 'en' })
+  locale: string;
+
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
   })
@@ -103,4 +107,7 @@ export class User {
 
   @Field(() => Workspace, { nullable: true })
   currentWorkspace: Relation<Workspace>;
+
+  @Field(() => UserWorkspace, { nullable: true })
+  currentUserWorkspace?: Relation<UserWorkspace>;
 }

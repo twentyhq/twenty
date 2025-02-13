@@ -4,8 +4,8 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const prefillRecord = <T extends ObjectRecord>({
   objectMetadataItem,
@@ -19,9 +19,9 @@ export const prefillRecord = <T extends ObjectRecord>({
       .map((fieldMetadataItem) => {
         const inputValue = input[fieldMetadataItem.name];
         if (
-          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.ManyToOne
+            RelationDefinitionType.MANY_TO_ONE
         ) {
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
         }

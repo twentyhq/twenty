@@ -2,16 +2,17 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
 import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { isDefined } from '~/utils/isDefined';
+import {
+  FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
+  isDefined,
+} from 'twenty-shared';
 
 export const buildRecordGqlFieldsAggregateForView = ({
   objectMetadataItem,
   recordIndexKanbanAggregateOperation,
-  fieldNameForCount,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   recordIndexKanbanAggregateOperation: KanbanAggregateOperation;
-  fieldNameForCount: string;
 }): RecordGqlFieldsAggregate => {
   let recordGqlFieldsAggregate = {};
 
@@ -31,7 +32,9 @@ export const buildRecordGqlFieldsAggregateForView = ({
       );
     } else {
       recordGqlFieldsAggregate = {
-        [fieldNameForCount]: [AGGREGATE_OPERATIONS.count],
+        [FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]: [
+          AGGREGATE_OPERATIONS.count,
+        ],
       };
     }
   } else {

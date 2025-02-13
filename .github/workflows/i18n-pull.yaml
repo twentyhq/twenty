@@ -1,0 +1,87 @@
+# Pull down translations from Crowdin every two hours or when triggered manually.
+# When force_pull input is true, translations will be pulled regardless of compilation status.
+
+name: 'Pull translations'
+
+on:
+  schedule:
+    - cron: '0 */2 * * *' # Every two hours.
+  workflow_dispatch:
+    inputs:
+      force_pull:
+        description: 'Force pull translations regardless of compilation status'
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      force_pull:
+        description: 'Force pull translations regardless of compilation status'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  pull_translations:
+    name: Pull translations
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+
+      # Strict mode fails if there are missing translations.
+      - name: Compile translations
+        id: compile_translations
+        run: |
+          npx nx run twenty-server:lingui:compile --strict
+          npx nx run twenty-emails:lingui:compile --strict
+          npx nx run twenty-front:lingui:compile --strict
+        continue-on-error: true
+
+      - name: Pull translations from Crowdin
+        if: inputs.force_pull || steps.compile_translations.outcome == 'failure'
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          export_only_approved: false
+          localization_branch_name: i18n
+          commit_message: 'i18n - translations'
+          pull_request_title: 'i18n - translations'
+          base_url: 'https://twenty.api.crowdin.com'
+          auto_approve_imported: false
+          import_eq_suggestions: false
+          download_sources: false
+          push_sources: true
+          skip_untranslated_strings: false
+          skip_untranslated_files: false
+          push_translations: true
+          create_pull_request: true
+          skip_ref_checkout: false
+          dryrun_action: false
+          github_base_url: 'github.com'
+          github_user_name: 'Crowdin Bot'
+          github_user_email: 'support+bot@crowdin.com'
+
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CROWDIN_PROJECT_ID: '1'
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

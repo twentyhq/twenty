@@ -1,17 +1,22 @@
+import { MessageDescriptor } from '@lingui/core';
 import { ObjectType } from 'typeorm';
 
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 interface WorkspaceRelationOptions<TClass> {
   standardId: string;
-  label: string | ((objectMetadata: ObjectMetadataEntity) => string);
-  description?: string | ((objectMetadata: ObjectMetadataEntity) => string);
+  label:
+    | MessageDescriptor
+    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
+  description?:
+    | MessageDescriptor
+    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
   icon?: string;
   type: RelationMetadataType;
   inverseSideTarget: () => ObjectType<TClass>;
@@ -51,9 +56,25 @@ export function WorkspaceRelation<TClass extends object>(
       target: object.constructor,
       standardId: options.standardId,
       name: propertyKey.toString(),
-      label: options.label,
+      label:
+        typeof options.label === 'function'
+          ? (objectMetadata: ObjectMetadataEntity) =>
+              (
+                options.label as (
+                  obj: ObjectMetadataEntity,
+                ) => MessageDescriptor
+              )(objectMetadata).message ?? ''
+          : (options.label.message ?? ''),
       type: options.type,
-      description: options.description,
+      description:
+        typeof options.description === 'function'
+          ? (objectMetadata: ObjectMetadataEntity) =>
+              (
+                options.description as (
+                  obj: ObjectMetadataEntity,
+                ) => MessageDescriptor
+              )(objectMetadata).message ?? ''
+          : (options.description?.message ?? ''),
       icon: options.icon,
       inverseSideTarget: options.inverseSideTarget,
       inverseSideFieldKey: options.inverseSideFieldKey as string | undefined,

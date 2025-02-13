@@ -7,12 +7,14 @@ import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionFormCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormCreateRecord';
 import { WorkflowEditActionFormDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormDeleteRecord';
+import { WorkflowEditActionFormFindRecords } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormFindRecords';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormSendEmail';
 import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormUpdateRecord';
+import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
 import { Suspense, lazy } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 
 const WorkflowEditActionFormServerlessFunction = lazy(() =>
@@ -48,18 +50,12 @@ export const WorkflowStepDetail = ({
     stepId,
     workflowVersion,
   });
-  if (!isDefined(stepDefinition)) {
+  if (!isDefined(stepDefinition) || !isDefined(stepDefinition.definition)) {
     return null;
   }
 
   switch (stepDefinition.type) {
     case 'trigger': {
-      if (!isDefined(stepDefinition.definition)) {
-        throw new Error(
-          'Expected the trigger to be defined at this point. Ensure the trigger has been set with a default value before trying to edit it.',
-        );
-      }
-
       switch (stepDefinition.definition.type) {
         case 'DATABASE_EVENT': {
           return (
@@ -72,6 +68,14 @@ export const WorkflowStepDetail = ({
         case 'MANUAL': {
           return (
             <WorkflowEditTriggerManualForm
+              trigger={stepDefinition.definition}
+              triggerOptions={props}
+            />
+          );
+        }
+        case 'CRON': {
+          return (
+            <WorkflowEditTriggerCronForm
               trigger={stepDefinition.definition}
               triggerOptions={props}
             />
@@ -129,6 +133,16 @@ export const WorkflowStepDetail = ({
         case 'DELETE_RECORD': {
           return (
             <WorkflowEditActionFormDeleteRecord
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+
+        case 'FIND_RECORDS': {
+          return (
+            <WorkflowEditActionFormFindRecords
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}

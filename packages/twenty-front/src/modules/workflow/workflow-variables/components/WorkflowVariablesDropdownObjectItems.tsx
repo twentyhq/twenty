@@ -2,10 +2,9 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import {
-  OutputSchema,
-  StepOutputSchema,
-} from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 
@@ -32,22 +31,8 @@ export const WorkflowVariablesDropdownObjectItems = ({
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
 
-  const getCurrentSubStep = (): OutputSchema => {
-    let currentSubStep = step.outputSchema;
-
-    for (const key of currentPath) {
-      if (isRecordOutputSchema(currentSubStep)) {
-        currentSubStep = currentSubStep.fields[key]?.value;
-      } else if (isBaseOutputSchema(currentSubStep)) {
-        currentSubStep = currentSubStep[key]?.value;
-      }
-    }
-
-    return currentSubStep;
-  };
-
   const getDisplayedSubStepFields = () => {
-    const currentSubStep = getCurrentSubStep();
+    const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
 
     if (isRecordOutputSchema(currentSubStep)) {
       return currentSubStep.fields;
@@ -57,7 +42,7 @@ export const WorkflowVariablesDropdownObjectItems = ({
   };
 
   const getDisplayedSubStepObject = () => {
-    const currentSubStep = getCurrentSubStep();
+    const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
 
     if (!isRecordOutputSchema(currentSubStep)) {
       return;
@@ -67,7 +52,7 @@ export const WorkflowVariablesDropdownObjectItems = ({
   };
 
   const handleSelectObject = () => {
-    const currentSubStep = getCurrentSubStep();
+    const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
 
     if (!isRecordOutputSchema(currentSubStep)) {
       return;
@@ -90,8 +75,6 @@ export const WorkflowVariablesDropdownObjectItems = ({
       setCurrentPath(currentPath.slice(0, -1));
     }
   };
-
-  const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
 
   const displayedSubStepObject = getDisplayedSubStepObject();
 
@@ -116,7 +99,9 @@ export const WorkflowVariablesDropdownObjectItems = ({
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
-        <OverflowingTextWithTooltip text={headerLabel} />
+        <OverflowingTextWithTooltip
+          text={getStepHeaderLabel(step, currentPath)}
+        />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus

@@ -6,6 +6,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { ACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/activateWorkflowVersion';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { isDefined } from 'twenty-shared';
 import {
   ActivateWorkflowVersionMutation,
   ActivateWorkflowVersionMutationVariables,
@@ -59,6 +60,23 @@ export const useActivateWorkflowVersion = () => {
           (version) =>
             version.status === 'ACTIVE' && version.id !== workflowVersionId,
         );
+
+        const newlyActiveWorkflowVersion = allWorkflowVersions.find(
+          (version) => version.id === workflowVersionId,
+        );
+
+        if (isDefined(newlyActiveWorkflowVersion)) {
+          triggerUpdateRecordOptimisticEffect({
+            cache: apolloClient.cache,
+            objectMetadataItem: objectMetadataItemWorkflowVersion,
+            currentRecord: newlyActiveWorkflowVersion,
+            updatedRecord: {
+              ...newlyActiveWorkflowVersion,
+              status: 'ACTIVE',
+            },
+            objectMetadataItems: [objectMetadataItemWorkflowVersion],
+          });
+        }
 
         for (const workflowVersion of previousActiveWorkflowVersions) {
           apolloClient.cache.modify({

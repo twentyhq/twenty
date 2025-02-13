@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-import { isDefined } from '@ui/utilities';
+import { isDefined } from 'twenty-shared';
 
 import { FloatingButtonPosition, FloatingButtonProps } from './FloatingButton';
 

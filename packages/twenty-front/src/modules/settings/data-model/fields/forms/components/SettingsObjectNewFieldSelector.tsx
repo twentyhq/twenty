@@ -7,6 +7,7 @@ import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/Setting
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
+import { FieldType } from '@/settings/data-model/types/FieldType';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -22,7 +23,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsObjectNewFieldSelectorProps = {
   className?: string;
-  excludedFieldTypes?: SettingsFieldType[];
+  excludedFieldTypes?: FieldType[];
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
@@ -85,14 +86,14 @@ export const SettingsObjectNewFieldSelector = ({
 
   const resetDefaultValueField = (nextValue: SettingsFieldType) => {
     switch (nextValue) {
-      case FieldMetadataType.Boolean:
+      case FieldMetadataType.BOOLEAN:
         resetBooleanDefaultValueField();
         break;
-      case FieldMetadataType.Currency:
+      case FieldMetadataType.CURRENCY:
         resetCurrencyDefaultValueField();
         break;
-      case FieldMetadataType.Select:
-      case FieldMetadataType.MultiSelect:
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT:
         resetSelectDefaultValueField();
         break;
       default:

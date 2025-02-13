@@ -1,5 +1,7 @@
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
+import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
+
 export interface WorkspaceEntityMetadataArgs {
   /**
    * Standard id.
@@ -65,4 +67,9 @@ export interface WorkspaceEntityMetadataArgs {
    * Image identifier.
    */
   readonly imageIdentifierStandardId: string | null;
+
+  /**
+   * Duplicate criteria.
+   */
+  readonly duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
 }

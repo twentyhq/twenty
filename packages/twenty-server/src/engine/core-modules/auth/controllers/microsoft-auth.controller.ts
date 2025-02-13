@@ -11,14 +11,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microsoft-oauth.guard';
 import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/microsoft-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Controller('auth/microsoft')
@@ -27,7 +26,7 @@ export class MicrosoftAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -51,9 +50,9 @@ export class MicrosoftAuthController {
       email,
       picture,
       workspaceInviteHash,
-      workspacePersonalInviteToken,
       workspaceId,
       billingCheckoutSessionState,
+      locale,
     } = req.user;
 
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
@@ -65,7 +64,7 @@ export class MicrosoftAuthController {
 
     try {
       const invitation =
-        currentWorkspace && workspacePersonalInviteToken && email
+        currentWorkspace && email
           ? await this.authService.findInvitationForSignInUp({
               currentWorkspace,
               email,
@@ -82,6 +81,7 @@ export class MicrosoftAuthController {
           lastName,
           email,
           picture,
+          locale,
         },
         existingUser,
       );
@@ -111,20 +111,19 @@ export class MicrosoftAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          subdomain: workspace.subdomain,
-
+          workspace,
           billingCheckoutSessionState,
         }),
       );
     } catch (err) {
-      if (err instanceof AuthException) {
-        return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl(err.message, {
-            subdomain: currentWorkspace?.subdomain,
-          }),
-        );
-      }
-      throw err;
+      return res.redirect(
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
+          err,
+          this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
+            currentWorkspace,
+          ),
+        ),
+      );
     }
   }
 }

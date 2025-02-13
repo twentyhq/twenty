@@ -45,8 +45,6 @@ spec:
               value: "false"
             - name: STORAGE_TYPE
               value: "local"
-            - name: "MESSAGE_QUEUE_TYPE"
-              value: "bull-mq"
             - name: "ACCESS_TOKEN_EXPIRES_IN"
               value: "7d"
             - name: "LOGIN_TOKEN_EXPIRES_IN"

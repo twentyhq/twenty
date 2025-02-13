@@ -5,12 +5,15 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
+  WorkflowDiagramEmptyTriggerNodeData,
   WorkflowDiagramNode,
+  WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
+import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { isDefined } from 'twenty-ui';
+import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
+import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 
 export const generateWorkflowDiagram = ({
@@ -37,7 +40,8 @@ export const generateWorkflowDiagram = ({
         nodeType: 'action',
         actionType: step.type,
         name: step.name,
-      },
+        isLeafNode: false,
+      } satisfies WorkflowDiagramStepNodeData,
       position: {
         x: xPos,
         y: yPos,
@@ -57,11 +61,23 @@ export const generateWorkflowDiagram = ({
   const triggerNodeId = TRIGGER_STEP_ID;
 
   if (isDefined(trigger)) {
-    let triggerLabel: string;
+    let triggerDefaultLabel: string;
+    let triggerIcon: string | undefined;
 
     switch (trigger.type) {
       case 'MANUAL': {
-        triggerLabel = 'Manual Trigger';
+        triggerDefaultLabel = 'Manual Trigger';
+        triggerIcon = getTriggerIcon({
+          type: 'MANUAL',
+        });
+
+        break;
+      }
+      case 'CRON': {
+        triggerDefaultLabel = 'On a Schedule';
+        triggerIcon = getTriggerIcon({
+          type: 'CRON',
+        });
 
         break;
       }
@@ -70,10 +86,15 @@ export const generateWorkflowDiagram = ({
           trigger.settings.eventName,
         );
 
-        triggerLabel =
-          DATABASE_TRIGGER_EVENTS.find(
-            (event) => event.value === triggerEvent.event,
-          )?.label ?? '';
+        triggerDefaultLabel =
+          DATABASE_TRIGGER_TYPES.find(
+            (item) => item.event === triggerEvent.event,
+          )?.defaultLabel ?? '';
+
+        triggerIcon = getTriggerIcon({
+          type: 'DATABASE_EVENT',
+          eventName: triggerEvent.event,
+        });
 
         break;
       }
@@ -90,8 +111,10 @@ export const generateWorkflowDiagram = ({
       data: {
         nodeType: 'trigger',
         triggerType: trigger.type,
-        name: isDefined(trigger.name) ? trigger.name : triggerLabel,
-      },
+        name: isDefined(trigger.name) ? trigger.name : triggerDefaultLabel,
+        icon: triggerIcon,
+        isLeafNode: false,
+      } satisfies WorkflowDiagramStepNodeData,
       position: {
         x: 0,
         y: 0,
@@ -101,7 +124,10 @@ export const generateWorkflowDiagram = ({
     nodes.push({
       id: triggerNodeId,
       type: 'empty-trigger',
-      data: {} as any,
+      data: {
+        nodeType: 'empty-trigger',
+        isLeafNode: false,
+      } satisfies WorkflowDiagramEmptyTriggerNodeData,
       position: {
         x: 0,
         y: 0,

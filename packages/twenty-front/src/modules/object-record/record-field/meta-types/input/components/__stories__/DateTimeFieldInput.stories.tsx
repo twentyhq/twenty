@@ -72,7 +72,7 @@ const DateFieldInputWithContext = ({
           fieldMetadataId: 'date',
           defaultValue: null,
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
           iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',

@@ -8,7 +8,7 @@ import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/u
 import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/unsavedToUpsertViewSortsComponentFamilyState';
 import { View } from '@/views/types/View';
 import { getCombinedViewSorts } from '@/views/utils/getCombinedViewSorts';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 // TODO: fix naming
 export const useGetViewSortsCombined = (viewBarComponentId?: string) => {

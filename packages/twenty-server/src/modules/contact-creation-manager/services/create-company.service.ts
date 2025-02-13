@@ -100,32 +100,6 @@ export class CreateCompanyService {
     };
   }
 
-  async createCompany(
-    company: CompanyToCreate,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<string> {
-    const companyRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        CompanyWorkspaceEntity,
-      );
-    let lastCompanyPosition = await this.getLastCompanyPosition(
-      companyRepository,
-      transactionManager,
-    );
-
-    const data = await this.prepareCompanyData(company, ++lastCompanyPosition);
-
-    const createdCompany = await companyRepository.save(
-      data,
-      undefined,
-      transactionManager,
-    );
-
-    return createdCompany.id;
-  }
-
   private async prepareCompanyData(
     company: CompanyToCreate,
     position: number,

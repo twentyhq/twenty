@@ -21,7 +21,7 @@ if (!mockedCompanyObjectMetadataItem) {
 }
 
 const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-  ({ type }) => type === FieldMetadataType.Text,
+  ({ type }) => type === FieldMetadataType.TEXT,
 )!;
 
 const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
@@ -64,7 +64,7 @@ export const WithSelectForm: Story = {
     fieldMetadataItem: {
       label: 'Industry',
       icon: 'IconBuildingFactory2',
-      type: FieldMetadataType.Select,
+      type: FieldMetadataType.SELECT,
     },
   },
 };

@@ -18,7 +18,8 @@ describe('searchTaskTargetsResolver (e2e)', () => {
                 personId
                 companyId
                 opportunityId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -54,7 +55,8 @@ describe('searchTaskTargetsResolver (e2e)', () => {
           expect(searchTaskTargets).toHaveProperty('personId');
           expect(searchTaskTargets).toHaveProperty('companyId');
           expect(searchTaskTargets).toHaveProperty('opportunityId');
-          expect(searchTaskTargets).toHaveProperty('rocketId');
+          expect(searchTaskTargets).toHaveProperty('petId');
+          expect(searchTaskTargets).toHaveProperty('surveyResultId');
         }
       });
   });

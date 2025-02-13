@@ -11,6 +11,7 @@ import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue
 import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 
 export type PgBossDriverOptions = PgBoss.ConstructorOptions;
 
@@ -62,27 +63,40 @@ export class PgBossDriver
     );
   }
 
-  async addCron<T>(
-    queueName: MessageQueue,
-    jobName: string,
-    data: T,
-    options?: QueueCronJobOptions,
-  ): Promise<void> {
+  async addCron<T>({
+    queueName,
+    jobName,
+    data,
+    options,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    data: T;
+    options: QueueCronJobOptions;
+    jobId?: string;
+  }): Promise<void> {
+    const name = `${queueName}.${getJobKey({ jobName, jobId })}`;
+
     await this.pgBoss.schedule(
-      `${queueName}.${jobName}`,
-      options?.repeat?.pattern ??
-        DEFAULT_PG_BOSS_CRON_PATTERN_WHEN_NOT_PROVIDED,
+      name,
+      options.repeat.pattern ?? DEFAULT_PG_BOSS_CRON_PATTERN_WHEN_NOT_PROVIDED,
       data as object,
-      options
-        ? {
-            singletonKey: options?.id,
-          }
-        : {},
     );
   }
 
-  async removeCron(queueName: MessageQueue, jobName: string): Promise<void> {
-    await this.pgBoss.unschedule(`${queueName}.${jobName}`);
+  async removeCron({
+    queueName,
+    jobName,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobId?: string;
+  }): Promise<void> {
+    const name = `${queueName}.${getJobKey({ jobName, jobId })}`;
+
+    await this.pgBoss.unschedule(name);
   }
 
   async add<T>(

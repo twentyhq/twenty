@@ -1,6 +1,7 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { i18n } from '@lingui/core';
 import { Button, IconButton, useIsMobile } from 'twenty-ui';
 
 export const RecordShowActionMenuButtons = () => {
@@ -23,9 +24,9 @@ export const RecordShowActionMenuButtons = () => {
               size="small"
               variant="secondary"
               accent="default"
-              title={entry.shortLabel}
+              title={i18n._(entry.shortLabel)}
               onClick={() => entry.onClick?.()}
-              ariaLabel={entry.label}
+              ariaLabel={i18n._(entry.label)}
             />
           ) : (
             <IconButton
@@ -35,7 +36,7 @@ export const RecordShowActionMenuButtons = () => {
               variant="secondary"
               accent="default"
               onClick={() => entry.onClick?.()}
-              ariaLabel={entry.label}
+              ariaLabel={i18n._(entry.label)}
             />
           ),
         )}

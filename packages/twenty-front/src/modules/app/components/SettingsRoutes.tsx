@@ -62,14 +62,6 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const SettingsDevelopersWebhooksNew = lazy(() =>
-  import(
-    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew'
-  ).then((module) => ({
-    default: module.SettingsDevelopersWebhooksNew,
-  })),
-);
-
 const Releases = lazy(() =>
   import('~/pages/settings/Releases').then((module) => ({
     default: module.Releases,
@@ -253,16 +245,36 @@ const SettingsAdminContent = lazy(() =>
   ),
 );
 
+const SettingsLab = lazy(() =>
+  import('~/pages/settings/lab/SettingsLab').then((module) => ({
+    default: module.SettingsLab,
+  })),
+);
+
+const SettingsRoles = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoles').then((module) => ({
+    default: module.SettingsRoles,
+  })),
+);
+
+const SettingsRoleEdit = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
+    default: module.SettingsRoleEdit,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
-  isServerlessFunctionSettingsEnabled?: boolean;
+  isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
+  isPermissionsEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
-  isServerlessFunctionSettingsEnabled,
+  isFunctionSettingsEnabled,
   isAdminPageEnabled,
+  isPermissionsEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -298,8 +310,16 @@ export const SettingsRoutes = ({
         element={<SettingsObjectDetailPage />}
       />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
+      {isPermissionsEnabled && (
+        <>
+          <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
+          <Route
+            path={SettingsPath.RoleDetail}
+            element={<SettingsRoleEdit />}
+          />
+        </>
+      )}
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
-
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}
@@ -309,14 +329,10 @@ export const SettingsRoutes = ({
         element={<SettingsDevelopersApiKeyDetail />}
       />
       <Route
-        path={SettingsPath.DevelopersNewWebhook}
-        element={<SettingsDevelopersWebhooksNew />}
-      />
-      <Route
         path={SettingsPath.DevelopersNewWebhookDetail}
         element={<SettingsDevelopersWebhooksDetail />}
       />
-      {isServerlessFunctionSettingsEnabled && (
+      {isFunctionSettingsEnabled && (
         <>
           <Route
             path={SettingsPath.ServerlessFunctions}
@@ -379,6 +395,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
+      <Route path={SettingsPath.Lab} element={<SettingsLab />} />
     </Routes>
   </Suspense>
 );

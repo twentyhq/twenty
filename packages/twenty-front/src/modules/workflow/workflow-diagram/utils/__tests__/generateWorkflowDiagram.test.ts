@@ -21,6 +21,7 @@ describe('generateWorkflowDiagram', () => {
     expect(result.nodes[0]).toMatchObject({
       data: {
         nodeType: 'trigger',
+        isLeafNode: false,
       },
     });
   });
@@ -87,6 +88,7 @@ describe('generateWorkflowDiagram', () => {
         nodeType: 'action',
         actionType: 'CODE',
         name: step.name,
+        isLeafNode: false,
       });
     }
   });

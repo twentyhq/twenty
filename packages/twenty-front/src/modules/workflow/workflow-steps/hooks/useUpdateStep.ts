@@ -4,7 +4,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useUpdateStep = ({
   workflow,
@@ -19,9 +19,10 @@ export const useUpdateStep = ({
       throw new Error('Can not update an undefined workflow version.');
     }
 
-    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+
     await updateWorkflowVersionStep({
-      workflowVersionId: workflowVersion.id,
+      workflowVersionId,
       step: updatedStep,
     });
   };

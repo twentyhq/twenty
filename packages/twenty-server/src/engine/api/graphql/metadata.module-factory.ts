@@ -1,6 +1,8 @@
 import { YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
@@ -47,7 +49,7 @@ export const metadataModuleFactory = async (
     }),
   };
 
-  if (environmentService.get('DEBUG_MODE')) {
+  if (environmentService.get('NODE_ENV') === NodeEnvironment.development) {
     config.renderGraphiQL = () => {
       return renderApolloPlayground({ path: 'metadata' });
     };

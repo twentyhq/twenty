@@ -1,7 +1,7 @@
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
@@ -55,7 +55,7 @@ export const LinksFieldInput = ({
       onCancel={onCancel}
       onClickOutside={onClickOutside}
       placeholder="URL"
-      fieldMetadataType={FieldMetadataType.Links}
+      fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({
         isValid: absoluteUrlSchema.safeParse(input).success,
         errorMessage: '',

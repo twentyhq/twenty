@@ -34,10 +34,10 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isDefined } from '~/utils/isDefined';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 //TODO: fix this type
@@ -107,7 +107,7 @@ export const SettingsObjectFieldEdit = () => {
 
     try {
       if (
-        formValues.type === FieldMetadataType.Relation &&
+        formValues.type === FieldMetadataType.RELATION &&
         'relation' in formValues &&
         'relation' in dirtyFields
       ) {
@@ -213,7 +213,7 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
-                  fieldMetadataItem.type !== FieldMetadataType.Relation
+                  fieldMetadataItem.type !== FieldMetadataType.RELATION
                 }
               />
             </Section>

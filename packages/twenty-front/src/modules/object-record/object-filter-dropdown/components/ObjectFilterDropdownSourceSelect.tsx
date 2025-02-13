@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { v4 } from 'uuid';
 
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useEmptyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useEmptyRecordFilter';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -17,7 +19,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
@@ -49,8 +51,8 @@ export const ObjectFilterDropdownSourceSelect = ({
     selectedOperandInDropdownComponentState,
   );
 
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
+  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
@@ -61,6 +63,7 @@ export const ObjectFilterDropdownSourceSelect = ({
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
 
+  // TODO: this should be removed as it is not consistent across re-renders
   const [fieldId] = useState(v4());
 
   const sourceTypes = getActorSourceMultiSelectOptions(
@@ -73,6 +76,8 @@ export const ObjectFilterDropdownSourceSelect = ({
 
   const { emptyRecordFilter } = useEmptyRecordFilter();
 
+  const { removeRecordFilter } = useRemoveRecordFilter();
+
   const handleMultipleItemSelectChange = (
     itemToSelect: SelectableItem,
     newSelectedValue: boolean,
@@ -83,8 +88,15 @@ export const ObjectFilterDropdownSourceSelect = ({
           (id) => id !== itemToSelect.id,
         );
 
+    if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
+      throw new Error(
+        'Field metadata item used in filter dropdown should be defined',
+      );
+    }
+
     if (newSelectedItemIds.length === 0) {
       emptyRecordFilter();
+      removeRecordFilter(fieldMetadataItemUsedInFilterDropdown.id);
       deleteCombinedViewFilter(fieldId);
       return;
     }
@@ -101,7 +113,7 @@ export const ObjectFilterDropdownSourceSelect = ({
         : selectedItemNames.join(', ');
 
     if (
-      isDefined(filterDefinitionUsedInDropdown) &&
+      isDefined(fieldMetadataItemUsedInFilterDropdown) &&
       isDefined(selectedOperandInDropdown)
     ) {
       const newFilterValue =
@@ -113,17 +125,21 @@ export const ObjectFilterDropdownSourceSelect = ({
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (viewFilter) =>
             viewFilter.fieldMetadataId ===
-            filterDefinitionUsedInDropdown.fieldMetadataId,
+            fieldMetadataItemUsedInFilterDropdown.id,
         );
 
       const filterId = viewFilter?.id ?? fieldId;
 
+      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
+        field: fieldMetadataItemUsedInFilterDropdown,
+      });
+
       applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : filterId,
-        definition: filterDefinitionUsedInDropdown,
+        definition: filterDefinition,
         operand: selectedOperandInDropdown || ViewFilterOperand.Is,
         displayValue: filterDisplayValue,
-        fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+        fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
         value: newFilterValue,
         viewFilterGroupId: selectedFilter?.viewFilterGroupId,
       });

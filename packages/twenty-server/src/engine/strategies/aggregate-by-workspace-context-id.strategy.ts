@@ -7,6 +7,7 @@ import {
 
 import { Request } from 'express';
 import { jwtDecode } from 'jwt-decode';
+import { isDefined } from 'twenty-shared';
 
 import { JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 
@@ -24,8 +25,10 @@ export class AggregateByWorkspaceContextIdStrategy
       return () => contextId;
     }
 
-    if (workspaces.has(jwtPayload.workspaceId)) {
-      workspaceSubTreeId = workspaces.get(jwtPayload.workspaceId)!;
+    const subTreeId = workspaces.get(jwtPayload.workspaceId);
+
+    if (isDefined(subTreeId)) {
+      workspaceSubTreeId = subTreeId;
     } else {
       workspaceSubTreeId = ContextIdFactory.create();
       workspaces.set(jwtPayload.workspaceId, workspaceSubTreeId);

@@ -1,6 +1,7 @@
 import { capitalize } from 'twenty-shared';
 import { WhereExpressionBuilder } from 'typeorm';
 
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
@@ -17,9 +18,14 @@ const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
 export class GraphqlQueryFilterFieldParser {
   private fieldMetadataMapByName: FieldMetadataMap;
+  private featureFlagsMap: FeatureFlagMap;
 
-  constructor(fieldMetadataMapByName: FieldMetadataMap) {
+  constructor(
+    fieldMetadataMapByName: FieldMetadataMap,
+    featureFlagsMap: FeatureFlagMap,
+  ) {
     this.fieldMetadataMapByName = fieldMetadataMapByName;
+    this.featureFlagsMap = featureFlagsMap;
   }
 
   public parse(

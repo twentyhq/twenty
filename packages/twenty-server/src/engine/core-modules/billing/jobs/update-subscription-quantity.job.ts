@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Logger, Scope } from '@nestjs/common';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -36,13 +38,13 @@ export class UpdateSubscriptionQuantityJob {
     }
 
     try {
-      const billingSubscriptionItem =
-        await this.billingSubscriptionService.getCurrentBillingSubscriptionItemOrThrow(
+      const billingBaseProductSubscriptionItem =
+        await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(
           data.workspaceId,
         );
 
       await this.stripeSubscriptionItemService.updateSubscriptionItem(
-        billingSubscriptionItem.stripeSubscriptionItemId,
+        billingBaseProductSubscriptionItem.stripeSubscriptionItemId,
         workspaceMembersCount,
       );
 

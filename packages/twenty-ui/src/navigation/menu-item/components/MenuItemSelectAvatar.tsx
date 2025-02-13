@@ -2,11 +2,12 @@ import { useTheme } from '@emotion/react';
 import { ReactNode } from 'react';
 
 import {
+  StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { IconCheck, OverflowingTextWithTooltip } from '@ui/display';
+import { OverflowingTextWithTooltip } from '@ui/display';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
@@ -50,7 +51,7 @@ export const MenuItemSelectAvatar = ({
           <OverflowingTextWithTooltip text={text} />
         </StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && <IconCheck size={theme.icon.size.md} />}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

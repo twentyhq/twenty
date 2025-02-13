@@ -14,8 +14,8 @@ export const createOneRelationMetadataFactory = ({
   input,
 }: CreateOneRelationFactoryParams) => ({
   query: gql`
-      mutation CreateOneRelationMetadata($input: CreateOneRelationInput!) {
-        createOneRelation(input: $input) {
+      mutation CreateOneRelationMetadata($input: CreateOneRelationMetadataInput!) {
+        createOneRelationMetadata(input: $input) {
           ${gqlFields}
         }
       }

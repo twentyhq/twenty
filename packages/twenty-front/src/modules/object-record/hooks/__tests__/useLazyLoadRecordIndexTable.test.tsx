@@ -71,6 +71,7 @@ const mocks: MockedResponse[] = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         domainName {
@@ -115,6 +116,7 @@ const mocks: MockedResponse[] = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         id
@@ -136,6 +138,7 @@ const mocks: MockedResponse[] = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         id
@@ -156,6 +159,7 @@ const mocks: MockedResponse[] = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         emails {
@@ -197,13 +201,14 @@ const mocks: MockedResponse[] = [
                         }
                       }
                       personId
-                      rocket {
+                      pet {
                         __typename
                         createdAt
                         createdBy {
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         id
@@ -211,7 +216,8 @@ const mocks: MockedResponse[] = [
                         position
                         updatedAt
                       }
-                      rocketId
+                      petId
+                      surveyResultId
                       updatedAt
                     }
                   }
@@ -243,6 +249,7 @@ const mocks: MockedResponse[] = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         domainName {
@@ -292,6 +299,7 @@ const mocks: MockedResponse[] = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         id
@@ -312,6 +320,7 @@ const mocks: MockedResponse[] = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         emails {
@@ -353,13 +362,14 @@ const mocks: MockedResponse[] = [
                         }
                       }
                       personId
-                      rocket {
+                      pet {
                         __typename
                         createdAt
                         createdBy {
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         id
@@ -367,7 +377,8 @@ const mocks: MockedResponse[] = [
                         position
                         updatedAt
                       }
-                      rocketId
+                      petId
+                      surveyResultId
                       task {
                         __typename
                         assigneeId
@@ -377,6 +388,7 @@ const mocks: MockedResponse[] = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         dueAt
