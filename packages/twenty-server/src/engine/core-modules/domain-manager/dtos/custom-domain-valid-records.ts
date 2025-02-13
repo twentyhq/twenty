@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-class CustomDomainVerification {
+class CustomDomainRecord {
   @Field(() => String)
   validationType: 'ownership' | 'ssl' | 'redirection';
 
@@ -19,13 +19,13 @@ class CustomDomainVerification {
 }
 
 @ObjectType()
-export class CustomDomainDetails {
+export class CustomDomainValidRecords {
   @Field(() => String)
   id: string;
 
   @Field(() => String)
   customDomain: string;
 
-  @Field(() => [CustomDomainVerification])
-  records: Array<CustomDomainVerification>;
+  @Field(() => [CustomDomainRecord])
+  records: Array<CustomDomainRecord>;
 }
