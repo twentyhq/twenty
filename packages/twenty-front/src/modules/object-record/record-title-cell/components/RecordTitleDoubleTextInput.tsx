@@ -13,7 +13,7 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 const StyledContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  justify-content: center;
+  justify-content: inherit;
   width: 100%;
 `;
 
