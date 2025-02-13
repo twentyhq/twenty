@@ -5,12 +5,12 @@ import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filt
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { isDateAggregateOperation } from '@/object-record/utils/isDateAggregateOperation';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -51,21 +51,24 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const aggregateOperationForViewFieldWithProbableImpossibleValues =
     useRecoilValue(viewFieldAggregateOperationState({ viewFieldId }));
 
-  const aggregateOperationForViewField:
-    | ExtendedAggregateOperations
-    | undefined
-    | null =
+  const isAggregateOperationImpossibleForDateField =
     isFieldMetadataDateKind(fieldMetadataItem) &&
     isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
     isDefined(fieldMetadataItem) &&
-    !isDateAggregateOperation(
-      aggregateOperationForViewFieldWithProbableImpossibleValues,
-    )
-      ? convertAggregateOperationToExtendedAggregateOperation(
-          aggregateOperationForViewFieldWithProbableImpossibleValues,
-          fieldMetadataItem.type,
-        )
-      : aggregateOperationForViewFieldWithProbableImpossibleValues;
+    (aggregateOperationForViewFieldWithProbableImpossibleValues ===
+      AGGREGATE_OPERATIONS.min ||
+      aggregateOperationForViewFieldWithProbableImpossibleValues ===
+        AGGREGATE_OPERATIONS.max);
+
+  const aggregateOperationForViewField:
+    | ExtendedAggregateOperations
+    | undefined
+    | null = isAggregateOperationImpossibleForDateField
+    ? convertAggregateOperationToExtendedAggregateOperation(
+        aggregateOperationForViewFieldWithProbableImpossibleValues,
+        fieldMetadataItem.type,
+      )
+    : aggregateOperationForViewFieldWithProbableImpossibleValues;
 
   const fieldName = fieldMetadataItem?.name;
 
