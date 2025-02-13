@@ -13,7 +13,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
   relationrecordFields?: Record<string, any>;
   computeReferences?: boolean;
-  isForInsertion?: boolean; // Name not incredible
+  isForInput?: boolean; // Name not incredible
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
@@ -21,7 +21,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   field,
   relationrecordFields,
   computeReferences = false,
-  isForInsertion = false,
+  isForInput = false,
 }: MapFieldMetadataToGraphQLQueryArgs): any => {
   const fieldType = field.type;
 
@@ -138,7 +138,7 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.ACTOR) {
-    if (isForInsertion) {
+    if (isForInput) {
       return `${field.name}
 {
     source

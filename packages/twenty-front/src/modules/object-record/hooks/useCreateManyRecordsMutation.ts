@@ -39,7 +39,7 @@ export const useCreateManyRecordsMutation = ({
     )}CreateInput!]!, $upsert: Boolean)  {
       ${mutationResponseField}(data: $data, upsert: $upsert) ${mapObjectMetadataToGraphQLQuery(
         {
-          isForInsertion: true,
+          isForInput: true,
           objectMetadataItems,
           objectMetadataItem,
           recordGqlFields,
