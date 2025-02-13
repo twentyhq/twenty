@@ -18,9 +18,8 @@ import {
   WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
-export class ColumnActionAbstractFactory<
-  T extends FieldMetadataType | 'default',
-> implements WorkspaceColumnActionFactory<T>
+export class ColumnActionAbstractFactory<T extends FieldMetadataType>
+  implements WorkspaceColumnActionFactory<T>
 {
   protected readonly logger = new Logger(ColumnActionAbstractFactory.name);
 

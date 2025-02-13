@@ -64,9 +64,7 @@ registerEnumType(FieldMetadataType, {
 @Relation('object', () => ObjectMetadataDTO, {
   nullable: true,
 })
-export class FieldMetadataDTO<
-  T extends FieldMetadataType | 'default' = 'default',
-> {
+export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsUUID()
   @IsNotEmpty()
   @IDField(() => UUIDScalarType)
@@ -75,7 +73,7 @@ export class FieldMetadataDTO<
   @IsEnum(FieldMetadataType)
   @IsNotEmpty()
   @Field(() => FieldMetadataType)
-  type: FieldMetadataType;
+  type: T;
 
   @IsString()
   @IsNotEmpty()
