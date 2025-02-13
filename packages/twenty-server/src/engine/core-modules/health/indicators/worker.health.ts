@@ -14,7 +14,7 @@ export class WorkerHealthIndicator extends HealthIndicator {
     super();
   }
 
-  async isHealthy(key: string): Promise<HealthIndicatorResult> {
+  async isHealthy(): Promise<HealthIndicatorResult> {
     try {
       await Promise.race([
         this.checkWorkers(),
@@ -26,9 +26,9 @@ export class WorkerHealthIndicator extends HealthIndicator {
         ),
       ]);
 
-      return this.getStatus(key, true);
+      return this.getStatus('worker', true);
     } catch (error) {
-      return this.getStatus(key, false, { error: error.message });
+      return this.getStatus('worker', false, { error: error.message });
     }
   }
 

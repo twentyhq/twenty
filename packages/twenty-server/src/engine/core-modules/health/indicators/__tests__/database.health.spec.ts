@@ -40,7 +40,7 @@ describe('DatabaseHealthIndicator', () => {
   it('should return up status when database responds', async () => {
     dataSource.query.mockResolvedValueOnce([]);
 
-    const result = await service.isHealthy('database');
+    const result = await service.isHealthy();
 
     expect(result.database.status).toBe('up');
   });
@@ -50,7 +50,7 @@ describe('DatabaseHealthIndicator', () => {
       new Error(HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED),
     );
 
-    const result = await service.isHealthy('database');
+    const result = await service.isHealthy();
 
     expect(result.database.status).toBe('down');
     expect(result.database.error).toBe(
@@ -66,7 +66,7 @@ describe('DatabaseHealthIndicator', () => {
         ),
     );
 
-    const healthCheckPromise = service.isHealthy('database');
+    const healthCheckPromise = service.isHealthy();
 
     jest.advanceTimersByTime(HEALTH_INDICATORS_TIMEOUT + 1);
 

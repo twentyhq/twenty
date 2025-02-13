@@ -11,7 +11,7 @@ export class RedisHealthIndicator extends HealthIndicator {
     super();
   }
 
-  async isHealthy(key: string): Promise<HealthIndicatorResult> {
+  async isHealthy(): Promise<HealthIndicatorResult> {
     try {
       await Promise.race([
         this.redisClient.getClient().ping(),
@@ -23,9 +23,9 @@ export class RedisHealthIndicator extends HealthIndicator {
         ),
       ]);
 
-      return this.getStatus(key, true);
+      return this.getStatus('redis', true);
     } catch (error) {
-      return this.getStatus(key, false, {
+      return this.getStatus('redis', false, {
         error: error?.message ?? HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED,
       });
     }

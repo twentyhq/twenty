@@ -60,7 +60,7 @@ describe('WorkerHealthIndicator', () => {
   it('should return up status when workers are active', async () => {
     mockQueue.getWorkers.mockResolvedValue([{ id: 'worker1' }] as any);
 
-    const result = await service.isHealthy('worker');
+    const result = await service.isHealthy();
 
     expect(result.worker.status).toBe('up');
     expect(Queue).toHaveBeenCalledWith(expect.any(String), expect.any(Object));
@@ -70,7 +70,7 @@ describe('WorkerHealthIndicator', () => {
   it('should return down status when no workers are active', async () => {
     mockQueue.getWorkers.mockResolvedValue([]);
 
-    const result = await service.isHealthy('worker');
+    const result = await service.isHealthy();
 
     expect(result.worker.status).toBe('down');
     expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS);
@@ -79,7 +79,7 @@ describe('WorkerHealthIndicator', () => {
   it('should check all message queues', async () => {
     mockQueue.getWorkers.mockResolvedValue([{ id: 'worker1' }] as any);
 
-    await service.isHealthy('worker');
+    await service.isHealthy();
 
     expect(Queue).toHaveBeenCalledTimes(Object.keys(MessageQueue).length);
   });
@@ -92,7 +92,7 @@ describe('WorkerHealthIndicator', () => {
         ),
     );
 
-    const healthCheckPromise = service.isHealthy('worker');
+    const healthCheckPromise = service.isHealthy();
 
     jest.advanceTimersByTime(HEALTH_INDICATORS_TIMEOUT + 1);
 

@@ -24,9 +24,9 @@ export class HealthController {
   @HealthCheck()
   checkService(@Param('serviceName') serviceName: string) {
     const checks = {
-      database: () => this.databaseHealth.isHealthy('database'),
-      redis: () => this.redisHealth.isHealthy('redis'),
-      worker: () => this.workerHealth.isHealthy('worker'),
+      database: () => this.databaseHealth.isHealthy(),
+      redis: () => this.redisHealth.isHealthy(),
+      worker: () => this.workerHealth.isHealthy(),
     };
 
     if (!(serviceName in checks)) {

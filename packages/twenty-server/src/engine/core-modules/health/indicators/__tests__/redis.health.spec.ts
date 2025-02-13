@@ -45,7 +45,7 @@ describe('RedisHealthIndicator', () => {
   it('should return up status when redis responds', async () => {
     mockRedis.ping.mockResolvedValueOnce('PONG');
 
-    const result = await service.isHealthy('redis');
+    const result = await service.isHealthy();
 
     expect(result.redis.status).toBe('up');
   });
@@ -55,7 +55,7 @@ describe('RedisHealthIndicator', () => {
       new Error(HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED),
     );
 
-    const result = await service.isHealthy('redis');
+    const result = await service.isHealthy();
 
     expect(result.redis.status).toBe('down');
     expect(result.redis.error).toBe(
@@ -71,7 +71,7 @@ describe('RedisHealthIndicator', () => {
         ),
     );
 
-    const healthCheckPromise = service.isHealthy('redis');
+    const healthCheckPromise = service.isHealthy();
 
     jest.advanceTimersByTime(HEALTH_INDICATORS_TIMEOUT + 1);
 

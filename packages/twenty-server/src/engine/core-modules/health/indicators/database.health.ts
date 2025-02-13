@@ -16,7 +16,7 @@ export class DatabaseHealthIndicator extends HealthIndicator {
     super();
   }
 
-  async isHealthy(key: string): Promise<HealthIndicatorResult> {
+  async isHealthy(): Promise<HealthIndicatorResult> {
     try {
       await Promise.race([
         this.dataSource.query('SELECT 1'),
@@ -28,9 +28,9 @@ export class DatabaseHealthIndicator extends HealthIndicator {
         ),
       ]);
 
-      return this.getStatus(key, true);
+      return this.getStatus('database', true);
     } catch (error) {
-      return this.getStatus(key, false, {
+      return this.getStatus('database', false, {
         error:
           error.message || HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED,
       });
