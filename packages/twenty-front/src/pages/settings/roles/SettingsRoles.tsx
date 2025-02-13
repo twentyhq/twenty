@@ -14,6 +14,7 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -22,7 +23,12 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
-import { FeatureFlagKey, useGetRolesQuery } from '~/generated/graphql';
+import React from 'react';
+import {
+  FeatureFlagKey,
+  SettingsFeatures,
+  useGetRolesQuery,
+} from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -99,7 +105,11 @@ export const SettingsRoles = () => {
     fetchPolicy: 'network-only',
   });
 
-  if (!isPermissionsEnabled) {
+  const hasRolesSettingsPermission = useHasSettingsPermission(
+    SettingsFeatures.ROLES,
+  );
+
+  if (!isPermissionsEnabled || !hasRolesSettingsPermission) {
     return null;
   }
 
@@ -157,9 +167,8 @@ export const SettingsRoles = () => {
                         {role.workspaceMembers
                           .slice(0, 5)
                           .map((workspaceMember) => (
-                            <>
+                            <React.Fragment key={workspaceMember.id}>
                               <StyledAvatarContainer
-                                key={workspaceMember.id}
                                 id={`avatar-${workspaceMember.id}`}
                               >
                                 <Avatar
@@ -180,7 +189,7 @@ export const SettingsRoles = () => {
                                 positionStrategy="fixed"
                                 delay={TooltipDelay.shortDelay}
                               />
-                            </>
+                            </React.Fragment>
                           ))}
                       </StyledAvatarGroup>
                       <StyledAssignedText>
