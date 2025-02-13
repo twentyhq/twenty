@@ -9,6 +9,8 @@ import {
 } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import assert from 'assert';
+
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
@@ -74,6 +76,8 @@ export class WorkspaceResolver {
   @UseGuards(WorkspaceAuthGuard)
   async currentWorkspace(@AuthWorkspace() { id }: Workspace) {
     const workspace = await this.workspaceService.findById(id);
+
+    assert(workspace, 'Workspace not found');
 
     return workspace;
   }
@@ -224,6 +228,30 @@ export class WorkspaceResolver {
   @ResolveField(() => workspaceUrls)
   workspaceUrls(@Parent() workspace: Workspace) {
     return this.domainManagerService.getWorkspaceUrls(workspace);
+  }
+
+  @ResolveField(() => Boolean)
+  isGoogleAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isGoogleAuthEnabled &&
+      this.environmentService.get('AUTH_GOOGLE_ENABLED')
+    );
+  }
+
+  @ResolveField(() => Boolean)
+  isMicrosoftAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isMicrosoftAuthEnabled &&
+      this.environmentService.get('AUTH_MICROSOFT_ENABLED')
+    );
+  }
+
+  @ResolveField(() => Boolean)
+  isPasswordAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isPasswordAuthEnabled &&
+      this.environmentService.get('AUTH_PASSWORD_ENABLED')
+    );
   }
 
   @Query(() => CustomDomainDetails, { nullable: true })
