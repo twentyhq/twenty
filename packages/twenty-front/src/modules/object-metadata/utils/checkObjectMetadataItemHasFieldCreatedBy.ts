@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared';
 
-export const objectMetadataItemHasFieldCreatedBy = (
+export const checkObjectMetadataItemHasFieldCreatedBy = (
   objectMetadataItem: ObjectMetadataItem,
 ) =>
   objectMetadataItem.fields.some(

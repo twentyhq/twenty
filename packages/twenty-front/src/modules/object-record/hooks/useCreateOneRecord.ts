@@ -7,7 +7,7 @@ import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effec
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { objectMetadataItemHasFieldCreatedBy } from '@/object-metadata/utils/objectMetadataItemHasFieldCreatedBy';
+import { checkObjectMetadataItemHasFieldCreatedBy } from '@/object-metadata/utils/checkObjectMetadataItemHasFieldCreatedBy';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
@@ -47,7 +47,7 @@ export const useCreateOneRecord = <
   });
 
   const objectMetadataHasCreatedByField =
-    objectMetadataItemHasFieldCreatedBy(objectMetadataItem);
+    checkObjectMetadataItemHasFieldCreatedBy(objectMetadataItem);
 
   const computedRecordGqlFields =
     recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
