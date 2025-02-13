@@ -14,12 +14,14 @@ import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class SAMLAuthGuard extends AuthGuard('saml') {
   constructor(
     private readonly sSOService: SSOService,
     private readonly guardRedirectService: GuardRedirectService,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super();
   }
@@ -49,7 +51,7 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
           identityProvider?.workspace,
         ),
       );

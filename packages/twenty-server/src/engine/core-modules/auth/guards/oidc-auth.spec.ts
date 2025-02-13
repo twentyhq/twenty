@@ -9,6 +9,7 @@ import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/ser
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 const createMockExecutionContext = (mockedRequest: any): ExecutionContext => {
   return {
@@ -56,6 +57,13 @@ describe('OIDCAuthGuard', () => {
           useValue: {
             dispatchErrorFromGuard: jest.fn(),
             getSubdomainAndCustomDomainFromWorkspace: jest.fn(),
+          },
+        },
+        {
+          provide: DomainManagerService,
+          useValue: {
+            getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain:
+              jest.fn(),
           },
         },
       ],
