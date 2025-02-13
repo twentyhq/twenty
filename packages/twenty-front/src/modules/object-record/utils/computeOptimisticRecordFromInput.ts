@@ -12,36 +12,11 @@ import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldA
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/object-record/utils/buildOptimisticActorFieldValueFromCurrentWorkspaceMember';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
-
-const buildDefaultActorFieldValue = (
-  currentWorkspaceMember: CurrentWorkspaceMember | null,
-): FieldActorValue => {
-  const defaultActorFieldValue: FieldActorValue = {
-    context: {},
-    name: '',
-    source: 'MANUAL',
-    workspaceMemberId: null,
-  };
-
-  if (!isDefined(currentWorkspaceMember)) {
-    return defaultActorFieldValue;
-  }
-
-  const {
-    id: workspaceMemberId,
-    name: { firstName, lastName },
-  } = currentWorkspaceMember;
-  const name = `${firstName} ${lastName}`;
-  return {
-    ...defaultActorFieldValue,
-    name: name,
-    workspaceMemberId,
-  };
-};
 
 type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
@@ -99,7 +74,7 @@ export const computeOptimisticRecordFromInput = ({
     }
 
     if (isFieldActor(fieldMetadataItem) && isDefined(recordInputFieldValue)) {
-      const defaultActorFieldValue = buildDefaultActorFieldValue(
+      const defaultActorFieldValue = buildOptimisticActorFieldValueFromCurrentWorkspaceMember(
         currentWorkspaceMember,
       );
       optimisticRecord[fieldMetadataItem.name] = {
