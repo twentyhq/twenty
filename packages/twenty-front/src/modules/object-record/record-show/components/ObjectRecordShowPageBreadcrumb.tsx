@@ -12,15 +12,21 @@ const StyledEditableTitleContainer = styled.div`
   display: flex;
   flex-direction: row;
   overflow-x: hidden;
+  width: 100%;
 `;
 
 const StyledEditableTitlePrefix = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  flex: 1 0 auto;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(0.75)};
+`;
+
+const StyledTitle = styled.div`
+  overflow: hidden;
+  max-width: 100%;
+  width: fit-content;
 `;
 
 export const ObjectRecordShowPageBreadcrumb = ({
@@ -58,31 +64,35 @@ export const ObjectRecordShowPageBreadcrumb = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      <FieldContext.Provider
-        value={{
-          recordId: objectRecordId,
-          recoilScopeId: objectRecordId + labelIdentifierFieldMetadataItem?.id,
-          isLabelIdentifier: false,
-          fieldDefinition: {
-            type:
-              labelIdentifierFieldMetadataItem?.type || FieldMetadataType.TEXT,
-            iconName: '',
-            fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
-            label: labelIdentifierFieldMetadataItem?.label || '',
-            metadata: {
-              fieldName: labelIdentifierFieldMetadataItem?.name || '',
-              objectMetadataNameSingular: objectNameSingular,
+      <StyledTitle>
+        <FieldContext.Provider
+          value={{
+            recordId: objectRecordId,
+            recoilScopeId:
+              objectRecordId + labelIdentifierFieldMetadataItem?.id,
+            isLabelIdentifier: false,
+            fieldDefinition: {
+              type:
+                labelIdentifierFieldMetadataItem?.type ||
+                FieldMetadataType.TEXT,
+              iconName: '',
+              fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
+              label: labelIdentifierFieldMetadataItem?.label || '',
+              metadata: {
+                fieldName: labelIdentifierFieldMetadataItem?.name || '',
+                objectMetadataNameSingular: objectNameSingular,
+              },
+              defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
             },
-            defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
-          },
-          useUpdateRecord: useUpdateOneObjectRecordMutation,
-          hotkeyScope: InlineCellHotkeyScope.InlineCell,
-          isCentered: false,
-          isDisplayModeFixHeight: true,
-        }}
-      >
-        <RecordTitleCell sizeVariant="sm" />
-      </FieldContext.Provider>
+            useUpdateRecord: useUpdateOneObjectRecordMutation,
+            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+            isCentered: false,
+            isDisplayModeFixHeight: true,
+          }}
+        >
+          <RecordTitleCell sizeVariant="sm" />
+        </FieldContext.Provider>
+      </StyledTitle>
     </StyledEditableTitleContainer>
   );
 };
