@@ -193,8 +193,9 @@ export class ServerlessFunctionService {
       );
 
       if (deepEqual(latestCode, draftCode)) {
-        throw new Error(
+        throw new ServerlessFunctionException(
           'Cannot publish a new version when code has not changed',
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED,
         );
       }
     }
