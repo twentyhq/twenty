@@ -67,14 +67,31 @@ export const computeOptimisticRecordFromInput = ({
       if (isRelationFieldId) {
         continue;
       }
+
+      // Does util already exists ?
+      // Not great is a side effect
+      // const isRecordPrimaryKey = fieldMetadataItem.name === 'id';
+      // if (isRecordPrimaryKey && isDefined(recordInputFieldValue)) {
+      //   const defaultCreatedByValue: FieldActorValue = {
+      //     context: {},
+      //     name: '', // could be optimiscally retrieved
+      //     source: 'MANUAL',
+      //     workspaceMemberId: null, // could be optimistically retrieve
+      //   };
+
+      //   optimisticRecord[fieldMetadataItem.name] = recordInputFieldValue;
+      //   optimisticRecord["createdBy"] = defaultCreatedByValue;
+      //   continue
+      // }
     }
 
+    // Is it required ?
     if (isFieldActor(fieldMetadataItem) && isDefined(recordInputFieldValue)) {
       // could be retrieved from a util ?
       const defaultValue: FieldActorValue = {
         context: {},
         name: '', // could be optimiscally retrieved
-        source: '',
+        source: 'MANUAL',
         workspaceMemberId: null, // could be optimistically retrieve
       };
       optimisticRecord[fieldMetadataItem.name] = {

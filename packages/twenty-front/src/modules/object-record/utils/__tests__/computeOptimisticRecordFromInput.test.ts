@@ -46,7 +46,30 @@ describe('computeOptimisticRecordFromInput', () => {
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         city: 'Paris',
-        createdBy: actorFieldDefaultValue,
+        createdBy: actorFieldDefaultValue
+      },
+      cache,
+    });
+
+    expect(result).toEqual({
+      city: 'Paris',
+      createdBy: {
+        context: {},
+        name: '',
+        source: 'MANUAL',
+        workspaceMemberId: null,
+      },
+    });
+  });
+
+  it.skip('should generate correct optimistic record createdBy when recordInput contains id', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
+    const result = computeOptimisticRecordFromInput({
+      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: {
+        id: '20202020-058c-4591-a7d7-50a75af6d1e6',
       },
       cache,
     });

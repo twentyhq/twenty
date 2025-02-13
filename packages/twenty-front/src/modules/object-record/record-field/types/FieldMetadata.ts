@@ -279,8 +279,10 @@ export type FieldRichTextV2Value = {
 
 export type FieldRichTextValue = null | string;
 
+type FieldActorSource = 'API' | 'IMPORT' | 'EMAIL' | 'CALENDAR' | 'MANUAL' | 'SYSTEM' | 'WORKFLOW'; // TODO find already existing
+
 export type FieldActorValue = {
-  source: string; // TODO strictly type
+  source: FieldActorSource;
   workspaceMemberId: string | null;
   name: string;
   context: {

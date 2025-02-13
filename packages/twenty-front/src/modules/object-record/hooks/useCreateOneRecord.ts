@@ -82,9 +82,6 @@ export const useCreateOneRecord = <
       recordInput: {
         ...recordInput,
         id: idForCreation,
-        createdBy: {
-          source: 'MANUAL',
-        },
       },
     });
     const recordCreatedInCache = createOneRecordInCache({
