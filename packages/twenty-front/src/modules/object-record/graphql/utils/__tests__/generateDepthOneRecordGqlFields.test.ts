@@ -5,8 +5,8 @@ import {
 } from '~/testing/mock-data/people';
 
 describe('generateDepthOneRecordGqlFields', () => {
-  it('Should handle basic record', () => {
-    const objectMetadataItem = getPersonObjectMetadataItem();
+  const objectMetadataItem = getPersonObjectMetadataItem();
+  it('Should handle basic call with both objectMetadaItem and record', () => {
     const personRecord = getPersonRecord();
     const result = generateDepthOneRecordGqlFields({
       objectMetadataItem,
@@ -42,6 +42,45 @@ describe('generateDepthOneRecordGqlFields', () => {
   "updatedAt": false,
   "whatsapp": false,
   "workPreference": false,
+  "xLink": true,
+}
+`);
+  });
+
+  it('Should handle basic call with standalone objectMetadaItem', () => {
+    const result = generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+    });
+    expect(result).toMatchInlineSnapshot(`
+{
+  "attachments": true,
+  "avatarUrl": true,
+  "calendarEventParticipants": true,
+  "city": true,
+  "company": true,
+  "companyId": true,
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "emails": true,
+  "favorites": true,
+  "id": true,
+  "intro": true,
+  "jobTitle": true,
+  "linkedinLink": true,
+  "messageParticipants": true,
+  "name": true,
+  "noteTargets": true,
+  "performanceRating": true,
+  "phones": true,
+  "pointOfContactForOpportunities": true,
+  "position": true,
+  "searchVector": true,
+  "taskTargets": true,
+  "timelineActivities": true,
+  "updatedAt": true,
+  "whatsapp": true,
+  "workPreference": true,
   "xLink": true,
 }
 `);
