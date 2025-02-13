@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
@@ -17,6 +18,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 type PartialObjectRecordWithId = Partial<ObjectRecord> & {
@@ -56,6 +58,8 @@ export const useCreateManyRecords = <
     objectMetadataItem,
   });
 
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
@@ -82,6 +86,7 @@ export const useCreateManyRecords = <
           cache: apolloClient.cache,
           objectMetadataItem,
           objectMetadataItems,
+          currentWorkspaceMember: currentWorkspaceMember,
           recordInput: {
             createdBy: {
               source: 'MANUAL',

@@ -1,5 +1,6 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
+import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   getRecordFromCache,
@@ -16,15 +17,43 @@ import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 
+const buildDefaultActorFieldValue = (
+  currentWorkspaceMember: CurrentWorkspaceMember | null,
+): FieldActorValue => {
+  const defaultActorFieldValue: FieldActorValue = {
+    context: {},
+    name: '',
+    source: 'MANUAL',
+    workspaceMemberId: null,
+  };
+
+  if (!isDefined(currentWorkspaceMember)) {
+    return defaultActorFieldValue;
+  }
+
+  const {
+    id: workspaceMemberId,
+    name: { firstName, lastName },
+  } = currentWorkspaceMember;
+  const name = `${firstName} ${lastName}`;
+  return {
+    ...defaultActorFieldValue,
+    name: name,
+    workspaceMemberId,
+  };
+};
+
 type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
+  currentWorkspaceMember: CurrentWorkspaceMember | null;
 } & Pick<GetRecordFromCacheArgs, 'cache' | 'objectMetadataItems'>;
 export const computeOptimisticRecordFromInput = ({
   objectMetadataItem,
   recordInput,
   cache,
   objectMetadataItems,
+  currentWorkspaceMember,
 }: ComputeOptimisticCacheRecordInputArgs) => {
   const unknownRecordInputFields = Object.keys(recordInput).filter(
     (recordKey) => {
@@ -67,42 +96,15 @@ export const computeOptimisticRecordFromInput = ({
       if (isRelationFieldId) {
         continue;
       }
-
-      // Does util already exists ?
-      const isRecordPrimaryKey = fieldMetadataItem.name === 'id';
-      if (isRecordPrimaryKey && isDefined(recordInputFieldValue)) {
-        const createdByRecordInputValue = recordInput['createdBy'];
-        if (!isDefined(createdByRecordInputValue)) {
-          throw new Error("Should never occur, encountered record primary mutation but createdBy is missing from record input")
-        };
-
-        const defaultCreatedByValue: FieldActorValue = {
-          context: {},
-          name: '', // could be optimiscally retrieved
-          source: 'MANUAL',
-          workspaceMemberId: null, // could be optimistically retrieve
-        };
-        optimisticRecord[fieldMetadataItem.name] = recordInputFieldValue;
-        optimisticRecord["createdBy"] = {
-          ...defaultCreatedByValue,
-          ...createdByRecordInputValue
-        };
-        continue
-      }
     }
 
-    // Is it required ?
     if (isFieldActor(fieldMetadataItem) && isDefined(recordInputFieldValue)) {
-      // could be retrieved from a util ?
-      const defaultValue: FieldActorValue = {
-        context: {},
-        name: '', // could be optimiscally retrieved
-        source: 'MANUAL',
-        workspaceMemberId: null, // could be optimistically retrieve
-      };
+      const defaultActorFieldValue = buildDefaultActorFieldValue(
+        currentWorkspaceMember,
+      );
       optimisticRecord[fieldMetadataItem.name] = {
-        ...defaultValue,
-        ...(recordInputFieldValue as FieldActorValue), // TODO
+        ...defaultActorFieldValue,
+        ...(recordInputFieldValue as FieldActorValue),
       };
       continue;
     }

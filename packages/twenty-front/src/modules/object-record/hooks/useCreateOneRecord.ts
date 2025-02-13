@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
@@ -18,6 +19,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 type useCreateOneRecordProps = {
@@ -50,6 +52,8 @@ export const useCreateOneRecord = <
     recordGqlFields: computedRecordGqlFields,
   });
 
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const createOneRecordInCache = useCreateOneRecordInCache<CreatedObjectRecord>(
     {
       objectMetadataItem,
@@ -77,6 +81,7 @@ export const useCreateOneRecord = <
 
     const optimisticRecordInput = computeOptimisticRecordFromInput({
       cache: apolloClient.cache,
+      currentWorkspaceMember: currentWorkspaceMember,
       objectMetadataItem,
       objectMetadataItems,
       recordInput: {

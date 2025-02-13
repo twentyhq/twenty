@@ -1,5 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import {
   FieldMetadataType,
@@ -100,7 +100,9 @@ export const generateEmptyFieldValue = ({
       return {
         source: 'MANUAL',
         context: {},
-      } satisfies FieldActorForInputValue;
+        name: '',
+        workspaceMemberId: null
+      } satisfies FieldActorValue;
     }
     case FieldMetadataType.PHONES: {
       return {
