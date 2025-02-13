@@ -19,6 +19,11 @@ import { WorkerHealthIndicator } from './indicators/worker.health';
     RedisHealthIndicator,
     WorkerHealthIndicator,
   ],
-  exports: [HealthCacheService],
+  exports: [
+    HealthCacheService,
+    DatabaseHealthIndicator,
+    RedisHealthIndicator,
+    WorkerHealthIndicator,
+  ],
 })
 export class HealthModule {}

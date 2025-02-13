@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { MessageChannelSyncJobByStatusCounter } from './health-metrics.types';
-import { HealthService } from './health-service.types';
+import { MessageChannelSyncJobByStatusCounter } from 'src/engine/core-modules/health/types/health-metrics.types';
+import { HealthService } from 'src/engine/core-modules/health/types/health-service.types';
 
 @ObjectType()
-export class HealthSystem {
+export class SystemHealth {
   @Field(() => HealthService)
   database: HealthService;
 
