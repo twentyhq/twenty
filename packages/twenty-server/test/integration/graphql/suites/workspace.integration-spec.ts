@@ -1,5 +1,7 @@
 import request from 'supertest';
 import { ADMIN_ACCESS_TOKEN } from 'test/integration/constants/admin-access-token.constants';
+import { MEMBER_ACCESS_TOKEN } from 'test/integration/constants/member-access-token.constants';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
@@ -15,7 +17,7 @@ describe('WorkspaceResolver', () => {
       true,
     );
 
-    await client.post('/graphql').send(query);
+    await makeGraphqlAPIRequest(query);
   });
   afterEach(async () => {
     const query = updateFeatureFlagFactory(
@@ -24,7 +26,7 @@ describe('WorkspaceResolver', () => {
       false,
     );
 
-    await client.post('/graphql').send(query);
+    await makeGraphqlAPIRequest(query);
   });
   describe('security permissions', () => {
     it('should update workspace when user has permission (admin role)', async () => {
@@ -56,11 +58,11 @@ describe('WorkspaceResolver', () => {
         });
     });
 
-    it('should throw a permission error when user does not have permission (no admin role)', async () => {
+    it('should throw a permission error when user does not have permission (member role)', async () => {
       const queryData = {
         query: `
         mutation updateWorkspace {
-          updateWorkspace(data: { isMicrosoftAuthEnabled: false }) {
+          updateWorkspace(data: { isMicrosoftAuthEnabled: true }) {
             id
             isMicrosoftAuthEnabled
           }
@@ -68,9 +70,9 @@ describe('WorkspaceResolver', () => {
       `,
       };
 
-      return client
+      await client
         .post('/graphql')
-        .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+        .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
         .send(queryData)
         .expect(200)
         .expect((res) => {
@@ -83,7 +85,7 @@ describe('WorkspaceResolver', () => {
     });
   });
   describe('workspace permissions', () => {
-    it('should update workspace when permissions are enabled and user has permission', async () => {
+    it('should update workspace when permissions are enabled and user has permission (admin role)', async () => {
       const queryData = {
         query: `
         mutation updateWorkspace {
@@ -109,6 +111,32 @@ describe('WorkspaceResolver', () => {
 
           expect(data).toBeDefined();
           expect(data.displayName).toBe('New Workspace Name');
+        });
+    });
+
+    it('should throw a permission error when user does not have permission (member role)', async () => {
+      const queryData = {
+        query: `
+        mutation updateWorkspace {
+          updateWorkspace(data: { displayName: "Another New Workspace Name" }) {
+            id
+            displayName
+          }
+        }
+      `,
+      };
+
+      const resp = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
+        .send(queryData)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data).toBeNull();
+          expect(res.body.errors).toBeDefined();
+          expect(res.body.errors[0].message).toBe(
+            PermissionsExceptionMessage.PERMISSION_DENIED,
+          );
         });
     });
   });
