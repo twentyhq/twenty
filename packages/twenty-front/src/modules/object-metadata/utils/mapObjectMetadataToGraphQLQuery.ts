@@ -1,11 +1,15 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
+import {
+  RecordGqlFields,
+  isRecordGqlFieldsNode,
+  mapFieldMetadataToGraphQLQuery,
+} from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
-  recordGqlFields?: Record<string, any>;
+  recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   isRootLevel?: boolean;
 };
@@ -37,13 +41,14 @@ export const mapObjectMetadataToGraphQLQuery = ({
 __typename
 ${fieldsThatShouldBeQueried
   .map((field) => {
+    const currentRecordGqlFields = recordGqlFields?.[field.name];
+    const relationRecordGqlFields = isRecordGqlFieldsNode(currentRecordGqlFields)
+      ? currentRecordGqlFields
+      : undefined;
     return mapFieldMetadataToGraphQLQuery({
       objectMetadataItems,
       field,
-      relationrecordFields:
-        typeof recordGqlFields?.[field.name] === 'boolean'
-          ? undefined
-          : recordGqlFields?.[field.name],
+      relationRecordGqlFields,
       computeReferences,
     });
   })

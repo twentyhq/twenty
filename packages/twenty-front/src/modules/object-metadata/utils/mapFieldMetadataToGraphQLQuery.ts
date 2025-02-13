@@ -1,4 +1,3 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isUndefined } from '@sniptt/guards';
 import {
@@ -6,21 +5,26 @@ import {
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
+
+export type RecordGqlFields =
+    { [k: string]: boolean | RecordGqlFields };
+export const isRecordGqlFieldsNode = (recordGql: RecordGqlFields | boolean | undefined): recordGql is RecordGqlFields => typeof recordGql !== 'boolean'
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
-  relationrecordFields?: Record<string, any>;
+  relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
-  relationrecordFields,
+  relationRecordGqlFields,
   computeReferences = false,
-}: MapFieldMetadataToGraphQLQueryArgs): any => {
+}: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = field.type;
 
   const fieldIsSimpleValue = [
@@ -61,7 +65,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
-  recordGqlFields: relationrecordFields,
+  recordGqlFields: relationRecordGqlFields,
   computeReferences: computeReferences,
   isRootLevel: false,
 })}`;
@@ -87,7 +91,7 @@ ${mapObjectMetadataToGraphQLQuery({
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,
-      recordGqlFields: relationrecordFields,
+      recordGqlFields: relationRecordGqlFields,
       computeReferences,
       isRootLevel: false,
     })}
