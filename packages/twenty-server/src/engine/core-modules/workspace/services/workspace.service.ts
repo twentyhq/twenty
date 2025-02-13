@@ -37,6 +37,7 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -59,6 +60,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly domainManagerService: DomainManagerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
+    private readonly customDomainService: CustomDomainService,
   ) {
     super(workspaceRepository);
   }
@@ -111,7 +113,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.customDomain !== customDomain &&
       isDefined(workspace.customDomain)
     ) {
-      await this.domainManagerService.updateCustomDomain(
+      await this.customDomainService.updateCustomDomain(
         workspace.customDomain,
         customDomain,
       );
@@ -122,7 +124,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.customDomain !== customDomain &&
       !isDefined(workspace.customDomain)
     ) {
-      await this.domainManagerService.registerCustomDomain(customDomain);
+      await this.customDomainService.registerCustomDomain(customDomain);
     }
   }
 
@@ -146,7 +148,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     let customDomainRegistered = false;
 
     if (payload.customDomain === null && isDefined(workspace.customDomain)) {
-      await this.domainManagerService.deleteCustomHostnameByHostnameSilently(
+      await this.customDomainService.deleteCustomHostnameByHostnameSilently(
         workspace.customDomain,
       );
     }
@@ -179,7 +181,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     } catch (error) {
       // revert custom domain registration on error
       if (payload.customDomain && customDomainRegistered) {
-        this.domainManagerService
+        this.customDomainService
           .deleteCustomHostnameByHostnameSilently(payload.customDomain)
           .catch((err) => {
             this.exceptionHandlerService.captureExceptions([err]);
@@ -319,5 +321,26 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         );
       }
     }
+  }
+
+  async checkCustomDomainValidRecords(workspace: Workspace) {
+    if (!workspace.customDomain) return;
+
+    const customDomainDetails =
+      await this.customDomainService.getCustomDomainDetails(
+        workspace.customDomain,
+      );
+
+    if (!customDomainDetails) return;
+
+    const isCustomDomainWorking =
+      this.domainManagerService.isCustomDomainWorking(customDomainDetails);
+
+    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
+      workspace.isCustomDomainEnabled = isCustomDomainWorking;
+      await this.workspaceRepository.save(workspace);
+    }
+
+    return customDomainDetails;
   }
 }

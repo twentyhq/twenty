@@ -17,7 +17,6 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -47,6 +46,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 
 import { Workspace } from './workspace.entity';
 
@@ -229,14 +229,12 @@ export class WorkspaceResolver {
     return this.domainManagerService.getWorkspaceUrls(workspace);
   }
 
-  @Query(() => CustomDomainDetails, { nullable: true })
+  @Mutation(() => CustomDomainValidRecords, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async getCustomDomainDetails(
-    @AuthWorkspace() { customDomain }: Workspace,
-  ): Promise<CustomDomainDetails | undefined> {
-    if (!customDomain) return undefined;
-
-    return await this.domainManagerService.getCustomDomainDetails(customDomain);
+  async checkCustomDomainValidRecords(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<CustomDomainValidRecords | undefined> {
+    return this.workspaceService.checkCustomDomainValidRecords(workspace);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
