@@ -1,4 +1,6 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
+import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
+import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
@@ -23,12 +25,28 @@ export const generateWorkflowDiagram = ({
   const nodes: Array<WorkflowDiagramNode> = [];
   const edges: Array<WorkflowDiagramEdge> = [];
 
-  const processNode = (
-    step: WorkflowStep,
-    parentNodeId: string,
-    xPos: number,
-    yPos: number,
-  ) => {
+  if (isDefined(trigger)) {
+    nodes.push(getWorkflowDiagramTriggerNode({ trigger }));
+  } else {
+    nodes.push(WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION);
+  }
+
+  const processNode = ({
+    stepIndex,
+    parentNodeId,
+    xPos,
+    yPos,
+  }: {
+    stepIndex: number;
+    parentNodeId: string;
+    xPos: number;
+    yPos: number;
+  }) => {
+    const step = steps.at(stepIndex);
+    if (!isDefined(step)) {
+      return;
+    }
+
     const nodeId = step.id;
 
     nodes.push({
@@ -41,7 +59,7 @@ export const generateWorkflowDiagram = ({
       } satisfies WorkflowDiagramStepNodeData,
       position: {
         x: xPos,
-        y: yPos,
+        y: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
       },
     });
 
@@ -52,20 +70,20 @@ export const generateWorkflowDiagram = ({
       target: nodeId,
     });
 
-    return nodeId;
+    processNode({
+      stepIndex: stepIndex + 1,
+      parentNodeId: nodeId,
+      xPos,
+      yPos: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
+    });
   };
 
-  if (isDefined(trigger)) {
-    nodes.push(getWorkflowDiagramTriggerNode({ trigger }));
-  } else {
-    nodes.push(WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION);
-  }
-
-  let lastStepId = TRIGGER_STEP_ID;
-
-  for (const step of steps) {
-    lastStepId = processNode(step, lastStepId, 150, 100);
-  }
+  processNode({
+    stepIndex: 0,
+    parentNodeId: TRIGGER_STEP_ID,
+    xPos: FIRST_NODE_POSITION.x,
+    yPos: FIRST_NODE_POSITION.y,
+  });
 
   return {
     nodes,

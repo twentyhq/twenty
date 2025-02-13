@@ -147,8 +147,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step1",
       "position": {
-        "x": 150,
-        "y": 100,
+        "x": 0,
+        "y": 0,
       },
     },
     {
@@ -161,8 +161,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step2",
       "position": {
-        "x": 150,
-        "y": 250,
+        "x": 0,
+        "y": 150,
       },
     },
     {
@@ -175,8 +175,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step3",
       "position": {
-        "x": 150,
-        "y": 400,
+        "x": 0,
+        "y": 300,
       },
     },
   ],
@@ -326,8 +326,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step1",
       "position": {
-        "x": 150,
-        "y": 100,
+        "x": 0,
+        "y": 0,
       },
     },
     {
@@ -340,8 +340,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step2",
       "position": {
-        "x": 150,
-        "y": 250,
+        "x": 0,
+        "y": 150,
       },
     },
     {
@@ -354,8 +354,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step3",
       "position": {
-        "x": 150,
-        "y": 400,
+        "x": 0,
+        "y": 300,
       },
     },
   ],
@@ -531,8 +531,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step1",
       "position": {
-        "x": 150,
-        "y": 100,
+        "x": 0,
+        "y": 0,
       },
     },
     {
@@ -545,8 +545,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step2",
       "position": {
-        "x": 150,
-        "y": 250,
+        "x": 0,
+        "y": 150,
       },
     },
     {
@@ -559,8 +559,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step3",
       "position": {
-        "x": 150,
-        "y": 400,
+        "x": 0,
+        "y": 300,
       },
     },
   ],
@@ -695,8 +695,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step1",
       "position": {
-        "x": 150,
-        "y": 100,
+        "x": 0,
+        "y": 0,
       },
     },
     {
@@ -709,8 +709,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step2",
       "position": {
-        "x": 150,
-        "y": 250,
+        "x": 0,
+        "y": 150,
       },
     },
     {
@@ -723,8 +723,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step3",
       "position": {
-        "x": 150,
-        "y": 400,
+        "x": 0,
+        "y": 300,
       },
     },
   ],
@@ -902,8 +902,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step1",
       "position": {
-        "x": 150,
-        "y": 100,
+        "x": 0,
+        "y": 0,
       },
     },
     {
@@ -916,8 +916,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step2",
       "position": {
-        "x": 150,
-        "y": 250,
+        "x": 0,
+        "y": 150,
       },
     },
     {
@@ -930,8 +930,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step3",
       "position": {
-        "x": 150,
-        "y": 400,
+        "x": 0,
+        "y": 300,
       },
     },
     {
@@ -944,8 +944,8 @@ describe('generateWorkflowRunDiagram', () => {
       },
       "id": "step4",
       "position": {
-        "x": 150,
-        "y": 550,
+        "x": 0,
+        "y": 450,
       },
     },
   ],

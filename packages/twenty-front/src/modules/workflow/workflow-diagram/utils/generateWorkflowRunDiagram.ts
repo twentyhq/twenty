@@ -3,11 +3,12 @@ import {
   WorkflowStep,
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
+import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
+import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import { WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeSuccessConfiguration';
 import {
   WorkflowDiagramRunStatus,
-  WorkflowDiagramStepNodeData,
   WorkflowRunDiagram,
   WorkflowRunDiagramEdge,
   WorkflowRunDiagramNode,
@@ -117,7 +118,7 @@ export const generateWorkflowRunDiagram = ({
       parentNodeId: nodeId,
       parentRunStatus: runStatus,
       xPos,
-      yPos: yPos + 150,
+      yPos: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
       skippedExecution: skippedExecution
         ? true
         : runStatus === 'failure' || runStatus === 'running',
@@ -128,8 +129,8 @@ export const generateWorkflowRunDiagram = ({
     stepIndex: 0,
     parentNodeId: TRIGGER_STEP_ID,
     parentRunStatus: 'success',
-    xPos: 150,
-    yPos: 100,
+    xPos: FIRST_NODE_POSITION.x,
+    yPos: FIRST_NODE_POSITION.y,
     skippedExecution: false,
   });
 
