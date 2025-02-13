@@ -3,12 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-42/0-42-fix-body-v2-view-field-position.command';
 import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
+import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-relations-to-field-metadata.command';
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
 import { UpgradeTo0_42Command } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.command';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-relations-to-field-metadata.command';
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -25,7 +25,7 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
       [ObjectMetadataEntity, FieldMetadataEntity],
       'metadata',
     ),
-    WorkspaceSyncMetadataCommandsModule,
+    TypeORMModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceMigrationModule,
     WorkspaceMetadataVersionModule,
