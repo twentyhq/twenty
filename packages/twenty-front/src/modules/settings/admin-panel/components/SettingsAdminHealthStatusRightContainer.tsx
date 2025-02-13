@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Status } from 'twenty-ui';
 
-import { HealthService } from '~/generated/graphql';
+import { HealthService, HealthServiceStatus } from '~/generated/graphql';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
@@ -16,13 +16,13 @@ export const SettingsAdminHealthStatusRightContainer = ({
 }) => {
   return (
     <StyledRowRightContainer>
-      {service.status === 'OPERATIONAL' && (
+      {service.status === HealthServiceStatus.OPERATIONAL && (
         <Status color="green" text="Operational" weight="medium" />
       )}
-      {service.status === 'DEGRADED' && (
+      {service.status === HealthServiceStatus.DEGRADED && (
         <Status color="orange" text="Degraded" weight="medium" />
       )}
-      {service.status === 'OUTAGE' && (
+      {service.status === HealthServiceStatus.OUTAGE && (
         <Status color="red" text="Outage" weight="medium" />
       )}
     </StyledRowRightContainer>
