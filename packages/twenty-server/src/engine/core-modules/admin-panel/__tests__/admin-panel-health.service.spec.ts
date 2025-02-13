@@ -87,13 +87,31 @@ describe('AdminPanelHealthService', () => {
       info: {
         database: { status: 'up' },
         redis: { status: 'up' },
-        worker: { status: 'up' },
+        worker: {
+          status: 'up',
+          queues: [
+            {
+              name: 'test',
+              workers: 1,
+              status: HealthServiceStatus.OPERATIONAL,
+            },
+          ],
+        },
       },
       error: {},
       details: {
         database: { status: 'up' },
         redis: { status: 'up' },
-        worker: { status: 'up' },
+        worker: {
+          status: 'up',
+          queues: [
+            {
+              name: 'test',
+              workers: 1,
+              status: HealthServiceStatus.OPERATIONAL,
+            },
+          ],
+        },
       },
     };
 
@@ -115,12 +133,17 @@ describe('AdminPanelHealthService', () => {
     const expected: SystemHealth = {
       database: {
         status: HealthServiceStatus.OPERATIONAL,
+        details: undefined,
       },
       redis: {
         status: HealthServiceStatus.OPERATIONAL,
+        details: undefined,
       },
       worker: {
         status: HealthServiceStatus.OPERATIONAL,
+        queues: [
+          { name: 'test', workers: 1, status: HealthServiceStatus.OPERATIONAL },
+        ],
       },
       messageSync: mockMessageSync,
     };
@@ -163,12 +186,22 @@ describe('AdminPanelHealthService', () => {
       error: {
         database: { status: 'down' },
         redis: { status: 'down' },
-        worker: { status: 'down' },
+        worker: {
+          status: 'down',
+          queues: [
+            { name: 'test', workers: 0, status: HealthServiceStatus.OUTAGE },
+          ],
+        },
       },
       details: {
         database: { status: 'down' },
         redis: { status: 'down' },
-        worker: { status: 'down' },
+        worker: {
+          status: 'down',
+          queues: [
+            { name: 'test', workers: 0, status: HealthServiceStatus.OUTAGE },
+          ],
+        },
       },
     };
 

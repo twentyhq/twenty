@@ -63,8 +63,8 @@ describe('WorkerHealthIndicator', () => {
 
     const result = await service.isHealthy();
 
-    expect(result.worker.status).toBe(HealthServiceStatus.OPERATIONAL);
-    expect(result.worker.details).toEqual(
+    expect(result.worker.status).toBe('up');
+    expect(result.worker.queues).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           workers: 1,
@@ -74,8 +74,7 @@ describe('WorkerHealthIndicator', () => {
     );
   });
 
-  it('should return degraded status when some queues have no workers', async () => {
-    // Need to mock for each queue in MessageQueue
+  it('should return up status when some queues have no workers', async () => {
     Object.values(MessageQueue).forEach((_, index) => {
       mockQueue.getWorkers.mockResolvedValueOnce(
         index === 0 ? ([{ id: 'worker1' }] as any) : [],
@@ -84,8 +83,8 @@ describe('WorkerHealthIndicator', () => {
 
     const result = await service.isHealthy();
 
-    expect(result.worker.status).toBe(HealthServiceStatus.DEGRADED);
-    expect(result.worker.details).toEqual(
+    expect(result.worker.status).toBe('up');
+    expect(result.worker.queues).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           workers: 1,
@@ -99,12 +98,12 @@ describe('WorkerHealthIndicator', () => {
     );
   });
 
-  it('should return outage status when no queues have workers', async () => {
+  it('should return down status when no queues have workers', async () => {
     mockQueue.getWorkers.mockResolvedValue([]);
 
     const result = await service.isHealthy();
 
-    expect(result.worker.status).toBe(HealthServiceStatus.OUTAGE);
+    expect(result.worker.status).toBe('down');
     expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS);
   });
 
@@ -121,7 +120,7 @@ describe('WorkerHealthIndicator', () => {
     jest.advanceTimersByTime(HEALTH_INDICATORS_TIMEOUT + 1);
     const result = await healthCheckPromise;
 
-    expect(result.worker.status).toBe(HealthServiceStatus.OUTAGE);
+    expect(result.worker.status).toBe('down');
     expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT);
   });
 

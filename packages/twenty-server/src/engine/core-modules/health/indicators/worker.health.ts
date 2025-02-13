@@ -23,14 +23,15 @@ export class WorkerHealthIndicator extends HealthIndicator {
         HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT,
       );
 
-      return this.getStatus('worker', true, {
+      return this.getStatus('worker', workerStatus.status === 'up', {
         status: workerStatus.status,
-        queues: workerStatus.details,
+        error: workerStatus.error,
+        queues: workerStatus.queues,
       });
     } catch (error) {
       return this.getStatus('worker', false, {
+        status: 'down',
         error: error.message,
-        status: HealthServiceStatus.OUTAGE,
       });
     }
   }
@@ -62,15 +63,16 @@ export class WorkerHealthIndicator extends HealthIndicator {
     }
 
     if (queuesWithoutWorkers.length === queues.length) {
-      throw new Error(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS);
+      return {
+        status: 'down',
+        error: HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS,
+        queues: queueStatuses,
+      };
     }
 
     return {
-      status:
-        queuesWithoutWorkers.length > 0
-          ? HealthServiceStatus.DEGRADED
-          : HealthServiceStatus.OPERATIONAL,
-      details: queueStatuses,
+      status: 'up',
+      queues: queueStatuses,
     };
   }
 }

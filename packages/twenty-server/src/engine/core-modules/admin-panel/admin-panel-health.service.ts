@@ -45,11 +45,14 @@ export class AdminPanelHealthService {
         details: healthCheck.info?.redis?.details,
       },
       [HealthServiceName.WORKER]: {
-        status: healthCheck.info?.worker?.queues?.every((q) => q.workers === 0)
-          ? HealthServiceStatus.OUTAGE
-          : healthCheck.info?.worker?.queues?.some((q) => q.workers === 0)
-            ? HealthServiceStatus.DEGRADED
-            : HealthServiceStatus.OPERATIONAL,
+        status:
+          healthCheck.info?.worker?.status !== 'up'
+            ? HealthServiceStatus.OUTAGE
+            : healthCheck.info?.worker?.queues?.every((q) => q.workers === 0)
+              ? HealthServiceStatus.OUTAGE
+              : healthCheck.info?.worker?.queues?.some((q) => q.workers === 0)
+                ? HealthServiceStatus.DEGRADED
+                : HealthServiceStatus.OPERATIONAL,
         queues: healthCheck.info?.worker?.queues,
       },
       messageSync,
