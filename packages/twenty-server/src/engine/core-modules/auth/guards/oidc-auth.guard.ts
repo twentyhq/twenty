@@ -28,7 +28,9 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     identityProviderId: string;
   } {
     if (request.params.identityProviderId) {
-      return request.params.identityProviderId;
+      return {
+        identityProviderId: request.params.identityProviderId,
+      };
     }
 
     if (
@@ -57,6 +59,13 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     try {
       const state = this.getStateByRequest(request);
 
+      if (!state.identityProviderId) {
+        throw new AuthException(
+          'identityProviderId missing',
+          AuthExceptionCode.INVALID_DATA,
+        );
+      }
+
       identityProvider = await this.sSOService.findSSOIdentityProviderById(
         state.identityProviderId,
       );
@@ -67,7 +76,6 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
           AuthExceptionCode.INVALID_DATA,
         );
       }
-
       const issuer = await Issuer.discover(identityProvider.issuer);
 
       new OIDCAuthStrategy(

@@ -18,17 +18,6 @@ const jestConfig: JestConfigWithTsJest = {
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
   testTimeout: 15000,
   maxWorkers: 1,
-  moduleNameMapper: {
-    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
-      prefix: '<rootDir>/../..',
-    }),
-    '^test/(.*)$': '<rootDir>/test/$1',
-    'twenty-emails': '<rootDir>/../twenty-emails/dist/index.js',
-    'twenty-shared': '<rootDir>/../twenty-shared/dist/index.js',
-  },
-  fakeTimers: {
-    enableGlobally: true,
-  },
   transform: {
     '^.+\\.(t|j)s$': [
       '@swc/jest',
@@ -55,6 +44,17 @@ const jestConfig: JestConfigWithTsJest = {
         },
       },
     ],
+  },
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
+      prefix: '<rootDir>/../..',
+    }),
+    '^test/(.*)$': '<rootDir>/test/$1',
+    'twenty-emails': '<rootDir>/../twenty-emails/dist/index.js',
+    'twenty-shared': '<rootDir>/../twenty-shared/dist/index.js',
+  },
+  fakeTimers: {
+    enableGlobally: true,
   },
   globals: {
     APP_PORT: 4000,

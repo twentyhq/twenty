@@ -93,7 +93,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const toId = uuidV4();
 
     const createdRelationFieldsMetadata =
-      await this.fieldMetadataService.createMany([
+      await this.fieldMetadataRepository.save([
         this.createFieldMetadataForRelationMetadata(
           relationMetadataInput,
           'from',

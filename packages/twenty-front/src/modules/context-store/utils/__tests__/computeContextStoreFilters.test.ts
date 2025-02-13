@@ -73,9 +73,22 @@ describe('computeContextStoreFilters', () => {
     expect(filters).toEqual({
       and: [
         {
-          name: {
-            ilike: '%John%',
-          },
+          or: [
+            {
+              name: {
+                firstName: {
+                  ilike: '%John%',
+                },
+              },
+            },
+            {
+              name: {
+                lastName: {
+                  ilike: '%John%',
+                },
+              },
+            },
+          ],
         },
         {
           not: {

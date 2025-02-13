@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
@@ -21,8 +21,9 @@ import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { useRecoilCallback } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { isUndefined } from '@sniptt/guards';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -33,9 +34,13 @@ const StyledIndexContainer = styled.div`
 export const RecordIndexPage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
+  const mainContextStoreComponentInstanceId = useRecoilValue(
+    mainContextStoreComponentInstanceIdState,
+  );
+
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
-    objectNamePlural,
+    mainContextStoreComponentInstanceId,
   );
 
   const recordIndexId = `${objectNamePlural}-${contextStoreCurrentViewId}`;
@@ -62,32 +67,33 @@ export const RecordIndexPage = () => {
     [],
   );
 
-  if (!isDefined(contextStoreCurrentViewId)) {
-    return;
+  if (isUndefined(contextStoreCurrentViewId)) {
+    return null;
   }
 
   return (
     <PageContainer>
-      <RecordIndexContextProvider
+      <ContextStoreComponentInstanceContext.Provider
         value={{
-          recordIndexId,
-          objectNamePlural,
-          objectNameSingular,
-          objectMetadataItem,
-          onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          indexIdentifierUrl,
+          instanceId: mainContextStoreComponentInstanceId,
         }}
       >
-        <ViewComponentInstanceContext.Provider
-          value={{ instanceId: recordIndexId }}
+        <RecordIndexContextProvider
+          value={{
+            recordIndexId,
+            objectNamePlural,
+            objectNameSingular,
+            objectMetadataItem,
+            onIndexRecordsLoaded: handleIndexRecordsLoaded,
+            indexIdentifierUrl,
+          }}
         >
-          <RecordFiltersComponentInstanceContext.Provider
+          <RecordIndexContainerContextStoreObjectMetadataEffect />
+          <ViewComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
           >
-            <ContextStoreComponentInstanceContext.Provider
-              value={{
-                instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-              }}
+            <RecordFiltersComponentInstanceContext.Provider
+              value={{ instanceId: recordIndexId }}
             >
               <ActionMenuComponentInstanceContext.Provider
                 value={{
@@ -98,17 +104,15 @@ export const RecordIndexPage = () => {
                 <RecordIndexPageHeader />
                 <PageBody>
                   <StyledIndexContainer>
-                    <RecordIndexContainerContextStoreObjectMetadataEffect />
                     <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                    <MainContextStoreComponentInstanceIdSetterEffect />
                     <RecordIndexContainer />
                   </StyledIndexContainer>
                 </PageBody>
               </ActionMenuComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
-        </ViewComponentInstanceContext.Provider>
-      </RecordIndexContextProvider>
+            </RecordFiltersComponentInstanceContext.Provider>
+          </ViewComponentInstanceContext.Provider>
+        </RecordIndexContextProvider>
+      </ContextStoreComponentInstanceContext.Provider>
     </PageContainer>
   );
 };
