@@ -461,7 +461,6 @@ export enum FeatureFlagKey {
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsLocalizationEnabled = 'IsLocalizationEnabled',
-  IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
@@ -1536,7 +1535,7 @@ export enum SettingsFeatures {
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
-  WORKSPACE_SETTINGS = 'WORKSPACE_SETTINGS',
+  WORKSPACE = 'WORKSPACE',
   WORKSPACE_USERS = 'WORKSPACE_USERS'
 }
 

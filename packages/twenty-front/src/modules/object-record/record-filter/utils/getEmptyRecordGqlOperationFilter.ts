@@ -1,3 +1,4 @@
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import {
   ActorFilter,
   AddressFilter,
@@ -15,24 +16,32 @@ import {
   StringFilter,
   URLFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
-export const getEmptyRecordGqlOperationFilter = (
-  operand: ViewFilterOperand,
-  correspondingField: Pick<Field, 'id' | 'name'>,
-  definition: RecordFilterDefinition,
-) => {
+type GetEmptyRecordGqlOperationFilterParams = {
+  operand: ViewFilterOperand;
+  correspondingField: Pick<Field, 'id' | 'name' | 'type'>;
+  recordFilter: RecordFilter;
+};
+
+export const getEmptyRecordGqlOperationFilter = ({
+  operand,
+  correspondingField,
+  recordFilter,
+}: GetEmptyRecordGqlOperationFilterParams) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 
-  const compositeFieldName = definition.compositeFieldName;
+  const compositeFieldName = recordFilter.subFieldName;
 
   const isCompositeField = isNonEmptyString(compositeFieldName);
 
-  switch (definition.type) {
+  const filterType = getFilterTypeFromFieldType(correspondingField.type);
+
+  switch (filterType) {
     case 'TEXT':
       emptyRecordFilter = {
         or: [
@@ -344,7 +353,7 @@ export const getEmptyRecordGqlOperationFilter = (
       };
       break;
     default:
-      throw new Error(`Unsupported empty filter type ${definition.type}`);
+      throw new Error(`Unsupported empty filter type ${filterType}`);
   }
 
   switch (operand) {
@@ -355,8 +364,6 @@ export const getEmptyRecordGqlOperationFilter = (
         not: emptyRecordFilter,
       };
     default:
-      throw new Error(
-        `Unknown operand ${operand} for ${definition.type} filter`,
-      );
+      throw new Error(`Unknown operand ${operand} for ${filterType} filter`);
   }
 };
