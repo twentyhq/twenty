@@ -2,10 +2,15 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
+import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
 import { InMemoryCache } from '@apollo/client';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPersonObjectMetadataItem } from '~/testing/mock-data/people';
+import {
+  getPersonFieldMetadataItem,
+  getPersonObjectMetadataItem,
+} from '~/testing/mock-data/people';
 
 describe('computeOptimisticRecordFromInput', () => {
   it('should generate correct optimistic record if no relation field is present', () => {
@@ -24,6 +29,37 @@ describe('computeOptimisticRecordFromInput', () => {
     expect(result).toEqual({
       city: 'Paris',
     });
+  });
+
+  it('should generate correct optimistic record with actor field', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = getPersonObjectMetadataItem();
+    const personActorField = getPersonFieldMetadataItem(
+      FieldMetadataType.ACTOR,
+      personObjectMetadataItem,
+    );
+    const actorFieldDefaultValue = generateDefaultFieldValue({
+      fieldMetadataItem: personActorField,
+    });
+    const result = computeOptimisticRecordFromInput({
+      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: {
+        city: 'Paris',
+        createdBy: actorFieldDefaultValue
+      },
+      cache,
+    });
+
+    expect(result).toEqual({
+      "city": "Paris",
+      "createdBy": {
+        "context": {},
+        "name": "",
+        "source": "MANUAL",
+        "workspaceMemberId": null,
+      },
+    })
   });
 
   it('should generate correct optimistic record if relation field is present but cache is empty', () => {
