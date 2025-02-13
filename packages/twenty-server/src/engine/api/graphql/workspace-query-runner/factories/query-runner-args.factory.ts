@@ -205,6 +205,8 @@ export class QueryRunnerArgsFactory {
 
           return [key, newValue];
         }
+        case FieldMetadataType.NUMBER:
+          return [key, value === null ? null : Number(value)];
         case FieldMetadataType.RICH_TEXT_V2: {
           const richTextV2Value = richTextV2ValueSchema.parse(value);
 
