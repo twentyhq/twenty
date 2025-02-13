@@ -7,6 +7,7 @@ type ComputeNodeDimensionsProps = {
     dimensions: { height: number; width: number } | undefined,
   ) => ReactNode;
   node?: ReactNode;
+  height?: number;
 };
 
 const StyledNodeWrapper = styled.span`
@@ -14,14 +15,16 @@ const StyledNodeWrapper = styled.span`
   visibility: hidden;
 `;
 
-const StyledDiv = styled.div`
+const StyledDiv = styled.div<{ height?: number }>`
   max-width: 100%;
+  height: ${({ height }) => (height ? `${height}px` : 'auto')};
   position: relative;
 `;
 
 export const ComputeNodeDimensions = ({
   children,
   node = children(undefined),
+  height,
 }: ComputeNodeDimensionsProps) => {
   const nodeWrapperRef = useRef<HTMLDivElement>(null);
   const [nodeDimensions, setNodeDimensions] = useState<
@@ -49,9 +52,9 @@ export const ComputeNodeDimensions = ({
   }, [nodeWrapperRef]);
 
   return (
-    <StyledDiv ref={nodeWrapperRef}>
+    <StyledDiv ref={nodeWrapperRef} height={height}>
       <StyledNodeWrapper>{node}</StyledNodeWrapper>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
+      <div style={{ position: 'absolute', top: 0, left: 0 }}>
         {nodeDimensions && children(nodeDimensions)}
       </div>
     </StyledDiv>

@@ -309,7 +309,16 @@ const TextInputV2WithAutoGrowWrapper = forwardRef<
   return (
     <>
       {props.autoGrow ? (
-        <ComputeNodeDimensions node={props.value || props.placeholder}>
+        <ComputeNodeDimensions
+          node={props.value || props.placeholder}
+          height={
+            props.sizeVariant === 'sm'
+              ? 20
+              : props.sizeVariant === 'md'
+                ? 28
+                : 30
+          }
+        >
           {(nodeDimensions) => (
             <TextInputV2Component
               // eslint-disable-next-line react/jsx-props-no-spreading

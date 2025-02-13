@@ -100,7 +100,7 @@ export const SummaryCard = ({
           }}
         >
           {isCommandMenuV2Enabled ? (
-            <RecordTitleCell />
+            <RecordTitleCell sizeVariant="md" />
           ) : isInRightDrawer ? (
             <RightDrawerTitleRecordInlineCell />
           ) : (
