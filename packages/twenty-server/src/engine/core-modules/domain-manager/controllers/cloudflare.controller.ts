@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import {
   Controller,
   Post,
@@ -21,6 +23,7 @@ import {
 import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manager/guards/cloudflare-secret.guard';
+import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 
 @Controller('cloudflare')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -29,6 +32,7 @@ export class CloudflareController {
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly domainManagerService: DomainManagerService,
+    private readonly customDomainService: CustomDomainService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -54,7 +58,7 @@ export class CloudflareController {
     if (!workspace) return;
 
     const customDomainDetails =
-      await this.domainManagerService.getCustomDomainDetails(
+      await this.customDomainService.getCustomDomainDetails(
         req.body.data.data.hostname,
       );
 

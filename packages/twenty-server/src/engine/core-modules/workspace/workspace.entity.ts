@@ -124,7 +124,7 @@ export class Workspace {
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', unique: true, nullable: true })
-  customDomain?: string | null;
+  customDomain: string | null;
 
   @Field()
   @Column({ default: true })

@@ -3,7 +3,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { Status, ThemeColor } from 'twenty-ui';
 import styled from '@emotion/styled';
-import { CustomDomainDetails } from '~/generated/graphql';
+import { CustomDomainValidRecords } from '~/generated/graphql';
 
 const StyledTable = styled(Table)`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -24,7 +24,7 @@ const StyledTableRow = styled(TableRow)`
 export const SettingsCustomDomainRecordsStatus = ({
   records,
 }: {
-  records: CustomDomainDetails['records'];
+  records: CustomDomainValidRecords['records'];
 }) => {
   const rows = records.reduce(
     (acc, record) => {

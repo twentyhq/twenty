@@ -22,7 +22,7 @@ export class GuardRedirectService {
     workspace: {
       id?: string;
       subdomain: string;
-      customDomain?: string | null;
+      customDomain: string | null;
       isCustomDomainEnabled?: boolean;
     },
   ) {
@@ -36,10 +36,7 @@ export class GuardRedirectService {
       .redirect(this.getRedirectErrorUrlAndCaptureExceptions(error, workspace));
   }
 
-  getSubdomainAndCustomDomainFromContext(context: ExecutionContext): {
-    subdomain: string;
-    customDomain?: string;
-  } {
+  getSubdomainAndCustomDomainFromContext(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
 
     const subdomainAndCustomDomainFromReferer = request.headers.referer
@@ -48,12 +45,16 @@ export class GuardRedirectService {
         )
       : null;
 
-    return {
-      subdomain:
-        subdomainAndCustomDomainFromReferer?.subdomain ??
-        this.environmentService.get('DEFAULT_SUBDOMAIN'),
-      customDomain: subdomainAndCustomDomainFromReferer?.customDomain,
-    };
+    return subdomainAndCustomDomainFromReferer &&
+      subdomainAndCustomDomainFromReferer.subdomain
+      ? {
+          subdomain: subdomainAndCustomDomainFromReferer.subdomain,
+          customDomain: subdomainAndCustomDomainFromReferer.customDomain,
+        }
+      : {
+          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+          customDomain: null,
+        };
   }
 
   private captureException(err: Error | CustomException, workspaceId?: string) {
@@ -71,7 +72,7 @@ export class GuardRedirectService {
     workspace: {
       id?: string;
       subdomain: string;
-      customDomain?: string | null;
+      customDomain: string | null;
       isCustomDomainEnabled?: boolean;
     },
   ) {

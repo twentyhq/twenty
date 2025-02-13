@@ -4,7 +4,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { Button } from 'twenty-ui';
 import { Table } from '@/ui/layout/table/components/Table';
-import { CustomDomainDetails } from '~/generated/graphql';
+import { CustomDomainValidRecords } from '~/generated/graphql';
 import styled from '@emotion/styled';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -28,7 +28,7 @@ const StyledButton = styled(Button)`
 export const SettingsCustomDomainRecords = ({
   records,
 }: {
-  records: CustomDomainDetails['records'];
+  records: CustomDomainValidRecords['records'];
 }) => {
   const { enqueueSnackBar } = useSnackBar();
 

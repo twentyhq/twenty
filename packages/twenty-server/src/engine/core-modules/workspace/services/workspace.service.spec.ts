@@ -16,6 +16,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -52,6 +53,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: DomainManagerService,
+          useValue: {},
+        },
+        {
+          provide: CustomDomainService,
           useValue: {},
         },
         {
