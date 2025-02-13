@@ -29,6 +29,8 @@ export class WorkerHealthIndicator extends HealthIndicator {
           const queue = new Queue(queueName, { connection: redis });
           const workers = await queue.getWorkers();
 
+          await queue.close();
+
           return {
             queue: queueName,
             activeWorkers: workers.length,
