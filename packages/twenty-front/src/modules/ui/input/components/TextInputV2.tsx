@@ -67,13 +67,13 @@ const StyledInput = styled.input<
   outline: none;
   padding: ${({ theme, sizeVariant, autoGrow }) =>
     autoGrow
-      ? '0'
+      ? theme.spacing(1)
       : sizeVariant === 'sm'
         ? `${theme.spacing(2)} 0`
         : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon, autoGrow }) =>
     autoGrow
-      ? '0'
+      ? theme.spacing(1)
       : LeftIcon
         ? `calc(${theme.spacing(3)} + 16px)`
         : theme.spacing(2)};
@@ -306,6 +306,7 @@ const TextInputV2WithAutoGrowWrapper = forwardRef<
   HTMLInputElement,
   TextInputV2WithAutoGrowWrapperProps
 >((props, ref) => {
+  const theme = useTheme();
   return (
     <>
       {props.autoGrow ? (
@@ -318,6 +319,7 @@ const TextInputV2WithAutoGrowWrapper = forwardRef<
                 ? 28
                 : 30
           }
+          padding={4}
         >
           {(nodeDimensions) => (
             <TextInputV2Component
