@@ -259,10 +259,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
   }
 
-  async softDeleteWorkspace(
-    id: string,
+  async softDeleteWorkspace({
+    id,
     withMetadataSchemaAndUserWorkspaceDeletion = true,
-  ) {
+  }: {
+    id: string;
+    withMetadataSchemaAndUserWorkspaceDeletion?: boolean;
+  }) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -296,7 +299,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       withDeleted: true,
     });
 
-    const workspace = await this.softDeleteWorkspace(id, !softDelete);
+    const workspace = await this.softDeleteWorkspace({
+      id,
+      withMetadataSchemaAndUserWorkspaceDeletion: !softDelete,
+    });
 
     for (const userWorkspace of userWorkspaces) {
       await this.handleRemoveWorkspaceMember(

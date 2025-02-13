@@ -7,7 +7,7 @@ import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -23,8 +23,6 @@ import {
   WorkspaceCleanerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
 @Injectable()
 export class CleanerWorkspaceService {
@@ -208,7 +206,7 @@ export class CleanerWorkspaceService {
     daysSinceInactive: number,
     dryRun: boolean,
   ) {
-    if (workspace.deletedAt) {
+    if (isDefined(workspace.deletedAt)) {
       this.logger.log(
         `${dryRun ? 'DRY RUN - ' : ''}Workspace ${workspace.id} ${
           workspace.displayName
@@ -274,10 +272,9 @@ export class CleanerWorkspaceService {
         const workspaceInactivity =
           await this.computeWorkspaceBillingInactivity(workspace);
 
-        const daysSinceSoftDeleted = differenceInDays(
-          new Date(),
-          workspace.deletedAt || new Date(),
-        );
+        const daysSinceSoftDeleted = workspace.deletedAt
+          ? differenceInDays(new Date(), workspace.deletedAt)
+          : 0;
 
         if (
           daysSinceSoftDeleted >
@@ -293,7 +290,6 @@ export class CleanerWorkspaceService {
           continue;
         }
         if (
-          workspaceInactivity &&
           workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
           deletedWorkspacesCount <=
             this.maxNumberOfWorkspacesDeletedPerExecution
@@ -308,7 +304,6 @@ export class CleanerWorkspaceService {
           continue;
         }
         if (
-          workspaceInactivity &&
           workspaceInactivity > this.inactiveDaysBeforeWarn &&
           workspaceInactivity <= this.inactiveDaysBeforeSoftDelete
         ) {

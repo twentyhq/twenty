@@ -56,17 +56,17 @@ export class CleanSuspendedWorkspacesCommand extends BaseCommandRunner {
   ): Promise<void> {
     const { dryRun } = options;
 
-    const activeWorkspaceIds =
+    const suspendedWorkspaceIds =
       this.workspaceIds.length > 0
         ? this.workspaceIds
         : await this.fetchSuspendedWorkspaceIds();
 
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${activeWorkspaceIds.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
     );
 
     await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
-      this.workspaceIds,
+      suspendedWorkspaceIds,
       dryRun,
     );
   }
