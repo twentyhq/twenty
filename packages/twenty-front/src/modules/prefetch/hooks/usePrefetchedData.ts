@@ -23,11 +23,12 @@ export const usePrefetchedData = <T extends ObjectRecord>(
     objectNameSingular,
   });
 
+  const recordGqlFields =
+    operationSignatureFactory({ objectMetadataItem }).fields ?? filter;
   const { records } = useFindManyRecords<T>({
     skip: !isDataPrefetched,
     objectNameSingular: objectNameSingular,
-    recordGqlFields:
-      operationSignatureFactory({ objectMetadataItem }).fields ?? filter,
+    recordGqlFields,
   });
 
   return {

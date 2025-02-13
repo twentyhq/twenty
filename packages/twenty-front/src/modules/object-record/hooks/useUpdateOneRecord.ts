@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -15,6 +16,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isNull } from '@sniptt/guards';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
@@ -22,7 +24,11 @@ type useUpdateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: Record<string, any>;
 };
-
+type UpdateOneRecordArgs<UpdatedObjectRecord> = {
+  idToUpdate: string;
+  updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
+  optimisticRecord?: Partial<ObjectRecord>;
+};
 export const useUpdateOneRecord = <
   UpdatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
@@ -47,6 +53,8 @@ export const useUpdateOneRecord = <
     recordGqlFields: computedRecordGqlFields,
   });
 
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
@@ -57,15 +65,12 @@ export const useUpdateOneRecord = <
     idToUpdate,
     updateOneRecordInput,
     optimisticRecord,
-  }: {
-    idToUpdate: string;
-    updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
-    optimisticRecord?: Partial<ObjectRecord>;
-  }) => {
+  }: UpdateOneRecordArgs<UpdatedObjectRecord>) => {
     const optimisticRecordInput =
       optimisticRecord ??
       computeOptimisticRecordFromInput({
         objectMetadataItem,
+        currentWorkspaceMember: currentWorkspaceMember,
         recordInput: updateOneRecordInput,
         cache: apolloClient.cache,
         objectMetadataItems,

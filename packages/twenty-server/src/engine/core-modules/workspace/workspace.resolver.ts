@@ -9,6 +9,8 @@ import {
 } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import assert from 'assert';
+
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
@@ -17,6 +19,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -44,9 +47,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
-import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 
 import { Workspace } from './workspace.entity';
 
@@ -76,7 +77,7 @@ export class WorkspaceResolver {
   async currentWorkspace(@AuthWorkspace() { id }: Workspace) {
     const workspace = await this.workspaceService.findById(id);
 
-    assert(workspace, 'User not found');
+    assert(workspace, 'Workspace not found');
 
     return workspace;
   }
@@ -227,6 +228,30 @@ export class WorkspaceResolver {
   @ResolveField(() => workspaceUrls)
   workspaceUrls(@Parent() workspace: Workspace) {
     return this.domainManagerService.getWorkspaceUrls(workspace);
+  }
+
+  @ResolveField(() => Boolean)
+  isGoogleAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isGoogleAuthEnabled &&
+      this.environmentService.get('AUTH_GOOGLE_ENABLED')
+    );
+  }
+
+  @ResolveField(() => Boolean)
+  isMicrosoftAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isMicrosoftAuthEnabled &&
+      this.environmentService.get('AUTH_MICROSOFT_ENABLED')
+    );
+  }
+
+  @ResolveField(() => Boolean)
+  isPasswordAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isPasswordAuthEnabled &&
+      this.environmentService.get('AUTH_PASSWORD_ENABLED')
+    );
   }
 
   @Mutation(() => CustomDomainValidRecords, { nullable: true })

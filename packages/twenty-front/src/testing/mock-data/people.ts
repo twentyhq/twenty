@@ -1,5 +1,6 @@
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { FieldMetadataType } from 'twenty-shared';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 export const getPeopleMock = (): ObjectRecord[] => {
@@ -18,6 +19,22 @@ export const getPersonObjectMetadataItem = () => {
   }
 
   return personObjectMetadataItem;
+};
+
+export const getPersonFieldMetadataItem = (
+  fieldMetadataType: FieldMetadataType,
+  objectMetadataItem = getPersonObjectMetadataItem(),
+) => {
+  const result = objectMetadataItem.fields.find(
+    (field) => field.type === fieldMetadataType,
+  );
+  if (!result) {
+    throw new Error(
+      `Person fieldmetadata item type ${fieldMetadataType} not found`,
+    );
+  }
+
+  return result;
 };
 
 export const getPersonRecord = (
