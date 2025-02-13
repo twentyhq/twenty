@@ -6,7 +6,7 @@ import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-pan
 import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
-import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/systen-health.dto';
+import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';

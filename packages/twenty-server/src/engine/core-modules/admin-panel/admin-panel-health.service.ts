@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HealthCheckService } from '@nestjs/terminus';
 
-import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/systen-health.dto';
+import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { HealthServiceName } from 'src/engine/core-modules/health/enums/health-service-name.enum';
 import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/health-service-status.enum';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';

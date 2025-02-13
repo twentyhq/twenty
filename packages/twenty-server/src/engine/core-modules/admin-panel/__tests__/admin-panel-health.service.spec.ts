@@ -2,7 +2,7 @@ import { HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
-import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/systen-health.dto';
+import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/health-service-status.enum';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
