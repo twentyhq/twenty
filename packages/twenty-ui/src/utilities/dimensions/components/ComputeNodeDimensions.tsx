@@ -9,6 +9,7 @@ type ComputeNodeDimensionsProps = {
   node?: ReactNode;
   height?: number;
   padding?: number;
+  className?: string;
 };
 
 const StyledNodeWrapper = styled.span`
@@ -17,17 +18,20 @@ const StyledNodeWrapper = styled.span`
 `;
 
 const StyledDiv = styled.div<{ height?: number; padding?: number }>`
-  height: ${({ height }) => (height ? `${height}px` : 'auto')};
   max-width: 100%;
-  padding: ${({ padding }) => (padding ? `0 ${padding}px` : '0')};
   position: relative;
+`;
+
+const StyledChildWrapper = styled.div<{ height?: number; padding?: number }>`
+  left: 0;
+  position: absolute;
+  top: 0;
 `;
 
 export const ComputeNodeDimensions = ({
   children,
   node = children(undefined),
-  height,
-  padding,
+  className,
 }: ComputeNodeDimensionsProps) => {
   const nodeWrapperRef = useRef<HTMLDivElement>(null);
   const [nodeDimensions, setNodeDimensions] = useState<
@@ -55,11 +59,11 @@ export const ComputeNodeDimensions = ({
   }, [nodeWrapperRef]);
 
   return (
-    <StyledDiv ref={nodeWrapperRef} height={height} padding={padding}>
+    <StyledDiv ref={nodeWrapperRef} className={className}>
       <StyledNodeWrapper>{node}</StyledNodeWrapper>
-      <div style={{ position: 'absolute', top: 0, left: 0 }}>
+      <StyledChildWrapper>
         {nodeDimensions && children(nodeDimensions)}
-      </div>
+      </StyledChildWrapper>
     </StyledDiv>
   );
 };

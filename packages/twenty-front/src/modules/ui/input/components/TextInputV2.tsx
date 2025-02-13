@@ -302,24 +302,26 @@ const TextInputV2Component = forwardRef<
   },
 );
 
+const StyledComputeNodeDimensions = styled(ComputeNodeDimensions)<{
+  sizeVariant?: TextInputV2Size;
+}>`
+  border: 1px solid transparent;
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '30px'};
+  padding: 0 ${({ theme }) => theme.spacing(1)};
+  box-sizing: border-box;
+`;
+
 const TextInputV2WithAutoGrowWrapper = forwardRef<
   HTMLInputElement,
   TextInputV2WithAutoGrowWrapperProps
 >((props, ref) => {
-  const theme = useTheme();
   return (
     <>
       {props.autoGrow ? (
-        <ComputeNodeDimensions
+        <StyledComputeNodeDimensions
+          sizeVariant={props.sizeVariant}
           node={props.value || props.placeholder}
-          height={
-            props.sizeVariant === 'sm'
-              ? 20
-              : props.sizeVariant === 'md'
-                ? 28
-                : 30
-          }
-          padding={4}
         >
           {(nodeDimensions) => (
             <TextInputV2Component
@@ -329,7 +331,7 @@ const TextInputV2WithAutoGrowWrapper = forwardRef<
               width={nodeDimensions?.width}
             />
           )}
-        </ComputeNodeDimensions>
+        </StyledComputeNodeDimensions>
       ) : (
         <TextInputV2Component
           // eslint-disable-next-line react/jsx-props-no-spreading
