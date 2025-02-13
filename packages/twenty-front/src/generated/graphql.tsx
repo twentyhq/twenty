@@ -573,13 +573,13 @@ export type FullName = {
   lastName: Scalars['String'];
 };
 
-export type GetAuthorizationUrlInput = {
+export type GetAuthorizationUrlForSsoInput = {
   identityProviderId: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
-export type GetAuthorizationUrlOutput = {
-  __typename?: 'GetAuthorizationUrlOutput';
+export type GetAuthorizationUrlForSsoOutput = {
+  __typename?: 'GetAuthorizationUrlForSSOOutput';
   authorizationURL: Scalars['String'];
   id: Scalars['String'];
   type: Scalars['String'];
@@ -761,7 +761,7 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;
-  getAuthorizationUrl: GetAuthorizationUrlOutput;
+  getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginToken;
   getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
@@ -918,8 +918,8 @@ export type MutationGetAuthTokensFromLoginTokenArgs = {
 };
 
 
-export type MutationGetAuthorizationUrlArgs = {
-  input: GetAuthorizationUrlInput;
+export type MutationGetAuthorizationUrlForSsoArgs = {
+  input: GetAuthorizationUrlForSsoInput;
 };
 
 
@@ -2090,12 +2090,12 @@ export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
 
 export type GetAuthTokensFromLoginTokenMutation = { __typename?: 'Mutation', getAuthTokensFromLoginToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
-export type GetAuthorizationUrlMutationVariables = Exact<{
-  input: GetAuthorizationUrlInput;
+export type GetAuthorizationUrlForSsoMutationVariables = Exact<{
+  input: GetAuthorizationUrlForSsoInput;
 }>;
 
 
-export type GetAuthorizationUrlMutation = { __typename?: 'Mutation', getAuthorizationUrl: { __typename?: 'GetAuthorizationUrlOutput', id: string, type: string, authorizationURL: string } };
+export type GetAuthorizationUrlForSsoMutation = { __typename?: 'Mutation', getAuthorizationUrlForSSO: { __typename?: 'GetAuthorizationUrlForSSOOutput', id: string, type: string, authorizationURL: string } };
 
 export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
   email: Scalars['String'];
@@ -3072,41 +3072,41 @@ export function useGetAuthTokensFromLoginTokenMutation(baseOptions?: Apollo.Muta
 export type GetAuthTokensFromLoginTokenMutationHookResult = ReturnType<typeof useGetAuthTokensFromLoginTokenMutation>;
 export type GetAuthTokensFromLoginTokenMutationResult = Apollo.MutationResult<GetAuthTokensFromLoginTokenMutation>;
 export type GetAuthTokensFromLoginTokenMutationOptions = Apollo.BaseMutationOptions<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>;
-export const GetAuthorizationUrlDocument = gql`
-    mutation GetAuthorizationUrl($input: GetAuthorizationUrlInput!) {
-  getAuthorizationUrl(input: $input) {
+export const GetAuthorizationUrlForSsoDocument = gql`
+    mutation GetAuthorizationUrlForSSO($input: GetAuthorizationUrlForSSOInput!) {
+  getAuthorizationUrlForSSO(input: $input) {
     id
     type
     authorizationURL
   }
 }
     `;
-export type GetAuthorizationUrlMutationFn = Apollo.MutationFunction<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>;
+export type GetAuthorizationUrlForSsoMutationFn = Apollo.MutationFunction<GetAuthorizationUrlForSsoMutation, GetAuthorizationUrlForSsoMutationVariables>;
 
 /**
- * __useGetAuthorizationUrlMutation__
+ * __useGetAuthorizationUrlForSsoMutation__
  *
- * To run a mutation, you first call `useGetAuthorizationUrlMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetAuthorizationUrlMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useGetAuthorizationUrlForSsoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetAuthorizationUrlForSsoMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [getAuthorizationUrlMutation, { data, loading, error }] = useGetAuthorizationUrlMutation({
+ * const [getAuthorizationUrlForSsoMutation, { data, loading, error }] = useGetAuthorizationUrlForSsoMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetAuthorizationUrlMutation(baseOptions?: Apollo.MutationHookOptions<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>) {
+export function useGetAuthorizationUrlForSsoMutation(baseOptions?: Apollo.MutationHookOptions<GetAuthorizationUrlForSsoMutation, GetAuthorizationUrlForSsoMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>(GetAuthorizationUrlDocument, options);
+        return Apollo.useMutation<GetAuthorizationUrlForSsoMutation, GetAuthorizationUrlForSsoMutationVariables>(GetAuthorizationUrlForSsoDocument, options);
       }
-export type GetAuthorizationUrlMutationHookResult = ReturnType<typeof useGetAuthorizationUrlMutation>;
-export type GetAuthorizationUrlMutationResult = Apollo.MutationResult<GetAuthorizationUrlMutation>;
-export type GetAuthorizationUrlMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>;
+export type GetAuthorizationUrlForSsoMutationHookResult = ReturnType<typeof useGetAuthorizationUrlForSsoMutation>;
+export type GetAuthorizationUrlForSsoMutationResult = Apollo.MutationResult<GetAuthorizationUrlForSsoMutation>;
+export type GetAuthorizationUrlForSsoMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlForSsoMutation, GetAuthorizationUrlForSsoMutationVariables>;
 export const GetLoginTokenFromCredentialsDocument = gql`
     mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String) {
   getLoginTokenFromCredentials(
