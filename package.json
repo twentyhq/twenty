@@ -188,7 +188,7 @@
     "tslib": "^2.3.0",
     "tsup": "^8.2.4",
     "type-fest": "4.10.1",
-    "typescript": "5.3.3",
+    "typescript": "5.7.2",
     "use-context-selector": "^2.0.0",
     "use-debounce": "^10.0.0",
     "uuid": "^9.0.0",
@@ -356,7 +356,7 @@
   "resolutions": {
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
-    "typescript": "5.3.3",
+    "typescript": "5.7.2",
     "prosemirror-model": "1.23.0"
   },
   "version": "0.2.1",

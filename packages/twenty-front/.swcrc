@@ -1,6 +1,6 @@
 {
   "jsc": {
-    "target": "es2017",
+    "target": "es2018",
     "parser": {
       "syntax": "typescript",
       "tsx": true,
