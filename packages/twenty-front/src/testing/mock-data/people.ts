@@ -23,9 +23,9 @@ export const getPersonObjectMetadataItem = () => {
 
 export const getPersonFieldMetadataItem = (
   fieldMetadataType: FieldMetadataType,
-  objectMetadaItem = getPersonObjectMetadataItem(),
+  objectMetadataItem = getPersonObjectMetadataItem(),
 ) => {
-  const result = objectMetadaItem.fields.find(
+  const result = objectMetadataItem.fields.find(
     (field) => field.type === fieldMetadataType,
   );
   if (!result) {

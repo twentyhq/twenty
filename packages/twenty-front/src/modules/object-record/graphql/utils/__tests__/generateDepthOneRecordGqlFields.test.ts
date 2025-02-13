@@ -6,7 +6,7 @@ import {
 
 describe('generateDepthOneRecordGqlFields', () => {
   const objectMetadataItem = getPersonObjectMetadataItem();
-  it('Should handle basic call with both objectMetadaItem and record', () => {
+  it('Should handle basic call with both objectMetadataItem and record', () => {
     const personRecord = getPersonRecord();
     const result = generateDepthOneRecordGqlFields({
       objectMetadataItem,
@@ -47,7 +47,7 @@ describe('generateDepthOneRecordGqlFields', () => {
 `);
   });
 
-  it('Should handle basic call with standalone objectMetadaItem', () => {
+  it('Should handle basic call with standalone objectMetadataItem', () => {
     const result = generateDepthOneRecordGqlFields({
       objectMetadataItem,
     });

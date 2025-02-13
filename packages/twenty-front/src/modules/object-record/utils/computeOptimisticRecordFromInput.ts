@@ -66,7 +66,7 @@ export const computeOptimisticRecordFromInput = ({
   );
   if (unknownRecordInputFields.length > 0) {
     throw new Error(
-      `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadaItem ${objectMetadataItem.nameSingular}`,
+      `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadataItem ${objectMetadataItem.nameSingular}`,
     );
   }
 

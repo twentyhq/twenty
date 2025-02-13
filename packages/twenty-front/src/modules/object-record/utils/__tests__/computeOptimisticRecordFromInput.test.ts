@@ -234,7 +234,7 @@ describe('computeOptimisticRecordFromInput', () => {
         cache,
       }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadaItem person"`,
+      `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadataItem person"`,
     );
   });
 
