@@ -5,6 +5,7 @@ import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { AppPath } from '@/types/AppPath';
 import { View } from '@/views/types/View';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -28,7 +29,7 @@ const getViewId = (
     return indexView.id;
   }
 
-  throw new Error('No view id found');
+  return undefined;
 };
 
 export const MainContextStoreProvider = () => {
@@ -73,7 +74,7 @@ export const MainContextStoreProvider = () => {
   if (
     !isDefined(pageName) ||
     !isDefined(objectMetadataItem) ||
-    !isDefined(viewId)
+    !isNonEmptyString(viewId)
   ) {
     return null;
   }
