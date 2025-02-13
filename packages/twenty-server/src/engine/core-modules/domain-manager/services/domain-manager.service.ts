@@ -21,11 +21,10 @@ export class DomainManagerService {
   ) {}
 
   getFrontUrl() {
-    const frontUrl = this.environmentService.get('FRONTEND_URL');
-
-    const serverUrl = this.environmentService.get('SERVER_URL');
-
-    return frontUrl ? new URL(frontUrl) : new URL(serverUrl);
+    return new URL(
+      this.environmentService.get('FRONTEND_URL') ??
+        this.environmentService.get('SERVER_URL'),
+    );
   }
 
   getBaseUrl(): URL {

@@ -15,8 +15,7 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
           };
 
           return env[key];
@@ -39,8 +38,7 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
           };
 
           return env[key];
@@ -89,8 +87,7 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
           };
 
           return env[key];
@@ -106,8 +103,8 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
+
             IS_MULTIWORKSPACE_ENABLED: true,
             DEFAULT_SUBDOMAIN: 'test',
           };
@@ -125,9 +122,7 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
-            FRONT_PORT: '8080',
+            FRONTEND_URL: 'https://example.com:8080',
           };
 
           return env[key];
@@ -145,8 +140,8 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
+
             IS_MULTIWORKSPACE_ENABLED: true,
             DEFAULT_SUBDOMAIN: 'default',
           };
@@ -170,8 +165,7 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
           };
 
           return env[key];
@@ -194,8 +188,7 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
           };
 
           return env[key];
