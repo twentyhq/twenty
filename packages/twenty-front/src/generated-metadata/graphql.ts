@@ -384,20 +384,20 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type CustomDomainDetails = {
-  __typename?: 'CustomDomainDetails';
-  customDomain: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  records: Array<CustomDomainVerification>;
-};
-
-export type CustomDomainVerification = {
-  __typename?: 'CustomDomainVerification';
+export type CustomDomainRecord = {
+  __typename?: 'CustomDomainRecord';
   key: Scalars['String']['output'];
   status: Scalars['String']['output'];
   type: Scalars['String']['output'];
   validationType: Scalars['String']['output'];
   value: Scalars['String']['output'];
+};
+
+export type CustomDomainValidRecords = {
+  __typename?: 'CustomDomainValidRecords';
+  customDomain: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  records: Array<CustomDomainRecord>;
 };
 
 export type DeleteOneFieldInput = {
@@ -1343,6 +1343,7 @@ export type PublishServerlessFunctionInput = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: BillingSessionOutput;
+  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -1359,7 +1360,6 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON']['output'];
-  getCustomDomainDetails?: Maybe<CustomDomainDetails>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
@@ -2099,6 +2099,7 @@ export type Workspace = {
   hasValidEnterpriseKey: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
+  isCustomDomainEnabled: Scalars['Boolean']['output'];
   isGoogleAuthEnabled: Scalars['Boolean']['output'];
   isMicrosoftAuthEnabled: Scalars['Boolean']['output'];
   isPasswordAuthEnabled: Scalars['Boolean']['output'];
