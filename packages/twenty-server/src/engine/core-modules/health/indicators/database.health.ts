@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class DatabaseHealthIndicator extends HealthIndicator {
         this.dataSource.query('SELECT 1'),
         new Promise((_, reject) =>
           setTimeout(
-            () => reject(new Error('Database timeout')),
+            () => reject(new Error(HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT)),
             HEALTH_INDICATORS_TIMEOUT,
           ),
         ),
@@ -30,7 +31,8 @@ export class DatabaseHealthIndicator extends HealthIndicator {
       return this.getStatus(key, true);
     } catch (error) {
       return this.getStatus(key, false, {
-        error: error.message || 'Database connection failed',
+        error:
+          error.message || HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED,
       });
     }
   }

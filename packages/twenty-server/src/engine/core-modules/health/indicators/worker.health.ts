@@ -3,6 +3,7 @@ import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 
 import { Queue } from 'bullmq';
 
+import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
@@ -19,7 +20,7 @@ export class WorkerHealthIndicator extends HealthIndicator {
         this.checkWorkers(),
         new Promise((_, reject) =>
           setTimeout(
-            () => reject(new Error('Worker check timeout')),
+            () => reject(new Error(HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT)),
             HEALTH_INDICATORS_TIMEOUT,
           ),
         ),
@@ -55,7 +56,7 @@ export class WorkerHealthIndicator extends HealthIndicator {
     );
 
     if (totalWorkers === 0) {
-      throw new Error('No active workers found');
+      throw new Error(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS);
     }
 
     return {

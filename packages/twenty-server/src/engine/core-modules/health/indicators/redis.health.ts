@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 
+import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
@@ -16,7 +17,7 @@ export class RedisHealthIndicator extends HealthIndicator {
         this.redisClient.getClient().ping(),
         new Promise((_, reject) =>
           setTimeout(
-            () => reject(new Error('Redis timeout')),
+            () => reject(new Error(HEALTH_ERROR_MESSAGES.REDIS_TIMEOUT)),
             HEALTH_INDICATORS_TIMEOUT,
           ),
         ),
@@ -25,7 +26,7 @@ export class RedisHealthIndicator extends HealthIndicator {
       return this.getStatus(key, true);
     } catch (error) {
       return this.getStatus(key, false, {
-        error: error?.message ?? 'Unknown Redis error',
+        error: error?.message ?? HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED,
       });
     }
   }
