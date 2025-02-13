@@ -87,7 +87,6 @@ export const useCreateOneRecord = <
         },
       },
     });
-    debugger;
     const recordCreatedInCache = createOneRecordInCache({
       ...optimisticRecordInput,
       id: idForCreation,

@@ -46,20 +46,20 @@ describe('computeOptimisticRecordFromInput', () => {
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         city: 'Paris',
-        createdBy: actorFieldDefaultValue
+        createdBy: actorFieldDefaultValue,
       },
       cache,
     });
 
     expect(result).toEqual({
-      "city": "Paris",
-      "createdBy": {
-        "context": {},
-        "name": "",
-        "source": "MANUAL",
-        "workspaceMemberId": null,
+      city: 'Paris',
+      createdBy: {
+        context: {},
+        name: '',
+        source: 'MANUAL',
+        workspaceMemberId: null,
       },
-    })
+    });
   });
 
   it('should generate correct optimistic record if relation field is present but cache is empty', () => {

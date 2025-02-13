@@ -62,12 +62,7 @@ export const useClearField = () => {
           },
         });
       },
-    [
-      recordId,
-      fieldDefinition,
-      updateRecord,
-      setRecordFieldValue,
-    ],
+    [recordId, fieldDefinition, updateRecord, setRecordFieldValue],
   );
 
   return clearField;

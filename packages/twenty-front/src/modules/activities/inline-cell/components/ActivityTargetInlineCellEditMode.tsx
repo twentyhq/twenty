@@ -1,9 +1,5 @@
 import { isNull } from '@sniptt/guards';
-import {
-  useRecoilCallback,
-  useRecoilState,
-  useSetRecoilState
-} from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';

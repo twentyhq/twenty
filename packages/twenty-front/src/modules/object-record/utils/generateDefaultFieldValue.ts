@@ -15,7 +15,7 @@ export const generateDefaultFieldValue = ({
     fieldDefinition: fieldMetadataItem,
   })
     ? generateEmptyFieldValue({
-        fieldMetadataItem
+        fieldMetadataItem,
       })
     : stripSimpleQuotesFromString(fieldMetadataItem.defaultValue);
 

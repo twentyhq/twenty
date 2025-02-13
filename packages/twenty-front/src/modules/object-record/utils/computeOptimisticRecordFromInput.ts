@@ -74,12 +74,12 @@ export const computeOptimisticRecordFromInput = ({
       const defaultValue: FieldActorValue = {
         context: {},
         name: '', // could be optimiscally retrieved
-        source: "",
+        source: '',
         workspaceMemberId: null, // could be optimistically retrieve
       };
       optimisticRecord[fieldMetadataItem.name] = {
         ...defaultValue,
-        ...recordInputFieldValue as FieldActorValue // TODO
+        ...(recordInputFieldValue as FieldActorValue), // TODO
       };
       continue;
     }
