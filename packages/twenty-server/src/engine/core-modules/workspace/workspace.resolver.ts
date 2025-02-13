@@ -229,7 +229,7 @@ export class WorkspaceResolver {
     return this.domainManagerService.getWorkspaceUrls(workspace);
   }
 
-  @Query(() => CustomDomainValidRecords, { nullable: true })
+  @Mutation(() => CustomDomainValidRecords, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
   async checkCustomDomainValidRecords(
     @AuthWorkspace() workspace: Workspace,

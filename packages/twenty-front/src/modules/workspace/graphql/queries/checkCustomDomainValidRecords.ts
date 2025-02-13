@@ -1,8 +1,9 @@
 import { gql } from '@apollo/client';
 
 export const CHECK_CUSTOM_DOMAIN_VALID_RECORDS = gql`
-  query CheckCustomDomainValidRecords {
+  mutation CheckCustomDomainValidRecords {
     checkCustomDomainValidRecords {
+      id
       customDomain
       records {
         type

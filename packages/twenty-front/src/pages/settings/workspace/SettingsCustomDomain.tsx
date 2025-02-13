@@ -5,9 +5,10 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, Section } from 'twenty-ui';
-import { useCheckCustomDomainValidRecordsQuery } from '~/generated/graphql';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
+import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
+import { useRecoilValue } from 'recoil';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
@@ -19,8 +20,7 @@ const StyledRecordsWrapper = styled.div`
 `;
 
 export const SettingsCustomDomain = () => {
-  const { data: checkCustomDomainValidRecordsData } =
-    useCheckCustomDomainValidRecordsQuery();
+  const customDomainRecords = useRecoilValue(customDomainRecordsState);
 
   const { t } = useLingui();
 
@@ -49,22 +49,14 @@ export const SettingsCustomDomain = () => {
           )}
         />
       </StyledDomainFormWrapper>
-      {checkCustomDomainValidRecordsData?.checkCustomDomainValidRecords &&
-        getValues('customDomain') ===
-          checkCustomDomainValidRecordsData?.checkCustomDomainValidRecords
-            ?.customDomain && (
+      {customDomainRecords &&
+        getValues('customDomain') === customDomainRecords?.customDomain && (
           <StyledRecordsWrapper>
             <SettingsCustomDomainRecordsStatus
-              records={
-                checkCustomDomainValidRecordsData.checkCustomDomainValidRecords
-                  .records
-              }
+              records={customDomainRecords.records}
             />
             <SettingsCustomDomainRecords
-              records={
-                checkCustomDomainValidRecordsData.checkCustomDomainValidRecords
-                  .records
-              }
+              records={customDomainRecords.records}
             />
           </StyledRecordsWrapper>
         )}

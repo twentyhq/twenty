@@ -734,6 +734,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
   buildDraftServerlessFunction: ServerlessFunction;
+  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -1210,7 +1211,6 @@ export type PublishServerlessFunctionInput = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: BillingSessionOutput;
-  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -2422,10 +2422,10 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 
 export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
 
-export type CheckCustomDomainValidRecordsQueryVariables = Exact<{ [key: string]: never; }>;
+export type CheckCustomDomainValidRecordsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CheckCustomDomainValidRecordsQuery = { __typename?: 'Query', checkCustomDomainValidRecords?: { __typename?: 'CustomDomainValidRecords', customDomain: string, records: Array<{ __typename?: 'CustomDomainRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
+export type CheckCustomDomainValidRecordsMutation = { __typename?: 'Mutation', checkCustomDomainValidRecords?: { __typename?: 'CustomDomainValidRecords', id: string, customDomain: string, records: Array<{ __typename?: 'CustomDomainRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -4897,8 +4897,9 @@ export type UploadWorkspaceLogoMutationHookResult = ReturnType<typeof useUploadW
 export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
 export const CheckCustomDomainValidRecordsDocument = gql`
-    query CheckCustomDomainValidRecords {
+    mutation CheckCustomDomainValidRecords {
   checkCustomDomainValidRecords {
+    id
     customDomain
     records {
       type
@@ -4910,33 +4911,31 @@ export const CheckCustomDomainValidRecordsDocument = gql`
   }
 }
     `;
+export type CheckCustomDomainValidRecordsMutationFn = Apollo.MutationFunction<CheckCustomDomainValidRecordsMutation, CheckCustomDomainValidRecordsMutationVariables>;
 
 /**
- * __useCheckCustomDomainValidRecordsQuery__
+ * __useCheckCustomDomainValidRecordsMutation__
  *
- * To run a query within a React component, call `useCheckCustomDomainValidRecordsQuery` and pass it any options that fit your needs.
- * When your component renders, `useCheckCustomDomainValidRecordsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useCheckCustomDomainValidRecordsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckCustomDomainValidRecordsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useCheckCustomDomainValidRecordsQuery({
+ * const [checkCustomDomainValidRecordsMutation, { data, loading, error }] = useCheckCustomDomainValidRecordsMutation({
  *   variables: {
  *   },
  * });
  */
-export function useCheckCustomDomainValidRecordsQuery(baseOptions?: Apollo.QueryHookOptions<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>) {
+export function useCheckCustomDomainValidRecordsMutation(baseOptions?: Apollo.MutationHookOptions<CheckCustomDomainValidRecordsMutation, CheckCustomDomainValidRecordsMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>(CheckCustomDomainValidRecordsDocument, options);
+        return Apollo.useMutation<CheckCustomDomainValidRecordsMutation, CheckCustomDomainValidRecordsMutationVariables>(CheckCustomDomainValidRecordsDocument, options);
       }
-export function useCheckCustomDomainValidRecordsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>(CheckCustomDomainValidRecordsDocument, options);
-        }
-export type CheckCustomDomainValidRecordsQueryHookResult = ReturnType<typeof useCheckCustomDomainValidRecordsQuery>;
-export type CheckCustomDomainValidRecordsLazyQueryHookResult = ReturnType<typeof useCheckCustomDomainValidRecordsLazyQuery>;
-export type CheckCustomDomainValidRecordsQueryResult = Apollo.QueryResult<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>;
+export type CheckCustomDomainValidRecordsMutationHookResult = ReturnType<typeof useCheckCustomDomainValidRecordsMutation>;
+export type CheckCustomDomainValidRecordsMutationResult = Apollo.MutationResult<CheckCustomDomainValidRecordsMutation>;
+export type CheckCustomDomainValidRecordsMutationOptions = Apollo.BaseMutationOptions<CheckCustomDomainValidRecordsMutation, CheckCustomDomainValidRecordsMutationVariables>;
 export const GetWorkspaceFromInviteHashDocument = gql`
     query GetWorkspaceFromInviteHash($inviteHash: String!) {
   findWorkspaceFromInviteHash(inviteHash: $inviteHash) {
