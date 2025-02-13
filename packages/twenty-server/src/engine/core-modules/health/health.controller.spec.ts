@@ -1,8 +1,12 @@
-import { HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
+import { HealthCheckService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
-import { HealthController } from 'src/engine/core-modules/health/health.controller';
+import { HealthCacheService } from './health-cache.service';
+import { HealthController } from './health.controller';
+
+import { DatabaseHealthIndicator } from './indicators/database.health';
+import { RedisHealthIndicator } from './indicators/redis.health';
+import { WorkerHealthIndicator } from './indicators/worker.health';
 
 describe('HealthController', () => {
   let healthController: HealthController;
@@ -10,19 +14,31 @@ describe('HealthController', () => {
 
   beforeEach(async () => {
     testingModule = await Test.createTestingModule({
+      controllers: [HealthController],
       providers: [
-        HealthController,
         {
           provide: HealthCheckService,
-          useValue: {},
+          useValue: { check: jest.fn() },
         },
         {
-          provide: HttpHealthIndicator,
-          useValue: {},
+          provide: DatabaseHealthIndicator,
+          useValue: { isHealthy: jest.fn() },
+        },
+        {
+          provide: RedisHealthIndicator,
+          useValue: { isHealthy: jest.fn() },
+        },
+        {
+          provide: WorkerHealthIndicator,
+          useValue: { isHealthy: jest.fn() },
         },
         {
           provide: HealthCacheService,
-          useValue: {},
+          useValue: {
+            getMessageChannelSyncJobByStatusCounter: jest.fn(),
+            getInvalidCaptchaCounter: jest.fn(),
+            getSystemStatus: jest.fn(),
+          },
         },
       ],
     }).compile();

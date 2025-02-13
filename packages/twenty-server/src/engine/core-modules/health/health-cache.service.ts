@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { HealthCheckService } from '@nestjs/terminus';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { Queue } from 'bullmq';
 import { DataSource } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -9,11 +9,12 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/heath-service-status.enum';
+import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
+import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
+import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/health-counter-cache-keys.type';
 import { MessageChannelSyncJobByStatusCounter } from 'src/engine/core-modules/health/types/health-metrics.types';
-import { HealthService } from 'src/engine/core-modules/health/types/health-service.types';
 import { HealthSystem } from 'src/engine/core-modules/health/types/health-system.types';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -29,6 +30,10 @@ export class HealthCacheService {
     private readonly redisClient: RedisClientService,
     @InjectDataSource('core')
     private readonly dataSource: DataSource,
+    private readonly health: HealthCheckService,
+    private readonly databaseHealth: DatabaseHealthIndicator,
+    private readonly redisHealth: RedisHealthIndicator,
+    private readonly workerHealth: WorkerHealthIndicator,
   ) {
     this.healthMonitoringTimeWindowInMinutes = this.environmentService.get(
       'HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES',
@@ -143,86 +148,35 @@ export class HealthCacheService {
     return aggregatedCounter;
   }
 
-  async getDatabaseStatus(): Promise<HealthService> {
-    try {
-      await this.dataSource.query('SELECT 1');
-
-      return { status: HealthServiceStatus.OPERATIONAL };
-    } catch {
-      return { status: HealthServiceStatus.OUTAGE };
-    }
-  }
-
-  async getRedisStatus(): Promise<HealthService> {
-    try {
-      const redis = this.redisClient.getClient();
-
-      await redis.ping();
-
-      return { status: HealthServiceStatus.OPERATIONAL };
-    } catch {
-      return { status: HealthServiceStatus.OUTAGE };
-    }
-  }
-
-  async getWorkerStatus(): Promise<HealthService> {
-    try {
-      const redis = this.redisClient.getClient();
-
-      // Get all queue names from our MessageQueue enum
-      // TODO: Consider getting queue names dynamically from Redis using:
-      // const queueKeys = await redis.keys('bull:*:meta');
-      // const queueNames = queueKeys.map(key => key.split(':')[1]);
-      // This would automatically detect all queues instead of relying on MessageQueue enum
-      // altough using MessageQueue makes more sense as it's a more type-safe way to handle queue names
-      const queues = Object.values(MessageQueue);
-
-      const workerStatuses = await Promise.all(
-        queues.map(async (queueName) => {
-          const queue = new Queue(queueName, { connection: redis });
-          const workers = await queue.getWorkers();
-
-          return {
-            queue: queueName,
-            activeWorkers: workers.length,
-          };
-        }),
-      );
-
-      const totalWorkers = workerStatuses.reduce(
-        (sum, status) => sum + status.activeWorkers,
-        0,
-      );
-
-      return {
-        status:
-          totalWorkers > 0
-            ? HealthServiceStatus.OPERATIONAL
-            : HealthServiceStatus.OUTAGE,
-        details: {
-          totalWorkers,
-          queues: workerStatuses
-            .filter((s) => s.activeWorkers > 0)
-            .map((s) => s.queue),
-        },
-      };
-    } catch {
-      return { status: HealthServiceStatus.OUTAGE };
-    }
-  }
-
   async getSystemStatus(): Promise<HealthSystem> {
-    const [database, redis, worker, messageSync] = await Promise.all([
-      this.getDatabaseStatus(),
-      this.getRedisStatus(),
-      this.getWorkerStatus(),
+    const [healthCheck, messageSync] = await Promise.all([
+      this.health.check([
+        () => this.databaseHealth.isHealthy('database'),
+        () => this.redisHealth.isHealthy('redis'),
+        () => this.workerHealth.isHealthy('worker'),
+      ]),
       this.getMessageChannelSyncJobByStatusCounter(),
     ]);
 
     return {
-      database,
-      redis,
-      worker,
+      database: {
+        status:
+          healthCheck.info?.database?.status === 'up'
+            ? HealthServiceStatus.OPERATIONAL
+            : HealthServiceStatus.OUTAGE,
+      },
+      redis: {
+        status:
+          healthCheck.info?.redis?.status === 'up'
+            ? HealthServiceStatus.OPERATIONAL
+            : HealthServiceStatus.OUTAGE,
+      },
+      worker: {
+        status:
+          healthCheck.info?.worker?.status === 'up'
+            ? HealthServiceStatus.OPERATIONAL
+            : HealthServiceStatus.OUTAGE,
+      },
       messageSync,
     };
   }
