@@ -279,14 +279,28 @@ export type FieldRichTextV2Value = {
 
 export type FieldRichTextValue = null | string;
 
+type FieldActorSource =
+  | 'API'
+  | 'IMPORT'
+  | 'EMAIL'
+  | 'CALENDAR'
+  | 'MANUAL'
+  | 'SYSTEM'
+  | 'WORKFLOW';
+
 export type FieldActorValue = {
-  source: string;
-  workspaceMemberId?: string;
+  source: FieldActorSource;
+  workspaceMemberId: string | null;
   name: string;
-  context?: {
+  context: {
     provider?: ConnectedAccountProvider;
-  };
+  } | null;
 };
+
+export type FieldActorForInputValue = Pick<
+  FieldActorValue,
+  'context' | 'source'
+>;
 
 export type FieldArrayValue = string[];
 

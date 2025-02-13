@@ -1,13 +1,13 @@
+import { WorkflowRunVisualizerContent } from '@/workflow/components/WorkflowRunVisualizerContent';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
-import { CodeEditor } from 'twenty-ui';
 
 const StyledSourceCodeContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(4)};
+  height: 100%;
 `;
 
-export const WorkflowRunOutputVisualizer = ({
+export const WorkflowRunVisualizer = ({
   workflowRunId,
 }: {
   workflowRunId: string;
@@ -19,11 +19,7 @@ export const WorkflowRunOutputVisualizer = ({
 
   return (
     <StyledSourceCodeContainer>
-      <CodeEditor
-        value={JSON.stringify(workflowRun.output, null, 2)}
-        language="json"
-        options={{ readOnly: true, domReadOnly: true }}
-      />
+      <WorkflowRunVisualizerContent workflowRun={workflowRun} />
     </StyledSourceCodeContainer>
   );
 };
