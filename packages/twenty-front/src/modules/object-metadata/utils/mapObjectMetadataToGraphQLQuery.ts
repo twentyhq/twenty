@@ -8,7 +8,6 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   recordGqlFields?: Record<string, any>;
   computeReferences?: boolean;
   isRootLevel?: boolean;
-  isForInput?: boolean;
 };
 export const mapObjectMetadataToGraphQLQuery = ({
   objectMetadataItems,
@@ -16,7 +15,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
   recordGqlFields,
   computeReferences = false,
   isRootLevel = true,
-  isForInput = false,
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   const fieldsThatShouldBeQueried =
     objectMetadataItem?.fields
@@ -40,7 +38,6 @@ __typename
 ${fieldsThatShouldBeQueried
   .map((field) => {
     return mapFieldMetadataToGraphQLQuery({
-      isForInput,
       objectMetadataItems,
       field,
       relationrecordFields:
