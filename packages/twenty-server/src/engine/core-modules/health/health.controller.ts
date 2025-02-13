@@ -1,20 +1,20 @@
 import { Controller, Get } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-
-import { DataSource } from 'typeorm';
-
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 
 import { HealthCacheService } from './health-cache.service';
 
 @Controller('healthz')
 export class HealthController {
   constructor(
-    private redisClient: RedisClientService,
+    private health: HealthCheckService,
     private healthCacheService: HealthCacheService,
-    @InjectDataSource('core')
-    private readonly dataSource: DataSource,
   ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([]);
+  }
 
   @Get('/message-channel-sync-job-by-status-counter')
   getMessageChannelSyncJobByStatusCounter() {
