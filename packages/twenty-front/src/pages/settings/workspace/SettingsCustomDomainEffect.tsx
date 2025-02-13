@@ -2,10 +2,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { useGetCustomDomainDetailsQuery } from '~/generated/graphql';
+import { useCheckCustomDomainValidRecordsQuery } from '~/generated/graphql';
 
 export const SettingsCustomDomainEffect = () => {
-  const { refetch } = useGetCustomDomainDetailsQuery();
+  const { refetch } = useCheckCustomDomainValidRecordsQuery();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 

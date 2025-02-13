@@ -821,6 +821,14 @@ export class EnvironmentVariables {
   CLOUDFLARE_ZONE_ID: string;
 
   @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Random string to validate queries from Cloudflare',
+  })
+  @IsString()
+  @IsOptional()
+  CLOUDFLARE_WEBHOOK_SECRET: string;
+
+  @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.LLM,
     description: 'Driver for the LLM chat model',
   })

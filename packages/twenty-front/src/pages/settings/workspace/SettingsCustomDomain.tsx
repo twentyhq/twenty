@@ -1,18 +1,26 @@
+/* @license Enterprise */
+
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, Section } from 'twenty-ui';
-import { useGetCustomDomainDetailsQuery } from '~/generated/graphql';
+import { useCheckCustomDomainValidRecordsQuery } from '~/generated/graphql';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
+import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
   display: flex;
 `;
 
+const StyledRecordsWrapper = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const SettingsCustomDomain = () => {
-  const { data: getCustomDomainDetailsData } = useGetCustomDomainDetailsQuery();
+  const { data: checkCustomDomainValidRecordsData } =
+    useCheckCustomDomainValidRecordsQuery();
 
   const { t } = useLingui();
 
@@ -22,7 +30,10 @@ export const SettingsCustomDomain = () => {
 
   return (
     <Section>
-      <H2Title title={t`Domain`} description={t`Set the name of your domain`} />
+      <H2Title
+        title={t`Custom Domain`}
+        description={t`Set the name of your custom domain and configure your DNS records.`}
+      />
       <StyledDomainFormWrapper>
         <Controller
           name="customDomain"
@@ -38,12 +49,24 @@ export const SettingsCustomDomain = () => {
           )}
         />
       </StyledDomainFormWrapper>
-      {getCustomDomainDetailsData?.getCustomDomainDetails &&
+      {checkCustomDomainValidRecordsData?.checkCustomDomainValidRecords &&
         getValues('customDomain') ===
-          getCustomDomainDetailsData?.getCustomDomainDetails?.customDomain && (
-          <SettingsCustomDomainRecords
-            records={getCustomDomainDetailsData.getCustomDomainDetails.records}
-          />
+          checkCustomDomainValidRecordsData?.checkCustomDomainValidRecords
+            ?.customDomain && (
+          <StyledRecordsWrapper>
+            <SettingsCustomDomainRecordsStatus
+              records={
+                checkCustomDomainValidRecordsData.checkCustomDomainValidRecords
+                  .records
+              }
+            />
+            <SettingsCustomDomainRecords
+              records={
+                checkCustomDomainValidRecordsData.checkCustomDomainValidRecords
+                  .records
+              }
+            />
+          </StyledRecordsWrapper>
         )}
     </Section>
   );

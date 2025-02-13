@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -321,20 +321,20 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
-export type CustomDomainDetails = {
-  __typename?: 'CustomDomainDetails';
-  customDomain: Scalars['String'];
-  id: Scalars['String'];
-  records: Array<CustomDomainVerification>;
-};
-
-export type CustomDomainVerification = {
-  __typename?: 'CustomDomainVerification';
+export type CustomDomainRecord = {
+  __typename?: 'CustomDomainRecord';
   key: Scalars['String'];
   status: Scalars['String'];
   type: Scalars['String'];
   validationType: Scalars['String'];
   value: Scalars['String'];
+};
+
+export type CustomDomainValidRecords = {
+  __typename?: 'CustomDomainValidRecords';
+  customDomain: Scalars['String'];
+  id: Scalars['String'];
+  records: Array<CustomDomainRecord>;
 };
 
 export type DeleteOneFieldInput = {
@@ -488,7 +488,6 @@ export type Field = {
   label: Scalars['String'];
   name: Scalars['String'];
   object?: Maybe<Object>;
-  objectMetadataId: Scalars['UUID'];
   options?: Maybe<Scalars['JSON']>;
   relation?: Maybe<Relation>;
   relationDefinition?: Maybe<RelationDefinition>;
@@ -520,7 +519,6 @@ export type FieldFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
-  objectMetadataId?: InputMaybe<StringFieldComparison>;
   or?: InputMaybe<Array<FieldFilter>>;
 };
 
@@ -1073,6 +1071,7 @@ export type Object = {
   dataSourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   fields: ObjectFieldsConnection;
+  fieldsList: Array<Field>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
@@ -1211,6 +1210,7 @@ export type PublishServerlessFunctionInput = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: BillingSessionOutput;
+  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -1224,7 +1224,6 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
-  getCustomDomainDetails?: Maybe<CustomDomainDetails>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
@@ -1571,23 +1570,6 @@ export type SignUpOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
-export type StringFieldComparison = {
-  eq?: InputMaybe<Scalars['String']>;
-  gt?: InputMaybe<Scalars['String']>;
-  gte?: InputMaybe<Scalars['String']>;
-  iLike?: InputMaybe<Scalars['String']>;
-  in?: InputMaybe<Array<Scalars['String']>>;
-  is?: InputMaybe<Scalars['Boolean']>;
-  isNot?: InputMaybe<Scalars['Boolean']>;
-  like?: InputMaybe<Scalars['String']>;
-  lt?: InputMaybe<Scalars['String']>;
-  lte?: InputMaybe<Scalars['String']>;
-  neq?: InputMaybe<Scalars['String']>;
-  notILike?: InputMaybe<Scalars['String']>;
-  notIn?: InputMaybe<Array<Scalars['String']>>;
-  notLike?: InputMaybe<Scalars['String']>;
-};
-
 export enum SubscriptionInterval {
   Day = 'Day',
   Month = 'Month',
@@ -1709,7 +1691,6 @@ export type UpdateFieldInput = {
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
 };
@@ -1896,6 +1877,7 @@ export type Workspace = {
   hasValidEnterpriseKey: Scalars['Boolean'];
   id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
+  isCustomDomainEnabled: Scalars['Boolean'];
   isGoogleAuthEnabled: Scalars['Boolean'];
   isMicrosoftAuthEnabled: Scalars['Boolean'];
   isPasswordAuthEnabled: Scalars['Boolean'];
@@ -2440,10 +2422,10 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 
 export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
 
-export type GetCustomDomainDetailsQueryVariables = Exact<{ [key: string]: never; }>;
+export type CheckCustomDomainValidRecordsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCustomDomainDetailsQuery = { __typename?: 'Query', getCustomDomainDetails?: { __typename?: 'CustomDomainDetails', customDomain: string, records: Array<{ __typename?: 'CustomDomainVerification', type: string, key: string, value: string, validationType: string, status: string }> } | null };
+export type CheckCustomDomainValidRecordsQuery = { __typename?: 'Query', checkCustomDomainValidRecords?: { __typename?: 'CustomDomainValidRecords', customDomain: string, records: Array<{ __typename?: 'CustomDomainRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -4914,9 +4896,9 @@ export function useUploadWorkspaceLogoMutation(baseOptions?: Apollo.MutationHook
 export type UploadWorkspaceLogoMutationHookResult = ReturnType<typeof useUploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
-export const GetCustomDomainDetailsDocument = gql`
-    query GetCustomDomainDetails {
-  getCustomDomainDetails {
+export const CheckCustomDomainValidRecordsDocument = gql`
+    query CheckCustomDomainValidRecords {
+  checkCustomDomainValidRecords {
     customDomain
     records {
       type
@@ -4930,31 +4912,31 @@ export const GetCustomDomainDetailsDocument = gql`
     `;
 
 /**
- * __useGetCustomDomainDetailsQuery__
+ * __useCheckCustomDomainValidRecordsQuery__
  *
- * To run a query within a React component, call `useGetCustomDomainDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCustomDomainDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCheckCustomDomainValidRecordsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckCustomDomainValidRecordsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetCustomDomainDetailsQuery({
+ * const { data, loading, error } = useCheckCustomDomainValidRecordsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetCustomDomainDetailsQuery(baseOptions?: Apollo.QueryHookOptions<GetCustomDomainDetailsQuery, GetCustomDomainDetailsQueryVariables>) {
+export function useCheckCustomDomainValidRecordsQuery(baseOptions?: Apollo.QueryHookOptions<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCustomDomainDetailsQuery, GetCustomDomainDetailsQueryVariables>(GetCustomDomainDetailsDocument, options);
+        return Apollo.useQuery<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>(CheckCustomDomainValidRecordsDocument, options);
       }
-export function useGetCustomDomainDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCustomDomainDetailsQuery, GetCustomDomainDetailsQueryVariables>) {
+export function useCheckCustomDomainValidRecordsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCustomDomainDetailsQuery, GetCustomDomainDetailsQueryVariables>(GetCustomDomainDetailsDocument, options);
+          return Apollo.useLazyQuery<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>(CheckCustomDomainValidRecordsDocument, options);
         }
-export type GetCustomDomainDetailsQueryHookResult = ReturnType<typeof useGetCustomDomainDetailsQuery>;
-export type GetCustomDomainDetailsLazyQueryHookResult = ReturnType<typeof useGetCustomDomainDetailsLazyQuery>;
-export type GetCustomDomainDetailsQueryResult = Apollo.QueryResult<GetCustomDomainDetailsQuery, GetCustomDomainDetailsQueryVariables>;
+export type CheckCustomDomainValidRecordsQueryHookResult = ReturnType<typeof useCheckCustomDomainValidRecordsQuery>;
+export type CheckCustomDomainValidRecordsLazyQueryHookResult = ReturnType<typeof useCheckCustomDomainValidRecordsLazyQuery>;
+export type CheckCustomDomainValidRecordsQueryResult = Apollo.QueryResult<CheckCustomDomainValidRecordsQuery, CheckCustomDomainValidRecordsQueryVariables>;
 export const GetWorkspaceFromInviteHashDocument = gql`
     query GetWorkspaceFromInviteHash($inviteHash: String!) {
   findWorkspaceFromInviteHash(inviteHash: $inviteHash) {

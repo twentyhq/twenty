@@ -43,7 +43,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
+import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
 import { Workspace } from './workspace.entity';
@@ -220,14 +220,12 @@ export class WorkspaceResolver {
     return this.domainManagerService.getWorkspaceUrls(workspace);
   }
 
-  @Query(() => CustomDomainDetails, { nullable: true })
+  @Query(() => CustomDomainValidRecords, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async getCustomDomainDetails(
+  async checkCustomDomainValidRecords(
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<CustomDomainDetails | undefined> {
-    return this.workspaceService.getCustomDomainDetailsAndToggleIsCustomDomainEnabled(
-      workspace,
-    );
+  ): Promise<CustomDomainValidRecords | undefined> {
+    return this.workspaceService.checkCustomDomainValidRecords(workspace);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
