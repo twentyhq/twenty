@@ -174,6 +174,7 @@ export class HealthCacheService {
       // const queueKeys = await redis.keys('bull:*:meta');
       // const queueNames = queueKeys.map(key => key.split(':')[1]);
       // This would automatically detect all queues instead of relying on MessageQueue enum
+      // altough using MessageQueue makes more sense as it's a more type-safe way to handle queue names
       const queues = Object.values(MessageQueue);
 
       const workerStatuses = await Promise.all(
