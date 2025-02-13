@@ -52,9 +52,9 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     useRecoilValue(viewFieldAggregateOperationState({ viewFieldId }));
 
   const isAggregateOperationImpossibleForDateField =
-    isFieldMetadataDateKind(fieldMetadataItem) &&
-    isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
     isDefined(fieldMetadataItem) &&
+    isFieldMetadataDateKind(fieldMetadataItem.type) &&
+    isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
     (aggregateOperationForViewFieldWithProbableImpossibleValues ===
       AGGREGATE_OPERATIONS.min ||
       aggregateOperationForViewFieldWithProbableImpossibleValues ===
