@@ -63,6 +63,30 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     super(workspaceRepository);
   }
 
+  async findById(workspaceId: string) {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    assert(workspace, 'Workspace not found');
+
+    const authProvidersBySystem = {
+      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+    };
+
+    workspace.isGoogleAuthEnabled =
+      workspace.isGoogleAuthEnabled && authProvidersBySystem.google;
+
+    workspace.isMicrosoftAuthEnabled =
+      workspace.isMicrosoftAuthEnabled && authProvidersBySystem.microsoft;
+    workspace.isPasswordAuthEnabled =
+      workspace.isPasswordAuthEnabled && authProvidersBySystem.password;
+
+    return workspace;
+  }
+
   private async isCustomDomainEnabled(workspaceId: string) {
     const isCustomDomainBillingEnabled =
       await this.billingService.hasEntitlement(
@@ -157,6 +181,25 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     ) {
       await this.setCustomDomain(workspace, payload.customDomain);
       customDomainRegistered = true;
+    }
+
+    const authProvidersBySystem = {
+      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+    };
+
+    if (payload.isGoogleAuthEnabled) {
+      payload.isGoogleAuthEnabled =
+        payload.isGoogleAuthEnabled && authProvidersBySystem.google;
+    }
+    if (payload.isMicrosoftAuthEnabled) {
+      payload.isMicrosoftAuthEnabled =
+        payload.isMicrosoftAuthEnabled && authProvidersBySystem.microsoft;
+    }
+    if (payload.isPasswordAuthEnabled) {
+      payload.isPasswordAuthEnabled =
+        payload.isPasswordAuthEnabled && authProvidersBySystem.password;
     }
 
     const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
