@@ -21,12 +21,17 @@ export class HealthController {
   }
 
   @Get('/:serviceName')
+  @HealthCheck()
   checkService(@Param('serviceName') serviceName: string) {
     const checks = {
       database: () => this.databaseHealth.isHealthy('database'),
       redis: () => this.redisHealth.isHealthy('redis'),
       worker: () => this.workerHealth.isHealthy('worker'),
     };
+
+    if (!(serviceName in checks)) {
+      throw new Error(`Invalid service name: ${serviceName}`);
+    }
 
     return this.health.check([checks[serviceName]]);
   }
