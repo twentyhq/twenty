@@ -100,6 +100,20 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
+    // let's make sure we don\t allow worskapce authproviders that the sysntem does not allow
+    const authProviders = {
+      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+    };
+
+    workspace.isGoogleAuthEnabled =
+      workspace.isGoogleAuthEnabled && authProviders.google;
+    workspace.isMicrosoftAuthEnabled =
+      workspace.isMicrosoftAuthEnabled && authProviders.microsoft;
+    workspace.isPasswordAuthEnabled =
+      workspace.isPasswordAuthEnabled && authProviders.password;
+
     const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IsPermissionsEnabled,
       workspace.id,
