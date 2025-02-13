@@ -5,12 +5,19 @@ export const GET_SYSTEM_HEALTH_STATUS = gql`
     getSystemHealthStatus {
       database {
         status
+        details
       }
       redis {
         status
+        details
       }
       worker {
         status
+        queues {
+          name
+          workers
+          status
+        }
       }
       messageSync {
         NOT_SYNCED

@@ -594,10 +594,13 @@ export type GetServerlessFunctionSourceCodeInput = {
 
 export type HealthService = {
   __typename?: 'HealthService';
+  details?: Maybe<Scalars['String']>;
+  queues?: Maybe<Array<WorkerQueueHealth>>;
   status: HealthServiceStatus;
 };
 
 export enum HealthServiceStatus {
+  DEGRADED = 'DEGRADED',
   OPERATIONAL = 'OPERATIONAL',
   OUTAGE = 'OUTAGE'
 }
@@ -1870,6 +1873,13 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String'];
 };
 
+export type WorkerQueueHealth = {
+  __typename?: 'WorkerQueueHealth';
+  name: Scalars['String'];
+  status: HealthServiceStatus;
+  workers: Scalars['Float'];
+};
+
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID'];
@@ -2269,7 +2279,7 @@ export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnv
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'HealthService', status: HealthServiceStatus }, redis: { __typename?: 'HealthService', status: HealthServiceStatus }, worker: { __typename?: 'HealthService', status: HealthServiceStatus }, messageSync: { __typename?: 'MessageChannelSyncJobByStatusCounter', NOT_SYNCED?: number | null, ONGOING?: number | null, ACTIVE?: number | null, FAILED_INSUFFICIENT_PERMISSIONS?: number | null, FAILED_UNKNOWN?: number | null } } };
+export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'HealthService', status: HealthServiceStatus, details?: string | null }, redis: { __typename?: 'HealthService', status: HealthServiceStatus, details?: string | null }, worker: { __typename?: 'HealthService', status: HealthServiceStatus, queues?: Array<{ __typename?: 'WorkerQueueHealth', name: string, workers: number, status: HealthServiceStatus }> | null }, messageSync: { __typename?: 'MessageChannelSyncJobByStatusCounter', NOT_SYNCED?: number | null, ONGOING?: number | null, ACTIVE?: number | null, FAILED_INSUFFICIENT_PERMISSIONS?: number | null, FAILED_UNKNOWN?: number | null } } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -3984,12 +3994,19 @@ export const GetSystemHealthStatusDocument = gql`
   getSystemHealthStatus {
     database {
       status
+      details
     }
     redis {
       status
+      details
     }
     worker {
       status
+      queues {
+        name
+        workers
+        status
+      }
     }
     messageSync {
       NOT_SYNCED

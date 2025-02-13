@@ -5,6 +5,7 @@ import { Redis } from 'ioredis';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
+import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/health-service-status.enum';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
@@ -57,31 +58,54 @@ describe('WorkerHealthIndicator', () => {
     expect(service).toBeDefined();
   });
 
-  it('should return up status when workers are active', async () => {
+  it('should return operational status when all queues have workers', async () => {
     mockQueue.getWorkers.mockResolvedValue([{ id: 'worker1' }] as any);
 
     const result = await service.isHealthy();
 
-    expect(result.worker.status).toBe('up');
-    expect(Queue).toHaveBeenCalledWith(expect.any(String), expect.any(Object));
-    expect(mockQueue.close).toHaveBeenCalled();
+    expect(result.worker.status).toBe(HealthServiceStatus.OPERATIONAL);
+    expect(result.worker.details).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          workers: 1,
+          status: HealthServiceStatus.OPERATIONAL,
+        }),
+      ]),
+    );
   });
 
-  it('should return down status when no workers are active', async () => {
+  it('should return degraded status when some queues have no workers', async () => {
+    // Need to mock for each queue in MessageQueue
+    Object.values(MessageQueue).forEach((_, index) => {
+      mockQueue.getWorkers.mockResolvedValueOnce(
+        index === 0 ? ([{ id: 'worker1' }] as any) : [],
+      );
+    });
+
+    const result = await service.isHealthy();
+
+    expect(result.worker.status).toBe(HealthServiceStatus.DEGRADED);
+    expect(result.worker.details).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          workers: 1,
+          status: HealthServiceStatus.OPERATIONAL,
+        }),
+        expect.objectContaining({
+          workers: 0,
+          status: HealthServiceStatus.OUTAGE,
+        }),
+      ]),
+    );
+  });
+
+  it('should return outage status when no queues have workers', async () => {
     mockQueue.getWorkers.mockResolvedValue([]);
 
     const result = await service.isHealthy();
 
-    expect(result.worker.status).toBe('down');
+    expect(result.worker.status).toBe(HealthServiceStatus.OUTAGE);
     expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS);
-  });
-
-  it('should check all message queues', async () => {
-    mockQueue.getWorkers.mockResolvedValue([{ id: 'worker1' }] as any);
-
-    await service.isHealthy();
-
-    expect(Queue).toHaveBeenCalledTimes(Object.keys(MessageQueue).length);
   });
 
   it('should timeout after specified duration', async () => {
@@ -95,10 +119,20 @@ describe('WorkerHealthIndicator', () => {
     const healthCheckPromise = service.isHealthy();
 
     jest.advanceTimersByTime(HEALTH_INDICATORS_TIMEOUT + 1);
-
     const result = await healthCheckPromise;
 
-    expect(result.worker.status).toBe('down');
+    expect(result.worker.status).toBe(HealthServiceStatus.OUTAGE);
     expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT);
+  });
+
+  it('should check all message queues', async () => {
+    mockQueue.getWorkers.mockResolvedValue([{ id: 'worker1' }] as any);
+
+    await service.isHealthy();
+
+    expect(Queue).toHaveBeenCalledTimes(Object.keys(MessageQueue).length);
+    expect(mockQueue.close).toHaveBeenCalledTimes(
+      Object.keys(MessageQueue).length,
+    );
   });
 });

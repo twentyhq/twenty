@@ -35,18 +35,22 @@ export class AdminPanelHealthService {
           healthCheck.info?.database?.status === 'up'
             ? HealthServiceStatus.OPERATIONAL
             : HealthServiceStatus.OUTAGE,
+        details: healthCheck.info?.database?.details,
       },
       [HealthServiceName.REDIS]: {
         status:
           healthCheck.info?.redis?.status === 'up'
             ? HealthServiceStatus.OPERATIONAL
             : HealthServiceStatus.OUTAGE,
+        details: healthCheck.info?.redis?.details,
       },
       [HealthServiceName.WORKER]: {
-        status:
-          healthCheck.info?.worker?.status === 'up'
-            ? HealthServiceStatus.OPERATIONAL
-            : HealthServiceStatus.OUTAGE,
+        status: healthCheck.info?.worker?.queues?.every((q) => q.workers === 0)
+          ? HealthServiceStatus.OUTAGE
+          : healthCheck.info?.worker?.queues?.some((q) => q.workers === 0)
+            ? HealthServiceStatus.DEGRADED
+            : HealthServiceStatus.OPERATIONAL,
+        queues: healthCheck.info?.worker?.queues,
       },
       messageSync,
     };
