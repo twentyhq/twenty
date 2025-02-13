@@ -21,9 +21,9 @@ export class AdminPanelHealthService {
   async getSystemHealthStatus(): Promise<SystemHealth> {
     const [healthCheck, messageSync] = await Promise.all([
       this.health.check([
-        () => this.databaseHealth.isHealthy('database'),
-        () => this.redisHealth.isHealthy('redis'),
-        () => this.workerHealth.isHealthy('worker'),
+        () => this.databaseHealth.isHealthy(),
+        () => this.redisHealth.isHealthy(),
+        () => this.workerHealth.isHealthy(),
       ]),
       this.healthCacheService.getMessageChannelSyncJobByStatusCounter(),
     ]);
