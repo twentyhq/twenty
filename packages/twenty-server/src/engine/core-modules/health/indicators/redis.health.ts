@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
-import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
+import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Injectable()
@@ -13,15 +13,10 @@ export class RedisHealthIndicator extends HealthIndicator {
 
   async isHealthy(): Promise<HealthIndicatorResult> {
     try {
-      await Promise.race([
+      await withHealthCheckTimeout(
         this.redisClient.getClient().ping(),
-        new Promise((_, reject) =>
-          setTimeout(
-            () => reject(new Error(HEALTH_ERROR_MESSAGES.REDIS_TIMEOUT)),
-            HEALTH_INDICATORS_TIMEOUT,
-          ),
-        ),
-      ]);
+        HEALTH_ERROR_MESSAGES.REDIS_TIMEOUT,
+      );
 
       return this.getStatus('redis', true);
     } catch (error) {

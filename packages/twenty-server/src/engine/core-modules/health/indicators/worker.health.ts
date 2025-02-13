@@ -4,7 +4,7 @@ import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 import { Queue } from 'bullmq';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
-import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
+import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
@@ -16,15 +16,10 @@ export class WorkerHealthIndicator extends HealthIndicator {
 
   async isHealthy(): Promise<HealthIndicatorResult> {
     try {
-      await Promise.race([
+      await withHealthCheckTimeout(
         this.checkWorkers(),
-        new Promise((_, reject) =>
-          setTimeout(
-            () => reject(new Error(HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT)),
-            HEALTH_INDICATORS_TIMEOUT,
-          ),
-        ),
-      ]);
+        HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT,
+      );
 
       return this.getStatus('worker', true);
     } catch (error) {

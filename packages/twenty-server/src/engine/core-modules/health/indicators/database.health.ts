@@ -5,7 +5,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
-import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
+import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
 
 @Injectable()
 export class DatabaseHealthIndicator extends HealthIndicator {
@@ -18,15 +18,10 @@ export class DatabaseHealthIndicator extends HealthIndicator {
 
   async isHealthy(): Promise<HealthIndicatorResult> {
     try {
-      await Promise.race([
+      await withHealthCheckTimeout(
         this.dataSource.query('SELECT 1'),
-        new Promise((_, reject) =>
-          setTimeout(
-            () => reject(new Error(HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT)),
-            HEALTH_INDICATORS_TIMEOUT,
-          ),
-        ),
-      ]);
+        HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT,
+      );
 
       return this.getStatus('database', true);
     } catch (error) {
