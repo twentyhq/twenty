@@ -1,4 +1,5 @@
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -33,7 +34,9 @@ describe('computeViewRecordGqlOperationFilter', () => {
       value: companiesMock[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId?.id,
       displayValue: companiesMock[0].name,
-      operand: ViewFilterOperand.Contains,
+      operand: RecordFilterOperand.Contains,
+      type: 'TEXT',
+      label: 'Name',
       definition: {
         type: 'TEXT',
         fieldMetadataId: companyMockNameFieldMetadataId?.id,

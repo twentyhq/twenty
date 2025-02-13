@@ -121,7 +121,7 @@ export const WorkflowEditTriggerCronForm = ({
 
               const cronValidator = cron(newPattern);
 
-              if (cronValidator.isError()) {
+              if (cronValidator.isError() === true) {
                 setErrorMessages({
                   CUSTOM: `Invalid cron pattern, ${cronValidator
                     .getError()[0]

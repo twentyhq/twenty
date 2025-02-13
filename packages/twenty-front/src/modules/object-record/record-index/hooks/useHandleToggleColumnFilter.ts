@@ -5,12 +5,15 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import {
+  formatFieldMetadataItemAsFilterDefinition,
+  getFilterTypeFromFieldType,
+} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -115,8 +118,11 @@ export const useHandleToggleColumnFilter = ({
           throw new Error('Filter definition not found');
         }
 
-        const availableOperandsForFilter =
-          getRecordFilterOperandsForRecordFilterDefinition(filterDefinition);
+        const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+
+        const availableOperandsForFilter = getRecordFilterOperands({
+          filterType,
+        });
 
         const defaultOperand = availableOperandsForFilter[0];
 
