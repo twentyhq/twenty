@@ -42,7 +42,9 @@ __typename
 ${fieldsThatShouldBeQueried
   .map((field) => {
     const currentRecordGqlFields = recordGqlFields?.[field.name];
-    const relationRecordGqlFields = isRecordGqlFieldsNode(currentRecordGqlFields)
+    const relationRecordGqlFields = isRecordGqlFieldsNode(
+      currentRecordGqlFields,
+    )
       ? currentRecordGqlFields
       : undefined;
     return mapFieldMetadataToGraphQLQuery({

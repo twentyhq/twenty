@@ -101,7 +101,7 @@ export const generateEmptyFieldValue = ({
         source: 'MANUAL',
         context: {},
         name: '',
-        workspaceMemberId: null
+        workspaceMemberId: null,
       } satisfies FieldActorValue;
     }
     case FieldMetadataType.PHONES: {

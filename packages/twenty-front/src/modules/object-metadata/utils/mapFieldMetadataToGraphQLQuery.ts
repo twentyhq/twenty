@@ -8,9 +8,10 @@ import {
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
-export type RecordGqlFields =
-    { [k: string]: boolean | RecordGqlFields };
-export const isRecordGqlFieldsNode = (recordGql: RecordGqlFields | boolean | undefined): recordGql is RecordGqlFields => typeof recordGql !== 'boolean'
+export type RecordGqlFields = { [k: string]: boolean | RecordGqlFields };
+export const isRecordGqlFieldsNode = (
+  recordGql: RecordGqlFields | boolean | undefined,
+): recordGql is RecordGqlFields => typeof recordGql !== 'boolean';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
