@@ -13,7 +13,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
             firstName: true,
             lastName: true,
           },
-        } as RecordGqlFields,
+        } satisfies RecordGqlFields,
         variables: {
           filter: { id: { eq: '123' } },
           orderBy: [{ createdAt: 'AscNullsLast' }],
