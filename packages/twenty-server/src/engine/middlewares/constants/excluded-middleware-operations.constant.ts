@@ -14,6 +14,6 @@ export const EXCLUDED_MIDDLEWARE_OPERATIONS = [
   'UpdatePasswordViaResetToken',
   'IntrospectionQuery',
   'ExchangeAuthorizationCode',
-  'GetAuthorizationUrl',
+  'GetAuthorizationUrlForSSO',
   'GetPublicWorkspaceDataByDomain',
 ] as const;

@@ -1,14 +1,17 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
   JestContextStoreSetter,
   JestContextStoreSetterMocks,
 } from '~/testing/jest/JestContextStoreSetter';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:
@@ -32,6 +35,18 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
     onInitializeRecoilSnapshot,
   });
 
+  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular ===
+      contextStoreCurrentObjectMetadataNameSingular,
+  );
+
+  if (!isDefined(mockObjectMetadataItem)) {
+    throw new Error(
+      `Mock object metadata item ${contextStoreCurrentObjectMetadataNameSingular} not found`,
+    );
+  }
+
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
       <RecordFiltersComponentInstanceContext.Provider
@@ -47,18 +62,31 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
               instanceId: componentInstanceId,
             }}
           >
-            <JestContextStoreSetter
-              contextStoreFilters={contextStoreFilters}
-              contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
-              contextStoreNumberOfSelectedRecords={
-                contextStoreNumberOfSelectedRecords
-              }
-              contextStoreCurrentObjectMetadataNameSingular={
-                contextStoreCurrentObjectMetadataNameSingular
-              }
+            <RecordIndexContextProvider
+              value={{
+                indexIdentifierUrl: () => 'indexIdentifierUrl',
+                onIndexRecordsLoaded: () => {},
+                objectNamePlural: mockObjectMetadataItem.namePlural,
+                objectNameSingular: mockObjectMetadataItem.nameSingular,
+                objectMetadataItem: mockObjectMetadataItem,
+                recordIndexId: 'recordIndexId',
+              }}
             >
-              {children}
-            </JestContextStoreSetter>
+              <JestContextStoreSetter
+                contextStoreFilters={contextStoreFilters}
+                contextStoreTargetedRecordsRule={
+                  contextStoreTargetedRecordsRule
+                }
+                contextStoreNumberOfSelectedRecords={
+                  contextStoreNumberOfSelectedRecords
+                }
+                contextStoreCurrentObjectMetadataNameSingular={
+                  contextStoreCurrentObjectMetadataNameSingular
+                }
+              >
+                {children}
+              </JestContextStoreSetter>
+            </RecordIndexContextProvider>
           </ActionMenuComponentInstanceContext.Provider>
         </ContextStoreComponentInstanceContext.Provider>
       </RecordFiltersComponentInstanceContext.Provider>

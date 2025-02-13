@@ -91,16 +91,15 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
     setFilterDefinitionUsedInDropdown(filterDefinition);
 
-    if (
-      filterDefinition.type === 'RELATION' ||
-      filterDefinition.type === 'SELECT'
-    ) {
+    const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+
+    if (filterType === 'RELATION' || filterType === 'SELECT') {
       setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
     }
 
     setSelectedOperandInDropdown(
       getRecordFilterOperands({
-        filterType: filterDefinition.type,
+        filterType,
       })[0],
     );
 

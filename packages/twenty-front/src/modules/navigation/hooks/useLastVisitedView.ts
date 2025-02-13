@@ -1,5 +1,4 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { lastVisitedObjectMetadataItemIdStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemIdStateSelector';
 import { lastVisitedViewPerObjectMetadataItemStateSelector } from '@/navigation/states/selectors/lastVisitedViewPerObjectMetadataItemStateSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -10,18 +9,9 @@ export const useLastVisitedView = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const scopeId = currentWorkspace?.id ?? '';
 
-  const lastVisitedObjectMetadataItemIdState = extractComponentState(
-    lastVisitedObjectMetadataItemIdStateSelector,
-    scopeId,
-  );
-
   const lastVisitedViewPerObjectMetadataItemState = extractComponentState(
     lastVisitedViewPerObjectMetadataItemStateSelector,
     scopeId,
-  );
-
-  const lastVisitedObjectMetadataItemId = useRecoilValue(
-    lastVisitedObjectMetadataItemIdState,
   );
 
   const [
@@ -35,6 +25,7 @@ export const useLastVisitedView = () => {
   const setFallbackForLastVisitedView = (objectMetadataItemId: string) => {
     /* ...{} allows us to pass value as undefined to remove that particular key
      even though param type is of type Record<string,string> */
+
     setLastVisitedViewPerObjectMetadataItem({
       ...{},
       [objectMetadataItemId]: undefined,
@@ -48,22 +39,12 @@ export const useLastVisitedView = () => {
     objectNamePlural: string;
     viewId: string;
   }) => {
-    const fallbackObjectMetadataItem =
+    const objectMetadataItem =
       findActiveObjectMetadataItemByNamePlural(objectNamePlural);
 
-    if (isDefined(fallbackObjectMetadataItem)) {
-      /* when both are equal meaning there was change in view else 
-      there was a object page change from nav
-    */
-      const fallbackViewId =
-        lastVisitedObjectMetadataItemId === fallbackObjectMetadataItem.id
-          ? viewId
-          : (lastVisitedViewPerObjectMetadataItem?.[
-              fallbackObjectMetadataItem.id
-            ] ?? viewId);
-
+    if (isDefined(objectMetadataItem)) {
       setLastVisitedViewPerObjectMetadataItem({
-        [fallbackObjectMetadataItem.id]: fallbackViewId,
+        [objectMetadataItem.id]: viewId,
       });
     }
   };
