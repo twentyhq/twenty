@@ -1,9 +1,10 @@
 /* @license Enterprise */
 
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import omit from 'lodash.omit';
+import { SettingsFeatures } from 'twenty-shared';
 
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
@@ -22,9 +23,13 @@ import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { SSOException } from 'src/engine/core-modules/sso/sso.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseGuards(SettingsPermissionsGuard(SettingsFeatures.SECURITY))
 export class SSOResolver {
   constructor(private readonly sSOService: SSOService) {}
 

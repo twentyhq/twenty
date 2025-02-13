@@ -8,7 +8,8 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 02:23\n"
+"PO-Revision-Date: 2025-01-01 00:00
+"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -55,6 +56,10 @@ msgstr "24 ч. ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Общая среда, где вы сможете управлять отношениями с клиентами вместе со своей командой."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "Возможность взаимодействовать с каждым объектом"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "Прервать"
@@ -80,6 +85,8 @@ msgstr "Удаление аккаунта"
 msgid "Accounts"
 msgstr "Аккаунты"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "Действия"
@@ -147,7 +154,7 @@ msgstr "Добавлено {beautifiedCreatedAt}"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
 msgid "Advanced filter"
-msgstr ""
+msgstr "Расширенный фильтр"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
@@ -213,11 +220,11 @@ msgstr "Название API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
 msgid "API Name (Plural)"
-msgstr ""
+msgstr "Названия API (Множественное число)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
 msgid "API Name (Singular)"
-msgstr ""
+msgstr "Название API (Единственное число)"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -248,11 +255,11 @@ msgstr "Назначить {workspaceMemberName}?"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Назначьте роли для определения прав доступа каждого участника"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "Назначить участнику"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "Назначенные участники"
 
@@ -368,7 +375,7 @@ msgstr "Выберите объект"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
 msgid "Choose the fields that will identify your records"
-msgstr ""
+msgstr "Выберите поля, которые будут идентифицировать ваши записи"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
@@ -452,7 +459,7 @@ msgstr "Скопировать ссылку приглашения"
 
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
 msgid "Copy link"
-msgstr ""
+msgstr "Копировать ссылку"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -543,7 +550,7 @@ msgstr "Датский"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Dark"
-msgstr ""
+msgstr "Темный"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -580,7 +587,7 @@ msgstr "Деактивируйте \"Синхронизировать метки
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
 msgid "Deactivate object"
-msgstr ""
+msgstr "Деактивировать объект"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -1042,7 +1049,7 @@ msgstr "Недопустимые значения формы"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
 msgid "Invite"
-msgstr ""
+msgstr "Пригласить"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1098,7 +1105,7 @@ msgstr "Последняя дата"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
 msgid "Light"
-msgstr ""
+msgstr "Светлый"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
@@ -1107,7 +1114,7 @@ msgstr "Ссылка скопирована в буфер обмена"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
 msgid "Listings"
-msgstr ""
+msgstr "Объявления"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1172,6 +1179,8 @@ msgstr "Переместить вправо"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1189,7 +1198,7 @@ msgstr "Имя не может быть пустым"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr ""
+msgstr "Указание названия в единственном (например, 'Счет-фактура') и множественном (например, 'Счета-фактуры') числах."
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1236,7 +1245,7 @@ msgstr "Новый аккаунт"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
 msgid "New Field"
-msgstr ""
+msgstr "Новое поле"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1274,20 +1283,28 @@ msgid "No connected account"
 msgstr "Нет подключенных аккаунтов"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "Пока никто не назначен на эту роль"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "Нет пользователей, соответствующих этому поиску"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "Нет пользователей, соответствующих вашему поиску"
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "Больше нет пользователей для добавления"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "Больше нет участников для назначения"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "Нет результатов"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1309,6 +1326,7 @@ msgstr "Не пусто"
 msgid "Object"
 msgstr "Объект"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1382,7 +1400,6 @@ msgid "Permanently destroy workflows"
 msgstr "Безвозвратно уничтожить Workflow"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "Разрешения"
 
@@ -1405,7 +1422,7 @@ msgstr "Пожалуйста, введите {confirmationText}, чтобы по
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
 msgid "Plural"
-msgstr ""
+msgstr "Множественное число"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1547,7 +1564,7 @@ msgstr "Искать ''{commandMenuSearch}'' с помощью..."
 msgid "Search a field..."
 msgstr "Поиск поля..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "Поиск участника"
 
@@ -1615,7 +1632,7 @@ msgstr "Сербский (кириллица)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin"
-msgstr ""
+msgstr "Администратор сервера"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
@@ -1634,12 +1651,17 @@ msgid "Set the name of your subdomain"
 msgstr "Установить название вашего поддомена"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "Настройки"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "Настройки разрешений"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1651,7 +1673,7 @@ msgstr "Должно ли изменение метки поля также ме
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
 msgid "Should changing an object's label also change the API?"
-msgstr ""
+msgstr "Должно ли изменение метки объекта также влечь за собой изменение API?"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1734,11 +1756,11 @@ msgstr "Синхронизировать метку поля и API-имя"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
 msgid "Synchronize Objects Labels and API Names"
-msgstr ""
+msgstr "Синхронизация меток объектов и названий API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "System settings"
-msgstr ""
+msgstr "Настройки системы"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1813,14 +1835,14 @@ msgid "This member will be unassigned from this role."
 msgstr "Этот участник будет исключен из этой роли."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "Эта роль имеет следующие разрешения."
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "Эта роль назначена следующим участникам рабочего пространства."
 
@@ -1848,6 +1870,7 @@ msgstr "Тип триггера должен быть <b>Ручной</b> - ко
 msgid "Turkish"
 msgstr "Турецкий"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
@@ -2032,3 +2055,4 @@ msgstr "Ваше рабочее пространство"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ваше рабочее пространство будет отключено"
+

@@ -8,7 +8,8 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 02:23\n"
+"PO-Revision-Date: 2025-01-01 00:00
+"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -55,6 +56,10 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Un mediu comun unde veți putea gestiona relația cu clienții împreună cu echipa dumneavoastră."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "Capacitatea de a interacționa cu fiecare obiect"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "Anulează"
@@ -80,6 +85,8 @@ msgstr "Ștergerea contului"
 msgid "Accounts"
 msgstr "Conturi"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "Acțiuni"
@@ -147,7 +154,7 @@ msgstr "Adăugat {beautifiedCreatedAt}"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
 msgid "Advanced filter"
-msgstr ""
+msgstr "Filtru avansat"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
@@ -213,11 +220,11 @@ msgstr "Numele API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
 msgid "API Name (Plural)"
-msgstr ""
+msgstr "Nume API (Plural)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
 msgid "API Name (Singular)"
-msgstr ""
+msgstr "Numele API (singular)"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -248,11 +255,11 @@ msgstr "Atribuiți lui {workspaceMemberName}?"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Atribuiți roluri pentru a specifica permisiunile de acces ale fiecărui membru"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "Atribuie membrului"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "Membrii asignați"
 
@@ -368,7 +375,7 @@ msgstr "Alegeți un obiect"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
 msgid "Choose the fields that will identify your records"
-msgstr ""
+msgstr "Alegeți câmpurile care vor identifica înregistrările dvs"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
@@ -452,7 +459,7 @@ msgstr "Copiați link-ul invitației"
 
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
 msgid "Copy link"
-msgstr ""
+msgstr "Copiază linkul"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -543,7 +550,7 @@ msgstr "Daneză"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Dark"
-msgstr ""
+msgstr "Întunecat"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -580,7 +587,7 @@ msgstr "Dezactivează \"Sincronizarea Etichetelor Obiectelor și Numelor API\" p
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
 msgid "Deactivate object"
-msgstr ""
+msgstr "Dezactivează obiectul"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -1042,7 +1049,7 @@ msgstr "Valori de formular invalide"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
 msgid "Invite"
-msgstr ""
+msgstr "Invită"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1098,7 +1105,7 @@ msgstr "Data cea mai recentă"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
 msgid "Light"
-msgstr ""
+msgstr "Luminos"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
@@ -1107,7 +1114,7 @@ msgstr "Link-ul a fost copiat în clipboard"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
 msgid "Listings"
-msgstr ""
+msgstr "Listări"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1172,6 +1179,8 @@ msgstr "Mută la dreapta"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1189,7 +1198,7 @@ msgstr "Numele nu poate fi gol"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr ""
+msgstr "Numele în ambele forme, singular (de exemplu, 'Factură') și plural (de exemplu, 'Facturi')."
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1236,7 +1245,7 @@ msgstr "Cont nou"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
 msgid "New Field"
-msgstr ""
+msgstr "Câmp nou"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1274,20 +1283,28 @@ msgid "No connected account"
 msgstr "Niciun cont conectat"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "Niciun membru nu a fost încă asignat acestui rol"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "Niciun membru care să corespundă acestei căutări"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "Niciun membru care să corespundă căutării dumneavoastră"
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "Nu mai există membri de adăugat"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "Nu mai sunt membri de atribuit"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "Niciun rezultat"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1309,6 +1326,7 @@ msgstr "Nu este gol"
 msgid "Object"
 msgstr "Obiect"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1382,7 +1400,6 @@ msgid "Permanently destroy workflows"
 msgstr "Distrugere definitivă a workflow-urilor"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "Permisiuni"
 
@@ -1405,7 +1422,7 @@ msgstr "Vă rugăm să introduceți {confirmationText} pentru a confirma că dor
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
 msgid "Plural"
-msgstr ""
+msgstr "Plural"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1547,7 +1564,7 @@ msgstr "Caută ''{commandMenuSearch}'' cu..."
 msgid "Search a field..."
 msgstr "Caută un câmp..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "Caută un membru"
 
@@ -1615,7 +1632,7 @@ msgstr "Sârbă (Chirilic)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin"
-msgstr ""
+msgstr "Administrator server"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
@@ -1634,12 +1651,17 @@ msgid "Set the name of your subdomain"
 msgstr "Stabilește numele subdomeniului tău"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "Setări"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "Permisiuni pentru setări"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1651,7 +1673,7 @@ msgstr "Modificarea etichetei unui câmp ar trebui să schimbe și numele pentru
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
 msgid "Should changing an object's label also change the API?"
-msgstr ""
+msgstr "Schimbarea etichetei unui obiect ar trebui să schimbe și API-ul?"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1734,11 +1756,11 @@ msgstr "Sincronizare Etichetă Câmp și Nume API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
 msgid "Synchronize Objects Labels and API Names"
-msgstr ""
+msgstr "Sincronizează etichetele obiectelor și numele API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "System settings"
-msgstr ""
+msgstr "Setările sistemului"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1813,14 +1835,14 @@ msgid "This member will be unassigned from this role."
 msgstr "Acest membru va fi retras din acest rol."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "Acest Rol are următoarele permisiuni."
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "Acest rol este atribuit acestor membri ai spațiului de lucru."
 
@@ -1848,6 +1870,7 @@ msgstr "Tipul declanșatorului trebuie să fie Manual - când nicio înregistrar
 msgid "Turkish"
 msgstr "Turcă"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
@@ -2032,3 +2055,4 @@ msgstr "Spațiul tău de lucru"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Spațiul tău de lucru va fi dezactivat"
+

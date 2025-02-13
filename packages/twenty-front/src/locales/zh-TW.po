@@ -8,7 +8,8 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 02:23\n"
+"PO-Revision-Date: 2025-01-01 00:00
+"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -55,6 +56,10 @@ msgstr "24小時 ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "一個共享環境，您與您的團隊可以在此管理客戶關係。"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "與每個物件互動的能力"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "中止"
@@ -80,6 +85,8 @@ msgstr "刪除帳戶"
 msgid "Accounts"
 msgstr "帳戶"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "操作"
@@ -147,7 +154,7 @@ msgstr "已添加 {beautifiedCreatedAt}"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
 msgid "Advanced filter"
-msgstr ""
+msgstr "高級篩選"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
@@ -213,11 +220,11 @@ msgstr "API 名稱"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
 msgid "API Name (Plural)"
-msgstr ""
+msgstr "API 名稱 (複數)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
 msgid "API Name (Singular)"
-msgstr ""
+msgstr "API 名稱（單數）"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -248,11 +255,11 @@ msgstr "指派 {workspaceMemberName}？"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "分配角色以指定每個成員的訪問權限"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "指派給成員"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "分配成員"
 
@@ -368,7 +375,7 @@ msgstr "選擇對象"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
 msgid "Choose the fields that will identify your records"
-msgstr ""
+msgstr "選擇將識別您記錄的欄位"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
@@ -452,7 +459,7 @@ msgstr "複製邀請鏈接"
 
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
 msgid "Copy link"
-msgstr ""
+msgstr "複製連結"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -543,7 +550,7 @@ msgstr "丹麥語"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Dark"
-msgstr ""
+msgstr "深色模式"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -580,7 +587,7 @@ msgstr "停用 \"同步對象標籤和 API 名稱\" 以設置自定義 API 名�
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
 msgid "Deactivate object"
-msgstr ""
+msgstr "停用對象"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -1042,7 +1049,7 @@ msgstr "無效的表單值"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
 msgid "Invite"
-msgstr ""
+msgstr "邀請"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1098,7 +1105,7 @@ msgstr "最新日期"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
 msgid "Light"
-msgstr ""
+msgstr "淺色模式"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
@@ -1107,7 +1114,7 @@ msgstr "鏈接已複製到剪貼板"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
 msgid "Listings"
-msgstr ""
+msgstr "列表"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1172,6 +1179,8 @@ msgstr "向右移動"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1189,7 +1198,7 @@ msgstr "名稱不能為空"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr ""
+msgstr "名稱需包含單數（例如，'發票'）和複數（例如，'發票們'）形式。"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1236,7 +1245,7 @@ msgstr "新帳戶"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
 msgid "New Field"
-msgstr ""
+msgstr "新字段"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1274,20 +1283,28 @@ msgid "No connected account"
 msgstr "無連接帳戶"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "這個角色尚未分配成員"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "沒有符合此搜尋的成員"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "沒有符合你搜尋的成員"
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "沒有更多成員可以添加"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "沒有更多成員可以指派"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "沒有結果"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1309,6 +1326,7 @@ msgstr "非空"
 msgid "Object"
 msgstr "對象"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1382,7 +1400,6 @@ msgid "Permanently destroy workflows"
 msgstr "永久銷毀工作流程"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "權限"
 
@@ -1405,7 +1422,7 @@ msgstr "請鍵入 {confirmationText} 確認要刪除此 Webhook。"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
 msgid "Plural"
-msgstr ""
+msgstr "複數形"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1547,7 +1564,7 @@ msgstr "用\"'{commandMenuSearch}'\"搜索..."
 msgid "Search a field..."
 msgstr "搜索字段..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "搜索成員"
 
@@ -1615,7 +1632,7 @@ msgstr "塞爾維亞語（西里爾文）"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin"
-msgstr ""
+msgstr "服務器管理員"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
@@ -1634,12 +1651,17 @@ msgid "Set the name of your subdomain"
 msgstr "設置您的子域名"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "設置"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "設定權限"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1651,7 +1673,7 @@ msgstr "更改字段標籤是否也應更改 API 名稱？"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
 msgid "Should changing an object's label also change the API?"
-msgstr ""
+msgstr "更改對象標籤是否也應更改 API 名稱？"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1734,11 +1756,11 @@ msgstr "同步字段標籤和 API 名稱"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
 msgid "Synchronize Objects Labels and API Names"
-msgstr ""
+msgstr "同步對象標籤和 API 名稱"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "System settings"
-msgstr ""
+msgstr "系統設置"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1813,14 +1835,14 @@ msgid "This member will be unassigned from this role."
 msgstr "這個成員將不再被指派此角色。"
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "此角色具有以下權限。"
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "這個角色已被指派給這些工作區成員。"
 
@@ -1848,6 +1870,7 @@ msgstr "觸發類型應為手動 - 當未選擇記錄時"
 msgid "Turkish"
 msgstr "土耳其語"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
@@ -2032,3 +2055,4 @@ msgstr "您的工作區"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "您的工作區將被禁用"
+

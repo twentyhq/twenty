@@ -8,7 +8,8 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 02:23\n"
+"PO-Revision-Date: 2025-01-01 00:00
+"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -55,6 +56,10 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Un environnement partagé où vous pourrez gérer vos relations clients avec votre équipe."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "Possibilité d'interagir avec chaque objet"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "Annuler"
@@ -80,6 +85,8 @@ msgstr "Suppression de compte"
 msgid "Accounts"
 msgstr "Comptes"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "Actions"
@@ -147,7 +154,7 @@ msgstr "Ajouté {beautifiedCreatedAt}"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
 msgid "Advanced filter"
-msgstr ""
+msgstr "Filtre avancé"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
@@ -213,11 +220,11 @@ msgstr "Nom de l'API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
 msgid "API Name (Plural)"
-msgstr ""
+msgstr "Noms des API (Pluriel)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
 msgid "API Name (Singular)"
-msgstr ""
+msgstr "Nom de l'API (Singulier)"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -248,11 +255,11 @@ msgstr "Assigner {workspaceMemberName} ?"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Attribuer des rôles pour spécifier les autorisations d'accès de chaque membre"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "Assigner à un membre"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "Membres assignés"
 
@@ -368,7 +375,7 @@ msgstr "Choisir un objet"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
 msgid "Choose the fields that will identify your records"
-msgstr ""
+msgstr "Choisissez les champs qui identifieront vos enregistrements"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
@@ -452,7 +459,7 @@ msgstr "Copier le lien d'invitation"
 
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
 msgid "Copy link"
-msgstr ""
+msgstr "Copier le lien"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -543,7 +550,7 @@ msgstr "Danois"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Dark"
-msgstr ""
+msgstr "Sombre"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -580,7 +587,7 @@ msgstr "Désactiver \"Synchroniser les étiquettes des objets et les noms des AP
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
 msgid "Deactivate object"
-msgstr ""
+msgstr "Désactiver l'objet"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -1042,7 +1049,7 @@ msgstr "Valeurs de formulaire invalides"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
 msgid "Invite"
-msgstr ""
+msgstr "Inviter"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1098,7 +1105,7 @@ msgstr "Dernière date"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
 msgid "Light"
-msgstr ""
+msgstr "Clair"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
@@ -1107,7 +1114,7 @@ msgstr "Lien copié dans le presse-papiers"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
 msgid "Listings"
-msgstr ""
+msgstr "Annonces"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1172,6 +1179,8 @@ msgstr "Déplacer à droite"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1189,7 +1198,7 @@ msgstr "Le nom ne peut pas être vide"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr ""
+msgstr "Nom à la fois au singulier (par exemple, 'Facture') et au pluriel (par exemple, 'Factures')."
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1236,7 +1245,7 @@ msgstr "Nouveau compte"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
 msgid "New Field"
-msgstr ""
+msgstr "Nouveau champ"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1274,20 +1283,28 @@ msgid "No connected account"
 msgstr "Aucun compte connecté"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "Aucun membre n'a encore été assigné à ce rôle"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "Aucun membre ne correspond à cette recherche"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "Aucun membre ne correspond à votre recherche"
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "Il n'y a plus de membres à ajouter"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "Plus de membres à assigner"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "Aucun résultat"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1309,6 +1326,7 @@ msgstr "Non vide"
 msgid "Object"
 msgstr "Objet"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1382,7 +1400,6 @@ msgid "Permanently destroy workflows"
 msgstr "Détruire définitivement les workflows"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "Permissions"
 
@@ -1405,7 +1422,7 @@ msgstr "Veuillez taper {confirmationText} pour confirmer que vous souhaitez supp
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
 msgid "Plural"
-msgstr ""
+msgstr "Pluriel"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1547,7 +1564,7 @@ msgstr "Rechercher ''{commandMenuSearch}'' avec..."
 msgid "Search a field..."
 msgstr "Rechercher un champ..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "Rechercher un membre"
 
@@ -1615,7 +1632,7 @@ msgstr "Serbe (Cyrillique)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin"
-msgstr ""
+msgstr "Administrateur du serveur"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
@@ -1634,12 +1651,17 @@ msgid "Set the name of your subdomain"
 msgstr "Définir le nom de votre sous-domaine"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "Paramètres"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "Autorisations des paramètres"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1651,7 +1673,7 @@ msgstr "Changer l'étiquette d'un champ doit-il aussi changer le nom de l'API ?"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
 msgid "Should changing an object's label also change the API?"
-msgstr ""
+msgstr "Changer le libellé d'un objet doit-il aussi changer l'API ?"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1734,11 +1756,11 @@ msgstr "Synchroniser l'étiquette du champ et le nom de l'API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
 msgid "Synchronize Objects Labels and API Names"
-msgstr ""
+msgstr "Synchroniser les libellés des objets et les noms des API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "System settings"
-msgstr ""
+msgstr "Paramètres du système"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1813,14 +1835,14 @@ msgid "This member will be unassigned from this role."
 msgstr "Ce membre sera retiré de ce rôle."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "Ce rôle a les permissions suivantes."
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "Ce rôle est attribué à ces membres de l'espace de travail."
 
@@ -1848,6 +1870,7 @@ msgstr "Le type de déclencheur doit être Manuel - lorsqu'aucun enregistrement 
 msgid "Turkish"
 msgstr "Turc"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
@@ -2032,3 +2055,4 @@ msgstr "Votre espace de travail"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Votre espace de travail sera désactivé"
+

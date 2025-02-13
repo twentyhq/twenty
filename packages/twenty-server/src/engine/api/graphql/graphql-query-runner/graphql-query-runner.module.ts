@@ -21,6 +21,7 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 const graphqlQueryResolvers = [
   GraphqlQueryCreateManyResolverService,
@@ -44,6 +45,7 @@ const graphqlQueryResolvers = [
     WorkspaceQueryHookModule,
     WorkspaceQueryRunnerModule,
     FeatureFlagModule,
+    PermissionsModule,
   ],
   providers: [
     ApiEventEmitterService,

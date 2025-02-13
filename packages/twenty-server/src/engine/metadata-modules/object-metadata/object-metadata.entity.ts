@@ -12,6 +12,7 @@ import {
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -68,6 +69,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
 
   @Column({ default: true })
   isAuditLogged: boolean;
+
+  @Column({ type: 'jsonb', nullable: true })
+  duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
 
   @Column({ nullable: true })
   shortcut: string;

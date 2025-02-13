@@ -1,16 +1,12 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import styled from '@emotion/styled';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ChangeEvent, useState } from 'react';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { RoleWorkspaceMemberPickerDropdownContent } from './RoleWorkspaceMemberPickerDropdownContent';
-
-const StyledWorkspaceMemberSelectContainer = styled.div`
-  max-height: ${({ theme }) => theme.spacing(50)};
-  overflow-y: auto;
-`;
 
 type RoleWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
@@ -23,23 +19,9 @@ export const RoleWorkspaceMemberPickerDropdown = ({
 }: RoleWorkspaceMemberPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
-  const { records: workspaceMembers, loading } = useFindManyRecords({
+  const { loading, records: workspaceMembers } = useSearchRecords({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    filter: searchFilter
-      ? {
-          or: [
-            {
-              name: { firstName: { ilike: `%${searchFilter}%` } },
-            },
-            {
-              name: { lastName: { ilike: `%${searchFilter}%` } },
-            },
-            {
-              userEmail: { ilike: `%${searchFilter}%` },
-            },
-          ],
-        }
-      : undefined,
+    searchInput: searchFilter,
   });
 
   const filteredWorkspaceMembers = (workspaceMembers?.filter(
@@ -52,20 +34,21 @@ export const RoleWorkspaceMemberPickerDropdown = ({
   };
 
   return (
-    <DropdownMenuItemsContainer>
+    <DropdownMenu>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleSearchFilterChange}
         placeholder="Search"
       />
-      <StyledWorkspaceMemberSelectContainer>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer>
         <RoleWorkspaceMemberPickerDropdownContent
           loading={loading}
           searchFilter={searchFilter}
           filteredWorkspaceMembers={filteredWorkspaceMembers}
           onSelect={onSelect}
         />
-      </StyledWorkspaceMemberSelectContainer>
-    </DropdownMenuItemsContainer>
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
   );
 };

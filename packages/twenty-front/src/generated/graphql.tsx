@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -461,7 +461,6 @@ export enum FeatureFlagKey {
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsLocalizationEnabled = 'IsLocalizationEnabled',
-  IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
@@ -488,7 +487,6 @@ export type Field = {
   label: Scalars['String'];
   name: Scalars['String'];
   object?: Maybe<Object>;
-  objectMetadataId: Scalars['UUID'];
   options?: Maybe<Scalars['JSON']>;
   relation?: Maybe<Relation>;
   relationDefinition?: Maybe<RelationDefinition>;
@@ -520,7 +518,6 @@ export type FieldFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
-  objectMetadataId?: InputMaybe<StringFieldComparison>;
   or?: InputMaybe<Array<FieldFilter>>;
 };
 
@@ -1072,7 +1069,9 @@ export type Object = {
   createdAt: Scalars['DateTime'];
   dataSourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
   fields: ObjectFieldsConnection;
+  fieldsList: Array<Field>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
@@ -1535,8 +1534,8 @@ export enum SettingsFeatures {
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
-  SECURITY_SETTINGS = 'SECURITY_SETTINGS',
-  WORKSPACE_SETTINGS = 'WORKSPACE_SETTINGS',
+  SECURITY = 'SECURITY',
+  WORKSPACE = 'WORKSPACE',
   WORKSPACE_USERS = 'WORKSPACE_USERS'
 }
 
@@ -1569,23 +1568,6 @@ export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
-};
-
-export type StringFieldComparison = {
-  eq?: InputMaybe<Scalars['String']>;
-  gt?: InputMaybe<Scalars['String']>;
-  gte?: InputMaybe<Scalars['String']>;
-  iLike?: InputMaybe<Scalars['String']>;
-  in?: InputMaybe<Array<Scalars['String']>>;
-  is?: InputMaybe<Scalars['Boolean']>;
-  isNot?: InputMaybe<Scalars['Boolean']>;
-  like?: InputMaybe<Scalars['String']>;
-  lt?: InputMaybe<Scalars['String']>;
-  lte?: InputMaybe<Scalars['String']>;
-  neq?: InputMaybe<Scalars['String']>;
-  notILike?: InputMaybe<Scalars['String']>;
-  notIn?: InputMaybe<Array<Scalars['String']>>;
-  notLike?: InputMaybe<Scalars['String']>;
 };
 
 export enum SubscriptionInterval {
@@ -1709,7 +1691,6 @@ export type UpdateFieldInput = {
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
 };

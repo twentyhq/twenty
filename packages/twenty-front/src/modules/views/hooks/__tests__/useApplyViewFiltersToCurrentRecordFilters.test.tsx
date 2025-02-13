@@ -11,18 +11,20 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useApplyViewFiltersToCurrentRecordFilters } from '../useApplyViewFiltersToCurrentRecordFilters';
 
+const mockObjectMetadataItemNameSingular = 'company';
+
 describe('useApplyViewFiltersToCurrentRecordFilters', () => {
   const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'company',
+    (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
   );
 
   if (!isDefined(mockObjectMetadataItem)) {
     throw new Error(
-      'Missing mock object metadata item with name singular "company"',
+      `Missing mock object metadata item with name singular ${mockObjectMetadataItemNameSingular}`,
     );
   }
 
@@ -58,7 +60,12 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         return { applyViewFiltersToCurrentRecordFilters, currentFilters };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({}),
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
+        }),
       },
     );
 
@@ -95,7 +102,12 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         return { applyViewFiltersToCurrentRecordFilters, currentFilters };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({}),
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
+        }),
       },
     );
 

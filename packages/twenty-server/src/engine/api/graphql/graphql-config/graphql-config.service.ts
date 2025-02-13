@@ -70,7 +70,13 @@ export class GraphQLConfigService
         let workspace: Workspace | undefined;
 
         try {
-          const { user, workspace, apiKey, workspaceMemberId } = context.req;
+          const {
+            user,
+            workspace,
+            apiKey,
+            workspaceMemberId,
+            userWorkspaceId,
+          } = context.req;
 
           if (!workspace) {
             return new GraphQLSchema({});
@@ -81,6 +87,7 @@ export class GraphQLConfigService
             workspace,
             apiKey,
             workspaceMemberId,
+            userWorkspaceId,
           });
         } catch (error) {
           if (error instanceof UnauthorizedException) {

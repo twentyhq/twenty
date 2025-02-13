@@ -8,7 +8,8 @@ msgstr ""
 "Language: el\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 02:23\n"
+"PO-Revision-Date: 2025-01-01 00:00
+"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -55,6 +56,10 @@ msgstr "24ω ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Ένα κοινό περιβάλλον όπου θα μπορέσετε να διαχειρίζεστε τις σχέσεις με τους πελάτες σας με την ομάδα σας."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "Δυνατότητα αλληλεπίδρασης με κάθε αντικείμενο"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "Ακύρωση"
@@ -80,6 +85,8 @@ msgstr "Διαγραφή Λογαριασμού"
 msgid "Accounts"
 msgstr "Λογαριασμοί"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
 msgid "Actions"
 msgstr "Ενέργειες"
@@ -147,7 +154,7 @@ msgstr "Προστέθηκε {beautifiedCreatedAt}"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
 msgid "Advanced filter"
-msgstr ""
+msgstr "Προηγμένο φίλτρο"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "Afrikaans"
@@ -213,11 +220,11 @@ msgstr "Όνομα API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
 msgid "API Name (Plural)"
-msgstr ""
+msgstr "Όνομα API (Πληθυντικός)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
 msgid "API Name (Singular)"
-msgstr ""
+msgstr "Όνομα API (Ενικός)"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -248,11 +255,11 @@ msgstr "Ανάθεση στον χρήστη {workspaceMemberName};"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Αναθέστε ρόλους για να καθορίσετε τα δικαιώματα πρόσβασης του κάθε μέλους"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:199
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
 msgid "Assign to member"
 msgstr "Ανάθεση σε μέλος"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:161
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "Ανατεθειμένα μέλη"
 
@@ -368,7 +375,7 @@ msgstr "Επιλέξτε ένα αντικείμενο"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
 msgid "Choose the fields that will identify your records"
-msgstr ""
+msgstr "Επιλέξτε τα πεδία που θα ταυτοποιήσουν τις εγγραφές σας"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
@@ -452,7 +459,7 @@ msgstr "Αντιγραφή συνδέσμου πρόσκλησης"
 
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
 msgid "Copy link"
-msgstr ""
+msgstr "Αντιγραφή συνδέσμου"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -543,7 +550,7 @@ msgstr "Δανέζικα"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Dark"
-msgstr ""
+msgstr "Σκοτεινό"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -580,7 +587,7 @@ msgstr "Απενεργοποιήστε τη συγχρονισμό των ετι
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
 msgid "Deactivate object"
-msgstr ""
+msgstr "Απενεργοποίηση αντικειμένου"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -784,8 +791,7 @@ msgstr "Απολαύστε μια δωρεάν δοκιμαστική περίο
 
 #: src/pages/settings/security/SettingsSecurity.tsx:51
 msgid "Enterprise"
-msgstr ""
-"\n"
+msgstr "\n"
 "        {\"Enterprise\": \"{0, plural, one {Επιχείρηση} other {Επιχειρήσεις}}\",\n"
 "        \"broken_translation\": \"Επιχειρήσεις\",\n"
 "        \"qa_issues\": [\"Translation is the same as the source text\"],\n"
@@ -1050,7 +1056,7 @@ msgstr "Μη έγκυρες τιμές φόρμας"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
 msgid "Invite"
-msgstr ""
+msgstr "Πρόσκληση"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -1106,7 +1112,7 @@ msgstr "Τελευταία ημερομηνία"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
 msgid "Light"
-msgstr ""
+msgstr "Φωτεινό"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
@@ -1115,7 +1121,7 @@ msgstr "Ο σύνδεσμος αντιγράφηκε στο πρόχειρο"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
 msgid "Listings"
-msgstr ""
+msgstr "Καταχωρήσεις"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -1180,6 +1186,8 @@ msgstr "Μετακίνηση δεξιά"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1197,7 +1205,7 @@ msgstr "Το όνομα δεν μπορεί να είναι κενό"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr ""
+msgstr "Όνομα και σε ενικό (π.χ., 'Τιμολόγιο') και σε πληθυντικό (π.χ., 'Τιμολόγια') αριθμό."
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -1244,7 +1252,7 @@ msgstr "Νέος λογαριασμός"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
 msgid "New Field"
-msgstr ""
+msgstr "Νέο Πεδίο"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1282,20 +1290,28 @@ msgid "No connected account"
 msgstr "Κανένας συνδεδεμένος λογαριασμός"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:187
-msgid "No members assigned to this role yet"
-msgstr "Δεν έχουν ανατεθεί μέλη σε αυτόν τον ρόλο ακόμα"
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
-msgid "No members matching this search"
-msgstr "Δεν βρέθηκαν μέλη που να αντιστοιχούν σε αυτή την αναζήτηση"
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:186
-msgid "No members matching your search"
-msgstr "Δεν βρέθηκαν μέλη που να ταιριάζουν με την αναζήτησή σας"
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
-msgid "No more members to add"
-msgstr "Δεν υπάρχουν άλλα μέλη προς προσθήκη"
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "Δεν υπάρχουν άλλοι μέλη για ανάθεση"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "Χωρίς αποτέλεσμα"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1317,6 +1333,7 @@ msgstr "Όχι άδειο"
 msgid "Object"
 msgstr "Αντικείμενο"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
@@ -1390,7 +1407,6 @@ msgid "Permanently destroy workflows"
 msgstr "Καταστροφή των workflows οριστικά"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:80
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
 msgid "Permissions"
 msgstr "Δικαιώματα"
 
@@ -1413,7 +1429,7 @@ msgstr "Παρακαλώ πληκτρολογήστε {confirmationText} για 
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
 msgid "Plural"
-msgstr ""
+msgstr "Πληθυντικός"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
 msgid "Polish"
@@ -1555,7 +1571,7 @@ msgstr "Αναζήτηση ''{commandMenuSearch}'' με..."
 msgid "Search a field..."
 msgstr "Αναζήτηση πεδίου..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
 msgid "Search a member"
 msgstr "Αναζήτηση ενός μέλους"
 
@@ -1623,7 +1639,7 @@ msgstr "Σερβικά (Κυριλλικά)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin"
-msgstr ""
+msgstr "Διαχειριστής Διακομιστή"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
@@ -1642,12 +1658,17 @@ msgid "Set the name of your subdomain"
 msgstr "Ορίστε το όνομα του υποτομέα σας"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "Ρυθμίσεις"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "Δικαιώματα ρυθμίσεων"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1659,7 +1680,7 @@ msgstr "Θα πρέπει η αλλαγή της ετικέτας ενός πε�
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
 msgid "Should changing an object's label also change the API?"
-msgstr ""
+msgstr "Πρέπει η αλλαγή της ετικέτας ενός αντικειμένου να αλλάζει επίσης το API;"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1742,11 +1763,11 @@ msgstr "Συγχρονίστε την Ετικέτα Πεδίου και το Ό
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
 msgid "Synchronize Objects Labels and API Names"
-msgstr ""
+msgstr "Συγχρονισμός Ετικετών Αντικειμένων και Ονομάτων API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "System settings"
-msgstr ""
+msgstr "Ρυθμίσεις Συστήματος"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1821,14 +1842,14 @@ msgid "This member will be unassigned from this role."
 msgstr "Αυτό το μέλος θα αποδεσμευτεί από αυτόν τον ρόλο."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "Αυτός ο Ρόλος έχει τις ακόλουθες δικαιοδοσίες."
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:162
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
 msgid "This role is assigned to these workspace members."
 msgstr "Αυτός ο ρόλος έχει ανατεθεί σε αυτά τα μέλη του χώρου εργασίας."
 
@@ -1856,6 +1877,7 @@ msgstr "Ο τύπος ενεργοποιήσεως πρέπει να είναι 
 msgid "Turkish"
 msgstr "Τουρκικά"
 
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
@@ -2040,3 +2062,4 @@ msgstr "Ο χώρος εργασίας σας"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ο χώρος εργασίας σας θα απενεργοποιηθεί"
+

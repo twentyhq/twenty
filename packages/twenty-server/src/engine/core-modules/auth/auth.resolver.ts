@@ -2,7 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { SOURCE_LOCALE } from 'twenty-shared';
+import { SettingsFeatures, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
@@ -43,8 +43,10 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -58,7 +60,7 @@ import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input
 import { AuthService } from './services/auth.service';
 
 @Resolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
     @InjectRepository(User, 'core')
@@ -323,7 +325,10 @@ export class AuthResolver {
     return { tokens: tokens };
   }
 
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingsFeatures.API_KEYS_AND_WEBHOOKS),
+  )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
     @Args() args: ApiKeyTokenInput,
