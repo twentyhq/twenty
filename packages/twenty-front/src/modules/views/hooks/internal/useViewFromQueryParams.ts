@@ -79,7 +79,7 @@ export const useViewFromQueryParams = () => {
               async ([fieldName, filterFromURL]) => {
                 const [filterOperandFromURL, filterValueFromURL] =
                   Object.entries(filterFromURL)[0];
-                const fieldMetadataItem = objectMetadataItem.fields.find(
+                const fieldMetadataItem = objectMetadataItem?.fields.find(
                   (field) => field.name === fieldName,
                 );
 
@@ -190,7 +190,7 @@ export const useViewFromQueryParams = () => {
       apolloClient,
       filterQueryParams,
       hasFiltersQueryParams,
-      objectMetadataItem.fields,
+      objectMetadataItem?.fields,
       objectMetadataItems,
     ],
   );

@@ -28,9 +28,9 @@ export const useObjectNameSingularFromPlural = ({
   }
 
   if (!isDefined(objectMetadataItem)) {
-    throw new Error(
-      `Object metadata item not found for ${objectNamePlural} object`,
-    );
+    return {
+      objectNameSingular: "",
+    }
   }
 
   return { objectNameSingular: objectMetadataItem.nameSingular };

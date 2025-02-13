@@ -31,6 +31,7 @@ const StyledIndexContainer = styled.div`
 `;
 
 export const RecordIndexPage = () => {
+
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
@@ -47,6 +48,11 @@ export const RecordIndexPage = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  // if (!isDefined(objectMetadataItem)) {
+  //   window.location.href = AppPath.NotFound;
+  //   return null;
+  // }
 
   const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
