@@ -80,6 +80,10 @@ export const useCreateOneRecord = <
       objectMetadataItem,
       objectMetadataItems,
       recordInput: {
+        createdBy: {
+          source: "MANUAL",
+          context: {},
+        },
         ...recordInput,
         id: idForCreation,
       },

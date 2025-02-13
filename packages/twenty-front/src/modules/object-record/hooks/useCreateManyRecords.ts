@@ -82,7 +82,13 @@ export const useCreateManyRecords = <
           cache: apolloClient.cache,
           objectMetadataItem,
           objectMetadataItems,
-          recordInput: recordToCreate,
+          recordInput: {
+            createdBy: {
+              source: 'MANUAL',
+              context: {},
+            },
+            ...recordToCreate,
+          },
         }),
         id: idForCreation,
       };
