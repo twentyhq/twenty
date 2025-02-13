@@ -28,6 +28,7 @@ const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 @Injectable()
 export class CleanerWorkspaceService {
   private readonly logger = new Logger(CleanerWorkspaceService.name);
+  private readonly inactiveDaysBeforeSoftDelete: number;
   private readonly inactiveDaysBeforeDelete: number;
   private readonly inactiveDaysBeforeWarn: number;
   private readonly maxNumberOfWorkspacesDeletedPerExecution: number;
@@ -43,6 +44,9 @@ export class CleanerWorkspaceService {
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {
+    this.inactiveDaysBeforeSoftDelete = this.environmentService.get(
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
+    );
     this.inactiveDaysBeforeDelete = this.environmentService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION',
     );
@@ -104,7 +108,7 @@ export class CleanerWorkspaceService {
   ) {
     const emailData = {
       daysSinceInactive,
-      inactiveDaysBeforeDelete: this.inactiveDaysBeforeDelete,
+      inactiveDaysBeforeDelete: this.inactiveDaysBeforeSoftDelete,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName: `${workspaceDisplayName}`,
     };
@@ -198,7 +202,7 @@ export class CleanerWorkspaceService {
     });
   }
 
-  async informWorkspaceMembersAndDeleteWorkspace(
+  async informWorkspaceMembersAndSoftDeleteWorkspace(
     workspace: Workspace,
     daysSinceInactive: number,
     dryRun: boolean,
@@ -229,10 +233,10 @@ export class CleanerWorkspaceService {
         );
       }
 
-      await this.workspaceService.deleteWorkspace(workspace.id);
+      await this.workspaceService.deleteWorkspace(workspace.id, true);
     }
     this.logger.log(
-      `Cleaning Workspace ${workspace.id} ${workspace.displayName}`,
+      `Soft deleting Workspace ${workspace.id} ${workspace.displayName}`,
     );
   }
 
@@ -249,6 +253,7 @@ export class CleanerWorkspaceService {
         id: In(workspaceIds),
         activationStatus: WorkspaceActivationStatus.SUSPENDED,
       },
+      withDeleted: true,
     });
 
     let deletedWorkspacesCount = 0;
@@ -260,11 +265,26 @@ export class CleanerWorkspaceService {
 
         if (
           workspaceInactivity &&
-          workspaceInactivity > this.inactiveDaysBeforeDelete &&
+          workspace.deletedAt &&
+          workspaceInactivity > this.inactiveDaysBeforeDelete
+        ) {
+          this.logger.log(
+            `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
+          );
+          if (dryRun) {
+            continue;
+          }
+
+          await this.workspaceService.deleteWorkspace(workspace.id);
+          continue;
+        }
+        if (
+          workspaceInactivity &&
+          workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
           deletedWorkspacesCount <=
             this.maxNumberOfWorkspacesDeletedPerExecution
         ) {
-          await this.informWorkspaceMembersAndDeleteWorkspace(
+          await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
             workspaceInactivity,
             dryRun,
@@ -276,7 +296,7 @@ export class CleanerWorkspaceService {
         if (
           workspaceInactivity &&
           workspaceInactivity > this.inactiveDaysBeforeWarn &&
-          workspaceInactivity <= this.inactiveDaysBeforeDelete
+          workspaceInactivity <= this.inactiveDaysBeforeSoftDelete
         ) {
           await this.warnWorkspaceMembers(
             workspace,

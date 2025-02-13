@@ -259,10 +259,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
   }
 
-  async softDeleteWorkspace(id: string) {
+  async softDeleteWorkspace(
+    id: string,
+    withMetadataSchemaAndUserWorkspaceDeletion = true,
+  ) {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
     assert(workspace, 'Workspace not found');
+
+    if (!withMetadataSchemaAndUserWorkspaceDeletion) {
+      await this.userWorkspaceRepository.softDelete({ workspaceId: id });
+
+      return workspace;
+    }
 
     await this.userWorkspaceRepository.delete({ workspaceId: id });
 
@@ -275,27 +284,47 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return workspace;
   }
 
-  async deleteWorkspace(id: string) {
-    const userWorkspaces = await this.userWorkspaceRepository.findBy({
-      workspaceId: id,
+  async deleteWorkspace(id: string, softDelete = false) {
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        workspaceId: id,
+      },
+      withDeleted: true,
     });
 
-    const workspace = await this.softDeleteWorkspace(id);
+    const workspace = await this.softDeleteWorkspace(id, !softDelete);
 
     for (const userWorkspace of userWorkspaces) {
-      await this.handleRemoveWorkspaceMember(id, userWorkspace.userId);
+      await this.handleRemoveWorkspaceMember(
+        id,
+        userWorkspace.userId,
+        softDelete,
+      );
     }
 
-    await this.workspaceRepository.delete(id);
+    if (!softDelete) {
+      await this.workspaceRepository.delete(id);
+    }
 
     return workspace;
   }
 
-  async handleRemoveWorkspaceMember(workspaceId: string, userId: string) {
-    await this.userWorkspaceRepository.delete({
-      userId,
-      workspaceId,
-    });
+  async handleRemoveWorkspaceMember(
+    workspaceId: string,
+    userId: string,
+    softDelete = false,
+  ) {
+    if (softDelete) {
+      await this.userWorkspaceRepository.softDelete({
+        userId,
+        workspaceId,
+      });
+    } else {
+      await this.userWorkspaceRepository.delete({
+        userId,
+        workspaceId,
+      });
+    }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
