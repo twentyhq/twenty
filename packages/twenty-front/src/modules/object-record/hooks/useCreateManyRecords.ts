@@ -6,6 +6,7 @@ import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effec
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { objectMetadataItemHasFieldCreatedBy } from '@/object-metadata/utils/objectMetadataItemHasFieldCreatedBy';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
@@ -14,6 +15,7 @@ import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
@@ -45,6 +47,9 @@ export const useCreateManyRecords = <
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const objectMetadataHasCreatedByField =
+    objectMetadataItemHasFieldCreatedBy(objectMetadataItem);
 
   const computedRecordGqlFields =
     recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
@@ -81,6 +86,16 @@ export const useCreateManyRecords = <
         }),
         id: idForCreation,
       };
+      const baseOptimisticRecordInputCreatedBy:
+        | { createdBy: FieldActorForInputValue }
+        | undefined = objectMetadataHasCreatedByField
+        ? {
+            createdBy: {
+              source: 'MANUAL',
+              context: {},
+            },
+          }
+        : undefined;
       const optimisticRecordInput = {
         ...computeOptimisticRecordFromInput({
           cache: apolloClient.cache,
@@ -88,10 +103,7 @@ export const useCreateManyRecords = <
           objectMetadataItems,
           currentWorkspaceMember: currentWorkspaceMember,
           recordInput: {
-            createdBy: {
-              source: 'MANUAL',
-              context: {},
-            },
+            ...baseOptimisticRecordInputCreatedBy,
             ...recordToCreate,
           },
         }),

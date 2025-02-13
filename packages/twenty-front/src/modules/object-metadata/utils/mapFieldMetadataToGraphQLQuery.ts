@@ -140,9 +140,9 @@ ${mapObjectMetadataToGraphQLQuery({
     return `${field.name}
 {
     source
-    context
     workspaceMemberId
     name
+    context
 }`;
   }
 
