@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
@@ -30,7 +30,7 @@ export class HealthController {
     };
 
     if (!(serviceName in checks)) {
-      throw new Error(`Invalid service name: ${serviceName}`);
+      throw new BadRequestException(`Invalid service name: ${serviceName}`);
     }
 
     return this.health.check([checks[serviceName]]);
