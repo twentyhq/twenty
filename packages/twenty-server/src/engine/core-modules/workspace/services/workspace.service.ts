@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -35,9 +36,9 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -61,6 +62,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
     private readonly customDomainService: CustomDomainService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {
     super(workspaceRepository);
   }
@@ -272,6 +274,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
 
     assert(workspace, 'Workspace not found');
+
+    await this.workspaceCacheStorageService.flush(
+      workspace.id,
+      workspace.metadataVersion,
+    );
 
     if (!withMetadataSchemaAndUserWorkspaceDeletion) {
       await this.userWorkspaceRepository.softDelete({ workspaceId: id });
