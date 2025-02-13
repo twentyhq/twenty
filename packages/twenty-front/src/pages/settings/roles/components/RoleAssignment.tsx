@@ -1,3 +1,4 @@
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -6,7 +7,16 @@ import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { Button, H2Title, IconPlus, IconSearch, Section } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import {
+  AppTooltip,
+  Button,
+  H2Title,
+  IconPlus,
+  IconSearch,
+  Section,
+  TooltipDelay,
+} from 'twenty-ui';
 import { Role, WorkspaceMember } from '~/generated-metadata/graphql';
 import {
   GetRolesDocument,
@@ -34,14 +44,6 @@ const StyledBottomSection = styled(Section)<{ hasRows: boolean }>`
   `}
   display: flex;
   justify-content: flex-end;
-`;
-
-const StyledEmptyText = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
-  justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledSearchContainer = styled.div`
@@ -80,6 +82,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
   const { data: rolesData } = useGetRolesQuery();
   const { closeDropdown } = useDropdown('role-member-select');
   const [searchFilter, setSearchFilter] = useState('');
+  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
 
   const workspaceMemberRoleMap = new Map<
     string,
@@ -154,6 +157,9 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     setSearchFilter(text);
   };
 
+  const allWorkspaceMembersHaveThisRole =
+    role.workspaceMembers.length === currentWorkspaceMembers.length;
+
   return (
     <>
       <Section>
@@ -180,13 +186,6 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
               onRemove={() => handleRemoveClick(workspaceMember)}
             />
           ))}
-          {filteredWorkspaceMembers.length === 0 && (
-            <StyledEmptyText>
-              {searchFilter
-                ? t`No members matching your search`
-                : t`No members assigned to this role yet`}
-            </StyledEmptyText>
-          )}
         </Table>
       </Section>
       <StyledBottomSection hasRows={filteredWorkspaceMembers.length > 0}>
@@ -194,12 +193,23 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
           dropdownId="role-member-select"
           dropdownHotkeyScope={{ scope: 'roleAssignment' }}
           clickableComponent={
-            <Button
-              Icon={IconPlus}
-              title={t`Assign to member`}
-              variant="secondary"
-              size="small"
-            />
+            <>
+              <div id="assign-member">
+                <Button
+                  Icon={IconPlus}
+                  title={t`Assign to member`}
+                  variant="secondary"
+                  size="small"
+                  disabled={allWorkspaceMembersHaveThisRole}
+                />
+              </div>
+              <AppTooltip
+                anchorSelect="#assign-member"
+                content={t`No more members to assign`}
+                delay={TooltipDelay.noDelay}
+                hidden={!allWorkspaceMembersHaveThisRole}
+              />
+            </>
           }
           dropdownComponents={
             <RoleWorkspaceMemberPickerDropdown
