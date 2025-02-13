@@ -22,7 +22,11 @@ export const SettingsCustomDomainEffect = () => {
         );
       }
     }, 3000);
-  }, []);
+  }, [
+    checkCustomDomainValidRecords,
+    customDomainRecords,
+    setCustomDomainRecords,
+  ]);
 
   useEffect(() => {
     let pollIntervalFn: null | ReturnType<typeof setInterval> = null;
@@ -35,11 +39,7 @@ export const SettingsCustomDomainEffect = () => {
         clearInterval(pollIntervalFn);
       }
     };
-  }, [
-    currentWorkspace?.customDomain,
-    checkCustomDomainValidRecords,
-    initInterval,
-  ]);
+  }, [currentWorkspace?.customDomain, initInterval]);
 
   return <></>;
 };

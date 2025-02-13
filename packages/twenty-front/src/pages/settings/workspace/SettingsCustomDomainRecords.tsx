@@ -8,21 +8,30 @@ import { CustomDomainValidRecords } from '~/generated/graphql';
 import styled from '@emotion/styled';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
+const StyledTableCell = styled(TableCell)`
+  overflow: hidden;
+`;
+
 const StyledButton = styled(Button)`
+  -moz-user-select: text;
+  -ms-user-select: text;
+  -webkit-user-select: text;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.tertiary};
-  height: ${({ theme }) => theme.spacing(7)};
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  width: 100%;
+  height: ${({ theme }) => theme.spacing(7)};
   overflow: hidden;
+  user-select: text;
+  width: 100%;
 `;
 
 export const SettingsCustomDomainRecords = ({
@@ -39,6 +48,8 @@ export const SettingsCustomDomainRecords = ({
     });
   };
 
+  const copyToClipboardDebounced = useDebouncedCallback(copyToClipboard, 200);
+
   return (
     <StyledTable>
       <TableRow gridAutoColumns="35% 16% auto">
@@ -50,24 +61,26 @@ export const SettingsCustomDomainRecords = ({
         {records.map((record) => {
           return (
             <TableRow gridAutoColumns="30% 16% auto" key={record.key}>
-              <TableCell>
+              <StyledTableCell>
                 <StyledButton
                   title={record.key}
-                  onClick={() => copyToClipboard(record.key)}
+                  onClick={() => copyToClipboardDebounced(record.key)}
                 />
-              </TableCell>
-              <TableCell>
+              </StyledTableCell>
+              <StyledTableCell>
                 <StyledButton
                   title={record.type.toUpperCase()}
-                  onClick={() => copyToClipboard(record.type.toUpperCase())}
+                  onClick={() =>
+                    copyToClipboardDebounced(record.type.toUpperCase())
+                  }
                 />
-              </TableCell>
-              <TableCell>
+              </StyledTableCell>
+              <StyledTableCell>
                 <StyledButton
                   title={record.value}
-                  onClick={() => copyToClipboard(record.value)}
+                  onClick={() => copyToClipboardDebounced(record.value)}
                 />
-              </TableCell>
+              </StyledTableCell>
             </TableRow>
           );
         })}
