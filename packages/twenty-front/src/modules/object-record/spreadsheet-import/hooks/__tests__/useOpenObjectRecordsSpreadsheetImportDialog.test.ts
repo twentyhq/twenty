@@ -8,7 +8,7 @@ import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spread
 
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
@@ -292,10 +292,8 @@ const companyMocks = [
           {
             createdBy: {
               source: 'IMPORT',
-              context: null,
-              name: '',
-              workspaceMemberId: null,
-            } satisfies FieldActorValue,
+              context: {},
+            } satisfies FieldActorForInputValue,
             employees: 0,
             idealCustomerProfile: true,
             name: 'Example Company',
