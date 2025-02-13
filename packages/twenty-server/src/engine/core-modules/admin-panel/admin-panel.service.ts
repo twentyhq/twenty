@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { HealthCheckService } from '@nestjs/terminus';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -7,7 +6,6 @@ import { Repository } from 'typeorm';
 import { EnvironmentVariable } from 'src/engine/core-modules/admin-panel/dtos/environment-variable.dto';
 import { EnvironmentVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/environment-variables-group.dto';
 import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
-import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/systen-health.dto';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import {
   AuthException,
@@ -25,11 +23,6 @@ import {
   FeatureFlagExceptionCode,
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
-import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/health-service-status.enum';
-import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
-import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
-import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
-import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,11 +40,6 @@ export class AdminPanelService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
-    private readonly health: HealthCheckService,
-    private readonly databaseHealth: DatabaseHealthIndicator,
-    private readonly redisHealth: RedisHealthIndicator,
-    private readonly workerHealth: WorkerHealthIndicator,
-    private readonly healthCacheService: HealthCacheService,
   ) {}
 
   async impersonate(userId: string, workspaceId: string) {
@@ -223,38 +211,5 @@ export class AdminPanelService {
       }));
 
     return { groups };
-  }
-
-  async getSystemStatus(): Promise<SystemHealth> {
-    const [healthCheck, messageSync] = await Promise.all([
-      this.health.check([
-        () => this.databaseHealth.isHealthy('database'),
-        () => this.redisHealth.isHealthy('redis'),
-        () => this.workerHealth.isHealthy('worker'),
-      ]),
-      this.healthCacheService.getMessageChannelSyncJobByStatusCounter(),
-    ]);
-
-    return {
-      database: {
-        status:
-          healthCheck.info?.database?.status === 'up'
-            ? HealthServiceStatus.OPERATIONAL
-            : HealthServiceStatus.OUTAGE,
-      },
-      redis: {
-        status:
-          healthCheck.info?.redis?.status === 'up'
-            ? HealthServiceStatus.OPERATIONAL
-            : HealthServiceStatus.OUTAGE,
-      },
-      worker: {
-        status:
-          healthCheck.info?.worker?.status === 'up'
-            ? HealthServiceStatus.OPERATIONAL
-            : HealthServiceStatus.OUTAGE,
-      },
-      messageSync,
-    };
   }
 }
