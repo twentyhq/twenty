@@ -100,7 +100,6 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    // let's make sure we don\t allow worskapce authproviders that the sysntem does not allow
     const authProviders = {
       google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
       password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
