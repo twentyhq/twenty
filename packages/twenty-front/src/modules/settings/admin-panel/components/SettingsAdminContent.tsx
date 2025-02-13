@@ -4,7 +4,6 @@ import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/Setting
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import styled from '@emotion/styled';
 import { IconSettings2, IconVariable } from 'twenty-ui';
-import { useGetSystemHealthStatusQuery } from '~/generated/graphql';
 
 const StyledTabListContainer = styled.div`
   align-items: center;
@@ -27,10 +26,6 @@ export const SettingsAdminContent = () => {
       Icon: IconVariable,
     },
   ];
-
-  const { data } = useGetSystemHealthStatusQuery();
-
-  console.log(data);
 
   return (
     <>
