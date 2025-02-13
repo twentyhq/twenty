@@ -1,6 +1,7 @@
 import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 
+import { HealthServiceName } from 'src/engine/core-modules/health/enums/health-service-name.enum';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
@@ -22,11 +23,11 @@ export class HealthController {
 
   @Get('/:serviceName')
   @HealthCheck()
-  checkService(@Param('serviceName') serviceName: string) {
+  checkService(@Param('serviceName') serviceName: HealthServiceName) {
     const checks = {
-      database: () => this.databaseHealth.isHealthy(),
-      redis: () => this.redisHealth.isHealthy(),
-      worker: () => this.workerHealth.isHealthy(),
+      [HealthServiceName.DATABASE]: () => this.databaseHealth.isHealthy(),
+      [HealthServiceName.REDIS]: () => this.redisHealth.isHealthy(),
+      [HealthServiceName.WORKER]: () => this.workerHealth.isHealthy(),
     };
 
     if (!(serviceName in checks)) {
