@@ -19,7 +19,9 @@ export class DatabaseHealthIndicator extends HealthIndicator {
 
       return this.getStatus(key, true);
     } catch (error) {
-      return this.getStatus(key, false, { error: error.message });
+      return this.getStatus(key, false, {
+        error: 'Database connection failed',
+      });
     }
   }
 }
