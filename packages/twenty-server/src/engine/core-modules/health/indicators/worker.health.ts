@@ -3,6 +3,7 @@ import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 
 import { Queue } from 'bullmq';
 
+import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
@@ -14,37 +15,54 @@ export class WorkerHealthIndicator extends HealthIndicator {
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     try {
-      const redis = this.redisClient.getClient();
+      await Promise.race([
+        this.checkWorkers(),
+        new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error('Worker check timeout')),
+            HEALTH_INDICATORS_TIMEOUT,
+          ),
+        ),
+      ]);
 
-      const queues = Object.values(MessageQueue);
-
-      const workerStatuses = await Promise.all(
-        queues.map(async (queueName) => {
-          const queue = new Queue(queueName, { connection: redis });
-          const workers = await queue.getWorkers();
-
-          await queue.close();
-
-          return {
-            queue: queueName,
-            activeWorkers: workers.length,
-          };
-        }),
-      );
-
-      const totalWorkers = workerStatuses.reduce(
-        (sum, status) => sum + status.activeWorkers,
-        0,
-      );
-
-      return this.getStatus(key, totalWorkers > 0, {
-        totalWorkers,
-        queues: workerStatuses
-          .filter((s) => s.activeWorkers > 0)
-          .map((s) => s.queue),
-      });
+      return this.getStatus(key, true);
     } catch (error) {
       return this.getStatus(key, false, { error: error.message });
     }
+  }
+
+  private async checkWorkers() {
+    const redis = this.redisClient.getClient();
+    const queues = Object.values(MessageQueue);
+
+    const workerStatuses = await Promise.all(
+      queues.map(async (queueName) => {
+        const queue = new Queue(queueName, { connection: redis });
+        const workers = await queue.getWorkers();
+
+        await queue.close();
+
+        return {
+          queue: queueName,
+          activeWorkers: workers.length,
+        };
+      }),
+    );
+
+    const totalWorkers = workerStatuses.reduce(
+      (sum, status) => sum + status.activeWorkers,
+      0,
+    );
+
+    if (totalWorkers === 0) {
+      throw new Error('No active workers found');
+    }
+
+    return {
+      totalWorkers,
+      queues: workerStatuses
+        .filter((s) => s.activeWorkers > 0)
+        .map((s) => s.queue),
+    };
   }
 }

@@ -602,14 +602,6 @@ export enum HealthServiceStatus {
   OUTAGE = 'OUTAGE'
 }
 
-export type HealthSystem = {
-  __typename?: 'HealthSystem';
-  database: HealthService;
-  messageSync: MessageChannelSyncJobByStatusCounter;
-  redis: HealthService;
-  worker: HealthService;
-};
-
 export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
@@ -1236,7 +1228,6 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
-  adminSystemHealth: HealthSystem;
   billingPortalSession: BillingSessionOutput;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
@@ -1258,6 +1249,7 @@ export type Query = {
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
+  getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
@@ -1620,6 +1612,14 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
   supportFrontChatId?: Maybe<Scalars['String']>;
+};
+
+export type SystemHealth = {
+  __typename?: 'SystemHealth';
+  database: HealthService;
+  messageSync: MessageChannelSyncJobByStatusCounter;
+  redis: HealthService;
+  worker: HealthService;
 };
 
 export type TimelineCalendarEvent = {
@@ -2265,10 +2265,10 @@ export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]
 
 export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> } };
 
-export type GetSystemHealthQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSystemHealthQuery = { __typename?: 'Query', adminSystemHealth: { __typename?: 'HealthSystem', database: { __typename?: 'HealthService', status: HealthServiceStatus }, redis: { __typename?: 'HealthService', status: HealthServiceStatus }, worker: { __typename?: 'HealthService', status: HealthServiceStatus }, messageSync: { __typename?: 'MessageChannelSyncJobByStatusCounter', NOT_SYNCED?: number | null, ONGOING?: number | null, ACTIVE?: number | null, FAILED_INSUFFICIENT_PERMISSIONS?: number | null, FAILED_UNKNOWN?: number | null } } };
+export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'HealthService', status: HealthServiceStatus }, redis: { __typename?: 'HealthService', status: HealthServiceStatus }, worker: { __typename?: 'HealthService', status: HealthServiceStatus }, messageSync: { __typename?: 'MessageChannelSyncJobByStatusCounter', NOT_SYNCED?: number | null, ONGOING?: number | null, ACTIVE?: number | null, FAILED_INSUFFICIENT_PERMISSIONS?: number | null, FAILED_UNKNOWN?: number | null } } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -3978,9 +3978,9 @@ export function useGetEnvironmentVariablesGroupedLazyQuery(baseOptions?: Apollo.
 export type GetEnvironmentVariablesGroupedQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedQuery>;
 export type GetEnvironmentVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedLazyQuery>;
 export type GetEnvironmentVariablesGroupedQueryResult = Apollo.QueryResult<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>;
-export const GetSystemHealthDocument = gql`
-    query GetSystemHealth {
-  adminSystemHealth {
+export const GetSystemHealthStatusDocument = gql`
+    query GetSystemHealthStatus {
+  getSystemHealthStatus {
     database {
       status
     }
@@ -4002,31 +4002,31 @@ export const GetSystemHealthDocument = gql`
     `;
 
 /**
- * __useGetSystemHealthQuery__
+ * __useGetSystemHealthStatusQuery__
  *
- * To run a query within a React component, call `useGetSystemHealthQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSystemHealthQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetSystemHealthStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSystemHealthStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetSystemHealthQuery({
+ * const { data, loading, error } = useGetSystemHealthStatusQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetSystemHealthQuery(baseOptions?: Apollo.QueryHookOptions<GetSystemHealthQuery, GetSystemHealthQueryVariables>) {
+export function useGetSystemHealthStatusQuery(baseOptions?: Apollo.QueryHookOptions<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetSystemHealthQuery, GetSystemHealthQueryVariables>(GetSystemHealthDocument, options);
+        return Apollo.useQuery<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>(GetSystemHealthStatusDocument, options);
       }
-export function useGetSystemHealthLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSystemHealthQuery, GetSystemHealthQueryVariables>) {
+export function useGetSystemHealthStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetSystemHealthQuery, GetSystemHealthQueryVariables>(GetSystemHealthDocument, options);
+          return Apollo.useLazyQuery<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>(GetSystemHealthStatusDocument, options);
         }
-export type GetSystemHealthQueryHookResult = ReturnType<typeof useGetSystemHealthQuery>;
-export type GetSystemHealthLazyQueryHookResult = ReturnType<typeof useGetSystemHealthLazyQuery>;
-export type GetSystemHealthQueryResult = Apollo.QueryResult<GetSystemHealthQuery, GetSystemHealthQueryVariables>;
+export type GetSystemHealthStatusQueryHookResult = ReturnType<typeof useGetSystemHealthStatusQuery>;
+export type GetSystemHealthStatusLazyQueryHookResult = ReturnType<typeof useGetSystemHealthStatusLazyQuery>;
+export type GetSystemHealthStatusQueryResult = Apollo.QueryResult<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
   updateLabPublicFeatureFlag(input: $input) {
