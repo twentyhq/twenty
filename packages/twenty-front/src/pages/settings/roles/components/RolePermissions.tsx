@@ -63,7 +63,7 @@ export const RolePermissions = ({ role }: { role: Role }) => {
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.WORKSPACE_SETTINGS,
+      key: SettingsFeatures.WORKSPACE,
       label: 'Workspace Settings',
       type: 'General',
       value: role.canUpdateAllSettings,
@@ -87,7 +87,7 @@ export const RolePermissions = ({ role }: { role: Role }) => {
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.SECURITY_SETTINGS,
+      key: SettingsFeatures.SECURITY,
       label: 'Security Settings',
       type: 'Security',
       value: role.canUpdateAllSettings,
