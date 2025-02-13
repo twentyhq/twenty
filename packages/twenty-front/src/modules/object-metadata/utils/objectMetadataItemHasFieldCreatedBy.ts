@@ -4,7 +4,7 @@ import { FieldMetadataType } from 'twenty-shared';
 export const objectMetadataItemHasFieldCreatedBy = (
   objectMetadataItem: ObjectMetadataItem,
 ) =>
-    objectMetadataItem.fields.some(
+  objectMetadataItem.fields.some(
     (field) =>
       field.type === FieldMetadataType.ACTOR && field.name === 'createdBy',
   );

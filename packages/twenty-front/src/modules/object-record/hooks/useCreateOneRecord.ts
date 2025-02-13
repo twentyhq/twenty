@@ -49,7 +49,7 @@ export const useCreateOneRecord = <
   const objectMetadataHasCreatedByField =
     objectMetadataItemHasFieldCreatedBy(objectMetadataItem);
 
-    const computedRecordGqlFields =
+  const computedRecordGqlFields =
     recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
 
   const { createOneRecordMutation } = useCreateOneRecordMutation({
