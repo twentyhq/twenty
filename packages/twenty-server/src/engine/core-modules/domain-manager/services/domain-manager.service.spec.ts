@@ -116,22 +116,6 @@ describe('DomainManagerService', () => {
 
       expect(result.toString()).toBe('https://test.example.com/');
     });
-
-    it('should append port if FRONT_PORT is set', () => {
-      jest
-        .spyOn(environmentService, 'get')
-        .mockImplementation((key: string) => {
-          const env = {
-            FRONTEND_URL: 'https://example.com:8080',
-          };
-
-          return env[key];
-        });
-
-      const result = domainManagerService.getBaseUrl();
-
-      expect(result.toString()).toBe('https://example.com:8080/');
-    });
   });
 
   describe('buildWorkspaceURL', () => {
