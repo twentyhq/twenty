@@ -82,7 +82,7 @@ describe('DomainManagerService', () => {
   });
 
   describe('buildBaseUrl', () => {
-    it('should build the base URL with protocol and domain from environment variables', () => {
+    it('should build the base URL from environment variables', () => {
       jest
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
