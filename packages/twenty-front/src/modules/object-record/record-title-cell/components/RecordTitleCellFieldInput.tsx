@@ -11,7 +11,7 @@ import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell
 import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
 
 type RecordTitleCellFieldInputProps = {
-  recordFieldInputdId: string;
+  recordFieldInputId: string;
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
   onClickOutside?: (
@@ -28,7 +28,7 @@ type RecordTitleCellFieldInputProps = {
 
 export const RecordTitleCellFieldInput = ({
   sizeVariant,
-  recordFieldInputdId,
+  recordFieldInputId,
   onEnter,
   onEscape,
   onShiftTab,
@@ -39,7 +39,7 @@ export const RecordTitleCellFieldInput = ({
 
   return (
     <RecordFieldInputScope
-      recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
+      recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputId)}
     >
       {isFieldText(fieldDefinition) ? (
         <RecordTitleCellTextFieldInput

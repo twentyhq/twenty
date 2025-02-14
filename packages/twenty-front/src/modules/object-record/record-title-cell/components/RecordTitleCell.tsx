@@ -94,7 +94,7 @@ export const RecordTitleCell = ({
   const RecordTitleCellContextValue: RecordTitleCellContextProps = {
     editModeContent: (
       <RecordTitleCellFieldInput
-        recordFieldInputdId={getRecordFieldInputId(
+        recordFieldInputId={getRecordFieldInputId(
           recordId,
           fieldDefinition?.metadata?.fieldName,
         )}
