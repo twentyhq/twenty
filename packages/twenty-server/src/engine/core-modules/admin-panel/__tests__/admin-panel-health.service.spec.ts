@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
-import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/health-service-status.enum';
+import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
@@ -20,13 +20,47 @@ describe('AdminPanelHealthService', () => {
       info: {
         database: { status: 'up' },
         redis: { status: 'up' },
-        worker: { status: 'up' },
+        worker: {
+          status: 'up',
+          queues: [
+            {
+              name: 'test',
+              workers: 1,
+              status: 'up',
+              metrics: {
+                active: 0,
+                completed: 0,
+                delayed: 0,
+                failed: 0,
+                waiting: 0,
+                prioritized: 0,
+              },
+            },
+          ],
+        },
       },
       error: {},
       details: {
         database: { status: 'up' },
         redis: { status: 'up' },
-        worker: { status: 'up' },
+        worker: {
+          status: 'up',
+          queues: [
+            {
+              name: 'test',
+              workers: 1,
+              status: 'up',
+              metrics: {
+                active: 0,
+                completed: 0,
+                delayed: 0,
+                failed: 0,
+                waiting: 0,
+                prioritized: 0,
+              },
+            },
+          ],
+        },
       },
     };
 
@@ -93,7 +127,15 @@ describe('AdminPanelHealthService', () => {
             {
               name: 'test',
               workers: 1,
-              status: HealthServiceStatus.OPERATIONAL,
+              status: 'up',
+              metrics: {
+                active: 0,
+                completed: 0,
+                delayed: 0,
+                failed: 0,
+                waiting: 0,
+                prioritized: 0,
+              },
             },
           ],
         },
@@ -108,7 +150,15 @@ describe('AdminPanelHealthService', () => {
             {
               name: 'test',
               workers: 1,
-              status: HealthServiceStatus.OPERATIONAL,
+              status: 'up',
+              metrics: {
+                active: 0,
+                completed: 0,
+                delayed: 0,
+                failed: 0,
+                waiting: 0,
+                prioritized: 0,
+              },
             },
           ],
         },
@@ -132,17 +182,29 @@ describe('AdminPanelHealthService', () => {
 
     const expected: SystemHealth = {
       database: {
-        status: HealthServiceStatus.OPERATIONAL,
+        status: AdminPanelHealthServiceStatus.OPERATIONAL,
         details: undefined,
       },
       redis: {
-        status: HealthServiceStatus.OPERATIONAL,
+        status: AdminPanelHealthServiceStatus.OPERATIONAL,
         details: undefined,
       },
       worker: {
-        status: HealthServiceStatus.OPERATIONAL,
+        status: AdminPanelHealthServiceStatus.OPERATIONAL,
         queues: [
-          { name: 'test', workers: 1, status: HealthServiceStatus.OPERATIONAL },
+          {
+            name: 'test',
+            workers: 1,
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
+            metrics: {
+              active: 0,
+              completed: 0,
+              delayed: 0,
+              failed: 0,
+              waiting: 0,
+              prioritized: 0,
+            },
+          },
         ],
       },
       messageSync: mockMessageSync,
@@ -173,9 +235,9 @@ describe('AdminPanelHealthService', () => {
     const result = await service.getSystemHealthStatus();
 
     expect(result).toMatchObject({
-      database: { status: HealthServiceStatus.OPERATIONAL },
-      redis: { status: HealthServiceStatus.OUTAGE },
-      worker: { status: HealthServiceStatus.OPERATIONAL },
+      database: { status: AdminPanelHealthServiceStatus.OPERATIONAL },
+      redis: { status: AdminPanelHealthServiceStatus.OUTAGE },
+      worker: { status: AdminPanelHealthServiceStatus.OPERATIONAL },
     });
   });
 
@@ -189,7 +251,11 @@ describe('AdminPanelHealthService', () => {
         worker: {
           status: 'down',
           queues: [
-            { name: 'test', workers: 0, status: HealthServiceStatus.OUTAGE },
+            {
+              name: 'test',
+              workers: 0,
+              status: AdminPanelHealthServiceStatus.OUTAGE,
+            },
           ],
         },
       },
@@ -199,7 +265,11 @@ describe('AdminPanelHealthService', () => {
         worker: {
           status: 'down',
           queues: [
-            { name: 'test', workers: 0, status: HealthServiceStatus.OUTAGE },
+            {
+              name: 'test',
+              workers: 0,
+              status: AdminPanelHealthServiceStatus.OUTAGE,
+            },
           ],
         },
       },
@@ -210,9 +280,9 @@ describe('AdminPanelHealthService', () => {
     const result = await service.getSystemHealthStatus();
 
     expect(result).toMatchObject({
-      database: { status: HealthServiceStatus.OUTAGE },
-      redis: { status: HealthServiceStatus.OUTAGE },
-      worker: { status: HealthServiceStatus.OUTAGE },
+      database: { status: AdminPanelHealthServiceStatus.OUTAGE },
+      redis: { status: AdminPanelHealthServiceStatus.OUTAGE },
+      worker: { status: AdminPanelHealthServiceStatus.OUTAGE },
     });
   });
 });
