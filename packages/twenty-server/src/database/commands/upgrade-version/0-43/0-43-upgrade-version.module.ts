@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-41/0-41-add-tasks-assigned-to-me-view.command';
-import { UpgradeTo0_41Command } from 'src/database/commands/upgrade-version/0-41/0-41-upgrade-version.command';
+import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-43/0-43-add-tasks-assigned-to-me-view.command';
+import { UpgradeTo0_43Command } from 'src/database/commands/upgrade-version/0-43/0-43-upgrade-version.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -21,6 +21,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceMigrationModule,
     WorkspaceMetadataVersionModule,
   ],
-  providers: [UpgradeTo0_41Command, AddTasksAssignedToMeViewCommand],
+  providers: [UpgradeTo0_43Command, AddTasksAssignedToMeViewCommand],
 })
-export class UpgradeTo0_41CommandModule {}
+export class UpgradeTo0_43CommandModule {}

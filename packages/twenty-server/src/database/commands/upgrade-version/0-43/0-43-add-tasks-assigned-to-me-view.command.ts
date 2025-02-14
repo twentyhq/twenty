@@ -23,7 +23,7 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
-  name: 'upgrade-0.41:add-tasks-assigned-to-me-view',
+  name: 'upgrade-0.43:add-tasks-assigned-to-me-view',
   description: 'Add tasks assigned to me view',
 })
 export class AddTasksAssignedToMeViewCommand extends ActiveWorkspacesCommandRunner {

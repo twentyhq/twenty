@@ -5,14 +5,14 @@ import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
-import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-41/0-41-add-tasks-assigned-to-me-view.command';
+import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-43/0-43-add-tasks-assigned-to-me-view.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Command({
-  name: 'upgrade-0.41',
-  description: 'Upgrade to 0.41',
+  name: 'upgrade-0.43',
+  description: 'Upgrade to 0.43',
 })
-export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
+export class UpgradeTo0_43Command extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -26,7 +26,7 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     options: BaseCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
-    this.logger.log('Running command to upgrade to 0.41');
+    this.logger.log('Running command to upgrade to 0.43');
 
     await this.addTasksAssignedToMeViewCommand.executeActiveWorkspacesCommand(
       passedParam,
