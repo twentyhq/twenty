@@ -10,6 +10,13 @@ import {
 @Injectable()
 export class MicrosoftHandleErrorService {
   public handleMicrosoftMessageFetchError(error: GraphError): void {
+    if (!error.statusCode) {
+      throw new MessageImportDriverException(
+        `Microsoft Graph API unknown error: ${error}`,
+        MessageImportDriverExceptionCode.UNKNOWN,
+      );
+    }
+
     if (error.statusCode === 401) {
       throw new MessageImportDriverException(
         'Unauthorized access to Microsoft Graph API',
