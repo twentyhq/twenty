@@ -20,6 +20,15 @@ const baseDefinition = {
   fieldName: 'fieldName',
 };
 
+const baseFieldMetadataItem = {
+  id: '05731f68-6e7a-4903-8374-c0b6a9063482',
+  createdAt: '2021-01-01',
+  updatedAt: '2021-01-01',
+  name: 'name',
+  label: 'Name',
+  type: FieldMetadataType.FULL_NAME,
+};
+
 describe('mapViewSortsToSorts', () => {
   it('should map each ViewSort object to a corresponding Sort object', () => {
     const viewSorts: ViewSort[] = [
@@ -62,23 +71,12 @@ describe('mapViewFiltersToFilters', () => {
         value: 'testValue',
         displayValue: 'Test Display Value',
         operand: ViewFilterOperand.Is,
-        definition: {
-          ...baseDefinition,
-          type: 'FULL_NAME',
-        },
-        label: baseDefinition.label,
-        type: 'FULL_NAME',
-        positionInViewFilterGroup: undefined,
-        viewFilterGroupId: undefined,
+        label: baseFieldMetadataItem.label,
+        type: FieldMetadataType.FULL_NAME,
       },
     ];
     expect(
-      mapViewFiltersToFilters(viewFilters, [
-        {
-          ...baseDefinition,
-          type: 'FULL_NAME',
-        },
-      ]),
+      mapViewFiltersToFilters(viewFilters, [baseFieldMetadataItem]),
     ).toEqual(expectedFilters);
   });
 });

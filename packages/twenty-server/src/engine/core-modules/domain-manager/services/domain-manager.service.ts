@@ -21,28 +21,10 @@ export class DomainManagerService {
   ) {}
 
   getFrontUrl() {
-    let baseUrl: URL;
-    const frontPort = this.environmentService.get('FRONT_PORT');
-    const frontDomain = this.environmentService.get('FRONT_DOMAIN');
-    const frontProtocol = this.environmentService.get('FRONT_PROTOCOL');
-
-    const serverUrl = this.environmentService.get('SERVER_URL');
-
-    if (!frontDomain) {
-      baseUrl = new URL(serverUrl);
-    } else {
-      baseUrl = new URL(`${frontProtocol}://${frontDomain}`);
-    }
-
-    if (frontPort) {
-      baseUrl.port = frontPort.toString();
-    }
-
-    if (frontProtocol) {
-      baseUrl.protocol = frontProtocol;
-    }
-
-    return baseUrl;
+    return new URL(
+      this.environmentService.get('FRONTEND_URL') ??
+        this.environmentService.get('SERVER_URL'),
+    );
   }
 
   getBaseUrl(): URL {
@@ -235,7 +217,9 @@ export class DomainManagerService {
   private getTwentyWorkspaceUrl(subdomain: string) {
     const url = this.getFrontUrl();
 
-    url.hostname = `${subdomain}.${url.hostname}`;
+    url.hostname = this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+      ? `${subdomain}.${url.hostname}`
+      : url.hostname;
 
     return url.toString();
   }

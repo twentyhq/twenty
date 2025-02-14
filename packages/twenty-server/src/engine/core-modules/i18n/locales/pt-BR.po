@@ -8,8 +8,8 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
+": \n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2251,4 +2251,3 @@ msgstr "X"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Seu membro da equipe responsável por gerenciar a conta da empresa"
-

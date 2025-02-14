@@ -1,4 +1,4 @@
-import { useFilterDefinitionsFromFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterDefinitionsFromFilterableFieldMetadataItems';
+import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 
@@ -7,8 +7,8 @@ export const useCurrentViewFilter = ({
 }: {
   viewFilterId?: string;
 }) => {
-  const { filterDefinitions } =
-    useFilterDefinitionsFromFilterableFieldMetadataItems();
+  const { filterableFieldMetadataItems } =
+    useFilterableFieldMetadataItemsInRecordIndexContext();
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
@@ -20,7 +20,10 @@ export const useCurrentViewFilter = ({
     return undefined;
   }
 
-  const [filter] = mapViewFiltersToFilters([viewFilter], filterDefinitions);
+  const [filter] = mapViewFiltersToFilters(
+    [viewFilter],
+    filterableFieldMetadataItems,
+  );
 
   return filter;
 };

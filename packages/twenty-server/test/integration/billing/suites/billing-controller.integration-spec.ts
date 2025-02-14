@@ -19,7 +19,7 @@ describe('BillingController (integration)', () => {
 
     await client
       .post('/billing/webhooks')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
       .send(JSON.stringify(productUpdatedPayload))
@@ -30,7 +30,7 @@ describe('BillingController (integration)', () => {
 
     await client
       .post('/billing/webhooks')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
       .send(JSON.stringify(priceCreatedPayload))
@@ -52,7 +52,7 @@ describe('BillingController (integration)', () => {
 
     await client
       .post('/billing/webhooks')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
       .send(JSON.stringify(subscriptionCreatedPayload))
@@ -64,7 +64,7 @@ describe('BillingController (integration)', () => {
 
     await client
       .post('/billing/webhooks')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
       .send(JSON.stringify(entitlementUpdatedPayload))
@@ -84,7 +84,7 @@ describe('BillingController (integration)', () => {
 
     await client
       .post('/billing/webhooks')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
       .send(JSON.stringify(entitlementUpdatedPayload))
@@ -103,7 +103,7 @@ describe('BillingController (integration)', () => {
 
     await client
       .post('/billing/webhooks')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'invalid-signature')
       .set('Content-Type', 'application/json')
       .send(JSON.stringify(entitlementUpdatedPayload))

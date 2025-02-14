@@ -37,7 +37,7 @@ msgstr "(System) View Sorts"
 msgid "(System) Views"
 msgstr "(System) Views"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:55
+#: src/modules/company/standard-objects/company.workspace-entity.ts:56
 msgid "A company"
 msgstr "A company"
 
@@ -69,7 +69,7 @@ msgstr "A note"
 msgid "A note target"
 msgstr "A note target"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+#: src/modules/person/standard-objects/person.workspace-entity.ts:60
 msgid "A person"
 msgstr "A person"
 
@@ -111,7 +111,7 @@ msgstr "Access Token"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
-#: src/modules/company/standard-objects/company.workspace-entity.ts:176
+#: src/modules/company/standard-objects/company.workspace-entity.ts:178
 msgid "Account Owner"
 msgstr "Account Owner"
 
@@ -123,19 +123,19 @@ msgstr "Account owner for companies"
 msgid "Account Owner For Companies"
 msgstr "Account Owner For Companies"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:123
+#: src/modules/company/standard-objects/company.workspace-entity.ts:125
 msgid "Address"
 msgstr "Address"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:264
+#: src/modules/company/standard-objects/company.workspace-entity.ts:266
 msgid "Address (deprecated) "
 msgstr "Address (deprecated) "
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:124
+#: src/modules/company/standard-objects/company.workspace-entity.ts:126
 msgid "Address of the company"
 msgstr "Address of the company"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:265
+#: src/modules/company/standard-objects/company.workspace-entity.ts:267
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Address of the company - deprecated in favor of new address field"
 
@@ -172,7 +172,7 @@ msgstr "An event related to user behavior"
 msgid "An opportunity"
 msgstr "An opportunity"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:114
+#: src/modules/company/standard-objects/company.workspace-entity.ts:116
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 
@@ -196,7 +196,7 @@ msgstr "ApiKey name"
 msgid "ApiKey revocation date"
 msgstr "ApiKey revocation date"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:113
+#: src/modules/company/standard-objects/company.workspace-entity.ts:115
 msgid "ARR"
 msgstr "ARR"
 
@@ -253,10 +253,10 @@ msgid "Attachment type"
 msgstr "Attachment type"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:156
-#: src/modules/person/standard-objects/person.workspace-entity.ts:238
+#: src/modules/person/standard-objects/person.workspace-entity.ts:244
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
 #: src/modules/note/standard-objects/note.workspace-entity.ts:118
-#: src/modules/company/standard-objects/company.workspace-entity.ts:239
+#: src/modules/company/standard-objects/company.workspace-entity.ts:241
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
 msgid "Attachments"
@@ -266,11 +266,11 @@ msgstr "Attachments"
 msgid "Attachments created by the workspace member"
 msgstr "Attachments created by the workspace member"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:240
+#: src/modules/company/standard-objects/company.workspace-entity.ts:242
 msgid "Attachments linked to the company"
 msgstr "Attachments linked to the company"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:239
+#: src/modules/person/standard-objects/person.workspace-entity.ts:245
 msgid "Attachments linked to the contact."
 msgstr "Attachments linked to the contact."
 
@@ -316,7 +316,7 @@ msgstr "Automatically create People records when receiving or sending emails"
 msgid "Automatically create records for people you participated with in an event."
 msgstr "Automatically create records for people you participated with in an event."
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:146
+#: src/modules/person/standard-objects/person.workspace-entity.ts:152
 msgid "Avatar"
 msgstr "Avatar"
 
@@ -396,8 +396,8 @@ msgstr "Calendar event participants"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
-#: src/modules/person/standard-objects/person.workspace-entity.ts:262
-#: src/modules/person/standard-objects/person.workspace-entity.ts:263
+#: src/modules/person/standard-objects/person.workspace-entity.ts:268
+#: src/modules/person/standard-objects/person.workspace-entity.ts:269
 msgid "Calendar Event Participants"
 msgstr "Calendar Event Participants"
 
@@ -415,7 +415,7 @@ msgstr "Channel ID"
 msgid "Channel Type"
 msgstr "Channel Type"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:137
+#: src/modules/person/standard-objects/person.workspace-entity.ts:143
 msgid "City"
 msgstr "City"
 
@@ -431,22 +431,22 @@ msgstr "Color Scheme"
 msgid "Compact View"
 msgstr "Compact View"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:54
+#: src/modules/company/standard-objects/company.workspace-entity.ts:55
 msgid "Companies"
 msgstr "Companies"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
-#: src/modules/person/standard-objects/person.workspace-entity.ts:177
+#: src/modules/person/standard-objects/person.workspace-entity.ts:183
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:148
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:65
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:88
-#: src/modules/company/standard-objects/company.workspace-entity.ts:53
+#: src/modules/company/standard-objects/company.workspace-entity.ts:54
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
 msgid "Company"
 msgstr "Company"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:144
+#: src/modules/company/standard-objects/company.workspace-entity.ts:146
 msgid "Company record position"
 msgstr "Company record position"
 
@@ -477,52 +477,57 @@ msgstr "Connected Accounts"
 msgid "Contact auto creation policy"
 msgstr "Contact auto creation policy"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:147
+#: src/modules/person/standard-objects/person.workspace-entity.ts:153
 msgid "Contact’s avatar"
 msgstr "Contact’s avatar"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:138
+#: src/modules/person/standard-objects/person.workspace-entity.ts:144
 msgid "Contact’s city"
 msgstr "Contact’s city"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:178
+#: src/modules/person/standard-objects/person.workspace-entity.ts:184
 msgid "Contact’s company"
 msgstr "Contact’s company"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:80
+#: src/modules/person/standard-objects/person.workspace-entity.ts:86
 msgid "Contact’s Emails"
 msgstr "Contact’s Emails"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:110
+#: src/modules/person/standard-objects/person.workspace-entity.ts:116
 msgid "Contact’s job title"
 msgstr "Contact’s job title"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:90
+#: src/modules/person/standard-objects/person.workspace-entity.ts:96
 msgid "Contact’s Linkedin account"
 msgstr "Contact’s Linkedin account"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:70
+#: src/modules/person/standard-objects/person.workspace-entity.ts:76
 msgid "Contact’s name"
 msgstr "Contact’s name"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:119
+#: src/modules/person/standard-objects/person.workspace-entity.ts:125
 msgid "Contact’s phone number"
 msgstr "Contact’s phone number"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:129
+#: src/modules/person/standard-objects/person.workspace-entity.ts:135
 msgid "Contact’s phone numbers"
 msgstr "Contact’s phone numbers"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:100
+#: src/modules/person/standard-objects/person.workspace-entity.ts:106
 msgid "Contact’s X/Twitter account"
 msgstr "Contact’s X/Twitter account"
 
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+msgid "Context"
+msgstr "Context"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
-#: src/modules/person/standard-objects/person.workspace-entity.ts:167
+#: src/modules/person/standard-objects/person.workspace-entity.ts:173
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
 #: src/modules/note/standard-objects/note.workspace-entity.ts:98
-#: src/modules/company/standard-objects/company.workspace-entity.ts:154
+#: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
 msgstr "Created by"
@@ -577,7 +582,7 @@ msgstr "Display Name"
 msgid "Display Value"
 msgstr "Display Value"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:73
+#: src/modules/company/standard-objects/company.workspace-entity.ts:75
 msgid "Domain Name"
 msgstr "Domain Name"
 
@@ -585,11 +590,11 @@ msgstr "Domain Name"
 msgid "Due Date"
 msgstr "Due Date"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:79
+#: src/modules/person/standard-objects/person.workspace-entity.ts:85
 msgid "Emails"
 msgstr "Emails"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:83
+#: src/modules/company/standard-objects/company.workspace-entity.ts:85
 msgid "Employees"
 msgstr "Employees"
 
@@ -681,11 +686,11 @@ msgid "Event workspace member"
 msgstr "Event workspace member"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
-#: src/modules/person/standard-objects/person.workspace-entity.ts:276
+#: src/modules/person/standard-objects/person.workspace-entity.ts:282
 msgid "Events"
 msgstr "Events"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:277
+#: src/modules/person/standard-objects/person.workspace-entity.ts:283
 msgid "Events linked to the person"
 msgstr "Events linked to the person"
 
@@ -775,15 +780,15 @@ msgstr "Favorite workspace member"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
 #: src/modules/task/standard-objects/task.workspace-entity.ts:197
-#: src/modules/person/standard-objects/person.workspace-entity.ts:226
+#: src/modules/person/standard-objects/person.workspace-entity.ts:232
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
 #: src/modules/note/standard-objects/note.workspace-entity.ts:143
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
-#: src/modules/company/standard-objects/company.workspace-entity.ts:226
+#: src/modules/company/standard-objects/company.workspace-entity.ts:228
 #: src/engine/twenty-orm/custom.workspace-entity.ts:101
 msgid "Favorites"
 msgstr "Favorites"
@@ -792,11 +797,11 @@ msgstr "Favorites"
 msgid "Favorites in this folder"
 msgstr "Favorites in this folder"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:227
+#: src/modules/company/standard-objects/company.workspace-entity.ts:229
 msgid "Favorites linked to the company"
 msgstr "Favorites linked to the company"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:227
+#: src/modules/person/standard-objects/person.workspace-entity.ts:233
 msgid "Favorites linked to the contact"
 msgstr "Favorites linked to the contact"
 
@@ -820,7 +825,7 @@ msgstr "Favorites linked to the view"
 msgid "Favorites linked to the workflow"
 msgstr "Favorites linked to the workflow"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
 msgid "Favorites linked to the workflow run"
 msgstr "Favorites linked to the workflow run"
 
@@ -907,7 +912,7 @@ msgstr "iCal UID"
 msgid "Icon"
 msgstr "Icon"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:133
+#: src/modules/company/standard-objects/company.workspace-entity.ts:135
 msgid "ICP"
 msgstr "ICP"
 
@@ -916,7 +921,7 @@ msgstr "ICP"
 msgid "Id"
 msgstr "Id"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:134
+#: src/modules/company/standard-objects/company.workspace-entity.ts:136
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 
@@ -953,7 +958,7 @@ msgstr "Is Organizer"
 msgid "Is Sync Enabled"
 msgstr "Is Sync Enabled"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:109
+#: src/modules/person/standard-objects/person.workspace-entity.ts:115
 msgid "Job Title"
 msgstr "Job Title"
 
@@ -1026,7 +1031,7 @@ msgstr "Last update"
 msgid "Linked Object Metadata Id"
 msgstr "Linked Object Metadata Id"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:192
+#: src/modules/person/standard-objects/person.workspace-entity.ts:198
 msgid "Linked Opportunities"
 msgstr "Linked Opportunities"
 
@@ -1039,12 +1044,12 @@ msgstr "Linked Record cached name"
 msgid "Linked Record id"
 msgstr "Linked Record id"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:89
-#: src/modules/company/standard-objects/company.workspace-entity.ts:93
+#: src/modules/person/standard-objects/person.workspace-entity.ts:95
+#: src/modules/company/standard-objects/company.workspace-entity.ts:95
 msgid "Linkedin"
 msgstr "Linkedin"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:193
+#: src/modules/person/standard-objects/person.workspace-entity.ts:199
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "List of opportunities for which that person is the point of contact"
 
@@ -1140,8 +1145,8 @@ msgstr "Message Participant"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
-#: src/modules/person/standard-objects/person.workspace-entity.ts:249
-#: src/modules/person/standard-objects/person.workspace-entity.ts:250
+#: src/modules/person/standard-objects/person.workspace-entity.ts:255
+#: src/modules/person/standard-objects/person.workspace-entity.ts:256
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:93
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:94
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
@@ -1194,11 +1199,11 @@ msgstr "Messaging provider refresh token"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:62
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
 #: src/modules/view/standard-objects/view.workspace-entity.ts:43
-#: src/modules/person/standard-objects/person.workspace-entity.ts:69
+#: src/modules/person/standard-objects/person.workspace-entity.ts:75
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:60
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:32
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:43
-#: src/modules/company/standard-objects/company.workspace-entity.ts:64
+#: src/modules/company/standard-objects/company.workspace-entity.ts:66
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:42
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:29
 #: src/engine/twenty-orm/custom.workspace-entity.ts:40
@@ -1251,10 +1256,10 @@ msgstr "Note Targets"
 msgid "Note title"
 msgstr "Note title"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:215
+#: src/modules/person/standard-objects/person.workspace-entity.ts:221
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
 #: src/modules/note/standard-objects/note.workspace-entity.ts:45
-#: src/modules/company/standard-objects/company.workspace-entity.ts:203
+#: src/modules/company/standard-objects/company.workspace-entity.ts:205
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
 msgstr "Notes"
@@ -1263,11 +1268,11 @@ msgstr "Notes"
 msgid "Notes tied to the {label}"
 msgstr "Notes tied to the {label}"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:204
+#: src/modules/company/standard-objects/company.workspace-entity.ts:206
 msgid "Notes tied to the company"
 msgstr "Notes tied to the company"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:216
+#: src/modules/person/standard-objects/person.workspace-entity.ts:222
 msgid "Notes tied to the contact"
 msgstr "Notes tied to the contact"
 
@@ -1291,7 +1296,7 @@ msgstr "NoteTarget opportunity"
 msgid "NoteTarget person"
 msgstr "NoteTarget person"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:84
+#: src/modules/company/standard-objects/company.workspace-entity.ts:86
 msgid "Number of employees in the company"
 msgstr "Number of employees in the company"
 
@@ -1327,11 +1332,11 @@ msgid "Operations"
 msgstr "Operations"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
-#: src/modules/company/standard-objects/company.workspace-entity.ts:214
+#: src/modules/company/standard-objects/company.workspace-entity.ts:216
 msgid "Opportunities"
 msgstr "Opportunities"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:215
+#: src/modules/company/standard-objects/company.workspace-entity.ts:217
 msgid "Opportunities linked to the company."
 msgstr "Opportunities linked to the company."
 
@@ -1393,18 +1398,18 @@ msgstr "Parent View Filter Group"
 msgid "Parent View Filter Group Id"
 msgstr "Parent View Filter Group Id"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:58
-#: src/modules/company/standard-objects/company.workspace-entity.ts:164
+#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+#: src/modules/company/standard-objects/company.workspace-entity.ts:166
 msgid "People"
 msgstr "People"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:165
+#: src/modules/company/standard-objects/company.workspace-entity.ts:167
 msgid "People linked to the company."
 msgstr "People linked to the company."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
-#: src/modules/person/standard-objects/person.workspace-entity.ts:57
+#: src/modules/person/standard-objects/person.workspace-entity.ts:58
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:50
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:85
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:86
@@ -1415,15 +1420,15 @@ msgstr "People linked to the company."
 msgid "Person"
 msgstr "Person"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:157
+#: src/modules/person/standard-objects/person.workspace-entity.ts:163
 msgid "Person record Position"
 msgstr "Person record Position"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:118
+#: src/modules/person/standard-objects/person.workspace-entity.ts:124
 msgid "Phone"
 msgstr "Phone"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:128
+#: src/modules/person/standard-objects/person.workspace-entity.ts:134
 msgid "Phones"
 msgstr "Phones"
 
@@ -1433,17 +1438,17 @@ msgstr "Point of Contact"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:156
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
 #: src/modules/task/standard-objects/task.workspace-entity.ts:57
-#: src/modules/person/standard-objects/person.workspace-entity.ts:156
+#: src/modules/person/standard-objects/person.workspace-entity.ts:162
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
 #: src/modules/note/standard-objects/note.workspace-entity.ts:55
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
-#: src/modules/company/standard-objects/company.workspace-entity.ts:143
+#: src/modules/company/standard-objects/company.workspace-entity.ts:145
 #: src/engine/twenty-orm/custom.workspace-entity.ts:49
 #: src/engine/twenty-orm/custom.workspace-entity.ts:50
 msgid "Position"
@@ -1648,9 +1653,9 @@ msgid "Task title"
 msgstr "Task title"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:47
-#: src/modules/person/standard-objects/person.workspace-entity.ts:204
+#: src/modules/person/standard-objects/person.workspace-entity.ts:210
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
-#: src/modules/company/standard-objects/company.workspace-entity.ts:192
+#: src/modules/company/standard-objects/company.workspace-entity.ts:194
 #: src/engine/twenty-orm/custom.workspace-entity.ts:85
 msgid "Tasks"
 msgstr "Tasks"
@@ -1663,11 +1668,11 @@ msgstr "Tasks assigned to the workspace member"
 msgid "Tasks tied to the {label}"
 msgstr "Tasks tied to the {label}"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:193
+#: src/modules/company/standard-objects/company.workspace-entity.ts:195
 msgid "Tasks tied to the company"
 msgstr "Tasks tied to the company"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:205
+#: src/modules/person/standard-objects/person.workspace-entity.ts:211
 msgid "Tasks tied to the contact"
 msgstr "Tasks tied to the contact"
 
@@ -1704,28 +1709,28 @@ msgstr "The account handle (email, username, phone number, etc.)"
 msgid "The account provider"
 msgstr "The account provider"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:94
+#: src/modules/company/standard-objects/company.workspace-entity.ts:96
 msgid "The company Linkedin account"
 msgstr "The company Linkedin account"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:65
+#: src/modules/company/standard-objects/company.workspace-entity.ts:67
 msgid "The company name"
 msgstr "The company name"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:104
+#: src/modules/company/standard-objects/company.workspace-entity.ts:106
 msgid "The company Twitter/X account"
 msgstr "The company Twitter/X account"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:74
+#: src/modules/company/standard-objects/company.workspace-entity.ts:76
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "The company website URL. We use this url to fetch the company icon"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
 #: src/modules/task/standard-objects/task.workspace-entity.ts:138
-#: src/modules/person/standard-objects/person.workspace-entity.ts:169
+#: src/modules/person/standard-objects/person.workspace-entity.ts:175
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
 #: src/modules/note/standard-objects/note.workspace-entity.ts:100
-#: src/modules/company/standard-objects/company.workspace-entity.ts:156
+#: src/modules/company/standard-objects/company.workspace-entity.ts:158
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
 msgstr "The creator of the record"
@@ -1795,17 +1800,17 @@ msgstr "Time zone"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:198
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:208
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
 #: src/modules/task/standard-objects/task.workspace-entity.ts:185
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
 #: src/modules/note/standard-objects/note.workspace-entity.ts:131
-#: src/modules/company/standard-objects/company.workspace-entity.ts:251
+#: src/modules/company/standard-objects/company.workspace-entity.ts:253
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
 msgstr "Timeline Activities"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:252
+#: src/modules/company/standard-objects/company.workspace-entity.ts:254
 msgid "Timeline Activities linked to the company"
 msgstr "Timeline Activities linked to the company"
 
@@ -1817,7 +1822,7 @@ msgstr "Timeline Activities linked to the note."
 msgid "Timeline Activities linked to the opportunity."
 msgstr "Timeline Activities linked to the opportunity."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
 msgid "Timeline activities linked to the run"
 msgstr "Timeline activities linked to the run"
 
@@ -2096,7 +2101,7 @@ msgstr "Webhooks"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:182
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
@@ -2109,7 +2114,7 @@ msgstr "Workflow"
 msgid "Workflow event listeners linked to the workflow."
 msgstr "Workflow event listeners linked to the workflow."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
 msgid "Workflow linked to the run."
 msgstr "Workflow linked to the run."
 
@@ -2127,7 +2132,7 @@ msgstr "Workflow Run"
 msgid "Workflow run ended at"
 msgstr "Workflow run ended at"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
 msgid "Workflow run position"
 msgstr "Workflow run position"
 
@@ -2153,7 +2158,7 @@ msgstr "Workflow runs linked to the version."
 msgid "Workflow runs linked to the workflow."
 msgstr "Workflow runs linked to the workflow."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
 msgid "Workflow version"
 msgstr "Workflow version"
 
@@ -2161,7 +2166,7 @@ msgstr "Workflow version"
 msgid "Workflow Version"
 msgstr "Workflow Version"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
 msgid "Workflow version linked to the run."
 msgstr "Workflow version linked to the run."
 
@@ -2232,11 +2237,11 @@ msgstr "Workspace Members"
 msgid "WorkspaceMember"
 msgstr "WorkspaceMember"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:99
-#: src/modules/company/standard-objects/company.workspace-entity.ts:103
+#: src/modules/person/standard-objects/person.workspace-entity.ts:105
+#: src/modules/company/standard-objects/company.workspace-entity.ts:105
 msgid "X"
 msgstr "X"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:177
+#: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Your team member responsible for managing the company account"

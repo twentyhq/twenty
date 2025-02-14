@@ -1,11 +1,12 @@
+import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -16,19 +17,17 @@ import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 
 type SelectFilterParams = {
-  filterDefinition: RecordFilterDefinition;
+  fieldMetadataItemId: string;
 };
 
-export const useSelectFilterDefinitionUsedInDropdown = (
-  componentInstanceId?: string,
-) => {
-  const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
-    filterDefinitionUsedInDropdownComponentState,
+export const useSelectFilterUsedInDropdown = (componentInstanceId?: string) => {
+  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
+    selectedOperandInDropdownComponentState,
     componentInstanceId,
   );
 
-  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
-    selectedOperandInDropdownComponentState,
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+    fieldMetadataItemIdUsedInDropdownComponentState,
     componentInstanceId,
   );
 
@@ -51,26 +50,36 @@ export const useSelectFilterDefinitionUsedInDropdown = (
 
   const { applyRecordFilter } = useApplyRecordFilter(componentInstanceId);
 
-  const selectFilterDefinitionUsedInDropdown = ({
-    filterDefinition,
+  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
+
+  const selectFilterUsedInDropdown = ({
+    fieldMetadataItemId,
   }: SelectFilterParams) => {
-    setFilterDefinitionUsedInDropdown(filterDefinition);
+    setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
+
+    const fieldMetadataItem = getFieldMetadataItemById(fieldMetadataItemId);
+
+    if (!isDefined(fieldMetadataItem)) {
+      return;
+    }
 
     if (
-      filterDefinition.type === 'RELATION' ||
-      filterDefinition.type === 'SELECT'
+      fieldMetadataItem.type === 'RELATION' ||
+      fieldMetadataItem.type === 'SELECT'
     ) {
       setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
     }
 
+    const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+
     const firstOperand = getRecordFilterOperands({
-      filterType: filterDefinition.type,
+      filterType,
     })[0];
 
     setSelectedOperandInDropdown(firstOperand);
 
     const { value, displayValue } = getInitialFilterValue(
-      filterDefinition.type,
+      filterType,
       firstOperand,
     );
 
@@ -79,12 +88,13 @@ export const useSelectFilterDefinitionUsedInDropdown = (
     if (isAdvancedFilter || value !== '') {
       applyRecordFilter({
         id: advancedFilterViewFilterId ?? v4(),
-        fieldMetadataId: filterDefinition.fieldMetadataId,
+        fieldMetadataId: fieldMetadataItem.id,
         displayValue,
         operand: firstOperand,
         value,
-        definition: filterDefinition,
         viewFilterGroupId: advancedFilterViewFilterGroupId,
+        type: filterType,
+        label: fieldMetadataItem.label,
       });
     }
 
@@ -92,6 +102,6 @@ export const useSelectFilterDefinitionUsedInDropdown = (
   };
 
   return {
-    selectFilterDefinitionUsedInDropdown,
+    selectFilterUsedInDropdown,
   };
 };

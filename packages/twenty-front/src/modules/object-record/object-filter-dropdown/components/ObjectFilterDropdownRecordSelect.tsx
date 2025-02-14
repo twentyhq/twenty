@@ -1,12 +1,11 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import {
-  formatFieldMetadataItemAsFilterDefinition,
+  getFilterTypeFromFieldType,
   getRelationObjectMetadataNameSingular,
 } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
@@ -40,10 +39,6 @@ type ObjectFilterDropdownRecordSelectProps = {
 export const ObjectFilterDropdownRecordSelect = ({
   viewComponentId,
 }: ObjectFilterDropdownRecordSelectProps) => {
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
-  );
-
   const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -182,10 +177,7 @@ export const ObjectFilterDropdownRecordSelect = ({
         ? `${selectedItemNames.length} ${objectLabelPlural.toLowerCase()}`
         : selectedItemNames.join(', ');
 
-    if (
-      isDefined(filterDefinitionUsedInDropdown) &&
-      isDefined(selectedOperandInDropdown)
-    ) {
+    if (isDefined(selectedOperandInDropdown)) {
       const newFilterValue =
         newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
           ? JSON.stringify({
@@ -204,13 +196,12 @@ export const ObjectFilterDropdownRecordSelect = ({
 
       const filterId = viewFilter?.id ?? v4();
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemUsedInFilterDropdown,
-      });
-
       applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : filterId,
-        definition: filterDefinition,
+        type: getFilterTypeFromFieldType(
+          fieldMetadataItemUsedInFilterDropdown.type,
+        ),
+        label: fieldMetadataItemUsedInFilterDropdown.label,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,
         fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,

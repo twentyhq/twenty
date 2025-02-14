@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useState } from 'react';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
@@ -58,18 +58,17 @@ export const ObjectFilterDropdownTextSearchInput = () => {
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setObjectFilterDropdownSearchInput(event.target.value);
 
-          const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-            field: fieldMetadataItemUsedInDropdown,
-          });
-
           applyRecordFilter({
             id: selectedFilter?.id ?? v4(),
             fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
             value: event.target.value,
             operand: selectedOperandInDropdown,
             displayValue: event.target.value,
-            definition: filterDefinition,
             viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+            type: getFilterTypeFromFieldType(
+              fieldMetadataItemUsedInDropdown.type,
+            ),
+            label: fieldMetadataItemUsedInDropdown.label,
           });
         }}
       />

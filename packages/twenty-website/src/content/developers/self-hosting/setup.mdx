@@ -155,8 +155,7 @@ yarn command:prod cron:calendar:ongoing-stale
     ['FRONT_DOMAIN', 'localhost', 'Domain of the hosted frontend'],
     ['DEFAULT_SUBDOMAIN', 'app', 'The default subdomain name when multiworkspace mode is enabled'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
-    ['FRONT_PROTOCOL', 'http', 'protocol of the frontend server. Could be `http` or `https`'],
-    ['FRONT_PORT', '3001', 'Port of the frontend server.'],
+    ['FRONTEND_URL', '$SERVER_URL', 'Url to the frontend server. Same as SERVER_URL by default'],
     ['PORT', '3000', 'Port of the backend server'],
     ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></ArticleTable>
@@ -337,7 +336,8 @@ This feature is WIP and is not yet useful for most users.
 
 <ArticleTable options={[
   ['WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION', '', 'Number of inactive days before sending workspace deleting warning email'],
-  ['WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', '', 'Number of inactive days before deleting workspace'],
+  ['WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION', '', 'Number of inactive days before soft deleting workspace'],
+  ['WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', '', 'Number of inactive days before destroying workspace'],
   ]}></ArticleTable>
 
 ### Captcha
