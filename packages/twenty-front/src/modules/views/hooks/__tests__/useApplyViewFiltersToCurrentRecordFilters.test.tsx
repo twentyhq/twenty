@@ -1,12 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 
-import {
-  formatFieldMetadataItemAsFilterDefinition,
-  getFilterTypeFromFieldType,
-} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -30,11 +26,6 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
 
   const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
 
-  const mockAvailableFilterDefinition: RecordFilterDefinition =
-    formatFieldMetadataItemAsFilterDefinition({
-      field: mockFieldMetadataItem,
-    });
-
   const mockViewFilter: ViewFilter = {
     __typename: 'ViewFilter',
     id: 'filter-1',
@@ -44,7 +35,6 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
     displayValue: mockFieldMetadataItem.label,
     viewFilterGroupId: 'group-1',
     positionInViewFilterGroup: 0,
-    definition: mockAvailableFilterDefinition,
   };
 
   it('should apply view filters to current record filters', () => {
@@ -82,8 +72,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         operand: mockViewFilter.operand,
         viewFilterGroupId: mockViewFilter.viewFilterGroupId,
         positionInViewFilterGroup: mockViewFilter.positionInViewFilterGroup,
-        definition: mockAvailableFilterDefinition,
-        label: mockViewFilter.displayValue,
+        label: mockFieldMetadataItem.label,
         type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
       } satisfies RecordFilter,
     ]);
