@@ -1,13 +1,11 @@
 /* eslint-disable no-restricted-imports */
 import { forwardRef, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { Telephony } from 'src/engine/core-modules/telephony/telephony.entity';
 import { TelephonyResolver } from 'src/engine/core-modules/telephony/telephony.resolver';
 import { TelephonyService } from 'src/engine/core-modules/telephony/telephony.service';
@@ -25,7 +23,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     }),
     DataSourceModule,
     forwardRef(() => WorkspaceModule),
-    TypeOrmModule.forFeature([KeyValuePair], 'core'),
   ],
   exports: [TelephonyService],
   providers: [TelephonyService, TelephonyResolver, TypeORMService],
