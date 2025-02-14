@@ -41,34 +41,14 @@
       "runtimeArgs": [
         "nx",
         "run",
-        "twenty-server:jest",
-        "--",
-        "--config",
-        "./jest-integration.config.ts",
-        "${relativeFile}"
+        "twenty-server:command",
+        "my-command",
+        "--my-parameter value"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
       "console": "internalConsole",
       "cwd": "${workspaceFolder}/packages/twenty-server/"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug Integration Tests",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": [
-        "nx",
-        "run",
-        "twenty-server:jest",
-        "--",
-        "--config",
-        "./jest-integration.config.ts",
-        "/Users/mariestoppa/twenty/packages/twenty-server/test/integration/graphql/suites/workspace.integration-spec.ts"
-      ],
-      "cwd": "${workspaceFolder}/packages/twenty-server",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
     },
     {
       "name": "Playwright Test current file",
@@ -84,7 +64,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Integration Test File (to launch with test file open)",
+      "name": "twenty-server - debug integration test file (to launch with test file open)",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
         "nx",
