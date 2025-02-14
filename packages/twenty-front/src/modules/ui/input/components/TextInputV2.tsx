@@ -301,7 +301,7 @@ const StyledComputeNodeDimensions = styled(ComputeNodeDimensions)<{
 }>`
   border: 1px solid transparent;
   height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '30px'};
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   padding: 0 ${({ theme }) => theme.spacing(1)};
   box-sizing: border-box;
 `;
