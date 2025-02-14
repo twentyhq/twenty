@@ -14,55 +14,59 @@ describe('AdminPanelHealthService', () => {
   let healthService: jest.Mocked<HealthCheckService>;
   let healthCacheService: jest.Mocked<HealthCacheService>;
 
+  const defaultMockHealthCheck: HealthCheckResult = {
+    status: 'ok',
+    info: {
+      database: { status: 'up' },
+      redis: { status: 'up' },
+      worker: {
+        status: 'up',
+        queues: [
+          {
+            name: 'test',
+            workers: 1,
+            status: 'up',
+            metrics: {
+              active: 1,
+              completed: 0,
+              delayed: 4,
+              failed: 3,
+              waiting: 0,
+              prioritized: 0,
+            },
+          },
+        ],
+      },
+    },
+    error: {},
+    details: {
+      database: { status: 'up' },
+      redis: { status: 'up' },
+      worker: {
+        status: 'up',
+        queues: [
+          {
+            name: 'test',
+            workers: 1,
+            status: 'up',
+            metrics: {
+              active: 1,
+              completed: 0,
+              delayed: 4,
+              failed: 3,
+              waiting: 0,
+              prioritized: 0,
+            },
+          },
+        ],
+      },
+    },
+  };
+
   beforeEach(async () => {
-    const mockHealthCheck: HealthCheckResult = {
-      status: 'ok',
-      info: {
-        database: { status: 'up' },
-        redis: { status: 'up' },
-        worker: {
-          status: 'up',
-          queues: [
-            {
-              name: 'test',
-              workers: 1,
-              status: 'up',
-              metrics: {
-                active: 0,
-                completed: 0,
-                delayed: 0,
-                failed: 0,
-                waiting: 0,
-                prioritized: 0,
-              },
-            },
-          ],
-        },
-      },
-      error: {},
-      details: {
-        database: { status: 'up' },
-        redis: { status: 'up' },
-        worker: {
-          status: 'up',
-          queues: [
-            {
-              name: 'test',
-              workers: 1,
-              status: 'up',
-              metrics: {
-                active: 0,
-                completed: 0,
-                delayed: 0,
-                failed: 0,
-                waiting: 0,
-                prioritized: 0,
-              },
-            },
-          ],
-        },
-      },
-    };
+    healthService = {
+      check: jest.fn().mockResolvedValue(defaultMockHealthCheck),
+    } as unknown as jest.Mocked<HealthCheckService>;
 
     const mockMessageSync = {
       NOT_SYNCED: 0,
@@ -71,10 +75,6 @@ describe('AdminPanelHealthService', () => {
       FAILED_INSUFFICIENT_PERMISSIONS: 0,
       FAILED_UNKNOWN: 0,
     };
-
-    healthService = {
-      check: jest.fn().mockResolvedValue(mockHealthCheck),
-    } as unknown as jest.Mocked<HealthCheckService>;
 
     healthCacheService = {
       getMessageChannelSyncJobByStatusCounter: jest
@@ -116,55 +116,6 @@ describe('AdminPanelHealthService', () => {
   });
 
   it('should transform health check response to SystemHealth format', async () => {
-    const mockHealthCheck: HealthCheckResult = {
-      status: 'ok',
-      info: {
-        database: { status: 'up' },
-        redis: { status: 'up' },
-        worker: {
-          status: 'up',
-          queues: [
-            {
-              name: 'test',
-              workers: 1,
-              status: 'up',
-              metrics: {
-                active: 0,
-                completed: 0,
-                delayed: 0,
-                failed: 0,
-                waiting: 0,
-                prioritized: 0,
-              },
-            },
-          ],
-        },
-      },
-      error: {},
-      details: {
-        database: { status: 'up' },
-        redis: { status: 'up' },
-        worker: {
-          status: 'up',
-          queues: [
-            {
-              name: 'test',
-              workers: 1,
-              status: 'up',
-              metrics: {
-                active: 0,
-                completed: 0,
-                delayed: 0,
-                failed: 0,
-                waiting: 0,
-                prioritized: 0,
-              },
-            },
-          ],
-        },
-      },
-    };
-
     const mockMessageSync = {
       NOT_SYNCED: 1,
       ONGOING: 2,
@@ -173,7 +124,6 @@ describe('AdminPanelHealthService', () => {
       FAILED_UNKNOWN: 0,
     };
 
-    healthService.check.mockResolvedValueOnce(mockHealthCheck);
     healthCacheService.getMessageChannelSyncJobByStatusCounter.mockResolvedValueOnce(
       mockMessageSync,
     );
@@ -197,10 +147,10 @@ describe('AdminPanelHealthService', () => {
             workers: 1,
             status: AdminPanelHealthServiceStatus.OPERATIONAL,
             metrics: {
-              active: 0,
+              active: 1,
               completed: 0,
-              delayed: 0,
-              failed: 0,
+              delayed: 4,
+              failed: 3,
               waiting: 0,
               prioritized: 0,
             },
