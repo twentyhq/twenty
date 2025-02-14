@@ -7,19 +7,31 @@ type ComputeNodeDimensionsProps = {
     dimensions: { height: number; width: number } | undefined,
   ) => ReactNode;
   node?: ReactNode;
+  className?: string;
 };
 
 const StyledNodeWrapper = styled.span`
   pointer-events: none;
-  position: fixed;
   visibility: hidden;
+`;
+
+const StyledDiv = styled.div`
+  max-width: 100%;
+  position: relative;
+`;
+
+const StyledChildWrapper = styled.div`
+  left: 0;
+  position: absolute;
+  top: 0;
 `;
 
 export const ComputeNodeDimensions = ({
   children,
   node = children(undefined),
+  className,
 }: ComputeNodeDimensionsProps) => {
-  const nodeWrapperRef = useRef<HTMLSpanElement>(null);
+  const nodeWrapperRef = useRef<HTMLDivElement>(null);
   const [nodeDimensions, setNodeDimensions] = useState<
     | {
         width: number;
@@ -45,9 +57,11 @@ export const ComputeNodeDimensions = ({
   }, [nodeWrapperRef]);
 
   return (
-    <>
-      <StyledNodeWrapper ref={nodeWrapperRef}>{node}</StyledNodeWrapper>
-      {nodeDimensions && children(nodeDimensions)}
-    </>
+    <StyledDiv ref={nodeWrapperRef} className={className}>
+      <StyledNodeWrapper>{node}</StyledNodeWrapper>
+      <StyledChildWrapper>
+        {nodeDimensions && children(nodeDimensions)}
+      </StyledChildWrapper>
+    </StyledDiv>
   );
 };
