@@ -10,6 +10,7 @@ export type RecordChipProps = {
   record: ObjectRecord;
   className?: string;
   variant?: AvatarChipVariant;
+  isClickable?: boolean;
 };
 
 export const RecordChip = ({
@@ -17,6 +18,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
+  isClickable = true
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -36,7 +38,7 @@ export const RecordChip = ({
       className={className}
       variant={variant}
       onClick={handleClick}
-      to={getLinkToShowPage(objectNameSingular, record)}
+      to={isClickable ? getLinkToShowPage(objectNameSingular, record) : undefined}
     />
   );
 };

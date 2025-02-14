@@ -12,6 +12,13 @@ export const RelationToOneFieldDisplay = () => {
     return null;
   }
 
+  let isClickable = true;
+
+  if(fieldDefinition?.metadata.fieldName == "accountOwner") {
+    isClickable = false;
+  }
+  
+
   const recordChipData = generateRecordChipData(fieldValue);
 
   return (
@@ -19,6 +26,7 @@ export const RelationToOneFieldDisplay = () => {
       key={recordChipData.recordId}
       objectNameSingular={recordChipData.objectNameSingular}
       record={fieldValue}
+      isClickable={isClickable}
     />
   );
 };
