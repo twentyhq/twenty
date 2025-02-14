@@ -12,7 +12,7 @@ const StyledNodeWrapper = styled.span`
   visibility: hidden;
 `;
 
-const StyledDiv = styled.div`
+const StyledContainer = styled.div`
   max-width: 100%;
   position: relative;
 `;
@@ -30,9 +30,9 @@ export const AutogrowWrapper = ({
   className,
 }: AutogrowWrapperProps) => {
   return (
-    <StyledDiv className={className}>
+    <StyledContainer className={className}>
       <StyledNodeWrapper>{node}</StyledNodeWrapper>
       <StyledChildWrapper>{children}</StyledChildWrapper>
-    </StyledDiv>
+    </StyledContainer>
   );
 };
