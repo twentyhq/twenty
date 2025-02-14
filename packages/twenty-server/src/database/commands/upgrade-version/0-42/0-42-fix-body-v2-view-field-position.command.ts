@@ -163,7 +163,7 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
             aggregateOperation: bodyViewField.aggregateOperation,
           });
 
-          viewFieldRepository.save(viewFieldToCreate);
+          await viewFieldRepository.save(viewFieldToCreate);
 
           await viewFieldRepository.update(
             { id: bodyViewField.id },
