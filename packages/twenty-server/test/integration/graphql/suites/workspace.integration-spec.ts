@@ -17,7 +17,6 @@ describe('WorkspaceResolver', () => {
     const query = gql`
       query getWorkspace {
         currentWorkspace {
-          customDomain
           displayName
           isGoogleAuthEnabled
           isMicrosoftAuthEnabled
@@ -58,18 +57,20 @@ describe('WorkspaceResolver', () => {
         updateWorkspace(data: {
           displayName: "${originalWorkspaceState.displayName}",
           subdomain: "${originalWorkspaceState.subdomain}",
-          customDomain: "${originalWorkspaceState.customDomain}",
           logo: "${originalWorkspaceState.logo}",
           isGoogleAuthEnabled: ${originalWorkspaceState.isGoogleAuthEnabled},
           isMicrosoftAuthEnabled: ${originalWorkspaceState.isMicrosoftAuthEnabled},
           isPasswordAuthEnabled: ${originalWorkspaceState.isPasswordAuthEnabled}
+          isPublicInviteLinkEnabled: ${originalWorkspaceState.isPublicInviteLinkEnabled}
         }) {
           id
         }
       }
     `;
 
-    await makeGraphqlAPIRequest({ query: restoreQuery });
+    const a = await makeGraphqlAPIRequest({ query: restoreQuery });
+
+    console.log(a);
   });
 
   describe('security permissions', () => {
@@ -88,7 +89,7 @@ describe('WorkspaceResolver', () => {
 
         return client
           .post('/graphql')
-          .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
           .expect((res) => {
@@ -148,7 +149,7 @@ describe('WorkspaceResolver', () => {
 
         return client
           .post('/graphql')
-          .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
           .expect((res) => {
@@ -167,9 +168,9 @@ describe('WorkspaceResolver', () => {
         const queryData = {
           query: `
           mutation updateWorkspace {
-            updateWorkspace(data: { isMicrosoftAuthEnabled: true }) {
+            updateWorkspace(data: { isGoogleAuthEnabled: true }) {
               id
-              isMicrosoftAuthEnabled
+              isGoogleAuthEnabled
             }
           }
         `,
@@ -208,7 +209,7 @@ describe('WorkspaceResolver', () => {
 
         return client
           .post('/graphql')
-          .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
           .expect((res) => {
@@ -267,7 +268,7 @@ describe('WorkspaceResolver', () => {
 
         return client
           .post('/graphql')
-          .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
           .expect((res) => {
@@ -359,7 +360,7 @@ describe('WorkspaceResolver', () => {
 
         return client
           .post('/graphql')
-          .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
           .expect((res) => {
@@ -419,7 +420,7 @@ describe('WorkspaceResolver', () => {
 
         return client
           .post('/graphql')
-          .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
           .expect((res) => {
@@ -479,7 +480,7 @@ describe('WorkspaceResolver', () => {
 
         return client
           .post('/graphql')
-          .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
           .expect((res) => {
@@ -539,7 +540,7 @@ describe('WorkspaceResolver', () => {
 
         return client
           .post('/graphql')
-          .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
           .expect((res) => {

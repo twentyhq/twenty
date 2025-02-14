@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import isEmpty from 'lodash.isempty';
 import { Repository } from 'typeorm';
 
 import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
@@ -10,10 +9,6 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -54,7 +49,13 @@ export class WorkspaceManagerService {
    * @param workspaceId
    * @returns Promise<void>
    */
-  public async init(workspaceId: string): Promise<void> {
+  public async init({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }): Promise<void> {
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
@@ -75,7 +76,7 @@ export class WorkspaceManagerService {
       await this.permissionsService.isPermissionsEnabled();
 
     if (permissionsEnabled === true) {
-      await this.initPermissions(workspaceId);
+      await this.initPermissions({ workspaceId, userId });
     }
 
     await this.prefillWorkspaceWithStandardObjects(
@@ -230,30 +231,23 @@ export class WorkspaceManagerService {
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
   }
 
-  private async initPermissions(workspaceId: string) {
+  private async initPermissions({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }) {
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
 
-    const userWorkspace = await this.userWorkspaceRepository.find({
+    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
       where: {
         workspaceId,
+        userId,
       },
     });
-
-    if (isEmpty(userWorkspace)) {
-      throw new PermissionsException(
-        'User workspace not found',
-        PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    if (userWorkspace.length > 1) {
-      throw new PermissionsException(
-        'Multiple user workspaces found, cannot tell which one should be admin',
-        PermissionsExceptionCode.TOO_MANY_ADMIN_CANDIDATES,
-      );
-    }
 
     await this.userRoleService.assignRoleToUserWorkspace({
       workspaceId,
