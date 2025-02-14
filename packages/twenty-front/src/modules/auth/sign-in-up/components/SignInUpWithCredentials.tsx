@@ -1,8 +1,8 @@
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
-  SignInUpStep,
-  signInUpStepState,
+    SignInUpStep,
+    signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
@@ -14,8 +14,8 @@ import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { Loader, MainButton } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledForm = styled.form`
   align-items: center;

@@ -126,9 +126,9 @@ export class Workspace {
   @Column({ unique: true })
   subdomain: string;
 
-  @Field({ nullable: true })
-  @Column({ unique: true, nullable: true })
-  hostname?: string;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  customDomain: string | null;
 
   @Field()
   @Column({ default: true })
@@ -141,4 +141,8 @@ export class Workspace {
   @Field()
   @Column({ default: true })
   isMicrosoftAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: false })
+  isCustomDomainEnabled: boolean;
 }

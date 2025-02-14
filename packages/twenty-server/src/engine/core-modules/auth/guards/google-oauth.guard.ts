@@ -2,23 +2,24 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { Request } from 'express';
 import { Repository } from 'typeorm';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 export class GoogleOauthGuard extends AuthGuard('google') {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly environmentService: EnvironmentService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super({
       prompt: 'select_account',
@@ -26,7 +27,7 @@ export class GoogleOauthGuard extends AuthGuard('google') {
   }
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
     let workspace: Workspace | null = null;
 
     try {
@@ -40,9 +41,6 @@ export class GoogleOauthGuard extends AuthGuard('google') {
         });
       }
 
-      const workspaceInviteHash = request.query.inviteHash;
-      const workspacePersonalInviteToken = request.query.inviteToken;
-
       if (request.query.error === 'access_denied') {
         throw new AuthException(
           'Google OAuth access denied',
@@ -50,34 +48,14 @@ export class GoogleOauthGuard extends AuthGuard('google') {
         );
       }
 
-      if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
-        request.params.workspaceInviteHash = workspaceInviteHash;
-      }
-
-      if (
-        workspacePersonalInviteToken &&
-        typeof workspacePersonalInviteToken === 'string'
-      ) {
-        request.params.workspacePersonalInviteToken =
-          workspacePersonalInviteToken;
-      }
-
-      if (
-        request.query.billingCheckoutSessionState &&
-        typeof request.query.billingCheckoutSessionState === 'string'
-      ) {
-        request.params.billingCheckoutSessionState =
-          request.query.billingCheckoutSessionState;
-      }
-
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        workspace ?? {
-          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-        },
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+          workspace,
+        ),
       );
 
       return false;

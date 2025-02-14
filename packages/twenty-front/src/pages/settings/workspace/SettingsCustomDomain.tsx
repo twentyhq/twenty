@@ -1,14 +1,14 @@
 /* @license Enterprise */
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
 import { H2Title, Section } from 'twenty-ui';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
-import { useRecoilValue } from 'recoil';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;

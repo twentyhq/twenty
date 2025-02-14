@@ -12,6 +12,7 @@ import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/googl
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { WhatsappIntegrationResolver } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.resolver';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
@@ -48,6 +49,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     WhatsappService,
     WhatsappResolver,
     GoogleStorageService,
+    FirebaseService,
   ],
 })
 export class MetaModule {}

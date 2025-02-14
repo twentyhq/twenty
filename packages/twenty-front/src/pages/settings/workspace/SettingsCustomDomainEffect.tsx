@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useEffect, useCallback } from 'react';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useCallback, useEffect } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { useCheckCustomDomainValidRecordsMutation } from '~/generated/graphql';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';

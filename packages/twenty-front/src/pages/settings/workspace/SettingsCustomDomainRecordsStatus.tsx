@@ -1,8 +1,8 @@
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { Status, ThemeColor } from 'twenty-ui';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
+import { Status, ThemeColor } from 'twenty-ui';
 import { CustomDomainValidRecords } from '~/generated/graphql';
 
 const StyledTable = styled(Table)`

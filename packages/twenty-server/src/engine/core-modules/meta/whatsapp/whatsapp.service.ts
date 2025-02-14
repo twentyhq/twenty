@@ -6,6 +6,7 @@ import axios from 'axios';
 import {
   collection,
   doc,
+  Firestore,
   getDoc,
   getDocs,
   query,
@@ -20,6 +21,7 @@ import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { FirebaseService } from 'src/engine/core-modules/meta/services/firebase.service';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 import {
   SendMessageInput,
@@ -32,6 +34,7 @@ import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 
 export class WhatsappService {
   private META_API_URL = this.environmentService.get('META_API_URL');
+  private firestoreDb: Firestore;
 
   constructor(
     @InjectRepository(WhatsappIntegration, 'core')
@@ -42,7 +45,10 @@ export class WhatsappService {
     private sectorRepository: Repository<Sector>,
     @InjectRepository(Agent, 'core')
     private agentRepository: Repository<Agent>,
-  ) {}
+    private readonly firebaseService: FirebaseService,
+  ) {
+    this.firestoreDb = this.firebaseService.getFirestoreDb();
+  }
 
   async sendTemplate(sendTemplateInput: SendTemplateInput) {
     const { integrationId, to, templateName, language } = sendTemplateInput;
