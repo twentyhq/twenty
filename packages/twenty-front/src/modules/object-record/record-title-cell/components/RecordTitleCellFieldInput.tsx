@@ -37,6 +37,10 @@ export const RecordTitleCellFieldInput = ({
 }: RecordTitleCellFieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
+  if (!isFieldText(fieldDefinition) && !isFieldFullName(fieldDefinition)) {
+    throw new Error('Field definition is not a text or full name field');
+  }
+
   return (
     <RecordFieldInputScope
       recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputId)}
@@ -59,9 +63,7 @@ export const RecordTitleCellFieldInput = ({
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
         />
-      ) : (
-        <></>
-      )}
+      ) : null}
     </RecordFieldInputScope>
   );
 };

@@ -8,15 +8,17 @@ import { useContext } from 'react';
 export const RecordTitleCellFieldDisplay = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
+  if (!isFieldText(fieldDefinition) && !isFieldFullName(fieldDefinition)) {
+    throw new Error('Field definition is not a text or full name field');
+  }
+
   return (
     <>
       {isFieldText(fieldDefinition) ? (
         <RecordTitleCellSingleTextDisplayMode />
       ) : isFieldFullName(fieldDefinition) ? (
         <RecordTitleFullNameFieldDisplay />
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   );
 };
