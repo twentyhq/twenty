@@ -212,7 +212,7 @@ describe('useCombinedFindManyRecords', () => {
               firstName: true,
               lastName: true,
             },
-          } as RecordGqlFields,
+          } satisfies RecordGqlFields,
           variables: {},
         },
         {
@@ -220,7 +220,7 @@ describe('useCombinedFindManyRecords', () => {
           fields: {
             id: true,
             name: true,
-          } as RecordGqlFields,
+          } satisfies RecordGqlFields,
           variables: {},
         },
       ],
@@ -283,7 +283,7 @@ describe('useCombinedFindManyRecords', () => {
               firstName: true,
               lastName: true,
             },
-          } as RecordGqlFields,
+          } satisfies RecordGqlFields,
           variables: {
             limit: 1,
             cursorFilter: {
@@ -349,7 +349,7 @@ describe('useCombinedFindManyRecords', () => {
               firstName: true,
               lastName: true,
             },
-          } as RecordGqlFields,
+          } satisfies RecordGqlFields,
           variables: {
             limit: 1,
             cursorFilter: {
@@ -415,7 +415,7 @@ describe('useCombinedFindManyRecords', () => {
               firstName: true,
               lastName: true,
             },
-          } as RecordGqlFields,
+          } satisfies RecordGqlFields,
           variables: {
             limit: 1,
           },
@@ -495,7 +495,7 @@ describe('useCombinedFindManyRecords', () => {
               firstName: true,
               lastName: true,
             },
-          } as RecordGqlFields,
+          } satisfies RecordGqlFields,
           variables: {
             limit: 1,
             cursorFilter: {
@@ -509,7 +509,7 @@ describe('useCombinedFindManyRecords', () => {
           fields: {
             id: true,
             name: true,
-          } as RecordGqlFields,
+          } satisfies RecordGqlFields,
           variables: {
             limit: 1,
           },
@@ -558,7 +558,7 @@ describe('useCombinedFindManyRecords', () => {
           objectNameSingular: 'person',
           fields: {
             id: true,
-          } as RecordGqlFields,
+          } satisfies RecordGqlFields,
           variables: {},
         },
       ],

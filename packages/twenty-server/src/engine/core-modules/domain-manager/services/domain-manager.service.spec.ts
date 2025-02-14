@@ -25,6 +25,7 @@ describe('DomainManagerService', () => {
       const result = domainManagerService.getWorkspaceUrls({
         subdomain: 'subdomain',
         customDomain: 'custom-host.com',
+        isCustomDomainEnabled: true,
       });
 
       expect(result).toEqual({
@@ -47,7 +48,8 @@ describe('DomainManagerService', () => {
 
       const result = domainManagerService.getWorkspaceUrls({
         subdomain: 'subdomain',
-        customDomain: undefined,
+        customDomain: null,
+        isCustomDomainEnabled: false,
       });
 
       expect(result).toEqual({
@@ -155,7 +157,8 @@ describe('DomainManagerService', () => {
       const result = domainManagerService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
-          customDomain: undefined,
+          customDomain: null,
+          isCustomDomainEnabled: false,
         },
       });
 
@@ -177,7 +180,8 @@ describe('DomainManagerService', () => {
       const result = domainManagerService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
-          customDomain: undefined,
+          customDomain: null,
+          isCustomDomainEnabled: false,
         },
         pathname: '/path/to/resource',
       });
@@ -200,7 +204,8 @@ describe('DomainManagerService', () => {
       const result = domainManagerService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
-          customDomain: undefined,
+          customDomain: null,
+          isCustomDomainEnabled: false,
         },
         searchParams: {
           foo: 'bar',

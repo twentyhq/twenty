@@ -7,10 +7,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyOneRecordMutationResponseField } from '@/object-record/utils/getDestroyOneRecordMutationResponseField';
-import { capitalize } from 'twenty-shared';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { capitalize, isDefined } from 'twenty-shared';
 
 type useDestroyOneRecordProps = {
   objectNameSingular: string;
@@ -26,9 +24,7 @@ export const useDestroyOneRecord = ({
     objectNameSingular,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular,
-  });
+  const getRecordFromCache = useGetRecordFromCache({ objectNameSingular });
 
   const { destroyOneRecordMutation } = useDestroyOneRecordMutation({
     objectNameSingular,
@@ -41,7 +37,7 @@ export const useDestroyOneRecord = ({
 
   const destroyOneRecord = useCallback(
     async (idToDestroy: string) => {
-      const originalRecord: ObjectRecord | null = getRecordFromCache(
+      const originalRecord = getRecordFromCache(
         idToDestroy,
         apolloClient.cache,
       );
@@ -58,13 +54,10 @@ export const useDestroyOneRecord = ({
           },
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
-
-            if (!record) return;
+            if (!isDefined(record)) return;
 
             const cachedRecord = getRecordFromCache(record.id, cache);
-
-            if (!cachedRecord) return;
-
+            if (!isDefined(cachedRecord)) return;
             triggerDestroyRecordsOptimisticEffect({
               cache,
               objectMetadataItem,
@@ -74,7 +67,7 @@ export const useDestroyOneRecord = ({
           },
         })
         .catch((error: Error) => {
-          if (!isUndefinedOrNull(originalRecord)) {
+          if (isDefined(originalRecord)) {
             triggerCreateRecordsOptimisticEffect({
               cache: apolloClient.cache,
               objectMetadataItem,
@@ -82,6 +75,7 @@ export const useDestroyOneRecord = ({
               objectMetadataItems,
             });
           }
+
           throw error;
         });
 

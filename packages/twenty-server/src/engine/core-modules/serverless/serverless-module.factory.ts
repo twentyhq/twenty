@@ -29,7 +29,11 @@ export const serverlessModuleFactory = async (
       const secretAccessKey = environmentService.get(
         'SERVERLESS_LAMBDA_SECRET_ACCESS_KEY',
       );
-      const role = environmentService.get('SERVERLESS_LAMBDA_ROLE');
+      const lambdaRole = environmentService.get('SERVERLESS_LAMBDA_ROLE');
+
+      const subhostingRole = environmentService.get(
+        'SERVERLESS_LAMBDA_SUBHOSTING_ROLE',
+      );
 
       return {
         type: ServerlessDriverType.Lambda,
@@ -43,8 +47,9 @@ export const serverlessModuleFactory = async (
             : fromNodeProviderChain({
                 clientConfig: { region },
               }),
-          region: region ?? '',
-          role: role ?? '',
+          region,
+          lambdaRole,
+          subhostingRole,
         },
       };
     }

@@ -93,16 +93,12 @@ const StyledInput = styled.input<
   }
 
   &:focus {
-    ${({ theme }) => {
+    ${({ theme, error }) => {
       return `
-      border-color: ${theme.color.blue};
+      border-color: ${error ? theme.border.color.danger : theme.color.blue};
       `;
     }};
   }
-`;
-
-const StyledErrorHelper = styled(InputErrorHelper)`
-  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputV2Size }>`
@@ -294,9 +290,7 @@ const TextInputV2Component = forwardRef<
             )}
           </StyledTrailingIconContainer>
         </StyledInputContainer>
-        {error && !noErrorHelper && (
-          <StyledErrorHelper>{error}</StyledErrorHelper>
-        )}
+        <InputErrorHelper isVisible={!noErrorHelper}>{error}</InputErrorHelper>
       </StyledContainer>
     );
   },

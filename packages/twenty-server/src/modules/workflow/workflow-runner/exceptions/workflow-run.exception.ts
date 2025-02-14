@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkflowRunException extends CustomException {
-  code: WorkflowRunExceptionCode;
   constructor(message: string, code: WorkflowRunExceptionCode) {
     super(message, code);
   }

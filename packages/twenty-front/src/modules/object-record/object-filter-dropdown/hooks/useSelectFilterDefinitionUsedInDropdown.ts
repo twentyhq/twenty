@@ -6,7 +6,8 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
-import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -62,13 +63,15 @@ export const useSelectFilterDefinitionUsedInDropdown = (
       setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
     }
 
-    setSelectedOperandInDropdown(
-      getRecordFilterOperandsForRecordFilterDefinition(filterDefinition)[0],
-    );
+    const firstOperand = getRecordFilterOperands({
+      filterType: filterDefinition.type,
+    })[0];
+
+    setSelectedOperandInDropdown(firstOperand);
 
     const { value, displayValue } = getInitialFilterValue(
       filterDefinition.type,
-      getRecordFilterOperandsForRecordFilterDefinition(filterDefinition)[0],
+      firstOperand,
     );
 
     const isAdvancedFilter = isDefined(advancedFilterViewFilterId);
@@ -78,8 +81,7 @@ export const useSelectFilterDefinitionUsedInDropdown = (
         id: advancedFilterViewFilterId ?? v4(),
         fieldMetadataId: filterDefinition.fieldMetadataId,
         displayValue,
-        operand:
-          getRecordFilterOperandsForRecordFilterDefinition(filterDefinition)[0],
+        operand: firstOperand,
         value,
         definition: filterDefinition,
         viewFilterGroupId: advancedFilterViewFilterGroupId,

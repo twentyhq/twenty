@@ -61,22 +61,12 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsMicrosoftSyncEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsAdvancedFiltersEnabled,
         workspaceId: workspaceId,
         value: false,
       },
       {
         key: FeatureFlagKey.IsCommandMenuV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsLocalizationEnabled,
         workspaceId: workspaceId,
         value: true,
       },

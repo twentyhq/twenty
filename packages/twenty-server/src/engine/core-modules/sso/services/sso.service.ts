@@ -198,7 +198,7 @@ export class SSOService {
     });
   }
 
-  async getAuthorizationUrl(
+  async getAuthorizationUrlForSSO(
     identityProviderId: string,
     searchParams: Record<string, string | boolean>,
   ) {

@@ -15,8 +15,8 @@ import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
+import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
-
 @Injectable()
 export class MessagingFullMessageListFetchService {
   constructor(
@@ -27,6 +27,7 @@ export class MessagingFullMessageListFetchService {
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
+    private readonly messagingCursorService: MessagingCursorService,
   ) {}
 
   public async processMessageListFetch(
@@ -39,80 +40,71 @@ export class MessagingFullMessageListFetchService {
         [messageChannel.id],
       );
 
-      const { messageExternalIds, nextSyncCursor } =
-        await this.messagingGetMessageListService.getFullMessageList(
-          connectedAccount,
+      const fullMessageLists =
+        await this.messagingGetMessageListService.getFullMessageLists(
+          messageChannel,
         );
 
-      const messageChannelMessageAssociationRepository =
-        await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-          'messageChannelMessageAssociation',
+      for (const fullMessageList of fullMessageLists) {
+        const { messageExternalIds, nextSyncCursor, folderId } =
+          fullMessageList;
+
+        const messageChannelMessageAssociationRepository =
+          await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            'messageChannelMessageAssociation',
+          );
+
+        const existingMessageChannelMessageAssociations =
+          await messageChannelMessageAssociationRepository.find({
+            where: {
+              messageChannelId: messageChannel.id,
+            },
+          });
+
+        const existingMessageChannelMessageAssociationsExternalIds =
+          existingMessageChannelMessageAssociations.map(
+            (messageChannelMessageAssociation) =>
+              messageChannelMessageAssociation.messageExternalId,
+          );
+
+        const messageExternalIdsToImport = messageExternalIds.filter(
+          (messageExternalId) =>
+            !existingMessageChannelMessageAssociationsExternalIds.includes(
+              messageExternalId,
+            ),
         );
 
-      const existingMessageChannelMessageAssociations =
-        await messageChannelMessageAssociationRepository.find({
-          where: {
+        const messageExternalIdsToDelete =
+          existingMessageChannelMessageAssociationsExternalIds.filter(
+            (existingMessageCMAExternalId) =>
+              existingMessageCMAExternalId &&
+              !messageExternalIds.includes(existingMessageCMAExternalId),
+          );
+
+        if (messageExternalIdsToDelete.length) {
+          await messageChannelMessageAssociationRepository.delete({
             messageChannelId: messageChannel.id,
-          },
-        });
+            messageExternalId: In(messageExternalIdsToDelete),
+          });
 
-      const existingMessageChannelMessageAssociationsExternalIds =
-        existingMessageChannelMessageAssociations.map(
-          (messageChannelMessageAssociation) =>
-            messageChannelMessageAssociation.messageExternalId,
-        );
+          await this.messagingMessageCleanerService.cleanWorkspaceThreads(
+            workspaceId,
+          );
+        }
 
-      const messageExternalIdsToImport = messageExternalIds.filter(
-        (messageExternalId) =>
-          !existingMessageChannelMessageAssociationsExternalIds.includes(
-            messageExternalId,
-          ),
-      );
+        if (messageExternalIdsToImport.length) {
+          await this.cacheStorage.setAdd(
+            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            messageExternalIdsToImport,
+          );
+        }
 
-      const messageExternalIdsToDelete =
-        existingMessageChannelMessageAssociationsExternalIds.filter(
-          (existingMessageCMAExternalId) =>
-            existingMessageCMAExternalId &&
-            !messageExternalIds.includes(existingMessageCMAExternalId),
-        );
-
-      if (messageExternalIdsToDelete.length) {
-        await messageChannelMessageAssociationRepository.delete({
-          messageChannelId: messageChannel.id,
-          messageExternalId: In(messageExternalIdsToDelete),
-        });
-
-        await this.messagingMessageCleanerService.cleanWorkspaceThreads(
-          workspaceId,
+        await this.messagingCursorService.updateCursor(
+          messageChannel,
+          nextSyncCursor,
+          folderId,
         );
       }
-
-      if (messageExternalIdsToImport.length) {
-        await this.cacheStorage.setAdd(
-          `messages-to-import:${workspaceId}:${messageChannel.id}`,
-          messageExternalIdsToImport,
-        );
-      }
-
-      const messageChannelRepository =
-        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-          'messageChannel',
-        );
-
-      await messageChannelRepository.update(
-        {
-          id: messageChannel.id,
-        },
-        {
-          throttleFailureCount: 0,
-          syncStageStartedAt: null,
-          syncCursor:
-            !messageChannel.syncCursor ||
-            nextSyncCursor > messageChannel.syncCursor
-              ? nextSyncCursor
-              : messageChannel.syncCursor,
-        },
-      );
 
       await this.messageChannelSyncStatusService.scheduleMessagesImport([
         messageChannel.id,

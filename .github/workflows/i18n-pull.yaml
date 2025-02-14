@@ -80,8 +80,37 @@ jobs:
           github_base_url: 'github.com'
           github_user_name: 'Crowdin Bot'
           github_user_email: 'support+bot@crowdin.com'
-
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Compile translations
+        if: inputs.force_pull || steps.compile_translations.outcome == 'failure'
+        run: |
+          npx nx run twenty-server:lingui:compile
+          npx nx run twenty-emails:lingui:compile 
+          npx nx run twenty-front:lingui:compile
+
+      - name: Check and commit compiled files
+        id: check_changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          git add .
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: compile translations [skip ci]"
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push changes
+        if: steps.check_changes.outputs.changes_detected == 'true'
+        run: git push origin HEAD:i18n
+
+      - name: Create pull request
+        if: steps.check_changes.outputs.changes_detected == 'true'
+        run: gh pr create -B main -H i18n --title 'i18n - translations' --body 'Created by Github action' || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,4 +1,4 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
 import { WorkflowDiagramCreateStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepNode';
@@ -8,14 +8,14 @@ import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/com
 import { ReactFlowProvider } from '@xyflow/react';
 
 export const WorkflowDiagramCanvasEditable = ({
-  workflowWithCurrentVersion,
+  versionStatus,
 }: {
-  workflowWithCurrentVersion: WorkflowWithCurrentVersion;
+  versionStatus: WorkflowVersionStatus;
 }) => {
   return (
     <ReactFlowProvider>
       <WorkflowDiagramCanvasBase
-        status={workflowWithCurrentVersion.currentVersion.status}
+        status={versionStatus}
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
           'create-step': WorkflowDiagramCreateStepNode,

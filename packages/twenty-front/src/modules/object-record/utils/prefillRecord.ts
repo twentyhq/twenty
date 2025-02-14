@@ -7,13 +7,14 @@ import { generateDefaultFieldValue } from '@/object-record/utils/generateDefault
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
 
+type PrefillRecordArgs = {
+  objectMetadataItem: ObjectMetadataItem;
+  input: Record<string, unknown>;
+};
 export const prefillRecord = <T extends ObjectRecord>({
   objectMetadataItem,
   input,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-  input: Record<string, unknown>;
-}) => {
+}: PrefillRecordArgs) => {
   return Object.fromEntries(
     objectMetadataItem.fields
       .map((fieldMetadataItem) => {
@@ -26,12 +27,10 @@ export const prefillRecord = <T extends ObjectRecord>({
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
         }
 
-        return [
-          fieldMetadataItem.name,
-          isUndefined(inputValue)
-            ? generateDefaultFieldValue(fieldMetadataItem)
-            : inputValue,
-        ];
+        const fieldValue = isUndefined(inputValue)
+          ? generateDefaultFieldValue({ fieldMetadataItem })
+          : inputValue;
+        return [fieldMetadataItem.name, fieldValue];
       })
       .filter(isDefined),
   ) as T;

@@ -64,7 +64,7 @@ const StyledAvatarGroup = styled.div`
 `;
 
 const StyledTableHeaderRow = styled(Table)`
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledBottomSection = styled(Section)`
