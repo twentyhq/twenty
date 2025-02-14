@@ -9,10 +9,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export interface FieldMetadataInterface<
-  T extends FieldMetadataType | 'default' = 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > {
   id: string;
-  type: FieldMetadataType;
+  type: T;
   name: string;
   label: string;
   defaultValue?: FieldMetadataDefaultValue<T>;

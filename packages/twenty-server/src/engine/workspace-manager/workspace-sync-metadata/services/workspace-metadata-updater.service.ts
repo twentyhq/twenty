@@ -15,6 +15,8 @@ import { v4 as uuidV4 } from 'uuid';
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -24,12 +26,15 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { FieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { ObjectMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
+  constructor(private readonly featureFlagService: FeatureFlagService) {}
+
   async updateObjectMetadata(
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
@@ -275,6 +280,15 @@ export class WorkspaceMetadataUpdaterService {
     createdIndexMetadataCollection: IndexMetadataEntity[];
   }> {
     const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
+    const workspaceId = originalObjectMetadataCollection?.[0]?.workspaceId;
+    let isNewRelationEnabled = false;
+
+    if (workspaceId) {
+      isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsNewRelationEnabled,
+        workspaceId,
+      );
+    }
 
     const convertIndexMetadataForSaving = (
       indexMetadata: PartialIndexMetadata,
@@ -287,6 +301,15 @@ export class WorkspaceMetadataUpdaterService {
         const fieldMetadata = originalObjectMetadataCollection
           .find((object) => object.id === indexMetadata.objectMetadataId)
           ?.fields.find((field) => {
+            if (
+              isNewRelationEnabled &&
+              isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)
+            ) {
+              if (field.settings?.joinColumnName === column) {
+                return true;
+              }
+            }
+
             if (field.name === column) {
               return true;
             }

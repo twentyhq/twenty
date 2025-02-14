@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import isEmpty from 'lodash.isempty';
 import { Repository } from 'typeorm';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -46,6 +47,7 @@ export class WorkspaceManagerService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   /**
@@ -65,9 +67,13 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
+    const featureFlags =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
+      featureFlags,
     });
 
     const permissionsEnabled =
@@ -100,9 +106,13 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
+    const featureFlags =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
+      featureFlags,
     });
 
     await this.prefillWorkspaceWithDemoObjects(dataSourceMetadata, workspaceId);
@@ -120,9 +130,13 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
+    const featureFlags =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
+      featureFlags,
     });
 
     const permissionsEnabled =

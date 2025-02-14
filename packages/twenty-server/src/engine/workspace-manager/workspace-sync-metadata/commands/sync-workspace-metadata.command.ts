@@ -4,6 +4,7 @@ import { Command, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
@@ -30,6 +31,7 @@ export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesCommandRunner 
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(workspaceRepository);
   }
@@ -95,11 +97,17 @@ export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesCommandRunner 
             workspaceId,
           );
 
+        const featureFlags =
+          await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+            workspaceId,
+          );
+
         const { storage, workspaceMigrations } =
           await this.workspaceSyncMetadataService.synchronize(
             {
               workspaceId,
               dataSourceId: dataSourceMetadata.id,
+              featureFlags,
             },
             { applyChanges: !options.dryRun },
           );

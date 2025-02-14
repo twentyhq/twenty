@@ -1,12 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import { DataSource, QueryFailedError } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -28,7 +26,6 @@ export class WorkspaceSyncMetadataService {
   constructor(
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
@@ -36,8 +33,6 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 
   /**
@@ -71,12 +66,6 @@ export class WorkspaceSyncMetadataService {
         WorkspaceMigrationEntity,
       );
 
-      // Retrieve feature flags
-      const workspaceFeatureFlagsMap =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-          context.workspaceId,
-        );
-
       this.logger.log('Syncing standard objects and fields metadata');
 
       // 1 - Sync standard objects
@@ -85,7 +74,6 @@ export class WorkspaceSyncMetadataService {
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       // 2 - Sync standard fields on standard and custom objects
@@ -94,7 +82,6 @@ export class WorkspaceSyncMetadataService {
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       // 3 - Sync standard relations on standard and custom objects
@@ -103,7 +90,6 @@ export class WorkspaceSyncMetadataService {
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       // 4 - Sync standard indexes on standard objects
@@ -112,7 +98,6 @@ export class WorkspaceSyncMetadataService {
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       // 5 - Sync standard object metadata identifiers, does not need to return nor apply migrations
@@ -120,7 +105,6 @@ export class WorkspaceSyncMetadataService {
         context,
         manager,
         storage,
-        workspaceFeatureFlagsMap,
       );
 
       // Save workspace migrations into the database
