@@ -14,21 +14,15 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
-import React, { useEffect } from 'react';
-import {
-  FeatureFlagKey,
-  SettingsFeatures,
-  useGetRolesQuery,
-} from '~/generated/graphql';
+import React from 'react';
+import { useGetRolesQuery } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -96,24 +90,12 @@ const StyledAssignedText = styled.div`
 
 export const SettingsRoles = () => {
   const { t } = useLingui();
-  const isPermissionsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsEnabled,
-  );
+
   const theme = useTheme();
   const navigateSettings = useNavigateSettings();
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
     fetchPolicy: 'network-only',
   });
-
-  const hasRolesSettingsPermission = useHasSettingsPermission(
-    SettingsFeatures.ROLES,
-  );
-
-  useEffect(() => {
-    if (!isPermissionsEnabled || !hasRolesSettingsPermission) {
-      navigateSettings(SettingsPath.ProfilePage);
-    }
-  }, [navigateSettings, isPermissionsEnabled, hasRolesSettingsPermission]);
 
   const handleRoleClick = (roleId: string) => {
     navigateSettings(SettingsPath.RoleDetail, { roleId });

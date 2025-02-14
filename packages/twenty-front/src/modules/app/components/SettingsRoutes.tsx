@@ -1,8 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsFeatures } from 'twenty-shared';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -299,26 +302,35 @@ export const SettingsRoutes = ({
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
       />
-      <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
-      <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
       <Route
-        path={SettingsPath.ObjectOverview}
-        element={<SettingsObjectOverview />}
-      />
-      <Route
-        path={SettingsPath.ObjectDetail}
-        element={<SettingsObjectDetailPage />}
-      />
-      <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
-      {isPermissionsEnabled && (
-        <>
-          <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
-          <Route
-            path={SettingsPath.RoleDetail}
-            element={<SettingsRoleEdit />}
+        element={
+          <SettingsProtectedRouteWrapper
+            feature={SettingsFeatures.DATA_MODEL}
           />
-        </>
-      )}
+        }
+      >
+        <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
+        <Route
+          path={SettingsPath.ObjectOverview}
+          element={<SettingsObjectOverview />}
+        />
+        <Route
+          path={SettingsPath.ObjectDetail}
+          element={<SettingsObjectDetailPage />}
+        />
+        <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            feature={SettingsFeatures.ROLES}
+            requiresFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
+          />
+        }
+      >
+        <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
+        <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
+      </Route>
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
         path={SettingsPath.DevelopersNewApiKey}

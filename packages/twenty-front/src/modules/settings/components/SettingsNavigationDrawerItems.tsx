@@ -27,6 +27,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
+import { SettingsNavigationItemWrapper } from '@/settings/components/SettingsNavigationItemWrapper';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
@@ -142,16 +143,22 @@ export const SettingsNavigationDrawerItems = () => {
       </NavigationDrawerSection>
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label={t`Workspace`} />
-        <SettingsNavigationDrawerItem
-          label={t`General`}
-          path={SettingsPath.Workspace}
-          Icon={IconSettings}
-        />
-        <SettingsNavigationDrawerItem
-          label={t`Members`}
-          path={SettingsPath.WorkspaceMembersPage}
-          Icon={IconUsers}
-        />
+        <SettingsNavigationItemWrapper feature={SettingsFeatures.WORKSPACE}>
+          <SettingsNavigationDrawerItem
+            label={t`General`}
+            path={SettingsPath.Workspace}
+            Icon={IconSettings}
+          />
+        </SettingsNavigationItemWrapper>
+        <SettingsNavigationItemWrapper
+          feature={SettingsFeatures.WORKSPACE_USERS}
+        >
+          <SettingsNavigationDrawerItem
+            label={t`Members`}
+            path={SettingsPath.WorkspaceMembersPage}
+            Icon={IconUsers}
+          />
+        </SettingsNavigationItemWrapper>
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
             label={t`Billing`}
@@ -159,30 +166,40 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCurrencyDollar}
           />
         )}
-        {isPermissionsEnabled &&
-          settingsPermissionMap[SettingsFeatures.ROLES] && (
-            <SettingsNavigationDrawerItem
-              label={t`Roles`}
-              path={SettingsPath.Roles}
-              Icon={IconLock}
-            />
-          )}
-        <SettingsNavigationDrawerItem
-          label={t`Data model`}
-          path={SettingsPath.Objects}
-          Icon={IconHierarchy2}
-        />
-        <SettingsNavigationDrawerItem
-          label={t`Integrations`}
-          path={SettingsPath.Integrations}
-          Icon={IconApps}
-        />
-        <AdvancedSettingsWrapper navigationDrawerItem={true}>
+        <SettingsNavigationItemWrapper
+          feature={SettingsFeatures.ROLES}
+          requiresFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
+        >
           <SettingsNavigationDrawerItem
-            label={t`Security`}
-            path={SettingsPath.Security}
-            Icon={IconKey}
+            label={t`Roles`}
+            path={SettingsPath.Roles}
+            Icon={IconLock}
           />
+        </SettingsNavigationItemWrapper>
+        <SettingsNavigationItemWrapper feature={SettingsFeatures.DATA_MODEL}>
+          <SettingsNavigationDrawerItem
+            label={t`Data model`}
+            path={SettingsPath.Objects}
+            Icon={IconHierarchy2}
+          />
+        </SettingsNavigationItemWrapper>
+        <SettingsNavigationItemWrapper
+          feature={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
+        >
+          <SettingsNavigationDrawerItem
+            label={t`Integrations`}
+            path={SettingsPath.Integrations}
+            Icon={IconApps}
+          />
+        </SettingsNavigationItemWrapper>
+        <AdvancedSettingsWrapper navigationDrawerItem={true}>
+          <SettingsNavigationItemWrapper feature={SettingsFeatures.SECURITY}>
+            <SettingsNavigationDrawerItem
+              label={t`Security`}
+              path={SettingsPath.Security}
+              Icon={IconKey}
+            />
+          </SettingsNavigationItemWrapper>
         </AdvancedSettingsWrapper>
       </NavigationDrawerSection>
 
@@ -191,30 +208,40 @@ export const SettingsNavigationDrawerItems = () => {
           <NavigationDrawerSectionTitle label={t`Developers`} />
         </AdvancedSettingsWrapper>
         <AdvancedSettingsWrapper navigationDrawerItem={true}>
-          <SettingsNavigationDrawerItem
-            label={t`API & Webhooks`}
-            path={SettingsPath.Developers}
-            Icon={IconCode}
-          />
+          <SettingsNavigationItemWrapper
+            feature={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
+          >
+            <SettingsNavigationDrawerItem
+              label={t`API & Webhooks`}
+              path={SettingsPath.Developers}
+              Icon={IconCode}
+            />
+          </SettingsNavigationItemWrapper>
         </AdvancedSettingsWrapper>
         {isFunctionSettingsEnabled && (
           <AdvancedSettingsWrapper navigationDrawerItem={true}>
-            <SettingsNavigationDrawerItem
-              label={t`Functions`}
-              path={SettingsPath.ServerlessFunctions}
-              Icon={IconFunction}
-            />
+            <SettingsNavigationItemWrapper
+              feature={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
+            >
+              <SettingsNavigationDrawerItem
+                label={t`Functions`}
+                path={SettingsPath.ServerlessFunctions}
+                Icon={IconFunction}
+              />
+            </SettingsNavigationItemWrapper>
           </AdvancedSettingsWrapper>
         )}
       </NavigationDrawerSection>
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label={t`Other`} />
         {isAdminPageEnabled && (
-          <SettingsNavigationDrawerItem
-            label={t`Server Admin`}
-            path={SettingsPath.AdminPanel}
-            Icon={IconServer}
-          />
+          <SettingsNavigationItemWrapper feature={SettingsFeatures.ADMIN_PANEL}>
+            <SettingsNavigationDrawerItem
+              label={t`Server Admin`}
+              path={SettingsPath.AdminPanel}
+              Icon={IconServer}
+            />
+          </SettingsNavigationItemWrapper>
         )}
         {labPublicFeatureFlags?.length > 0 && (
           <SettingsNavigationDrawerItem
