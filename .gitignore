@@ -18,6 +18,7 @@
 !.yarn/sdks
 !.yarn/versions
 .vercel
+.swc
 
 **/**/logs/**
 
@@ -40,3 +41,5 @@ dump.rdb
 /devenv.nix
 /flake.lock
 /flake.nix
+
+.crowdin.yml

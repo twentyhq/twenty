@@ -12,7 +12,7 @@ import { isFieldRating } from '../../types/guards/isFieldRating';
 export const useRatingField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.Rating, isFieldRating, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.RATING, isFieldRating, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

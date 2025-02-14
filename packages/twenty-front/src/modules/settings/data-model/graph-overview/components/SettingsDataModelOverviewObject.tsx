@@ -13,8 +13,10 @@ import { capitalize } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
+import { SettingsPath } from '@/types/SettingsPath';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;
 type SettingsDataModelOverviewObjectProps =
@@ -109,10 +111,12 @@ export const SettingsDataModelOverviewObject = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const fields = objectMetadataItem.fields.filter((x) => !x.isSystem);
+  const fields = objectMetadataItem.fields.filter(
+    (x) => !x.isSystem && x.isActive,
+  );
 
   const countNonRelation = fields.filter(
-    (x) => x.type !== FieldMetadataType.Relation,
+    (x) => x.type !== FieldMetadataType.RELATION,
   ).length;
 
   const Icon = getIcon(objectMetadataItem.icon);
@@ -122,7 +126,9 @@ export const SettingsDataModelOverviewObject = ({
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
           <StyledObjectLink
-            to={`/settings/objects/${objectMetadataItem.namePlural}`}
+            to={getSettingsPath(SettingsPath.Objects, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
           >
             {Icon && <Icon size={theme.icon.size.md} />}
             {capitalize(objectMetadataItem.namePlural)}
@@ -136,7 +142,7 @@ export const SettingsDataModelOverviewObject = ({
 
       <StyledInnerCard>
         {fields
-          .filter((x) => x.type === FieldMetadataType.Relation)
+          .filter((x) => x.type === FieldMetadataType.RELATION)
           .map((field) => (
             <StyledCardRow key={field.id}>
               <ObjectFieldRow field={field} />
@@ -156,9 +162,9 @@ export const SettingsDataModelOverviewObject = ({
             </StyledCardRowOther>
             {otherFieldsExpanded &&
               fields
-                .filter((x) => x.type !== FieldMetadataType.Relation)
+                .filter((x) => x.type !== FieldMetadataType.RELATION)
                 .map((field) => (
-                  <StyledCardRow>
+                  <StyledCardRow key={field.id}>
                     <ObjectFieldRowWithoutRelation field={field} />
                   </StyledCardRow>
                 ))}

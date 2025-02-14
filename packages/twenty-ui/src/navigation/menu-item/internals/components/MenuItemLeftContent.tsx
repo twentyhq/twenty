@@ -19,7 +19,7 @@ const StyledMainText = styled.div`
 `;
 
 const StyledContextualText = styled.div`
-  color: ${({ theme }) => theme.color.gray35};
+  color: ${({ theme }) => theme.font.color.light};
   font-family: inherit;
 
   font-size: inherit;
@@ -40,7 +40,7 @@ type MenuItemLeftContentProps = {
   className?: string;
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   text: ReactNode;
   contextualText?: ReactNode;
 };
@@ -51,7 +51,7 @@ export const MenuItemLeftContent = ({
   text,
   contextualText,
   showGrip = false,
-  isDisabled = false,
+  disabled = false,
 }: MenuItemLeftContentProps) => {
   const theme = useTheme();
 
@@ -63,7 +63,7 @@ export const MenuItemLeftContent = ({
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
             color={
-              isDisabled ? theme.font.color.extraLight : theme.font.color.light
+              disabled ? theme.font.color.extraLight : theme.font.color.light
             }
           />
         </StyledDraggableItem>

@@ -11,7 +11,7 @@ const calendarEvents: TimelineCalendarEvent[] = [
     id: '1234',
     isFullDay: false,
     startsAt: '2024-02-17T21:45:27.822Z',
-    visibility: CalendarChannelVisibility.Metadata,
+    visibility: CalendarChannelVisibility.METADATA,
     conferenceLink: {
       primaryLinkUrl: 'https://meet.google.com/abc-def-ghi',
       primaryLinkLabel: 'Google Meet',
@@ -30,7 +30,7 @@ const calendarEvents: TimelineCalendarEvent[] = [
     id: '5678',
     isFullDay: false,
     startsAt: '2024-02-18T21:43:27.754Z',
-    visibility: CalendarChannelVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     conferenceLink: {
       primaryLinkUrl: 'https://meet.google.com/abc-def-ghi',
       primaryLinkLabel: 'Google Meet',
@@ -49,7 +49,7 @@ const calendarEvents: TimelineCalendarEvent[] = [
     id: '91011',
     isFullDay: true,
     startsAt: '2024-02-19T22:05:27.653Z',
-    visibility: CalendarChannelVisibility.Metadata,
+    visibility: CalendarChannelVisibility.METADATA,
     conferenceLink: {
       primaryLinkUrl: 'https://meet.google.com/abc-def-ghi',
       primaryLinkLabel: 'Google Meet',
@@ -68,7 +68,7 @@ const calendarEvents: TimelineCalendarEvent[] = [
     id: '121314',
     isFullDay: true,
     startsAt: '2024-02-20T23:15:23.150Z',
-    visibility: CalendarChannelVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     conferenceLink: {
       primaryLinkUrl: 'https://meet.google.com/abc-def-ghi',
       primaryLinkLabel: 'Google Meet',

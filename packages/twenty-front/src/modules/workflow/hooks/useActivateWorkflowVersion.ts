@@ -1,4 +1,3 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useApolloClient, useMutation } from '@apollo/client';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
@@ -7,19 +6,19 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { ACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/activateWorkflowVersion';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { isDefined } from 'twenty-shared';
 import {
   ActivateWorkflowVersionMutation,
   ActivateWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
 
 export const useActivateWorkflowVersion = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
   const [mutate] = useMutation<
     ActivateWorkflowVersionMutation,
     ActivateWorkflowVersionMutationVariables
   >(ACTIVATE_WORKFLOW_VERSION, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
@@ -61,6 +60,23 @@ export const useActivateWorkflowVersion = () => {
           (version) =>
             version.status === 'ACTIVE' && version.id !== workflowVersionId,
         );
+
+        const newlyActiveWorkflowVersion = allWorkflowVersions.find(
+          (version) => version.id === workflowVersionId,
+        );
+
+        if (isDefined(newlyActiveWorkflowVersion)) {
+          triggerUpdateRecordOptimisticEffect({
+            cache: apolloClient.cache,
+            objectMetadataItem: objectMetadataItemWorkflowVersion,
+            currentRecord: newlyActiveWorkflowVersion,
+            updatedRecord: {
+              ...newlyActiveWorkflowVersion,
+              status: 'ACTIVE',
+            },
+            objectMetadataItems: [objectMetadataItemWorkflowVersion],
+          });
+        }
 
         for (const workflowVersion of previousActiveWorkflowVersions) {
           apolloClient.cache.modify({

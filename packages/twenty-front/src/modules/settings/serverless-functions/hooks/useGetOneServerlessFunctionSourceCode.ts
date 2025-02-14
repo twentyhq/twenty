@@ -25,6 +25,7 @@ export const useGetOneServerlessFunctionSourceCode = ({
       input: { id, version },
     },
     onCompleted,
+    fetchPolicy: 'network-only',
   });
   return { code: data?.getServerlessFunctionSourceCode, loading };
 };

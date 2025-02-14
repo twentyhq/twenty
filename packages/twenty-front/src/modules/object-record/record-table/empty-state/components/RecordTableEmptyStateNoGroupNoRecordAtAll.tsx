@@ -3,12 +3,17 @@ import { IconPlus } from 'twenty-ui';
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
+import { getEmptyStateSubTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateSubTitle';
+import { getEmptyStateTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateTitle';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 
 export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
-  const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
+  const { createNewTableRecord } = useCreateNewTableRecord({
+    objectMetadataItem,
+    recordTableId,
+  });
 
   const handleButtonClick = () => {
     createNewTableRecord();
@@ -18,9 +23,15 @@ export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
 
   const buttonTitle = `Add a ${objectLabel}`;
 
-  const title = `Add your first ${objectLabel}`;
+  const title = getEmptyStateTitle(
+    objectMetadataItem.nameSingular,
+    objectLabel,
+  );
 
-  const subTitle = `Use our API or add your first ${objectLabel} manually`;
+  const subTitle = getEmptyStateSubTitle(
+    objectMetadataItem.nameSingular,
+    objectLabel,
+  );
 
   return (
     <RecordTableEmptyStateDisplay

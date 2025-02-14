@@ -13,10 +13,9 @@ import {
   IconCalendarEvent,
   IconMail,
   IconNotes,
-  IconPrinter,
   IconSettings,
 } from 'twenty-ui';
-import { FeatureFlag, FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
@@ -180,20 +179,6 @@ export const useRecordShowContainerTabs = (
     },
     [CoreObjectNameSingular.WorkflowRun]: {
       tabs: {
-        workflowRunOutput: {
-          title: 'Output',
-          position: 0,
-          Icon: IconPrinter,
-          cards: [{ type: CardType.WorkflowRunOutputCard }],
-          hide: {
-            ifMobile: false,
-            ifDesktop: false,
-            ifInRightDrawer: false,
-            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
-            ifRequiredObjectsInactive: [],
-            ifRelationsMissing: [],
-          },
-        },
         workflowRunFlow: {
           title: 'Flow',
           position: 0,
@@ -252,7 +237,7 @@ export const useRecordShowContainerTabs = (
           hide.ifFeaturesDisabled.length > 0 &&
           !hide.ifFeaturesDisabled.every((flagKey) => {
             return !!currentWorkspace?.featureFlags?.find(
-              (flag: FeatureFlag) => flag.key === flagKey && flag.value,
+              (flag) => flag.key === flagKey && flag.value,
             );
           });
 
@@ -269,7 +254,7 @@ export const useRecordShowContainerTabs = (
           !hide.ifRelationsMissing.every((rel) =>
             objectMetadataItem.fields.some(
               (field) =>
-                field.type === FieldMetadataType.Relation &&
+                field.type === FieldMetadataType.RELATION &&
                 field.name === rel &&
                 field.isActive,
             ),

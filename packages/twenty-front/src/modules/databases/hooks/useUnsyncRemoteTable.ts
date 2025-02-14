@@ -5,12 +5,12 @@ import { UNSYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/unsyncRemoteT
 import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
+import { isDefined } from 'twenty-shared';
 import {
   RemoteTableInput,
   UnsyncRemoteTableMutation,
   UnsyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const useUnsyncRemoteTable = () => {
   const apolloMetadataClient = useApolloMetadataClient();

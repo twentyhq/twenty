@@ -5,6 +5,7 @@ import { ComponentDecorator } from 'twenty-ui';
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelFieldIconLabelForm } from '../SettingsDataModelFieldIconLabelForm';
 
@@ -24,6 +25,7 @@ const meta: Meta<typeof SettingsDataModelFieldIconLabelForm> = {
     FormProviderDecorator,
     IconsProviderDecorator,
     ComponentDecorator,
+    I18nFrontDecorator,
   ],
 };
 

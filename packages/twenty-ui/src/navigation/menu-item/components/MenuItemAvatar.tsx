@@ -7,8 +7,8 @@ import {
 } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
 import { MenuItemIconButton } from '@ui/navigation/menu-item/components/MenuItem';
-import { isDefined } from '@ui/utilities';
 import { MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,

@@ -19,11 +19,11 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
+  getOsControlSymbol,
 } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -35,6 +35,8 @@ import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
@@ -49,6 +51,7 @@ const meta: Meta<typeof NavigationDrawer> = {
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
     PrefetchLoadedDecorator,
+    I18nFrontDecorator,
     (Story) => {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
@@ -88,7 +91,7 @@ export const Default: Story = {
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            keyboard={['⌘', 'K']}
+            keyboard={[`${getOsControlSymbol()}`, 'K']}
           />
           <NavigationDrawerItem
             label="Settings"
@@ -135,30 +138,30 @@ export const Settings: Story = {
           <NavigationDrawerSectionTitle label="User" />
           <NavigationDrawerItem
             label="Profile"
-            to={getSettingsPagePath(SettingsPath.ProfilePage)}
+            to={getSettingsPath(SettingsPath.ProfilePage)}
             Icon={IconUserCircle}
             active
           />
           <NavigationDrawerItem
             label="Appearance"
-            to={getSettingsPagePath(SettingsPath.Appearance)}
+            to={getSettingsPath(SettingsPath.Experience)}
             Icon={IconColorSwatch}
           />
           <NavigationDrawerItemGroup>
             <NavigationDrawerItem
               label="Accounts"
-              to={getSettingsPagePath(SettingsPath.Accounts)}
+              to={getSettingsPath(SettingsPath.Accounts)}
               Icon={IconAt}
             />
             <NavigationDrawerSubItem
               label="Emails"
-              to={getSettingsPagePath(SettingsPath.AccountsEmails)}
+              to={getSettingsPath(SettingsPath.AccountsEmails)}
               Icon={IconMail}
               subItemState="intermediate-before-selected"
             />
             <NavigationDrawerSubItem
               label="Calendar"
-              to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
+              to={getSettingsPath(SettingsPath.AccountsCalendars)}
               Icon={IconCalendarEvent}
               subItemState="last-selected"
             />
@@ -169,12 +172,12 @@ export const Settings: Story = {
           <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
             label="General"
-            to={getSettingsPagePath(SettingsPath.Workspace)}
+            to={getSettingsPath(SettingsPath.Workspace)}
             Icon={IconSettings}
           />
           <NavigationDrawerItem
             label="Members"
-            to={getSettingsPagePath(SettingsPath.WorkspaceMembersPage)}
+            to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
             Icon={IconUsers}
           />
         </NavigationDrawerSection>

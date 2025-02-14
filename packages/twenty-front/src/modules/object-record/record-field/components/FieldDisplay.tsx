@@ -9,6 +9,7 @@ import { PhonesFieldDisplay } from '@/object-record/record-field/meta-types/disp
 import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
 import { RichTextFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RichTextFieldDisplay';
+import { RichTextV2FieldDisplay } from '@/object-record/record-field/meta-types/display/components/RichTextV2FieldDisplay';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
@@ -20,6 +21,7 @@ import { isFieldRating } from '@/object-record/record-field/types/guards/isField
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
+import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -90,6 +92,8 @@ export const FieldDisplay = () => {
     <RatingFieldDisplay />
   ) : isFieldRichText(fieldDefinition) ? (
     <RichTextFieldDisplay />
+  ) : isFieldRichTextV2(fieldDefinition) ? (
+    <RichTextV2FieldDisplay />
   ) : isFieldActor(fieldDefinition) ? (
     <ActorFieldDisplay />
   ) : isFieldArray(fieldDefinition) ? (

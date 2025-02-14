@@ -5,6 +5,7 @@ import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdent
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared';
 import {
@@ -24,6 +25,8 @@ const StyledSettingsSecurityOptionsList = styled.div`
 `;
 
 export const SettingsSecurityOptionsList = () => {
+  const { t } = useLingui();
+
   const { enqueueSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const authProviders = useRecoilValue(authProvidersState);
@@ -45,13 +48,13 @@ export const SettingsSecurityOptionsList = () => {
     authProvider: keyof Omit<AuthProviders, '__typename' | 'magicLink' | 'sso'>,
   ) => {
     if (!currentWorkspace?.id) {
-      throw new Error('User is not logged in');
+      throw new Error(t`User is not logged in`);
     }
 
     const key = `is${capitalize(authProvider)}AuthEnabled`;
 
     if (!isValidAuthProvider(key)) {
-      throw new Error('Invalid auth provider');
+      throw new Error(t`Invalid auth provider`);
     }
 
     const allAuthProvidersEnabled = [
@@ -67,7 +70,7 @@ export const SettingsSecurityOptionsList = () => {
         1
     ) {
       return enqueueSnackBar(
-        'At least one authentication method must be enabled',
+        t`At least one authentication method must be enabled`,
         {
           variant: SnackBarVariant.Error,
         },
@@ -100,7 +103,7 @@ export const SettingsSecurityOptionsList = () => {
   const handleChange = async (value: boolean) => {
     try {
       if (!currentWorkspace?.id) {
-        throw new Error('User is not logged in');
+        throw new Error(t`User is not logged in`);
       }
       await updateWorkspace({
         variables: {
@@ -129,7 +132,7 @@ export const SettingsSecurityOptionsList = () => {
               <SettingsOptionCardContentToggle
                 Icon={IconGoogle}
                 title="Google"
-                description="Allow logins through Google's single sign-on functionality."
+                description={t`Allow logins through Google's single sign-on functionality.`}
                 checked={currentWorkspace.isGoogleAuthEnabled}
                 advancedMode
                 divider
@@ -140,7 +143,7 @@ export const SettingsSecurityOptionsList = () => {
               <SettingsOptionCardContentToggle
                 Icon={IconMicrosoft}
                 title="Microsoft"
-                description="Allow logins through Microsoft's single sign-on functionality."
+                description={t`Allow logins through Microsoft's single sign-on functionality.`}
                 checked={currentWorkspace.isMicrosoftAuthEnabled}
                 advancedMode
                 divider
@@ -150,8 +153,8 @@ export const SettingsSecurityOptionsList = () => {
             {authProviders.password === true && (
               <SettingsOptionCardContentToggle
                 Icon={IconPassword}
-                title="Password"
-                description="Allow users to sign in with an email and password."
+                title={t`Password`}
+                description={t`Allow users to sign in with an email and password.`}
                 checked={currentWorkspace.isPasswordAuthEnabled}
                 advancedMode
                 onChange={() => toggleAuthMethod('password')}
@@ -161,8 +164,8 @@ export const SettingsSecurityOptionsList = () => {
           <Card rounded>
             <SettingsOptionCardContentToggle
               Icon={IconLink}
-              title="Invite by Link"
-              description="Allow the invitation of new users by sharing an invite link."
+              title={t`Invite by Link`}
+              description={t`Allow the invitation of new users by sharing an invite link.`}
               checked={currentWorkspace.isPublicInviteLinkEnabled}
               advancedMode
               onChange={() =>

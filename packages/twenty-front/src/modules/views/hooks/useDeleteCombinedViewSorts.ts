@@ -6,7 +6,7 @@ import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewSortIdsComponentFamilyState';
 import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/unsavedToUpsertViewSortsComponentFamilyState';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useDeleteCombinedViewSorts = (viewBarComponentId?: string) => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(

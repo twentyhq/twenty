@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { FormPhoneFieldInput } from '../FormPhoneFieldInput';
@@ -33,9 +33,80 @@ export const Default: Story = {
   },
 };
 
-export const WithVariables: Story = {
+export const SelectCountryCode: Story = {
   args: {
-    label: 'Enter phone...',
+    label: 'Phone',
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const defaultEmptyOption = await canvas.findByText('No country');
+    expect(defaultEmptyOption).toBeVisible();
+
+    await userEvent.click(defaultEmptyOption);
+
+    const searchInput = await canvas.findByPlaceholderText('Search');
+    expect(searchInput).toBeVisible();
+
+    await userEvent.type(searchInput, 'France');
+
+    const franceOption = await canvas.findByText(/France/);
+
+    await userEvent.click(franceOption);
+
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith({
+        primaryPhoneNumber: '',
+        primaryPhoneCountryCode: 'FR',
+        primaryPhoneCallingCode: '33',
+      });
+    });
+
+    expect(args.onPersist).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const SelectEmptyCountryCode: Story = {
+  args: {
+    label: 'Phone',
+    onPersist: fn(),
+    defaultValue: {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneCallingCode: '33',
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const defaultSelectedOption = await canvas.findByText(/France/);
+    expect(defaultSelectedOption).toBeVisible();
+
+    await userEvent.click(defaultSelectedOption);
+
+    const searchInput = await canvas.findByPlaceholderText('Search');
+    expect(searchInput).toBeVisible();
+
+    const emptyOption = await canvas.findByText('No country');
+
+    await userEvent.click(emptyOption);
+
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith({
+        primaryPhoneNumber: '',
+        primaryPhoneCountryCode: '',
+        primaryPhoneCallingCode: '',
+      });
+    });
+
+    expect(args.onPersist).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const WithVariablesAsDefaultValues: Story = {
+  args: {
+    label: 'Phone',
     defaultValue: {
       primaryPhoneCountryCode: '{{a.countryCode}}',
       primaryPhoneNumber: '{{a.phoneNumber}}',
@@ -53,7 +124,7 @@ export const WithVariables: Story = {
 
     const variablePickers = await canvas.findAllByText('VariablePicker');
 
-    expect(variablePickers).toHaveLength(2);
+    expect(variablePickers).toHaveLength(1);
 
     for (const variablePicker of variablePickers) {
       expect(variablePicker).toBeVisible();
@@ -61,9 +132,52 @@ export const WithVariables: Story = {
   },
 };
 
+export const SelectingVariables: Story = {
+  args: {
+    label: 'Phone',
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const countryCodeDefaultValue = await canvas.findByText('No country');
+    expect(countryCodeDefaultValue).toBeVisible();
+
+    const phoneNumberDefaultValue =
+      await canvas.findByPlaceholderText('Enter phone number');
+    expect(phoneNumberDefaultValue).toHaveDisplayValue('');
+
+    const phoneNumberVariablePicker = await canvas.findByText('Add variable');
+
+    await userEvent.click(phoneNumberVariablePicker);
+
+    const phoneNumberVariable = await canvas.findByText('test');
+    expect(phoneNumberVariable).toBeVisible();
+
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith({
+        primaryPhoneNumber: '{{test}}',
+        primaryPhoneCountryCode: '',
+        primaryPhoneCallingCode: '',
+      });
+    });
+  },
+};
+
 export const Disabled: Story = {
   args: {
-    label: 'Enter phone...',
+    label: 'Phone',
     readonly: true,
     VariablePicker: () => <div>VariablePicker</div>,
   },

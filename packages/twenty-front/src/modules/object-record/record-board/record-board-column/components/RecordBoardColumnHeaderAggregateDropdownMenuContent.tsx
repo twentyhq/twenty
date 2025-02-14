@@ -10,8 +10,11 @@ import {
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
+  const { t } = useLingui();
+
   const { onContentChange, closeDropdown } =
     useDropdown<RecordBoardColumnHeaderAggregateDropdownContextValue>({
       context: RecordBoardColumnHeaderAggregateDropdownContext,
@@ -32,28 +35,28 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
           onClick={() => {
             onContentChange('countAggregateOperationsOptions');
           }}
-          text={'Count'}
+          text={t`Count`}
           hasSubMenu
         />
         <MenuItem
           onClick={() => {
             onContentChange('percentAggregateOperationsOptions');
           }}
-          text={'Percent'}
+          text={t`Percent`}
           hasSubMenu
         />
         <MenuItem
           onClick={() => {
             onContentChange('datesAggregateOperationOptions');
           }}
-          text={'Dates'}
+          text={t`Date`}
           hasSubMenu
         />
         <MenuItem
           onClick={() => {
             onContentChange('moreAggregateOperationOptions');
           }}
-          text={'More options'}
+          text={t`More options`}
           hasSubMenu
         />
       </DropdownMenuItemsContainer>

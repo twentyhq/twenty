@@ -2,19 +2,14 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
+  IsNotIn,
   IsOptional,
   IsString,
   Matches,
-  IsNotIn,
 } from 'class-validator';
 
 @InputType()
 export class UpdateWorkspaceInput {
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  domainName?: string;
-
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
@@ -97,13 +92,58 @@ export class UpdateWorkspaceInput {
     'au',
     'nz',
     'za',
-    'uk',
     'eu',
+    'uk',
+    'ru',
+    'ua',
+    'pl',
+    'ro',
+    'bg',
+    'gr',
+    'cz',
+    'sk',
+    'hu',
+    'hr',
+    'si',
+    'rs',
+    'me',
+    'ba',
+    'mk',
+    'al',
+    'az',
+    'tr',
+    'cy',
+    'lv',
+    'lt',
+    'ee',
+    'fi',
+    'is',
+    'no',
+    'se',
+    'dk',
     'asia',
     'africa',
     'america',
+    'europe',
+    'north-america',
+    'south-africa',
+    'north-africa',
+    'south-america',
+    'oceania',
+    'paris',
+    'london',
+    'new-york',
+    'san-francisco',
   ])
   subdomain?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  @Matches(
+    /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+  )
+  customDomain?: string;
 
   @Field({ nullable: true })
   @IsString()

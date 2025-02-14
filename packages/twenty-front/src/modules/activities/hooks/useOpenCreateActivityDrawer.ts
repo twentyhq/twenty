@@ -19,6 +19,7 @@ import { isNewViewableRecordLoadingState } from '@/object-record/record-right-dr
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { IconList } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
@@ -75,12 +76,19 @@ export const useOpenCreateActivityDrawer = ({
     customAssignee?: WorkspaceMember;
   }) => {
     setIsNewViewableRecordLoading(true);
-    openRightDrawer(RightDrawerPages.ViewRecord);
+    openRightDrawer(RightDrawerPages.ViewRecord, {
+      title: activityObjectNameSingular,
+      Icon: IconList,
+    });
     setViewableRecordId(null);
     setViewableRecordNameSingular(activityObjectNameSingular);
 
     const activity = await createOneActivity({
-      assigneeId: customAssignee?.id,
+      ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+        ? {
+            assigneeId: customAssignee?.id,
+          }
+        : {}),
       position: 'last',
     });
 
@@ -88,28 +96,26 @@ export const useOpenCreateActivityDrawer = ({
       const targetableObjectRelationIdName = `${targetableObjects[0].targetObjectNameSingular}Id`;
 
       await createOneActivityTarget({
-        taskId:
-          activityObjectNameSingular === CoreObjectNameSingular.Task
-            ? activity.id
-            : undefined,
-        noteId:
-          activityObjectNameSingular === CoreObjectNameSingular.Note
-            ? activity.id
-            : undefined,
+        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? {
+              taskId: activity.id,
+            }
+          : {
+              noteId: activity.id,
+            }),
         [targetableObjectRelationIdName]: targetableObjects[0].id,
       });
 
       setActivityTargetableEntityArray(targetableObjects);
     } else {
       await createOneActivityTarget({
-        taskId:
-          activityObjectNameSingular === CoreObjectNameSingular.Task
-            ? activity.id
-            : undefined,
-        noteId:
-          activityObjectNameSingular === CoreObjectNameSingular.Note
-            ? activity.id
-            : undefined,
+        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? {
+              taskId: activity.id,
+            }
+          : {
+              noteId: activity.id,
+            }),
       });
 
       setActivityTargetableEntityArray([]);

@@ -10,8 +10,8 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 type SummaryCardProps = {
   objectNameSingular: string;
@@ -77,7 +77,7 @@ export const SummaryCard = ({
             fieldDefinition: {
               type:
                 labelIdentifierFieldMetadataItem?.type ||
-                FieldMetadataType.Text,
+                FieldMetadataType.TEXT,
               iconName: '',
               fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
               label: labelIdentifierFieldMetadataItem?.label || '',

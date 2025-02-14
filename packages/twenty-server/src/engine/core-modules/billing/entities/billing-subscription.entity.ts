@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
@@ -30,7 +32,7 @@ registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
   unique: true,
   where: `status IN ('trialing', 'active', 'past_due')`,
 })
-@ObjectType('BillingSubscription')
+@ObjectType()
 export class BillingSubscription {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

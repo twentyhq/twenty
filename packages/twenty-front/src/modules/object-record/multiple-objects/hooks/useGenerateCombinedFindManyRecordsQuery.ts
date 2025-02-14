@@ -6,6 +6,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import { capitalize } from 'twenty-shared';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
@@ -38,10 +39,10 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
     )
     .join(', ');
 
-  const lastCursorPerMetadataItemArray = operationSignatures
+  const cursorFilteringPerMetadataItemArray = operationSignatures
     .map(
       ({ objectNameSingular }) =>
-        `$lastCursor${capitalize(objectNameSingular)}: String`,
+        `$after${capitalize(objectNameSingular)}: String, $before${capitalize(objectNameSingular)}: String, $first${capitalize(objectNameSingular)}: Int, $last${capitalize(objectNameSingular)}: Int`,
     )
     .join(', ');
 
@@ -52,48 +53,42 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
     )
     .join(', ');
 
-  const queryKeyWithObjectMetadataItemArray = operationSignatures.map(
-    (queryKey) => {
+  const queryOperationSignatureWithObjectMetadataItemArray =
+    operationSignatures.map((operationSignature) => {
       const objectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
-          objectMetadataItem.nameSingular === queryKey.objectNameSingular,
+          objectMetadataItem.nameSingular ===
+          operationSignature.objectNameSingular,
       );
 
       if (isUndefined(objectMetadataItem)) {
         throw new Error(
-          `Object metadata item not found for object name singular: ${queryKey.objectNameSingular}`,
+          `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
         );
       }
 
-      return { ...queryKey, objectMetadataItem };
-    },
-  );
+      return { operationSignature, objectMetadataItem };
+    });
 
   return gql`
     query CombinedFindManyRecords(
       ${filterPerMetadataItemArray}, 
       ${orderByPerMetadataItemArray}, 
-      ${lastCursorPerMetadataItemArray}, 
+      ${cursorFilteringPerMetadataItemArray}, 
       ${limitPerMetadataItemArray}
     ) {
-      ${queryKeyWithObjectMetadataItemArray
+      ${queryOperationSignatureWithObjectMetadataItemArray
         .map(
-          ({ objectMetadataItem, fields }) =>
-            `${objectMetadataItem.namePlural}(filter: $filter${capitalize(
-              objectMetadataItem.nameSingular,
-            )}, orderBy: $orderBy${capitalize(
-              objectMetadataItem.nameSingular,
-            )}, first: $limit${capitalize(
-              objectMetadataItem.nameSingular,
-            )}, after: $lastCursor${capitalize(
-              objectMetadataItem.nameSingular,
-            )}){
+          ({ objectMetadataItem, operationSignature }) =>
+            `${getCombinedFindManyRecordsQueryFilteringPart(
+              objectMetadataItem,
+            )} {
           edges {
             node ${mapObjectMetadataToGraphQLQuery({
               objectMetadataItems: objectMetadataItems,
               objectMetadataItem,
               recordGqlFields:
-                fields ??
+                operationSignature.fields ??
                 generateDepthOneRecordGqlFields({
                   objectMetadataItem,
                 }),

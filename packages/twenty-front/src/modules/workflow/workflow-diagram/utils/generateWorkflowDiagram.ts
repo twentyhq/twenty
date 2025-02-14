@@ -1,16 +1,18 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
+import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
+import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
+import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
+import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
+  WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { MarkerType } from '@xyflow/react';
-import { capitalize } from 'twenty-shared';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 
 export const generateWorkflowDiagram = ({
@@ -23,13 +25,28 @@ export const generateWorkflowDiagram = ({
   const nodes: Array<WorkflowDiagramNode> = [];
   const edges: Array<WorkflowDiagramEdge> = [];
 
-  // Helper function to generate nodes and edges recursively
-  const processNode = (
-    step: WorkflowStep,
-    parentNodeId: string,
-    xPos: number,
-    yPos: number,
-  ) => {
+  if (isDefined(trigger)) {
+    nodes.push(getWorkflowDiagramTriggerNode({ trigger }));
+  } else {
+    nodes.push(WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION);
+  }
+
+  const processNode = ({
+    stepIndex,
+    parentNodeId,
+    xPos,
+    yPos,
+  }: {
+    stepIndex: number;
+    parentNodeId: string;
+    xPos: number;
+    yPos: number;
+  }) => {
+    const step = steps.at(stepIndex);
+    if (!isDefined(step)) {
+      return;
+    }
+
     const nodeId = step.id;
 
     nodes.push({
@@ -38,86 +55,35 @@ export const generateWorkflowDiagram = ({
         nodeType: 'action',
         actionType: step.type,
         name: step.name,
-      },
+        isLeafNode: false,
+      } satisfies WorkflowDiagramStepNodeData,
       position: {
         x: xPos,
-        y: yPos,
+        y: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
       },
     });
 
-    // Create an edge from the parent node to this node
     edges.push({
+      ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       id: v4(),
       source: parentNodeId,
       target: nodeId,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-      deletable: false,
-      selectable: false,
     });
 
-    return nodeId;
+    processNode({
+      stepIndex: stepIndex + 1,
+      parentNodeId: nodeId,
+      xPos,
+      yPos: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
+    });
   };
 
-  // Start with the trigger node
-  const triggerNodeId = TRIGGER_STEP_ID;
-
-  if (isDefined(trigger)) {
-    let triggerLabel: string;
-
-    switch (trigger.type) {
-      case 'MANUAL': {
-        triggerLabel = 'Manual Trigger';
-
-        break;
-      }
-      case 'DATABASE_EVENT': {
-        const triggerEvent = splitWorkflowTriggerEventName(
-          trigger.settings.eventName,
-        );
-
-        triggerLabel = `${capitalize(triggerEvent.objectType)} is ${capitalize(triggerEvent.event)}`;
-
-        break;
-      }
-      default: {
-        return assertUnreachable(
-          trigger,
-          `Expected the trigger "${JSON.stringify(trigger)}" to be supported.`,
-        );
-      }
-    }
-
-    nodes.push({
-      id: triggerNodeId,
-      data: {
-        nodeType: 'trigger',
-        triggerType: trigger.type,
-        name: isDefined(trigger.name) ? trigger.name : triggerLabel,
-      },
-      position: {
-        x: 0,
-        y: 0,
-      },
-    });
-  } else {
-    nodes.push({
-      id: triggerNodeId,
-      type: 'empty-trigger',
-      data: {} as any,
-      position: {
-        x: 0,
-        y: 0,
-      },
-    });
-  }
-
-  let lastStepId = triggerNodeId;
-
-  for (const step of steps) {
-    lastStepId = processNode(step, lastStepId, 150, 100);
-  }
+  processNode({
+    stepIndex: 0,
+    parentNodeId: TRIGGER_STEP_ID,
+    xPos: FIRST_NODE_POSITION.x,
+    yPos: FIRST_NODE_POSITION.y,
+  });
 
   return {
     nodes,

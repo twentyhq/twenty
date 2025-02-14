@@ -6,7 +6,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
@@ -83,9 +83,7 @@ export const RightDrawer = () => {
       isRightDrawerMinimized={isRightDrawerMinimized}
       animate={targetVariantForAnimation}
       variants={RIGHT_DRAWER_ANIMATION_VARIANTS}
-      transition={{
-        duration: theme.animation.duration.normal,
-      }}
+      transition={{ duration: theme.animation.duration.normal }}
       onAnimationComplete={handleAnimationComplete}
     >
       <StyledRightDrawer>

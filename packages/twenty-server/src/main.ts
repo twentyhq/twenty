@@ -9,6 +9,8 @@ import { useContainer, ValidationError } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
@@ -25,7 +27,7 @@ const bootstrap = async () => {
     cors: true,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
-    snapshot: process.env.DEBUG_MODE === 'true',
+    snapshot: process.env.NODE_ENV === NodeEnvironment.development,
     ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
       ? {
           httpsOptions: {
@@ -37,6 +39,8 @@ const bootstrap = async () => {
   });
   const logger = app.get(LoggerService);
   const environmentService = app.get(EnvironmentService);
+
+  app.use(session(getSessionStorageOptions(environmentService)));
 
   // TODO: Double check this as it's not working for now, it's going to be helpful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
@@ -83,10 +87,7 @@ const bootstrap = async () => {
   // Inject the server url in the frontend page
   generateFrontConfig();
 
-  // Enable session - Today it's used only for SSO
-  app.use(session(getSessionStorageOptions(environmentService)));
-
-  await app.listen(environmentService.get('PORT'));
+  await app.listen(environmentService.get('NODE_PORT'));
 };
 
 bootstrap();

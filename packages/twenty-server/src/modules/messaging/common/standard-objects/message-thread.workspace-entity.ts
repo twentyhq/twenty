@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
@@ -18,9 +20,9 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThread,
   namePlural: 'messageThreads',
-  labelSingular: 'Message Thread',
-  labelPlural: 'Message Threads',
-  description: 'Message Thread',
+  labelSingular: msg`Message Thread`,
+  labelPlural: msg`Message Threads`,
+  description: msg`A group of related messages (e.g. email thread, chat thread)`,
   icon: STANDARD_OBJECT_ICONS.messageThread,
 })
 @WorkspaceIsNotAuditLogged()
@@ -29,8 +31,8 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Messages',
-    description: 'Messages from the thread.',
+    label: msg`Messages`,
+    description: msg`Messages from the thread.`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

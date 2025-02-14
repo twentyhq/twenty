@@ -1,3 +1,4 @@
+export * from './button/components/AnimatedLightIconButton';
 export * from './button/components/Button';
 export * from './button/components/ButtonGroup';
 export * from './button/components/ColorPickerButton';

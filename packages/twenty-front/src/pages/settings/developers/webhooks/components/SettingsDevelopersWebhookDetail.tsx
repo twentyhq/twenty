@@ -1,7 +1,7 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import {
   Button,
   H2Title,
@@ -11,7 +11,6 @@ import {
   IconPlus,
   IconRefresh,
   IconTrash,
-  isDefined,
   Section,
   useIcons,
 } from 'twenty-ui';
@@ -21,14 +20,7 @@ import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffec
 import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/AnalyticsGraphDataInstanceContext';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -36,10 +28,12 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
-import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
+import { isDefined } from 'twenty-shared';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -63,57 +57,38 @@ const StyledPlaceholder = styled.div`
 `;
 
 export const SettingsDevelopersWebhooksDetail = () => {
+  const { t } = useLingui();
+
   const { objectMetadataItems } = useObjectMetadataItems();
+
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
+
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
+
+  const { getIcon } = useIcons();
+
   const { webhookId = '' } = useParams();
+
+  const [searchParams] = useSearchParams();
+
+  const isCreationMode = isDefined(searchParams.get('creationMode'));
+
+  const {
+    formData,
+    title,
+    loading,
+    isTargetUrlValid,
+    updateWebhook,
+    updateOperation,
+    removeOperation,
+    deleteWebhook,
+  } = useWebhookUpdateForm({
+    webhookId,
+    isCreationMode,
+  });
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
     useState(false);
-  const [description, setDescription] = useState<string>('');
-  const [operations, setOperations] = useState<WebhookOperationType[]>([
-    WEBHOOK_EMPTY_OPERATION,
-  ]);
-  const [secret, setSecret] = useState<string>('');
-  const [isDirty, setIsDirty] = useState<boolean>(false);
-  const { getIcon } = useIcons();
-
-  const { record: webhookData } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Webhook,
-    objectRecordId: webhookId,
-    onCompleted: (data) => {
-      setDescription(data?.description ?? '');
-      const baseOperations = data?.operations
-        ? data.operations.map((op: string) => {
-            const [object, action] = op.split('.');
-            return { object, action };
-          })
-        : data?.operation
-          ? [
-              {
-                object: data.operation.split('.')[0],
-                action: data.operation.split('.')[1],
-              },
-            ]
-          : [];
-
-      setOperations(addEmptyOperationIfNecessary(baseOperations));
-      setSecret(data?.secret ?? '');
-      setIsDirty(false);
-    },
-  });
-
-  const { deleteOneRecord: deleteOneWebhook } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Webhook,
-  });
-
-  const developerPath = getSettingsPagePath(SettingsPath.Developers);
-
-  const deleteWebhook = () => {
-    deleteOneWebhook(webhookId);
-    navigate(developerPath);
-  };
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsAnalyticsV2Enabled,
@@ -138,124 +113,65 @@ export const SettingsDevelopersWebhooksDetail = () => {
     { value: 'deleted', label: 'Deleted', Icon: IconTrash },
   ];
 
-  const { updateOneRecord } = useUpdateOneRecord<Webhook>({
-    objectNameSingular: CoreObjectNameSingular.Webhook,
-  });
-
-  const cleanAndFormatOperations = (operations: WebhookOperationType[]) => {
-    return Array.from(
-      new Set(
-        operations
-          .filter((op) => isDefined(op.object) && isDefined(op.action))
-          .map((op) => `${op.object}.${op.action}`),
-      ),
-    );
-  };
-
-  const handleSave = async () => {
-    const cleanedOperations = cleanAndFormatOperations(operations);
-    setIsDirty(false);
-    await updateOneRecord({
-      idToUpdate: webhookId,
-      updateOneRecordInput: {
-        operations: cleanedOperations,
-        description: description,
-        secret: secret,
-      },
-    });
-    navigate(developerPath);
-  };
-
-  const addEmptyOperationIfNecessary = (
-    newOperations: WebhookOperationType[],
-  ) => {
-    if (
-      !newOperations.some((op) => op.object === '*' && op.action === '*') &&
-      !newOperations.some((op) => op.object === null)
-    ) {
-      return [...newOperations, WEBHOOK_EMPTY_OPERATION];
-    }
-    return newOperations;
-  };
-
-  const updateOperation = (
-    index: number,
-    field: 'object' | 'action',
-    value: string | null,
-  ) => {
-    const newOperations = [...operations];
-
-    newOperations[index] = {
-      ...newOperations[index],
-      [field]: value,
-    };
-
-    setOperations(addEmptyOperationIfNecessary(newOperations));
-    setIsDirty(true);
-  };
-
-  const removeOperation = (index: number) => {
-    const newOperations = operations.filter((_, i) => i !== index);
-    setOperations(addEmptyOperationIfNecessary(newOperations));
-    setIsDirty(true);
-  };
-
-  if (!webhookData?.targetUrl) {
+  if (loading || !formData) {
     return <></>;
   }
 
+  const confirmationText = t`yes`;
+
   return (
     <SubMenuTopBarContainer
-      title={webhookData.targetUrl}
+      title={title}
+      reserveTitleSpace
       links={[
         {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'Developers', href: developerPath },
-        { children: 'Webhook' },
+        {
+          children: t`Developers`,
+          href: getSettingsPath(SettingsPath.Developers),
+        },
+        { children: t`Webhook` },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
-          isSaveDisabled={!isDirty}
-          onCancel={() => {
-            navigate(developerPath);
-          }}
-          onSave={handleSave}
-        />
-      }
     >
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title="Endpoint URL"
-            description="We will send POST requests to this endpoint for every new event"
+            title={t`Endpoint URL`}
+            description={t`We will send POST requests to this endpoint for every new event`}
           />
           <TextInput
-            placeholder="URL"
-            value={webhookData.targetUrl}
-            disabled
+            placeholder={t`URL`}
+            value={formData.targetUrl}
+            onChange={(targetUrl) => {
+              updateWebhook({ targetUrl });
+            }}
+            error={!isTargetUrlValid ? t`Please enter a valid URL` : undefined}
             fullWidth
+            autoFocus={formData.targetUrl.trim() === ''}
           />
         </Section>
         <Section>
-          <H2Title title="Description" description="An optional description" />
+          <H2Title
+            title={t`Description`}
+            description={t`An optional description`}
+          />
           <TextArea
-            placeholder="Write a description"
+            placeholder={t`Write a description`}
             minRows={4}
-            value={description}
+            value={formData.description}
             onChange={(description) => {
-              setDescription(description);
-              setIsDirty(true);
+              updateWebhook({ description });
             }}
           />
         </Section>
         <Section>
           <H2Title
-            title="Filters"
-            description="Select the events you wish to send to this endpoint"
+            title={t`Filters`}
+            description={t`Select the events you wish to send to this endpoint`}
           />
-          {operations.map((operation, index) => (
+          {formData.operations.map((operation, index) => (
             <StyledFilterRow isMobile={isMobile} key={index}>
               <Select
                 withSearchInput
@@ -268,7 +184,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 options={fieldTypeOptions}
                 emptyOption={{
                   value: null,
-                  label: 'Choose an object',
+                  label: t`Choose an object`,
                   Icon: IconBox,
                 }}
               />
@@ -283,7 +199,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 options={actionOptions}
               />
 
-              {index < operations.length - 1 ? (
+              {index < formData.operations.length - 1 ? (
                 <IconButton
                   onClick={() => removeOperation(index)}
                   variant="tertiary"
@@ -304,15 +220,14 @@ export const SettingsDevelopersWebhooksDetail = () => {
           <TextInput
             type="password"
             placeholder="Write a secret"
-            value={secret}
+            value={formData.secret}
             onChange={(secret: string) => {
-              setSecret(secret.trim());
-              setIsDirty(true);
+              updateWebhook({ secret: secret.trim() });
             }}
             fullWidth
           />
         </Section>
-        {isAnalyticsEnabled && isAnalyticsV2Enabled && (
+        {!isCreationMode && isAnalyticsEnabled && isAnalyticsV2Enabled && (
           <AnalyticsGraphDataInstanceContext.Provider
             value={{ instanceId: `webhook-${webhookId}-analytics` }}
           >
@@ -327,25 +242,31 @@ export const SettingsDevelopersWebhooksDetail = () => {
           </AnalyticsGraphDataInstanceContext.Provider>
         )}
         <Section>
-          <H2Title title="Danger zone" description="Delete this integration" />
+          <H2Title
+            title={t`Danger zone`}
+            description={t`Delete this integration`}
+          />
           <Button
             accent="danger"
             variant="secondary"
-            title="Delete"
+            title={t`Delete`}
             Icon={IconTrash}
             onClick={() => setIsDeleteWebhookModalOpen(true)}
           />
           <ConfirmationModal
-            confirmationPlaceholder="yes"
-            confirmationValue="yes"
+            confirmationPlaceholder={confirmationText}
+            confirmationValue={confirmationText}
             isOpen={isDeleteWebhookModalOpen}
             setIsOpen={setIsDeleteWebhookModalOpen}
-            title="Delete webhook"
+            title={t`Delete webhook`}
             subtitle={
-              <>Please type "yes" to confirm you want to delete this webhook.</>
+              <Trans>
+                Please type {confirmationText} to confirm you want to delete
+                this webhook.
+              </Trans>
             }
             onConfirmClick={deleteWebhook}
-            deleteButtonText="Delete webhook"
+            deleteButtonText={t`Delete webhook`}
           />
         </Section>
       </SettingsPageContainer>

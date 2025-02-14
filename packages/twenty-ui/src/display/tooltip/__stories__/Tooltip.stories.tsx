@@ -102,6 +102,48 @@ export const Hoverable: Story = {
   ),
 };
 
+export const WithWidth: Story = {
+  args: {
+    place: TooltipPosition.Top,
+    delay: TooltipDelay.mediumDelay,
+    content: 'Tooltip with custom width',
+    hidden: false,
+    anchorSelect: '#width-text',
+    width: '200px',
+  },
+  decorators: [ComponentDecorator],
+  render: ({
+    anchorSelect,
+    className,
+    content,
+    delay,
+    noArrow,
+    offset,
+    place,
+    positionStrategy,
+    width,
+  }) => (
+    <>
+      <p id="width-text" data-testid="tooltip">
+        Hover me to see custom width!
+      </p>
+      <Tooltip
+        {...{
+          anchorSelect,
+          className,
+          content,
+          delay,
+          noArrow,
+          offset,
+          place,
+          positionStrategy,
+          width,
+        }}
+      />
+    </>
+  ),
+};
+
 export const Catalog: CatalogStory<Story, typeof Tooltip> = {
   args: { hidden: false, content: 'Tooltip Test' },
   play: async ({ canvasElement }) => {

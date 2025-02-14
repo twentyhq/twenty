@@ -16,6 +16,7 @@ import { onToggleColumnFilterComponentState } from '@/object-record/record-table
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useLingui } from '@lingui/react/macro';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 
@@ -26,6 +27,8 @@ export type RecordTableColumnHeadDropdownMenuProps = {
 export const RecordTableColumnHeadDropdownMenu = ({
   column,
 }: RecordTableColumnHeadDropdownMenuProps) => {
+  const { t } = useLingui();
+
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
   );
@@ -96,14 +99,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
         <MenuItem
           LeftIcon={IconFilter}
           onClick={handleFilterClick}
-          text="Filter"
+          text={t`Filter`}
         />
       )}
       {isSortable && (
         <MenuItem
           LeftIcon={IconSortDescending}
           onClick={handleSortClick}
-          text="Sort"
+          text={t`Sort`}
         />
       )}
       {showSeparator && <DropdownMenuSeparator />}
@@ -111,21 +114,21 @@ export const RecordTableColumnHeadDropdownMenu = ({
         <MenuItem
           LeftIcon={IconArrowLeft}
           onClick={handleColumnMoveLeft}
-          text="Move left"
+          text={t`Move left`}
         />
       )}
       {canMoveRight && (
         <MenuItem
           LeftIcon={IconArrowRight}
           onClick={handleColumnMoveRight}
-          text="Move right"
+          text={t`Move right`}
         />
       )}
       {canHide && (
         <MenuItem
           LeftIcon={IconEyeOff}
           onClick={handleColumnVisibility}
-          text="Hide"
+          text={t`Hide`}
         />
       )}
     </DropdownMenuItemsContainer>

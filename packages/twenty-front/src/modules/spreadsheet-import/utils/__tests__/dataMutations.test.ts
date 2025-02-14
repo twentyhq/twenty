@@ -6,6 +6,7 @@ import {
   TableHook,
 } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
+import { FieldMetadataType } from 'twenty-shared';
 
 describe('addErrorsAndRunHooks', () => {
   type FullData = ImportedStructuredRow<'name' | 'age' | 'country'>;
@@ -15,6 +16,7 @@ describe('addErrorsAndRunHooks', () => {
     fieldValidationDefinitions: [{ rule: 'required' }],
     icon: null,
     fieldType: { type: 'input' },
+    fieldMetadataType: FieldMetadataType.TEXT,
   };
 
   const regexField: Field<'age'> = {
@@ -25,6 +27,7 @@ describe('addErrorsAndRunHooks', () => {
     ],
     icon: null,
     fieldType: { type: 'input' },
+    fieldMetadataType: FieldMetadataType.NUMBER,
   };
 
   const uniqueField: Field<'country'> = {
@@ -33,6 +36,7 @@ describe('addErrorsAndRunHooks', () => {
     fieldValidationDefinitions: [{ rule: 'unique' }],
     icon: null,
     fieldType: { type: 'input' },
+    fieldMetadataType: FieldMetadataType.SELECT,
   };
 
   const functionValidationFieldTrue: Field<'email'> = {
@@ -47,6 +51,7 @@ describe('addErrorsAndRunHooks', () => {
     ],
     icon: null,
     fieldType: { type: 'input' },
+    fieldMetadataType: FieldMetadataType.EMAILS,
   };
 
   const functionValidationFieldFalse: Field<'email'> = {
@@ -61,6 +66,7 @@ describe('addErrorsAndRunHooks', () => {
     ],
     icon: null,
     fieldType: { type: 'input' },
+    fieldMetadataType: FieldMetadataType.EMAILS,
   };
 
   const validData: ImportedStructuredRow<'name' | 'age'> = {

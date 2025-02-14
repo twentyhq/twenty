@@ -1,15 +1,22 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import {
+  formatFieldMetadataItemAsFilterDefinition,
+  getFilterTypeFromFieldType,
+} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import {
   IconFilter,
   MenuItemLeftContent,
@@ -40,6 +47,8 @@ export const StyledPill = styled(Pill)`
 export const AdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
+  const { t } = useLingui();
+
   const { openDropdown: openAdvancedFilterDropdown } = useDropdown(
     ADVANCED_FILTER_DROPDOWN_ID,
   );
@@ -66,8 +75,10 @@ export const AdvancedFilterButton = () => {
     objectId: objectMetadataId ?? null,
   });
 
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
+  const availableFieldMetadataItemsForFilter = useRecoilValue(
+    availableFieldMetadataItemsForFilterFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
   );
 
   const handleClick = () => {
@@ -88,24 +99,34 @@ export const AdvancedFilterButton = () => {
 
       upsertCombinedViewFilterGroup(newViewFilterGroup);
 
-      const defaultFilterDefinition =
-        availableFilterDefinitions.find(
-          (filterDefinition) =>
-            filterDefinition.fieldMetadataId ===
+      const defaultFieldMetadataItem =
+        availableFieldMetadataItemsForFilter.find(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id ===
             objectMetadataItem?.labelIdentifierFieldMetadataId,
-        ) ?? availableFilterDefinitions?.[0];
+        ) ?? availableFieldMetadataItemsForFilter[0];
 
-      if (!defaultFilterDefinition) {
+      if (!isDefined(defaultFieldMetadataItem)) {
         throw new Error('Missing default filter definition');
       }
 
+      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
+        field: defaultFieldMetadataItem,
+      });
+
+      const filterType = getFilterTypeFromFieldType(
+        defaultFieldMetadataItem.type,
+      );
+
+      const firstOperand = getRecordFilterOperands({
+        filterType,
+      })[0];
+
       upsertCombinedViewFilter({
         id: v4(),
-        fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
-        operand: getRecordFilterOperandsForRecordFilterDefinition(
-          defaultFilterDefinition,
-        )[0],
-        definition: defaultFilterDefinition,
+        fieldMetadataId: defaultFieldMetadataItem.id,
+        operand: firstOperand,
+        definition: filterDefinition,
         value: '',
         displayValue: '',
         viewFilterGroupId: newViewFilterGroup.id,
@@ -119,7 +140,7 @@ export const AdvancedFilterButton = () => {
   return (
     <StyledContainer>
       <StyledMenuItemSelect onClick={handleClick}>
-        <MenuItemLeftContent LeftIcon={IconFilter} text="Advanced filter" />
+        <MenuItemLeftContent LeftIcon={IconFilter} text={t`Advanced filter`} />
         {advancedFilterQuerySubFilterCount > 0 && (
           <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
         )}

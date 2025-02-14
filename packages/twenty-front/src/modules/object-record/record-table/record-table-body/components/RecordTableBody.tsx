@@ -15,7 +15,8 @@ const StyledTbody = styled.tbody`
       z-index: 5;
       transition: 0.3s ease;
     }
-    td:nth-of-type(3) {
+    tr:not(:last-child) td:nth-of-type(3) {
+      // Last row is aggregate footer
       position: sticky;
       left: 43px;
       z-index: 5;

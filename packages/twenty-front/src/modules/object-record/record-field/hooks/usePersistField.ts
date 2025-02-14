@@ -29,7 +29,10 @@ import { RecordForSelect } from '@/object-record/relation-picker/types/RecordFor
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
+import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
+import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -117,6 +120,10 @@ export const usePersistField = () => {
           isFieldRichText(fieldDefinition) &&
           isFieldRichTextValue(valueToPersist);
 
+        const fieldIsRichTextV2 =
+          isFieldRichTextV2(fieldDefinition) &&
+          isFieldRichTextV2Value(valueToPersist);
+
         const fieldIsArray =
           isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
 
@@ -138,7 +145,8 @@ export const usePersistField = () => {
           fieldIsAddress ||
           fieldIsRawJson ||
           fieldIsArray ||
-          fieldIsRichText;
+          fieldIsRichText ||
+          fieldIsRichTextV2;
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
@@ -153,8 +161,8 @@ export const usePersistField = () => {
               variables: {
                 where: { id: recordId },
                 updateOneRecordInput: {
-                  [fieldName]: value,
-                  [`${fieldName}Id`]: value?.id ?? null,
+                  [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                    value?.id ?? null,
                 },
               },
             });

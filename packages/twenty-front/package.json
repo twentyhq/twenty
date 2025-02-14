@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.35.4",
+  "version": "0.42.0-canary",
   "private": true,
   "type": "module",
   "scripts": {
@@ -32,6 +32,7 @@
   "dependencies": {
     "@blocknote/xl-docx-exporter": "^0.22.0",
     "@blocknote/xl-pdf-exporter": "^0.22.0",
+    "@lingui/detect-locale": "^5.2.0",
     "@nivo/calendar": "^0.87.0",
     "@nivo/core": "^0.87.0",
     "@nivo/line": "^0.87.0",
@@ -39,17 +40,19 @@
     "@tiptap/core": "^2.10.4",
     "@tiptap/extension-document": "^2.10.4",
     "@tiptap/extension-hard-break": "^2.10.4",
+    "@tiptap/extension-history": "^2.10.4",
     "@tiptap/extension-paragraph": "^2.10.4",
     "@tiptap/extension-placeholder": "^2.10.4",
     "@tiptap/extension-text": "^2.10.4",
     "@tiptap/extension-text-style": "^2.10.4",
     "@tiptap/react": "^2.10.4",
-    "@xyflow/react": "^12.0.4",
+    "@xyflow/react": "^12.4.2",
     "buffer": "^6.0.3",
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
     "recoil-sync": "^0.2.0",
-    "transliteration": "^2.3.5"
+    "transliteration": "^2.3.5",
+    "twenty-shared": "workspace:*"
   },
   "devDependencies": {
     "@types/file-saver": "^2"

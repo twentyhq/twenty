@@ -26,7 +26,9 @@ export const RightDrawerTitleRecordInlineCell = () => {
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   useListenRightDrawerClose(() => {
-    persistField(draftValue);
+    if (draftValue !== undefined) {
+      persistField(draftValue);
+    }
     closeInlineCell();
   });
 

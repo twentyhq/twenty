@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { AppPath } from '@/types/AppPath';
-import { useSetRecoilState } from 'recoil';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { isDefined } from 'twenty-ui';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
@@ -18,9 +19,9 @@ export const VerifyEffect = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const isLogged = useIsLogged();
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
-  const { verify } = useAuth();
+  const { getAuthTokensFromLoginToken } = useAuth();
 
   const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
     isAppWaitingForFreshObjectMetadataState,
@@ -29,13 +30,14 @@ export const VerifyEffect = () => {
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueSnackBar(errorMessage, {
+        dedupeKey: 'get-auth-tokens-from-login-token-failed-dedupe-key',
         variant: SnackBarVariant.Error,
       });
     }
 
     if (isDefined(loginToken)) {
       setIsAppWaitingForFreshObjectMetadata(true);
-      verify(loginToken);
+      getAuthTokensFromLoginToken(loginToken);
     } else if (!isLogged) {
       navigate(AppPath.SignInUp);
     }

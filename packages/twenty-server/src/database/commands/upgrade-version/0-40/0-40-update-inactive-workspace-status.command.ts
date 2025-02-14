@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, Option } from 'nest-commander';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -12,14 +13,11 @@ import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
@@ -42,8 +40,8 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
     protected readonly workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>,
     @InjectRepository(BillingSubscription, 'core')
     protected readonly subscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    protected readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @InjectRepository(FeatureFlag, 'core')
+    protected readonly featureFlagRepository: Repository<FeatureFlag>,
     @InjectRepository(KeyValuePair, 'core')
     protected readonly keyValuePairRepository: Repository<KeyValuePair>,
     @InjectRepository(UserWorkspace, 'core')

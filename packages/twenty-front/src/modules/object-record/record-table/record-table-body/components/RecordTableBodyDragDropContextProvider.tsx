@@ -11,7 +11,7 @@ import { isRemoveSortingModalOpenState } from '@/object-record/record-table/stat
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const RecordTableBodyDragDropContextProvider = ({
   children,

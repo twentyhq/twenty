@@ -8,7 +8,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 type SelectFieldInputProps = {
   onSubmit?: FieldInputEvent;

@@ -7,6 +7,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
   useSearchParams: jest.fn(),
+  Link: jest.fn(),
 }));
 
 jest.mock('@/auth/hooks/useAuth', () => ({
@@ -22,7 +23,6 @@ describe('useSignInWithMicrosoft', () => {
     plan: 'PRO',
     interval: 'Month',
     requirePaymentMethod: true,
-    skipPlanPage: false,
   };
 
   it('should call signInWithMicrosoft with the correct parameters', () => {

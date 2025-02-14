@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -135,9 +137,11 @@ export class WorkspaceDatasourceFactory {
                   dataSourceMetadata.url ??
                   this.environmentService.get('PG_DATABASE_URL'),
                 type: 'postgres',
-                logging: this.environmentService.get('DEBUG_MODE')
-                  ? ['query', 'error']
-                  : ['error'],
+                logging:
+                  this.environmentService.get('NODE_ENV') ===
+                  NodeEnvironment.development
+                    ? ['query', 'error']
+                    : ['error'],
                 schema: dataSourceMetadata.schema,
                 entities: cachedEntitySchemas,
                 ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')

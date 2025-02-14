@@ -5,7 +5,7 @@ export interface QueueJobOptions {
 }
 
 export interface QueueCronJobOptions extends QueueJobOptions {
-  repeat?: {
+  repeat: {
     every?: number;
     pattern?: string;
     limit?: number;

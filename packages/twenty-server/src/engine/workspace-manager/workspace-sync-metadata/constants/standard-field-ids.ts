@@ -244,6 +244,7 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   excludeNonProfessionalEmails: '20202020-1df5-445d-b4f3-2413ad178431',
   excludeGroupEmails: '20202020-45a0-4be4-9164-5820a6a109fb',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
+  messageFolders: '20202020-cc39-4432-9fe8-ec8ab8bbed94',
   isSyncEnabled: '20202020-d9a6-48e9-990b-b97fdf22e8dd',
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
   syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
@@ -251,6 +252,12 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncStage: '20202020-7979-4b08-89fe-99cb5e698767',
   syncStageStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
   throttleFailureCount: '20202020-0291-42be-9ad0-d578a51684ab',
+};
+
+export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
+  name: '20202020-7cf8-40bc-a681-b80b771449b7',
+  messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
+  syncCursor: '20202020-98cd-49ed-8dfc-cb5796400e64',
 };
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
@@ -288,6 +295,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   position: '20202020-368d-4dc2-943f-ed8a49c7fdfb',
   title: '20202020-faeb-4c76-8ba6-ccbb0b4a965f',
   body: '20202020-e63d-4e70-95be-a78cd9abe7ef',
+  bodyV2: '20202020-a7bb-4d94-be51-8f25181502c8',
   createdBy: '20202020-0d79-4e21-ab77-5a394eff97be',
   noteTargets: '20202020-1f25-43fe-8b00-af212fdde823',
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
@@ -317,7 +325,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
-  taskTargets: '20202020-59c0-4179-a208-4a255f04a5be',
+  taskTargets: '20202020-59c0-4279-a208-4a255f04a5be',
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
@@ -330,7 +338,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   emails: '20202020-3c51-43fa-8b6e-af39e29368ab',
   linkedinLink: '20202020-f1af-48f7-893b-2007a73dd508',
   xLink: '20202020-8fc2-487c-b84a-55a99b145cfd',
-  jobTitle: '20202020-b0d0-415a-bef9-640a26dacd9b',
+  jobTitle: '20202020-b0d0-425a-bef9-640a26dacd9b',
   phone: '20202020-4564-4b8b-a09f-05445f2e0bce',
   phones: '20202020-0638-448e-8825-439134618022',
   city: '20202020-5243-4ffb-afc5-2c675da41346',
@@ -355,6 +363,7 @@ export const TASK_STANDARD_FIELD_IDS = {
   position: '20202020-7d47-4690-8a98-98b9a0c05dd8',
   title: '20202020-b386-4cb7-aa5a-08d4a4d92680',
   body: '20202020-ce13-43f4-8821-69388fe1fd26',
+  bodyV2: '20202020-4aa0-4ae8-898d-7df0afd47ab1',
   dueAt: '20202020-fd99-40da-951b-4cb9a352fce3',
   status: '20202020-70bc-48f9-89c5-6aa730b151e0',
   createdBy: '20202020-1a04-48ab-a567-576965ae5387',
@@ -371,7 +380,7 @@ export const TASK_TARGET_STANDARD_FIELD_IDS = {
   person: '20202020-c8a0-4e85-a016-87e2349cfbec',
   company: '20202020-4703-4a4e-948c-487b0c60a92c',
   opportunity: '20202020-6cb2-4c01-a9a5-aca3dbc11d41',
-  custom: '20202020-41c1-4c9a-8c75-be0971ef89af',
+  custom: '20202020-42c1-4c9a-8c75-be0971ef89af',
 };
 
 export const VIEW_FIELD_STANDARD_FIELD_IDS = {
@@ -470,6 +479,7 @@ export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   position: '20202020-7802-4c40-ae89-1f506fe3365c',
   createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
   output: '20202020-7be4-4db2-8ac6-3ff0d740843d',
+  context: '20202020-189c-478a-b867-d72feaf5926a',
   favorites: '20202020-4baf-4604-b899-2f7fcfbbf90d',
   timelineActivities: '20202020-af4d-4eb0-babc-eb960a45b356',
 };

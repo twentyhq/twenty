@@ -1,40 +1,37 @@
 import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
-import styled from '@emotion/styled';
-
 import { css, useTheme } from '@emotion/react';
-import { IconX, isDefined } from 'twenty-ui';
-
-export const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-`;
+import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared';
+import { IconX } from 'twenty-ui';
 
 const StyledChip = styled.div<{ deletable: boolean }>`
-  align-items: center;
   background-color: ${({ theme }) => theme.accent.quaternary};
   border: 1px solid ${({ theme }) => theme.accent.tertiary};
   border-radius: 4px;
-  color: ${({ theme }) => theme.color.blue};
-  height: 26px;
+  height: 20px;
   box-sizing: border-box;
-  cursor: pointer;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   flex-direction: row;
   flex-shrink: 0;
   column-gap: ${({ theme }) => theme.spacing(1)};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(0.5)};
   padding-left: ${({ theme }) => theme.spacing(1)};
-  margin-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
   white-space: nowrap;
 
   ${({ theme, deletable }) =>
-    !deletable &&
-    css`
-      padding-right: ${theme.spacing(1)};
-    `}
+    !deletable
+      ? css`
+          padding-right: ${theme.spacing(1)};
+        `
+      : css`
+          cursor: pointer;
+        `}
+`;
+
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.color.blue};
+  line-height: 140%;
 `;
 
 const StyledDelete = styled.button`
@@ -51,11 +48,12 @@ const StyledDelete = styled.button`
   margin: 0;
   background: none;
   border: none;
-  color: inherit;
+  color: ${({ theme }) => theme.color.blue};
+  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
+  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
 
   &:hover {
     background-color: ${({ theme }) => theme.accent.secondary};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;
 
@@ -71,16 +69,14 @@ export const VariableChip = ({
   const theme = useTheme();
 
   return (
-    <StyledContainer>
-      <StyledChip deletable={isDefined(onRemove)}>
-        {extractVariableLabel(rawVariableName)}
+    <StyledChip deletable={isDefined(onRemove)}>
+      <StyledLabel>{extractVariableLabel(rawVariableName)}</StyledLabel>
 
-        {onRemove ? (
-          <StyledDelete onClick={onRemove}>
-            <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-          </StyledDelete>
-        ) : null}
-      </StyledChip>
-    </StyledContainer>
+      {onRemove ? (
+        <StyledDelete onClick={onRemove} aria-label="Remove variable">
+          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+        </StyledDelete>
+      ) : null}
+    </StyledChip>
   );
 };

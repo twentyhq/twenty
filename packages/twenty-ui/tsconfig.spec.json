@@ -2,7 +2,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "baseUrl": "../..",
+    "paths": {
+      "@ui/*": ["./packages/twenty-ui/src/*"]
+    }
   },
   "include": [
     "vite.config.ts",

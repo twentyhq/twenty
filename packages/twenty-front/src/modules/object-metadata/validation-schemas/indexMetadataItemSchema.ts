@@ -5,7 +5,7 @@ import { indexFieldMetadataItemSchema } from '@/object-metadata/validation-schem
 import { IndexType } from '~/generated-metadata/graphql';
 
 export const indexMetadataItemSchema = z.object({
-  __typename: z.literal('index'),
+  __typename: z.literal('Index'),
   id: z.string().uuid(),
   name: z.string(),
   indexFieldMetadatas: z.array(indexFieldMetadataItemSchema),

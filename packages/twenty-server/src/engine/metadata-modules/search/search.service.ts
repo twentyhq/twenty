@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -28,7 +28,6 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { SearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
-import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class SearchService {
@@ -56,8 +55,8 @@ export class SearchService {
       isSystem: true,
       type: FieldMetadataType.TS_VECTOR,
       name: SEARCH_VECTOR_FIELD.name,
-      label: SEARCH_VECTOR_FIELD.label,
-      description: SEARCH_VECTOR_FIELD.description,
+      label: SEARCH_VECTOR_FIELD.label.message ?? '',
+      description: SEARCH_VECTOR_FIELD.description.message ?? '',
       isNullable: true,
     });
 

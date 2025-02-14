@@ -31,12 +31,18 @@ export type ColorSchemePickerProps = {
   value: ColorScheme;
   className?: string;
   onChange: (value: ColorScheme) => void;
+  lightLabel: string;
+  darkLabel: string;
+  systemLabel: string;
 };
 
 export const ColorSchemePicker = ({
   value,
   onChange,
   className,
+  lightLabel,
+  darkLabel,
+  systemLabel,
 }: ColorSchemePickerProps) => (
   <StyledContainer className={className}>
     <StyledCardContainer>
@@ -45,7 +51,7 @@ export const ColorSchemePicker = ({
         variant="Light"
         selected={value === 'Light'}
       />
-      <StyledLabel>Light</StyledLabel>
+      <StyledLabel>{lightLabel}</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
@@ -53,7 +59,7 @@ export const ColorSchemePicker = ({
         variant="Dark"
         selected={value === 'Dark'}
       />
-      <StyledLabel>Dark</StyledLabel>
+      <StyledLabel>{darkLabel}</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
@@ -61,7 +67,7 @@ export const ColorSchemePicker = ({
         variant="System"
         selected={value === 'System'}
       />
-      <StyledLabel>System settings</StyledLabel>
+      <StyledLabel>{systemLabel}</StyledLabel>
     </StyledCardContainer>
   </StyledContainer>
 );

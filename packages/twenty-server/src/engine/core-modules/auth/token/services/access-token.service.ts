@@ -5,6 +5,7 @@ import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
 import { ExtractJwt } from 'passport-jwt';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
@@ -19,15 +20,13 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
 @Injectable()
 export class AccessTokenService {
@@ -40,6 +39,8 @@ export class AccessTokenService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
 
   async generateAccessToken(
@@ -67,7 +68,7 @@ export class AccessTokenService {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
+    if (isWorkspaceActiveOrSuspended(workspace)) {
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
@@ -89,11 +90,18 @@ export class AccessTokenService {
 
       tokenWorkspaceMemberId = workspaceMember.id;
     }
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        userId: user.id,
+        workspaceId,
+      },
+    });
 
     const jwtPayload: JwtPayload = {
       sub: user.id,
       workspaceId,
       workspaceMemberId: tokenWorkspaceMemberId,
+      userWorkspaceId: userWorkspace?.id,
     };
 
     return {
@@ -110,10 +118,10 @@ export class AccessTokenService {
 
     const decoded = await this.jwtWrapperService.decode(token);
 
-    const { user, apiKey, workspace, workspaceMemberId } =
+    const { user, apiKey, workspace, workspaceMemberId, userWorkspaceId } =
       await this.jwtStrategy.validate(decoded as JwtPayload);
 
-    return { user, apiKey, workspace, workspaceMemberId };
+    return { user, apiKey, workspace, workspaceMemberId, userWorkspaceId };
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {

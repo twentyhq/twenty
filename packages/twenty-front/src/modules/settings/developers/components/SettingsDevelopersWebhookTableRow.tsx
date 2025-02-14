@@ -5,6 +5,7 @@ import { IconChevronRight } from 'twenty-ui';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getUrlHostname } from '~/utils/url/getUrlHostname';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 1fr 28px;
@@ -37,7 +38,9 @@ export const SettingsDevelopersWebhookTableRow = ({
 
   return (
     <StyledApisFieldTableRow to={to}>
-      <StyledUrlTableCell>{fieldItem.targetUrl}</StyledUrlTableCell>
+      <StyledUrlTableCell>
+        {getUrlHostname(fieldItem.targetUrl, { keepPath: true })}
+      </StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}

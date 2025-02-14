@@ -1,6 +1,6 @@
 import { Field } from '@/spreadsheet-import/types';
 import { findMatch } from '@/spreadsheet-import/utils/findMatch';
-
+import { FieldMetadataType } from 'twenty-shared';
 describe('findMatch', () => {
   const defaultField: Field<'defaultField'> = {
     key: 'defaultField',
@@ -9,6 +9,7 @@ describe('findMatch', () => {
     fieldType: {
       type: 'input',
     },
+    fieldMetadataType: FieldMetadataType.TEXT,
     alternateMatches: ['Full Name', 'First Name'],
   };
 
@@ -19,6 +20,7 @@ describe('findMatch', () => {
     fieldType: {
       type: 'input',
     },
+    fieldMetadataType: FieldMetadataType.TEXT,
   };
 
   const fields = [defaultField, secondaryField];

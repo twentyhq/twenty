@@ -27,7 +27,7 @@ export const getSubfieldsForAggregateOperation = (
       case FieldMetadataType.LINKS:
         return ['primaryLinkUrl'];
       case FieldMetadataType.ACTOR:
-        return ['workspaceMemberId'];
+        return ['workspaceMemberId', 'source'];
       case FieldMetadataType.EMAILS:
         return ['primaryEmail'];
       case FieldMetadataType.PHONES:
@@ -36,6 +36,8 @@ export const getSubfieldsForAggregateOperation = (
           'primaryPhoneCountryCode',
           'primaryPhoneCallingCode',
         ];
+      case FieldMetadataType.RICH_TEXT_V2:
+        return ['blocknote', 'markdown'];
       default:
         throw new Error(`Unsupported composite field type: ${fieldType}`);
     }

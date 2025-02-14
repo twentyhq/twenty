@@ -1,5 +1,6 @@
 import { Key } from 'ts-key-enum';
 import {
+  AppTooltip,
   IconFileExport,
   IconFileImport,
   IconLayout,
@@ -14,6 +15,7 @@ import {
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
@@ -30,7 +32,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const {
@@ -54,6 +56,10 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
   );
+
+  const isGroupByEnabled =
+    (isDefined(currentView?.viewGroups) && currentView.viewGroups.length > 0) ||
+    currentView?.key !== 'INDEX';
 
   useScopedHotkeys(
     [Key.Escape],
@@ -88,6 +94,11 @@ export const ObjectOptionsDropdownMenuContent = () => {
     viewType,
   });
 
+  // TODO: Remove this once we have implemented Rich Text v2 and removed the old rich text
+  const canImportOrExport =
+    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
+    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task;
+
   return (
     <>
       <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
@@ -115,33 +126,51 @@ export const ObjectOptionsDropdownMenuContent = () => {
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
-        {viewType === ViewType.Kanban ||
-          (currentView?.key !== 'INDEX' && (
-            <MenuItem
-              onClick={() =>
-                isDefined(recordGroupFieldMetadata)
-                  ? onContentChange('recordGroups')
-                  : onContentChange('recordGroupFields')
-              }
-              LeftIcon={IconLayoutList}
-              text="Group by"
-              contextualText={recordGroupFieldMetadata?.label}
-              hasSubMenu
-            />
-          ))}
+
+        <div id="group-by-menu-item">
+          <MenuItem
+            onClick={() =>
+              isDefined(recordGroupFieldMetadata)
+                ? onContentChange('recordGroups')
+                : onContentChange('recordGroupFields')
+            }
+            LeftIcon={IconLayoutList}
+            text="Group by"
+            contextualText={
+              !isGroupByEnabled
+                ? 'Not available on Default View'
+                : recordGroupFieldMetadata?.label
+            }
+            hasSubMenu
+            disabled={!isGroupByEnabled}
+          />
+        </div>
+        {!isGroupByEnabled && (
+          <AppTooltip
+            anchorSelect={`#group-by-menu-item`}
+            content="Not available on Default View"
+            noArrow
+            place="bottom"
+            width="100%"
+          />
+        )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItem
-          onClick={download}
-          LeftIcon={IconFileExport}
-          text={displayedExportProgress(progress)}
-        />
-        <MenuItem
-          onClick={() => openObjectRecordsSpreasheetImportDialog()}
-          LeftIcon={IconFileImport}
-          text="Import"
-        />
+        {canImportOrExport && (
+          <>
+            <MenuItem
+              onClick={download}
+              LeftIcon={IconFileExport}
+              text={displayedExportProgress(progress)}
+            />
+            <MenuItem
+              onClick={() => openObjectRecordsSpreasheetImportDialog()}
+              LeftIcon={IconFileImport}
+              text="Import"
+            />
+          </>
+        )}
         <MenuItem
           onClick={() => {
             handleToggleTrashColumnFilter();

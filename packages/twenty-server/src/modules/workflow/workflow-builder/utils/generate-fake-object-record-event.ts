@@ -4,6 +4,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 export const generateFakeObjectRecordEvent = (
   objectMetadataEntity: ObjectMetadataEntity,
@@ -17,7 +18,7 @@ export const generateFakeObjectRecordEvent = (
   const formattedObjectMetadataEntity = Object.entries(
     objectMetadataEntity,
   ).reduce((acc: BaseOutputSchema, [key, value]) => {
-    acc[key] = { isLeaf: true, value };
+    acc[key] = { isLeaf: true, value, label: camelToTitleCase(key) };
 
     return acc;
   }, {});
@@ -46,10 +47,10 @@ export const generateFakeObjectRecordEvent = (
   if (action === DatabaseEventAction.CREATED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.after': {
         isLeaf: false,
-        value: { after: { isLeaf: false, value: after, label: 'After' } },
-        label: 'Record fields',
+        value: after,
+        label: 'Record Fields',
       },
     };
   }
@@ -62,10 +63,10 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
-          after: { isLeaf: false, value: after, label: 'After' },
+          before: { isLeaf: false, value: before, label: 'Before Update' },
+          after: { isLeaf: false, value: after, label: 'After Update' },
         },
-        label: 'Record fields',
+        label: 'Record Fields',
       },
     };
   }
@@ -73,12 +74,10 @@ export const generateFakeObjectRecordEvent = (
   if (action === DatabaseEventAction.DELETED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.before': {
         isLeaf: false,
-        value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
-        },
-        label: 'Record fields',
+        value: before,
+        label: 'Record Fields',
       },
     };
   }
@@ -86,12 +85,10 @@ export const generateFakeObjectRecordEvent = (
   if (action === DatabaseEventAction.DESTROYED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.before': {
         isLeaf: false,
-        value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
-        },
-        label: 'Record fields',
+        value: before,
+        label: 'Record Fields',
       },
     };
   }

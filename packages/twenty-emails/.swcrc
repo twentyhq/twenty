@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "experimental": {
+      "plugins": [
+        [
+          "@lingui/swc-plugin",
+         {
+           "runtimeModules": {
+             "i18n": ["@lingui/core", "i18n"],
+             "trans": ["@lingui/react", "Trans"]
+           },
+           "stripNonEssentialFields": false
+          }
+        ]
+      ]
+    }
+  }
+}

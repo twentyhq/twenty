@@ -1,11 +1,17 @@
-import { Button, IconButton, IconDotsVertical, useIsMobile } from 'twenty-ui';
+import {
+  Button,
+  IconButton,
+  IconDotsVertical,
+  getOsControlSymbol,
+  useIsMobile,
+} from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const PageHeaderOpenCommandMenuButton = () => {
-  const { openCommandMenu } = useCommandMenu();
+  const { openRootCommandMenu } = useCommandMenu();
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
@@ -22,9 +28,9 @@ export const PageHeaderOpenCommandMenuButton = () => {
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          shortcut={isMobile ? '' : '⌘K'}
+          hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel="Open command menu"
-          onClick={openCommandMenu}
+          onClick={openRootCommandMenu}
         />
       ) : (
         <IconButton
@@ -33,7 +39,7 @@ export const PageHeaderOpenCommandMenuButton = () => {
           dataTestId="more-showpage-button"
           accent="default"
           variant="secondary"
-          onClick={openCommandMenu}
+          onClick={openRootCommandMenu}
         />
       )}
     </>

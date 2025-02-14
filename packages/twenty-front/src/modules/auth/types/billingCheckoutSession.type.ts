@@ -5,5 +5,4 @@ export type BillingCheckoutSession = {
   plan: BillingPlanKey;
   interval: SubscriptionInterval;
   requirePaymentMethod: boolean;
-  skipPlanPage: boolean;
 };

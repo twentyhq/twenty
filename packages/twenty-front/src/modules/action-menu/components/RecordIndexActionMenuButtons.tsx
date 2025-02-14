@@ -1,22 +1,14 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { i18n } from '@lingui/core';
 import { Button } from 'twenty-ui';
 
 export const RecordIndexActionMenuButtons = () => {
-  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-    contextStoreNumberOfSelectedRecordsComponentState,
-  );
-
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
 
   const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
-
-  if (contextStoreNumberOfSelectedRecords === 0) {
-    return null;
-  }
 
   return (
     <>
@@ -27,9 +19,9 @@ export const RecordIndexActionMenuButtons = () => {
           size="small"
           variant="secondary"
           accent="default"
-          title={entry.shortLabel}
+          title={entry.shortLabel ? i18n._(entry.shortLabel) : ''}
           onClick={entry.onClick}
-          ariaLabel={entry.label}
+          ariaLabel={i18n._(entry.label)}
         />
       ))}
     </>

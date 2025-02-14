@@ -45,7 +45,6 @@ describe('computeContextStoreFilters', () => {
     const contextStoreFilters: RecordFilter[] = [
       {
         id: 'name-filter',
-        variant: 'default',
         fieldMetadataId: personObjectMetadataItem.fields.find(
           (field) => field.name === 'name',
         )!.id,
@@ -74,9 +73,22 @@ describe('computeContextStoreFilters', () => {
     expect(filters).toEqual({
       and: [
         {
-          name: {
-            ilike: '%John%',
-          },
+          or: [
+            {
+              name: {
+                firstName: {
+                  ilike: '%John%',
+                },
+              },
+            },
+            {
+              name: {
+                lastName: {
+                  ilike: '%John%',
+                },
+              },
+            },
+          ],
         },
         {
           not: {

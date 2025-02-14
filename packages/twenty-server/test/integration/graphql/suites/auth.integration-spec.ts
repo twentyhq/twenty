@@ -10,11 +10,11 @@ const auth = {
 describe('AuthResolve (integration)', () => {
   let loginToken: string;
 
-  it('should challenge with email and password', () => {
+  it('should getLoginTokenFromCredentials with email and password', () => {
     const queryData = {
       query: `
-        mutation Challenge {
-          challenge(email: "${auth.email}", password: "${auth.password}") {
+        mutation GetLoginTokenFromCredentials {
+          getLoginTokenFromCredentials(email: "${auth.email}", password: "${auth.password}") {
             loginToken {
               token
               expiresAt
@@ -33,7 +33,7 @@ describe('AuthResolve (integration)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.challenge;
+        const data = res.body.data.getLoginTokenFromCredentials;
 
         expect(data).toBeDefined();
         expect(data.loginToken).toBeDefined();
@@ -42,11 +42,11 @@ describe('AuthResolve (integration)', () => {
       });
   });
 
-  it('should verify with login token', () => {
+  it('should getAuthTokensFromLoginToken with login token', () => {
     const queryData = {
       query: `
-        mutation Verify {
-          verify(loginToken: "${loginToken}") {
+        mutation GetAuthTokensFromLoginToken {
+          getAuthTokensFromLoginToken(loginToken: "${loginToken}") {
             tokens {
               accessToken {
                 token
@@ -66,7 +66,7 @@ describe('AuthResolve (integration)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.verify;
+        const data = res.body.data.getAuthTokensFromLoginToken;
 
         expect(data).toBeDefined();
         expect(data.tokens).toBeDefined();

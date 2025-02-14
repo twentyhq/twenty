@@ -2,7 +2,7 @@ import { Nullable } from 'twenty-ui';
 
 import { useDateField } from '@/object-record/record-field/meta-types/hooks/useDateField';
 import { DateInput } from '@/ui/field/input/components/DateInput';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { usePersistField } from '../../../hooks/usePersistField';
@@ -32,9 +32,13 @@ export const DateFieldInput = ({
     if (!isDefined(newDate)) {
       persistField(null);
     } else {
-      const newDateISO = newDate?.toISOString();
+      const newDateWithoutTime = `${newDate?.getFullYear()}-${(
+        newDate?.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, '0')}-${newDate?.getDate().toString().padStart(2, '0')}`;
 
-      persistField(newDateISO);
+      persistField(newDateWithoutTime);
     }
   };
 

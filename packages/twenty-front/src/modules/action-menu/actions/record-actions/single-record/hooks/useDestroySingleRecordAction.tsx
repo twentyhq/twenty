@@ -4,11 +4,13 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { AppPath } from '@/types/AppPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
@@ -17,6 +19,8 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
     useState(false);
+
+  const navigateApp = useNavigateApp();
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: objectMetadataItem.namePlural,
@@ -34,7 +38,16 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
     resetTableRowSelection();
 
     await destroyOneRecord(recordId);
-  }, [resetTableRowSelection, destroyOneRecord, recordId]);
+    navigateApp(AppPath.RecordIndexPage, {
+      objectNamePlural: objectMetadataItem.namePlural,
+    });
+  }, [
+    resetTableRowSelection,
+    destroyOneRecord,
+    recordId,
+    navigateApp,
+    objectMetadataItem.namePlural,
+  ]);
 
   const isRemoteObject = objectMetadataItem.isRemote;
 

@@ -8,7 +8,7 @@ import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const AdvancedFilterDropdownButton = () => {
   const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();

@@ -1,10 +1,20 @@
+import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { getWorkflowVersionDiagram } from '../getWorkflowVersionDiagram';
+
+jest.mock('uuid', () => ({
+  v4: getUuidV4Mock(),
+}));
 
 describe('getWorkflowVersionDiagram', () => {
   it('returns an empty diagram if the provided workflow version', () => {
     const result = getWorkflowVersionDiagram(undefined);
 
-    expect(result).toEqual({ nodes: [], edges: [] });
+    expect(result).toMatchInlineSnapshot(`
+{
+  "edges": [],
+  "nodes": [],
+}
+`);
   });
 
   it('returns a diagram with an empty-trigger node if the provided workflow version has no trigger', () => {
@@ -20,20 +30,28 @@ describe('getWorkflowVersionDiagram', () => {
       workflowId: '',
     });
 
-    expect(result).toEqual({
-      nodes: [
-        {
-          data: {},
-          id: 'trigger',
-          position: { x: 0, y: 0 },
-          type: 'empty-trigger',
-        },
-      ],
-      edges: [],
-    });
+    expect(result).toMatchInlineSnapshot(`
+{
+  "edges": [],
+  "nodes": [
+    {
+      "data": {
+        "isLeafNode": false,
+        "nodeType": "empty-trigger",
+      },
+      "id": "trigger",
+      "position": {
+        "x": 0,
+        "y": 0,
+      },
+      "type": "empty-trigger",
+    },
+  ],
+}
+`);
   });
 
-  it('returns a diagram with an empty-trigger node if the provided workflow version has no steps', () => {
+  it('returns a diagram with only a trigger node if the provided workflow version has no steps', () => {
     const result = getWorkflowVersionDiagram({
       __typename: 'WorkflowVersion',
       status: 'ACTIVE',
@@ -42,7 +60,7 @@ describe('getWorkflowVersionDiagram', () => {
       name: '',
       steps: null,
       trigger: {
-        name: 'Company created',
+        name: 'Record is created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -50,20 +68,27 @@ describe('getWorkflowVersionDiagram', () => {
       workflowId: '',
     });
 
-    expect(result).toEqual({
-      nodes: [
-        {
-          data: {
-            name: 'Company created',
-            nodeType: 'trigger',
-            triggerType: 'DATABASE_EVENT',
-          },
-          id: 'trigger',
-          position: { x: 0, y: 0 },
-        },
-      ],
-      edges: [],
-    });
+    expect(result).toMatchInlineSnapshot(`
+{
+  "edges": [],
+  "nodes": [
+    {
+      "data": {
+        "icon": "IconPlaylistAdd",
+        "isLeafNode": false,
+        "name": "Record is created",
+        "nodeType": "trigger",
+        "triggerType": "DATABASE_EVENT",
+      },
+      "id": "trigger",
+      "position": {
+        "x": 0,
+        "y": 0,
+      },
+    },
+  ],
+}
+`);
   });
 
   it('returns the diagram for the last version', () => {
@@ -102,8 +127,49 @@ describe('getWorkflowVersionDiagram', () => {
       workflowId: '',
     });
 
-    // Corresponds to the trigger + 1 step
-    expect(result.nodes).toHaveLength(2);
-    expect(result.edges).toHaveLength(1);
+    expect(result).toMatchInlineSnapshot(`
+{
+  "edges": [
+    {
+      "deletable": false,
+      "id": "8f3b2121-f194-4ba4-9fbf-0",
+      "markerEnd": "workflow-edge-arrow-rounded",
+      "markerStart": "workflow-edge-gray-circle",
+      "selectable": false,
+      "source": "trigger",
+      "target": "step-1",
+    },
+  ],
+  "nodes": [
+    {
+      "data": {
+        "icon": "IconPlaylistAdd",
+        "isLeafNode": false,
+        "name": "Company created",
+        "nodeType": "trigger",
+        "triggerType": "DATABASE_EVENT",
+      },
+      "id": "trigger",
+      "position": {
+        "x": 0,
+        "y": 0,
+      },
+    },
+    {
+      "data": {
+        "actionType": "CODE",
+        "isLeafNode": false,
+        "name": "",
+        "nodeType": "action",
+      },
+      "id": "step-1",
+      "position": {
+        "x": 0,
+        "y": 150,
+      },
+    },
+  ],
+}
+`);
   });
 });

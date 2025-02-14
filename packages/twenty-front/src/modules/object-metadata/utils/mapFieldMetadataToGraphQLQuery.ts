@@ -1,42 +1,43 @@
-import { isUndefined } from '@sniptt/guards';
-
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
+type MapFieldMetadataToGraphQLQueryArgs = {
+  objectMetadataItems: ObjectMetadataItem[];
+  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
+  relationRecordGqlFields?: RecordGqlFields;
+  computeReferences?: boolean;
+};
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
-  relationrecordFields,
+  relationRecordGqlFields,
   computeReferences = false,
-}: {
-  objectMetadataItems: ObjectMetadataItem[];
-  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
-  relationrecordFields?: Record<string, any>;
-  computeReferences?: boolean;
-}): any => {
+}: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = field.type;
 
   const fieldIsSimpleValue = [
-    FieldMetadataType.Uuid,
-    FieldMetadataType.Text,
-    FieldMetadataType.DateTime,
-    FieldMetadataType.Date,
-    FieldMetadataType.Number,
-    FieldMetadataType.Boolean,
-    FieldMetadataType.Rating,
-    FieldMetadataType.Select,
-    FieldMetadataType.MultiSelect,
-    FieldMetadataType.Position,
-    FieldMetadataType.RawJson,
-    FieldMetadataType.RichText,
-    FieldMetadataType.Array,
+    FieldMetadataType.UUID,
+    FieldMetadataType.TEXT,
+    FieldMetadataType.DATE_TIME,
+    FieldMetadataType.DATE,
+    FieldMetadataType.NUMBER,
+    FieldMetadataType.BOOLEAN,
+    FieldMetadataType.RATING,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.MULTI_SELECT,
+    FieldMetadataType.POSITION,
+    FieldMetadataType.RAW_JSON,
+    FieldMetadataType.RICH_TEXT,
+    FieldMetadataType.ARRAY,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
@@ -44,8 +45,8 @@ export const mapFieldMetadataToGraphQLQuery = ({
   }
 
   if (
-    fieldType === FieldMetadataType.Relation &&
-    field.relationDefinition?.direction === RelationDefinitionType.ManyToOne
+    fieldType === FieldMetadataType.RELATION &&
+    field.relationDefinition?.direction === RelationDefinitionType.MANY_TO_ONE
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -61,15 +62,15 @@ export const mapFieldMetadataToGraphQLQuery = ({
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
-  recordGqlFields: relationrecordFields,
+  recordGqlFields: relationRecordGqlFields,
   computeReferences: computeReferences,
   isRootLevel: false,
 })}`;
   }
 
   if (
-    fieldType === FieldMetadataType.Relation &&
-    field.relationDefinition?.direction === RelationDefinitionType.OneToMany
+    fieldType === FieldMetadataType.RELATION &&
+    field.relationDefinition?.direction === RelationDefinitionType.ONE_TO_MANY
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -87,7 +88,7 @@ ${mapObjectMetadataToGraphQLQuery({
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,
-      recordGqlFields: relationrecordFields,
+      recordGqlFields: relationRecordGqlFields,
       computeReferences,
       isRootLevel: false,
     })}
@@ -95,7 +96,7 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
-  if (fieldType === FieldMetadataType.Links) {
+  if (fieldType === FieldMetadataType.LINKS) {
     return `${field.name}
 {
   primaryLinkUrl
@@ -104,7 +105,7 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
-  if (fieldType === FieldMetadataType.Currency) {
+  if (fieldType === FieldMetadataType.CURRENCY) {
     return `${field.name}
 {
   amountMicros
@@ -113,7 +114,7 @@ ${mapObjectMetadataToGraphQLQuery({
     `;
   }
 
-  if (fieldType === FieldMetadataType.FullName) {
+  if (fieldType === FieldMetadataType.FULL_NAME) {
     return `${field.name}
 {
   firstName
@@ -121,7 +122,7 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
-  if (fieldType === FieldMetadataType.Address) {
+  if (fieldType === FieldMetadataType.ADDRESS) {
     return `${field.name}
 {
   addressStreet1
@@ -135,16 +136,17 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
-  if (fieldType === FieldMetadataType.Actor) {
+  if (fieldType === FieldMetadataType.ACTOR) {
     return `${field.name}
 {
     source
     workspaceMemberId
     name
+    context
 }`;
   }
 
-  if (fieldType === FieldMetadataType.Emails) {
+  if (fieldType === FieldMetadataType.EMAILS) {
     return `${field.name}
 {
   primaryEmail
@@ -152,7 +154,7 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
-  if (fieldType === FieldMetadataType.Phones) {
+  if (fieldType === FieldMetadataType.PHONES) {
     return `${field.name}
     {
       primaryPhoneNumber
@@ -160,6 +162,14 @@ ${mapObjectMetadataToGraphQLQuery({
       primaryPhoneCallingCode
       additionalPhones
     }`;
+  }
+
+  if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
+    return `${field.name}
+{
+  blocknote
+  markdown
+}`;
   }
 
   return '';

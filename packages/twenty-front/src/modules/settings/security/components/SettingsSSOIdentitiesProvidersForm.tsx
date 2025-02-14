@@ -16,10 +16,7 @@ const StyledInputsContainer = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(2, 4)};
   grid-template-columns: 1fr 1fr;
-  grid-template-areas:
-    'input-1 input-1'
-    'input-2 input-3'
-    'input-4 input-5';
+  grid-template-areas: 'input-1 input-1';
 
   & :first-of-type {
     grid-area: input-1;
@@ -66,9 +63,9 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
 
   const formByType = useMemo(() => {
     switch (selectedType) {
-      case IdentityProviderType.Oidc:
+      case IdentityProviderType.OIDC:
         return IdentitiesProvidersMap.OIDC.form;
-      case IdentityProviderType.Saml:
+      case IdentityProviderType.SAML:
         return IdentitiesProvidersMap.SAML.form;
       default:
         return null;

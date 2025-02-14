@@ -13,15 +13,15 @@ export const isFieldCellSupported = (
 ) => {
   if (
     [
-      FieldMetadataType.Uuid,
-      FieldMetadataType.Position,
-      FieldMetadataType.RichText,
+      FieldMetadataType.UUID,
+      FieldMetadataType.POSITION,
+      FieldMetadataType.RICH_TEXT,
     ].includes(fieldMetadataItem.type)
   ) {
     return false;
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.Relation) {
+  if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
     const relationObjectMetadataItemId =
       fieldMetadataItem.relationDefinition?.targetObjectMetadata.id;
 
@@ -52,7 +52,7 @@ export const isFieldCellSupported = (
       !fieldMetadataItem.relationDefinition ||
       // TODO: Many to many relations are not supported yet.
       fieldMetadataItem.relationDefinition.direction ===
-        RelationDefinitionType.ManyToMany ||
+        RelationDefinitionType.MANY_TO_MANY ||
       !relationObjectMetadataItem ||
       !isObjectMetadataAvailableForRelation(relationObjectMetadataItem)
     ) {
