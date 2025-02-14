@@ -84,7 +84,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Integration Test File",
+      "name": "Debug Integration Test File (to launch with test file open)",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
         "nx",
