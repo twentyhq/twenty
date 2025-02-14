@@ -155,7 +155,9 @@ describe('useRecordData', () => {
 
     it('should call the callback function with kanban field included as column if view type is kanban', async () => {
       const callback = jest.fn();
+
       mockFetchAllRecords.mockReturnValue([mockPerson]);
+
       const { result } = renderHook(
         () => {
           const [recordGroupFieldMetadata, setRecordGroupFieldMetadata] =
@@ -234,7 +236,7 @@ describe('useRecordData', () => {
                   displayAsRelativeDate: true,
                 },
               },
-              position: 3,
+              position: 10,
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',

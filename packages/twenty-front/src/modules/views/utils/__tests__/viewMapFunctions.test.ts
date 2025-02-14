@@ -71,7 +71,7 @@ describe('mapViewFiltersToFilters', () => {
         value: 'testValue',
         displayValue: 'Test Display Value',
         operand: ViewFilterOperand.Is,
-        label: baseDefinition.label,
+        label: baseFieldMetadataItem.label,
         type: FieldMetadataType.FULL_NAME,
       },
     ];
