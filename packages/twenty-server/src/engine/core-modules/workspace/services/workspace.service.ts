@@ -261,13 +261,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
   }
 
-  async softDeleteWorkspace({
-    id,
-    withMetadataSchemaAndUserWorkspaceDeletion = true,
-  }: {
-    id: string;
-    withMetadataSchemaAndUserWorkspaceDeletion?: boolean;
-  }) {
+  async deleteMetadataSchemaCacheAndUserWorkspace(workspace: Workspace) {
+    await this.userWorkspaceRepository.delete({ workspaceId: workspace.id });
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
+    }
+
+    await this.workspaceManagerService.delete(workspace.id);
+
+    return workspace;
+  }
+
+  async deleteWorkspace(id: string, softDelete = false) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -275,40 +281,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     assert(workspace, 'Workspace not found');
 
-    await this.workspaceCacheStorageService.flush(
-      workspace.id,
-      workspace.metadataVersion,
-    );
-
-    if (!withMetadataSchemaAndUserWorkspaceDeletion) {
-      await this.userWorkspaceRepository.softDelete({ workspaceId: id });
-      await this.workspaceRepository.softDelete({ id });
-
-      return workspace;
-    }
-
-    await this.userWorkspaceRepository.delete({ workspaceId: id });
-
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
-    }
-
-    await this.workspaceManagerService.delete(id);
-
-    return workspace;
-  }
-
-  async deleteWorkspace(id: string, softDelete = false) {
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         workspaceId: id,
       },
       withDeleted: true,
-    });
-
-    const workspace = await this.softDeleteWorkspace({
-      id,
-      withMetadataSchemaAndUserWorkspaceDeletion: !softDelete,
     });
 
     for (const userWorkspace of userWorkspaces) {
@@ -319,11 +296,18 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       );
     }
 
-    if (!softDelete) {
-      await this.workspaceRepository.delete(id);
+    await this.workspaceCacheStorageService.flush(
+      workspace.id,
+      workspace.metadataVersion,
+    );
+
+    if (softDelete) {
+      return await this.workspaceRepository.softDelete({ id });
     }
 
-    return workspace;
+    await this.deleteMetadataSchemaCacheAndUserWorkspace(workspace);
+
+    return await this.workspaceRepository.delete(id);
   }
 
   async handleRemoveWorkspaceMember(
