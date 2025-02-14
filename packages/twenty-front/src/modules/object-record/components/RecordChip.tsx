@@ -22,7 +22,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
-  isClickable = true
+  isClickable = true,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
