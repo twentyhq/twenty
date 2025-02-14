@@ -317,6 +317,7 @@ const TextInputV2WithAutoGrowWrapper = forwardRef<
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...props}
             ref={ref}
+            fullWidth={true}
           />
         </StyledAutogrowWrapper>
       ) : (

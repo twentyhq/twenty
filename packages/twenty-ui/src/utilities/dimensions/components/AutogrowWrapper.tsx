@@ -21,6 +21,7 @@ const StyledChildWrapper = styled.div`
   left: 0;
   top: 0;
   position: absolute;
+  width: 100%;
 `;
 
 export const AutogrowWrapper = ({
