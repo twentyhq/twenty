@@ -79,7 +79,7 @@ export const RecordTitleCell = ({
     [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
   );
 
-  const RecordTitleCellContextValue: RecordTitleCellContextProps = {
+  const recordTitleCellContextValue: RecordTitleCellContextProps = {
     editModeContent: (
       <RecordTitleCellFieldInput
         recordFieldInputId={getRecordFieldInputId(
@@ -101,7 +101,7 @@ export const RecordTitleCell = ({
 
   return (
     <FieldFocusContextProvider>
-      <RecordTitleCellContext.Provider value={RecordTitleCellContextValue}>
+      <RecordTitleCellContext.Provider value={recordTitleCellContextValue}>
         <RecordTitleCellContainer />
       </RecordTitleCellContext.Provider>
     </FieldFocusContextProvider>
