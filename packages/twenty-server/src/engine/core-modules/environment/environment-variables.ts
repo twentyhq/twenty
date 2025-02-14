@@ -551,11 +551,11 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Domain for the frontend application',
+    description: 'Url for the frontend application',
   })
-  @IsString()
+  @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
-  FRONT_DOMAIN?: string;
+  FRONTEND_URL: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
@@ -565,23 +565,6 @@ export class EnvironmentVariables {
   @IsString()
   @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
   DEFAULT_SUBDOMAIN = 'app';
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Protocol for the frontend application (http or https)',
-  })
-  @IsString()
-  @IsOptional()
-  FRONT_PROTOCOL?: 'http' | 'https' = 'http';
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Port for the frontend application',
-  })
-  @CastToPositiveNumber()
-  @IsNumber()
-  @IsOptional()
-  FRONT_PORT?: number;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,

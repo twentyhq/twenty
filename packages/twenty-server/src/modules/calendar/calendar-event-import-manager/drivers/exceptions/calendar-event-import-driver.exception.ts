@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class CalendarEventImportDriverException extends CustomException {
-  code: CalendarEventImportDriverExceptionCode;
   constructor(message: string, code: CalendarEventImportDriverExceptionCode) {
     super(message, code);
   }
