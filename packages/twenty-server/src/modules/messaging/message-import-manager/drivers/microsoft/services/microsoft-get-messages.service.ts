@@ -134,7 +134,12 @@ export class MicrosoftGetMessagesService {
         return response.body;
       }
 
-      return { error: response.error };
+      return {
+        error: {
+          ...response.body.error,
+          statusCode: response.status,
+        },
+      };
     });
   }
 }
