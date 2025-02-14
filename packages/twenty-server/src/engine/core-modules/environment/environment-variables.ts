@@ -409,8 +409,16 @@ export class EnvironmentVariables {
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
   @IsString()
-  @IsOptional()
   SERVERLESS_LAMBDA_ROLE: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerlessConfig,
+    description: 'Role to assume when hosting lambdas in dedicated AWS account',
+  })
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_SUBHOSTING_ROLE?: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerlessConfig,
@@ -739,12 +747,12 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Port for the backend server',
+    description: 'Port for the node server',
   })
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
-  PORT = 3000;
+  NODE_PORT = 3000;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
@@ -819,6 +827,14 @@ export class EnvironmentVariables {
   @IsString()
   @ValidateIf((env) => env.CLOUDFLARE_API_KEY)
   CLOUDFLARE_ZONE_ID: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Random string to validate queries from Cloudflare',
+  })
+  @IsString()
+  @IsOptional()
+  CLOUDFLARE_WEBHOOK_SECRET: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.LLM,
