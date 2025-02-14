@@ -409,8 +409,16 @@ export class EnvironmentVariables {
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
   @IsString()
-  @IsOptional()
   SERVERLESS_LAMBDA_ROLE: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerlessConfig,
+    description: 'Role to assume when hosting lambdas in dedicated AWS account',
+  })
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_SUBHOSTING_ROLE?: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerlessConfig,

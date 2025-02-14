@@ -21,6 +21,7 @@ import {
   UpdateFunctionConfigurationCommandInput,
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
+import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
 import dotenv from 'dotenv';
@@ -55,24 +56,74 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
+const CREDENTIALS_DURATION_IN_SECONDS = 10 * 60 * 60; // 10h
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
   region: string;
-  role: string;
+  lambdaRole: string;
+  subhostingRole?: string;
 }
 
 export class LambdaDriver implements ServerlessDriver {
-  private readonly lambdaClient: Lambda;
-  private readonly lambdaRole: string;
+  private lambdaClient: Lambda | undefined;
+  private credentialsExpiry: Date | null = null;
+  private readonly options: LambdaDriverOptions;
   private readonly fileStorageService: FileStorageService;
 
   constructor(options: LambdaDriverOptions) {
-    const { region, role, ...lambdaOptions } = options;
-
-    this.lambdaClient = new Lambda({ ...lambdaOptions, region });
-    this.lambdaRole = role;
+    this.options = options;
+    this.lambdaClient = undefined;
     this.fileStorageService = options.fileStorageService;
+  }
+
+  private async getLambdaClient() {
+    if (
+      !isDefined(this.lambdaClient) ||
+      (isDefined(this.options.subhostingRole) &&
+        isDefined(this.credentialsExpiry) &&
+        new Date() >= this.credentialsExpiry)
+    ) {
+      this.lambdaClient = new Lambda({
+        ...this.options,
+        ...(isDefined(this.options.subhostingRole) && {
+          credentials: await this.getAssumeRoleCredentials(),
+        }),
+      });
+    }
+
+    return this.lambdaClient;
+  }
+
+  private async getAssumeRoleCredentials() {
+    const stsClient = new STSClient({ region: this.options.region });
+
+    this.credentialsExpiry = new Date(
+      Date.now() + (CREDENTIALS_DURATION_IN_SECONDS - 60 * 5) * 1000,
+    );
+
+    const assumeRoleCommand = new AssumeRoleCommand({
+      RoleArn: 'arn:aws:iam::820242914089:role/LambdaDeploymentRole',
+      RoleSessionName: 'LambdaSession',
+      DurationSeconds: CREDENTIALS_DURATION_IN_SECONDS,
+    });
+
+    const { Credentials } = await stsClient.send(assumeRoleCommand);
+
+    if (
+      !isDefined(Credentials) ||
+      !isDefined(Credentials.AccessKeyId) ||
+      !isDefined(Credentials.SecretAccessKey) ||
+      !isDefined(Credentials.SessionToken)
+    ) {
+      throw new Error('Failed to assume role');
+    }
+
+    return {
+      accessKeyId: Credentials.AccessKeyId,
+      secretAccessKey: Credentials.SecretAccessKey,
+      sessionToken: Credentials.SessionToken,
+    };
   }
 
   private async waitFunctionUpdates(
@@ -82,7 +133,7 @@ export class LambdaDriver implements ServerlessDriver {
     const waitParams = { FunctionName: serverlessFunctionId };
 
     await waitUntilFunctionUpdatedV2(
-      { client: this.lambdaClient, maxWaitTime },
+      { client: await this.getLambdaClient(), maxWaitTime },
       waitParams,
     );
   }
@@ -93,7 +144,9 @@ export class LambdaDriver implements ServerlessDriver {
       MaxItems: 1,
     };
     const listLayerCommand = new ListLayerVersionsCommand(listLayerParams);
-    const listLayerResult = await this.lambdaClient.send(listLayerCommand);
+    const listLayerResult = await (
+      await this.getLambdaClient()
+    ).send(listLayerCommand);
 
     if (
       isDefined(listLayerResult.LayerVersions) &&
@@ -128,7 +181,7 @@ export class LambdaDriver implements ServerlessDriver {
 
     const command = new PublishLayerVersionCommand(params);
 
-    const result = await this.lambdaClient.send(command);
+    const result = await (await this.getLambdaClient()).send(command);
 
     await lambdaBuildDirectoryManager.clean();
 
@@ -145,7 +198,7 @@ export class LambdaDriver implements ServerlessDriver {
         FunctionName: functionName,
       });
 
-      await this.lambdaClient.send(getFunctionCommand);
+      await (await this.getLambdaClient()).send(getFunctionCommand);
 
       return true;
     } catch (error) {
@@ -166,7 +219,7 @@ export class LambdaDriver implements ServerlessDriver {
         FunctionName: serverlessFunction.id,
       });
 
-      await this.lambdaClient.send(deleteFunctionCommand);
+      await (await this.getLambdaClient()).send(deleteFunctionCommand);
     }
   }
 
@@ -232,7 +285,7 @@ export class LambdaDriver implements ServerlessDriver {
         Environment: {
           Variables: envVariables,
         },
-        Role: this.lambdaRole,
+        Role: this.options.lambdaRole,
         Runtime: serverlessFunction.runtime,
         Description: 'Lambda function to run user script',
         Timeout: serverlessFunction.timeoutSeconds,
@@ -240,7 +293,7 @@ export class LambdaDriver implements ServerlessDriver {
 
       const command = new CreateFunctionCommand(params);
 
-      await this.lambdaClient.send(command);
+      await (await this.getLambdaClient()).send(command);
     } else {
       const updateCodeParams: UpdateFunctionCodeCommandInput = {
         ZipFile: await fs.readFile(lambdaZipPath),
@@ -249,7 +302,7 @@ export class LambdaDriver implements ServerlessDriver {
 
       const updateCodeCommand = new UpdateFunctionCodeCommand(updateCodeParams);
 
-      await this.lambdaClient.send(updateCodeCommand);
+      await (await this.getLambdaClient()).send(updateCodeCommand);
 
       const updateConfigurationParams: UpdateFunctionConfigurationCommandInput =
         {
@@ -266,7 +319,7 @@ export class LambdaDriver implements ServerlessDriver {
 
       await this.waitFunctionUpdates(serverlessFunction.id);
 
-      await this.lambdaClient.send(updateConfigurationCommand);
+      await (await this.getLambdaClient()).send(updateConfigurationCommand);
     }
 
     await this.waitFunctionUpdates(serverlessFunction.id);
@@ -280,7 +333,7 @@ export class LambdaDriver implements ServerlessDriver {
 
     const command = new PublishVersionCommand(params);
 
-    const result = await this.lambdaClient.send(command);
+    const result = await (await this.getLambdaClient()).send(command);
     const newVersion = result.Version;
 
     if (!newVersion) {
@@ -331,7 +384,7 @@ export class LambdaDriver implements ServerlessDriver {
     const command = new InvokeCommand(params);
 
     try {
-      const result = await this.lambdaClient.send(command);
+      const result = await (await this.getLambdaClient()).send(command);
 
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())
