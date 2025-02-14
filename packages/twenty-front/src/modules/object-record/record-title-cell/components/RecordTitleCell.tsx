@@ -22,7 +22,6 @@ import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDr
 import { useRecoilCallback } from 'recoil';
 
 type RecordTitleCellProps = {
-  readonly?: boolean;
   loading?: boolean;
   sizeVariant?: 'sm' | 'md';
 };
