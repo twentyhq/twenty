@@ -7,7 +7,6 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 
 import { useInlineCell } from '../../record-inline-cell/hooks/useInlineCell';
 
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { RecordTitleCellContainer } from '@/object-record/record-title-cell/components/RecordTitleCellContainer';
 import {
@@ -34,21 +33,10 @@ export const RecordTitleCell = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const isFieldReadOnly = useIsFieldValueReadOnly();
-
   const { closeInlineCell } = useInlineCell();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
-    closeInlineCell();
-  };
-
-  const handleSubmit: FieldInputEvent = (persistField) => {
-    persistField();
-    closeInlineCell();
-  };
-
-  const handleCancel = () => {
     closeInlineCell();
   };
 
@@ -99,13 +87,10 @@ export const RecordTitleCell = ({
           fieldDefinition?.metadata?.fieldName,
         )}
         onEnter={handleEnter}
-        onCancel={handleCancel}
         onEscape={handleEscape}
-        onSubmit={handleSubmit}
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
-        isReadOnly={isFieldReadOnly}
         sizeVariant={sizeVariant}
       />
     ),

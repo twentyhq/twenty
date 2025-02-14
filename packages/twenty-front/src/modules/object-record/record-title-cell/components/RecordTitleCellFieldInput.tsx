@@ -12,8 +12,6 @@ import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell
 
 type RecordTitleCellFieldInputProps = {
   recordFieldInputId: string;
-  onSubmit?: FieldInputEvent;
-  onCancel?: () => void;
   onClickOutside?: (
     persist: () => void,
     event: MouseEvent | TouchEvent,
@@ -22,7 +20,6 @@ type RecordTitleCellFieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
-  isReadOnly?: boolean;
   sizeVariant?: 'sm' | 'md';
 };
 
