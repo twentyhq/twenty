@@ -113,7 +113,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });
-
     if (!user) {
       throw new AuthException(
         'User not found',
