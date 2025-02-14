@@ -188,8 +188,10 @@ jobs:
         uses: ./.github/workflows/actions/restore-cache
         with:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
-      - name: Build twenty-shared
-        run: npx nx build twenty-shared
+      - name: Build dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-emails
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
