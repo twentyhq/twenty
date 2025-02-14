@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactNode, useRef } from 'react';
+import { ReactNode } from 'react';
 
 type AutogrowWrapperProps = {
   children: ReactNode;
@@ -29,10 +29,8 @@ export const AutogrowWrapper = ({
   node = children,
   className,
 }: AutogrowWrapperProps) => {
-  const nodeWrapperRef = useRef<HTMLDivElement>(null);
-
   return (
-    <StyledDiv ref={nodeWrapperRef} className={className}>
+    <StyledDiv className={className}>
       <StyledNodeWrapper>{node}</StyledNodeWrapper>
       <StyledChildWrapper>{children}</StyledChildWrapper>
     </StyledDiv>
