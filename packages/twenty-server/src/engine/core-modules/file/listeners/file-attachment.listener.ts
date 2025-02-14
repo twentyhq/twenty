@@ -26,12 +26,14 @@ export class FileAttachmentListener {
       ObjectRecordDestroyEvent<AttachmentWorkspaceEntity>
     >,
   ) {
-    return this.messageQueueService.add<FileDeletionJobData>(
-      FileDeletionJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        fullPath: payload.events[0].properties.before.fullPath,
-      },
-    );
+    for (const event of payload.events) {
+      await this.messageQueueService.add<FileDeletionJobData>(
+        FileDeletionJob.name,
+        {
+          workspaceId: payload.workspaceId,
+          fullPath: event.properties.before.fullPath,
+        },
+      );
+    }
   }
 }

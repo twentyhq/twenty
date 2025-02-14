@@ -26,12 +26,17 @@ export class FileWorkspaceMemberListener {
       ObjectRecordDestroyEvent<WorkspaceMemberWorkspaceEntity>
     >,
   ) {
-    return this.messageQueueService.add<FileDeletionJobData>(
-      FileDeletionJob.name,
-      {
+    for (const event of payload.events) {
+      const avatarUrl = event.properties.before.avatarUrl;
+
+      if (!avatarUrl) {
+        continue;
+      }
+
+      this.messageQueueService.add<FileDeletionJobData>(FileDeletionJob.name, {
         workspaceId: payload.workspaceId,
-        fullPath: payload.events[0].properties.before.avatarUrl,
-      },
-    );
+        fullPath: event.properties.before.avatarUrl,
+      });
+    }
   }
 }

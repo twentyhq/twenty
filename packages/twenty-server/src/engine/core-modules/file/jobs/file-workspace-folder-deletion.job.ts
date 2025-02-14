@@ -15,6 +15,12 @@ export class FileWorkspaceFolderDeletionJob {
   async handle(data: FileWorkspaceFolderDeletionJobData): Promise<void> {
     const { workspaceId } = data;
 
-    await this.fileService.deleteWorkspaceFolder(workspaceId);
+    try {
+      await this.fileService.deleteWorkspaceFolder(workspaceId);
+    } catch (error) {
+      throw new Error(
+        `[${FileWorkspaceFolderDeletionJob.name}] Cannot delete workspace folder - ${workspaceId}`,
+      );
+    }
   }
 }
