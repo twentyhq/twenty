@@ -106,5 +106,43 @@ export const tasksAssignedToMeView = (
         size: 150,
       },
     ],
+    groups: [
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.status
+          ],
+        isVisible: true,
+        fieldValue: 'TODO',
+        position: 0,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.status
+          ],
+        isVisible: true,
+        fieldValue: 'IN_PROGRESS',
+        position: 1,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.status
+          ],
+        isVisible: true,
+        fieldValue: 'DONE',
+        position: 2,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.status
+          ],
+        isVisible: true,
+        fieldValue: '',
+        position: 3,
+      },
+    ],
   };
 };
