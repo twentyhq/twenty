@@ -30,7 +30,8 @@ export const RecordTitleFullNameFieldDisplay = () => {
 
   const content = [fieldValue?.firstName, fieldValue?.lastName]
     .filter(isNonEmptyString)
-    .join(' ');
+    .join(' ')
+    .trim();
 
   return (
     <StyledDiv onClick={() => openInlineCell()}>
