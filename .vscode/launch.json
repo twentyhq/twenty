@@ -64,7 +64,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Integration Test File",
+      "name": "twenty-server - debug integration test file (to launch with test file open)",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
         "nx",
