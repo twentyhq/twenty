@@ -271,6 +271,7 @@ yarn command:prod cron:calendar:ongoing-stale
   ['SERVERLESS_TYPE', 'local', "Serverless driver type: 'local' or 'lambda'"],
   ['SERVERLESS_LAMBDA_REGION', '', 'Lambda Region'],
   ['SERVERLESS_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['SERVERLESS_LAMBDA_SUBHOSTING_ROLE', '', 'Role to assume when hosting lambdas in dedicated AWS account'],
   ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
   ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
 ]}></ArticleTable>
@@ -304,7 +305,8 @@ This feature is WIP and is not yet useful for most users.
 <ArticleTable options={[
     ['SERVERLESS_TYPE', 'local', "Functions can either be executed through Lambda or directly by the main node process"],
     ['SERVERLESS_LAMBDA_REGION', 'us-east-1', 'If you use the Lambda driver, region of the Lambda function'],
-    ['SERVERLESS_LAMBDA_ROLE', 'arn:aws:iam::121334:role/lambda-execution-role', "If you use the Lambda drive, name of the IAM role with the right permissions"],
+    ['SERVERLESS_LAMBDA_ROLE', 'arn:aws:iam::121334:role/lambda-execution-role', "If you use the Lambda driver, name of the IAM role with the right permissions"],
+    ['SERVERLESS_LAMBDA_SUBHOSTING_ROLE', 'arn:aws:iam::121334:role/lambda-deployment-role', "If you host lambdas in a dedicated AWS account, name of the IAM role to assume in the dedicated account"],
 ]}></ArticleTable>
 
 
