@@ -41,7 +41,7 @@ export const notesAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.note].fields[
-            NOTE_STANDARD_FIELD_IDS.body
+            NOTE_STANDARD_FIELD_IDS.bodyV2
           ],
         position: 2,
         isVisible: true,
