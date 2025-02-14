@@ -7,7 +7,8 @@ import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator, MainButton } from 'twenty-ui';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
+import React from 'react';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -24,16 +25,15 @@ export const SignInUpSSOIdentityProviderSelection = () => {
       <StyledContentContainer>
         {isDefined(workspaceAuthProviders?.sso) &&
           workspaceAuthProviders?.sso.map((idp) => (
-            <>
+            <React.Fragment key={idp.id}>
               <MainButton
-                key={idp.id}
                 title={idp.name}
                 onClick={() => redirectToSSOLoginPage(idp.id)}
                 Icon={guessSSOIdentityProviderIconByUrl(idp.issuer)}
                 fullWidth
               />
               <HorizontalSeparator visible={false} />
-            </>
+            </React.Fragment>
           ))}
       </StyledContentContainer>
     </>

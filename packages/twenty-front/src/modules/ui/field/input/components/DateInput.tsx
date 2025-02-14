@@ -1,23 +1,14 @@
-import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
 import { Nullable } from 'twenty-ui';
 
+import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import {
-  InternalDatePicker,
+  DateTimePicker,
   MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-
-const StyledCalendarContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.secondary};
-  backdrop-filter: ${({ theme }) => theme.blur.medium};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-`;
 
 export type DateInputProps = {
   value: Nullable<Date>;
@@ -32,6 +23,8 @@ export type DateInputProps = {
   isDateTimeInput?: boolean;
   onClear?: () => void;
   onSubmit?: (newDate: Nullable<Date>) => void;
+  hideHeaderInput?: boolean;
+  hotkeyScope: string;
 };
 
 export const DateInput = ({
@@ -44,6 +37,8 @@ export const DateInput = ({
   isDateTimeInput,
   onClear,
   onSubmit,
+  hideHeaderInput,
+  hotkeyScope,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -59,7 +54,7 @@ export const DateInput = ({
     onClear?.();
   };
 
-  const handleMouseSelect = (newDate: Date | null) => {
+  const handleClose = (newDate: Date | null) => {
     setInternalValue(newDate);
     onSubmit?.(newDate);
   };
@@ -72,33 +67,54 @@ export const DateInput = ({
     MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
   );
 
-  useListenClickOutside({
-    refs: [wrapperRef],
-    listenerId: 'DateInput',
-    callback: (event) => {
-      event.stopImmediatePropagation();
+  const handleEnter = () => {
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
 
-      closeDropdownYearSelect();
-      closeDropdownMonthSelect();
-      closeDropdown();
-      onClickOutside(event, internalValue);
-    },
+    onEnter(internalValue);
+  };
+
+  const handleEscape = () => {
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
+
+    onEscape(internalValue);
+  };
+
+  const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+    event.stopImmediatePropagation();
+
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
+
+    onClickOutside(event, internalValue);
+  };
+
+  useRegisterInputEvents({
+    inputRef: wrapperRef,
+    inputValue: internalValue,
+    onEnter: handleEnter,
+    onEscape: handleEscape,
+    onClickOutside: handleClickOutside,
+    hotkeyScope: hotkeyScope,
   });
 
   return (
     <div ref={wrapperRef}>
-      <StyledCalendarContainer>
-        <InternalDatePicker
-          date={internalValue ?? new Date()}
-          onChange={handleChange}
-          onMouseSelect={handleMouseSelect}
-          clearable={clearable ? clearable : false}
-          isDateTimeInput={isDateTimeInput}
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClear={handleClear}
-        />
-      </StyledCalendarContainer>
+      <DateTimePicker
+        date={internalValue ?? new Date()}
+        onChange={handleChange}
+        onClose={handleClose}
+        clearable={clearable ? clearable : false}
+        onEnter={onEnter}
+        onEscape={onEscape}
+        onClear={handleClear}
+        hideHeaderInput={hideHeaderInput}
+        isDateTimeInput={isDateTimeInput}
+      />
     </div>
   );
 };

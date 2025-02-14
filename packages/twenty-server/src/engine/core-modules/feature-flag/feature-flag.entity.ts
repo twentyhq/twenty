@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -17,14 +17,14 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'featureFlag', schema: 'core' })
-@ObjectType('FeatureFlag')
+@ObjectType()
 @Unique('IndexOnKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
-export class FeatureFlagEntity {
+export class FeatureFlag {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field(() => String)
+  @Field(() => FeatureFlagKey)
   @Column({ nullable: false, type: 'text' })
   key: FeatureFlagKey;
 
@@ -47,3 +47,7 @@ export class FeatureFlagEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
+
+registerEnumType(FeatureFlagKey, {
+  name: 'FeatureFlagKey',
+});

@@ -1,14 +1,13 @@
-import styled from '@emotion/styled';
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus, LightIconButton, MenuItem } from 'twenty-ui';
 
+import {
+  MultiItemBaseInput,
+  MultiItemBaseInputProps,
+} from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import {
-  DropdownMenuInput,
-  DropdownMenuInputProps,
-} from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -17,11 +16,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-
-const StyledDropdownMenu = styled(DropdownMenu)`
-  margin: -1px;
-  position: relative;
-`;
 
 type MultiItemFieldInputProps<T> = {
   items: T[];
@@ -40,7 +34,7 @@ type MultiItemFieldInputProps<T> = {
   hotkeyScope: string;
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
-  renderInput?: DropdownMenuInputProps['renderInput'];
+  renderInput?: MultiItemBaseInputProps['renderInput'];
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
@@ -101,19 +95,19 @@ export const MultiItemFieldInput = <T,>({
   const handleEditButtonClick = (index: number) => {
     let item;
     switch (fieldMetadataType) {
-      case FieldMetadataType.Links:
+      case FieldMetadataType.LINKS:
         item = items[index] as { label: string; url: string };
         setInputValue(item.url || '');
         break;
-      case FieldMetadataType.Phones:
+      case FieldMetadataType.PHONES:
         item = items[index] as PhoneRecord;
         setInputValue(item.callingCode + item.number);
         break;
-      case FieldMetadataType.Emails:
+      case FieldMetadataType.EMAILS:
         item = items[index] as string;
         setInputValue(item);
         break;
-      case FieldMetadataType.Array:
+      case FieldMetadataType.ARRAY:
         item = items[index] as string;
         setInputValue(item);
         break;
@@ -132,6 +126,15 @@ export const MultiItemFieldInput = <T,>({
         setErrorData(validationData);
         return;
       }
+    }
+
+    if (inputValue === '' && isAddingNewItem) {
+      return;
+    }
+
+    if (inputValue === '' && !isAddingNewItem) {
+      handleDeleteItem(itemToEditIndex);
+      return;
     }
 
     const newItem = formatInput
@@ -164,7 +167,7 @@ export const MultiItemFieldInput = <T,>({
   };
 
   return (
-    <StyledDropdownMenu ref={containerRef} width={200}>
+    <DropdownMenu ref={containerRef} width={200}>
       {!!items.length && (
         <>
           <DropdownMenuItemsContainer>
@@ -182,7 +185,7 @@ export const MultiItemFieldInput = <T,>({
         </>
       )}
       {isInputDisplayed || !items.length ? (
-        <DropdownMenuInput
+        <MultiItemBaseInput
           autoFocus
           placeholder={placeholder}
           value={inputValue}
@@ -198,12 +201,14 @@ export const MultiItemFieldInput = <T,>({
                   })
               : undefined
           }
+          onEscape={handleDropdownClose}
           onChange={(event) =>
             handleOnChange(
               turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
             )
           }
           onEnter={handleSubmitInput}
+          hasItem={!!items.length}
           rightComponent={
             items.length ? (
               <LightIconButton
@@ -222,6 +227,6 @@ export const MultiItemFieldInput = <T,>({
           />
         </DropdownMenuItemsContainer>
       )}
-    </StyledDropdownMenu>
+    </DropdownMenu>
   );
 };

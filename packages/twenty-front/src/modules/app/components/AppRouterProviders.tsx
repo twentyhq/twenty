@@ -6,6 +6,7 @@ import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/compone
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
+import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsGater } from '@/object-metadata/components/ObjectMetadataItemsGater';
@@ -61,6 +62,7 @@ export const AppRouterProviders = () => {
                       </PrefetchDataProvider>
                     </ObjectMetadataItemsGater>
                     <PageChangeEffect />
+                    <MainContextStoreProvider />
                   </ObjectMetadataItemsProvider>
                 </ApolloMetadataClientProvider>
               </AuthProvider>

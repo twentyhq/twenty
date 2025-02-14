@@ -9,7 +9,7 @@ type SettingsAccountsMessageAutoCreationCardProps = {
 
 const autoCreationOptions = [
   {
-    title: 'Send and Received',
+    title: 'Sent and Received',
     description: 'People I’ve sent emails to and received emails from.',
     value: MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED,
     cardMedia: (

@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared';
 
 export const isCompositeFieldMetadataType = (
   type: FieldMetadataType,
@@ -9,7 +9,8 @@ export const isCompositeFieldMetadataType = (
   | FieldMetadataType.LINKS
   | FieldMetadataType.ACTOR
   | FieldMetadataType.EMAILS
-  | FieldMetadataType.PHONES => {
+  | FieldMetadataType.PHONES
+  | FieldMetadataType.RICH_TEXT_V2 => {
   return [
     FieldMetadataType.CURRENCY,
     FieldMetadataType.FULL_NAME,
@@ -18,5 +19,6 @@ export const isCompositeFieldMetadataType = (
     FieldMetadataType.ACTOR,
     FieldMetadataType.EMAILS,
     FieldMetadataType.PHONES,
+    FieldMetadataType.RICH_TEXT_V2,
   ].includes(type);
 };

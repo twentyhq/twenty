@@ -25,7 +25,7 @@ export const Default: Story = {
     place: TooltipPosition.Bottom,
     delay: TooltipDelay.mediumDelay,
     content: 'Tooltip Test',
-    isOpen: true,
+    hidden: false,
     anchorSelect: '#hover-text',
   },
   decorators: [ComponentDecorator],
@@ -34,7 +34,7 @@ export const Default: Story = {
     className,
     content,
     delay,
-    isOpen,
+    hidden,
     noArrow,
     offset,
     place,
@@ -51,7 +51,7 @@ export const Default: Story = {
           className,
           content,
           delay,
-          isOpen,
+          hidden,
           noArrow,
           offset,
           place,
@@ -68,7 +68,7 @@ export const Hoverable: Story = {
     place: TooltipPosition.Bottom,
     delay: TooltipDelay.mediumDelay,
     content: 'Tooltip Test',
-    isOpen: true,
+    hidden: false,
     anchorSelect: '#hover-text',
   },
   decorators: [ComponentDecorator],
@@ -102,8 +102,50 @@ export const Hoverable: Story = {
   ),
 };
 
+export const WithWidth: Story = {
+  args: {
+    place: TooltipPosition.Top,
+    delay: TooltipDelay.mediumDelay,
+    content: 'Tooltip with custom width',
+    hidden: false,
+    anchorSelect: '#width-text',
+    width: '200px',
+  },
+  decorators: [ComponentDecorator],
+  render: ({
+    anchorSelect,
+    className,
+    content,
+    delay,
+    noArrow,
+    offset,
+    place,
+    positionStrategy,
+    width,
+  }) => (
+    <>
+      <p id="width-text" data-testid="tooltip">
+        Hover me to see custom width!
+      </p>
+      <Tooltip
+        {...{
+          anchorSelect,
+          className,
+          content,
+          delay,
+          noArrow,
+          offset,
+          place,
+          positionStrategy,
+          width,
+        }}
+      />
+    </>
+  ),
+};
+
 export const Catalog: CatalogStory<Story, typeof Tooltip> = {
-  args: { isOpen: true, content: 'Tooltip Test' },
+  args: { hidden: false, content: 'Tooltip Test' },
   play: async ({ canvasElement }) => {
     Object.values(TooltipPosition).forEach((position) => {
       const element = canvasElement.querySelector(

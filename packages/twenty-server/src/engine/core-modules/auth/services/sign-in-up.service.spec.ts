@@ -2,86 +2,85 @@ import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { expect, jest } from '@jest/globals';
-import bcrypt from 'bcrypt';
+import { WorkspaceActivationStatus } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import {
+  AuthProviderWithPasswordType,
+  ExistingUserOrPartialUserWithPicture,
+  SignInUpBaseParams,
+} from 'src/engine/core-modules/auth/types/signInUp.type';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
-jest.mock('bcrypt');
-
-const UserFindOneMock = jest.fn();
-const workspaceInvitationValidateInvitationMock = jest.fn();
-const workspaceInvitationInvalidateWorkspaceInvitationMock = jest.fn();
-const workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock =
-  jest.fn();
-const userWorkspaceServiceAddUserToWorkspaceMock = jest.fn();
-const UserCreateMock = jest.fn();
-const UserSaveMock = jest.fn();
-const EnvironmentServiceGetMock = jest.fn();
-const WorkspaceCountMock = jest.fn();
-const WorkspaceCreateMock = jest.fn();
-const WorkspaceSaveMock = jest.fn();
+jest.mock('src/utils/image', () => {
+  return {
+    getImageBufferFromUrl: () => Promise.resolve(Buffer.from('')),
+  };
+});
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+  let UserRepository: Repository<User>;
+  let WorkspaceRepository: Repository<Workspace>;
+  let fileUploadService: FileUploadService;
+  let workspaceInvitationService: WorkspaceInvitationService;
+  let userWorkspaceService: UserWorkspaceService;
+  let environmentService: EnvironmentService;
+  let domainManagerService: DomainManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SignInUpService,
         {
-          provide: FileUploadService,
-          useValue: {},
+          provide: getRepositoryToken(User, 'core'),
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(Workspace, 'core'),
           useValue: {
-            count: WorkspaceCountMock,
-            create: WorkspaceCreateMock,
-            save: WorkspaceSaveMock,
+            save: jest.fn(),
+            create: jest.fn(),
+            get: jest.fn(),
+            count: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(User, 'core'),
+          provide: FileUploadService,
           useValue: {
-            findOne: UserFindOneMock,
-            create: UserCreateMock,
-            save: UserSaveMock,
+            uploadImage: jest.fn(),
           },
-        },
-        {
-          provide: getRepositoryToken(AppToken, 'core'),
-          useValue: {},
         },
         {
           provide: WorkspaceInvitationService,
-          useValue: {},
-        },
-        {
-          provide: WorkspaceService,
-          useValue: {},
+          useValue: {
+            validatePersonalInvitation: jest.fn(),
+            invalidateWorkspaceInvitation: jest.fn(),
+          },
         },
         {
           provide: UserWorkspaceService,
           useValue: {
-            addUserToWorkspace: userWorkspaceServiceAddUserToWorkspaceMock,
+            addUserToWorkspace: jest.fn(),
+            checkUserWorkspaceExists: jest.fn(),
             create: jest.fn(),
           },
         },
@@ -90,7 +89,6 @@ describe('SignInUpService', () => {
           useValue: {
             setOnboardingConnectAccountPending: jest.fn(),
             setOnboardingInviteTeamPending: jest.fn(),
-            setOnboardingCreateProfilePending: jest.fn(),
           },
         },
         {
@@ -100,391 +98,218 @@ describe('SignInUpService', () => {
         {
           provide: EnvironmentService,
           useValue: {
-            get: EnvironmentServiceGetMock,
+            get: jest.fn(),
           },
         },
         {
-          provide: WorkspaceInvitationService,
+          provide: UserService,
           useValue: {
-            validateInvitation: workspaceInvitationValidateInvitationMock,
-            invalidateWorkspaceInvitation:
-              workspaceInvitationInvalidateWorkspaceInvitationMock,
-            findInvitationByWorkspaceSubdomainAndUserEmail:
-              workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock,
+            markEmailAsVerified: jest.fn().mockReturnValue({
+              id: 'test-user-id',
+              email: 'test@test.com',
+              isEmailVerified: true,
+            } as User),
           },
         },
         {
           provide: DomainManagerService,
           useValue: {
-            generateSubdomain: jest.fn().mockReturnValue('testSubDomain'),
+            generateSubdomain: jest.fn(),
           },
         },
       ],
     }).compile();
 
     service = module.get<SignInUpService>(SignInUpService);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
-  it('signInUp - sso - new user', async () => {
-    const email = 'test@test.com';
-
-    UserFindOneMock.mockReturnValueOnce(false);
-    workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
-      undefined,
+    UserRepository = module.get(getRepositoryToken(User, 'core'));
+    WorkspaceRepository = module.get(getRepositoryToken(Workspace, 'core'));
+    fileUploadService = module.get<FileUploadService>(FileUploadService);
+    workspaceInvitationService = module.get<WorkspaceInvitationService>(
+      WorkspaceInvitationService,
     );
-
-    const spy = jest
-      .spyOn(service, 'signUpOnNewWorkspace')
-      .mockResolvedValueOnce({} as User);
-
-    await service.signInUp({
-      email: 'test@test.com',
-      fromSSO: true,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
-
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        email,
-        passwordHash: undefined,
-        firstName: expect.any(String),
-        lastName: expect.any(String),
-        picture: undefined,
-      }),
-    );
+    userWorkspaceService =
+      module.get<UserWorkspaceService>(UserWorkspaceService);
+    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    domainManagerService =
+      module.get<DomainManagerService>(DomainManagerService);
   });
-  it('signInUp - sso - existing user', async () => {
-    const email = 'existing@test.com';
-    const existingUser = {
-      id: 'user-id',
-      email,
-      passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
+
+  it('should handle signInUp with valid personal invitation', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      invitation: { value: 'invitationToken' } as AppToken,
+      workspace: {
+        id: 'workspaceId',
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as Workspace,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'existingUser',
+        existingUser: { email: 'test@example.com' } as User,
+      },
     };
 
-    UserFindOneMock.mockReturnValueOnce(existingUser);
-    workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
-      undefined,
-    );
+    jest
+      .spyOn(workspaceInvitationService, 'validatePersonalInvitation')
+      .mockResolvedValue({
+        isValid: true,
+        workspace: params.workspace as Workspace,
+      });
 
-    const result = await service.signInUp({
-      email,
-      fromSSO: true,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
+    jest
+      .spyOn(workspaceInvitationService, 'invalidateWorkspaceInvitation')
+      .mockResolvedValue(undefined);
 
-    expect(result).toEqual(existingUser);
-  });
-  it('signInUp - sso - new user - existing invitation', async () => {
-    const email = 'newuser@test.com';
-    const workspaceId = 'workspace-id';
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspace')
+      .mockResolvedValue({} as User);
 
-    UserFindOneMock.mockReturnValueOnce(null);
-    workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
-      {
-        value: 'personal-token-value',
-      },
-    );
-    workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
-      isValid: true,
-      workspace: { id: workspaceId },
-    });
+    const result = await service.signInUp(params);
 
-    workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
-      true,
-    );
-
-    const spySignInUpOnExistingWorkspace = jest
-      .spyOn(service, 'signInUpOnExistingWorkspace')
-      .mockResolvedValueOnce(
-        {} as Awaited<
-          ReturnType<(typeof service)['signInUpOnExistingWorkspace']>
-        >,
-      );
-
-    await service.signInUp({
-      email,
-      fromSSO: true,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
-
-    expect(spySignInUpOnExistingWorkspace).toHaveBeenCalledWith(
-      expect.objectContaining({
-        email,
-        passwordHash: undefined,
-        workspace: expect.objectContaining({
-          id: workspaceId,
-        }),
-        firstName: expect.any(String),
-        lastName: expect.any(String),
-        picture: undefined,
-      }),
-    );
-
+    expect(result.workspace).toEqual(params.workspace);
+    expect(result.user).toBeDefined();
     expect(
-      workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).toHaveBeenCalledWith(workspaceId, email);
+      workspaceInvitationService.validatePersonalInvitation,
+    ).toHaveBeenCalledWith({
+      workspacePersonalInviteToken: 'invitationToken',
+      email: 'test@example.com',
+    });
+    expect(
+      workspaceInvitationService.invalidateWorkspaceInvitation,
+    ).toHaveBeenCalledWith(
+      (params.workspace as Workspace).id,
+      'test@example.com',
+    );
   });
-  it('signInUp - sso - existing user - existing invitation', async () => {
-    const email = 'existinguser@test.com';
-    const workspaceId = 'workspace-id';
-    const existingUser = {
-      id: 'user-id',
-      email,
-      passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
+
+  it('should handle signInUp on existing workspace without invitation', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      workspace: {
+        id: 'workspaceId',
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as Workspace,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'existingUser',
+        existingUser: { email: 'test@example.com' } as User,
+      },
     };
 
-    UserFindOneMock.mockReturnValueOnce(existingUser);
-    workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
-      {
-        value: 'personal-token-value',
-      },
-    );
-    workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
-      isValid: true,
-      workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspace')
+      .mockResolvedValue({} as User);
 
-    workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
-      true,
-    );
+    const result = await service.signInUp(params);
 
-    userWorkspaceServiceAddUserToWorkspaceMock.mockReturnValueOnce({});
-
-    const result = await service.signInUp({
-      email,
-      fromSSO: true,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
-
-    expect(result).toEqual(existingUser);
-    expect(userWorkspaceServiceAddUserToWorkspaceMock).toHaveBeenCalledTimes(1);
-    expect(
-      workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).toHaveBeenCalledWith(workspaceId, email);
+    expect(result.workspace).toEqual(params.workspace);
+    expect(result.user).toBeDefined();
+    expect(userWorkspaceService.addUserToWorkspace).toHaveBeenCalled();
   });
-  it('signInUp - sso - new user - personal invitation token', async () => {
-    const email = 'newuser@test.com';
-    const workspaceId = 'workspace-id';
-    const workspacePersonalInviteToken = 'personal-token-value';
 
-    UserFindOneMock.mockReturnValueOnce(null);
-
-    workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
-      isValid: true,
-      workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+  it('should handle signUp on new workspace for a new user', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'newUserWithPicture',
+        newUserWithPicture: {
+          email: 'newuser@example.com',
+          picture: 'pictureUrl',
+        },
       },
-    });
-
-    workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
-      true,
-    );
-
-    const spySignInUpOnExistingWorkspace = jest
-      .spyOn(service, 'signInUpOnExistingWorkspace')
-      .mockResolvedValueOnce(
-        {} as Awaited<
-          ReturnType<(typeof service)['signInUpOnExistingWorkspace']>
-        >,
-      );
-
-    await service.signInUp({
-      email,
-      fromSSO: true,
-      workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
-
-    expect(spySignInUpOnExistingWorkspace).toHaveBeenCalledWith(
-      expect.objectContaining({
-        email,
-        passwordHash: undefined,
-        workspace: expect.objectContaining({
-          id: workspaceId,
-        }),
-        firstName: expect.any(String),
-        lastName: expect.any(String),
-        picture: undefined,
-      }),
-    );
-
-    expect(
-      workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock,
-    ).not.toHaveBeenCalled();
-    expect(
-      workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).toHaveBeenCalledWith(workspaceId, email);
-  });
-  it('signInUp - sso - existing user - personal invitation token', async () => {
-    const email = 'existinguser@test.com';
-    const workspaceId = 'workspace-id';
-    const workspacePersonalInviteToken = 'personal-token-value';
-    const existingUser = {
-      id: 'user-id',
-      email,
-      passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
     };
 
-    UserFindOneMock.mockReturnValueOnce(existingUser);
-    workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
-      isValid: true,
-      workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
+    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
+    jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
+    jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
+      id: 'newWorkspaceId',
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
+    } as Workspace);
+    jest.spyOn(fileUploadService, 'uploadImage').mockResolvedValue({
+      id: '',
+      mimeType: '',
+      paths: ['path/to/image'],
     });
+    jest.spyOn(UserRepository, 'create').mockReturnValue({} as User);
+    jest
+      .spyOn(domainManagerService, 'generateSubdomain')
+      .mockResolvedValue('a-subdomain');
+    jest
+      .spyOn(UserRepository, 'save')
+      .mockResolvedValue({ id: 'newUserId' } as User);
+    jest.spyOn(userWorkspaceService, 'create').mockResolvedValue({} as any);
 
-    workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
-      true,
-    );
+    const result = await service.signInUp(params);
 
-    await service.signInUp({
-      email,
-      fromSSO: true,
-      workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
-
-    expect(
-      workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).toHaveBeenCalledWith(workspaceId, email);
+    expect(result.workspace).toBeDefined();
+    expect(result.user).toBeDefined();
+    expect(WorkspaceRepository.create).toHaveBeenCalled();
+    expect(WorkspaceRepository.save).toHaveBeenCalled();
+    expect(UserRepository.create).toHaveBeenCalled();
+    expect(UserRepository.save).toHaveBeenCalled();
+    expect(fileUploadService.uploadImage).toHaveBeenCalled();
   });
-  it('signInUp - credentials - existing user', async () => {
-    const email = 'existinguser@test.com';
-    const password = 'validPassword123';
-    const existingUser = {
-      id: 'user-id',
-      email,
-      passwordHash: 'hash-of-validPassword123',
-      defaultWorkspace: { id: 'workspace-id' },
+
+  it('should handle signIn on workspace in pending state', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      workspace: {
+        id: 'workspaceId',
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      } as Workspace,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'existingUser',
+        existingUser: { email: 'test@example.com' } as User,
+      },
     };
 
-    UserFindOneMock.mockReturnValueOnce(existingUser);
+    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspace')
+      .mockResolvedValue({} as User);
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockResolvedValue({} as UserWorkspace);
 
-    EnvironmentServiceGetMock.mockReturnValueOnce(false);
+    const result = await service.signInUp(params);
 
-    (bcrypt.compare as jest.Mock).mockReturnValueOnce(true);
-
-    await service.signInUp({
-      email,
-      password,
-      fromSSO: false,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
-
-    expect(
-      workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).not.toHaveBeenCalled();
+    expect(result.workspace).toEqual(params.workspace);
+    expect(result.user).toBeDefined();
+    expect(userWorkspaceService.addUserToWorkspace).toHaveBeenCalled();
   });
-  it('signInUp - credentials - new user', async () => {
-    const email = 'newuser@test.com';
-    const password = 'validPassword123';
 
-    UserFindOneMock.mockReturnValueOnce(null);
-
-    UserCreateMock.mockReturnValueOnce({} as User);
-    UserSaveMock.mockReturnValueOnce({} as User);
-
-    EnvironmentServiceGetMock.mockReturnValueOnce(true);
-
-    WorkspaceCreateMock.mockReturnValueOnce({});
-    WorkspaceSaveMock.mockReturnValueOnce({});
-
-    await service.signInUp({
-      email,
-      password,
-      fromSSO: false,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
-
-    expect(UserCreateMock).toHaveBeenCalledTimes(1);
-    expect(UserSaveMock).toHaveBeenCalledTimes(1);
-
-    expect(WorkspaceSaveMock).toHaveBeenCalledTimes(1);
-    expect(WorkspaceCreateMock).toHaveBeenCalledTimes(1);
-  });
-  it('signInUp - credentials - new user - personal invitation token', async () => {
-    const email = 'newuser@test.com';
-    const password = 'validPassword123';
-    const workspaceId = 'workspace-id';
-    const workspacePersonalInviteToken = 'personal-token-value';
-
-    UserFindOneMock.mockReturnValueOnce(null);
-    workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
-      isValid: true,
+  it('should throw - handle signUp on workspace in pending state', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
       workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        id: 'workspaceId',
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      } as Workspace,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'existingUser',
+        existingUser: { email: 'test@example.com' } as User,
       },
-    });
+    };
 
-    workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
-      true,
+    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockResolvedValue(null);
+
+    await expect(() => service.signInUp(params)).rejects.toThrow(
+      new AuthException(
+        'User is not part of the workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
     );
-
-    UserCreateMock.mockReturnValueOnce({} as User);
-    UserSaveMock.mockReturnValueOnce({} as User);
-
-    await service.signInUp({
-      email,
-      password,
-      fromSSO: false,
-      workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'testSubDomain',
-    });
-
-    expect(UserCreateMock).toHaveBeenCalledTimes(1);
-    expect(UserSaveMock).toHaveBeenCalledTimes(1);
-
-    expect(
-      workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).toHaveBeenCalledWith(workspaceId, email);
-  });
-  it('signInUp - credentials - new user - public invitation token', async () => {
-    const email = 'newuser@test.com';
-    const password = 'validPassword123';
-    const workspaceId = 'workspace-id';
-    const workspaceInviteHash = 'public-token-value';
-
-    UserFindOneMock.mockReturnValueOnce(null);
-    workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
-      isValid: true,
-      workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
-
-    workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
-      true,
-    );
-
-    UserCreateMock.mockReturnValueOnce({} as User);
-    UserSaveMock.mockReturnValueOnce({} as User);
-
-    await service.signInUp({
-      email,
-      password,
-      fromSSO: false,
-      workspaceInviteHash,
-    });
-
-    expect(UserCreateMock).toHaveBeenCalledTimes(1);
-    expect(UserSaveMock).toHaveBeenCalledTimes(1);
-
-    expect(
-      workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).toHaveBeenCalledWith(workspaceId, email);
   });
 });

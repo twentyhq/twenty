@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "paths": {
-      "@/*": ["packages/twenty-chrome-extension/src/options/modules/*"],
-      "~/*": ["packages/twenty-chrome-extension/src/*"]
+      "@/*": ["./src/options/modules/*"],
+      "~/*": ["./src/*"]
     },
 
     /* Bundler mode */

@@ -15,8 +15,8 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/profile')).toBe(
       SettingsPageTitles.Profile,
     );
-    expect(getPageTitleFromPath('/settings/appearance')).toBe(
-      SettingsPageTitles.Appearance,
+    expect(getPageTitleFromPath('/settings/experience')).toBe(
+      SettingsPageTitles.Experience,
     );
     expect(getPageTitleFromPath('/settings/accounts')).toBe(
       SettingsPageTitles.Accounts,

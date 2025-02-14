@@ -2,10 +2,10 @@ import { Nullable } from 'twenty-ui';
 
 import { useDateField } from '@/object-record/record-field/meta-types/hooks/useDateField';
 import { DateInput } from '@/ui/field/input/components/DateInput';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
-import { usePersistField } from '../../../hooks/usePersistField';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { usePersistField } from '../../../hooks/usePersistField';
 
 type FieldInputEvent = (persist: () => void) => void;
 
@@ -24,7 +24,7 @@ export const DateFieldInput = ({
   onClear,
   onSubmit,
 }: DateFieldInputProps) => {
-  const { fieldValue, setDraftValue } = useDateField();
+  const { fieldValue, setDraftValue, hotkeyScope } = useDateField();
 
   const persistField = usePersistField();
 
@@ -32,9 +32,13 @@ export const DateFieldInput = ({
     if (!isDefined(newDate)) {
       persistField(null);
     } else {
-      const newDateISO = newDate?.toISOString();
+      const newDateWithoutTime = `${newDate?.getFullYear()}-${(
+        newDate?.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, '0')}-${newDate?.getDate().toString().padStart(2, '0')}`;
 
-      persistField(newDateISO);
+      persistField(newDateWithoutTime);
     }
   };
 
@@ -77,6 +81,7 @@ export const DateFieldInput = ({
       onChange={handleChange}
       onClear={handleClear}
       onSubmit={handleSubmit}
+      hotkeyScope={hotkeyScope}
     />
   );
 };

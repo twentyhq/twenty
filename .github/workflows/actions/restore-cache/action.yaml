@@ -1,0 +1,35 @@
+name: Restore cache
+inputs:
+  key:
+    required: true
+    description: Prefix to the cache key
+  additional-paths:
+    required: false
+outputs:
+  cache-primary-key:
+    description: actions/cache/restore cache-primary-key outputs proxy
+    value: ${{ steps.restore-cache.outputs.cache-primary-key }}
+  cache-hit:
+    description: String bool indicating whether cache has been directly or indirectly hit
+    value: ${{ steps.restore-cache.outputs.cache-hit == 'true' || steps.restore-cache.outputs.cache-matched-key != '' }}
+
+runs:
+  using: composite
+  steps:
+    - name: Cache primary key builder
+      id: cache-primary-key-builder
+      shell: bash
+      run: |
+        echo "CACHE_PRIMARY_KEY_PREFIX=${{ inputs.key }}-${{ github.ref_name }}" >> "${GITHUB_OUTPUT}"
+    - name: Restore cache
+      uses: actions/cache/restore@v4
+      id: restore-cache
+      with:
+        key:  ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-${{ github.sha }}
+        restore-keys: ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-
+        path: |
+          .cache
+          .nx/cache
+          node_modules/.cache
+          packages/*/node_modules/.cache
+          ${{ inputs.additional-paths }}

@@ -1,8 +1,7 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { RecordTableColumnHead } from './RecordTableColumnHead';
@@ -21,23 +20,18 @@ const StyledDropdown = styled(Dropdown)`
 export const RecordTableColumnHeadWithDropdown = ({
   column,
 }: RecordTableColumnHeadWithDropdownProps) => {
-  const setIsScrollEnabledForRecordTable = useSetRecoilComponentStateV2(
-    isScrollEnabledForRecordTableState,
-  );
+  const { toggleScrollXWrapper, toggleScrollYWrapper } =
+    useToggleScrollWrapper();
 
   const handleDropdownOpen = useCallback(() => {
-    setIsScrollEnabledForRecordTable({
-      enableXScroll: false,
-      enableYScroll: false,
-    });
-  }, [setIsScrollEnabledForRecordTable]);
+    toggleScrollXWrapper(false);
+    toggleScrollYWrapper(false);
+  }, [toggleScrollXWrapper, toggleScrollYWrapper]);
 
   const handleDropdownClose = useCallback(() => {
-    setIsScrollEnabledForRecordTable({
-      enableXScroll: true,
-      enableYScroll: true,
-    });
-  }, [setIsScrollEnabledForRecordTable]);
+    toggleScrollXWrapper(true);
+    toggleScrollYWrapper(true);
+  }, [toggleScrollXWrapper, toggleScrollYWrapper]);
 
   return (
     <StyledDropdown

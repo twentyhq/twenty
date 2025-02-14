@@ -8,4 +8,4 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const isFieldMultiSelect = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
 ): field is FieldDefinition<FieldMultiSelectMetadata> =>
-  field.type === FieldMetadataType.MultiSelect;
+  field.type === FieldMetadataType.MULTI_SELECT;

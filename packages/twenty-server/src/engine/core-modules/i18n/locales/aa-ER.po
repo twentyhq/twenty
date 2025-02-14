@@ -1,0 +1,2254 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-29 18:14+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: aa\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-01-01 00:00
+"
+"Last-Translator: \n"
+"Language-Team: Afar\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: aa\n"
+"X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
+"X-Crowdin-File-ID: 31\n"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
+msgid "(System) View Fields"
+msgstr "crwdns819:0crwdne819:0"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
+msgid "(System) View Filter Groups"
+msgstr "crwdns821:0crwdne821:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
+msgid "(System) View Filters"
+msgstr "crwdns823:0crwdne823:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
+msgid "(System) View Groups"
+msgstr "crwdns825:0crwdne825:0"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
+msgid "(System) View Sorts"
+msgstr "crwdns827:0crwdne827:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:33
+msgid "(System) Views"
+msgstr "crwdns829:0crwdne829:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:56
+msgid "A company"
+msgstr "crwdns831:0crwdne831:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:30
+msgid "A connected account"
+msgstr "crwdns833:0crwdne833:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
+msgid "A favorite that can be accessed from the left menu"
+msgstr "crwdns835:0crwdne835:0"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:24
+msgid "A Folder of favorites"
+msgstr "crwdns837:0crwdne837:0"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
+msgid "A group of related messages (e.g. email thread, chat thread)"
+msgstr "crwdns839:0crwdne839:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
+msgid "A message sent or received through a messaging channel (email, chat, etc.)"
+msgstr "crwdns841:0crwdne841:0"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:46
+msgid "A note"
+msgstr "crwdns843:0crwdne843:0"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
+msgid "A note target"
+msgstr "crwdns845:0crwdne845:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:60
+msgid "A person"
+msgstr "crwdns847:0crwdne847:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:48
+msgid "A task"
+msgstr "crwdns849:0crwdne849:0"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
+msgid "A task target"
+msgstr "crwdns851:0crwdne851:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:20
+msgid "A webhook"
+msgstr "crwdns853:0crwdne853:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
+msgid "A workflow"
+msgstr "crwdns855:0crwdne855:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
+msgid "A workflow event listener"
+msgstr "crwdns857:0crwdne857:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
+msgid "A workflow run"
+msgstr "crwdns859:0crwdne859:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
+msgid "A workflow version"
+msgstr "crwdns861:0crwdne861:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
+msgid "A workspace member"
+msgstr "crwdns863:0crwdne863:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:58
+msgid "Access Token"
+msgstr "crwdns865:0crwdne865:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
+#: src/modules/company/standard-objects/company.workspace-entity.ts:178
+msgid "Account Owner"
+msgstr "crwdns867:0crwdne867:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:169
+msgid "Account owner for companies"
+msgstr "crwdns869:0crwdne869:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:168
+msgid "Account Owner For Companies"
+msgstr "crwdns871:0crwdne871:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:125
+msgid "Address"
+msgstr "crwdns873:0crwdne873:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:266
+msgid "Address (deprecated) "
+msgstr "crwdns875:0crwdne875:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:126
+msgid "Address of the company"
+msgstr "crwdns877:0crwdne877:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:267
+msgid "Address of the company - deprecated in favor of new address field"
+msgstr "crwdns879:0crwdne879:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:189
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
+msgid "Aggregate operation"
+msgstr "crwdns881:0crwdne881:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:35
+msgid "Aggregated / filtered event to be displayed on the timeline"
+msgstr "crwdns883:0crwdne883:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:69
+msgid "Amount"
+msgstr "crwdns885:0crwdne885:0"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:19
+msgid "An API key"
+msgstr "crwdns887:0crwdne887:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:32
+msgid "An attachment"
+msgstr "crwdns889:0crwdne889:0"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:24
+msgid "An audit log of actions performed in the system"
+msgstr "crwdns891:0crwdne891:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:20
+msgid "An event related to user behavior"
+msgstr "crwdns893:0crwdne893:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:50
+msgid "An opportunity"
+msgstr "crwdns895:0crwdne895:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:116
+msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
+msgstr "crwdns897:0crwdne897:0"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
+msgid "API Key"
+msgstr "crwdns899:0crwdne899:0"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:18
+msgid "API Keys"
+msgstr "crwdns901:0crwdne901:0"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
+msgid "ApiKey expiration date"
+msgstr "crwdns903:0crwdne903:0"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
+msgid "ApiKey name"
+msgstr "crwdns905:0crwdne905:0"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
+msgid "ApiKey revocation date"
+msgstr "crwdns907:0crwdne907:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:115
+msgid "ARR"
+msgstr "crwdns909:0crwdne909:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
+msgid "Assigned tasks"
+msgstr "crwdns911:0crwdne911:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:168
+msgid "Assignee"
+msgstr "crwdns913:0crwdne913:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
+msgid "Associated User Id"
+msgstr "crwdns915:0crwdne915:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:30
+msgid "Attachment"
+msgstr "crwdns917:0crwdne917:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:70
+msgid "Attachment author"
+msgstr "crwdns919:0crwdne919:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:129
+msgid "Attachment company"
+msgstr "crwdns921:0crwdne921:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:52
+msgid "Attachment full path"
+msgstr "crwdns923:0crwdne923:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:43
+msgid "Attachment name"
+msgstr "crwdns925:0crwdne925:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:99
+msgid "Attachment note"
+msgstr "crwdns927:0crwdne927:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:144
+msgid "Attachment opportunity"
+msgstr "crwdns929:0crwdne929:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:114
+msgid "Attachment person"
+msgstr "crwdns931:0crwdne931:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:84
+msgid "Attachment task"
+msgstr "crwdns933:0crwdne933:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:61
+msgid "Attachment type"
+msgstr "crwdns935:0crwdne935:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:156
+#: src/modules/person/standard-objects/person.workspace-entity.ts:244
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
+#: src/modules/note/standard-objects/note.workspace-entity.ts:118
+#: src/modules/company/standard-objects/company.workspace-entity.ts:241
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
+#: src/engine/twenty-orm/custom.workspace-entity.ts:118
+msgid "Attachments"
+msgstr "crwdns937:0crwdne937:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
+msgid "Attachments created by the workspace member"
+msgstr "crwdns939:0crwdne939:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:242
+msgid "Attachments linked to the company"
+msgstr "crwdns941:0crwdne941:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:245
+msgid "Attachments linked to the contact."
+msgstr "crwdns943:0crwdne943:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:200
+msgid "Attachments linked to the opportunity"
+msgstr "crwdns945:0crwdne945:0"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:123
+msgid "Attachments tied to the {label}"
+msgstr "crwdns947:0{label}crwdne947:0"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
+msgid "Audit Log"
+msgstr "crwdns949:0crwdne949:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:255
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:23
+msgid "Audit Logs"
+msgstr "crwdns951:0crwdne951:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:256
+msgid "Audit Logs linked to the workspace member"
+msgstr "crwdns953:0crwdne953:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
+msgid "Auth failed at"
+msgstr "crwdns955:0crwdne955:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
+msgid "Author"
+msgstr "crwdns957:0crwdne957:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:180
+msgid "Authored attachments"
+msgstr "crwdns959:0crwdne959:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
+msgid "Automatically create People records when receiving or sending emails"
+msgstr "crwdns961:0crwdne961:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
+msgid "Automatically create records for people you participated with in an event."
+msgstr "crwdns963:0crwdne963:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:152
+msgid "Avatar"
+msgstr "crwdns965:0crwdne965:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:117
+msgid "Avatar Url"
+msgstr "crwdns967:0crwdne967:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:18
+msgid "Behavioral Event"
+msgstr "crwdns969:0crwdne969:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:19
+msgid "Behavioral Events"
+msgstr "crwdns971:0crwdne971:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:216
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:22
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:24
+msgid "Blocklist"
+msgstr "crwdns973:0crwdne973:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:217
+msgid "Blocklisted handles"
+msgstr "crwdns975:0crwdne975:0"
+
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:23
+msgid "Blocklists"
+msgstr "crwdns977:0crwdne977:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:77
+#: src/modules/task/standard-objects/task.workspace-entity.ts:87
+#: src/modules/note/standard-objects/note.workspace-entity.ts:75
+#: src/modules/note/standard-objects/note.workspace-entity.ts:85
+msgid "Body"
+msgstr "crwdns979:0crwdne979:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
+msgid "Cached record name"
+msgstr "crwdns981:0crwdne981:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:74
+msgid "Calendar Channel"
+msgstr "crwdns983:0crwdne983:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:23
+msgid "Calendar Channel Event Association"
+msgstr "crwdns985:0crwdne985:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:155
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:156
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:322
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:323
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:24
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:25
+msgid "Calendar Channel Event Associations"
+msgstr "crwdns987:0crwdne987:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:139
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:140
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:75
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:76
+msgid "Calendar Channels"
+msgstr "crwdns989:0crwdne989:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:27
+msgid "Calendar event"
+msgstr "crwdns991:0crwdne991:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:32
+msgid "Calendar event participant"
+msgstr "crwdns993:0crwdne993:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:33
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:34
+msgid "Calendar event participants"
+msgstr "crwdns995:0crwdne995:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
+#: src/modules/person/standard-objects/person.workspace-entity.ts:268
+#: src/modules/person/standard-objects/person.workspace-entity.ts:269
+msgid "Calendar Event Participants"
+msgstr "crwdns997:0crwdne997:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:28
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:29
+msgid "Calendar events"
+msgstr "crwdns999:0crwdne999:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:55
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:56
+msgid "Channel ID"
+msgstr "crwdns1001:0crwdne1001:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:136
+msgid "Channel Type"
+msgstr "crwdns1003:0crwdne1003:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:143
+msgid "City"
+msgstr "crwdns1005:0crwdne1005:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:79
+msgid "Close date"
+msgstr "crwdns1007:0crwdne1007:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:97
+msgid "Color Scheme"
+msgstr "crwdns1009:0crwdne1009:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:108
+msgid "Compact View"
+msgstr "crwdns1011:0crwdne1011:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:55
+msgid "Companies"
+msgstr "crwdns1013:0crwdne1013:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
+#: src/modules/person/standard-objects/person.workspace-entity.ts:183
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:148
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:65
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:88
+#: src/modules/company/standard-objects/company.workspace-entity.ts:54
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
+msgid "Company"
+msgstr "crwdns1015:0crwdne1015:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:146
+msgid "Company record position"
+msgstr "crwdns1017:0crwdne1017:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:135
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:136
+msgid "Conference Solution"
+msgstr "crwdns1019:0crwdne1019:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:359
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:360
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:28
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:307
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:308
+msgid "Connected Account"
+msgstr "crwdns1021:0crwdne1021:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:192
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:193
+msgid "Connected accounts"
+msgstr "crwdns1023:0crwdne1023:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:29
+msgid "Connected Accounts"
+msgstr "crwdns1025:0crwdne1025:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:170
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:221
+msgid "Contact auto creation policy"
+msgstr "crwdns1027:0crwdne1027:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:153
+msgid "Contact’s avatar"
+msgstr "crwdns1029:0crwdne1029:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:144
+msgid "Contact’s city"
+msgstr "crwdns1031:0crwdne1031:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:184
+msgid "Contact’s company"
+msgstr "crwdns1033:0crwdne1033:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:86
+msgid "Contact’s Emails"
+msgstr "crwdns1035:0crwdne1035:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:116
+msgid "Contact’s job title"
+msgstr "crwdns1037:0crwdne1037:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:96
+msgid "Contact’s Linkedin account"
+msgstr "crwdns1039:0crwdne1039:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:76
+msgid "Contact’s name"
+msgstr "crwdns1041:0crwdne1041:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:125
+msgid "Contact’s phone number"
+msgstr "crwdns1043:0crwdne1043:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:135
+msgid "Contact’s phone numbers"
+msgstr "crwdns1045:0crwdne1045:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:106
+msgid "Contact’s X/Twitter account"
+msgstr "crwdns1047:0crwdne1047:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+msgid "Context"
+msgstr "crwdns1781:0crwdne1781:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
+#: src/modules/task/standard-objects/task.workspace-entity.ts:136
+#: src/modules/person/standard-objects/person.workspace-entity.ts:173
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
+#: src/modules/note/standard-objects/note.workspace-entity.ts:98
+#: src/modules/company/standard-objects/company.workspace-entity.ts:156
+#: src/engine/twenty-orm/custom.workspace-entity.ts:61
+msgid "Created by"
+msgstr "crwdns1049:0crwdne1049:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:44
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:45
+#: src/engine/twenty-orm/base.workspace-entity.ts:26
+#: src/engine/twenty-orm/base.workspace-entity.ts:27
+msgid "Creation date"
+msgstr "crwdns1051:0crwdne1051:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
+msgid "Creation DateTime"
+msgstr "crwdns1053:0crwdne1053:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:278
+msgid "Date format"
+msgstr "crwdns1055:0crwdne1055:0"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:53
+msgid "Date when the record was deleted"
+msgstr "crwdns1057:0crwdne1057:0"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:52
+msgid "Deleted at"
+msgstr "crwdns1059:0crwdne1059:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:109
+msgid "Describes if the view is in compact mode"
+msgstr "crwdns1061:0crwdne1061:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:109
+msgid "Description"
+msgstr "crwdns1063:0crwdne1063:0"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:48
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:66
+msgid "Direction"
+msgstr "crwdns1065:0crwdne1065:0"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:62
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:63
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:54
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:55
+msgid "Display Name"
+msgstr "crwdns1067:0crwdne1067:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:59
+msgid "Display Value"
+msgstr "crwdns1069:0crwdne1069:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:75
+msgid "Domain Name"
+msgstr "crwdns1071:0crwdne1071:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:100
+msgid "Due Date"
+msgstr "crwdns1073:0crwdne1073:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:85
+msgid "Emails"
+msgstr "crwdns1075:0crwdne1075:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:85
+msgid "Employees"
+msgstr "crwdns1077:0crwdne1077:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:78
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:79
+msgid "End Date"
+msgstr "crwdns1079:0crwdne1079:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
+msgid "Event company"
+msgstr "crwdns1081:0crwdne1081:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
+msgid "Event context"
+msgstr "crwdns1083:0crwdne1083:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
+msgid "Event details"
+msgstr "crwdns1085:0crwdne1085:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
+msgid "Event external ID"
+msgstr "crwdns1087:0crwdne1087:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
+msgid "Event ID"
+msgstr "crwdns1089:0crwdne1089:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
+msgid "Event Listeners"
+msgstr "crwdns1091:0crwdne1091:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:48
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
+msgid "Event name"
+msgstr "crwdns1093:0crwdne1093:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
+msgid "Event name/type"
+msgstr "crwdns1095:0crwdne1095:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
+msgid "Event note"
+msgstr "crwdns1097:0crwdne1097:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
+msgid "Event opportunity"
+msgstr "crwdns1099:0crwdne1099:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
+msgid "Event Participants"
+msgstr "crwdns1101:0crwdne1101:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
+msgid "Event person"
+msgstr "crwdns1103:0crwdne1103:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
+msgid "Event task"
+msgstr "crwdns1105:0crwdne1105:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
+msgid "Event workflow"
+msgstr "crwdns1107:0crwdne1107:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
+msgid "Event workflow run"
+msgstr "crwdns1109:0crwdne1109:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
+msgid "Event workflow version"
+msgstr "crwdns1111:0crwdne1111:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
+msgid "Event workspace member"
+msgstr "crwdns1113:0crwdne1113:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
+#: src/modules/person/standard-objects/person.workspace-entity.ts:282
+msgid "Events"
+msgstr "crwdns1115:0crwdne1115:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:283
+msgid "Events linked to the person"
+msgstr "crwdns1117:0crwdne1117:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
+msgid "Events linked to the workspace member"
+msgstr "crwdns1119:0crwdne1119:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
+msgid "Exclude group emails"
+msgstr "crwdns1121:0crwdne1121:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
+msgid "Exclude non professional emails"
+msgstr "crwdns1123:0crwdne1123:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
+msgid "Executed by"
+msgstr "crwdns1125:0crwdne1125:0"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
+msgid "Expiration date"
+msgstr "crwdns1127:0crwdne1127:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
+msgid "Favorite"
+msgstr "crwdns1129:0crwdne1129:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
+msgid "Favorite company"
+msgstr "crwdns1131:0crwdne1131:0"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
+msgid "Favorite Folder"
+msgstr "crwdns1133:0crwdne1133:0"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
+msgid "Favorite folder position"
+msgstr "crwdns1135:0crwdne1135:0"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
+msgid "Favorite Folders"
+msgstr "crwdns1137:0crwdne1137:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
+msgid "Favorite note"
+msgstr "crwdns1139:0crwdne1139:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
+msgid "Favorite opportunity"
+msgstr "crwdns1141:0crwdne1141:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
+msgid "Favorite person"
+msgstr "crwdns1143:0crwdne1143:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
+msgid "Favorite position"
+msgstr "crwdns1145:0crwdne1145:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
+msgid "Favorite task"
+msgstr "crwdns1147:0crwdne1147:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
+msgid "Favorite view"
+msgstr "crwdns1149:0crwdne1149:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
+msgid "Favorite workflow"
+msgstr "crwdns1151:0crwdne1151:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
+msgid "Favorite workflow run"
+msgstr "crwdns1153:0crwdne1153:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
+msgid "Favorite workflow version"
+msgstr "crwdns1155:0crwdne1155:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
+msgid "Favorite workspace member"
+msgstr "crwdns1157:0crwdne1157:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
+#: src/modules/view/standard-objects/view.workspace-entity.ts:177
+#: src/modules/task/standard-objects/task.workspace-entity.ts:197
+#: src/modules/person/standard-objects/person.workspace-entity.ts:232
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
+#: src/modules/note/standard-objects/note.workspace-entity.ts:143
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
+#: src/modules/company/standard-objects/company.workspace-entity.ts:228
+#: src/engine/twenty-orm/custom.workspace-entity.ts:101
+msgid "Favorites"
+msgstr "crwdns1159:0crwdne1159:0"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
+msgid "Favorites in this folder"
+msgstr "crwdns1161:0crwdne1161:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:229
+msgid "Favorites linked to the company"
+msgstr "crwdns1163:0crwdne1163:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:233
+msgid "Favorites linked to the contact"
+msgstr "crwdns1165:0crwdne1165:0"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:144
+msgid "Favorites linked to the note"
+msgstr "crwdns1167:0crwdne1167:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:165
+msgid "Favorites linked to the opportunity"
+msgstr "crwdns1169:0crwdne1169:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:198
+msgid "Favorites linked to the task"
+msgstr "crwdns1171:0crwdne1171:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:178
+msgid "Favorites linked to the view"
+msgstr "crwdns1173:0crwdne1173:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
+msgid "Favorites linked to the workflow"
+msgstr "crwdns1175:0crwdne1175:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
+msgid "Favorites linked to the workflow run"
+msgstr "crwdns1177:0crwdne1177:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
+msgid "Favorites linked to the workflow version"
+msgstr "crwdns1179:0crwdne1179:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
+msgid "Favorites linked to the workspace member"
+msgstr "crwdns1181:0crwdne1181:0"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:106
+msgid "Favorites tied to the {label}"
+msgstr "crwdns1183:0{label}crwdne1183:0"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:34
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:45
+msgid "Field Metadata Id"
+msgstr "crwdns1185:0crwdne1185:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:262
+#: src/modules/view/standard-objects/view.workspace-entity.ts:263
+msgid "Field metadata used for aggregate operation"
+msgstr "crwdns1187:0crwdne1187:0"
+
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:6
+msgid "Field used for full-text search"
+msgstr "crwdns1189:0crwdne1189:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:51
+msgid "Field Value"
+msgstr "crwdns1191:0crwdne1191:0"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
+msgid "Folder for Message Channel"
+msgstr "crwdns1193:0crwdne1193:0"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
+msgid "Folder name"
+msgstr "crwdns1195:0crwdne1195:0"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:51
+msgid "Full path"
+msgstr "crwdns1197:0crwdne1197:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:52
+msgid "Group by this field value"
+msgstr "crwdns1199:0crwdne1199:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
+msgid "handle"
+msgstr "crwdns1201:0crwdne1201:0"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:53
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:54
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:126
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:127
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:45
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:46
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:86
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:87
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:34
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:35
+msgid "Handle"
+msgstr "crwdns1203:0crwdne1203:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:95
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:96
+msgid "Handle Aliases"
+msgstr "crwdns1205:0crwdne1205:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:40
+msgid "Header message Id"
+msgstr "crwdns1207:0crwdne1207:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:126
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:127
+msgid "iCal UID"
+msgstr "crwdns1209:0crwdne1209:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:79
+msgid "Icon"
+msgstr "crwdns1211:0crwdne1211:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:135
+msgid "ICP"
+msgstr "crwdns1213:0crwdne1213:0"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:14
+#: src/engine/twenty-orm/base.workspace-entity.ts:15
+msgid "Id"
+msgstr "crwdns1215:0crwdne1215:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:136
+msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
+msgstr "crwdns1217:0crwdne1217:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:78
+msgid "If the event is related to a particular object"
+msgstr "crwdns1219:0crwdne1219:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:48
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:49
+msgid "Is canceled"
+msgstr "crwdns1221:0crwdne1221:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:160
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:161
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
+msgid "Is Contact Auto Creation Enabled"
+msgstr "crwdns1223:0crwdne1223:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
+msgid "Is Full Day"
+msgstr "crwdns1225:0crwdne1225:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
+msgid "Is Organizer"
+msgstr "crwdns1227:0crwdne1227:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:258
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:259
+msgid "Is Sync Enabled"
+msgstr "crwdns1229:0crwdne1229:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:115
+msgid "Job Title"
+msgstr "crwdns1231:0crwdne1231:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:68
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:53
+msgid "Json object to provide context (user, device, workspace, etc.)"
+msgstr "crwdns1233:0crwdne1233:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
+msgid "Json object to provide output of the workflow run"
+msgstr "crwdns1235:0crwdne1235:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
+msgid "Json object to provide steps"
+msgstr "crwdns1237:0crwdne1237:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
+msgid "Json object to provide trigger"
+msgstr "crwdns1239:0crwdne1239:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:64
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:58
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:43
+msgid "Json value for event details"
+msgstr "crwdns1241:0crwdne1241:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:87
+msgid "kanbanfieldMetadataId"
+msgstr "crwdns1243:0crwdne1243:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:68
+msgid "Key"
+msgstr "crwdns1245:0crwdne1245:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:107
+msgid "Language"
+msgstr "crwdns1247:0crwdne1247:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
+msgid "Last published Version Id"
+msgstr "crwdns1249:0crwdne1249:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
+msgid "Last sync cursor"
+msgstr "crwdns1251:0crwdne1251:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:239
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:240
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:277
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:278
+msgid "Last sync date"
+msgstr "crwdns1253:0crwdne1253:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:76
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:77
+msgid "Last sync history ID"
+msgstr "crwdns1255:0crwdne1255:0"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:40
+msgid "Last time the record was changed"
+msgstr "crwdns1257:0crwdne1257:0"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:39
+msgid "Last update"
+msgstr "crwdns1259:0crwdne1259:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:93
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:94
+msgid "Linked Object Metadata Id"
+msgstr "crwdns1261:0crwdne1261:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:198
+msgid "Linked Opportunities"
+msgstr "crwdns1263:0crwdne1263:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:74
+msgid "Linked Record cached name"
+msgstr "crwdns1265:0crwdne1265:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:83
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:84
+msgid "Linked Record id"
+msgstr "crwdns1267:0crwdne1267:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:95
+#: src/modules/company/standard-objects/company.workspace-entity.ts:95
+msgid "Linkedin"
+msgstr "crwdns1269:0crwdne1269:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:199
+msgid "List of opportunities for which that person is the point of contact"
+msgstr "crwdns1271:0crwdne1271:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:117
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:118
+msgid "Location"
+msgstr "crwdns1273:0crwdne1273:0"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:60
+msgid "Logical Operator"
+msgstr "crwdns1275:0crwdne1275:0"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:61
+msgid "Logical operator for the filter group"
+msgstr "crwdns1277:0crwdne1277:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
+msgid "Meet Link"
+msgstr "crwdns1279:0crwdne1279:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:72
+msgid "Message"
+msgstr "crwdns1281:0crwdne1281:0"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:41
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:42
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:84
+msgid "Message Channel"
+msgstr "crwdns1283:0crwdne1283:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:105
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:374
+msgid "Message Channel Association"
+msgstr "crwdns1285:0crwdne1285:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:91
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:92
+msgid "Message Channel Id"
+msgstr "crwdns1287:0crwdne1287:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:29
+msgid "Message Channel Message Association"
+msgstr "crwdns1289:0crwdne1289:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:30
+msgid "Message Channel Message Associations"
+msgstr "crwdns1291:0crwdne1291:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:85
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:86
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:128
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:129
+msgid "Message Channels"
+msgstr "crwdns1293:0crwdne1293:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:67
+msgid "Message Direction"
+msgstr "crwdns1295:0crwdne1295:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:45
+msgid "Message External Id"
+msgstr "crwdns1297:0crwdne1297:0"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:21
+msgid "Message Folder"
+msgstr "crwdns1299:0crwdne1299:0"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:22
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:388
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:389
+msgid "Message Folders"
+msgstr "crwdns1301:0crwdne1301:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:106
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:107
+msgid "Message Id"
+msgstr "crwdns1303:0crwdne1303:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:41
+msgid "Message id from the message header"
+msgstr "crwdns1305:0crwdne1305:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:46
+msgid "Message id from the messaging provider"
+msgstr "crwdns1307:0crwdne1307:0"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:25
+msgid "Message Participant"
+msgstr "crwdns1309:0crwdne1309:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
+#: src/modules/person/standard-objects/person.workspace-entity.ts:255
+#: src/modules/person/standard-objects/person.workspace-entity.ts:256
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:93
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:94
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:27
+msgid "Message Participants"
+msgstr "crwdns1311:0crwdne1311:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:31
+msgid "Message Synced with a Message Channel"
+msgstr "crwdns1313:0crwdne1313:0"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:23
+msgid "Message Thread"
+msgstr "crwdns1315:0crwdne1315:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:77
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:78
+msgid "Message Thread Id"
+msgstr "crwdns1317:0crwdne1317:0"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:24
+msgid "Message Threads"
+msgstr "crwdns1319:0crwdne1319:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:29
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:34
+msgid "Messages"
+msgstr "crwdns1321:0crwdne1321:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
+msgid "Messages from the channel."
+msgstr "crwdns1323:0crwdne1323:0"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
+msgid "Messages from the thread."
+msgstr "crwdns1325:0crwdne1325:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
+msgid "Messaging provider access token"
+msgstr "crwdns1327:0crwdne1327:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
+msgid "Messaging provider refresh token"
+msgstr "crwdns1329:0crwdne1329:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:75
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:62
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
+#: src/modules/view/standard-objects/view.workspace-entity.ts:43
+#: src/modules/person/standard-objects/person.workspace-entity.ts:75
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:60
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:32
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:43
+#: src/modules/company/standard-objects/company.workspace-entity.ts:66
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:42
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:29
+#: src/engine/twenty-orm/custom.workspace-entity.ts:40
+#: src/engine/twenty-orm/custom.workspace-entity.ts:41
+msgid "Name"
+msgstr "crwdns1331:0crwdne1331:0"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
+msgid "Name of the favorite folder"
+msgstr "crwdns1333:0crwdne1333:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
+msgid "Name of the workflow run"
+msgstr "crwdns1335:0crwdne1335:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
+#: src/modules/note/standard-objects/note.workspace-entity.ts:44
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
+msgid "Note"
+msgstr "crwdns1337:0crwdne1337:0"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:119
+msgid "Note attachments"
+msgstr "crwdns1339:0crwdne1339:0"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:76
+#: src/modules/note/standard-objects/note.workspace-entity.ts:86
+msgid "Note body"
+msgstr "crwdns1341:0crwdne1341:0"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:56
+msgid "Note record position"
+msgstr "crwdns1343:0crwdne1343:0"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
+msgid "Note Target"
+msgstr "crwdns1345:0crwdne1345:0"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:107
+msgid "Note targets"
+msgstr "crwdns1347:0crwdne1347:0"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:26
+msgid "Note Targets"
+msgstr "crwdns1349:0crwdne1349:0"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:67
+msgid "Note title"
+msgstr "crwdns1351:0crwdne1351:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:221
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
+#: src/modules/note/standard-objects/note.workspace-entity.ts:45
+#: src/modules/company/standard-objects/company.workspace-entity.ts:205
+#: src/engine/twenty-orm/custom.workspace-entity.ts:69
+msgid "Notes"
+msgstr "crwdns1353:0crwdne1353:0"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:74
+msgid "Notes tied to the {label}"
+msgstr "crwdns1355:0{label}crwdne1355:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:206
+msgid "Notes tied to the company"
+msgstr "crwdns1357:0crwdne1357:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:222
+msgid "Notes tied to the contact"
+msgstr "crwdns1359:0crwdne1359:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
+msgid "Notes tied to the opportunity"
+msgstr "crwdns1361:0crwdne1361:0"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
+msgid "NoteTarget company"
+msgstr "crwdns1363:0crwdne1363:0"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
+msgid "NoteTarget note"
+msgstr "crwdns1365:0crwdne1365:0"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
+msgid "NoteTarget opportunity"
+msgstr "crwdns1367:0crwdne1367:0"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
+msgid "NoteTarget person"
+msgstr "crwdns1369:0crwdne1369:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:86
+msgid "Number of employees in the company"
+msgstr "crwdns1371:0crwdne1371:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
+msgid "Object id"
+msgstr "crwdns1373:0crwdne1373:0"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
+msgid "Object metadata id"
+msgstr "crwdns1375:0crwdne1375:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:51
+msgid "Object Metadata Id"
+msgstr "crwdns1377:0crwdne1377:0"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:63
+msgid "Object name"
+msgstr "crwdns1379:0crwdne1379:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
+msgid "Operand"
+msgstr "crwdns1381:0crwdne1381:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
+msgid "Operation"
+msgstr "crwdns1383:0crwdne1383:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
+msgid "Operations"
+msgstr "crwdns1385:0crwdne1385:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
+#: src/modules/company/standard-objects/company.workspace-entity.ts:216
+msgid "Opportunities"
+msgstr "crwdns1387:0crwdne1387:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:217
+msgid "Opportunities linked to the company."
+msgstr "crwdns1389:0crwdne1389:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:48
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:80
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:118
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:143
+msgid "Opportunity"
+msgstr "crwdns1391:0crwdne1391:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:70
+msgid "Opportunity amount"
+msgstr "crwdns1393:0crwdne1393:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:80
+msgid "Opportunity close date"
+msgstr "crwdns1395:0crwdne1395:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:149
+msgid "Opportunity company"
+msgstr "crwdns1397:0crwdne1397:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
+msgid "Opportunity point of contact"
+msgstr "crwdns1399:0crwdne1399:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
+msgid "Opportunity probability"
+msgstr "crwdns1401:0crwdne1401:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
+msgid "Opportunity record position"
+msgstr "crwdns1403:0crwdne1403:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
+msgid "Opportunity stage"
+msgstr "crwdns1405:0crwdne1405:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:190
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:97
+msgid "Optional aggregate operation"
+msgstr "crwdns1407:0crwdne1407:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
+msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
+msgstr "crwdns1409:0crwdne1409:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
+msgid "Output"
+msgstr "crwdns1411:0crwdne1411:0"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:52
+msgid "Parent View Filter Group"
+msgstr "crwdns1413:0crwdne1413:0"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:51
+msgid "Parent View Filter Group Id"
+msgstr "crwdns1415:0crwdne1415:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+#: src/modules/company/standard-objects/company.workspace-entity.ts:166
+msgid "People"
+msgstr "crwdns1417:0crwdne1417:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:167
+msgid "People linked to the company."
+msgstr "crwdns1419:0crwdne1419:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
+#: src/modules/person/standard-objects/person.workspace-entity.ts:58
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:50
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:85
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:86
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:73
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:123
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:124
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:113
+msgid "Person"
+msgstr "crwdns1421:0crwdne1421:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:163
+msgid "Person record Position"
+msgstr "crwdns1423:0crwdne1423:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:124
+msgid "Phone"
+msgstr "crwdns1425:0crwdne1425:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:134
+msgid "Phones"
+msgstr "crwdns1427:0crwdne1427:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
+msgid "Point of Contact"
+msgstr "crwdns1429:0crwdne1429:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:156
+#: src/modules/view/standard-objects/view.workspace-entity.ts:98
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
+#: src/modules/task/standard-objects/task.workspace-entity.ts:57
+#: src/modules/person/standard-objects/person.workspace-entity.ts:162
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
+#: src/modules/note/standard-objects/note.workspace-entity.ts:55
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
+#: src/modules/company/standard-objects/company.workspace-entity.ts:145
+#: src/engine/twenty-orm/custom.workspace-entity.ts:49
+#: src/engine/twenty-orm/custom.workspace-entity.ts:50
+msgid "Position"
+msgstr "crwdns1431:0crwdne1431:0"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:90
+msgid "Position in the parent view filter group"
+msgstr "crwdns1433:0crwdne1433:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
+msgid "Position in the view filter group"
+msgstr "crwdns1435:0crwdne1435:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
+msgid "Position in view filter group"
+msgstr "crwdns1437:0crwdne1437:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
+msgid "Preferred color scheme"
+msgstr "crwdns1439:0crwdne1439:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
+msgid "Preferred language"
+msgstr "crwdns1441:0crwdne1441:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
+msgid "Probability"
+msgstr "crwdns1443:0crwdne1443:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:49
+msgid "provider"
+msgstr "crwdns1445:0crwdne1445:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
+msgid "Received At"
+msgstr "crwdns1447:0crwdne1447:0"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
+msgid "Record id"
+msgstr "crwdns1449:0crwdne1449:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:45
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:46
+msgid "Recurring Event ID"
+msgstr "crwdns1451:0crwdne1451:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
+msgid "Refresh Token"
+msgstr "crwdns1453:0crwdne1453:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
+msgid "Related user email address"
+msgstr "crwdns1455:0crwdne1455:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:144
+#: src/modules/note/standard-objects/note.workspace-entity.ts:106
+msgid "Relations"
+msgstr "crwdns1457:0crwdne1457:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:73
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:74
+msgid "Response Status"
+msgstr "crwdns1459:0crwdne1459:0"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:47
+msgid "Revocation date"
+msgstr "crwdns1461:0crwdne1461:0"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:37
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:38
+msgid "Role"
+msgstr "crwdns1463:0crwdne1463:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:121
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:142
+msgid "Runs"
+msgstr "crwdns1465:0crwdne1465:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
+msgid "Scopes"
+msgstr "crwdns1467:0crwdne1467:0"
+
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
+msgid "Search vector"
+msgstr "crwdns1469:0crwdne1469:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:69
+msgid "Secret"
+msgstr "crwdns1471:0crwdne1471:0"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:64
+msgid "Size"
+msgstr "crwdns1473:0crwdne1473:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
+msgid "Stage"
+msgstr "crwdns1475:0crwdne1475:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
+msgid "Start Date"
+msgstr "crwdns1477:0crwdne1477:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:110
+msgid "Status"
+msgstr "crwdns1479:0crwdne1479:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:87
+msgid "Statuses"
+msgstr "crwdns1481:0crwdne1481:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:49
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:50
+msgid "Subject"
+msgstr "crwdns1483:0crwdne1483:0"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:51
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:52
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:268
+msgid "Sync Cursor"
+msgstr "crwdns1485:0crwdne1485:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
+msgid "Sync Cursor. Used for syncing events from the calendar provider"
+msgstr "crwdns1487:0crwdne1487:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:137
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:138
+msgid "Sync stage"
+msgstr "crwdns1489:0crwdne1489:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:339
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:340
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
+msgid "Sync stage started at"
+msgstr "crwdns1491:0crwdne1491:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:95
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:96
+msgid "Sync status"
+msgstr "crwdns1493:0crwdne1493:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:30
+msgid "Target Url"
+msgstr "crwdns1495:0crwdne1495:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
+#: src/modules/task/standard-objects/task.workspace-entity.ts:46
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
+msgid "Task"
+msgstr "crwdns1497:0crwdne1497:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:169
+msgid "Task assignee"
+msgstr "crwdns1499:0crwdne1499:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:157
+msgid "Task attachments"
+msgstr "crwdns1501:0crwdne1501:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:78
+#: src/modules/task/standard-objects/task.workspace-entity.ts:88
+msgid "Task body"
+msgstr "crwdns1503:0crwdne1503:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:101
+msgid "Task due date"
+msgstr "crwdns1505:0crwdne1505:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:58
+msgid "Task record position"
+msgstr "crwdns1507:0crwdne1507:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:111
+msgid "Task status"
+msgstr "crwdns1509:0crwdne1509:0"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:25
+msgid "Task Target"
+msgstr "crwdns1511:0crwdne1511:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:145
+msgid "Task targets"
+msgstr "crwdns1513:0crwdne1513:0"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
+msgid "Task Targets"
+msgstr "crwdns1515:0crwdne1515:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:69
+msgid "Task title"
+msgstr "crwdns1517:0crwdne1517:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:47
+#: src/modules/person/standard-objects/person.workspace-entity.ts:210
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
+#: src/modules/company/standard-objects/company.workspace-entity.ts:194
+#: src/engine/twenty-orm/custom.workspace-entity.ts:85
+msgid "Tasks"
+msgstr "crwdns1519:0crwdne1519:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:146
+msgid "Tasks assigned to the workspace member"
+msgstr "crwdns1521:0crwdne1521:0"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:90
+msgid "Tasks tied to the {label}"
+msgstr "crwdns1523:0{label}crwdne1523:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:195
+msgid "Tasks tied to the company"
+msgstr "crwdns1525:0crwdne1525:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:211
+msgid "Tasks tied to the contact"
+msgstr "crwdns1527:0crwdne1527:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
+msgid "Tasks tied to the opportunity"
+msgstr "crwdns1529:0crwdne1529:0"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:66
+msgid "TaskTarget company"
+msgstr "crwdns1531:0crwdne1531:0"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
+msgid "TaskTarget opportunity"
+msgstr "crwdns1533:0crwdne1533:0"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
+msgid "TaskTarget person"
+msgstr "crwdns1535:0crwdne1535:0"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:36
+msgid "TaskTarget task"
+msgstr "crwdns1537:0crwdne1537:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
+msgid "Text"
+msgstr "crwdns1539:0crwdne1539:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
+msgid "The account handle (email, username, phone number, etc.)"
+msgstr "crwdns1541:0crwdne1541:0"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
+msgid "The account provider"
+msgstr "crwdns1543:0crwdne1543:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:96
+msgid "The company Linkedin account"
+msgstr "crwdns1545:0crwdne1545:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:67
+msgid "The company name"
+msgstr "crwdns1547:0crwdne1547:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:106
+msgid "The company Twitter/X account"
+msgstr "crwdns1549:0crwdne1549:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:76
+msgid "The company website URL. We use this url to fetch the company icon"
+msgstr "crwdns1551:0crwdne1551:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
+#: src/modules/task/standard-objects/task.workspace-entity.ts:138
+#: src/modules/person/standard-objects/person.workspace-entity.ts:175
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
+#: src/modules/note/standard-objects/note.workspace-entity.ts:100
+#: src/modules/company/standard-objects/company.workspace-entity.ts:158
+#: src/engine/twenty-orm/custom.workspace-entity.ts:63
+msgid "The creator of the record"
+msgstr "crwdns1553:0crwdne1553:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
+msgid "The current statuses of the workflow versions"
+msgstr "crwdns1555:0crwdne1555:0"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
+msgid "The date the message was received"
+msgstr "crwdns1557:0crwdne1557:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
+msgid "The executor of the workflow"
+msgstr "crwdns1559:0crwdne1559:0"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
+msgid "The folder this favorite belongs to"
+msgstr "crwdns1561:0crwdne1561:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:61
+msgid "The opportunity name"
+msgstr "crwdns1563:0crwdne1563:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:35
+msgid "The workflow event listener name"
+msgstr "crwdns1565:0crwdne1565:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
+msgid "The workflow last published version id"
+msgstr "crwdns1567:0crwdne1567:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
+msgid "The workflow name"
+msgstr "crwdns1569:0crwdne1569:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:76
+msgid "The workflow version name"
+msgstr "crwdns1571:0crwdne1571:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:105
+msgid "The workflow version status"
+msgstr "crwdns1573:0crwdne1573:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:56
+msgid "Thread External Id"
+msgstr "crwdns1575:0crwdne1575:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
+msgid "Thread id from the messaging provider"
+msgstr "crwdns1577:0crwdne1577:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
+msgid "Throttle Failure Count"
+msgstr "crwdns1579:0crwdne1579:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
+msgid "Time format"
+msgstr "crwdns1581:0crwdne1581:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:268
+msgid "Time zone"
+msgstr "crwdns1583:0crwdne1583:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:208
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
+#: src/modules/task/standard-objects/task.workspace-entity.ts:185
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
+#: src/modules/note/standard-objects/note.workspace-entity.ts:131
+#: src/modules/company/standard-objects/company.workspace-entity.ts:253
+#: src/engine/twenty-orm/custom.workspace-entity.ts:134
+msgid "Timeline Activities"
+msgstr "crwdns1585:0crwdne1585:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:254
+msgid "Timeline Activities linked to the company"
+msgstr "crwdns1587:0crwdne1587:0"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:132
+msgid "Timeline Activities linked to the note."
+msgstr "crwdns1589:0crwdne1589:0"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
+msgid "Timeline Activities linked to the opportunity."
+msgstr "crwdns1591:0crwdne1591:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
+msgid "Timeline activities linked to the run"
+msgstr "crwdns1593:0crwdne1593:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:186
+msgid "Timeline Activities linked to the task."
+msgstr "crwdns1595:0crwdne1595:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
+msgid "Timeline activities linked to the version"
+msgstr "crwdns1597:0crwdne1597:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:156
+msgid "Timeline activities linked to the workflow"
+msgstr "crwdns1599:0crwdne1599:0"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:139
+msgid "Timeline Activities tied to the {label}"
+msgstr "crwdns1601:0{label}crwdne1601:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
+msgid "Timeline Activity"
+msgstr "crwdns1603:0crwdne1603:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:68
+#: src/modules/note/standard-objects/note.workspace-entity.ts:66
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
+msgid "Title"
+msgstr "crwdns1605:0crwdne1605:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:59
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:135
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:60
+msgid "Type"
+msgstr "crwdns1607:0crwdne1607:0"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:98
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:99
+msgid "Update DateTime"
+msgstr "crwdns1609:0crwdne1609:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:126
+msgid "User Email"
+msgstr "crwdns1611:0crwdne1611:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:135
+msgid "User Id"
+msgstr "crwdns1613:0crwdne1613:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:270
+msgid "User time zone"
+msgstr "crwdns1615:0crwdne1615:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:279
+msgid "User's preferred date format"
+msgstr "crwdns1617:0crwdne1617:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:315
+msgid "User's preferred time format"
+msgstr "crwdns1619:0crwdne1619:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
+msgid "Value"
+msgstr "crwdns1621:0crwdne1621:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
+msgid "Version status"
+msgstr "crwdns1623:0crwdne1623:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:94
+msgid "Version steps"
+msgstr "crwdns1625:0crwdne1625:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:84
+msgid "Version trigger"
+msgstr "crwdns1627:0crwdne1627:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:110
+msgid "Versions"
+msgstr "crwdns1629:0crwdne1629:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:31
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:57
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:70
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:67
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:38
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:39
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:85
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:208
+msgid "View"
+msgstr "crwdns1631:0crwdne1631:0"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
+msgid "View Field"
+msgstr "crwdns1633:0crwdne1633:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
+msgid "View Field position"
+msgstr "crwdns1635:0crwdne1635:0"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
+msgid "View Field related view"
+msgstr "crwdns1637:0crwdne1637:0"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
+msgid "View Field size"
+msgstr "crwdns1639:0crwdne1639:0"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
+msgid "View Field target field"
+msgstr "crwdns1641:0crwdne1641:0"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
+msgid "View Field visibility"
+msgstr "crwdns1643:0crwdne1643:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:117
+#: src/modules/view/standard-objects/view.workspace-entity.ts:118
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
+msgid "View Fields"
+msgstr "crwdns1645:0crwdne1645:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
+msgid "View Filter"
+msgstr "crwdns1647:0crwdne1647:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
+msgid "View Filter Display Value"
+msgstr "crwdns1649:0crwdne1649:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
+msgid "View Filter Group"
+msgstr "crwdns1651:0crwdne1651:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
+msgid "View Filter Group Id"
+msgstr "crwdns1653:0crwdne1653:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:153
+#: src/modules/view/standard-objects/view.workspace-entity.ts:154
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
+msgid "View Filter Groups"
+msgstr "crwdns1655:0crwdne1655:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
+msgid "View Filter operand"
+msgstr "crwdns1657:0crwdne1657:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
+msgid "View Filter related view"
+msgstr "crwdns1659:0crwdne1659:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
+msgid "View Filter target field"
+msgstr "crwdns1661:0crwdne1661:0"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
+msgid "View Filter value"
+msgstr "crwdns1663:0crwdne1663:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:141
+#: src/modules/view/standard-objects/view.workspace-entity.ts:142
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
+msgid "View Filters"
+msgstr "crwdns1665:0crwdne1665:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
+msgid "View Group"
+msgstr "crwdns1667:0crwdne1667:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
+msgid "View Group related view"
+msgstr "crwdns1669:0crwdne1669:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
+msgid "View Group target field"
+msgstr "crwdns1671:0crwdne1671:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
+msgid "View Group visibility"
+msgstr "crwdns1673:0crwdne1673:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:129
+#: src/modules/view/standard-objects/view.workspace-entity.ts:130
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
+msgid "View Groups"
+msgstr "crwdns1675:0crwdne1675:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:80
+msgid "View icon"
+msgstr "crwdns1677:0crwdne1677:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:88
+msgid "View Kanban column field"
+msgstr "crwdns1679:0crwdne1679:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:69
+msgid "View key"
+msgstr "crwdns1681:0crwdne1681:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:44
+msgid "View name"
+msgstr "crwdns1683:0crwdne1683:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:99
+msgid "View position"
+msgstr "crwdns1685:0crwdne1685:0"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
+msgid "View Sort"
+msgstr "crwdns1687:0crwdne1687:0"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
+msgid "View Sort direction"
+msgstr "crwdns1689:0crwdne1689:0"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
+msgid "View Sort related view"
+msgstr "crwdns1691:0crwdne1691:0"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
+msgid "View Sort target field"
+msgstr "crwdns1693:0crwdne1693:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:165
+#: src/modules/view/standard-objects/view.workspace-entity.ts:166
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
+msgid "View Sorts"
+msgstr "crwdns1695:0crwdne1695:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:52
+msgid "View target object"
+msgstr "crwdns1697:0crwdne1697:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:60
+msgid "View type"
+msgstr "crwdns1699:0crwdne1699:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:32
+msgid "Views"
+msgstr "crwdns1701:0crwdne1701:0"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:186
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:187
+msgid "Visibility"
+msgstr "crwdns1703:0crwdne1703:0"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
+msgid "Visible"
+msgstr "crwdns1705:0crwdne1705:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
+msgid "Webhook"
+msgstr "crwdns1707:0crwdne1707:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
+msgid "Webhook operation"
+msgstr "crwdns1709:0crwdne1709:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
+msgid "Webhook operations"
+msgstr "crwdns1711:0crwdne1711:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
+msgid "Webhook target url"
+msgstr "crwdns1713:0crwdne1713:0"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
+msgid "Webhooks"
+msgstr "crwdns1715:0crwdne1715:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:182
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
+msgid "Workflow"
+msgstr "crwdns1717:0crwdne1717:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
+msgid "Workflow event listeners linked to the workflow."
+msgstr "crwdns1719:0crwdne1719:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
+msgid "Workflow linked to the run."
+msgstr "crwdns1721:0crwdne1721:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
+msgid "Workflow record position"
+msgstr "crwdns1723:0crwdne1723:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
+msgid "Workflow Run"
+msgstr "crwdns1725:0crwdne1725:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
+msgid "Workflow run ended at"
+msgstr "crwdns1727:0crwdne1727:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
+msgid "Workflow run position"
+msgstr "crwdns1729:0crwdne1729:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
+msgid "Workflow run started at"
+msgstr "crwdns1731:0crwdne1731:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
+msgid "Workflow run status"
+msgstr "crwdns1733:0crwdne1733:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
+msgid "Workflow Runs"
+msgstr "crwdns1735:0crwdne1735:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
+msgid "Workflow runs linked to the version."
+msgstr "crwdns1737:0crwdne1737:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
+msgid "Workflow runs linked to the workflow."
+msgstr "crwdns1739:0crwdne1739:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
+msgid "Workflow version"
+msgstr "crwdns1741:0crwdne1741:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
+msgid "Workflow Version"
+msgstr "crwdns1743:0crwdne1743:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
+msgid "Workflow version linked to the run."
+msgstr "crwdns1745:0crwdne1745:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
+msgid "Workflow version position"
+msgstr "crwdns1747:0crwdne1747:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
+msgid "Workflow Versions"
+msgstr "crwdns1749:0crwdne1749:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
+msgid "Workflow versions linked to the workflow."
+msgstr "crwdns1751:0crwdne1751:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
+msgid "WorkflowEventListener"
+msgstr "crwdns1753:0crwdne1753:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
+msgid "WorkflowEventListener workflow"
+msgstr "crwdns1755:0crwdne1755:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
+msgid "WorkflowEventListeners"
+msgstr "crwdns1757:0crwdne1757:0"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
+msgid "Workflows"
+msgstr "crwdns1759:0crwdne1759:0"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
+msgid "WorkflowVersion"
+msgstr "crwdns1761:0crwdne1761:0"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
+msgid "WorkflowVersion workflow"
+msgstr "crwdns1763:0crwdne1763:0"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
+msgid "Workspace member"
+msgstr "crwdns1765:0crwdne1765:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:90
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:100
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:58
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:138
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:139
+msgid "Workspace Member"
+msgstr "crwdns1767:0crwdne1767:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:118
+msgid "Workspace member avatar"
+msgstr "crwdns1769:0crwdne1769:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
+msgid "Workspace member name"
+msgstr "crwdns1771:0crwdne1771:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
+msgid "Workspace Members"
+msgstr "crwdns1773:0crwdne1773:0"
+
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
+msgid "WorkspaceMember"
+msgstr "crwdns1775:0crwdne1775:0"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:105
+#: src/modules/company/standard-objects/company.workspace-entity.ts:105
+msgid "X"
+msgstr "crwdns1777:0crwdne1777:0"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:179
+msgid "Your team member responsible for managing the company account"
+msgstr "crwdns1779:0crwdne1779:0"
+

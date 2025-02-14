@@ -10,14 +10,22 @@ describe('getFunctionOutputSchema', () => {
       e: [1, 2, 3],
     };
     const expectedOutputSchema = {
-      a: { isLeaf: true, type: 'unknown', value: null },
-      b: { isLeaf: true, type: 'string', value: 'b' },
+      a: { isLeaf: true, type: 'unknown', value: null, icon: 'IconVariable' },
+      b: { isLeaf: true, type: 'string', value: 'b', icon: 'IconVariable' },
       c: {
         isLeaf: false,
-        value: { cc: { isLeaf: true, type: 'number', value: 1 } },
+        icon: 'IconVariable',
+        value: {
+          cc: { isLeaf: true, type: 'number', value: 1, icon: 'IconVariable' },
+        },
       },
-      d: { isLeaf: true, type: 'boolean', value: true },
-      e: { isLeaf: true, type: 'array', value: [1, 2, 3] },
+      d: { isLeaf: true, type: 'boolean', value: true, icon: 'IconVariable' },
+      e: {
+        isLeaf: true,
+        type: 'array',
+        value: [1, 2, 3],
+        icon: 'IconVariable',
+      },
     };
     expect(getFunctionOutputSchema(testResult)).toEqual(expectedOutputSchema);
   });

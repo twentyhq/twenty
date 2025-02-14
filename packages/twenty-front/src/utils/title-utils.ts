@@ -4,7 +4,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 
 export enum SettingsPageTitles {
   Accounts = 'Account - Settings',
-  Appearance = 'Appearance - Settings',
+  Experience = 'Experience - Settings',
   Profile = 'Profile - Settings',
   Objects = 'Data model - Settings',
   Members = 'Members - Settings',
@@ -17,7 +17,7 @@ export enum SettingsPageTitles {
 
 enum SettingsPathPrefixes {
   Accounts = `${AppBasePath.Settings}/${SettingsPath.Accounts}`,
-  Appearance = `${AppBasePath.Settings}/${SettingsPath.Appearance}`,
+  Experience = `${AppBasePath.Settings}/${SettingsPath.Experience}`,
   Profile = `${AppBasePath.Settings}/${SettingsPath.ProfilePage}`,
   Objects = `${AppBasePath.Settings}/${SettingsPath.Objects}`,
   Members = `${AppBasePath.Settings}/${SettingsPath.WorkspaceMembersPage}`,
@@ -49,8 +49,8 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return 'Create Workspace';
     case AppPath.CreateProfile:
       return 'Create Profile';
-    case SettingsPathPrefixes.Appearance:
-      return SettingsPageTitles.Appearance;
+    case SettingsPathPrefixes.Experience:
+      return SettingsPageTitles.Experience;
     case SettingsPathPrefixes.Accounts:
       return SettingsPageTitles.Accounts;
     case SettingsPathPrefixes.Profile:

@@ -4,9 +4,12 @@ import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 
 export const RecordIndexPageTableAddButtonNoGroup = () => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
+  const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const { createNewTableRecord } = useCreateNewTableRecord(recordIndexId);
+  const { createNewTableRecord } = useCreateNewTableRecord({
+    objectMetadataItem,
+    recordTableId: recordIndexId,
+  });
 
   const handleCreateNewTableRecord = () => {
     createNewTableRecord();

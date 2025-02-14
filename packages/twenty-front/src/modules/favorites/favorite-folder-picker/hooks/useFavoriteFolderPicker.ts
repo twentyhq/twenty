@@ -9,7 +9,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 type useFavoriteFolderPickerProps = {
   record?: ObjectRecord;

@@ -46,4 +46,9 @@
     "**/.yarn": true,
   },
   "eslint.debug": true,
+  "files.associations": {
+    ".cursorrules": "markdown"
+  },
+  "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}"
+  }
 }

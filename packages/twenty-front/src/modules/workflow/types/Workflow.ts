@@ -44,6 +44,7 @@ export type WorkflowUpdateRecordActionSettings = BaseWorkflowActionSettings & {
     objectName: string;
     objectRecord: ObjectRecord;
     objectRecordId: string;
+    fieldsToUpdate: string[];
   };
 };
 
@@ -51,6 +52,13 @@ export type WorkflowDeleteRecordActionSettings = BaseWorkflowActionSettings & {
   input: {
     objectName: string;
     objectRecordId: string;
+  };
+};
+
+export type WorkflowFindRecordsActionSettings = BaseWorkflowActionSettings & {
+  input: {
+    objectName: string;
+    limit?: number;
   };
 };
 
@@ -85,12 +93,18 @@ export type WorkflowDeleteRecordAction = BaseWorkflowAction & {
   settings: WorkflowDeleteRecordActionSettings;
 };
 
+export type WorkflowFindRecordsAction = BaseWorkflowAction & {
+  type: 'FIND_RECORDS';
+  settings: WorkflowFindRecordsActionSettings;
+};
+
 export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowSendEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
-  | WorkflowDeleteRecordAction;
+  | WorkflowDeleteRecordAction
+  | WorkflowFindRecordsAction;
 
 export type WorkflowActionType = WorkflowAction['type'];
 
@@ -121,6 +135,24 @@ export type WorkflowManualTrigger = BaseTrigger & {
   };
 };
 
+export type WorkflowCronTrigger = BaseTrigger & {
+  type: 'CRON';
+  settings: (
+    | {
+        type: 'HOURS';
+        schedule: { hour: number; minute: number };
+      }
+    | {
+        type: 'MINUTES';
+        schedule: { minute: number };
+      }
+    | {
+        type: 'CUSTOM';
+        pattern: string;
+      }
+  ) & { outputSchema: object };
+};
+
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 
 export type WorkflowManualTriggerAvailability =
@@ -129,7 +161,8 @@ export type WorkflowManualTriggerAvailability =
 
 export type WorkflowTrigger =
   | WorkflowDatabaseEventTrigger
-  | WorkflowManualTrigger;
+  | WorkflowManualTrigger
+  | WorkflowCronTrigger;
 
 export type WorkflowTriggerType = WorkflowTrigger['type'];
 
@@ -166,13 +199,14 @@ type StepRunOutput = {
 
 export type WorkflowRunOutput = {
   steps: Record<string, StepRunOutput>;
+  error?: string;
 };
 
 export type WorkflowRun = {
   __typename: 'WorkflowRun';
   id: string;
   workflowVersionId: string;
-  output: WorkflowRunOutput;
+  output: WorkflowRunOutput | null;
 };
 
 export type Workflow = {

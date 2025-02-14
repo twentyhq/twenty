@@ -6,6 +6,7 @@ export const SERVERLESS_FUNCTION_FRAGMENT = gql`
     name
     description
     runtime
+    timeoutSeconds
     syncStatus
     latestVersion
     latestVersionInputSchema

@@ -7,6 +7,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -17,7 +18,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -37,8 +38,6 @@ export class WorkspaceInvitationService {
   constructor(
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly environmentService: EnvironmentService,
@@ -47,32 +46,7 @@ export class WorkspaceInvitationService {
     private readonly domainManagerService: DomainManagerService,
   ) {}
 
-  // VALIDATIONS METHODS
-  private async validatePublicInvitation(workspaceInviteHash: string) {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        inviteHash: workspaceInviteHash,
-      },
-    });
-
-    if (!workspace) {
-      throw new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    if (!workspace.isPublicInviteLinkEnabled) {
-      throw new AuthException(
-        'Workspace does not allow public invites',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    return { isValid: true, workspace };
-  }
-
-  private async validatePersonalInvitation({
+  async validatePersonalInvitation({
     workspacePersonalInviteToken,
     email,
   }: {
@@ -109,44 +83,17 @@ export class WorkspaceInvitationService {
     }
   }
 
-  async validateInvitation({
-    workspacePersonalInviteToken,
-    workspaceInviteHash,
-    email,
-  }: {
-    workspacePersonalInviteToken?: string;
-    workspaceInviteHash?: string;
-    email: string;
-  }) {
-    if (workspacePersonalInviteToken) {
-      return await this.validatePersonalInvitation({
-        workspacePersonalInviteToken,
-        email,
-      });
-    }
-
-    if (workspaceInviteHash) {
-      return await this.validatePublicInvitation(workspaceInviteHash);
-    }
-
-    throw new AuthException(
-      'Invitation invalid',
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
-    );
-  }
-
   async findInvitationByWorkspaceSubdomainAndUserEmail({
     subdomain,
     email,
   }: {
-    subdomain?: string;
+    subdomain: string;
     email: string;
   }) {
-    const workspace = this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
-      ? await this.workspaceRepository.findOneBy({
-          subdomain,
-        })
-      : await this.domainManagerService.getDefaultWorkspace();
+    const workspace =
+      await this.domainManagerService.getWorkspaceBySubdomainOrDefaultWorkspace(
+        subdomain,
+      );
 
     if (!workspace) return;
 
@@ -332,7 +279,7 @@ export class WorkspaceInvitationService {
     for (const invitation of invitationsPr) {
       if (invitation.status === 'fulfilled') {
         const link = this.domainManagerService.buildWorkspaceURL({
-          subdomain: workspace.subdomain,
+          workspace,
           pathname: `invite/${workspace?.inviteHash}`,
           searchParams: invitation.value.isPersonalInvitation
             ? {
@@ -350,13 +297,11 @@ export class WorkspaceInvitationService {
             lastName: sender.lastName,
           },
           serverUrl: this.environmentService.get('SERVER_URL'),
+          locale: 'en' as keyof typeof APP_LOCALES,
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);
-        const html = render(emailTemplate, {
-          pretty: true,
-        });
-
+        const html = render(emailTemplate);
         const text = render(emailTemplate, {
           plainText: true,
         });

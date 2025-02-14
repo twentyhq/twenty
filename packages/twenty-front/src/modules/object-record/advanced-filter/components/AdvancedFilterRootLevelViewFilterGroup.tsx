@@ -5,7 +5,7 @@ import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/compon
 import { AdvancedFilterViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterGroup';
 import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 const StyledRow = styled.div`
   display: flex;

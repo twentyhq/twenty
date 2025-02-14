@@ -4,7 +4,7 @@ import { AnimatedContainer, Chip, ChipVariant } from 'twenty-ui';
 
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 const StyledContainer = styled.div`
   align-items: center;

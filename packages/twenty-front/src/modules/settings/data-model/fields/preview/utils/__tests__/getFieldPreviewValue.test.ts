@@ -24,7 +24,9 @@ describe('getFieldPreviewValue', () => {
     }
 
     // When
-    const result = getFieldPreviewValue({ fieldMetadataItem });
+    const result = getFieldPreviewValue({
+      fieldMetadataItem,
+    });
 
     // Then
     expect(result).toBe(false);
@@ -42,12 +44,14 @@ describe('getFieldPreviewValue', () => {
     }
 
     // When
-    const result = getFieldPreviewValue({ fieldMetadataItem });
+    const result = getFieldPreviewValue({
+      fieldMetadataItem,
+    });
 
     // Then
     expect(result).toBe(2000);
     expect(result).toBe(
-      getSettingsFieldTypeConfig(FieldMetadataType.Number).exampleValue,
+      getSettingsFieldTypeConfig(FieldMetadataType.NUMBER).exampleValue,
     );
   });
 
@@ -63,7 +67,9 @@ describe('getFieldPreviewValue', () => {
     }
 
     // When
-    const result = getFieldPreviewValue({ fieldMetadataItem });
+    const result = getFieldPreviewValue({
+      fieldMetadataItem,
+    });
 
     // Then
     expect(result).toBeNull();

@@ -1,15 +1,14 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'typeorm';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -28,9 +27,9 @@ registerEnumType(AGGREGATE_OPERATIONS, {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewField,
   namePlural: 'viewFields',
-  labelSingular: 'View Field',
-  labelPlural: 'View Fields',
-  description: '(System) View Fields',
+  labelSingular: msg`View Field`,
+  labelPlural: msg`View Fields`,
+  description: msg`(System) View Fields`,
   icon: STANDARD_OBJECT_ICONS.viewField,
 })
 @WorkspaceIsNotAuditLogged()
@@ -43,8 +42,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
-    description: 'View Field target field',
+    label: msg`Field Metadata Id`,
+    description: msg`View Field target field`,
     icon: 'IconTag',
   })
   fieldMetadataId: string;
@@ -52,8 +51,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.isVisible,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Visible',
-    description: 'View Field visibility',
+    label: msg`Visible`,
+    description: msg`View Field visibility`,
     icon: 'IconEye',
     defaultValue: true,
   })
@@ -62,8 +61,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.size,
     type: FieldMetadataType.NUMBER,
-    label: 'Size',
-    description: 'View Field size',
+    label: msg`Size`,
+    description: msg`View Field size`,
     icon: 'IconEye',
     defaultValue: 0,
   })
@@ -72,8 +71,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'View Field position',
+    label: msg`Position`,
+    description: msg`View Field position`,
     icon: 'IconList',
     defaultValue: 0,
   })
@@ -83,8 +82,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'View Field related view',
+    label: msg`View`,
+    description: msg`View Field related view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFields',
@@ -94,8 +93,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.aggregateOperation,
     type: FieldMetadataType.SELECT,
-    label: 'Aggregate operation',
-    description: 'Optional aggregate operation',
+    label: msg`Aggregate operation`,
+    description: msg`Optional aggregate operation`,
     icon: 'IconCalculator',
     options: [
       {
@@ -128,11 +127,38 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
         position: 4,
         color: 'yellow',
       },
+      {
+        value: AGGREGATE_OPERATIONS.countEmpty,
+        label: 'Count empty',
+        position: 5,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countNotEmpty,
+        label: 'Count not empty',
+        position: 6,
+        color: 'purple',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countUniqueValues,
+        label: 'Count unique values',
+        position: 7,
+        color: 'sky',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.percentageEmpty,
+        label: 'Percent empty',
+        position: 8,
+        color: 'turquoise',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.percentageNotEmpty,
+        label: 'Percent not empty',
+        position: 9,
+        color: 'yellow',
+      },
     ],
     defaultValue: null,
-  })
-  @WorkspaceGate({
-    featureFlag: FeatureFlagKey.IsAggregateQueryEnabled,
   })
   @WorkspaceIsNullable()
   aggregateOperation?: AGGREGATE_OPERATIONS | null;

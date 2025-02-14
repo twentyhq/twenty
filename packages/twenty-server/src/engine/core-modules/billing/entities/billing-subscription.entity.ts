@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
@@ -6,6 +8,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -25,7 +28,11 @@ registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
-@ObjectType('BillingSubscription')
+@Index('IndexOnActiveSubscriptionPerWorkspace', ['workspaceId'], {
+  unique: true,
+  where: `status IN ('trialing', 'active', 'past_due')`,
+})
+@ObjectType()
 export class BillingSubscription {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -76,6 +83,7 @@ export class BillingSubscription {
     (billingCustomer) => billingCustomer.billingSubscriptions,
     {
       nullable: false,
+      onDelete: 'CASCADE',
       createForeignKeyConstraints: false,
     },
   )
@@ -83,7 +91,7 @@ export class BillingSubscription {
     referencedColumnName: 'stripeCustomerId',
     name: 'stripeCustomerId',
   })
-  billingCustomer: Relation<BillingCustomer>; //let's see if it works
+  billingCustomer: Relation<BillingCustomer>;
 
   @Column({ nullable: false, default: false })
   cancelAtPeriodEnd: boolean;

@@ -14,6 +14,7 @@
     "styled-components.vscode-styled-components",
     "unifiedjs.vscode-mdx",
     "xyc.vscode-mdx-preview",
-    "yoavbls.pretty-ts-errors"
+    "yoavbls.pretty-ts-errors",
+    "ms-playwright.playwright"
   ]
 }

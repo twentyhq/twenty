@@ -6,10 +6,18 @@ import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previo
 export const useSetActiveDropdownFocusIdAndMemorizePrevious = () => {
   const setActiveDropdownFocusIdAndMemorizePrevious = useRecoilCallback(
     ({ snapshot, set }) =>
-      (dropdownId: string) => {
+      (dropdownId: string | null) => {
         const focusedDropdownId = snapshot
           .getLoadable(activeDropdownFocusIdState)
           .getValue();
+
+        const activeDropdownFocusId = snapshot
+          .getLoadable(activeDropdownFocusIdState)
+          .getValue();
+
+        if (activeDropdownFocusId === dropdownId) {
+          return;
+        }
 
         set(previousDropdownFocusIdState, focusedDropdownId);
         set(activeDropdownFocusIdState, dropdownId);

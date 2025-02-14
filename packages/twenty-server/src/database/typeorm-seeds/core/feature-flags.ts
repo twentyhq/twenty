@@ -36,19 +36,9 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsFunctionSettingsEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsWorkflowEnabled,
         workspaceId: workspaceId,
         value: true,
-      },
-      {
-        key: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
-        workspaceId: workspaceId,
-        value: false,
       },
       {
         key: FeatureFlagKey.IsAnalyticsV2Enabled,
@@ -56,12 +46,12 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsSSOEnabled,
+        key: FeatureFlagKey.IsCustomDomainEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
-        key: FeatureFlagKey.IsGmailSendEmailScopeEnabled,
+        key: FeatureFlagKey.IsBillingPlansEnabled,
         workspaceId: workspaceId,
         value: true,
       },
@@ -71,34 +61,24 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsMicrosoftSyncEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsAdvancedFiltersEnabled,
         workspaceId: workspaceId,
         value: false,
       },
       {
-        key: FeatureFlagKey.IsAggregateQueryEnabled,
+        key: FeatureFlagKey.IsCommandMenuV2Enabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IsRichTextV2Enabled,
         workspaceId: workspaceId,
         value: false,
       },
       {
-        key: FeatureFlagKey.IsFavoriteFolderEnabled,
+        key: FeatureFlagKey.IsNewRelationEnabled,
         workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsPageHeaderV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
     ])
     .execute();

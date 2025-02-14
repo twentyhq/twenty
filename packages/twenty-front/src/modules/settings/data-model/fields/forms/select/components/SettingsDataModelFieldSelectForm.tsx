@@ -160,7 +160,7 @@ export const SettingsDataModelFieldSelectForm = ({
   ) => {
     if (isOptionDefaultValue(optionValue)) return;
 
-    if (fieldMetadataItem.type === FieldMetadataType.Select) {
+    if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', applySimpleQuotesToString(optionValue), {
         shouldDirty: true,
       });
@@ -170,7 +170,7 @@ export const SettingsDataModelFieldSelectForm = ({
     const previousDefaultValue = getValues('defaultValue');
 
     if (
-      fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
+      fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
       (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
     ) {
       setFormValue(
@@ -189,7 +189,7 @@ export const SettingsDataModelFieldSelectForm = ({
   ) => {
     if (!isOptionDefaultValue(optionValue)) return;
 
-    if (fieldMetadataItem.type === FieldMetadataType.Select) {
+    if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', null, { shouldDirty: true });
       return;
     }
@@ -197,7 +197,7 @@ export const SettingsDataModelFieldSelectForm = ({
     const previousDefaultValue = getValues('defaultValue');
 
     if (
-      fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
+      fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
       (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
     ) {
       const nextDefaultValue = previousDefaultValue?.filter(

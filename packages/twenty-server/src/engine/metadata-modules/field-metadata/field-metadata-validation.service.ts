@@ -9,10 +9,10 @@ import {
   Min,
   validateOrReject,
 } from 'class-validator';
+import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,

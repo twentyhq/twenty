@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableStickyBottomEffect } from '@/object-record/record-table/components/RecordTableStickyBottomEffect';
 import { RecordTableStickyEffect } from '@/object-record/record-table/components/RecordTableStickyEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -13,14 +14,12 @@ import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/recor
 import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
-import { RecordTableFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableFooter';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { hasPendingRecordComponentSelector } from '@/object-record/record-table/states/selectors/hasPendingRecordComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRef } from 'react';
 
 const StyledTable = styled.table`
@@ -28,16 +27,16 @@ const StyledTable = styled.table`
   border-spacing: 0;
   table-layout: fixed;
   width: 100%;
+
+  .footer-sticky tr:nth-last-child(2) td {
+    border-bottom-color: ${({ theme }) => theme.background.transparent};
+  }
 `;
 
 export const RecordTable = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
   const tableBodyRef = useRef<HTMLTableElement>(null);
-
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    'IS_AGGREGATE_QUERY_ENABLED',
-  );
 
   const { toggleClickOutsideListener } = useClickOutsideListener(
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
@@ -53,8 +52,8 @@ export const RecordTable = () => {
     recordTableId,
   );
 
-  const pendingRecordId = useRecoilComponentValueV2(
-    recordTablePendingRecordIdComponentState,
+  const hasPendingRecord = useRecoilComponentValueV2(
+    hasPendingRecordComponentSelector,
     recordTableId,
   );
 
@@ -66,7 +65,7 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading &&
     allRecordIds.length === 0 &&
-    isNull(pendingRecordId);
+    !hasPendingRecord;
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
@@ -88,7 +87,7 @@ export const RecordTable = () => {
         <RecordTableEmptyState />
       ) : (
         <>
-          <StyledTable className="entity-table-cell" ref={tableBodyRef}>
+          <StyledTable ref={tableBodyRef}>
             <RecordTableHeader />
             {!hasRecordGroups ? (
               <RecordTableNoRecordGroupBody />
@@ -96,7 +95,7 @@ export const RecordTable = () => {
               <RecordTableRecordGroupsBody />
             )}
             <RecordTableStickyEffect />
-            {isAggregateQueryEnabled && <RecordTableFooter />}
+            <RecordTableStickyBottomEffect />
           </StyledTable>
           <DragSelect
             dragSelectable={tableBodyRef}

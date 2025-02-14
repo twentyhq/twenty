@@ -14,6 +14,5 @@ export const mapColumnDefinitionsToViewFields = (
     size: columnDefinition.size,
     isVisible: columnDefinition.isVisible ?? true,
     definition: columnDefinition,
-    aggregateOperation: columnDefinition.aggregateOperation,
   }));
 };

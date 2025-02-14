@@ -1,50 +1,76 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
+import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
+import { UserContext } from '@/users/contexts/UserContext';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   fieldMetadataId: string,
 ) => {
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    'IS_AGGREGATE_QUERY_ENABLED',
-  );
-
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-  const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
+  const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
+
   const recordIndexViewFilterGroups = useRecoilValue(
     recordIndexViewFilterGroupsState,
   );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const requestFilters = computeViewRecordGqlOperationFilter(
+    filterValueDependencies,
     recordIndexFilters,
     objectMetadataItem.fields,
     recordIndexViewFilterGroups,
   );
 
-  const viewFieldId = currentViewWithSavedFiltersAndSorts?.viewFields?.find(
-    (viewField) => viewField.fieldMetadataId === fieldMetadataId,
-  )?.id;
-
-  if (!viewFieldId) {
-    throw new Error('ViewField not found');
-  }
-
-  const aggregateOperationForViewField = useRecoilValue(
-    aggregateOperationForViewFieldState({ viewFieldId: viewFieldId }),
+  const { viewFieldId } = useContext(
+    RecordTableColumnAggregateFooterCellContext,
   );
 
-  const fieldName = objectMetadataItem.fields.find(
+  const fieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.id === fieldMetadataId,
-  )?.name;
+  );
+
+  // TODO: This shouldn't be set with impossible values,
+  // see problem with view id not being set early enoughby Effect component in context store,
+  // This happens here when switching from a view to another.
+  const aggregateOperationForViewFieldWithProbableImpossibleValues =
+    useRecoilValue(viewFieldAggregateOperationState({ viewFieldId }));
+
+  const isAggregateOperationImpossibleForDateField =
+    isDefined(fieldMetadataItem) &&
+    isFieldMetadataDateKind(fieldMetadataItem.type) &&
+    isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
+    (aggregateOperationForViewFieldWithProbableImpossibleValues ===
+      AGGREGATE_OPERATIONS.min ||
+      aggregateOperationForViewFieldWithProbableImpossibleValues ===
+        AGGREGATE_OPERATIONS.max);
+
+  const aggregateOperationForViewField:
+    | ExtendedAggregateOperations
+    | undefined
+    | null = isAggregateOperationImpossibleForDateField
+    ? convertAggregateOperationToExtendedAggregateOperation(
+        aggregateOperationForViewFieldWithProbableImpossibleValues,
+        fieldMetadataItem.type,
+      )
+    : aggregateOperationForViewFieldWithProbableImpossibleValues;
+
+  const fieldName = fieldMetadataItem?.name;
 
   const recordGqlFieldsAggregate =
     isDefined(aggregateOperationForViewField) && isDefined(fieldName)
@@ -53,23 +79,28 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
         }
       : {};
 
-  const { data } = useAggregateRecords({
+  const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: { ...requestFilters },
-    skip:
-      !isAggregateQueryEnabled || !isDefined(aggregateOperationForViewField),
+    filter: { ...requestFilters, ...recordGroupFilter },
+    skip: !isDefined(aggregateOperationForViewField),
   });
+
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
   const { value, label } = computeAggregateValueAndLabel({
     data,
     objectMetadataItem,
     fieldMetadataId: fieldMetadataId,
     aggregateOperation: aggregateOperationForViewField,
+    dateFormat,
+    timeFormat,
+    timeZone,
   });
 
   return {
     aggregateValue: value,
     aggregateLabel: isDefined(value) ? label : undefined,
+    isLoading: loading,
   };
 };

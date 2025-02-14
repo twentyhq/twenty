@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
@@ -9,7 +9,7 @@ import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states
 import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { shouldReplaceFilter } from '@/views/utils/shouldReplaceFilter';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
   const unsavedToUpsertViewFiltersCallbackState =
@@ -33,7 +33,7 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
 
   const upsertCombinedViewFilter = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (upsertedFilter: Filter) => {
+      async (upsertedFilter: RecordFilter) => {
         const currentViewId = getSnapshotValue(
           snapshot,
           currentViewIdCallbackState,

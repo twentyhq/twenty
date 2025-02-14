@@ -6,13 +6,15 @@ import { RecordTableTd } from '@/object-record/record-table/record-table-cell/co
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { Checkbox } from 'twenty-ui';
 
+export const TABLE_CELL_CHECKBOX_MIN_WIDTH = '24px';
+
 const StyledContainer = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
   height: 32px;
   justify-content: center;
-  min-width: 24px;
+  min-width: ${TABLE_CELL_CHECKBOX_MIN_WIDTH};
 `;
 
 export const RecordTableCellCheckbox = () => {

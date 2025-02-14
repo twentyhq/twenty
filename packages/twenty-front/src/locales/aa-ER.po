@@ -1,0 +1,2058 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-30 18:16+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: aa\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-01-01 00:00
+"
+"Last-Translator: \n"
+"Language-Team: Afar\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: aa\n"
+"X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
+"X-Crowdin-File-ID: 29\n"
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr "crwdns45:0{aggregateLabel}crwdnd45:0{fieldLabel}crwdne45:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
+msgid "{apiKeyName} API Key"
+msgstr "crwdns47:0{apiKeyName}crwdne47:0"
+
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:40
+#: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
+msgid "{name}"
+msgstr "crwdns49:0{name}crwdne49:0"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
+msgid "{workspaceMemberName} will be unassigned from the following role:"
+msgstr "crwdns1783:0{workspaceMemberName}crwdne1783:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:92
+msgid "1 000 workflow node executions"
+msgstr "crwdns51:0crwdne51:0"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:63
+msgid "12h ({hour12Label})"
+msgstr "crwdns53:0{hour12Label}crwdne53:0"
+
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:198
+msgid "2. Configure field"
+msgstr "crwdns55:0crwdne55:0"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
+msgid "24h ({hour24Label})"
+msgstr "crwdns57:0{hour24Label}crwdne57:0"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:116
+msgid "A shared environment where you will be able to manage your customer relations with your team."
+msgstr "crwdns59:0crwdne59:0"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "crwdns4837:0crwdne4837:0"
+
+#: src/modules/ui/input/components/ImageInput.tsx:156
+msgid "Abort"
+msgstr "crwdns61:0crwdne61:0"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:90
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+msgid "About"
+msgstr "crwdns63:0crwdne63:0"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:40
+#: src/pages/settings/accounts/SettingsAccounts.tsx:46
+msgid "Account"
+msgstr "crwdns65:0crwdne65:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:321
+#: src/modules/settings/profile/components/DeleteAccount.tsx:45
+msgid "Account Deletion"
+msgstr "crwdns67:0crwdne67:0"
+
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+msgid "Accounts"
+msgstr "crwdns69:0crwdne69:0"
+
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
+msgid "Actions"
+msgstr "crwdns1785:0crwdne1785:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
+msgid "Activate"
+msgstr "crwdns71:0crwdne71:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:67
+msgid "Activate Workflow"
+msgstr "crwdns73:0crwdne73:0"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:190
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
+msgid "Active"
+msgstr "crwdns75:0crwdne75:0"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:51
+msgid "Active API keys created by you or your team."
+msgstr "crwdns77:0crwdne77:0"
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:38
+msgid "Add"
+msgstr "crwdns79:0crwdne79:0"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
+msgid "Add Field"
+msgstr "crwdns81:0crwdne81:0"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
+msgid "Add object"
+msgstr "crwdns83:0crwdne83:0"
+
+#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
+msgid "Add SSO Identity Provider"
+msgstr "crwdns85:0crwdne85:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
+msgid "Add to blocklist"
+msgstr "crwdns87:0crwdne87:0"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:68
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:79
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:105
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:106
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:35
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:36
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:194
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:195
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
+msgid "Add to favorites"
+msgstr "crwdns89:0crwdne89:0"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:16
+msgid "Add your first {objectLabel}"
+msgstr "crwdns91:0{objectLabel}crwdne91:0"
+
+#: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
+msgid "Added {beautifiedCreatedAt}"
+msgstr "crwdns93:0{beautifiedCreatedAt}crwdne93:0"
+
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+msgid "Advanced filter"
+msgstr "crwdns3979:0crwdne3979:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "Afrikaans"
+msgstr "crwdns1787:0crwdne1787:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
+msgid "All"
+msgstr "crwdns95:0crwdne95:0"
+
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+msgid "All ({relationRecordsCount})"
+msgstr "crwdns97:0{relationRecordsCount}crwdne97:0"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:124
+msgid "All roles"
+msgstr "crwdns99:0crwdne99:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
+msgid "Allow logins through Google's single sign-on functionality."
+msgstr "crwdns101:0crwdne101:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
+msgid "Allow logins through Microsoft's single sign-on functionality."
+msgstr "crwdns103:0crwdne103:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
+msgid "Allow the invitation of new users by sharing an invite link."
+msgstr "crwdns105:0crwdne105:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
+msgid "Allow users to sign in with an email and password."
+msgstr "crwdns107:0crwdne107:0"
+
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "crwdns109:0crwdne109:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:158
+msgid "An optional description"
+msgstr "crwdns111:0crwdne111:0"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
+msgid "and"
+msgstr "crwdns113:0crwdne113:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:91
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+msgid "API & Webhooks"
+msgstr "crwdns115:0crwdne115:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
+msgid "API Key"
+msgstr "crwdns117:0crwdne117:0"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+msgid "API keys"
+msgstr "crwdns119:0crwdne119:0"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
+msgid "API Name"
+msgstr "crwdns121:0crwdne121:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
+msgid "API Name (Plural)"
+msgstr "crwdns3981:0crwdne3981:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
+msgid "API Name (Singular)"
+msgstr "crwdns3983:0crwdne3983:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "Appearance"
+msgstr "crwdns123:0crwdne123:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+msgid "Arabic"
+msgstr "crwdns1789:0crwdne1789:0"
+
+#: src/pages/settings/SettingsBilling.tsx:189
+msgid "Are you sure that you want to change your billing interval?"
+msgstr "crwdns125:0crwdne125:0"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
+msgid "Are you sure you want to assign this role?"
+msgstr "crwdns1791:0crwdne1791:0"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Ascending"
+msgstr "crwdns127:0crwdne127:0"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
+msgid "Assign {workspaceMemberName}?"
+msgstr "crwdns1793:0{workspaceMemberName}crwdne1793:0"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:125
+msgid "Assign roles to specify each member's access permissions"
+msgstr "crwdns129:0crwdne129:0"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
+msgid "Assign to member"
+msgstr "crwdns1795:0crwdne1795:0"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
+msgid "Assigned members"
+msgstr "crwdns131:0crwdne131:0"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:134
+msgid "Assigned to"
+msgstr "crwdns133:0crwdne133:0"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:74
+msgid "Assignment"
+msgstr "crwdns135:0crwdne135:0"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "crwdns137:0crwdne137:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
+msgid "At least one authentication method must be enabled"
+msgstr "crwdns139:0crwdne139:0"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:63
+msgid "Authentication"
+msgstr "crwdns141:0crwdne141:0"
+
+#: src/pages/auth/Authorize.tsx:127
+msgid "Authorize"
+msgstr "crwdns143:0crwdne143:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
+msgid "Average"
+msgstr "crwdns145:0crwdne145:0"
+
+#: src/pages/not-found/NotFound.tsx:58
+msgid "Back to content"
+msgstr "crwdns147:0crwdne147:0"
+
+#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/SettingsBilling.tsx:138
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+msgid "Billing"
+msgstr "crwdns149:0crwdne149:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
+msgid "Blocklist"
+msgstr "crwdns151:0crwdne151:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:210
+msgid "Book a Call"
+msgstr "crwdns153:0crwdne153:0"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
+msgid "By using Twenty, you agree to the"
+msgstr "crwdns155:0crwdne155:0"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
+msgid "Calculate"
+msgstr "crwdns157:0crwdne157:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
+msgid "Calendar"
+msgstr "crwdns159:0crwdne159:0"
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+msgid "Calendars"
+msgstr "crwdns161:0crwdne161:0"
+
+#: src/pages/auth/Authorize.tsx:124
+#: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:152
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
+#: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
+msgid "Cancel"
+msgstr "crwdns163:0crwdne163:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:152
+msgid "Cancel anytime"
+msgstr "crwdns165:0crwdne165:0"
+
+#: src/pages/settings/SettingsBilling.tsx:176
+msgid "Cancel Plan"
+msgstr "crwdns167:0crwdne167:0"
+
+#: src/pages/settings/SettingsBilling.tsx:171
+msgid "Cancel your subscription"
+msgstr "crwdns169:0crwdne169:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+msgid "Catalan"
+msgstr "crwdns1797:0crwdne1797:0"
+
+#: src/pages/settings/SettingsBilling.tsx:193
+msgid "Change {to}"
+msgstr "crwdns171:0{to}crwdne171:0"
+
+#: src/pages/auth/PasswordReset.tsx:246
+#: src/modules/settings/profile/components/ChangePassword.tsx:52
+#: src/modules/settings/profile/components/ChangePassword.tsx:58
+msgid "Change Password"
+msgstr "crwdns173:0crwdne173:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
+msgid "Chinese — Simplified"
+msgstr "crwdns175:0crwdne175:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
+msgid "Chinese — Traditional"
+msgstr "crwdns177:0crwdne177:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:187
+msgid "Choose an object"
+msgstr "crwdns179:0crwdne179:0"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+msgid "Choose the fields that will identify your records"
+msgstr "crwdns3985:0crwdne3985:0"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
+msgid "Choose your provider"
+msgstr "crwdns181:0crwdne181:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:147
+msgid "Choose your Trial"
+msgstr "crwdns183:0crwdne183:0"
+
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
+msgid "Close"
+msgstr "crwdns185:0crwdne185:0"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:48
+msgid "Configure an SSO connection"
+msgstr "crwdns187:0crwdne187:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:58
+msgid "Configure and customize your calendar preferences."
+msgstr "crwdns189:0crwdne189:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+msgid "Configure how dates are displayed across the app"
+msgstr "crwdns191:0crwdne191:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
+msgid "Configure your emails and calendar settings."
+msgstr "crwdns193:0crwdne193:0"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
+msgid "Confirm"
+msgstr "crwdns1799:0crwdne1799:0"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
+msgid "Connect a new account to your workspace"
+msgstr "crwdns195:0crwdne195:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:61
+msgid "Connect with Google"
+msgstr "crwdns197:0crwdne197:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:70
+msgid "Connect with Microsoft"
+msgstr "crwdns199:0crwdne199:0"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:56
+msgid "Connected accounts"
+msgstr "crwdns201:0crwdne201:0"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:97
+msgid "Context"
+msgstr "crwdns203:0crwdne203:0"
+
+#: src/pages/onboarding/InviteTeam.tsx:228
+#: src/pages/onboarding/CreateWorkspace.tsx:154
+#: src/pages/onboarding/CreateProfile.tsx:221
+#: src/pages/onboarding/ChooseYourPlan.tsx:198
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:92
+msgid "Continue"
+msgstr "crwdns205:0crwdne205:0"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:75
+msgid "Continue with Email"
+msgstr "crwdns207:0crwdne207:0"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
+msgid "Continue with Google"
+msgstr "crwdns209:0crwdne209:0"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
+msgid "Continue with Microsoft"
+msgstr "crwdns211:0crwdne211:0"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:65
+msgid "Copilot"
+msgstr "crwdns213:0crwdne213:0"
+
+#: src/pages/onboarding/InviteTeam.tsx:217
+msgid "Copy invitation link"
+msgstr "crwdns215:0crwdne215:0"
+
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
+msgid "Copy link"
+msgstr "crwdns3987:0crwdne3987:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
+msgid "Copy this key as it will not be visible again"
+msgstr "crwdns217:0crwdne217:0"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
+msgid "Count"
+msgstr "crwdns219:0crwdne219:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
+msgid "Count all"
+msgstr "crwdns221:0crwdne221:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
+msgid "Count empty"
+msgstr "crwdns223:0crwdne223:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
+msgid "Count not empty"
+msgstr "crwdns225:0crwdne225:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
+msgid "Count unique values"
+msgstr "crwdns227:0crwdne227:0"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
+msgid "Create a workflow and return here to view its versions"
+msgstr "crwdns229:0crwdne229:0"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:57
+msgid "Create API key"
+msgstr "crwdns231:0crwdne231:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
+msgid "Create new record"
+msgstr "crwdns233:0crwdne233:0"
+
+#: src/pages/onboarding/CreateProfile.tsx:154
+msgid "Create profile"
+msgstr "crwdns235:0crwdne235:0"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:200
+msgid "Create Role"
+msgstr "crwdns237:0crwdne237:0"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:73
+msgid "Create Webhook"
+msgstr "crwdns239:0crwdne239:0"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:113
+msgid "Create your workspace"
+msgstr "crwdns241:0crwdne241:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:90
+msgid "Custom objects"
+msgstr "crwdns243:0crwdne243:0"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
+msgid "Customise the fields available in the {objectLabelSingular} views."
+msgstr "crwdns245:0{objectLabelSingular}crwdne245:0"
+
+#: src/pages/settings/SettingsWorkspace.tsx:56
+msgid "Customize Domain"
+msgstr "crwdns247:0crwdne247:0"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:64
+msgid "Customize your workspace security"
+msgstr "crwdns249:0crwdne249:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+msgid "Czech"
+msgstr "crwdns1801:0crwdne1801:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
+#: src/modules/settings/profile/components/DeleteAccount.tsx:29
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+msgid "Danger zone"
+msgstr "crwdns251:0crwdne251:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Danish"
+msgstr "crwdns1803:0crwdne1803:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+msgid "Dark"
+msgstr "crwdns3989:0crwdne3989:0"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:139
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+msgid "Data model"
+msgstr "crwdns253:0crwdne253:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
+msgid "Data type"
+msgstr "crwdns255:0crwdne255:0"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
+msgid "Date"
+msgstr "crwdns257:0crwdne257:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+msgid "Date and time"
+msgstr "crwdns259:0crwdne259:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
+msgid "Deactivate"
+msgstr "crwdns261:0crwdne261:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:117
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
+msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
+msgstr "crwdns263:0crwdne263:0"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+msgid "Deactivate object"
+msgstr "crwdns3991:0crwdne3991:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
+msgid "Deactivate this field"
+msgstr "crwdns265:0crwdne265:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:82
+msgid "Deactivate Workflow"
+msgstr "crwdns267:0crwdne267:0"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:91
+msgid "Define the name and description of your object"
+msgstr "crwdns269:0crwdne269:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:252
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:31
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:45
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx:61
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:225
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:241
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:116
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
+msgid "Delete"
+msgstr "crwdns271:0crwdne271:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:332
+#: src/modules/settings/profile/components/DeleteAccount.tsx:37
+#: src/modules/settings/profile/components/DeleteAccount.tsx:53
+msgid "Delete account"
+msgstr "crwdns273:0crwdne273:0"
+
+#: src/modules/settings/profile/components/DeleteAccount.tsx:30
+msgid "Delete account and all the associated data"
+msgstr "crwdns275:0crwdne275:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
+msgid "Delete API key"
+msgstr "crwdns277:0crwdne277:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
+msgid "Delete record"
+msgstr "crwdns279:0crwdne279:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
+msgid "Delete records"
+msgstr "crwdns281:0crwdne281:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:247
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
+msgid "Delete this integration"
+msgstr "crwdns283:0crwdne283:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:261
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:269
+msgid "Delete webhook"
+msgstr "crwdns285:0crwdne285:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
+msgid "Delete workflow"
+msgstr "crwdns287:0crwdne287:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
+msgid "Delete workflows"
+msgstr "crwdns289:0crwdne289:0"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
+msgid "Delete workspace"
+msgstr "crwdns291:0crwdne291:0"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
+msgid "Delete your whole workspace"
+msgstr "crwdns293:0crwdne293:0"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Descending"
+msgstr "crwdns295:0crwdne295:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:157
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
+msgid "Description"
+msgstr "crwdns297:0crwdne297:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:254
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:296
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:155
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:193
+msgid "Destroy"
+msgstr "crwdns299:0crwdne299:0"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:36
+#: src/pages/settings/developers/SettingsDevelopers.tsx:43
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+msgid "Developers"
+msgstr "crwdns301:0crwdne301:0"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:97
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:98
+msgid "Discard Draft"
+msgstr "crwdns303:0crwdne303:0"
+
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
+msgid "Display as relative date"
+msgstr "crwdns305:0crwdne305:0"
+
+#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/workspace/SettingsDomain.tsx:185
+#: src/pages/settings/workspace/SettingsDomain.tsx:195
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+msgid "Domain"
+msgstr "crwdns307:0crwdne307:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+msgid "Dutch"
+msgstr "crwdns1805:0crwdne1805:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
+msgid "E.g. backoffice integration"
+msgstr "crwdns309:0crwdne309:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
+msgid "Earliest"
+msgstr "crwdns311:0crwdne311:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
+msgid "Earliest date"
+msgstr "crwdns313:0crwdne313:0"
+
+#: src/pages/settings/SettingsBilling.tsx:158
+msgid "Edit billing interval"
+msgstr "crwdns315:0crwdne315:0"
+
+#: src/pages/settings/SettingsBilling.tsx:146
+msgid "Edit payment method, see your invoices and more"
+msgstr "crwdns317:0crwdne317:0"
+
+#: src/pages/settings/SettingsWorkspace.tsx:52
+msgid "Edit your subdomain name or set a custom domain."
+msgstr "crwdns319:0crwdne319:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:180
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:256
+#: src/pages/settings/SettingsProfile.tsx:42
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:21
+#: src/pages/auth/PasswordReset.tsx:206
+msgid "Email"
+msgstr "crwdns321:0crwdne321:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:89
+msgid "Email integration"
+msgstr "crwdns323:0crwdne323:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:55
+msgid "Email or domain is already in blocklist"
+msgstr "crwdns325:0crwdne325:0"
+
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
+msgid "Emails"
+msgstr "crwdns327:0crwdne327:0"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
+msgid "employees"
+msgstr "crwdns329:0crwdne329:0"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
+msgid "Employees"
+msgstr "crwdns331:0crwdne331:0"
+
+#: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
+msgid "Empty"
+msgstr "crwdns333:0crwdne333:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:141
+msgid "Endpoint URL"
+msgstr "crwdns335:0crwdne335:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
+msgid "English"
+msgstr "crwdns337:0crwdne337:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:157
+msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
+msgstr "crwdns339:0{withCreditCardTrialPeriodDuration}crwdne339:0"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:51
+msgid "Enterprise"
+msgstr "crwdns341:0crwdne341:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
+msgid "Error deleting api key: {err}"
+msgstr "crwdns343:0{err}crwdne343:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
+msgid "Error regenerating api key: {err}"
+msgstr "crwdns345:0{err}crwdne345:0"
+
+#: src/pages/settings/SettingsBilling.tsx:124
+msgid "Error while switching subscription {to}."
+msgstr "crwdns347:0{to}crwdne347:0"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:67
+msgid "Establish Webhook endpoints for notifications on asynchronous events."
+msgstr "crwdns349:0crwdne349:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
+msgid "Exclude the following people and domains from my email sync"
+msgstr "crwdns351:0crwdne351:0"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:162
+msgid "Existing objects"
+msgstr "crwdns353:0crwdne353:0"
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+msgid "Exit Settings"
+msgstr "crwdns355:0crwdne355:0"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
+#~ msgid "Expected selected node to be a create step node."
+#~ msgstr "Expected selected node to be a create step node."
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+msgid "Experience"
+msgstr "crwdns357:0crwdne357:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:219
+msgid "Expiration"
+msgstr "crwdns359:0crwdne359:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:126
+msgid "Expiration Date"
+msgstr "crwdns361:0crwdne361:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:259
+msgid "Expires in"
+msgstr "crwdns363:0crwdne363:0"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:78
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:136
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:149
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:88
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:101
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:270
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:283
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:129
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:142
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:89
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:102
+msgid "Export"
+msgstr "crwdns365:0crwdne365:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:135
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:87
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
+msgid "Export records"
+msgstr "crwdns367:0crwdne367:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
+msgid "Export to PDF"
+msgstr "crwdns369:0crwdne369:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:148
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:282
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
+msgid "Export view"
+msgstr "crwdns371:0crwdne371:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
+msgid "Export Workflows"
+msgstr "crwdns373:0crwdne373:0"
+
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
+msgid "Favorites"
+msgstr "crwdns375:0crwdne375:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
+msgid "Field type"
+msgstr "crwdns377:0crwdne377:0"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:97
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
+msgid "Fields"
+msgstr "crwdns379:0crwdne379:0"
+
+#: src/testing/mock-data/tableData.ts:22
+msgid "Fields Count"
+msgstr "crwdns381:0crwdne381:0"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
+#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
+msgid "Filter"
+msgstr "crwdns383:0crwdne383:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:171
+msgid "Filters"
+msgstr "crwdns385:0crwdne385:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+msgid "Finnish"
+msgstr "crwdns1807:0crwdne1807:0"
+
+#: src/pages/onboarding/CreateProfile.tsx:180
+msgid "First Name"
+msgstr "crwdns387:0crwdne387:0"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "crwdns389:0crwdne389:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
+msgid "French"
+msgstr "crwdns391:0crwdne391:0"
+
+#: src/pages/settings/SettingsBilling.tsx:47
+msgid "from monthly to yearly"
+msgstr "crwdns393:0crwdne393:0"
+
+#: src/pages/settings/SettingsBilling.tsx:54
+msgid "from yearly to monthly"
+msgstr "crwdns395:0crwdne395:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:87
+msgid "Full access"
+msgstr "crwdns397:0crwdne397:0"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+msgid "Functions"
+msgstr "crwdns399:0crwdne399:0"
+
+#: src/pages/settings/SettingsWorkspace.tsx:29
+#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+msgid "General"
+msgstr "crwdns401:0crwdne401:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
+msgid "German"
+msgstr "crwdns403:0crwdne403:0"
+
+#: src/pages/onboarding/InviteTeam.tsx:184
+msgid "Get the most out of your workspace by inviting your team."
+msgstr "crwdns405:0crwdne405:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:148
+msgid "Get your subscription"
+msgstr "crwdns407:0crwdne407:0"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:79
+msgid "Global"
+msgstr "crwdns409:0crwdne409:0"
+
+#: src/pages/settings/SettingsWorkspace.tsx:65
+msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+msgstr "crwdns411:0crwdne411:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
+msgid "Greek"
+msgstr "crwdns1809:0crwdne1809:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
+msgid "Hebrew"
+msgstr "crwdns1811:0crwdne1811:0"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
+msgid "Hide"
+msgstr "crwdns413:0crwdne413:0"
+
+#: src/pages/onboarding/CreateProfile.tsx:157
+msgid "How you'll be identified on the app."
+msgstr "crwdns415:0crwdne415:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
+msgid "Hungarian"
+msgstr "crwdns1813:0crwdne1813:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
+msgid "Icon and Name"
+msgstr "crwdns417:0crwdne417:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
+msgid "Identifier"
+msgstr "crwdns419:0crwdne419:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
+msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
+msgstr "crwdns421:0{confirmationValue}crwdne421:0"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:215
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
+msgid "Inactive"
+msgstr "crwdns423:0crwdne423:0"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:109
+msgid "Indexes"
+msgstr "crwdns425:0crwdne425:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:118
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
+msgid "Input must be in camel case and cannot start with a number"
+msgstr "crwdns427:0crwdne427:0"
+
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
+msgid "Instances"
+msgstr "crwdns429:0crwdne429:0"
+
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:15
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:21
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+msgid "Integrations"
+msgstr "crwdns431:0crwdne431:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
+msgid "Invalid auth provider"
+msgstr "crwdns433:0crwdne433:0"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:48
+msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr "crwdns1815:0crwdne1815:0"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:21
+msgid "Invalid email"
+msgstr "crwdns435:0crwdne435:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:44
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:50
+msgid "Invalid email or domain"
+msgstr "crwdns437:0crwdne437:0"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:166
+msgid "Invalid form values"
+msgstr "crwdns439:0crwdne439:0"
+
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
+msgid "Invite"
+msgstr "crwdns3993:0crwdne3993:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:244
+msgid "Invite by email"
+msgstr "crwdns441:0crwdne441:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:157
+msgid "Invite by link"
+msgstr "crwdns443:0crwdne443:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
+msgid "Invite by Link"
+msgstr "crwdns445:0crwdne445:0"
+
+#: src/pages/onboarding/InviteTeam.tsx:152
+msgid "Invite link sent to email addresses"
+msgstr "crwdns447:0crwdne447:0"
+
+#: src/pages/onboarding/InviteTeam.tsx:181
+msgid "Invite your team"
+msgstr "crwdns449:0crwdne449:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:129
+msgid "Italian"
+msgstr "crwdns451:0crwdne451:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:133
+msgid "Japanese"
+msgstr "crwdns453:0crwdne453:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:137
+msgid "Korean"
+msgstr "crwdns455:0crwdne455:0"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+msgid "Lab"
+msgstr "crwdns457:0crwdne457:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+msgid "Language"
+msgstr "crwdns459:0crwdne459:0"
+
+#: src/pages/onboarding/CreateProfile.tsx:202
+msgid "Last Name"
+msgstr "crwdns461:0crwdne461:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
+msgid "Latest"
+msgstr "crwdns463:0crwdne463:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
+msgid "Latest date"
+msgstr "crwdns465:0crwdne465:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+msgid "Light"
+msgstr "crwdns3995:0crwdne3995:0"
+
+#: src/pages/onboarding/InviteTeam.tsx:127
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
+msgid "Link copied to clipboard"
+msgstr "crwdns467:0crwdne467:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
+msgid "Listings"
+msgstr "crwdns3997:0crwdne3997:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:206
+msgid "Log out"
+msgstr "crwdns469:0crwdne469:0"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+msgid "Logout"
+msgstr "crwdns471:0crwdne471:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:167
+msgid "Manage Members"
+msgstr "crwdns473:0crwdne473:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:168
+msgid "Manage the members of your space here"
+msgstr "crwdns475:0crwdne475:0"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:57
+msgid "Manage your internet accounts."
+msgstr "crwdns477:0crwdne477:0"
+
+#: src/pages/settings/SettingsBilling.tsx:145
+msgid "Manage your subscription"
+msgstr "crwdns479:0crwdne479:0"
+
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:69
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:60
+msgid "Mark as done"
+msgstr "crwdns481:0crwdne481:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:13
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:13
+msgid "Max"
+msgstr "crwdns483:0crwdne483:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:143
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:149
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+msgid "Members"
+msgstr "crwdns485:0crwdne485:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
+msgid "Min"
+msgstr "crwdns487:0crwdne487:0"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
+msgid "More options"
+msgstr "crwdns489:0crwdne489:0"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
+msgid "Move left"
+msgstr "crwdns491:0crwdne491:0"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
+msgid "Move right"
+msgstr "crwdns493:0crwdne493:0"
+
+#: src/testing/mock-data/tableData.ts:16
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:177
+#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsProfile.tsx:35
+#: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
+#: src/pages/onboarding/CreateProfile.tsx:166
+#: src/modules/settings/workspace/components/NameField.tsx:91
+msgid "Name"
+msgstr "crwdns495:0crwdne495:0"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:49
+msgid "Name can not be empty"
+msgstr "crwdns497:0crwdne497:0"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+msgstr "crwdns3999:0crwdne3999:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+msgid "Name of your API key"
+msgstr "crwdns499:0crwdne499:0"
+
+#: src/pages/settings/SettingsWorkspace.tsx:44
+msgid "Name of your workspace"
+msgstr "crwdns501:0crwdne501:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:181
+msgid "Navigate to next record"
+msgstr "crwdns503:0crwdne503:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:95
+msgid "Navigate to next version"
+msgstr "crwdns505:0crwdne505:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:184
+msgid "Navigate to next workflow"
+msgstr "crwdns507:0crwdne507:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:65
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:170
+msgid "Navigate to previous record"
+msgstr "crwdns509:0crwdne509:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:85
+msgid "Navigate to previous version"
+msgstr "crwdns511:0crwdne511:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:174
+msgid "Navigate to previous workflow"
+msgstr "crwdns513:0crwdne513:0"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+msgid "New"
+msgstr "crwdns515:0crwdne515:0"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
+msgid "New account"
+msgstr "crwdns517:0crwdne517:0"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
+msgid "New Field"
+msgstr "crwdns4001:0crwdne4001:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
+msgid "New key"
+msgstr "crwdns519:0crwdne519:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
+msgid "New Key"
+msgstr "crwdns521:0crwdne521:0"
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
+msgid "New Object"
+msgstr "crwdns523:0crwdne523:0"
+
+#: src/pages/auth/PasswordReset.tsx:233
+msgid "New Password"
+msgstr "crwdns525:0crwdne525:0"
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:27
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:29
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:46
+msgid "New record"
+msgstr "crwdns527:0crwdne527:0"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:52
+#~ msgid "New Role"
+#~ msgstr "New Role"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
+#~ msgid "New Webhook"
+#~ msgstr "New Webhook"
+
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
+msgid "No connected account"
+msgstr "crwdns531:0crwdne531:0"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:187
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:186
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "crwdns4839:0crwdne4839:0"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Result"
+msgstr "crwdns4841:0crwdne4841:0"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
+msgid "No workflow runs yet"
+msgstr "crwdns533:0crwdne533:0"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
+msgid "No workflow versions yet"
+msgstr "crwdns535:0crwdne535:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
+msgid "Norwegian"
+msgstr "crwdns1825:0crwdne1825:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
+msgid "Not empty"
+msgstr "crwdns537:0crwdne537:0"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:75
+msgid "Object"
+msgstr "crwdns539:0crwdne539:0"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
+#: src/pages/settings/data-model/SettingsObjects.tsx:155
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
+msgid "Objects"
+msgstr "crwdns541:0crwdne541:0"
+
+#: src/pages/not-found/NotFound.tsx:47
+msgid "Off the beaten path"
+msgstr "crwdns543:0crwdne543:0"
+
+#: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
+msgid "Opened"
+msgstr "crwdns545:0crwdne545:0"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
+msgid "Options"
+msgstr "crwdns547:0crwdne547:0"
+
+#: src/pages/onboarding/InviteTeam.tsx:213
+msgid "or"
+msgstr "crwdns549:0crwdne549:0"
+
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+msgid "Other"
+msgstr "crwdns551:0crwdne551:0"
+
+#: src/pages/not-found/NotFound.tsx:41
+msgid "Page Not Found"
+msgstr "crwdns553:0crwdne553:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
+msgid "Password"
+msgstr "crwdns555:0crwdne555:0"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "crwdns557:0crwdne557:0"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:34
+msgid "Password reset link has been sent to the email"
+msgstr "crwdns559:0crwdne559:0"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
+msgid "Percent"
+msgstr "crwdns561:0crwdne561:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
+msgid "Percent empty"
+msgstr "crwdns563:0crwdne563:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
+msgid "Percent not empty"
+msgstr "crwdns565:0crwdne565:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:253
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
+msgid "Permanently destroy record"
+msgstr "crwdns567:0crwdne567:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
+msgid "Permanently destroy records"
+msgstr "crwdns569:0crwdne569:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
+msgid "Permanently destroy workflows"
+msgstr "crwdns571:0crwdne571:0"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:80
+msgid "Permissions"
+msgstr "crwdns573:0crwdne573:0"
+
+#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsProfile.tsx:30
+msgid "Picture"
+msgstr "crwdns575:0crwdne575:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
+msgid "Please enter a valid URL"
+msgstr "crwdns577:0crwdne577:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
+msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
+msgstr "crwdns579:0{confirmationValue}crwdne579:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
+msgid "Please type {confirmationText} to confirm you want to delete this webhook."
+msgstr "crwdns581:0{confirmationText}crwdne581:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
+msgid "Plural"
+msgstr "crwdns4003:0crwdne4003:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
+msgid "Polish"
+msgstr "crwdns1827:0crwdne1827:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#~ msgid "Portuguese"
+#~ msgstr "Portuguese"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:153
+msgid "Portuguese — Brazil"
+msgstr "crwdns583:0crwdne583:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:149
+msgid "Portuguese — Portugal"
+msgstr "crwdns585:0crwdne585:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
+#~ msgid "Portuguese (Brazil)"
+#~ msgstr "Portuguese (Brazil)"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#~ msgid "Portuguese (Portugal)"
+#~ msgstr "Portuguese (Portugal)"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
+#: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
+msgid "Preview"
+msgstr "crwdns587:0crwdne587:0"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
+msgid "Privacy Policy"
+msgstr "crwdns589:0crwdne589:0"
+
+#: src/pages/settings/SettingsProfile.tsx:19
+#: src/pages/settings/SettingsProfile.tsx:25
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+msgid "Profile"
+msgstr "crwdns591:0crwdne591:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:191
+msgid "Pseudo-English"
+msgstr "crwdns593:0crwdne593:0"
+
+#: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx:9
+msgid "Read documentation"
+msgstr "crwdns595:0crwdne595:0"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:53
+msgid "Receive an email containing password update link"
+msgstr "crwdns597:0crwdne597:0"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:69
+msgid "Record Selection"
+msgstr "crwdns599:0crwdne599:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
+msgid "Regenerate an API key"
+msgstr "crwdns601:0crwdne601:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
+msgid "Regenerate key"
+msgstr "crwdns603:0crwdne603:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
+msgid "Regenerate Key"
+msgstr "crwdns605:0crwdne605:0"
+
+#: src/pages/settings/Releases.tsx:111
+#: src/pages/settings/Releases.tsx:117
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+msgid "Releases"
+msgstr "crwdns607:0crwdne607:0"
+
+#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx:72
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
+#: src/modules/ui/input/components/ImageInput.tsx:172
+msgid "Remove"
+msgstr "crwdns609:0crwdne609:0"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
+msgid "Remove {workspaceMemberName}?"
+msgstr "crwdns1829:0{workspaceMemberName}crwdne1829:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:51
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:209
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:210
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:84
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:85
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:47
+msgid "Remove from favorites"
+msgstr "crwdns611:0crwdne611:0"
+
+#: src/pages/auth/PasswordReset.tsx:177
+msgid "Reset Password"
+msgstr "crwdns613:0crwdne613:0"
+
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:47
+msgid "Reset to"
+msgstr "crwdns615:0crwdne615:0"
+
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:245
+msgid "Results"
+msgstr "crwdns617:0crwdne617:0"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:112
+#: src/pages/settings/roles/SettingsRoles.tsx:118
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+msgid "Roles"
+msgstr "crwdns619:0crwdne619:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
+msgid "Romanian"
+msgstr "crwdns1831:0crwdne1831:0"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
+msgid "Run a workflow and return here to view its executions"
+msgstr "crwdns621:0crwdne621:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
+msgid "Russian"
+msgstr "crwdns1833:0crwdne1833:0"
+
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+msgid "Search"
+msgstr "crwdns623:0crwdne623:0"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "crwdns625:0{commandMenuSearch}crwdne625:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
+msgid "Search a field..."
+msgstr "crwdns627:0crwdne627:0"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
+msgid "Search a member"
+msgstr "crwdns1835:0crwdne1835:0"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
+msgid "Search an index..."
+msgstr "crwdns629:0crwdne629:0"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+msgid "Search fields"
+msgstr "crwdns631:0crwdne631:0"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:166
+msgid "Search for an object..."
+msgstr "crwdns633:0crwdne633:0"
+
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+msgid "Search records"
+msgstr "crwdns635:0crwdne635:0"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:33
+#: src/pages/settings/security/SettingsSecurity.tsx:40
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+msgid "Security"
+msgstr "crwdns637:0crwdne637:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:112
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:113
+msgid "See active version"
+msgstr "crwdns639:0crwdne639:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:55
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:56
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:127
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:128
+msgid "See runs"
+msgstr "crwdns641:0crwdne641:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:143
+msgid "See versions"
+msgstr "crwdns643:0crwdne643:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:142
+msgid "See versions history"
+msgstr "crwdns645:0crwdne645:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:172
+msgid "Select the events you wish to send to this endpoint"
+msgstr "crwdns647:0crwdne647:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+msgid "Select your preferred language"
+msgstr "crwdns649:0crwdne649:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:245
+msgid "Send an invite email to your team"
+msgstr "crwdns651:0crwdne651:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
+msgid "Serbian (Cyrillic)"
+msgstr "crwdns1837:0crwdne1837:0"
+
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+msgid "Server Admin"
+msgstr "crwdns4005:0crwdne4005:0"
+
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
+msgid "Server Admin Panel"
+msgstr "crwdns653:0crwdne653:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
+msgid "Set email visibility, manage your blocklist and more."
+msgstr "crwdns655:0crwdne655:0"
+
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+msgid "Set the name of your domain"
+msgstr "crwdns657:0crwdne657:0"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+msgid "Set the name of your subdomain"
+msgstr "crwdns659:0crwdne659:0"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
+msgid "Settings"
+msgstr "crwdns661:0crwdne661:0"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "crwdns4843:0crwdne4843:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:158
+msgid "Share this link to invite users to join your workspace"
+msgstr "crwdns663:0crwdne663:0"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
+msgid "Should changing a field's label also change the API name?"
+msgstr "crwdns665:0crwdne665:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
+msgid "Should changing an object's label also change the API?"
+msgstr "crwdns4007:0crwdne4007:0"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
+msgid "Sign in"
+msgstr "crwdns667:0crwdne667:0"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:89
+msgid "Sign up"
+msgstr "crwdns669:0crwdne669:0"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "crwdns671:0crwdne671:0"
+
+#: src/pages/onboarding/InviteTeam.tsx:236
+msgid "Skip"
+msgstr "crwdns673:0crwdne673:0"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
+msgid "Sort"
+msgstr "crwdns675:0crwdne675:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:169
+msgid "Spanish"
+msgstr "crwdns677:0crwdne677:0"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr "crwdns679:0crwdne679:0"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+msgid "Subdomain"
+msgstr "crwdns681:0crwdne681:0"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:111
+#: src/pages/settings/workspace/SettingsDomain.tsx:138
+msgid "Subdomain already taken"
+msgstr "crwdns683:0crwdne683:0"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:39
+msgid "Subdomain can not be longer than 30 characters"
+msgstr "crwdns685:0crwdne685:0"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:38
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "crwdns687:0crwdne687:0"
+
+#: src/pages/settings/SettingsBilling.tsx:120
+msgid "Subscription has been switched {to}"
+msgstr "crwdns689:0{to}crwdne689:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
+msgid "Sum"
+msgstr "crwdns691:0crwdne691:0"
+
+#: src/pages/settings/SettingsWorkspace.tsx:63
+msgid "Support"
+msgstr "crwdns693:0crwdne693:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
+msgid "Swedish"
+msgstr "crwdns1839:0crwdne1839:0"
+
+#: src/pages/settings/SettingsBilling.tsx:159
+msgid "Switch {from}"
+msgstr "crwdns695:0{from}crwdne695:0"
+
+#: src/pages/settings/SettingsBilling.tsx:163
+msgid "Switch {to}"
+msgstr "crwdns697:0{to}crwdne697:0"
+
+#: src/pages/settings/SettingsBilling.tsx:187
+msgid "Switch billing {to}"
+msgstr "crwdns699:0{to}crwdne699:0"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
+msgid "Synchronize Field Label and API Name"
+msgstr "crwdns701:0crwdne701:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
+msgid "Synchronize Objects Labels and API Names"
+msgstr "crwdns4009:0crwdne4009:0"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+msgid "System settings"
+msgstr "crwdns4011:0crwdne4011:0"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
+msgid "System settings - {systemDateFormatLabel}"
+msgstr "crwdns703:0{systemDateFormatLabel}crwdne703:0"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
+msgid "System Settings - {systemTimeFormatLabel}"
+msgstr "crwdns705:0{systemTimeFormatLabel}crwdne705:0"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
+msgid "Terms of Service"
+msgstr "crwdns707:0crwdne707:0"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:158
+msgid "Test"
+msgstr "crwdns709:0crwdne709:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:157
+msgid "Test Workflow"
+msgstr "crwdns711:0crwdne711:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
+msgid "The description of this field"
+msgstr "crwdns713:0crwdne713:0"
+
+#: src/pages/settings/SettingsProfile.tsx:43
+msgid "The email associated to your account"
+msgstr "crwdns715:0crwdne715:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:209
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:240
+msgid "The name and icon of this field"
+msgstr "crwdns717:0crwdne717:0"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:129
+msgid "The name of your organization"
+msgstr "crwdns719:0crwdne719:0"
+
+#: src/pages/not-found/NotFound.tsx:50
+msgid "The page you're seeking is either gone or never was. Let's get you back on track"
+msgstr "crwdns721:0crwdne721:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:229
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:252
+msgid "The values of this field"
+msgstr "crwdns723:0crwdne723:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
+msgid "The values of this field must be unique"
+msgstr "crwdns725:0crwdne725:0"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "crwdns727:0crwdne727:0"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:38
+msgid "There was an issue"
+msgstr "crwdns729:0crwdne729:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:323
+msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
+msgstr "crwdns731:0crwdne731:0"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
+msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
+msgstr "crwdns733:0crwdne733:0"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
+msgid "This member will be unassigned from this role."
+msgstr "crwdns1841:0crwdne1841:0"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:15
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:15
+#~ msgid "This Role is assigned to these workspace member."
+#~ msgstr "This Role is assigned to these workspace member."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+msgid "This role is assigned to these workspace members."
+msgstr "crwdns1843:0crwdne1843:0"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
+msgid "Time format"
+msgstr "crwdns739:0crwdne739:0"
+
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "to monthly"
+msgstr "crwdns741:0crwdne741:0"
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "to yearly"
+msgstr "crwdns743:0crwdne743:0"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:56
+msgid "Trigger Type"
+msgstr "crwdns745:0crwdne745:0"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:60
+msgid "Trigger type should be Manual - when no record(s) are selected"
+msgstr "crwdns747:0crwdne747:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
+msgid "Turkish"
+msgstr "crwdns1845:0crwdne1845:0"
+
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
+msgid "Type"
+msgstr "crwdns749:0crwdne749:0"
+
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+msgid "Type anything"
+msgstr "crwdns751:0crwdne751:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
+msgid "Ukrainian"
+msgstr "crwdns1847:0crwdne1847:0"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
+msgid "Unique"
+msgstr "crwdns753:0crwdne753:0"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:80
+msgid "Unknown error"
+msgstr "crwdns755:0crwdne755:0"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:88
+msgid "Unlimited contacts"
+msgstr "crwdns757:0crwdne757:0"
+
+#: src/modules/ui/input/components/ImageInput.tsx:164
+msgid "Upload"
+msgstr "crwdns759:0crwdne759:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:145
+msgid "URL"
+msgstr "crwdns761:0crwdne761:0"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:40
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:41
+msgid "Use as draft"
+msgstr "crwdns763:0crwdne763:0"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:41
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr "crwdns765:0crwdne765:0"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:16
+msgid "Use our API or add your first {objectLabel} manually"
+msgstr "crwdns767:0{objectLabel}crwdne767:0"
+
+#: src/pages/settings/SettingsProfile.tsx:22
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
+#: src/pages/settings/accounts/SettingsAccounts.tsx:43
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+msgid "User"
+msgstr "crwdns769:0crwdne769:0"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:51
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:106
+msgid "User is not logged in"
+msgstr "crwdns771:0crwdne771:0"
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:223
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:228
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:251
+msgid "Values"
+msgstr "crwdns773:0crwdne773:0"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
+msgid "Vietnamese"
+msgstr "crwdns1849:0crwdne1849:0"
+
+#: src/pages/settings/SettingsBilling.tsx:150
+msgid "View billing details"
+msgstr "crwdns775:0crwdne775:0"
+
+#: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx:35
+msgid "Visualize"
+msgstr "crwdns777:0crwdne777:0"
+
+#: src/modules/ui/input/components/ImageInput.tsx:177
+msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
+msgstr "crwdns779:0crwdne779:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:142
+msgid "We will send POST requests to this endpoint for every new event"
+msgstr "crwdns781:0crwdne781:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
+msgid "Webhook"
+msgstr "crwdns783:0crwdne783:0"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+msgid "Webhooks"
+msgstr "crwdns785:0crwdne785:0"
+
+#: src/pages/auth/SignInUp.tsx:43
+#~ msgid "Welcome to"
+#~ msgstr "Welcome to"
+
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "crwdns787:0{workspaceName}crwdne787:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
+msgid "When the API key will expire."
+msgstr "crwdns789:0crwdne789:0"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
+msgid "When the key will be disabled"
+msgstr "crwdns791:0crwdne791:0"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:58
+msgid "Workflow cannot be tested"
+msgstr "crwdns793:0crwdne793:0"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:146
+#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsBilling.tsx:135
+#: src/pages/settings/Releases.tsx:114
+#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/security/SettingsSecurity.tsx:37
+#: src/pages/settings/roles/SettingsRoles.tsx:115
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:18
+#: src/pages/settings/developers/SettingsDevelopers.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
+#: src/pages/settings/data-model/SettingsObjects.tsx:152
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:148
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/favorites/components/WorkspaceFavorites.tsx:19
+msgid "Workspace"
+msgstr "crwdns795:0crwdne795:0"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
+msgid "Workspace Deletion"
+msgstr "crwdns797:0crwdne797:0"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:123
+msgid "Workspace logo"
+msgstr "crwdns799:0crwdne799:0"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:128
+msgid "Workspace name"
+msgstr "crwdns801:0crwdne801:0"
+
+#: src/pages/settings/roles/components/RoleSettings.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:220
+msgid "Write a description"
+msgstr "crwdns803:0crwdne803:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:120
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
+msgid "yes"
+msgstr "crwdns805:0crwdne805:0"
+
+#: src/pages/settings/SettingsBilling.tsx:48
+msgid "You will be charged immediately for the full year."
+msgstr "crwdns807:0crwdne807:0"
+
+#: src/pages/settings/SettingsBilling.tsx:55
+msgid "Your credit balance will be used to pay the monthly bills."
+msgstr "crwdns809:0crwdne809:0"
+
+#: src/pages/settings/SettingsProfile.tsx:36
+msgid "Your name as it will be displayed"
+msgstr "crwdns811:0crwdne811:0"
+
+#: src/pages/onboarding/CreateProfile.tsx:167
+msgid "Your name as it will be displayed on the app"
+msgstr "crwdns813:0crwdne813:0"
+
+#: src/pages/auth/SignInUp.tsx:73
+msgid "Your Workspace"
+msgstr "crwdns815:0crwdne815:0"
+
+#: src/pages/settings/SettingsBilling.tsx:172
+msgid "Your workspace will be disabled"
+msgstr "crwdns817:0crwdne817:0"
+

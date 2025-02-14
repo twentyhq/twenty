@@ -1,3 +1,4 @@
+import { ConnectedAccountProvider } from 'twenty-shared';
 import { ThemeColor } from 'twenty-ui';
 
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
@@ -46,6 +47,8 @@ export type FieldDateMetadata = {
   };
 };
 
+export type FieldNumberVariant = 'number' | 'percentage';
+
 export type FieldNumberMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -53,7 +56,7 @@ export type FieldNumberMetadata = {
   isPositive?: boolean;
   settings?: {
     decimals?: number;
-    type?: 'percentage' | 'number';
+    type?: FieldNumberVariant;
   };
 };
 
@@ -122,6 +125,12 @@ export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
+  settings?: null;
+};
+
+export type FieldRichTextV2Metadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
   settings?: null;
 };
 
@@ -201,6 +210,7 @@ export type FieldMetadata =
   | FieldPhoneMetadata
   | FieldRatingMetadata
   | FieldRelationMetadata
+  | FieldRichTextMetadata
   | FieldSelectMetadata
   | FieldMultiSelectMetadata
   | FieldTextMetadata
@@ -208,7 +218,10 @@ export type FieldMetadata =
   | FieldAddressMetadata
   | FieldActorMetadata
   | FieldArrayMetadata
-  | FieldTsVectorMetadata;
+  | FieldTsVectorMetadata
+  | FieldRichTextV2Metadata
+  | FieldRichTextMetadata;
+
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
 export type FieldDateTimeValue = string | null;
@@ -228,6 +241,10 @@ export type FieldLinksValue = {
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;
+};
+export type FormFieldCurrencyValue = {
+  currencyCode: CurrencyCode | null;
+  amountMicros: number | string | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldAddressValue = {
@@ -255,20 +272,47 @@ export type FieldRelationValue<
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
-export type FieldRichTextValue = Record<string, Json> | Json[] | null;
+export type FieldRichTextV2Value = {
+  blocknote: string | null;
+  markdown: string | null;
+};
+
+export type FieldRichTextValue = null | string;
+
+type FieldActorSource =
+  | 'API'
+  | 'IMPORT'
+  | 'EMAIL'
+  | 'CALENDAR'
+  | 'MANUAL'
+  | 'SYSTEM'
+  | 'WORKFLOW';
 
 export type FieldActorValue = {
-  source: string;
-  workspaceMemberId?: string;
+  source: FieldActorSource;
+  workspaceMemberId: string | null;
   name: string;
+  context: {
+    provider?: ConnectedAccountProvider;
+  } | null;
 };
+
+export type FieldActorForInputValue = Pick<
+  FieldActorValue,
+  'context' | 'source'
+>;
 
 export type FieldArrayValue = string[];
 
-export type PhoneRecord = { number: string; callingCode: string };
+export type PhoneRecord = {
+  number: string;
+  callingCode: string;
+  countryCode: string;
+};
 
 export type FieldPhonesValue = {
   primaryPhoneNumber: string;
   primaryPhoneCountryCode: string;
+  primaryPhoneCallingCode?: string;
   additionalPhones?: PhoneRecord[] | null;
 };

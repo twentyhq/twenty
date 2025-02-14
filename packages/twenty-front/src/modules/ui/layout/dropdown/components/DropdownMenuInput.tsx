@@ -13,11 +13,6 @@ const StyledInput = styled.input<{
 }>`
   ${TEXT_INPUT_STYLE}
 
-  border: 1px solid ${({ theme, hasError }) =>
-    hasError ? theme.border.color.danger : theme.border.color.medium};
-  background-color: ${({ theme }) => theme.background.transparent.secondary};
-  backdrop-filter: ${({ theme }) => theme.blur.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 32px;

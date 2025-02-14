@@ -1,5 +1,5 @@
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 class ComponentInstanceContextMap {
   constructor() {

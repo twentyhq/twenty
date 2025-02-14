@@ -1,7 +1,14 @@
 module.exports = {
   root: true,
-  extends: ['plugin:prettier/recommended'],
-  plugins: ['@nx', 'prefer-arrow', 'import', 'unused-imports', 'unicorn'],
+  extends: ['plugin:prettier/recommended', 'plugin:lingui/recommended'],
+  plugins: [
+    '@nx',
+    'prefer-arrow',
+    'import',
+    'unused-imports',
+    'unicorn',
+    'lingui',
+  ],
   rules: {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
@@ -28,6 +35,10 @@ module.exports = {
           {
             sourceTag: 'scope:frontend',
             onlyDependOnLibsWithTags: ['scope:shared', 'scope:frontend'],
+          },
+          {
+            sourceTag: 'scope:zapier',
+            onlyDependOnLibsWithTags: ['scope:shared'],
           },
         ],
       },
@@ -70,7 +81,6 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/interface-name-prefix': 'off',
-        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-empty-interface': [
           'error',
           {
@@ -96,7 +106,11 @@ module.exports = {
       rules: {},
     },
     {
-      files: ['*.spec.@(ts|tsx|js|jsx)', '*.test.@(ts|tsx|js|jsx)'],
+      files: [
+        '*.spec.@(ts|tsx|js|jsx)',
+        '*.integration-spec.@(ts|tsx|js|jsx)',
+        '*.test.@(ts|tsx|js|jsx)',
+      ],
       env: {
         jest: true,
       },

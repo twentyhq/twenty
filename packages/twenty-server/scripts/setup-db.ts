@@ -30,6 +30,11 @@ rawDataSource
       'create extension "uuid-ossp"',
     );
 
+    // We paused the work on FDW
+    if (process.env.IS_FDW_ENABLED !== 'true') {
+      return;
+    }
+
     await performQuery(
       'CREATE EXTENSION IF NOT EXISTS "postgres_fdw"',
       'create extension "postgres_fdw"',
@@ -56,7 +61,7 @@ rawDataSource
     ]; // See https://supabase.github.io/wrappers/
 
     for (const wrapper of supabaseWrappers) {
-      if (await checkForeignDataWrapperExists(wrapper)) {
+      if (await checkForeignDataWrapperExists(`${wrapper.toLowerCase()}_fdw`)) {
         continue;
       }
       await performQuery(

@@ -1,4 +1,5 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 const DEFAULT_DEPTH_VALUE = 1;
@@ -150,7 +151,16 @@ export const mapFieldMetadataToGraphqlQuery = (
       {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
+    return `
+      ${field.name}
+      {
+        blocknote
+        markdown
       }
     `;
   }

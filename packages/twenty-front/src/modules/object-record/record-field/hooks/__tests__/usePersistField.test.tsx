@@ -39,7 +39,8 @@ const mocks: MockedResponse[] = [
         input: {
           phones: {
             primaryPhoneNumber: '123 456',
-            primaryPhoneCountryCode: '+1',
+            primaryPhoneCountryCode: 'US',
+            primaryPhoneCallingCode: '+1',
             additionalPhones: [],
           },
         },
@@ -134,7 +135,8 @@ describe('usePersistField', () => {
     act(() => {
       result.current.persistField({
         primaryPhoneNumber: '123 456',
-        primaryPhoneCountryCode: '+1',
+        primaryPhoneCountryCode: 'US',
+        primaryPhoneCallingCode: '+1',
         additionalPhones: [],
       });
     });

@@ -15,7 +15,7 @@ export const useDateTimeField = () => {
     useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.DateTime,
+    FieldMetadataType.DATE_TIME,
     isFieldDateTime,
     fieldDefinition,
   );

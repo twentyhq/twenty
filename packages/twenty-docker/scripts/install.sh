@@ -44,10 +44,10 @@ function on_exit {
 trap on_exit EXIT
 
 # Use environment variables VERSION and BRANCH, with defaults if not set
-version=${VERSION:-$(curl -s https://api.github.com/repos/twentyhq/twenty/tags | grep '"name":' | head -n 1 | cut -d '"' -f 4)}
-branch=${BRANCH:-$version}
+version=${VERSION:-$(curl -s "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
+branch=${BRANCH:-$(curl -s https://api.github.com/repos/twentyhq/twenty/tags | grep '"name":' | head -n 1 | cut -d '"' -f 4)}
 
-echo "🚀 Using version $version and branch $branch"
+echo "🚀 Using docker version $version and Github branch $branch"
 
 dir_name="twenty"
 function ask_directory {
@@ -90,10 +90,11 @@ else
 fi
 
 # Generate random strings for secrets
-echo "# === Randomly generated secrets ===" >>.env
-echo "APP_SECRET=$(openssl rand -base64 32)" >>.env
-echo "" >>.env
-echo "PGPASSWORD_SUPERUSER=$(openssl rand -hex 16)" >>.env
+echo "# === Randomly generated secret ===" >> .env
+echo "APP_SECRET=$(openssl rand -base64 32)" >> .env
+
+echo "" >> .env
+echo "PG_DATABASE_PASSWORD=$(openssl rand -hex 16)" >> .env
 
 echo -e "\t• .env configuration completed"
 

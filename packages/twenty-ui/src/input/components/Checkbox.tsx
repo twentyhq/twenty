@@ -100,8 +100,12 @@ const StyledInput = styled.input<InputProps>`
   & + label:before {
     --size: ${({ checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
-    background: ${({ theme, indeterminate, isChecked }) =>
-      indeterminate || isChecked ? theme.color.blue : 'transparent'};
+    background: ${({ theme, indeterminate, isChecked, disabled }) =>
+      disabled && isChecked
+        ? theme.color.blue30
+        : indeterminate || isChecked
+          ? theme.color.blue
+          : 'transparent'};
     border-color: ${({
       theme,
       indeterminate,
@@ -111,7 +115,7 @@ const StyledInput = styled.input<InputProps>`
     }) => {
       switch (true) {
         case disabled:
-          return theme.background.transparent.medium;
+          return isChecked ? theme.color.blue30 : theme.font.color.extraLight;
         case indeterminate || isChecked:
           return theme.color.blue;
         case variant === CheckboxVariant.Primary:

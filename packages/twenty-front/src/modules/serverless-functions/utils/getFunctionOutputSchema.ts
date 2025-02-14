@@ -1,7 +1,7 @@
-import { BaseOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
-import { isObject } from '@sniptt/guards';
 import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { isDefined } from 'twenty-ui';
+import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { isObject } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared';
 
 const getValueType = (value: any): InputSchemaPropertyType => {
   if (!isDefined(value) || value === null) {
@@ -32,6 +32,7 @@ export const getFunctionOutputSchema = (testResult: object) => {
           if (isObject(value) && !Array.isArray(value)) {
             acc[key] = {
               isLeaf: false,
+              icon: 'IconVariable',
               value: getFunctionOutputSchema(value),
             };
           } else {
@@ -39,6 +40,7 @@ export const getFunctionOutputSchema = (testResult: object) => {
               isLeaf: true,
               value,
               type: getValueType(value),
+              icon: 'IconVariable',
             };
           }
           return acc;

@@ -70,9 +70,81 @@ function assertTriggerSettingsAreValid(
       break;
     case WorkflowTriggerType.MANUAL:
       break;
+    case WorkflowTriggerType.CRON:
+      assertCronTriggerSettingsAreValid(settings);
+      break;
     default:
       throw new WorkflowTriggerException(
         'Invalid trigger type for enabling workflow trigger',
+        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+      );
+  }
+}
+
+function assertCronTriggerSettingsAreValid(settings: any) {
+  if (!settings?.type) {
+    throw new WorkflowTriggerException(
+      'No setting type provided in cron trigger',
+      WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+    );
+  }
+  switch (settings.type) {
+    case 'CUSTOM': {
+      if (!settings.pattern) {
+        throw new WorkflowTriggerException(
+          'No pattern provided in CUSTOM cron trigger',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+
+      return;
+    }
+
+    case 'HOURS': {
+      if (!settings.schedule) {
+        throw new WorkflowTriggerException(
+          'No schedule provided in cron trigger',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+      if (settings.schedule.hour <= 0) {
+        throw new WorkflowTriggerException(
+          'Invalid hour value. Should be integer greater than 1',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+
+      if (settings.schedule.minute < 0 || settings.schedule.minute > 59) {
+        throw new WorkflowTriggerException(
+          'Invalid minute value. Should be integer between 0 and 59',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+
+      return;
+    }
+
+    case 'MINUTES': {
+      if (!settings.schedule) {
+        throw new WorkflowTriggerException(
+          'No schedule provided in cron trigger',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+
+      if (settings.schedule.minute <= 0) {
+        throw new WorkflowTriggerException(
+          'Invalid minute value. Should be integer greater than 1',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+
+      return;
+    }
+
+    default:
+      throw new WorkflowTriggerException(
+        'Invalid setting type provided in cron trigger',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       );
   }

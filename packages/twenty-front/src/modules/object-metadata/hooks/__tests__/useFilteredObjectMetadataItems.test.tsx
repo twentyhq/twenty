@@ -35,7 +35,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useFilteredObjectMetadataItems', () => {
-  it('should findActiveObjectMetadataItemBySlug', async () => {
+  it('should findActiveObjectMetadataItemByNamePlural', async () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
@@ -49,13 +49,14 @@ describe('useFilteredObjectMetadataItems', () => {
     );
 
     act(() => {
-      const res = result.current.findActiveObjectMetadataItemBySlug('people');
+      const res =
+        result.current.findActiveObjectMetadataItemByNamePlural('people');
       expect(res).toBeDefined();
       expect(res?.namePlural).toBe('people');
     });
   });
 
-  it('should findObjectMetadataItemBySlug', async () => {
+  it('should findObjectMetadataItemByNamePlural', async () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
@@ -69,7 +70,7 @@ describe('useFilteredObjectMetadataItems', () => {
     );
 
     act(() => {
-      const res = result.current.findObjectMetadataItemBySlug('people');
+      const res = result.current.findObjectMetadataItemByNamePlural('people');
       expect(res).toBeDefined();
       expect(res?.namePlural).toBe('people');
     });

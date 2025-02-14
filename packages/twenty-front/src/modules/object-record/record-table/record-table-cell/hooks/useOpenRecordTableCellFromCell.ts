@@ -43,6 +43,7 @@ export const useOpenRecordTableCellFromCell = () => {
   const openTableCell = (
     initialValue?: string,
     isActionButtonClick = false,
+    isNavigating = false,
   ) => {
     onOpenTableCell({
       cellPosition,
@@ -54,6 +55,7 @@ export const useOpenRecordTableCellFromCell = () => {
       objectNameSingular,
       initialValue,
       isActionButtonClick,
+      isNavigating,
     });
   };
 

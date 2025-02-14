@@ -48,7 +48,7 @@ export const MenuItemMultiSelectAvatar = ({
         <Checkbox checked={selected} />
         <StyledMenuItemLeftContent>
           {avatar}
-          <StyledMenuItemLabel hasLeftIcon={!!avatar}>
+          <StyledMenuItemLabel>
             <OverflowingTextWithTooltip text={text} />
           </StyledMenuItemLabel>
         </StyledMenuItemLeftContent>

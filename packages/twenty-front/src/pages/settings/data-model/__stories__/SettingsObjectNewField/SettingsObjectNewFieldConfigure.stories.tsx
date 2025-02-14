@@ -14,8 +14,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsObjectNewFieldConfigure,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:objectSlug/new-field/configure',
-    routeParams: { ':objectSlug': 'companies' },
+    routePath: '/settings/objects/:objectNamePlural/new-field/configure',
+    routeParams: { ':objectNamePlural': 'companies' },
   },
   parameters: {
     msw: graphqlMocks,

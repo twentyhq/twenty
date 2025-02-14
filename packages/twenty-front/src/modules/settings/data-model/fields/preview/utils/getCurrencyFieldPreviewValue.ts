@@ -14,10 +14,10 @@ export const getCurrencyFieldPreviewValue = ({
     'defaultValue' | 'options' | 'type'
   >;
 }): FieldCurrencyValue | null => {
-  if (fieldMetadataItem.type !== FieldMetadataType.Currency) return null;
+  if (fieldMetadataItem.type !== FieldMetadataType.CURRENCY) return null;
 
   const currencyFieldTypeConfig = getSettingsFieldTypeConfig(
-    FieldMetadataType.Currency,
+    FieldMetadataType.CURRENCY,
   );
 
   const placeholderDefaultValue = currencyFieldTypeConfig.exampleValue;

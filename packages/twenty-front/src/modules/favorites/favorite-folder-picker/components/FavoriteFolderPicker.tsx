@@ -99,6 +99,7 @@ export const FavoriteFolderPicker = ({
           toggleFolderSelection={toggleFolderSelection}
         />
       </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
       <FavoriteFolderPickerFooter dropdownId={dropdownId} />
     </DropdownMenu>
   );

@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -25,9 +27,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
   namePlural: 'attachments',
-  labelSingular: 'Attachment',
-  labelPlural: 'Attachments',
-  description: 'An attachment',
+  labelSingular: msg`Attachment`,
+  labelPlural: msg`Attachments`,
+  description: msg`An attachment`,
   icon: STANDARD_OBJECT_ICONS.attachment,
   labelIdentifierStandardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
 })
@@ -37,8 +39,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'Attachment name',
+    label: msg`Name`,
+    description: msg`Attachment name`,
     icon: 'IconFileUpload',
   })
   name: string;
@@ -46,8 +48,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.fullPath,
     type: FieldMetadataType.TEXT,
-    label: 'Full path',
-    description: 'Attachment full path',
+    label: msg`Full path`,
+    description: msg`Attachment full path`,
     icon: 'IconLink',
   })
   fullPath: string;
@@ -55,8 +57,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
-    label: 'Type',
-    description: 'Attachment type',
+    label: msg`Type`,
+    description: msg`Attachment type`,
     icon: 'IconList',
   })
   type: string;
@@ -64,8 +66,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.author,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Author',
-    description: 'Attachment author',
+    label: msg`Author`,
+    description: msg`Attachment author`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredAttachments',
@@ -78,8 +80,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.task,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Task',
-    description: 'Attachment task',
+    label: msg`Task`,
+    description: msg`Attachment task`,
     icon: 'IconNotes',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
@@ -93,8 +95,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.note,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Note',
-    description: 'Attachment note',
+    label: msg`Note`,
+    description: msg`Attachment note`,
     icon: 'IconNotes',
     inverseSideTarget: () => NoteWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
@@ -108,8 +110,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
-    description: 'Attachment person',
+    label: msg`Person`,
+    description: msg`Attachment person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
@@ -123,8 +125,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Company',
-    description: 'Attachment company',
+    label: msg`Company`,
+    description: msg`Attachment company`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
@@ -138,8 +140,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.opportunity,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Opportunity',
-    description: 'Attachment opportunity',
+    label: msg`Opportunity`,
+    description: msg`Attachment opportunity`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'attachments',

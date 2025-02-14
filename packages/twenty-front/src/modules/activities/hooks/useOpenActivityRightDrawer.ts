@@ -7,6 +7,10 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { IconList } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useOpenActivityRightDrawer = ({
   objectNameSingular,
@@ -25,6 +29,10 @@ export const useOpenActivityRightDrawer = ({
 
   const setHotkeyScope = useSetHotkeyScope();
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   return (activityId: string) => {
     if (
       isRightDrawerOpen &&
@@ -34,9 +42,17 @@ export const useOpenActivityRightDrawer = ({
       return;
     }
 
-    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    if (isCommandMenuV2Enabled) {
+      setHotkeyScope(AppHotkeyScope.CommandMenuOpen, { goto: false });
+    } else {
+      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    }
+
     setViewableRecordId(activityId);
     setViewableRecordNameSingular(objectNameSingular);
-    openRightDrawer(RightDrawerPages.ViewRecord);
+    openRightDrawer(RightDrawerPages.ViewRecord, {
+      title: objectNameSingular,
+      Icon: IconList,
+    });
   };
 };

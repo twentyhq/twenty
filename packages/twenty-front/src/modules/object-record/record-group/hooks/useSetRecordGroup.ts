@@ -24,7 +24,7 @@ export const useSetRecordGroup = (viewId?: string) => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
       (recordGroups: RecordGroupDefinition[]) => {
-        const currentRecordGroupId = getSnapshotValue(
+        const currentRecordGroupIds = getSnapshotValue(
           snapshot,
           recordIndexRecordGroupIdsState,
         );
@@ -61,7 +61,7 @@ export const useSetRecordGroup = (viewId?: string) => {
         const recordGroupIds = recordGroups.map(({ id }) => id);
 
         // Get ids that has been removed between the current and new record groups
-        const removedRecordGroupIds = currentRecordGroupId.filter(
+        const removedRecordGroupIds = currentRecordGroupIds.filter(
           (id) => !recordGroupIds.includes(id),
         );
 
@@ -70,7 +70,7 @@ export const useSetRecordGroup = (viewId?: string) => {
           set(recordGroupDefinitionFamilyState(id), undefined);
         });
 
-        if (isDeeplyEqual(currentRecordGroupId, recordGroupIds)) {
+        if (isDeeplyEqual(currentRecordGroupIds, recordGroupIds)) {
           return;
         }
 

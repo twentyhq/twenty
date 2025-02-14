@@ -1,20 +1,22 @@
+import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
-import { Loader, MainButton } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
+
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { useRecoilValue } from 'recoil';
-import styled from '@emotion/styled';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
-import { useState, useMemo } from 'react';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
-import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { FormProvider } from 'react-hook-form';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
+import { captchaState } from '@/client-config/states/captchaState';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useMemo, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
+import { Loader, MainButton } from 'twenty-ui';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -24,11 +26,12 @@ const StyledForm = styled.form`
 `;
 
 export const SignInUpWithCredentials = () => {
-  const { form, validationSchema } = useSignInUpForm();
+  const { t } = useLingui();
+  const form = useFormContext<Form>();
 
-  const signInUpStep = useRecoilValue(signInUpStepState);
+  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
-  const captchaProvider = useRecoilValue(captchaProviderState);
+  const captcha = useRecoilValue(captchaState);
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
@@ -61,37 +64,42 @@ export const SignInUpWithCredentials = () => {
     }
   };
 
+  const onEmailChange = (email: string) => {
+    if (email !== form.getValues('email')) {
+      setSignInUpStep(SignInUpStep.Email);
+    }
+  };
+
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
-      return 'Continue With Email';
+      return t`Continue with Email`;
     }
 
     if (
       signInUpMode === SignInUpMode.SignIn &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return 'Sign in';
+      return t`Sign in`;
     }
 
     if (
       signInUpMode === SignInUpMode.SignUp &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return 'Sign up';
+      return t`Sign up`;
     }
 
-    return 'Continue';
-  }, [signInUpMode, signInUpStep]);
+    return t`Continue`;
+  }, [signInUpMode, signInUpStep, t]);
 
   const shouldWaitForCaptchaToken =
     signInUpStep !== SignInUpStep.Init &&
-    isDefined(captchaProvider?.provider) &&
+    isDefined(captcha?.provider) &&
     isRequestingCaptchaToken;
 
   const isEmailStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Email &&
-    (!validationSchema.shape.email.safeParse(form.watch('email')).success ||
-      shouldWaitForCaptchaToken);
+    (isDefined(form.formState.errors['email']) || shouldWaitForCaptchaToken);
 
   // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
   // We make the isValid check synchronous and update a reactState to make sure this does not happen
@@ -110,32 +118,30 @@ export const SignInUpWithCredentials = () => {
       {(signInUpStep === SignInUpStep.Password ||
         signInUpStep === SignInUpStep.Email ||
         signInUpStep === SignInUpStep.Init) && (
-        <>
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-          <FormProvider {...form}>
-            <StyledForm onSubmit={handleSubmit}>
-              {signInUpStep !== SignInUpStep.Init && (
-                <SignInUpEmailField showErrors={showErrors} />
-              )}
-              {signInUpStep === SignInUpStep.Password && (
-                <SignInUpPasswordField
-                  showErrors={showErrors}
-                  signInUpMode={signInUpMode}
-                />
-              )}
-              <MainButton
-                title={buttonTitle}
-                type="submit"
-                variant={
-                  signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
-                }
-                Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
-                disabled={isSubmitButtonDisabled}
-                fullWidth
-              />
-            </StyledForm>
-          </FormProvider>
-        </>
+        <StyledForm onSubmit={handleSubmit}>
+          {signInUpStep !== SignInUpStep.Init && (
+            <SignInUpEmailField
+              showErrors={showErrors}
+              onInputChange={onEmailChange}
+            />
+          )}
+          {signInUpStep === SignInUpStep.Password && (
+            <SignInUpPasswordField
+              showErrors={showErrors}
+              signInUpMode={signInUpMode}
+            />
+          )}
+          <MainButton
+            title={buttonTitle}
+            type="submit"
+            variant={
+              signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+            }
+            Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
+            disabled={isSubmitButtonDisabled}
+            fullWidth
+          />
+        </StyledForm>
       )}
     </>
   );

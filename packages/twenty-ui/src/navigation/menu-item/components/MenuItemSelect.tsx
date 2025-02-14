@@ -40,23 +40,27 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
   selected: boolean;
+  needIconCheck?: boolean;
   text: string;
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
   hovered?: boolean;
   hasSubMenu?: boolean;
+  contextualText?: string;
 };
 
 export const MenuItemSelect = ({
   LeftIcon,
   text,
   selected,
+  needIconCheck = true,
   className,
   onClick,
   disabled,
   hovered,
   hasSubMenu = false,
+  contextualText,
 }: MenuItemSelectProps) => {
   const theme = useTheme();
 
@@ -67,9 +71,17 @@ export const MenuItemSelect = ({
       selected={selected}
       disabled={disabled}
       hovered={hovered}
+      role="option"
+      aria-selected={selected}
+      aria-disabled={disabled}
     >
-      <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
-      {selected && <IconCheck size={theme.icon.size.md} />}
+      <MenuItemLeftContent
+        LeftIcon={LeftIcon}
+        text={text}
+        contextualText={contextualText}
+      />
+      {selected && needIconCheck && <IconCheck size={theme.icon.size.md} />}
+
       {hasSubMenu && (
         <IconChevronRight
           size={theme.icon.size.sm}

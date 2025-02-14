@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { ContactLink } from 'twenty-ui';
 import { EllipsisDisplay } from './EllipsisDisplay';

@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -20,17 +22,12 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/stan
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-export enum ConnectedAccountProvider {
-  GOOGLE = 'google',
-  MICROSOFT = 'microsoft',
-}
-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.connectedAccount,
   namePlural: 'connectedAccounts',
-  labelSingular: 'Connected Account',
-  labelPlural: 'Connected Accounts',
-  description: 'A connected account',
+  labelSingular: msg`Connected Account`,
+  labelPlural: msg`Connected Accounts`,
+  description: msg`A connected account`,
   icon: STANDARD_OBJECT_ICONS.connectedAccount,
   labelIdentifierStandardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
 })
@@ -40,8 +37,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
-    label: 'handle',
-    description: 'The account handle (email, username, phone number, etc.)',
+    label: msg`handle`,
+    description: msg`The account handle (email, username, phone number, etc.)`,
     icon: 'IconMail',
   })
   handle: string;
@@ -49,8 +46,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
     type: FieldMetadataType.TEXT,
-    label: 'provider',
-    description: 'The account provider',
+    label: msg`provider`,
+    description: msg`The account provider`,
     icon: 'IconSettings',
   })
   provider: ConnectedAccountProvider; // field metadata should be a SELECT
@@ -58,8 +55,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,
     type: FieldMetadataType.TEXT,
-    label: 'Access Token',
-    description: 'Messaging provider access token',
+    label: msg`Access Token`,
+    description: msg`Messaging provider access token`,
     icon: 'IconKey',
   })
   accessToken: string;
@@ -67,8 +64,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
     type: FieldMetadataType.TEXT,
-    label: 'Refresh Token',
-    description: 'Messaging provider refresh token',
+    label: msg`Refresh Token`,
+    description: msg`Messaging provider refresh token`,
     icon: 'IconKey',
   })
   refreshToken: string;
@@ -76,8 +73,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
     type: FieldMetadataType.TEXT,
-    label: 'Last sync history ID',
-    description: 'Last sync history ID',
+    label: msg`Last sync history ID`,
+    description: msg`Last sync history ID`,
     icon: 'IconHistory',
   })
   lastSyncHistoryId: string;
@@ -85,8 +82,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Auth failed at',
-    description: 'Auth failed at',
+    label: msg`Auth failed at`,
+    description: msg`Auth failed at`,
     icon: 'IconX',
   })
   @WorkspaceIsNullable()
@@ -95,8 +92,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handleAliases,
     type: FieldMetadataType.TEXT,
-    label: 'Handle Aliases',
-    description: 'Handle Aliases',
+    label: msg`Handle Aliases`,
+    description: msg`Handle Aliases`,
     icon: 'IconMail',
   })
   handleAliases: string;
@@ -104,8 +101,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,
     type: FieldMetadataType.ARRAY,
-    label: 'Scopes',
-    description: 'Scopes',
+    label: msg`Scopes`,
+    description: msg`Scopes`,
     icon: 'IconSettings',
   })
   @WorkspaceIsNullable()
@@ -114,8 +111,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Account Owner',
-    description: 'Account Owner',
+    label: msg`Account Owner`,
+    description: msg`Account Owner`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'connectedAccounts',
@@ -128,8 +125,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Channels',
-    description: 'Message Channels',
+    label: msg`Message Channels`,
+    description: msg`Message Channels`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -139,8 +136,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.calendarChannels,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Calendar Channels',
-    description: 'Calendar Channels',
+    label: msg`Calendar Channels`,
+    description: msg`Calendar Channels`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

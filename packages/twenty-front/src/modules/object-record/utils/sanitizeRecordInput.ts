@@ -1,11 +1,8 @@
-import { isString } from '@sniptt/guards';
-
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
-import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 export const sanitizeRecordInput = ({
   objectMetadataItem,
@@ -28,24 +25,26 @@ export const sanitizeRecordInput = ({
         }
 
         if (
-          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.ManyToOne
+            RelationDefinitionType.MANY_TO_ONE
         ) {
           const relationIdFieldName = `${fieldMetadataItem.name}Id`;
           const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
             (field) => field.name === relationIdFieldName,
           );
 
+          const relationIdFieldValue = recordInput[relationIdFieldName];
+
           return relationIdFieldMetadataItem
-            ? [relationIdFieldName, fieldValue?.id ?? null]
+            ? [relationIdFieldName, relationIdFieldValue ?? null]
             : undefined;
         }
 
         if (
-          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.OneToMany
+            RelationDefinitionType.ONE_TO_MANY
         ) {
           return undefined;
         }
@@ -56,15 +55,5 @@ export const sanitizeRecordInput = ({
       })
       .filter(isDefined),
   );
-  if (
-    !(
-      isDefined(filteredResultRecord.domainName) &&
-      isString(filteredResultRecord.domainName)
-    )
-  )
-    return filteredResultRecord;
-  return {
-    ...filteredResultRecord,
-    domainName: getUrlHostName(filteredResultRecord.domainName as string),
-  };
+  return filteredResultRecord;
 };

@@ -31,6 +31,14 @@ const computeStoriesGlob = () => {
 const config: StorybookConfig = {
   stories: computeStoriesGlob(),
   staticDirs: ['../public'],
+  build: {
+    test: {
+      disabledAddons: [
+        '@storybook/addon-docs',
+        '@storybook/addon-essentials/docs',
+      ],
+    }
+  },
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',

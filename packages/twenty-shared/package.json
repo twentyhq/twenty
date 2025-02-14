@@ -1,0 +1,21 @@
+{
+  "name": "twenty-shared",
+  "version": "0.42.0-canary",
+  "license": "AGPL-3.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "npx vite build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
+  }
+}

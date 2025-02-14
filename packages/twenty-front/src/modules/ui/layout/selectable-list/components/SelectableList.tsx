@@ -3,8 +3,8 @@ import { ReactNode, useEffect } from 'react';
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
+import { isDefined } from 'twenty-shared';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
-import { isDefined } from '~/utils/isDefined';
 
 type SelectableListProps = {
   children: ReactNode;
@@ -26,7 +26,7 @@ export const SelectableList = ({
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListId, hotkeyScope);
 
-  const { setSelectableItemIds, setSelectableListOnEnter } =
+  const { setSelectableItemIds, setSelectableListOnEnter, setSelectedItemId } =
     useSelectableList(selectableListId);
 
   useEffect(() => {
@@ -47,7 +47,12 @@ export const SelectableList = ({
     if (isDefined(selectableItemIdArray)) {
       setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
     }
-  }, [selectableItemIdArray, selectableItemIdMatrix, setSelectableItemIds]);
+  }, [
+    selectableItemIdArray,
+    selectableItemIdMatrix,
+    setSelectableItemIds,
+    setSelectedItemId,
+  ]);
 
   return (
     <SelectableListScope selectableListScopeId={selectableListId}>

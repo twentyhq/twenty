@@ -1,24 +1,31 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { SettingsFeatures } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+registerEnumType(SettingsFeatures, {
+  name: 'SettingsFeatures',
+});
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
-@ObjectType('UserWorkspace')
+@ObjectType()
 @Unique('IndexOnUserIdAndWorkspaceIdUnique', ['userId', 'workspaceId'])
 export class UserWorkspace {
   @IDField(() => UUIDScalarType)
@@ -58,4 +65,13 @@ export class UserWorkspace {
   @Field({ nullable: true })
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
+
+  @OneToMany(
+    () => TwoFactorMethod,
+    (twoFactorMethod) => twoFactorMethod.userWorkspace,
+  )
+  twoFactorMethods: Relation<TwoFactorMethod[]>;
+
+  @Field(() => [SettingsFeatures], { nullable: true })
+  settingsPermissions?: SettingsFeatures[];
 }

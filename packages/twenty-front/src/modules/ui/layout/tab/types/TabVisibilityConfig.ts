@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FeatureFlagKey } from '@/workspace/types/FeatureFlagKey';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export type TabVisibilityConfig = {
   ifMobile: boolean;

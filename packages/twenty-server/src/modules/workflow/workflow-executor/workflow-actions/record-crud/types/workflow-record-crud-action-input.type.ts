@@ -14,6 +14,7 @@ export type WorkflowUpdateRecordActionInput = {
   objectName: string;
   objectRecord: ObjectRecord;
   objectRecordId: string;
+  fieldsToUpdate: string[];
 };
 
 export type WorkflowDeleteRecordActionInput = {

@@ -9,7 +9,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockDefaultWorkspace,
+  mockCurrentWorkspace,
   mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
@@ -29,7 +29,7 @@ const meta: Meta<typeof SupportDropdown> = {
         currentWorkspaceMemberState,
       );
 
-      setCurrentWorkspace(mockDefaultWorkspace);
+      setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setCurrentUser(mockedUserData);
       setSupportChat({ supportDriver: 'front', supportFrontChatId: '1234' });

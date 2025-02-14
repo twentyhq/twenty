@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
-
-import { capitalize } from 'src/utils/capitalize';
+import { capitalize } from 'twenty-shared';
 
 type UpdateOneOperationFactoryParams = {
   objectMetadataSingularName: string;

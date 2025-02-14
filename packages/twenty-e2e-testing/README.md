@@ -1,39 +1,43 @@
-# Twenty e2e Testing
+# Twenty end-to-end (E2E) Testing
 
 ## Prerequisite
 
 Installing the browsers:
 
 ```
-yarn playwright install 
+npx nx setup twenty-e2e-testing
 ```
 
 ### Run end-to-end tests
 
 ```
-yarn run test:e2e
+npx nx test twenty-e2e-testing
 ```
 
 ### Start the interactive UI mode
 
 ```
-yarn run test:e2e:ui
-```
-
-### Run test only on Desktop Chrome
-
-```
-yarn run test:e2e:chrome
+npx nx test:ui twenty-e2e-testing
 ```
 
 ### Run test in specific file
 ```
-yarn run test:e2e <filename>
+npx nx test twenty-e2e-testing <filename>
+```
+
+Example (location of the test must be specified from the root of `twenty-e2e-testing` package):
+```
+npx nx test twenty-e2e-testing tests/login.spec.ts
 ```
 
 ### Runs the tests in debug mode.
 ```
-yarn run test:e2e:debug
+npx nx test:debug twenty-e2e-testing
+```
+
+### Show report after tests
+```
+npx nx test:report twenty-e2e-testing
 ```
 
 ## Q&A

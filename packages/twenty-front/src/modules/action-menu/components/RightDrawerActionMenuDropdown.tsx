@@ -8,11 +8,15 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
+import { i18n } from '@lingui/core';
 import { Key } from 'ts-key-enum';
-import { Button, MenuItem } from 'twenty-ui';
+import { Button, MenuItem, getOsControlSymbol } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RightDrawerActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
@@ -26,6 +30,10 @@ export const RightDrawerActionMenuDropdown = () => {
   const { closeDropdown, openDropdown } = useDropdownV2();
 
   const theme = useTheme();
+
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
 
   useScopedHotkeys(
     [Key.Escape, 'ctrl+o,meta+o'],
@@ -45,7 +53,9 @@ export const RightDrawerActionMenuDropdown = () => {
         getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
       );
     },
-    RightDrawerHotkeyScope.RightDrawer,
+    isCommandMenuV2Enabled
+      ? AppHotkeyScope.CommandMenuOpen
+      : RightDrawerHotkeyScope.RightDrawer,
     [openDropdown],
   );
 
@@ -59,11 +69,11 @@ export const RightDrawerActionMenuDropdown = () => {
           RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
       }}
       data-select-disable
-      clickableComponent={<Button title="Actions" shortcut="⌘O" />}
+      clickableComponent={
+        <Button title="Actions" hotkeys={[getOsControlSymbol(), 'O']} />
+      }
       dropdownPlacement="top-end"
-      dropdownOffset={{
-        y: parseInt(theme.spacing(2), 10),
-      }}
+      dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           {actionMenuEntries
@@ -83,7 +93,7 @@ export const RightDrawerActionMenuDropdown = () => {
                   );
                   actionMenuEntry.onClick?.();
                 }}
-                text={actionMenuEntry.label}
+                text={i18n._(actionMenuEntry.label)}
               />
             ))}
         </DropdownMenuItemsContainer>

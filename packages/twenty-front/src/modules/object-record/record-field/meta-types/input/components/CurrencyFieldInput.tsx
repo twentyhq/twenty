@@ -4,7 +4,6 @@ import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 
-import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -118,21 +117,19 @@ export const CurrencyFieldInput = ({
   };
 
   return (
-    <FieldInputOverlay>
-      <CurrencyInput
-        value={draftValue?.amount?.toString() ?? ''}
-        currencyCode={currencyCode}
-        autoFocus
-        placeholder="Currency"
-        onClickOutside={handleClickOutside}
-        onEnter={handleEnter}
-        onEscape={handleEscape}
-        onShiftTab={handleShiftTab}
-        onTab={handleTab}
-        onChange={handleChange}
-        onSelect={handleSelect}
-        hotkeyScope={hotkeyScope}
-      />
-    </FieldInputOverlay>
+    <CurrencyInput
+      value={draftValue?.amount?.toString() ?? ''}
+      currencyCode={currencyCode}
+      autoFocus
+      placeholder="Currency"
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onShiftTab={handleShiftTab}
+      onTab={handleTab}
+      onChange={handleChange}
+      onSelect={handleSelect}
+      hotkeyScope={hotkeyScope}
+    />
   );
 };

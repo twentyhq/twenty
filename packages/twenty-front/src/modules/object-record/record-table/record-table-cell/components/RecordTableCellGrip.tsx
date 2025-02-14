@@ -6,12 +6,14 @@ import { RecordTableTd } from '@/object-record/record-table/record-table-cell/co
 import { css } from '@emotion/react';
 import { IconListViewGrip } from 'twenty-ui';
 
+export const TABLE_CELL_GRIP_WIDTH = '16px';
+
 const StyledContainer = styled.div<{ isPendingRow?: boolean }>`
+  height: 32px;
+  width: ${TABLE_CELL_GRIP_WIDTH};
   border-color: transparent;
   cursor: grab;
   display: flex;
-  height: 32px;
-  width: 16px;
   ${({ isPendingRow }) =>
     !isPendingRow
       ? css`

@@ -6,7 +6,7 @@ import graphqlTypeJson from 'graphql-type-json';
 import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -24,28 +24,28 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
+import { BuildDraftServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/build-draft-serverless-function.input';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
 export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @InjectRepository(FeatureFlag, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 
   async checkFeatureFlag(workspaceId: string) {
-    const isFunctionSettingsEnabled =
-      await this.featureFlagRepository.findOneBy({
-        workspaceId,
-        key: FeatureFlagKey.IsFunctionSettingsEnabled,
-        value: true,
-      });
+    const isWorkflowEnabled = await this.featureFlagRepository.findOneBy({
+      workspaceId,
+      key: FeatureFlagKey.IsWorkflowEnabled,
+      value: true,
+    });
 
-    if (!isFunctionSettingsEnabled) {
+    if (!isWorkflowEnabled) {
       throw new ServerlessFunctionException(
-        `IS_FUNCTION_SETTINGS_ENABLED feature flag is not set to true for this workspace`,
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        `IS_WORKFLOW_ENABLED feature flag is not set to true for this workspace`,
+        ServerlessFunctionExceptionCode.FEATURE_FLAG_INVALID,
       );
     }
   }
@@ -123,10 +123,10 @@ export class ServerlessFunctionResolver {
     try {
       await this.checkFeatureFlag(workspaceId);
 
-      return await this.serverlessFunctionService.deleteOneServerlessFunction(
-        input.id,
+      return await this.serverlessFunctionService.deleteOneServerlessFunction({
+        id: input.id,
         workspaceId,
-      );
+      });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }
@@ -160,10 +160,7 @@ export class ServerlessFunctionResolver {
       await this.checkFeatureFlag(workspaceId);
 
       return await this.serverlessFunctionService.createOneServerlessFunction(
-        {
-          name: input.name,
-          description: input.description,
-        },
+        input,
         workspaceId,
       );
     } catch (error) {
@@ -201,6 +198,24 @@ export class ServerlessFunctionResolver {
       const { id } = input;
 
       return await this.serverlessFunctionService.publishOneServerlessFunction(
+        id,
+        workspaceId,
+      );
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => ServerlessFunctionDTO)
+  async buildDraftServerlessFunction(
+    @Args('input') input: BuildDraftServerlessFunctionInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+      const { id } = input;
+
+      return await this.serverlessFunctionService.buildDraftServerlessFunction(
         id,
         workspaceId,
       );

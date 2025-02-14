@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { isDefined } from 'twenty-shared';
 import { formatAmount } from '~/utils/format/formatAmount';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type CurrencyDisplayProps = {

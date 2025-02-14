@@ -15,6 +15,13 @@ export type Node = {
   value: OutputSchema;
 };
 
+type Link = {
+  isLeaf: true;
+  tab?: string;
+  icon?: string;
+  label?: string;
+};
+
 export type BaseOutputSchema = Record<string, Leaf | Node>;
 
 export type RecordOutputSchema = {
@@ -23,4 +30,12 @@ export type RecordOutputSchema = {
   _outputSchemaType: 'RECORD';
 };
 
-export type OutputSchema = BaseOutputSchema | RecordOutputSchema;
+export type LinkOutputSchema = {
+  link: Link;
+  _outputSchemaType: 'LINK';
+};
+
+export type OutputSchema =
+  | BaseOutputSchema
+  | RecordOutputSchema
+  | LinkOutputSchema;

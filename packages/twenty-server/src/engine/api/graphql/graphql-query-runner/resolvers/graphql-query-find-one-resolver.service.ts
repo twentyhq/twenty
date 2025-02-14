@@ -17,7 +17,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
@@ -65,12 +64,10 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       );
     }
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
-
     const objectRecords = [objectRecord];
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      await processNestedRelationsHelper.processNestedRelations({
+      await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
@@ -81,8 +78,16 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       });
     }
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace.id,
+      );
+
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: objectRecords[0],

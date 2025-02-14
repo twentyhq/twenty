@@ -1,13 +1,13 @@
 import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_COMPANY_IDS } from 'src/database/typeorm-seeds/workspace/companies';
-import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
+import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/seedPeople';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 
 const tableName = 'opportunity';
 
 export const DEV_SEED_OPPORTUNITY_IDS = {
-  OPPORTUNITY_1: '20202020-be10-412b-a663-16bd3c2228e1',
+  OPPORTUNITY_1: '20202020-be10-422b-a663-16bd3c2228e1',
   OPPORTUNITY_2: '20202020-0543-4cc2-9f96-95cc699960f2',
   OPPORTUNITY_3: '20202020-2f89-406f-90ea-180f433b2445',
   OPPORTUNITY_4: '20202020-35b1-4045-9cde-42f715148954',

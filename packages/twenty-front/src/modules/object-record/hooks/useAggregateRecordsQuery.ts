@@ -1,16 +1,16 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export type GqlFieldToFieldMap = {
   [gqlField: string]: [
     fieldName: string,
-    aggregateOperation: AGGREGATE_OPERATIONS,
+    aggregateOperation: ExtendedAggregateOperations,
   ];
 };
 

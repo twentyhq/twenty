@@ -1,16 +1,19 @@
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
+
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   COMPANY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const companiesAllView = (
-  objectMetadataMap: Record<string, ObjectMetadataEntity>,
+export const seedCompaniesAllView = (
+  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
     name: 'All',
-    objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.company].id,
+    objectMetadataId:
+      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -20,7 +23,7 @@ export const companiesAllView = (
     fields: [
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
             COMPANY_STANDARD_FIELD_IDS.name
           ],
         position: 0,
@@ -29,16 +32,17 @@ export const companiesAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
             COMPANY_STANDARD_FIELD_IDS.domainName
           ],
         position: 1,
         isVisible: true,
         size: 100,
+        aggregateOperation: AGGREGATE_OPERATIONS.count,
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
             COMPANY_STANDARD_FIELD_IDS.createdBy
           ],
         position: 2,
@@ -47,7 +51,7 @@ export const companiesAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
             COMPANY_STANDARD_FIELD_IDS.accountOwner
           ],
         position: 3,
@@ -56,7 +60,7 @@ export const companiesAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
             BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
           ],
         position: 4,
@@ -65,30 +69,33 @@ export const companiesAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
             COMPANY_STANDARD_FIELD_IDS.employees
           ],
         position: 5,
         isVisible: true,
         size: 150,
+        aggregateOperation: AGGREGATE_OPERATIONS.max,
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
             COMPANY_STANDARD_FIELD_IDS.linkedinLink
           ],
         position: 6,
         isVisible: true,
         size: 170,
+        aggregateOperation: AGGREGATE_OPERATIONS.percentageEmpty,
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
             COMPANY_STANDARD_FIELD_IDS.address
           ],
         position: 7,
         isVisible: true,
         size: 170,
+        aggregateOperation: AGGREGATE_OPERATIONS.countNotEmpty,
       },
     ],
   };

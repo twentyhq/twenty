@@ -18,7 +18,9 @@ export enum OrderByDirection {
 }
 
 export type ObjectRecordOrderBy = Array<{
-  [Property in keyof ObjectRecord]?: OrderByDirection;
+  [Property in keyof ObjectRecord]?:
+    | OrderByDirection
+    | Record<string, OrderByDirection>;
 }>;
 
 export interface ObjectRecordDuplicateCriteria {

@@ -8,6 +8,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       emails {
@@ -30,6 +31,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       position
@@ -37,6 +39,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       whatsapp {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       workPreference
@@ -63,7 +66,8 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             noteId
             opportunityId
             personId
-            rocketId
+            petId
+            surveyResultId
             taskId
             type
             updatedAt
@@ -112,6 +116,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
           source
           workspaceMemberId
           name
+          context
         }
         deletedAt
         domainName {
@@ -150,6 +155,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       emails {
@@ -168,8 +174,9 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             noteId
             opportunityId
             personId
+            petId
             position
-            rocketId
+            surveyResultId
             taskId
             updatedAt
             viewId
@@ -220,7 +227,8 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             noteId
             opportunityId
             personId
-            rocketId
+            petId
+            surveyResultId
             updatedAt
           }
         }
@@ -229,6 +237,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       pointOfContactForOpportunities {
@@ -246,6 +255,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
               source
               workspaceMemberId
               name
+              context
             }
             deletedAt
             id
@@ -268,7 +278,8 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             id
             opportunityId
             personId
-            rocketId
+            petId
+            surveyResultId
             taskId
             updatedAt
           }
@@ -290,8 +301,9 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             noteId
             opportunityId
             personId
+            petId
             properties
-            rocketId
+            surveyResultId
             taskId
             updatedAt
             workflowId
@@ -305,6 +317,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       whatsapp {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       workPreference

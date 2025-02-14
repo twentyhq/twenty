@@ -1,5 +1,7 @@
 export * from './constants/AccentDark';
 export * from './constants/AccentLight';
+export * from './constants/AdaptiveColorsDark';
+export * from './constants/AdaptiveColorsLight';
 export * from './constants/Animation';
 export * from './constants/BackgroundDark';
 export * from './constants/BackgroundLight';
@@ -25,7 +27,6 @@ export * from './constants/MainColorNames';
 export * from './constants/MainColors';
 export * from './constants/MobileViewport';
 export * from './constants/Modal';
-export * from './constants/OverlayBackground';
 export * from './constants/Rgba';
 export * from './constants/SecondaryColors';
 export * from './constants/SnackBarCommon';

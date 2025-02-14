@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkspaceActivationStatus } from 'twenty-shared';
+
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceActivationStatus } from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
@@ -25,34 +27,31 @@ export class OnboardingService {
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
   ) {}
 
-  private async isSubscriptionIncompleteOnboardingStatus(user: User) {
-    const hasSubscription =
-      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
-        user.defaultWorkspaceId,
-      );
+  private async isSubscriptionIncompleteOnboardingStatus(workspace: Workspace) {
+    const hasAnySubscription =
+      await this.billingService.hasWorkspaceAnySubscription(workspace.id);
 
-    return !hasSubscription;
+    return !hasAnySubscription;
   }
 
-  private isWorkspaceActivationPending(user: User) {
+  private isWorkspaceActivationPending(workspace: Workspace) {
     return (
-      user.defaultWorkspace.activationStatus ===
-      WorkspaceActivationStatus.PENDING_CREATION
+      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
     );
   }
 
-  async getOnboardingStatus(user: User) {
-    if (await this.isSubscriptionIncompleteOnboardingStatus(user)) {
+  async getOnboardingStatus(user: User, workspace: Workspace) {
+    if (await this.isSubscriptionIncompleteOnboardingStatus(workspace)) {
       return OnboardingStatus.PLAN_REQUIRED;
     }
 
-    if (this.isWorkspaceActivationPending(user)) {
+    if (this.isWorkspaceActivationPending(workspace)) {
       return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
 
     const userVars = await this.userVarsService.getAll({
       userId: user.id,
-      workspaceId: user.defaultWorkspaceId,
+      workspaceId: workspace.id,
     });
 
     const isProfileCreationPending =

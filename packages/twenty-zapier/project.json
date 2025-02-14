@@ -1,0 +1,32 @@
+{
+  "name": "twenty-zapier",
+  "projectType": "application",
+  "tags": ["scope:zapier"],
+  "targets": {
+    "build": {
+      "outputs": ["{projectRoot}/lib"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": ["nx run twenty-zapier:clean && tsc"]
+      },
+      "dependsOn": ["^build"]
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": ["rimraf ./lib ./build"]
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "nx run twenty-zapier:build && cp -r ../twenty-shared/ node_modules/twenty-shared && zapier push --skip-npm-install"
+        ]
+      }
+    }
+  }
+}

@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { RelationPicker } from '@/object-record/relation-picker/components/RelationPicker';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 
@@ -7,12 +5,6 @@ import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
 
 import { FieldInputEvent } from './DateTimeFieldInput';
-
-const StyledRelationPickerContainer = styled.div`
-  left: -1px;
-  position: absolute;
-  top: -1px;
-`;
 
 export type RelationToOneFieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -33,14 +25,12 @@ export const RelationToOneFieldInput = ({
   };
 
   return (
-    <StyledRelationPickerContainer>
-      <RelationPicker
-        fieldDefinition={fieldDefinition}
-        selectedRecordId={fieldValue?.id}
-        onSubmit={handleSubmit}
-        onCancel={onCancel}
-        initialSearchFilter={initialSearchValue}
-      />
-    </StyledRelationPickerContainer>
+    <RelationPicker
+      fieldDefinition={fieldDefinition}
+      selectedRecordId={fieldValue?.id}
+      onSubmit={handleSubmit}
+      onCancel={onCancel}
+      initialSearchFilter={initialSearchValue}
+    />
   );
 };

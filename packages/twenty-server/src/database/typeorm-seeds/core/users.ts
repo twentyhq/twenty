@@ -1,7 +1,5 @@
 import { DataSource } from 'typeorm';
 
-// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
-
 const tableName = 'user';
 
 export const DEV_SEED_USER_IDS = {
@@ -13,7 +11,6 @@ export const DEV_SEED_USER_IDS = {
 export const seedUsers = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -24,7 +21,7 @@ export const seedUsers = async (
       'lastName',
       'email',
       'passwordHash',
-      'defaultWorkspaceId',
+      'canImpersonate',
     ])
     .orIgnore()
     .values([
@@ -35,7 +32,7 @@ export const seedUsers = async (
         email: 'tim@apple.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: workspaceId,
+        canImpersonate: true,
       },
       {
         id: DEV_SEED_USER_IDS.JONY,
@@ -44,7 +41,7 @@ export const seedUsers = async (
         email: 'jony.ive@apple.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: workspaceId,
+        canImpersonate: true,
       },
       {
         id: DEV_SEED_USER_IDS.PHIL,
@@ -53,23 +50,8 @@ export const seedUsers = async (
         email: 'phil.schiler@apple.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: workspaceId,
+        canImpersonate: true,
       },
     ])
-    .execute();
-};
-
-export const deleteUsersByWorkspace = async (
-  workspaceDataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  await workspaceDataSource
-    .createQueryBuilder()
-    .delete()
-    .from(`${schemaName}.${tableName}`)
-    .where(`"${tableName}"."defaultWorkspaceId" = :workspaceId`, {
-      workspaceId,
-    })
     .execute();
 };

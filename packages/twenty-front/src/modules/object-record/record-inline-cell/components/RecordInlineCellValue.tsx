@@ -11,6 +11,7 @@ const StyledClickableContainer = styled.div<{
   readonly?: boolean;
   isCentered?: boolean;
 }>`
+  align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;

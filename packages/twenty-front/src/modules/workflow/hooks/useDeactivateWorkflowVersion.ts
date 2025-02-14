@@ -1,23 +1,24 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useApolloClient, useMutation } from '@apollo/client';
 
+import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/deactivateWorkflowVersion';
+import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { isDefined } from 'twenty-shared';
 import {
-  ActivateWorkflowVersionMutation,
-  ActivateWorkflowVersionMutationVariables,
+  DeactivateWorkflowVersionMutation,
+  DeactivateWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
 
 export const useDeactivateWorkflowVersion = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
   const [mutate] = useMutation<
-    ActivateWorkflowVersionMutation,
-    ActivateWorkflowVersionMutationVariables
+    DeactivateWorkflowVersionMutation,
+    DeactivateWorkflowVersionMutationVariables
   >(DEACTIVATE_WORKFLOW_VERSION, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
@@ -25,7 +26,11 @@ export const useDeactivateWorkflowVersion = () => {
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const deactivateWorkflowVersion = async (workflowVersionId: string) => {
+  const deactivateWorkflowVersion = async ({
+    workflowVersionId,
+  }: {
+    workflowVersionId: string;
+  }) => {
     await mutate({
       variables: {
         workflowVersionId,
@@ -38,6 +43,30 @@ export const useDeactivateWorkflowVersion = () => {
           fieldModifiers: {
             status: () => 'DEACTIVATED',
           },
+        });
+
+        const cacheSnapshot = apolloClient.cache.extract();
+        const workflowVersion: WorkflowVersion | undefined = Object.values(
+          cacheSnapshot,
+        ).find(
+          (item) =>
+            item.__typename === 'WorkflowVersion' &&
+            item.id === workflowVersionId,
+        );
+
+        if (!isDefined(workflowVersion)) {
+          return;
+        }
+
+        triggerUpdateRecordOptimisticEffect({
+          cache: apolloClient.cache,
+          objectMetadataItem: objectMetadataItemWorkflowVersion,
+          currentRecord: workflowVersion,
+          updatedRecord: {
+            ...workflowVersion,
+            status: 'DEACTIVATED',
+          },
+          objectMetadataItems: [objectMetadataItemWorkflowVersion],
         });
       },
     });

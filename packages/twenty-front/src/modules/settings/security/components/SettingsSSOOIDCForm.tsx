@@ -7,6 +7,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Button, H2Title, IconCopy, Section } from 'twenty-ui';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -36,7 +37,7 @@ export const SettingsSSOOIDCForm = () => {
   const theme = useTheme();
 
   const authorizedUrl = window.location.origin;
-  const redirectionUrl = `${window.location.origin}/auth/oidc/callback`;
+  const redirectionUrl = `${REACT_APP_SERVER_BASE_URL}/auth/oidc/callback`;
 
   return (
     <>

@@ -6,8 +6,10 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
+import { Repository } from 'typeorm';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microsoft-oauth.guard';
@@ -15,9 +17,9 @@ import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guar
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -25,8 +27,10 @@ export class MicrosoftAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
+    private readonly guardRedirectService: GuardRedirectService,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private readonly domainManagerService: DomainManagerService,
-    private readonly environmentService: EnvironmentService,
   ) {}
 
   @Get()
@@ -42,49 +46,86 @@ export class MicrosoftAuthController {
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
   ) {
-    try {
-      const {
-        firstName,
-        lastName,
-        email,
-        picture,
-        workspaceInviteHash,
-        workspacePersonalInviteToken,
-        targetWorkspaceSubdomain,
-      } = req.user;
+    const {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspaceId,
+      billingCheckoutSessionState,
+      locale,
+    } = req.user;
 
-      const user = await this.authService.signInUp({
-        email,
-        firstName,
-        lastName,
-        picture,
+    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
+      workspaceId,
+      workspaceInviteHash,
+      email,
+      authProvider: 'microsoft',
+    });
+
+    try {
+      const invitation =
+        currentWorkspace && email
+          ? await this.authService.findInvitationForSignInUp({
+              currentWorkspace,
+              email,
+            })
+          : undefined;
+
+      const existingUser = await this.userRepository.findOne({
+        where: { email },
+      });
+
+      const { userData } = this.authService.formatUserDataPayload(
+        {
+          firstName,
+          lastName,
+          email,
+          picture,
+          locale,
+        },
+        existingUser,
+      );
+
+      await this.authService.checkAccessForSignIn({
+        userData,
+        invitation,
         workspaceInviteHash,
-        workspacePersonalInviteToken,
-        targetWorkspaceSubdomain,
-        fromSSO: true,
-        authProvider: 'microsoft',
+        workspace: currentWorkspace,
+      });
+
+      const { user, workspace } = await this.authService.signInUp({
+        invitation,
+        workspace: currentWorkspace,
+        userData,
+        authParams: {
+          provider: 'microsoft',
+        },
+        billingCheckoutSessionState,
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
+        workspace.id,
       );
 
       return res.redirect(
-        await this.authService.computeRedirectURI(
-          loginToken.token,
-          user.defaultWorkspace.subdomain,
-        ),
+        this.authService.computeRedirectURI({
+          loginToken: loginToken.token,
+          workspace,
+          billingCheckoutSessionState,
+        }),
       );
     } catch (err) {
-      if (err instanceof AuthException) {
-        return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl({
-            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-            errorMessage: err.message,
-          }),
-        );
-      }
-      throw err;
+      return res.redirect(
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
+          err,
+          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+            currentWorkspace,
+          ),
+        ),
+      );
     }
   }
 }

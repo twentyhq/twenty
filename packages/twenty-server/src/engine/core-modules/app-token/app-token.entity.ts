@@ -1,21 +1,22 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Relation,
-} from 'typeorm';
 import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from 'typeorm';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 export enum AppTokenType {
   RefreshToken = 'REFRESH_TOKEN',
   CodeChallenge = 'CODE_CHALLENGE',
@@ -23,10 +24,11 @@ export enum AppTokenType {
   PasswordResetToken = 'PASSWORD_RESET_TOKEN',
   InvitationToken = 'INVITATION_TOKEN',
   OIDCCodeVerifier = 'OIDC_CODE_VERIFIER',
+  EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
-@ObjectType('AppToken')
+@ObjectType()
 @BeforeCreateOne(BeforeCreateOneAppToken)
 export class AppToken {
   @IDField(() => UUIDScalarType)

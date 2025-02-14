@@ -1,9 +1,9 @@
-import { FieldTextAreaOverlay } from '@/ui/field/input/components/FieldTextAreaOverlay';
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
+import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 import {
   FieldInputClickOutsideEvent,
@@ -57,7 +57,7 @@ export const TextFieldInput = ({
   };
 
   return (
-    <FieldTextAreaOverlay>
+    <FieldInputContainer>
       <TextAreaInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
@@ -70,6 +70,6 @@ export const TextFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
-    </FieldTextAreaOverlay>
+    </FieldInputContainer>
   );
 };

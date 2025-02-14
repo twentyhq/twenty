@@ -12,7 +12,7 @@ import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/i
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { computeEmptyDraftValue } from '@/object-record/record-field/utils/computeEmptyDraftValue';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -70,6 +70,9 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
         ...fieldValue,
         primaryPhoneCountryCode: stripSimpleQuotesFromString(
           fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+        ),
+        primaryPhoneCallingCode: stripSimpleQuotesFromString(
+          fieldDefinition?.defaultValue?.primaryPhoneCallingCode,
         ),
       } as unknown as FieldInputDraftValue<FieldValue>;
     }

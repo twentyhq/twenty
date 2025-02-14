@@ -1,4 +1,4 @@
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 export const getRestoreManyRecordsMutationResponseField = (
   objectNamePlural: string,

@@ -7,12 +7,12 @@ import {
   useIcons,
 } from 'twenty-ui';
 
+import { recordIndexEntityCountComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexEntityCountComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
@@ -22,8 +22,7 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
@@ -51,16 +50,13 @@ const StyledViewName = styled.span`
 
 export const ViewPickerDropdown = () => {
   const theme = useTheme();
-  const isFavoriteFolderEnabled = useIsFeatureEnabled(
-    'IS_FAVORITE_FOLDER_ENABLED',
-  );
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
-  const entityCountInCurrentView = useRecoilComponentValueV2(
-    entityCountInCurrentViewComponentState,
+  const entityCount = useRecoilComponentValueV2(
+    recordIndexEntityCountComponentSelector,
   );
 
   const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(
@@ -98,9 +94,7 @@ export const ViewPickerDropdown = () => {
             {currentViewWithCombinedFiltersAndSorts?.name ?? 'All'}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            {isDefined(entityCountInCurrentView) && (
-              <>· {entityCountInCurrentView} </>
-            )}
+            {isDefined(entityCount) && <>· {entityCount} </>}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
@@ -110,9 +104,7 @@ export const ViewPickerDropdown = () => {
           case 'list':
             return <ViewPickerListContent />;
           case 'favorite-folders-picker':
-            return (
-              isFavoriteFolderEnabled && <ViewPickerFavoriteFoldersDropdown />
-            );
+            return <ViewPickerFavoriteFoldersDropdown />;
           case 'create-empty':
           case 'create-from-current':
             return (

@@ -1,18 +1,17 @@
 import { useMemo } from 'react';
-import { Nullable } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { useRecoilValue } from 'recoil';
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
-import { formatFieldMetadataItemsAsFilterDefinitions } from '../utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldMetadataItemsAsSortDefinitions';
 
 export const useColumnDefinitionsFromFieldMetadata = (
-  objectMetadataItem?: Nullable<ObjectMetadataItem>,
+  objectMetadataItem: ObjectMetadataItem,
 ) => {
   const activeFieldMetadataItems = useMemo(
     () =>
@@ -24,12 +23,11 @@ export const useColumnDefinitionsFromFieldMetadata = (
     [objectMetadataItem],
   );
 
-  const isJsonFilterEnabled = useIsFeatureEnabled('IS_JSON_FILTER_ENABLED');
-
-  const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
-    fields: activeFieldMetadataItems,
-    isJsonFilterEnabled,
-  });
+  const filterableFieldMetadataItems = useRecoilValue(
+    availableFieldMetadataItemsForFilterFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
 
   const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
     fields: activeFieldMetadataItems,
@@ -48,9 +46,11 @@ export const useColumnDefinitionsFromFieldMetadata = (
             )
             .filter(filterAvailableTableColumns)
             .map((column) => {
-              const existsInFilterDefinitions = filterDefinitions.some(
-                (filter) => filter.fieldMetadataId === column.fieldMetadataId,
-              );
+              const existsInFilterDefinitions =
+                filterableFieldMetadataItems.some(
+                  (fieldMetadataItem) =>
+                    fieldMetadataItem.id === column.fieldMetadataId,
+                );
 
               const existsInSortDefinitions = sortDefinitions.some(
                 (sort) => sort.fieldMetadataId === column.fieldMetadataId,
@@ -64,16 +64,15 @@ export const useColumnDefinitionsFromFieldMetadata = (
             })
         : [],
     [
+      filterableFieldMetadataItems,
       activeFieldMetadataItems,
       objectMetadataItem,
-      filterDefinitions,
       sortDefinitions,
     ],
   );
 
   return {
     columnDefinitions,
-    filterDefinitions,
     sortDefinitions,
   };
 };

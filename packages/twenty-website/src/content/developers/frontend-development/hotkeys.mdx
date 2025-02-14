@@ -16,9 +16,9 @@ For example, if you have a page that listens for the Enter key, and a modal that
 
 To handle this problem, we have a custom hook that makes it possible to listen to hotkeys without any conflict.
 
-You place it in a component and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
+You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
 
-## How to listen for hotkeys in practice ?
+## How to listen for hotkeys in practice?
 
 There are two steps involved in setting up hotkey listening :
 1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
@@ -73,7 +73,7 @@ const PageListeningEnter = () => {
 
 ### Listening to hotkeys in a modal-type component
 
-For this example we'll use a modal component that listens for the Escape key to tell it's parent to close it.
+For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
 
 Here the user interaction is changing the scope.
 
@@ -131,7 +131,7 @@ It's important to use this pattern when you're not sure that just using a useEff
 
 Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
-## What is a hotkey scope ?
+## What is a hotkey scope?
 
 A hotkey scope is a string that represents a context in which the hotkeys are active. It is generally encoded as an enum.
 
@@ -171,7 +171,7 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 
 But this Recoil state should never be handled manually ! We'll see how to use it in the next section.
 
-## How is it working internally ? 
+## How is it working internally?
 
 We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
 

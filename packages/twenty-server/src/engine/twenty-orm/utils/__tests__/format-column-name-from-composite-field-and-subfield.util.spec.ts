@@ -1,18 +1,18 @@
-import { formatColumnNameFromCompositeFieldAndSubfield } from 'src/engine/twenty-orm/utils/format-column-name-from-composite-field-and-subfield.util';
+import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
-describe('formatColumnNameFromCompositeFieldAndSubfield', () => {
+describe('formatColumnNamesFromCompositeFieldAndSubfields', () => {
   it('should return fieldName when subFieldName is not defined', () => {
-    const result = formatColumnNameFromCompositeFieldAndSubfield('firstName');
+    const result = formatColumnNamesFromCompositeFieldAndSubfields('firstName');
 
-    expect(result).toBe('firstName');
+    expect(result).toEqual(['firstName']);
   });
 
   it('should return concatenated fieldName and capitalized subFieldName when subFieldName is defined', () => {
-    const result = formatColumnNameFromCompositeFieldAndSubfield(
-      'user',
+    const result = formatColumnNamesFromCompositeFieldAndSubfields('user', [
       'firstName',
-    );
+      'lastName',
+    ]);
 
-    expect(result).toBe('userFirstName');
+    expect(result).toEqual(['userFirstName', 'userLastName']);
   });
 });

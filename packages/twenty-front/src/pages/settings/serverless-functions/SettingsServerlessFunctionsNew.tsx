@@ -1,22 +1,22 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useNavigate } from 'react-router-dom';
 
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
 import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
 import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
-import { isDefined } from '~/utils/isDefined';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsServerlessFunctionsNew = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const [formValues, setFormValues] = useState<ServerlessFunctionNewFormValues>(
     {
       name: '',
@@ -34,11 +34,9 @@ export const SettingsServerlessFunctionsNew = () => {
     if (!isDefined(newServerlessFunction?.data)) {
       return;
     }
-    navigate(
-      getSettingsPagePath(SettingsPath.ServerlessFunctions, {
-        id: newServerlessFunction.data.createOneServerlessFunction.id,
-      }),
-    );
+    navigate(SettingsPath.ServerlessFunctions, {
+      id: newServerlessFunction.data.createOneServerlessFunction.id,
+    });
   };
 
   const onChange = (key: string) => {
@@ -69,7 +67,7 @@ export const SettingsServerlessFunctionsNew = () => {
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+      navigate(SettingsPath.ServerlessFunctions);
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
   );
@@ -80,11 +78,11 @@ export const SettingsServerlessFunctionsNew = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Functions',
-          href: getSettingsPagePath(SettingsPath.ServerlessFunctions),
+          href: getSettingsPath(SettingsPath.ServerlessFunctions),
         },
         { children: 'New' },
       ]}
@@ -92,7 +90,7 @@ export const SettingsServerlessFunctionsNew = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigate('/settings/functions');
+            navigate(SettingsPath.ServerlessFunctions);
           }}
           onSave={handleSave}
         />

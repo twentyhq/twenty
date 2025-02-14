@@ -5,6 +5,7 @@ import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/Obje
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';
 
 export const ObjectMetadataItemsProvider = ({
@@ -20,7 +21,7 @@ export const ObjectMetadataItemsProvider = ({
       {shouldDisplayChildren ? (
         <PreComputedChipGeneratorsProvider>
           <RecordPickerComponentInstanceContext.Provider
-            value={{ instanceId: 'record-picker' }}
+            value={{ instanceId: RelationPickerHotkeyScope.RelationPicker }}
           >
             {children}
           </RecordPickerComponentInstanceContext.Provider>

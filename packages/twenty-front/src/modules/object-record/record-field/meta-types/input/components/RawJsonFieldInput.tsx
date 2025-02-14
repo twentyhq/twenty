@@ -1,4 +1,3 @@
-import { FieldTextAreaOverlay } from '@/ui/field/input/components/FieldTextAreaOverlay';
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
 import { useJsonField } from '../../hooks/useJsonField';
@@ -59,20 +58,18 @@ export const RawJsonFieldInput = ({
   };
 
   return (
-    <FieldTextAreaOverlay>
-      <TextAreaInput
-        placeholder={fieldDefinition.metadata.placeHolder}
-        autoFocus
-        value={draftValue ?? ''}
-        onClickOutside={handleClickOutside}
-        onEnter={handleEnter}
-        onEscape={handleEscape}
-        onShiftTab={handleShiftTab}
-        onTab={handleTab}
-        hotkeyScope={hotkeyScope}
-        onChange={handleChange}
-        maxRows={25}
-      />
-    </FieldTextAreaOverlay>
+    <TextAreaInput
+      placeholder={fieldDefinition.metadata.placeHolder}
+      autoFocus
+      value={draftValue ?? ''}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onShiftTab={handleShiftTab}
+      onTab={handleTab}
+      hotkeyScope={hotkeyScope}
+      onChange={handleChange}
+      maxRows={25}
+    />
   );
 };

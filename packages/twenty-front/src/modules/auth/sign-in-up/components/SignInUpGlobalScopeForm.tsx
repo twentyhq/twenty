@@ -21,11 +21,13 @@ import {
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -48,6 +50,10 @@ export const SignInUpGlobalScopeForm = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
+
+  const isRequestingCaptchaToken = useRecoilValue(
+    isRequestingCaptchaTokenState,
+  );
 
   const { enqueueSnackBar } = useSnackBar();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -83,13 +89,12 @@ export const SignInUpGlobalScopeForm = () => {
       },
       onCompleted: (data) => {
         requestFreshCaptchaToken();
-        if (data.checkUserExists.__typename === 'UserExists') {
-          if (
-            isDefined(data?.checkUserExists.availableWorkspaces) &&
-            data.checkUserExists.availableWorkspaces.length >= 1
-          ) {
+        const response = data.checkUserExists;
+        if (response.__typename === 'UserExists') {
+          if (response.availableWorkspaces.length >= 1) {
+            const workspace = response.availableWorkspaces[0];
             return redirectToWorkspaceDomain(
-              data?.checkUserExists.availableWorkspaces[0].subdomain,
+              getWorkspaceUrl(workspace.workspaceUrls),
               pathname,
               {
                 email: form.getValues('email'),
@@ -97,7 +102,7 @@ export const SignInUpGlobalScopeForm = () => {
             );
           }
         }
-        if (data.checkUserExists.__typename === 'UserNotExists') {
+        if (response.__typename === 'UserNotExists') {
           setSignInUpMode(SignInUpMode.SignUp);
           setSignInUpStep(SignInUpStep.Password);
         }
@@ -105,30 +110,42 @@ export const SignInUpGlobalScopeForm = () => {
     });
   };
 
+  const onEmailChange = (email: string) => {
+    if (email !== form.getValues('email')) {
+      setSignInUpStep(SignInUpStep.Email);
+    }
+  };
+
   return (
     <>
       <StyledContentContainer>
         {authProviders.google && <SignInUpWithGoogle />}
-
         {authProviders.microsoft && <SignInUpWithMicrosoft />}
-        <HorizontalSeparator visible />
+        {(authProviders.google || authProviders.microsoft) && (
+          <HorizontalSeparator />
+        )}
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
-            <SignInUpEmailField showErrors={showErrors} />
+            <SignInUpEmailField
+              showErrors={showErrors}
+              onInputChange={onEmailChange}
+            />
             {signInUpStep === SignInUpStep.Password && (
               <SignInUpPasswordField
                 showErrors={showErrors}
                 signInUpMode={signInUpMode}
               />
             )}
-
             <MainButton
+              disabled={isRequestingCaptchaToken}
               title={
                 signInUpStep === SignInUpStep.Password ? 'Sign Up' : 'Continue'
               }
               type="submit"
-              variant="secondary"
+              variant={
+                signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+              }
               Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
               fullWidth
             />

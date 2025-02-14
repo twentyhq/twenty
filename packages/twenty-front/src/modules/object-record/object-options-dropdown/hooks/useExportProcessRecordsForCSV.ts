@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 
@@ -19,7 +19,7 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
           }
 
           switch (field.type) {
-            case FieldMetadataType.Currency:
+            case FieldMetadataType.CURRENCY:
               return {
                 ...processedRecord,
                 [field.name]: {
@@ -29,7 +29,7 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
                   currencyCode: record[field.name].currencyCode,
                 } satisfies FieldCurrencyValue,
               };
-            case FieldMetadataType.RawJson:
+            case FieldMetadataType.RAW_JSON:
               return {
                 ...processedRecord,
                 [field.name]: JSON.stringify(record[field.name]),

@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
 import { useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -16,16 +16,17 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isDefined } from '~/utils/isDefined';
+import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
+import { isDefined } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const filterQueryParamsSchema = z.object({
-  view: z.string().optional(),
+  viewId: z.string().optional(),
   filter: z
     .record(
       z.record(
         z.nativeEnum(ViewFilterOperand),
-        z.string().or(z.array(z.string())),
+        z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
       ),
     )
     .optional(),
@@ -58,7 +59,7 @@ export const useViewFromQueryParams = () => {
   const viewIdQueryParam = useMemo(
     () =>
       queryParamsValidation.success
-        ? queryParamsValidation.data.view
+        ? queryParamsValidation.data.viewId
         : undefined,
     [queryParamsValidation],
   );
@@ -111,12 +112,18 @@ export const useViewFromQueryParams = () => {
                         .getValue()
                     : null;
 
+                const satisfiesRelationFilterSchema =
+                  relationFilterValueSchemaObject.safeParse(
+                    filterValueFromURL,
+                  )?.success;
+
                 const relationRecordNames = [];
 
                 if (
                   isNonEmptyString(relationObjectMetadataNamePlural) &&
                   isDefined(relationObjectMetadataItem) &&
-                  Array.isArray(filterValueFromURL)
+                  (Array.isArray(filterValueFromURL) ||
+                    satisfiesRelationFilterSchema)
                 ) {
                   const queryResult = await apolloClient.query<
                     Record<string, { edges: { node: ObjectRecord }[] }>
@@ -126,7 +133,17 @@ export const useViewFromQueryParams = () => {
                       objectMetadataItems,
                     }),
                     variables: {
-                      filter: { id: { in: filterValueFromURL } },
+                      filter: {
+                        id: {
+                          in: satisfiesRelationFilterSchema
+                            ? (
+                                filterValueFromURL as {
+                                  selectedRecordIds: string[];
+                                }
+                              )?.selectedRecordIds
+                            : filterValueFromURL,
+                        },
+                      },
                     },
                   });
 
@@ -143,9 +160,11 @@ export const useViewFromQueryParams = () => {
                   relationRecordNames.push(...relationRecordNamesFromQuery);
                 }
 
-                const filterValueAsString = Array.isArray(filterValueFromURL)
-                  ? JSON.stringify(filterValueFromURL)
-                  : filterValueFromURL;
+                const filterValueAsString =
+                  Array.isArray(filterValueFromURL) ||
+                  isObject(filterValueFromURL)
+                    ? JSON.stringify(filterValueFromURL)
+                    : filterValueFromURL;
 
                 return {
                   __typename: 'ViewFilter',

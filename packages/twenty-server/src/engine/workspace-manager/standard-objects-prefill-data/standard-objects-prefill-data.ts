@@ -5,13 +5,12 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { companyPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/person';
-import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
+import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
 
 export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
-  isWorkflowEnabled: boolean,
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
     if (!object.standardId) {
@@ -37,11 +36,10 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource.transaction(async (entityManager: EntityManager) => {
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);
-    const viewDefinitionsWithId = await viewPrefillData(
+    const viewDefinitionsWithId = await seedViewWithDemoData(
       entityManager,
       schemaName,
       objectMetadataMap,
-      isWorkflowEnabled,
     );
 
     await seedWorkspaceFavorites(

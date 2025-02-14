@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 export const generateAggregateQuery = ({
   objectMetadataItem,

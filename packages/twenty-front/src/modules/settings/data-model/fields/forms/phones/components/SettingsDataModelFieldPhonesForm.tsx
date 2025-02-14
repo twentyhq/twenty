@@ -3,9 +3,11 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Select } from '@/ui/input/components/Select';
-import { IconMap } from 'twenty-ui';
+import { CountryCode } from 'libphonenumber-js';
+import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -27,22 +29,29 @@ export type SettingsDataModelFieldTextFormValues = z.infer<
   typeof settingsDataModelFieldPhonesFormSchema
 >;
 
+export type CountryCodeOrEmpty = CountryCode | '';
+
 export const SettingsDataModelFieldPhonesForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldPhonesFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
 
-  const countries = useCountries()
-    .sort((a, b) => a.countryName.localeCompare(b.countryName))
-    .map((country) => ({
-      label: `${country.countryName} (+${country.callingCode})`,
-      value: `+${country.callingCode}`,
-    }));
-  countries.unshift({ label: 'No country', value: '' });
+  const countries = [
+    { label: 'No country', value: '', Icon: IconCircleOff },
+    ...useCountries()
+      .sort((a, b) => a.countryName.localeCompare(b.countryName))
+      .map((country) => ({
+        label: `${country.countryName} (+${country.callingCode})`,
+        value: country.countryCode as CountryCodeOrEmpty,
+        Icon: (props: IconComponentProps) =>
+          country.Flag({ width: props.size, height: props.size }),
+      })),
+  ];
   const defaultDefaultValue = {
     primaryPhoneNumber: "''",
     primaryPhoneCountryCode: "''",
+    primaryPhoneCallingCode: "''",
     additionalPhones: null,
   };
   const fieldMetadataItemDefaultValue = fieldMetadataItem?.defaultValue;
@@ -73,11 +82,15 @@ export const SettingsDataModelFieldPhonesForm = ({
                   ...value,
                   primaryPhoneCountryCode:
                     applySimpleQuotesToString(newPhoneCountryCode),
+                  primaryPhoneCallingCode: applySimpleQuotesToString(
+                    countryCodeToCallingCode(newPhoneCountryCode),
+                  ),
                 })
               }
               disabled={disabled}
               options={countries}
               selectSizeVariant="small"
+              withSearchInput={true}
             />
           </SettingsOptionCardContentSelect>
         );

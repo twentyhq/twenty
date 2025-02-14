@@ -3,15 +3,29 @@ import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record
 import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
-import { Icon123, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
+import {
+  Icon123,
+  IconCheck,
+  IconChevronLeft,
+  MenuItem,
+  useIcons,
+} from 'twenty-ui';
 
 export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
-  const { closeDropdown, resetContent, objectMetadataItem } = useDropdown({
+  const {
+    closeDropdown,
+    objectMetadataItem,
+    onContentChange,
+    resetContent,
+    previousContentId,
+  } = useDropdown({
     context: RecordBoardColumnHeaderAggregateDropdownContext,
   });
 
@@ -27,11 +41,21 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
     availableFieldIdsForAggregateOperationComponentState,
   );
 
-  if (!isDefined(aggregateOperation)) return <></>;
+  const recordIndexKanbanAggregateOperation = useRecoilValue(
+    recordIndexKanbanAggregateOperationState,
+  );
 
+  if (!isDefined(aggregateOperation)) return <></>;
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
+      <DropdownMenuHeader
+        StartIcon={IconChevronLeft}
+        onClick={() =>
+          previousContentId
+            ? onContentChange(previousContentId)
+            : resetContent()
+        }
+      >
         {getAggregateOperationLabel(aggregateOperation)}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
@@ -53,6 +77,14 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
               }}
               LeftIcon={getIcon(fieldMetadata.icon) ?? Icon123}
               text={fieldMetadata.label}
+              RightIcon={
+                recordIndexKanbanAggregateOperation?.fieldMetadataId ===
+                  fieldId &&
+                recordIndexKanbanAggregateOperation?.operation ===
+                  aggregateOperation
+                  ? IconCheck
+                  : undefined
+              }
             />
           );
         })}

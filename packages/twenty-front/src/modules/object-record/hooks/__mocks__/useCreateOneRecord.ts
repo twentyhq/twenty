@@ -43,6 +43,7 @@ export const responseData = {
   },
   phones: {
     primaryPhoneCountryCode: '',
+    primaryPhoneCallingCode: '',
     primaryPhoneNumber: '',
   },
   linkedinLink: {

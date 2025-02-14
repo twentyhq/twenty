@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -23,9 +25,9 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.message,
   namePlural: 'messages',
-  labelSingular: 'Message',
-  labelPlural: 'Messages',
-  description: 'Message',
+  labelSingular: msg`Message`,
+  labelPlural: msg`Messages`,
+  description: msg`A message sent or received through a messaging channel (email, chat, etc.)`,
   icon: STANDARD_OBJECT_ICONS.message,
   labelIdentifierStandardId: MESSAGE_STANDARD_FIELD_IDS.subject,
 })
@@ -35,8 +37,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
     type: FieldMetadataType.TEXT,
-    label: 'Header message Id',
-    description: 'Message id from the message header',
+    label: msg`Header message Id`,
+    description: msg`Message id from the message header`,
     icon: 'IconHash',
   })
   headerMessageId: string;
@@ -44,8 +46,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
     type: FieldMetadataType.TEXT,
-    label: 'Subject',
-    description: 'Subject',
+    label: msg`Subject`,
+    description: msg`Subject`,
     icon: 'IconMessage',
   })
   subject: string;
@@ -53,8 +55,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.text,
     type: FieldMetadataType.TEXT,
-    label: 'Text',
-    description: 'Text',
+    label: msg`Text`,
+    description: msg`Text`,
     icon: 'IconMessage',
   })
   text: string;
@@ -62,8 +64,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Received At',
-    description: 'The date the message was received',
+    label: msg`Received At`,
+    description: msg`The date the message was received`,
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()
@@ -72,8 +74,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Thread Id',
-    description: 'Message Thread Id',
+    label: msg`Message Thread Id`,
+    description: msg`Message Thread Id`,
     icon: 'IconHash',
     inverseSideTarget: () => MessageThreadWorkspaceEntity,
     inverseSideFieldKey: 'messages',
@@ -88,8 +90,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Participants',
-    description: 'Message Participants',
+    label: msg`Message Participants`,
+    description: msg`Message Participants`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => MessageParticipantWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -100,8 +102,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Channel Association',
-    description: 'Messages from the channel.',
+    label: msg`Message Channel Association`,
+    description: msg`Messages from the channel.`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

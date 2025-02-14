@@ -9,8 +9,6 @@ import { Repository } from 'typeorm';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
   SSOException,
   SSOExceptionCode,
@@ -25,45 +23,40 @@ import {
   OIDCResponseType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 @Injectable()
 export class SSOService {
   private readonly featureLookUpKey = BillingEntitlementKey.SSO;
   constructor(
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
     private readonly environmentService: EnvironmentService,
     private readonly billingService: BillingService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   private async isSSOEnabled(workspaceId: string) {
-    const isSSOEnabledFeatureFlag = await this.featureFlagRepository.findOneBy({
+    const isSSOBillingEnabled = await this.billingService.hasEntitlement(
       workspaceId,
-      key: FeatureFlagKey.IsSSOEnabled,
-      value: true,
-    });
-
-    if (!isSSOEnabledFeatureFlag?.value) {
-      throw new SSOException(
-        `${FeatureFlagKey.IsSSOEnabled} feature flag is disabled`,
-        SSOExceptionCode.SSO_DISABLE,
-      );
-    }
-    const isSSOBillingEnabled =
-      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
-        workspaceId,
-        this.featureLookUpKey,
-      );
+      this.featureLookUpKey,
+    );
 
     if (!isSSOBillingEnabled) {
       throw new SSOException(
-        `${FeatureFlagKey.IsSSOEnabled} feature is enabled but no entitlement for this workspace`,
+        `No entitlement found for this workspace`,
         SSOExceptionCode.SSO_DISABLE,
+      );
+    }
+  }
+
+  private async getIssuerForOIDC(issuerUrl: string) {
+    try {
+      return await Issuer.discover(issuerUrl);
+    } catch (err) {
+      throw new SSOException(
+        'Invalid issuer',
+        SSOExceptionCode.INVALID_ISSUER_URL,
       );
     }
   }
@@ -78,21 +71,7 @@ export class SSOService {
     try {
       await this.isSSOEnabled(workspaceId);
 
-      if (!data.issuer) {
-        throw new SSOException(
-          'Invalid issuer URL',
-          SSOExceptionCode.INVALID_ISSUER_URL,
-        );
-      }
-
-      const issuer = await Issuer.discover(data.issuer);
-
-      if (!issuer.metadata.issuer) {
-        throw new SSOException(
-          'Invalid issuer URL from discovery',
-          SSOExceptionCode.INVALID_ISSUER_URL,
-        );
-      }
+      const issuer = await this.getIssuerForOIDC(data.issuer);
 
       const identityProvider =
         await this.workspaceSSOIdentityProviderRepository.save({
@@ -115,6 +94,8 @@ export class SSOService {
       if (err instanceof SSOException) {
         return err;
       }
+
+      this.exceptionHandlerService.captureExceptions([err]);
 
       return new SSOException(
         'Unknown SSO configuration error',
@@ -148,31 +129,40 @@ export class SSOService {
     };
   }
 
-  async findSSOIdentityProviderById(identityProviderId?: string) {
-    // if identityProviderId is not provide, typeorm return a random idp instead of undefined
-    if (!identityProviderId) return undefined;
-
+  async findSSOIdentityProviderById(identityProviderId: string) {
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: { id: identityProviderId },
-    })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | undefined;
+      relations: ['workspace'],
+    })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | null;
   }
 
   buildCallbackUrl(
-    identityProvider: Pick<WorkspaceSSOIdentityProvider, 'type'>,
+    identityProvider: Pick<WorkspaceSSOIdentityProvider, 'type' | 'id'>,
   ) {
     const callbackURL = new URL(this.environmentService.get('SERVER_URL'));
 
     callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback`;
+
+    if (identityProvider.type === IdentityProviderType.SAML) {
+      callbackURL.pathname += `/${identityProvider.id}`;
+    }
 
     return callbackURL.toString();
   }
 
   buildIssuerURL(
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'id' | 'type'>,
+    searchParams?: Record<string, string | boolean>,
   ) {
     const authorizationUrl = new URL(this.environmentService.get('SERVER_URL'));
 
     authorizationUrl.pathname = `/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
+
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        authorizationUrl.searchParams.append(key, value.toString());
+      });
+    }
 
     return authorizationUrl.toString();
   }
@@ -208,7 +198,10 @@ export class SSOService {
     });
   }
 
-  async getAuthorizationUrl(identityProviderId: string) {
+  async getAuthorizationUrlForSSO(
+    identityProviderId: string,
+    searchParams: Record<string, string | boolean>,
+  ) {
     const identityProvider =
       (await this.workspaceSSOIdentityProviderRepository.findOne({
         where: {
@@ -225,7 +218,7 @@ export class SSOService {
 
     return {
       id: identityProvider.id,
-      authorizationURL: this.buildIssuerURL(identityProvider),
+      authorizationURL: this.buildIssuerURL(identityProvider, searchParams),
       type: identityProvider.type,
     };
   }

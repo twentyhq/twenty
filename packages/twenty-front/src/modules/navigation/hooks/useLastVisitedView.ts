@@ -1,27 +1,17 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { lastVisitedObjectMetadataItemIdStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemIdStateSelector';
 import { lastVisitedViewPerObjectMetadataItemStateSelector } from '@/navigation/states/selectors/lastVisitedViewPerObjectMetadataItemStateSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useLastVisitedView = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const scopeId = currentWorkspace?.id ?? '';
 
-  const lastVisitedObjectMetadataItemIdState = extractComponentState(
-    lastVisitedObjectMetadataItemIdStateSelector,
-    scopeId,
-  );
-
   const lastVisitedViewPerObjectMetadataItemState = extractComponentState(
     lastVisitedViewPerObjectMetadataItemStateSelector,
     scopeId,
-  );
-
-  const lastVisitedObjectMetadataItemId = useRecoilValue(
-    lastVisitedObjectMetadataItemIdState,
   );
 
   const [
@@ -29,12 +19,13 @@ export const useLastVisitedView = () => {
     setLastVisitedViewPerObjectMetadataItem,
   ] = useRecoilState(lastVisitedViewPerObjectMetadataItemState);
 
-  const { findActiveObjectMetadataItemBySlug } =
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
   const setFallbackForLastVisitedView = (objectMetadataItemId: string) => {
     /* ...{} allows us to pass value as undefined to remove that particular key
      even though param type is of type Record<string,string> */
+
     setLastVisitedViewPerObjectMetadataItem({
       ...{},
       [objectMetadataItemId]: undefined,
@@ -48,22 +39,12 @@ export const useLastVisitedView = () => {
     objectNamePlural: string;
     viewId: string;
   }) => {
-    const fallbackObjectMetadataItem =
-      findActiveObjectMetadataItemBySlug(objectNamePlural);
+    const objectMetadataItem =
+      findActiveObjectMetadataItemByNamePlural(objectNamePlural);
 
-    if (isDefined(fallbackObjectMetadataItem)) {
-      /* when both are equal meaning there was change in view else 
-      there was a object page change from nav
-    */
-      const fallbackViewId =
-        lastVisitedObjectMetadataItemId === fallbackObjectMetadataItem.id
-          ? viewId
-          : (lastVisitedViewPerObjectMetadataItem?.[
-              fallbackObjectMetadataItem.id
-            ] ?? viewId);
-
+    if (isDefined(objectMetadataItem)) {
       setLastVisitedViewPerObjectMetadataItem({
-        [fallbackObjectMetadataItem.id]: fallbackViewId,
+        [objectMetadataItem.id]: viewId,
       });
     }
   };
@@ -72,7 +53,7 @@ export const useLastVisitedView = () => {
     objectNamePlural: string,
   ) => {
     const objectMetadataItemId: string | undefined =
-      findActiveObjectMetadataItemBySlug(objectNamePlural)?.id;
+      findActiveObjectMetadataItemByNamePlural(objectNamePlural)?.id;
     return objectMetadataItemId
       ? lastVisitedViewPerObjectMetadataItem?.[objectMetadataItemId]
       : undefined;

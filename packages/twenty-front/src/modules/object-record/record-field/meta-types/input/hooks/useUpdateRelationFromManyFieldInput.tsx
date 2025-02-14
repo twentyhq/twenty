@@ -17,7 +17,7 @@ export const useUpdateRelationFromManyFieldInput = ({
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.Relation,
+    FieldMetadataType.RELATION,
     isFieldRelation,
     fieldDefinition,
   );

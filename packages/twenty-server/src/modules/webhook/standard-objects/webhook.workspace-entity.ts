@@ -1,4 +1,6 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -13,9 +15,9 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.webhook,
   namePlural: 'webhooks',
-  labelSingular: 'Webhook',
-  labelPlural: 'Webhooks',
-  description: 'A webhook',
+  labelSingular: msg`Webhook`,
+  labelPlural: msg`Webhooks`,
+  description: msg`A webhook`,
   icon: STANDARD_OBJECT_ICONS.webhook,
   labelIdentifierStandardId: WEBHOOK_STANDARD_FIELD_IDS.targetUrl,
 })
@@ -25,8 +27,8 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.targetUrl,
     type: FieldMetadataType.TEXT,
-    label: 'Target Url',
-    description: 'Webhook target url',
+    label: msg`Target Url`,
+    description: msg`Webhook target url`,
     icon: 'IconLink',
   })
   targetUrl: string;
@@ -34,8 +36,8 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.operation,
     type: FieldMetadataType.TEXT,
-    label: 'Operation',
-    description: 'Webhook operation',
+    label: msg`Operation`,
+    description: msg`Webhook operation`,
     icon: 'IconCheckbox',
   })
   @WorkspaceIsDeprecated()
@@ -44,8 +46,8 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.operations,
     type: FieldMetadataType.ARRAY,
-    label: 'Operations',
-    description: 'Webhook operations',
+    label: msg`Operations`,
+    description: msg`Webhook operations`,
     icon: 'IconCheckbox',
     defaultValue: ['*.*'],
   })
@@ -54,10 +56,19 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.description,
     type: FieldMetadataType.TEXT,
-    label: 'Description',
+    label: msg`Description`,
     description: undefined,
     icon: 'IconInfo',
   })
   @WorkspaceIsNullable()
   description: string;
+
+  @WorkspaceField({
+    standardId: WEBHOOK_STANDARD_FIELD_IDS.secret,
+    type: FieldMetadataType.TEXT,
+    label: msg`Secret`,
+    description: msg`Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests.`,
+    icon: 'IconLock',
+  })
+  secret: string;
 }

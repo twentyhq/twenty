@@ -1,7 +1,7 @@
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -10,10 +10,10 @@ import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
-import { isDefined } from '~/utils/isDefined';
 
 import { AppPath } from '@/types/AppPath';
 import { ApolloFactory, Options } from '../services/apollo.factory';
@@ -24,11 +24,12 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
-  const isMatchingLocation = useIsMatchingLocation();
+  const { isMatchingLocation } = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
@@ -61,6 +62,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       connectToDevTools: isDebugMode,
       // We don't want to re-create the client on token change or it will cause infinite loop
       initialTokenPair: tokenPair,
+      currentWorkspaceMember: currentWorkspaceMember,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
@@ -69,7 +71,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
         setCurrentWorkspace(null);
-        setWorkspaces(null);
+        setWorkspaces([]);
         if (
           !isMatchingLocation(AppPath.Verify) &&
           !isMatchingLocation(AppPath.SignInUp) &&
@@ -104,6 +106,12 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       apolloRef.current.updateTokenPair(tokenPair);
     }
   }, [tokenPair]);
+
+  useUpdateEffect(() => {
+    if (isDefined(apolloRef.current)) {
+      apolloRef.current.updateWorkspaceMember(currentWorkspaceMember);
+    }
+  }, [currentWorkspaceMember]);
 
   return apolloClient;
 };

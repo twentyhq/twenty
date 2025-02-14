@@ -6,12 +6,12 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
 import {
   DateTimeFieldInput,
   DateTimeFieldInputProps,
 } from '../DateTimeFieldInput';
-
 const formattedDate = new Date(2022, 0, 1, 2, 0, 0);
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
@@ -72,7 +72,7 @@ const DateFieldInputWithContext = ({
           fieldMetadataId: 'date',
           defaultValue: null,
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
           iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',
@@ -81,6 +81,7 @@ const DateFieldInputWithContext = ({
         }}
         recordId={recordId}
       >
+        <StorybookFieldInputDropdownFocusIdSetterEffect />
         <DateFieldValueSetterEffect value={value} />
         <DateFieldValueGater
           onEscape={onEscape}
@@ -98,7 +99,7 @@ const enterJestFn = fn();
 const clickOutsideJestFn = fn();
 
 const meta: Meta = {
-  title: 'UI/Data/Field/Input/DateFieldInput',
+  title: 'UI/Data/Field/Input/DateTimeFieldInput',
   component: DateFieldInputWithContext,
   args: {
     value: formattedDate,

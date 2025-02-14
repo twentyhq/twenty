@@ -13,12 +13,7 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "twenty-emails": ["packages/twenty-emails/src/index.ts"],
-      "twenty-ui": ["packages/twenty-ui/src/index.ts"]
-    }
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "tmp"]
 }

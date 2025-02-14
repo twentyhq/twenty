@@ -10,7 +10,7 @@ describe('mapBoardFieldDefinitionsToViewFields', () => {
         fieldMetadataId: 'fieldMetadataId',
         label: 'label',
         iconName: 'iconName',
-        type: FieldMetadataType.Boolean,
+        type: FieldMetadataType.BOOLEAN,
         metadata: {
           objectMetadataNameSingular: 'objectMetadataNameSingular',
           fieldName: 'fieldName',
@@ -23,7 +23,7 @@ describe('mapBoardFieldDefinitionsToViewFields', () => {
         fieldMetadataId: 'fieldMetadataId1',
         label: 'label1',
         iconName: 'iconName1',
-        type: FieldMetadataType.Number,
+        type: FieldMetadataType.NUMBER,
         metadata: {
           objectMetadataNameSingular: 'objectMetadataNameSingular1',
           fieldName: 'fieldName1',

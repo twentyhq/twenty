@@ -59,6 +59,7 @@ export const SettingsDataModelFieldNumberForm = ({
                 value={type}
                 onChange={(value) => onChange({ type: value, decimals: count })}
                 disabled={disabled}
+                needIconCheck={false}
                 options={[
                   {
                     Icon: IconNumber9,

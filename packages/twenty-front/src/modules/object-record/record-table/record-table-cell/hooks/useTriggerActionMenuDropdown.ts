@@ -50,8 +50,8 @@ export const useTriggerActionMenuDropdown = ({
         event.preventDefault();
 
         set(recordIndexActionMenuDropdownPositionState, {
-          x: event.clientX,
-          y: event.clientY,
+          x: event.pageX,
+          y: event.pageY,
         });
 
         const isRowSelected = getSnapshotValue(

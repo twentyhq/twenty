@@ -16,7 +16,7 @@ export const useGetRelationMetadata = () =>
           'type' | 'relationDefinition'
         >;
       }) => {
-        if (fieldMetadataItem.type !== FieldMetadataType.Relation) return null;
+        if (fieldMetadataItem.type !== FieldMetadataType.RELATION) return null;
 
         const relationDefinition = fieldMetadataItem.relationDefinition;
 
