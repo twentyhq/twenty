@@ -217,7 +217,9 @@ export class DomainManagerService {
   private getTwentyWorkspaceUrl(subdomain: string) {
     const url = this.getFrontUrl();
 
-    url.hostname = `${subdomain}.${url.hostname}`;
+    url.hostname = this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+      ? `${subdomain}.${url.hostname}`
+      : url.hostname;
 
     return url.toString();
   }

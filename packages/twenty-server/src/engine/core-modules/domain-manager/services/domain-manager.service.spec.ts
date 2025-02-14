@@ -29,7 +29,7 @@ describe('DomainManagerService', () => {
 
       expect(result).toEqual({
         customUrl: 'https://custom-host.com/',
-        subdomainUrl: 'https://subdomain.example.com/',
+        subdomainUrl: 'https://example.com/',
       });
     });
 
@@ -39,6 +39,7 @@ describe('DomainManagerService', () => {
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
+            IS_MULTIWORKSPACE_ENABLED: true,
           };
 
           return env[key];
@@ -104,7 +105,6 @@ describe('DomainManagerService', () => {
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
-
             IS_MULTIWORKSPACE_ENABLED: true,
             DEFAULT_SUBDOMAIN: 'test',
           };
@@ -125,7 +125,6 @@ describe('DomainManagerService', () => {
         .mockImplementation((key: string) => {
           const env = {
             FRONTEND_URL: 'https://example.com',
-
             IS_MULTIWORKSPACE_ENABLED: true,
             DEFAULT_SUBDOMAIN: 'default',
           };
