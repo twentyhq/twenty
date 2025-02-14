@@ -4,6 +4,7 @@ import { ReactNode, forwardRef } from 'react';
 
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import styled from '@emotion/styled';
 
 type RecordTableDraggableTrProps = {
   className?: string;
@@ -13,6 +14,16 @@ type RecordTableDraggableTrProps = {
   onClick?: (event: React.MouseEvent<HTMLTableRowElement>) => void;
   children: ReactNode;
 };
+
+const StyledAbsoluteInViewContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: -1;
+`;
 
 export const RecordTableDraggableTr = forwardRef<
   HTMLTableCellElement,
@@ -64,7 +75,9 @@ export const RecordTableDraggableTr = forwardRef<
               }}
             >
               {children}
-              <td ref={ref}></td>
+              <StyledAbsoluteInViewContainer
+                ref={ref}
+              ></StyledAbsoluteInViewContainer>
             </RecordTableRowDraggableContextProvider>
           </RecordTableTr>
         )}
