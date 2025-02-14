@@ -1,6 +1,5 @@
 import request from 'supertest';
 import { ADMIN_ACCESS_TOKEN } from 'test/integration/constants/admin-access-token.constants';
-import { MEMBER_ACCESS_TOKEN } from 'test/integration/constants/member-access-token.constants';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 

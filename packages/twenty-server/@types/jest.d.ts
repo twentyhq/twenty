@@ -14,6 +14,7 @@ declare global {
   const APP_PORT: number;
   const ACCESS_TOKEN: string;
   const EXPIRED_ACCESS_TOKEN: string;
+  const MEMBER_ACCESS_TOKEN: string;
 }
 
 export {};
