@@ -141,6 +141,23 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
+    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsPermissionsEnabled,
+      workspace.id,
+    );
+
+    if (permissionsEnabled) {
+      await this.validateSecurityPermissions({
+        payload,
+        userWorkspaceId,
+      });
+
+      await this.validateWorkspacePermissions({
+        payload,
+        userWorkspaceId,
+      });
+    }
+
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
       await this.validateSubdomainUpdate(payload.subdomain);
     }
@@ -184,23 +201,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         'Password auth is not enabled in the system.',
         WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
       );
-    }
-
-    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspace.id,
-    );
-
-    if (permissionsEnabled) {
-      await this.validateSecurityPermissions({
-        payload,
-        userWorkspaceId,
-      });
-
-      await this.validateWorkspacePermissions({
-        payload,
-        userWorkspaceId,
-      });
     }
 
     try {
