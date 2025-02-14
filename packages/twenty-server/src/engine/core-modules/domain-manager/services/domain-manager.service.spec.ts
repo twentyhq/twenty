@@ -30,7 +30,7 @@ describe('DomainManagerService', () => {
 
       expect(result).toEqual({
         customUrl: 'https://custom-host.com/',
-        subdomainUrl: 'https://subdomain.example.com/',
+        subdomainUrl: 'https://example.com/',
       });
     });
 
@@ -41,6 +41,7 @@ describe('DomainManagerService', () => {
           const env = {
             FRONT_PROTOCOL: 'https',
             FRONT_DOMAIN: 'example.com',
+            IS_MULTIWORKSPACE_ENABLED: true,
           };
 
           return env[key];
