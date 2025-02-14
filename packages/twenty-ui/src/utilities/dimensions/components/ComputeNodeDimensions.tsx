@@ -7,8 +7,6 @@ type ComputeNodeDimensionsProps = {
     dimensions: { height: number; width: number } | undefined,
   ) => ReactNode;
   node?: ReactNode;
-  height?: number;
-  padding?: number;
   className?: string;
 };
 
@@ -17,12 +15,12 @@ const StyledNodeWrapper = styled.span`
   visibility: hidden;
 `;
 
-const StyledDiv = styled.div<{ height?: number; padding?: number }>`
+const StyledDiv = styled.div`
   max-width: 100%;
   position: relative;
 `;
 
-const StyledChildWrapper = styled.div<{ height?: number; padding?: number }>`
+const StyledChildWrapper = styled.div`
   left: 0;
   position: absolute;
   top: 0;
