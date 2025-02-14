@@ -9,7 +9,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
-type RecordPositionFactoryCreateArgs = {
+export type RecordPositionFactoryCreateArgs = {
   value: number | 'first' | 'last';
   objectMetadata: { isCustom: boolean; nameSingular: string };
   workspaceId: string;
