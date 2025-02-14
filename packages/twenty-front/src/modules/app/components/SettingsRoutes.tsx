@@ -270,14 +270,12 @@ type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
-  isPermissionsEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
-  isPermissionsEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
