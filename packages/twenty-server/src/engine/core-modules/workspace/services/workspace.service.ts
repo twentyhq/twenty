@@ -20,6 +20,13 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import {
+  FileWorkspaceFolderDeletionJob,
+  FileWorkspaceFolderDeletionJobData,
+} from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -63,6 +70,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly permissionsService: PermissionsService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {
     super(workspaceRepository);
   }
@@ -253,10 +262,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.id,
     );
 
-    await this.workspaceManagerService.init({
-      workspaceId: workspace.id,
-      userId: user.id,
-    });
+    await this.workspaceManagerService.init(workspace.id);
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
     await this.workspaceRepository.update(workspace.id, {
@@ -314,6 +320,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     await this.deleteMetadataSchemaCacheAndUserWorkspace(workspace);
+
+    await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
+      FileWorkspaceFolderDeletionJob.name,
+      { workspaceId: id },
+    );
 
     return await this.workspaceRepository.delete(id);
   }

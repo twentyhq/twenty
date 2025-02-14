@@ -4,7 +4,7 @@ import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -74,12 +74,12 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     [attachment?.id],
   );
 
-  const { deleteOneRecord: deleteOneAttachment } = useDeleteOneRecord({
+  const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
 
   const handleDelete = () => {
-    deleteOneAttachment(attachment.id);
+    destroyOneAttachment(attachment.id);
   };
 
   const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
