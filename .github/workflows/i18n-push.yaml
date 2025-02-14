@@ -28,6 +28,7 @@ jobs:
           if ! git ls-remote --heads origin i18n | grep i18n; then
             git checkout -b i18n
           else
+            git fetch origin i18n
             git checkout i18n
             git merge origin/main
           fi
@@ -43,6 +44,12 @@ jobs:
           npx nx run twenty-server:lingui:extract
           npx nx run twenty-emails:lingui:extract
           npx nx run twenty-front:lingui:extract
+
+      - name: Compile translations
+        run: |
+          npx nx run twenty-server:lingui:compile
+          npx nx run twenty-emails:lingui:compile
+          npx nx run twenty-front:lingui:compile
 
       - name: Check and commit any files created
         id: check_changes
