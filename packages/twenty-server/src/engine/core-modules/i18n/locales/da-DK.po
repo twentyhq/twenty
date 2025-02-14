@@ -8,8 +8,8 @@ msgstr ""
 "Language: da\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
+": \n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1538,7 +1538,8 @@ msgstr "Køringer"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
 msgid "Scopes"
-msgstr "R\n"
+msgstr ""
+"R\n"
 "ettigheder"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
@@ -2252,4 +2253,3 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Dit teammedlem ansvarlig for at forvalte virksomhedens konto"
-

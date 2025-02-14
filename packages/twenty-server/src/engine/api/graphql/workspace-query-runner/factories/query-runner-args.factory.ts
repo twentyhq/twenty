@@ -177,6 +177,7 @@ export class QueryRunnerArgsFactory {
       return Promise.resolve({});
     }
 
+    const workspaceId = options.authContext.workspace.id;
     let isFieldPositionPresent = false;
 
     const createArgByArgKeyPromises: Promise<[string, any]>[] = Object.entries(
@@ -192,16 +193,16 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.POSITION: {
           isFieldPositionPresent = true;
 
-          const newValue = await this.recordPositionFactory.create(
+          const newValue = await this.recordPositionFactory.create({
             value,
-            {
+            workspaceId,
+            objectMetadata: {
               isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
               nameSingular:
                 options.objectMetadataItemWithFieldMaps.nameSingular,
             },
-            options.authContext.workspace.id,
-            argPositionBackfillInput.argIndex,
-          );
+            index: argPositionBackfillInput.argIndex,
+          });
 
           return [key, newValue];
         }
@@ -248,16 +249,16 @@ export class QueryRunnerArgsFactory {
         ...newArgEntries,
         [
           'position',
-          await this.recordPositionFactory.create(
-            'first',
-            {
+          await this.recordPositionFactory.create({
+            value: 'first',
+            workspaceId,
+            objectMetadata: {
               isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
               nameSingular:
                 options.objectMetadataItemWithFieldMaps.nameSingular,
             },
-            options.authContext.workspace.id,
-            argPositionBackfillInput.argIndex,
-          ),
+            index: argPositionBackfillInput.argIndex,
+          }),
         ],
       ]);
     }

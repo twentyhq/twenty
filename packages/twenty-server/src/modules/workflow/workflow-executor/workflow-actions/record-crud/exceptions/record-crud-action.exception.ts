@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class RecordCRUDActionException extends CustomException {
-  code: RecordCRUDActionExceptionCode;
   constructor(message: string, code: RecordCRUDActionExceptionCode) {
     super(message, code);
   }

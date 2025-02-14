@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class SendEmailActionException extends CustomException {
-  code: SendEmailActionExceptionCode;
   constructor(message: string, code: SendEmailActionExceptionCode) {
     super(message, code);
   }

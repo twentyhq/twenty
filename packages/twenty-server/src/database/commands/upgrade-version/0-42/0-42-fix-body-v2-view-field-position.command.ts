@@ -154,7 +154,7 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
             (field) => field.name === 'bodyV2',
           )?.id;
 
-          await viewFieldRepository.create({
+          const viewFieldToCreate = viewFieldRepository.create({
             fieldMetadataId: bodyV2FieldMetadataId,
             viewId: view.id,
             position: bodyViewField.position,
@@ -162,6 +162,8 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
             size: bodyViewField.size,
             aggregateOperation: bodyViewField.aggregateOperation,
           });
+
+          await viewFieldRepository.save(viewFieldToCreate);
 
           await viewFieldRepository.update(
             { id: bodyViewField.id },
