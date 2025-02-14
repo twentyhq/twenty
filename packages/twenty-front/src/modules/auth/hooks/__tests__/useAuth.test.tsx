@@ -5,7 +5,6 @@ import { ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { iconsState } from 'twenty-ui';
-
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
@@ -16,6 +15,14 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { renderHook } from '@testing-library/react';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
+
+const redirectSpy = jest.fn();
+
+jest.mock('@/domain-manager/hooks/useRedirect', () => ({
+  useRedirect: jest.fn().mockImplementation(() => ({
+    redirect: redirectSpy,
+  })),
+}));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
@@ -74,6 +81,22 @@ describe('useAuth', () => {
 
     expect(mocks[0].result).toHaveBeenCalled();
     expect(mocks[1].result).toHaveBeenCalled();
+  });
+
+  it('should handle google sign-in', async () => {
+    const { result } = renderHooks();
+
+    await act(async () => {
+      await result.current.signInWithGoogle({
+        workspaceInviteHash: 'workspaceInviteHash',
+      });
+    });
+
+    expect(redirectSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        '/auth/google?workspaceInviteHash=workspaceInviteHash',
+      ),
+    );
   });
 
   it('should handle sign-out', async () => {

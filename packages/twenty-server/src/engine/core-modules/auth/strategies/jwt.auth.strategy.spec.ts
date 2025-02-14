@@ -208,10 +208,11 @@ describe('JwtAuthStrategy', () => {
     }
   });
 
-  it('should be truthy if type is ACCESS, no jti, and user and userWorkspace exist', async () => {
+  it('should not throw if type is ACCESS, no jti, and user and userWorkspace exist', async () => {
     const payload = {
       sub: 'sub-default',
       type: 'ACCESS',
+      userWorkspaceId: 'userWorkspaceId',
     };
 
     workspaceRepository = {

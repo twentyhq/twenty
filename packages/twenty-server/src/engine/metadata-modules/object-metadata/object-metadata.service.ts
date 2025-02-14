@@ -411,9 +411,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
   public async deleteObjectsMetadata(workspaceId: string) {
     await this.objectMetadataRepository.delete({ workspaceId });
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
   }
 
   public async getObjectMetadataStandardIdToIdMap(workspaceId: string) {

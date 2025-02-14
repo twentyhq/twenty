@@ -31,7 +31,7 @@ describe('workspaceMembersResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {

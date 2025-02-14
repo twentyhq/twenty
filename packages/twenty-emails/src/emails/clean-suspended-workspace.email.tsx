@@ -5,13 +5,13 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 
 type CleanSuspendedWorkspaceEmailProps = {
-  inactiveDaysBeforeDelete: number;
+  daysSinceInactive: number;
   userName: string;
   workspaceDisplayName: string | undefined;
 };
 
 export const CleanSuspendedWorkspaceEmail = ({
-  inactiveDaysBeforeDelete,
+  daysSinceInactive,
   userName,
   workspaceDisplayName,
 }: CleanSuspendedWorkspaceEmailProps) => {
@@ -26,7 +26,7 @@ export const CleanSuspendedWorkspaceEmail = ({
         <br />
         <Trans>
           Your workspace <b>{workspaceDisplayName}</b> has been deleted as your
-          subscription expired {inactiveDaysBeforeDelete} days ago.
+          subscription expired {daysSinceInactive} days ago.
         </Trans>
         <br />
         <br />

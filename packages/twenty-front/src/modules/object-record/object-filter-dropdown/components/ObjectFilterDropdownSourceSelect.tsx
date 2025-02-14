@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { v4 } from 'uuid';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useEmptyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useEmptyRecordFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
@@ -130,13 +130,12 @@ export const ObjectFilterDropdownSourceSelect = ({
 
       const filterId = viewFilter?.id ?? fieldId;
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemUsedInFilterDropdown,
-      });
-
       applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : filterId,
-        definition: filterDefinition,
+        type: getFilterTypeFromFieldType(
+          fieldMetadataItemUsedInFilterDropdown.type,
+        ),
+        label: fieldMetadataItemUsedInFilterDropdown.label,
         operand: selectedOperandInDropdown || ViewFilterOperand.Is,
         displayValue: filterDisplayValue,
         fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,

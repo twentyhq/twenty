@@ -455,7 +455,7 @@ export const useAuth = () => {
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
       if (isDefined(params.workspaceInviteHash)) {
-        url.searchParams.set('inviteHash', params.workspaceInviteHash);
+        url.searchParams.set('workspaceInviteHash', params.workspaceInviteHash);
       }
       if (isDefined(params.workspacePersonalInviteToken)) {
         url.searchParams.set(

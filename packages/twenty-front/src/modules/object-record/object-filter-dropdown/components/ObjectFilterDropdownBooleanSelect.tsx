@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -72,18 +72,15 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       return;
     }
 
-    const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: fieldMetadataItemUsedInDropdown,
-    });
-
     applyRecordFilter({
       id: selectedFilter?.id ?? v4(),
-      definition: filterDefinition,
       operand: selectedOperandInDropdown,
       displayValue: value ? 'True' : 'False',
       fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
       value: value.toString(),
       viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+      type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
+      label: fieldMetadataItemUsedInDropdown.label,
     });
 
     setSelectedValue(value);

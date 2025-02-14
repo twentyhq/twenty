@@ -280,7 +280,6 @@ export const computeFilterRecordGqlOperationFilter = ({
               ),
             } as RatingFilter,
           };
-
         default:
           throw new Error(
             `Unknown operand ${filter.operand} for ${filterType} filter`,

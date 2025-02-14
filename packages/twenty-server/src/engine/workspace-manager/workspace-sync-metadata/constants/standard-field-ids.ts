@@ -325,7 +325,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
-  taskTargets: '20202020-59c0-4279-a208-4a255f04a5be',
+  taskTargets: '20202020-59c0-4179-a208-4a255f04a5be',
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
@@ -338,7 +338,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   emails: '20202020-3c51-43fa-8b6e-af39e29368ab',
   linkedinLink: '20202020-f1af-48f7-893b-2007a73dd508',
   xLink: '20202020-8fc2-487c-b84a-55a99b145cfd',
-  jobTitle: '20202020-b0d0-425a-bef9-640a26dacd9b',
+  jobTitle: '20202020-b0d0-415a-bef9-640a26dacd9b',
   phone: '20202020-4564-4b8b-a09f-05445f2e0bce',
   phones: '20202020-0638-448e-8825-439134618022',
   city: '20202020-5243-4ffb-afc5-2c675da41346',
@@ -380,7 +380,7 @@ export const TASK_TARGET_STANDARD_FIELD_IDS = {
   person: '20202020-c8a0-4e85-a016-87e2349cfbec',
   company: '20202020-4703-4a4e-948c-487b0c60a92c',
   opportunity: '20202020-6cb2-4c01-a9a5-aca3dbc11d41',
-  custom: '20202020-42c1-4c9a-8c75-be0971ef89af',
+  custom: '20202020-41c1-4c9a-8c75-be0971ef89af',
 };
 
 export const VIEW_FIELD_STANDARD_FIELD_IDS = {
