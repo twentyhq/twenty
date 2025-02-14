@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-43/0-43-add-tasks-assigned-to-me-view.command';
+import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-relations-to-field-metadata.command';
 import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-search-vector-on-note-and-task-entities.command';
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
 import { UpgradeTo0_43Command } from 'src/database/commands/upgrade-version/0-43/0-43-upgrade-version.command';
@@ -33,6 +34,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
     UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
     StandardizationOfActorCompositeContextTypeCommand,
+    MigrateRelationsToFieldMetadataCommand,
   ],
 })
 export class UpgradeTo0_43CommandModule {}
