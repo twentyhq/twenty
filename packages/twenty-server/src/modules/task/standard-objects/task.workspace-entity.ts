@@ -17,6 +17,7 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -74,10 +75,11 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.RICH_TEXT,
-    label: msg`Body`,
+    label: msg`Body (deprecated)`,
     description: msg`Task body`,
     icon: 'IconFilePencil',
   })
+  @WorkspaceIsDeprecated()
   @WorkspaceIsNullable()
   body: string | null;
 
