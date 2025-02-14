@@ -18,7 +18,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
-  isClickable = true
+  isClickable = true,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -38,7 +38,9 @@ export const RecordChip = ({
       className={className}
       variant={variant}
       onClick={handleClick}
-      to={isClickable ? getLinkToShowPage(objectNameSingular, record) : undefined}
+      to={
+        isClickable ? getLinkToShowPage(objectNameSingular, record) : undefined
+      }
     />
   );
 };
