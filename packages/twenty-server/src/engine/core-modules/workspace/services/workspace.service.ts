@@ -143,6 +143,23 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
+    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsPermissionsEnabled,
+      workspace.id,
+    );
+
+    if (permissionsEnabled) {
+      await this.validateSecurityPermissions({
+        payload,
+        userWorkspaceId,
+      });
+
+      await this.validateWorkspacePermissions({
+        payload,
+        userWorkspaceId,
+      });
+    }
+
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
       await this.validateSubdomainUpdate(payload.subdomain);
     }
@@ -186,18 +203,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         'Password auth is not enabled in the system.',
         WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
       );
-    }
-
-    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspace.id,
-    );
-
-    if (permissionsEnabled) {
-      await this.validateSecurityPermissions({
-        payload,
-        userWorkspaceId,
-      });
     }
 
     try {
@@ -248,7 +253,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.id,
     );
 
-    await this.workspaceManagerService.init(workspace.id);
+    await this.workspaceManagerService.init({
+      workspaceId: workspace.id,
+      userId: user.id,
+    });
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
     await this.workspaceRepository.update(workspace.id, {
@@ -346,6 +354,27 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return !existingWorkspace;
   }
 
+  async checkCustomDomainValidRecords(workspace: Workspace) {
+    if (!workspace.customDomain) return;
+
+    const customDomainDetails =
+      await this.customDomainService.getCustomDomainDetails(
+        workspace.customDomain,
+      );
+
+    if (!customDomainDetails) return;
+
+    const isCustomDomainWorking =
+      this.domainManagerService.isCustomDomainWorking(customDomainDetails);
+
+    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
+      workspace.isCustomDomainEnabled = isCustomDomainWorking;
+      await this.workspaceRepository.save(workspace);
+    }
+
+    return customDomainDetails;
+  }
+
   private async validateSecurityPermissions({
     payload,
     userWorkspaceId,
@@ -354,10 +383,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     userWorkspaceId?: string;
   }) {
     if (
-      isDefined(payload.isGoogleAuthEnabled) ||
-      isDefined(payload.isMicrosoftAuthEnabled) ||
-      isDefined(payload.isPasswordAuthEnabled) ||
-      isDefined(payload.isPublicInviteLinkEnabled)
+      'isGoogleAuthEnabled' in payload ||
+      'isMicrosoftAuthEnabled' in payload ||
+      'isPasswordAuthEnabled' in payload ||
+      'isPublicInviteLinkEnabled' in payload
     ) {
       if (!userWorkspaceId) {
         throw new Error('Missing userWorkspaceId in authContext');
@@ -378,24 +407,35 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  async checkCustomDomainValidRecords(workspace: Workspace) {
-    if (!workspace.customDomain) return;
+  private async validateWorkspacePermissions({
+    payload,
+    userWorkspaceId,
+  }: {
+    payload: Partial<Workspace>;
+    userWorkspaceId?: string;
+  }) {
+    if (
+      'displayName' in payload ||
+      'subdomain' in payload ||
+      'customDomain' in payload ||
+      'logo' in payload
+    ) {
+      if (!userWorkspaceId) {
+        throw new Error('Missing userWorkspaceId in authContext');
+      }
 
-    const customDomainDetails =
-      await this.customDomainService.getCustomDomainDetails(
-        workspace.customDomain,
-      );
+      const userHasPermission =
+        await this.permissionsService.userHasWorkspaceSettingPermission({
+          userWorkspaceId,
+          _setting: SettingsFeatures.WORKSPACE,
+        });
 
-    if (!customDomainDetails) return;
-
-    const isCustomDomainWorking =
-      this.domainManagerService.isCustomDomainWorking(customDomainDetails);
-
-    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
-      workspace.isCustomDomainEnabled = isCustomDomainWorking;
-      await this.workspaceRepository.save(workspace);
+      if (!userHasPermission) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
     }
-
-    return customDomainDetails;
   }
 }
