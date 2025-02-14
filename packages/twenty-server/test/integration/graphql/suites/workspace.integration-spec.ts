@@ -68,9 +68,7 @@ describe('WorkspaceResolver', () => {
       }
     `;
 
-    const a = await makeGraphqlAPIRequest({ query: restoreQuery });
-
-    console.log(a);
+    await makeGraphqlAPIRequest({ query: restoreQuery });
   });
 
   describe('security permissions', () => {
