@@ -73,10 +73,6 @@ export class RunWorkflowJob {
         steps: workflowVersion.steps ?? [],
         context,
         workflowExecutorState: {
-          flow: {
-            trigger: workflowVersion.trigger,
-            steps: workflowVersion.steps,
-          },
           stepsOutput: {},
           status: WorkflowRunStatus.RUNNING,
         },

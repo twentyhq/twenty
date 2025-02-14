@@ -18,7 +18,6 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 const MAX_RETRIES_ON_FAILURE = 3;
 
 export type WorkflowExecutorState = {
-  flow: WorkflowRunOutput['flow'];
   stepsOutput: WorkflowRunOutput['stepsOutput'];
   status: WorkflowRunStatus;
 };
