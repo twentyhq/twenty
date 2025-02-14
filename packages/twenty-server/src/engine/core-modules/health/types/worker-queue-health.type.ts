@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/health-service-status.enum';
+import { WorkerQueueMetrics } from 'src/engine/core-modules/health/types/worker-queue-metrics.type';
 
 @ObjectType()
 export class WorkerQueueHealth {
@@ -10,6 +10,6 @@ export class WorkerQueueHealth {
   @Field(() => Number)
   workers: number;
 
-  @Field(() => HealthServiceStatus)
-  status: HealthServiceStatus;
+  @Field(() => WorkerQueueMetrics)
+  metrics: WorkerQueueMetrics;
 }

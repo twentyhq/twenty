@@ -17,6 +17,14 @@ export const GET_SYSTEM_HEALTH_STATUS = gql`
           name
           workers
           status
+          metrics {
+            failed
+            completed
+            waiting
+            active
+            delayed
+            prioritized
+          }
         }
       }
       messageSync {

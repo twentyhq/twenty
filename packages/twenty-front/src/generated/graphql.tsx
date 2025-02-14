@@ -25,6 +25,26 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
 
+export type AdminPanelHealthService = {
+  __typename?: 'AdminPanelHealthService';
+  details?: Maybe<Scalars['String']>;
+  queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
+  status: AdminPanelHealthServiceStatus;
+};
+
+export enum AdminPanelHealthServiceStatus {
+  OPERATIONAL = 'OPERATIONAL',
+  OUTAGE = 'OUTAGE'
+}
+
+export type AdminPanelWorkerQueueHealth = {
+  __typename?: 'AdminPanelWorkerQueueHealth';
+  metrics: WorkerQueueMetrics;
+  name: Scalars['String'];
+  status: AdminPanelHealthServiceStatus;
+  workers: Scalars['Float'];
+};
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -591,19 +611,6 @@ export type GetServerlessFunctionSourceCodeInput = {
   /** The version of the function */
   version?: Scalars['String'];
 };
-
-export type HealthService = {
-  __typename?: 'HealthService';
-  details?: Maybe<Scalars['String']>;
-  queues?: Maybe<Array<WorkerQueueHealth>>;
-  status: HealthServiceStatus;
-};
-
-export enum HealthServiceStatus {
-  DEGRADED = 'DEGRADED',
-  OPERATIONAL = 'OPERATIONAL',
-  OUTAGE = 'OUTAGE'
-}
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -1619,10 +1626,10 @@ export type Support = {
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
-  database: HealthService;
+  database: AdminPanelHealthService;
   messageSync: MessageChannelSyncJobByStatusCounter;
-  redis: HealthService;
-  worker: HealthService;
+  redis: AdminPanelHealthService;
+  worker: AdminPanelHealthService;
 };
 
 export type TimelineCalendarEvent = {
@@ -1873,11 +1880,14 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String'];
 };
 
-export type WorkerQueueHealth = {
-  __typename?: 'WorkerQueueHealth';
-  name: Scalars['String'];
-  status: HealthServiceStatus;
-  workers: Scalars['Float'];
+export type WorkerQueueMetrics = {
+  __typename?: 'WorkerQueueMetrics';
+  active: Scalars['Float'];
+  completed: Scalars['Float'];
+  delayed: Scalars['Float'];
+  failed: Scalars['Float'];
+  prioritized: Scalars['Float'];
+  waiting: Scalars['Float'];
 };
 
 export type WorkflowAction = {
@@ -2279,7 +2289,7 @@ export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnv
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'HealthService', status: HealthServiceStatus, details?: string | null }, redis: { __typename?: 'HealthService', status: HealthServiceStatus, details?: string | null }, worker: { __typename?: 'HealthService', status: HealthServiceStatus, queues?: Array<{ __typename?: 'WorkerQueueHealth', name: string, workers: number, status: HealthServiceStatus }> | null }, messageSync: { __typename?: 'MessageChannelSyncJobByStatusCounter', NOT_SYNCED?: number | null, ONGOING?: number | null, ACTIVE?: number | null, FAILED_INSUFFICIENT_PERMISSIONS?: number | null, FAILED_UNKNOWN?: number | null } } };
+export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, details?: string | null }, redis: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, details?: string | null }, worker: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', name: string, workers: number, status: AdminPanelHealthServiceStatus, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null }, messageSync: { __typename?: 'MessageChannelSyncJobByStatusCounter', NOT_SYNCED?: number | null, ONGOING?: number | null, ACTIVE?: number | null, FAILED_INSUFFICIENT_PERMISSIONS?: number | null, FAILED_UNKNOWN?: number | null } } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -4006,6 +4016,14 @@ export const GetSystemHealthStatusDocument = gql`
         name
         workers
         status
+        metrics {
+          failed
+          completed
+          waiting
+          active
+          delayed
+          prioritized
+        }
       }
     }
     messageSync {

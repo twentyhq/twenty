@@ -1,18 +1,17 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { MessageChannelSyncJobByStatusCounter } from 'src/engine/core-modules/health/types/health-metrics.types';
-import { HealthService } from 'src/engine/core-modules/health/types/health-service.types';
-
+import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service.dto';
+import { MessageChannelSyncJobByStatusCounter } from 'src/engine/core-modules/health/types/message-sync-metrics.types';
 @ObjectType()
 export class SystemHealth {
-  @Field(() => HealthService)
-  database: HealthService;
+  @Field(() => AdminPanelHealthService)
+  database: AdminPanelHealthService;
 
-  @Field(() => HealthService)
-  redis: HealthService;
+  @Field(() => AdminPanelHealthService)
+  redis: AdminPanelHealthService;
 
-  @Field(() => HealthService)
-  worker: HealthService;
+  @Field(() => AdminPanelHealthService)
+  worker: AdminPanelHealthService;
 
   @Field(() => MessageChannelSyncJobByStatusCounter)
   messageSync: MessageChannelSyncJobByStatusCounter;

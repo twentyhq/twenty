@@ -1,3 +1,12 @@
-import { HealthService } from '~/generated/graphql';
+import {
+  AdminPanelHealthService,
+  AdminPanelWorkerQueueHealth,
+} from '~/generated/graphql';
 
-export type AdminHealthService = HealthService & { id: string; name: string };
+type AdminWorkerService = AdminPanelHealthService & {
+  id: string;
+  name: string;
+  queues: AdminPanelWorkerQueueHealth[] | null | undefined;
+};
+
+export type AdminHealthService = AdminWorkerService;

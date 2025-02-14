@@ -5,4 +5,5 @@ export const HEALTH_ERROR_MESSAGES = {
   REDIS_TIMEOUT: 'Redis timeout',
   DATABASE_CONNECTION_FAILED: 'Database connection failed',
   REDIS_CONNECTION_FAILED: 'Unknown Redis error',
+  WORKER_CHECK_FAILED: 'Worker check failed',
 } as const;

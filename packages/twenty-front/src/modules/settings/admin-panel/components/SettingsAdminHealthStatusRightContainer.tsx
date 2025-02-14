@@ -1,7 +1,7 @@
+import { AdminHealthService } from '@/settings/admin-panel/types/AdminHealthService';
 import styled from '@emotion/styled';
 import { Status } from 'twenty-ui';
-
-import { HealthService, HealthServiceStatus } from '~/generated/graphql';
+import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
@@ -12,17 +12,14 @@ const StyledRowRightContainer = styled.div`
 export const SettingsAdminHealthStatusRightContainer = ({
   service,
 }: {
-  service: HealthService;
+  service: AdminHealthService;
 }) => {
   return (
     <StyledRowRightContainer>
-      {service.status === HealthServiceStatus.OPERATIONAL && (
+      {service.status === AdminPanelHealthServiceStatus.OPERATIONAL && (
         <Status color="green" text="Operational" weight="medium" />
       )}
-      {service.status === HealthServiceStatus.DEGRADED && (
-        <Status color="orange" text="Degraded" weight="medium" />
-      )}
-      {service.status === HealthServiceStatus.OUTAGE && (
+      {service.status === AdminPanelHealthServiceStatus.OUTAGE && (
         <Status color="red" text="Outage" weight="medium" />
       )}
     </StyledRowRightContainer>

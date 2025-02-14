@@ -1,38 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
+import { HealthIndicatorService } from '@nestjs/terminus';
 
 import { Queue } from 'bullmq';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
-import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/health-service-status.enum';
-import { WorkerQueueHealth } from 'src/engine/core-modules/health/types/worker-queue-health,type';
+import { WorkerQueueHealth } from 'src/engine/core-modules/health/types/worker-queue-health.type';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Injectable()
-export class WorkerHealthIndicator extends HealthIndicator {
-  constructor(private readonly redisClient: RedisClientService) {
-    super();
-  }
+export class WorkerHealthIndicator {
+  constructor(
+    private readonly redisClient: RedisClientService,
+    private readonly healthIndicatorService: HealthIndicatorService,
+  ) {}
 
-  async isHealthy(): Promise<HealthIndicatorResult> {
+  async isHealthy() {
+    const indicator = this.healthIndicatorService.check('worker');
+
     try {
       const workerStatus = await withHealthCheckTimeout(
         this.checkWorkers(),
         HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT,
       );
 
-      return this.getStatus('worker', workerStatus.status === 'up', {
-        status: workerStatus.status,
-        error: workerStatus.error,
-        queues: workerStatus.queues,
-      });
+      if (workerStatus.status === 'up') {
+        return indicator.up({
+          queues: workerStatus.queues,
+        });
+      }
+
+      return indicator.down(workerStatus.error);
     } catch (error) {
-      return this.getStatus('worker', false, {
-        status: 'down',
-        error: error.message,
-      });
+      const errorMessage =
+        error.message === HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT
+          ? HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT
+          : HEALTH_ERROR_MESSAGES.WORKER_CHECK_FAILED;
+
+      return indicator.down(errorMessage);
     }
   }
 
@@ -40,38 +46,57 @@ export class WorkerHealthIndicator extends HealthIndicator {
     const redis = this.redisClient.getClient();
     const queues = Object.values(MessageQueue);
     const queueStatuses: WorkerQueueHealth[] = [];
-    const queuesWithoutWorkers: string[] = [];
 
     for (const queueName of queues) {
       const queue = new Queue(queueName, { connection: redis });
-      const workers = await queue.getWorkers();
 
-      if (workers.length === 0) {
-        queuesWithoutWorkers.push(queueName);
+      try {
+        const workers = await queue.getWorkers();
+
+        if (workers.length > 0) {
+          const [
+            failedCount,
+            completedCount,
+            waitingCount,
+            activeCount,
+            delayedCount,
+            prioritizedCount,
+          ] = await Promise.all([
+            queue.getFailedCount(),
+            queue.getCompletedCount(),
+            queue.getWaitingCount(),
+            queue.getActiveCount(),
+            queue.getDelayedCount(),
+            queue.getPrioritizedCount(),
+          ]);
+
+          queueStatuses.push({
+            name: queueName,
+            workers: workers.length,
+            metrics: {
+              failed: failedCount,
+              completed: completedCount,
+              waiting: waitingCount,
+              active: activeCount,
+              delayed: delayedCount,
+              prioritized: prioritizedCount,
+            },
+          });
+        }
+
+        await queue.close();
+      } catch (error) {
+        await queue.close();
       }
-
-      queueStatuses.push({
-        name: queueName,
-        workers: workers.length,
-        status:
-          workers.length > 0
-            ? HealthServiceStatus.OPERATIONAL
-            : HealthServiceStatus.OUTAGE,
-      });
-
-      await queue.close();
     }
 
-    if (queuesWithoutWorkers.length === queues.length) {
-      return {
-        status: 'down',
-        error: HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS,
-        queues: queueStatuses,
-      };
-    }
+    const hasActiveWorkers = queueStatuses.some((q) => q.workers > 0);
 
     return {
-      status: 'up',
+      status: hasActiveWorkers ? 'up' : 'down',
+      error: hasActiveWorkers
+        ? undefined
+        : HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS,
       queues: queueStatuses,
     };
   }

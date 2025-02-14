@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { HealthCheckService } from '@nestjs/terminus';
 
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
+import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { HealthServiceName } from 'src/engine/core-modules/health/enums/health-service-name.enum';
-import { HealthServiceStatus } from 'src/engine/core-modules/health/enums/health-service-status.enum';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
@@ -21,41 +21,43 @@ export class AdminPanelHealthService {
 
   async getSystemHealthStatus(): Promise<SystemHealth> {
     const [healthCheck, messageSync] = await Promise.all([
-      this.health.check([
-        () => this.databaseHealth.isHealthy(),
-        () => this.redisHealth.isHealthy(),
-        () => this.workerHealth.isHealthy(),
-      ]),
+      this.health
+        .check([
+          () => this.databaseHealth.isHealthy(),
+          () => this.redisHealth.isHealthy(),
+          () => this.workerHealth.isHealthy(),
+        ])
+        .catch((error) => error.response),
       this.healthCacheService.getMessageChannelSyncJobByStatusCounter(),
     ]);
 
-    return {
+    const mapHealthStatus = (status: string) =>
+      status === 'up'
+        ? AdminPanelHealthServiceStatus.OPERATIONAL
+        : AdminPanelHealthServiceStatus.OUTAGE;
+
+    const healthServices = {
       [HealthServiceName.DATABASE]: {
-        status:
-          healthCheck.info?.database?.status === 'up'
-            ? HealthServiceStatus.OPERATIONAL
-            : HealthServiceStatus.OUTAGE,
+        status: mapHealthStatus(healthCheck.info?.database?.status),
         details: healthCheck.info?.database?.details,
       },
       [HealthServiceName.REDIS]: {
-        status:
-          healthCheck.info?.redis?.status === 'up'
-            ? HealthServiceStatus.OPERATIONAL
-            : HealthServiceStatus.OUTAGE,
+        status: mapHealthStatus(healthCheck.info?.redis?.status),
         details: healthCheck.info?.redis?.details,
       },
       [HealthServiceName.WORKER]: {
-        status:
-          healthCheck.info?.worker?.status !== 'up'
-            ? HealthServiceStatus.OUTAGE
-            : healthCheck.info?.worker?.queues?.every((q) => q.workers === 0)
-              ? HealthServiceStatus.OUTAGE
-              : healthCheck.info?.worker?.queues?.some((q) => q.workers === 0)
-                ? HealthServiceStatus.DEGRADED
-                : HealthServiceStatus.OPERATIONAL,
-        queues: healthCheck.info?.worker?.queues,
+        status: mapHealthStatus(healthCheck.info?.worker?.status),
+        queues: (healthCheck.info?.worker?.queues ?? []).map((queue) => ({
+          ...queue,
+          status:
+            queue.workers > 0
+              ? AdminPanelHealthServiceStatus.OPERATIONAL
+              : AdminPanelHealthServiceStatus.OUTAGE,
+        })),
       },
       messageSync,
     };
+
+    return healthServices;
   }
 }

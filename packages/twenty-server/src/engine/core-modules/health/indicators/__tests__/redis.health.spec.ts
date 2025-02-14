@@ -1,3 +1,4 @@
+import { HealthIndicatorService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { Redis } from 'ioredis';
@@ -10,6 +11,7 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
 describe('RedisHealthIndicator', () => {
   let service: RedisHealthIndicator;
   let mockRedis: jest.Mocked<Pick<Redis, 'ping'>>;
+  let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
 
   beforeEach(async () => {
     mockRedis = {
@@ -20,12 +22,28 @@ describe('RedisHealthIndicator', () => {
       getClient: () => mockRedis,
     } as unknown as RedisClientService;
 
+    healthIndicatorService = {
+      check: jest.fn().mockReturnValue({
+        up: jest.fn().mockReturnValue({ redis: { status: 'up' } }),
+        down: jest.fn().mockImplementation((error) => ({
+          redis: {
+            status: 'down',
+            error,
+          },
+        })),
+      }),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisHealthIndicator,
         {
           provide: RedisClientService,
           useValue: mockRedisService,
+        },
+        {
+          provide: HealthIndicatorService,
+          useValue: healthIndicatorService,
         },
       ],
     }).compile();

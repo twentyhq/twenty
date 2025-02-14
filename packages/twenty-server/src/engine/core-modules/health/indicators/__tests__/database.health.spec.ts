@@ -1,3 +1,4 @@
+import { HealthIndicatorService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { DataSource } from 'typeorm';
@@ -9,10 +10,23 @@ import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicato
 describe('DatabaseHealthIndicator', () => {
   let service: DatabaseHealthIndicator;
   let dataSource: jest.Mocked<DataSource>;
+  let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
 
   beforeEach(async () => {
     dataSource = {
       query: jest.fn(),
+    } as any;
+
+    healthIndicatorService = {
+      check: jest.fn().mockReturnValue({
+        up: jest.fn().mockReturnValue({ database: { status: 'up' } }),
+        down: jest.fn().mockImplementation((error) => ({
+          database: {
+            status: 'down',
+            error,
+          },
+        })),
+      }),
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
@@ -21,6 +35,10 @@ describe('DatabaseHealthIndicator', () => {
         {
           provide: 'coreDataSource',
           useValue: dataSource,
+        },
+        {
+          provide: HealthIndicatorService,
+          useValue: healthIndicatorService,
         },
       ],
     }).compile();
@@ -73,6 +91,6 @@ describe('DatabaseHealthIndicator', () => {
     const result = await healthCheckPromise;
 
     expect(result.database.status).toBe('down');
-    expect(result.database.error).toBe('Database timeout');
+    expect(result.database.error).toBe(HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT);
   });
 });
