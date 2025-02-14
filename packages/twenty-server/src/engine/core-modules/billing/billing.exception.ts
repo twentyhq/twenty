@@ -3,7 +3,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class BillingException extends CustomException {
-  code: BillingExceptionCode;
   constructor(message: string, code: BillingExceptionCode) {
     super(message, code);
   }
