@@ -28,21 +28,18 @@ import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeat
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { SettingsNavigationItemWrapper } from '@/settings/components/SettingsNavigationItemWrapper';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
   NavigationDrawerItem,
   NavigationDrawerItemIndentationLevel,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
-import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey, SettingsFeatures } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsNavigationSectionWrapper } from './SettingsNavigationSectionWrapper';
 
 type SettingsNavigationItem = {
   label: string;
@@ -58,11 +55,6 @@ export const SettingsNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const billing = useRecoilValue(billingState);
-  const isPermissionsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsEnabled,
-  );
-
-  const settingsPermissionMap = useSettingsPermissionMap();
 
   // We want to disable this serverless function setting menu but keep the code
   // for now
@@ -106,8 +98,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   return (
     <>
-      <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label={t`User`} />
+      <SettingsNavigationSectionWrapper title={t`User`}>
         <SettingsNavigationDrawerItem
           label={t`Profile`}
           path={SettingsPath.ProfilePage}
@@ -140,9 +131,9 @@ export const SettingsNavigationDrawerItems = () => {
             />
           ))}
         </NavigationDrawerItemGroup>
-      </NavigationDrawerSection>
-      <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label={t`Workspace`} />
+      </SettingsNavigationSectionWrapper>
+
+      <SettingsNavigationSectionWrapper title={t`Workspace`}>
         <SettingsNavigationItemWrapper feature={SettingsFeatures.WORKSPACE}>
           <SettingsNavigationDrawerItem
             label={t`General`}
@@ -168,7 +159,7 @@ export const SettingsNavigationDrawerItems = () => {
         )}
         <SettingsNavigationItemWrapper
           feature={SettingsFeatures.ROLES}
-          requiresFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
+          requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
         >
           <SettingsNavigationDrawerItem
             label={t`Roles`}
@@ -201,12 +192,9 @@ export const SettingsNavigationDrawerItems = () => {
             />
           </SettingsNavigationItemWrapper>
         </AdvancedSettingsWrapper>
-      </NavigationDrawerSection>
+      </SettingsNavigationSectionWrapper>
 
-      <NavigationDrawerSection>
-        <AdvancedSettingsWrapper hideIcon>
-          <NavigationDrawerSectionTitle label={t`Developers`} />
-        </AdvancedSettingsWrapper>
+      <SettingsNavigationSectionWrapper title={t`Developers`}>
         <AdvancedSettingsWrapper navigationDrawerItem={true}>
           <SettingsNavigationItemWrapper
             feature={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
@@ -231,9 +219,9 @@ export const SettingsNavigationDrawerItems = () => {
             </SettingsNavigationItemWrapper>
           </AdvancedSettingsWrapper>
         )}
-      </NavigationDrawerSection>
-      <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label={t`Other`} />
+      </SettingsNavigationSectionWrapper>
+
+      <SettingsNavigationSectionWrapper title={t`Other`}>
         {isAdminPageEnabled && (
           <SettingsNavigationItemWrapper feature={SettingsFeatures.ADMIN_PANEL}>
             <SettingsNavigationDrawerItem
@@ -260,7 +248,7 @@ export const SettingsNavigationDrawerItems = () => {
           onClick={signOut}
           Icon={IconDoorEnter}
         />
-      </NavigationDrawerSection>
+      </SettingsNavigationSectionWrapper>
     </>
   );
 };

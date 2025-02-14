@@ -3,27 +3,27 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ReactNode } from 'react';
 import { FeatureFlagKey, SettingsFeatures } from '~/generated/graphql';
 
-type SettingsNavigationItemWrapperProps = {
+export type SettingsNavigationItemWrapperProps = {
   children: ReactNode;
   feature: SettingsFeatures;
-  requiresFeatureFlag?: FeatureFlagKey;
+  requiredFeatureFlag?: FeatureFlagKey;
 };
 
 export const SettingsNavigationItemWrapper = ({
   children,
   feature,
-  requiresFeatureFlag,
+  requiredFeatureFlag,
 }: SettingsNavigationItemWrapperProps) => {
   const isPermissionsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsEnabled,
   );
   const hasPermission = useHasSettingsPermission(feature);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
-    requiresFeatureFlag || null,
+    requiredFeatureFlag || null,
   );
 
   if (
-    (requiresFeatureFlag && !requiredFeatureFlagEnabled) ||
+    (requiredFeatureFlag && !requiredFeatureFlagEnabled) ||
     (!hasPermission && isPermissionsEnabled)
   ) {
     return null;
