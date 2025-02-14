@@ -39,7 +39,11 @@ jobs:
         with:
           token: ${{ github.token }}
           ref: ${{ github.head_ref || github.ref_name }}
-          fetch-depth: 0
+
+      - name: Setup i18n branch
+        run: |
+          git fetch origin i18n || true
+          git checkout -B i18n origin/i18n || git checkout -b i18n
 
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
@@ -71,7 +75,7 @@ jobs:
           auto_approve_imported: false
           import_eq_suggestions: false
           download_sources: false
-          push_sources: true
+          push_sources: false
           skip_untranslated_strings: false
           skip_untranslated_files: false
           push_translations: true
@@ -93,14 +97,11 @@ jobs:
           npx nx run twenty-emails:lingui:compile 
           npx nx run twenty-front:lingui:compile
 
-      - name: Configure Git
-        run: |
-          git config --local user.name 'github-actions'
-          git config --local user.email 'github-actions@twenty.com'
-
       - name: Check and commit compiled files
         id: check_changes
         run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
           git add .
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: compile translations [skip ci]"
