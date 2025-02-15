@@ -5,7 +5,7 @@ import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { Tab } from './Tab';
-import { MoreTabsDropdown } from './TabMoreButton';
+import { MoreTabsDropdown } from './TabMoreDropdown';
 import { IconComponent, IconChevronDown } from 'twenty-ui';
 import { TAB_CONSTANTS } from '../constants/TabConstants';
 
