@@ -56,46 +56,44 @@ export const AbsoluteDatePickerHeader = ({
   isDateTimeInput,
   timeZone,
   hideInput = false,
-}: AbsoluteDatePickerHeaderProps) => {
-  return (
-    <>
-      {!hideInput && (
-        <DateTimeInput
-          date={date}
-          isDateTimeInput={isDateTimeInput}
-          onChange={onChange}
-          userTimezone={timeZone}
-        />
-      )}
+}: AbsoluteDatePickerHeaderProps) => (
+  <>
+    {!hideInput && (
+      <DateTimeInput
+        date={date}
+        isDateTimeInput={isDateTimeInput}
+        onChange={onChange}
+        userTimezone={timeZone}
+      />
+    )}
 
-      <StyledCustomDatePickerHeader>
-        <Select
-          dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-          options={getMonthSelectOptions()}
-          onChange={onChangeMonth}
-          value={month}
-          fullWidth
-        />
-        <Select
-          dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
-          onChange={onChangeYear}
-          value={year}
-          options={years}
-          fullWidth
-        />
-        <LightIconButton
-          Icon={IconChevronLeft}
-          onClick={onSubtractMonth}
-          size="medium"
-          disabled={prevMonthButtonDisabled}
-        />
-        <LightIconButton
-          Icon={IconChevronRight}
-          onClick={onAddMonth}
-          size="medium"
-          disabled={nextMonthButtonDisabled}
-        />
-      </StyledCustomDatePickerHeader>
-    </>
-  );
-};
+    <StyledCustomDatePickerHeader>
+      <Select
+        dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
+        options={getMonthSelectOptions()}
+        onChange={onChangeMonth}
+        value={month}
+        fullWidth
+      />
+      <Select
+        dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+        onChange={onChangeYear}
+        value={year}
+        options={years}
+        fullWidth
+      />
+      <LightIconButton
+        Icon={IconChevronLeft}
+        onClick={onSubtractMonth}
+        size="medium"
+        disabled={prevMonthButtonDisabled}
+      />
+      <LightIconButton
+        Icon={IconChevronRight}
+        onClick={onAddMonth}
+        size="medium"
+        disabled={nextMonthButtonDisabled}
+      />
+    </StyledCustomDatePickerHeader>
+  </>
+);
