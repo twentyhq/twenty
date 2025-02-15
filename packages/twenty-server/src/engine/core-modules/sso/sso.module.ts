@@ -15,7 +15,6 @@ import { SSOResolver } from 'src/engine/core-modules/sso/sso.resolver';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-
 @Module({
   imports: [
     NestjsQueryTypeOrmModule.forFeature(

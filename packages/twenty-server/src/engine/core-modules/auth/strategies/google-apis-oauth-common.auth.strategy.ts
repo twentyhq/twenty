@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { Strategy } from 'passport-google-oauth20';
 
-import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 
 export type GoogleAPIScopeConfig = {
   isCalendarEnabled?: boolean;

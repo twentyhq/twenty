@@ -2,11 +2,11 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CustomException } from 'src/utils/custom-exception';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 @Injectable()
 export class GuardRedirectService {

@@ -97,13 +97,7 @@ export class WorkspaceResolver {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    const result = await this.workspaceService.activateWorkspace(
-      user,
-      workspace,
-      data,
-    );
-
-    return result;
+    return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
 
   @Mutation(() => Workspace)

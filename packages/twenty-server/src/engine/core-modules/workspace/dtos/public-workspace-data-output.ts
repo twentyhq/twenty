@@ -1,11 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @ObjectType()
 export class SSOIdentityProvider {

@@ -118,3 +118,4 @@ msgstr "Verifica e-mail"
 #: src/emails/clean-suspended-workspace.email.tsx:27
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 msgstr "Il tuo spazio di lavoro <0>{workspaceDisplayName}</0> è stato cancellato poiché il tuo abbonamento è scaduto {inactiveDaysBeforeDelete} giorni fa."
+
