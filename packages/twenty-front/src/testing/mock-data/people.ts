@@ -1,9 +1,51 @@
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { FieldMetadataType } from 'twenty-shared';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
-export const getPeopleMock = () => {
+export const getPeopleMock = (): ObjectRecord[] => {
   const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
 
   return peopleMock;
+};
+
+export const getPersonObjectMetadataItem = () => {
+  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'person',
+  );
+
+  if (!personObjectMetadataItem) {
+    throw new Error('Person object metadata item not found');
+  }
+
+  return personObjectMetadataItem;
+};
+
+export const getPersonFieldMetadataItem = (
+  fieldMetadataType: FieldMetadataType,
+  objectMetadataItem = getPersonObjectMetadataItem(),
+) => {
+  const result = objectMetadataItem.fields.find(
+    (field) => field.type === fieldMetadataType,
+  );
+  if (!result) {
+    throw new Error(
+      `Person fieldmetadata item type ${fieldMetadataType} not found`,
+    );
+  }
+
+  return result;
+};
+
+export const getPersonRecord = (
+  overrides?: Partial<ObjectRecord>,
+  index = 0,
+) => {
+  const personRecords = getPeopleMock();
+  return {
+    ...personRecords[index],
+    ...overrides,
+  };
 };
 
 export const mockedEmptyPersonData = {

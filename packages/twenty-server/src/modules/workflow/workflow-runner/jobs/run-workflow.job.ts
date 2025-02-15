@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -23,7 +23,6 @@ export type RunWorkflowJobData = {
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class RunWorkflowJob {
-  private readonly logger = new Logger(RunWorkflowJob.name);
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
@@ -42,26 +41,39 @@ export class RunWorkflowJob {
       trigger: payload,
     };
 
-    await this.workflowRunWorkspaceService.startWorkflowRun({
-      workflowRunId,
-      context,
-    });
-
     try {
       const workflowVersion =
         await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
           workflowVersionId,
         );
 
+      if (!workflowVersion.trigger || !workflowVersion.steps) {
+        throw new WorkflowRunException(
+          'Workflow version has no trigger or steps',
+          WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+        );
+      }
+
+      await this.workflowRunWorkspaceService.startWorkflowRun({
+        workflowRunId,
+        context,
+        output: {
+          flow: {
+            trigger: workflowVersion.trigger,
+            steps: workflowVersion.steps,
+          },
+        },
+      });
+
       await this.throttleExecution(workflowVersion.workflowId);
 
       const { status } = await this.workflowExecutorWorkspaceService.execute({
         workflowRunId,
         currentStepIndex: 0,
-        steps: workflowVersion.steps || [],
+        steps: workflowVersion.steps ?? [],
         context,
-        workflowExecutorOutput: {
-          steps: {},
+        workflowExecutorState: {
+          stepsOutput: {},
           status: WorkflowRunStatus.RUNNING,
         },
       });

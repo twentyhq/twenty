@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { formatFieldMetadataItemsAsFilterDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+
 import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
@@ -15,13 +15,11 @@ export const getQueryVariablesFromView = ({
   view,
   fieldMetadataItems,
   objectMetadataItem,
-  isJsonFilterEnabled,
   filterValueDependencies,
 }: {
   view: View | null | undefined;
   fieldMetadataItems: FieldMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
-  isJsonFilterEnabled: boolean;
   filterValueDependencies: RecordFilterValueDependencies;
 }) => {
   if (!isDefined(view)) {
@@ -33,18 +31,13 @@ export const getQueryVariablesFromView = ({
 
   const { viewFilterGroups, viewFilters, viewSorts } = view;
 
-  const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
-    fields: fieldMetadataItems,
-    isJsonFilterEnabled,
-  });
-
   const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
     fields: fieldMetadataItems,
   });
 
   const filter = computeViewRecordGqlOperationFilter(
     filterValueDependencies,
-    mapViewFiltersToFilters(viewFilters, filterDefinitions),
+    mapViewFiltersToFilters(viewFilters, fieldMetadataItems),
     objectMetadataItem?.fields ?? [],
     viewFilterGroups ?? [],
   );

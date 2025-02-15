@@ -5,6 +5,7 @@ import { SettingsFeatures } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -63,7 +64,7 @@ export class UserWorkspace {
   updatedAt: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, type: 'timestamptz' })
+  @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
   @OneToMany(

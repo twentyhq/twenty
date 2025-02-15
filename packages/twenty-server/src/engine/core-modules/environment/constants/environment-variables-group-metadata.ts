@@ -19,7 +19,7 @@ export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
     position: 200,
     description:
       'We use this to limit the number of requests to the server. This is useful to prevent abuse.',
-    isHiddenOnLoad: false,
+    isHiddenOnLoad: true,
   },
   [EnvironmentVariablesGroup.StorageConfig]: {
     position: 300,
@@ -46,13 +46,13 @@ export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
   [EnvironmentVariablesGroup.Logging]: {
     position: 700,
     description: '',
-    isHiddenOnLoad: false,
+    isHiddenOnLoad: true,
   },
   [EnvironmentVariablesGroup.ExceptionHandler]: {
     position: 800,
     description:
       'By default, exceptions are sent to the logs. This should be enough for most self-hosting use-cases. For our cloud app we use Sentry.',
-    isHiddenOnLoad: false,
+    isHiddenOnLoad: true,
   },
   [EnvironmentVariablesGroup.Other]: {
     position: 900,

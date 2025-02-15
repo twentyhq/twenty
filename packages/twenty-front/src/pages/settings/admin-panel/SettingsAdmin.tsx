@@ -2,18 +2,21 @@ import { SettingsAdminContent } from '@/settings/admin-panel/components/Settings
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAdmin = () => {
+  const { t } = useLingui();
+
   return (
     <SubMenuTopBarContainer
-      title="Server Admin Panel"
+      title={t`Server Admin`}
       links={[
         {
-          children: 'Other',
+          children: t`Other`,
           href: getSettingsPath(SettingsPath.AdminPanel),
         },
-        { children: 'Server Admin Panel' },
+        { children: t`Server Admin Panel` },
       ]}
     >
       <SettingsPageContainer>

@@ -1,4 +1,4 @@
-import { useFilterDefinitionsFromFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterDefinitionsFromFilterableFieldMetadataItems';
+import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
@@ -19,15 +19,18 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
     currentRecordFiltersComponentState,
   );
 
-  const { filterDefinitions } =
-    useFilterDefinitionsFromFilterableFieldMetadataItems();
+  const { filterableFieldMetadataItems } =
+    useFilterableFieldMetadataItemsInRecordIndexContext();
 
   const applyCurrentViewFiltersToCurrentRecordFilters = () => {
     const currentView = views.find((view) => view.id === currentViewId);
 
     if (isDefined(currentView)) {
       setCurrentRecordFilters(
-        mapViewFiltersToFilters(currentView.viewFilters, filterDefinitions),
+        mapViewFiltersToFilters(
+          currentView.viewFilters,
+          filterableFieldMetadataItems,
+        ),
       );
     }
   };

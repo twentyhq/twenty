@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class TwentyORMException extends CustomException {
-  code: TwentyORMExceptionCode;
   constructor(message: string, code: TwentyORMExceptionCode) {
     super(message, code);
   }

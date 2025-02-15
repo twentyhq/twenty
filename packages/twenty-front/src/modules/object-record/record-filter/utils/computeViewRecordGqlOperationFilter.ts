@@ -22,6 +22,7 @@ import { isDefined } from 'twenty-shared';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import {
   convertGreaterThanRatingToArrayOfRatingValues,
   convertLessThanRatingToArrayOfRatingValues,
@@ -40,22 +41,35 @@ import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/valid
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
-const computeFilterRecordGqlOperationFilter = (
-  filterValueDependencies: RecordFilterValueDependencies,
-  filter: RecordFilter,
-  fields: Pick<Field, 'id' | 'name'>[],
-): RecordGqlOperationFilter | undefined => {
+import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+
+type ComputeFilterRecordGqlOperationFilterParams = {
+  filterValueDependencies: RecordFilterValueDependencies;
+  filter: RecordFilter;
+  fieldMetadataItems: Pick<Field, 'id' | 'name' | 'type'>[];
+};
+
+export const computeFilterRecordGqlOperationFilter = ({
+  filterValueDependencies,
+  filter,
+  fieldMetadataItems: fields,
+}: ComputeFilterRecordGqlOperationFilterParams):
+  | RecordGqlOperationFilter
+  | undefined => {
   const correspondingField = fields.find(
     (field) => field.id === filter.fieldMetadataId,
   );
 
-  const compositeFieldName = filter.definition.compositeFieldName;
+  const compositeFieldName = filter.subFieldName;
 
   const isCompositeFieldFiter = isNonEmptyString(compositeFieldName);
 
-  const isEmptyOperand = [
+  const isEmptinessOperand = [
     RecordFilterOperand.IsEmpty,
     RecordFilterOperand.IsNotEmpty,
+  ].includes(filter.operand);
+
+  const isDateOperandWithoutValue = [
     RecordFilterOperand.IsInPast,
     RecordFilterOperand.IsInFuture,
     RecordFilterOperand.IsToday,
@@ -65,13 +79,35 @@ const computeFilterRecordGqlOperationFilter = (
     return;
   }
 
-  if (!isEmptyOperand) {
-    if (!isDefined(filter.value) || filter.value === '') {
-      return;
-    }
+  const filterType = getFilterTypeFromFieldType(correspondingField.type);
+
+  const isFilterValueEmpty = !isDefined(filter.value) || filter.value === '';
+
+  const shouldSkipFiltering =
+    !isEmptinessOperand && !isDateOperandWithoutValue && isFilterValueEmpty;
+
+  if (shouldSkipFiltering) {
+    return;
   }
 
-  switch (filter.definition.type) {
+  const filterTypesThatHaveNoEmptinessOperand: FilterableFieldType[] = [
+    'BOOLEAN',
+  ];
+
+  const filterHasEmptinessOperands =
+    !filterTypesThatHaveNoEmptinessOperand.includes(filterType);
+
+  if (filterHasEmptinessOperands && isEmptinessOperand) {
+    const emptyOperationFilter = getEmptyRecordGqlOperationFilter({
+      operand: filter.operand,
+      correspondingField,
+      recordFilter: filter,
+    });
+
+    return emptyOperationFilter;
+  }
+
+  switch (filterType) {
     case 'TEXT':
       switch (filter.operand) {
         case RecordFilterOperand.Contains:
@@ -88,16 +124,9 @@ const computeFilterRecordGqlOperationFilter = (
               } as StringFilter,
             },
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     case 'RAW_JSON':
@@ -116,16 +145,9 @@ const computeFilterRecordGqlOperationFilter = (
               } as RawJsonFilter,
             },
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     case 'DATE':
@@ -149,14 +171,6 @@ const computeFilterRecordGqlOperationFilter = (
               lt: date.toISOString(),
             } as DateFilter,
           };
-        }
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty: {
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         }
         case RecordFilterOperand.IsRelative: {
           const dateRange = z
@@ -238,7 +252,7 @@ const computeFilterRecordGqlOperationFilter = (
         }
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`, //
+            `Unknown operand ${filter.operand} for ${filterType} filter`, //
           );
       }
     }
@@ -266,16 +280,9 @@ const computeFilterRecordGqlOperationFilter = (
               ),
             } as RatingFilter,
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     case 'NUMBER':
@@ -292,83 +299,61 @@ const computeFilterRecordGqlOperationFilter = (
               lte: parseFloat(filter.value),
             } as FloatFilter,
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     case 'RELATION': {
-      if (!isEmptyOperand) {
-        const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-          jsonRelationFilterValueSchema
-            .catch({
-              isCurrentWorkspaceMemberSelected: false,
-              selectedRecordIds: simpleRelationFilterValueSchema.parse(
-                filter.value,
-              ),
-            })
-            .parse(filter.value);
+      const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+        jsonRelationFilterValueSchema
+          .catch({
+            isCurrentWorkspaceMemberSelected: false,
+            selectedRecordIds: simpleRelationFilterValueSchema.parse(
+              filter.value,
+            ),
+          })
+          .parse(filter.value);
 
-        const recordIds = isCurrentWorkspaceMemberSelected
-          ? [
-              ...selectedRecordIds,
-              filterValueDependencies.currentWorkspaceMemberId,
-            ]
-          : selectedRecordIds;
+      const recordIds = isCurrentWorkspaceMemberSelected
+        ? [
+            ...selectedRecordIds,
+            filterValueDependencies.currentWorkspaceMemberId,
+          ]
+        : selectedRecordIds;
 
-        if (recordIds.length === 0) return;
-        switch (filter.operand) {
-          case RecordFilterOperand.Is:
-            return {
-              [correspondingField.name + 'Id']: {
-                in: recordIds,
-              } as RelationFilter,
-            };
-          case RecordFilterOperand.IsNot: {
-            if (recordIds.length === 0) return;
-            return {
-              or: [
-                {
-                  not: {
-                    [correspondingField.name + 'Id']: {
-                      in: recordIds,
-                    } as RelationFilter,
-                  },
-                },
-                {
+      if (recordIds.length === 0) return;
+
+      switch (filter.operand) {
+        case RecordFilterOperand.Is:
+          return {
+            [correspondingField.name + 'Id']: {
+              in: recordIds,
+            } as RelationFilter,
+          };
+        case RecordFilterOperand.IsNot: {
+          if (recordIds.length === 0) return;
+          return {
+            or: [
+              {
+                not: {
                   [correspondingField.name + 'Id']: {
-                    is: 'NULL',
+                    in: recordIds,
                   } as RelationFilter,
                 },
-              ],
-            };
-          }
-          default:
-            throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
-            );
+              },
+              {
+                [correspondingField.name + 'Id']: {
+                  is: 'NULL',
+                } as RelationFilter,
+              },
+            ],
+          };
         }
-      } else {
-        switch (filter.operand) {
-          case RecordFilterOperand.IsEmpty:
-          case RecordFilterOperand.IsNotEmpty:
-            return getEmptyRecordGqlOperationFilter(
-              filter.operand,
-              correspondingField,
-              filter.definition,
-            );
-          default:
-            throw new Error(
-              `Unknown empty operand ${filter.operand} for ${filter.definition.type} filter`,
-            );
-        }
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
+          );
       }
     }
     case 'CURRENCY':
@@ -385,16 +370,9 @@ const computeFilterRecordGqlOperationFilter = (
               amountMicros: { lte: parseFloat(filter.value) * 1000000 },
             } as CurrencyFilter,
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     case 'LINKS': {
@@ -439,16 +417,9 @@ const computeFilterRecordGqlOperationFilter = (
               },
             };
           }
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     }
@@ -493,16 +464,9 @@ const computeFilterRecordGqlOperationFilter = (
               },
             };
           }
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     }
@@ -609,27 +573,12 @@ const computeFilterRecordGqlOperationFilter = (
               },
             };
           }
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     case 'MULTI_SELECT': {
-      if (isEmptyOperand) {
-        return getEmptyRecordGqlOperationFilter(
-          filter.operand,
-          correspondingField,
-          filter.definition,
-        );
-      }
-
       const options = resolveSelectViewFilterValue(filter);
 
       if (options.length === 0) return;
@@ -665,18 +614,11 @@ const computeFilterRecordGqlOperationFilter = (
           };
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     }
     case 'SELECT': {
-      if (isEmptyOperand) {
-        return getEmptyRecordGqlOperationFilter(
-          filter.operand,
-          correspondingField,
-          filter.definition,
-        );
-      }
       const options = resolveSelectViewFilterValue(filter);
 
       if (options.length === 0) return;
@@ -698,7 +640,7 @@ const computeFilterRecordGqlOperationFilter = (
           };
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     }
@@ -718,16 +660,9 @@ const computeFilterRecordGqlOperationFilter = (
               } as ArrayFilter,
             },
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     }
@@ -786,13 +721,6 @@ const computeFilterRecordGqlOperationFilter = (
               },
             ],
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
             `Unknown operand ${filter.operand} for ${filter.label} filter`,
@@ -827,16 +755,9 @@ const computeFilterRecordGqlOperationFilter = (
               },
             ],
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     case 'PHONES': {
@@ -869,16 +790,9 @@ const computeFilterRecordGqlOperationFilter = (
               },
             ],
           };
-        case RecordFilterOperand.IsEmpty:
-        case RecordFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            `Unknown operand ${filter.operand} for ${filterType} filter`,
           );
       }
     }
@@ -897,7 +811,7 @@ const computeFilterRecordGqlOperationFilter = (
 const computeViewFilterGroupRecordGqlOperationFilter = (
   filterValueDependencies: RecordFilterValueDependencies,
   filters: RecordFilter[],
-  fields: Pick<Field, 'id' | 'name'>[],
+  fields: Pick<Field, 'id' | 'name' | 'type'>[],
   viewFilterGroups: ViewFilterGroup[],
   currentViewFilterGroupId?: string,
 ): RecordGqlOperationFilter | undefined => {
@@ -915,11 +829,11 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
 
   const groupRecordGqlOperationFilters = groupFilters
     .map((filter) =>
-      computeFilterRecordGqlOperationFilter(
+      computeFilterRecordGqlOperationFilter({
         filterValueDependencies,
         filter,
-        fields,
-      ),
+        fieldMetadataItems: fields,
+      }),
     )
     .filter(isDefined);
 
@@ -968,17 +882,17 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
 export const computeViewRecordGqlOperationFilter = (
   filterValueDependencies: RecordFilterValueDependencies,
   filters: RecordFilter[],
-  fields: Pick<Field, 'id' | 'name'>[],
+  fields: Pick<Field, 'id' | 'name' | 'type'>[],
   viewFilterGroups: ViewFilterGroup[],
 ): RecordGqlOperationFilter => {
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] = filters
     .filter((filter) => !filter.viewFilterGroupId)
     .map((regularFilter) =>
-      computeFilterRecordGqlOperationFilter(
+      computeFilterRecordGqlOperationFilter({
         filterValueDependencies,
-        regularFilter,
-        fields,
-      ),
+        filter: regularFilter,
+        fieldMetadataItems: fields,
+      }),
     )
     .filter(isDefined);
 

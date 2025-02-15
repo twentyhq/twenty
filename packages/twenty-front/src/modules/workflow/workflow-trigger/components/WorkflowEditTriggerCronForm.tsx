@@ -1,19 +1,19 @@
-import { WorkflowCronTrigger } from '@/workflow/types/Workflow';
-import { useIcons } from 'twenty-ui';
-import { useTheme } from '@emotion/react';
+import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { isDefined } from 'twenty-shared';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
+import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { CRON_TRIGGER_INTERVAL_OPTIONS } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
+import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
+import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
+import { useTheme } from '@emotion/react';
+import { isNumber } from '@sniptt/guards';
 import cron from 'cron-validate';
 import { useState } from 'react';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
-import { isNumber } from '@sniptt/guards';
-import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
+import { isDefined } from 'twenty-shared';
+import { useIcons } from 'twenty-ui';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
@@ -79,6 +79,7 @@ export const WorkflowEditTriggerCronForm = ({
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType={headerType}
+        disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>
         <Select
@@ -110,7 +111,7 @@ export const WorkflowEditTriggerCronForm = ({
             placeholder="0 */1 * * *"
             error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
             onBlur={onBlur}
-            hint="Format: [Second] [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
+            hint="Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
             readonly={triggerOptions.readonly}
             defaultValue={trigger.settings.pattern}
             onPersist={(newPattern: string) => {
@@ -120,7 +121,7 @@ export const WorkflowEditTriggerCronForm = ({
 
               const cronValidator = cron(newPattern);
 
-              if (cronValidator.isError()) {
+              if (cronValidator.isError() === true) {
                 setErrorMessages({
                   CUSTOM: `Invalid cron pattern, ${cronValidator
                     .getError()[0]
