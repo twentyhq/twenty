@@ -28,11 +28,8 @@ export const GET_SYSTEM_HEALTH_STATUS = gql`
         }
       }
       messageSync {
-        NOT_SYNCED
-        ONGOING
-        ACTIVE
-        FAILED_INSUFFICIENT_PERMISSIONS
-        FAILED_UNKNOWN
+        status
+        details
       }
     }
   }

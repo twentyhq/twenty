@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -739,15 +739,6 @@ export type LinksMetadata = {
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
-};
-
-export type MessageChannelSyncJobByStatusCounter = {
-  __typename?: 'MessageChannelSyncJobByStatusCounter';
-  ACTIVE?: Maybe<Scalars['Float']>;
-  FAILED_INSUFFICIENT_PERMISSIONS?: Maybe<Scalars['Float']>;
-  FAILED_UNKNOWN?: Maybe<Scalars['Float']>;
-  NOT_SYNCED?: Maybe<Scalars['Float']>;
-  ONGOING?: Maybe<Scalars['Float']>;
 };
 
 export enum MessageChannelVisibility {
@@ -1626,7 +1617,7 @@ export type Support = {
 export type SystemHealth = {
   __typename?: 'SystemHealth';
   database: AdminPanelHealthService;
-  messageSync: MessageChannelSyncJobByStatusCounter;
+  messageSync: AdminPanelHealthService;
   redis: AdminPanelHealthService;
   worker: AdminPanelHealthService;
 };
@@ -2288,7 +2279,7 @@ export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnv
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, details?: string | null }, redis: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, details?: string | null }, worker: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', name: string, workers: number, status: AdminPanelHealthServiceStatus, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null }, messageSync: { __typename?: 'MessageChannelSyncJobByStatusCounter', NOT_SYNCED?: number | null, ONGOING?: number | null, ACTIVE?: number | null, FAILED_INSUFFICIENT_PERMISSIONS?: number | null, FAILED_UNKNOWN?: number | null } } };
+export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, details?: string | null }, redis: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, details?: string | null }, worker: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', name: string, workers: number, status: AdminPanelHealthServiceStatus, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null }, messageSync: { __typename?: 'AdminPanelHealthService', status: AdminPanelHealthServiceStatus, details?: string | null } } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -4026,11 +4017,8 @@ export const GetSystemHealthStatusDocument = gql`
       }
     }
     messageSync {
-      NOT_SYNCED
-      ONGOING
-      ACTIVE
-      FAILED_INSUFFICIENT_PERMISSIONS
-      FAILED_UNKNOWN
+      status
+      details
     }
   }
 }

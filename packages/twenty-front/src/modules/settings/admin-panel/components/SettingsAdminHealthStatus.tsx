@@ -38,15 +38,28 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledDetailsContainer = styled.pre`
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3)};
+  white-space: pre-wrap;
+`;
+
 export const SettingsAdminHealthStatus = () => {
   const { data, loading } = useGetSystemHealthStatusQuery({
     fetchPolicy: 'network-only',
   });
 
   const [selectedQueue, setSelectedQueue] = useState<string | null>(null);
+  const [expandedService, setExpandedService] = useState<string | null>(null);
 
   const toggleQueueVisibility = (queueName: string) => {
     setSelectedQueue(selectedQueue === queueName ? null : queueName);
+  };
+
+  const toggleServiceExpansion = (serviceId: string) => {
+    setExpandedService(expandedService === serviceId ? null : serviceId);
   };
 
   const services = [
@@ -73,7 +86,12 @@ export const SettingsAdminHealthStatus = () => {
     <>
       <Section>
         <H2Title title="Health Status" description="How your system is doing" />
-        <SettingsHealthStatusListCard services={services} loading={loading} />
+        <SettingsHealthStatusListCard
+          services={services}
+          loading={loading}
+          onServiceClick={toggleServiceExpansion}
+          expandedService={expandedService}
+        />
       </Section>
       <Section>
         <StyledTitleContainer>

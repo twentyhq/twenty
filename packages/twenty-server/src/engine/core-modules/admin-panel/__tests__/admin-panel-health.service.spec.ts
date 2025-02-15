@@ -6,6 +6,7 @@ import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-he
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
+import { MessageSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/message-sync.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 
@@ -102,6 +103,10 @@ describe('AdminPanelHealthService', () => {
           useValue: {},
         },
         {
+          provide: MessageSyncHealthIndicator,
+          useValue: {},
+        },
+        {
           provide: HealthCacheService,
           useValue: healthCacheService,
         },
@@ -157,7 +162,10 @@ describe('AdminPanelHealthService', () => {
           },
         ],
       },
-      messageSync: mockMessageSync,
+      messageSync: {
+        status: AdminPanelHealthServiceStatus.OPERATIONAL,
+        details: undefined,
+      },
     };
 
     expect(result).toStrictEqual(expected);
