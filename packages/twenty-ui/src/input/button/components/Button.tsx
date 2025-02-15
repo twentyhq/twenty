@@ -12,10 +12,12 @@ export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 export type ButtonAccent = 'default' | 'blue' | 'danger';
+export type IconPosition = 'left' | 'right';
 
 export type ButtonProps = {
   className?: string;
   Icon?: IconComponent;
+  IconPosition?: IconPosition;
   title?: string;
   fullWidth?: boolean;
   variant?: ButtonVariant;
@@ -398,6 +400,7 @@ const StyledShortcutLabel = styled.div<{
 export const Button = ({
   className,
   Icon,
+  IconPosition = 'left',
   title,
   fullWidth = false,
   variant = 'primary',
@@ -439,8 +442,9 @@ export const Button = ({
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
-      {Icon && <Icon size={theme.icon.size.sm} />}
+      {Icon && IconPosition === 'left' && <Icon size={theme.icon.size.sm} />}
       {title}
+      {Icon && IconPosition === 'right' && <Icon size={theme.icon.size.sm} />}
       {hotkeys && !isMobile && (
         <>
           <StyledSeparator buttonSize={size} accent={accent} />

@@ -44,7 +44,7 @@ const StyledTab = styled('button', {
   justify-content: center;
   margin-bottom: 0;
   padding: ${({ theme }) => theme.spacing(2) + ' 0'};
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   text-decoration: none;
 
   &:hover {
