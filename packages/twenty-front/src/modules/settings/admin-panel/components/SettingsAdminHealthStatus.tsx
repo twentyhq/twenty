@@ -3,16 +3,13 @@ import { SettingsAdminQueueExpandableContainer } from '@/settings/admin-panel/co
 import { SettingsAdminQueueHealthButtons } from '@/settings/admin-panel/components/SettingsAdminQueueHealthButtons';
 import { SettingsHealthStatusListCard } from '@/settings/admin-panel/components/SettingsHealthStatusListCard';
 import { AdminHealthService } from '@/settings/admin-panel/types/AdminHealthService';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { H2Title, IconChevronRight, Section } from 'twenty-ui';
 import {
-  AnimatedExpandableContainer,
-  H2Title,
-  IconChevronRight,
-  Section,
-} from 'twenty-ui';
-import { useGetSystemHealthStatusQuery } from '~/generated/graphql';
+  AdminPanelHealthServiceStatus,
+  useGetSystemHealthStatusQuery,
+} from '~/generated/graphql';
 
 const StyledTransitionedIconChevronRight = styled(IconChevronRight)`
   cursor: pointer;
@@ -36,6 +33,11 @@ const StyledTitleContainer = styled.div`
   flex: 1;
 `;
 
+const StyledErrorMessage = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const SettingsAdminHealthStatus = () => {
   const { data, loading } = useGetSystemHealthStatusQuery({
     fetchPolicy: 'network-only',
@@ -43,28 +45,17 @@ export const SettingsAdminHealthStatus = () => {
 
   const [selectedQueue, setSelectedQueue] = useState<string | null>(null);
 
-  const [isWorkerSectionExpanded, setIsWorkerSectionExpanded] = useState(false);
-
-  const toggleWorkerSectionVisibility = () => {
-    setIsWorkerSectionExpanded(!isWorkerSectionExpanded);
-  };
-
   const toggleQueueVisibility = (queueName: string) => {
     setSelectedQueue(selectedQueue === queueName ? null : queueName);
   };
 
-  const theme = useTheme();
-
-  const services_1 = [
+  const services = [
     {
       id: 'database',
       name: 'Database Status',
       ...data?.getSystemHealthStatus.database,
     },
     { id: 'redis', name: 'Redis Status', ...data?.getSystemHealthStatus.redis },
-  ].filter((service): service is AdminHealthService => !!service.status);
-
-  const service_2 = [
     {
       id: 'worker',
       name: 'Worker Status',
@@ -73,40 +64,41 @@ export const SettingsAdminHealthStatus = () => {
     },
   ].filter((service): service is AdminHealthService => !!service.status);
 
+  const isWorkerDown =
+    !data?.getSystemHealthStatus.worker.status ||
+    data?.getSystemHealthStatus.worker.status ===
+      AdminPanelHealthServiceStatus.OUTAGE;
+
   return (
     <>
       <Section>
         <H2Title title="Health Status" description="How your system is doing" />
-        <SettingsHealthStatusListCard services={services_1} loading={loading} />
+        <SettingsHealthStatusListCard services={services} loading={loading} />
       </Section>
       <Section>
-        <StyledWorkerSectionHeader onClick={toggleWorkerSectionVisibility}>
-          <StyledTitleContainer>
-            <H2Title
-              title="Worker"
-              description="Expand to see queue wise worker status"
+        <StyledTitleContainer>
+          <H2Title
+            title="Queue Status"
+            description="Background job processing status and metrics"
+          />
+        </StyledTitleContainer>
+        {isWorkerDown && !loading ? (
+          <StyledErrorMessage>
+            Queue information is not available because the worker is down
+          </StyledErrorMessage>
+        ) : (
+          <>
+            <SettingsAdminQueueHealthButtons
+              queues={data?.getSystemHealthStatus.worker.queues ?? []}
+              selectedQueue={selectedQueue}
+              toggleQueueVisibility={toggleQueueVisibility}
             />
-          </StyledTitleContainer>
-          <StyledTransitionedIconChevronRight
-            $isExpanded={isWorkerSectionExpanded}
-            size={theme.icon.size.md}
-          />
-        </StyledWorkerSectionHeader>
-        <SettingsHealthStatusListCard services={service_2} loading={loading} />
-        <AnimatedExpandableContainer
-          isExpanded={isWorkerSectionExpanded}
-          mode="fit-content"
-        >
-          <SettingsAdminQueueHealthButtons
-            queues={data?.getSystemHealthStatus.worker.queues ?? []}
-            selectedQueue={selectedQueue}
-            toggleQueueVisibility={toggleQueueVisibility}
-          />
-          <SettingsAdminQueueExpandableContainer
-            queues={data?.getSystemHealthStatus.worker.queues ?? []}
-            selectedQueue={selectedQueue}
-          />
-        </AnimatedExpandableContainer>
+            <SettingsAdminQueueExpandableContainer
+              queues={data?.getSystemHealthStatus.worker.queues ?? []}
+              selectedQueue={selectedQueue}
+            />
+          </>
+        )}
       </Section>
       <Section>
         <H2Title
