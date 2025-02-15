@@ -9,9 +9,11 @@ const actorSchema = z.object({
   workspaceMemberId: z.optional(z.string().nullable()),
   name: z.string(),
   context: z.optional(
-    z.object({
-      provider: z.optional(z.nativeEnum(ConnectedAccountProvider)),
-    }),
+    z
+      .object({
+        provider: z.optional(z.nativeEnum(ConnectedAccountProvider)),
+      })
+      .nullable(),
   ),
 });
 
