@@ -4,11 +4,11 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import {
-  personIds,
-  personRecords,
-  query,
-  responseData,
-  variables,
+    personIds,
+    personRecords,
+    query,
+    responseData,
+    variables,
 } from '@/object-record/hooks/__mocks__/useDeleteManyRecords';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
@@ -17,7 +17,7 @@ import { InMemoryCache } from '@apollo/client';
 import { MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { getPersonObjectMetadataItem } from '~/testing/mock-data/people';
+import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 const getDefaultMocks = (
   overrides?: Partial<MockedResponse>,
 ): MockedResponse[] => [
@@ -40,7 +40,7 @@ const mockRefetchAggregateQueries = jest.fn();
 (useRefetchAggregateQueries as jest.Mock).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
-const objectMetadataItem = getPersonObjectMetadataItem();
+const objectMetadataItem = getMockPersonObjectMetadataItem();
 const objectMetadataItems = [objectMetadataItem];
 const expectedCachedRecordsWithDeletedAt = personRecords.map(
   (personRecord) => ({
