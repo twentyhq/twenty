@@ -8,7 +8,6 @@ import {
 } from 'twenty-ui';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isDefined } from 'twenty-shared';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
@@ -19,7 +18,7 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
 export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
@@ -325,80 +324,6 @@ export const DateTimePicker = ({
     MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
   );
 
-  const handleClear = () => {
-    closeDropdowns();
-    onClear?.();
-  };
-
-  const closeDropdowns = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
-    closeDropdown();
-  };
-
-  const handleClose = (newDate: Date) => {
-    closeDropdowns();
-    onClose?.(newDate);
-  };
-
-  const handleChangeMonth = (month: number) => {
-    const newDate = new Date(internalDate);
-    newDate.setMonth(month);
-    onChange?.(newDate);
-  };
-
-  const handleAddMonth = () => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .plus({ months: 1 })
-      .toJSDate();
-
-    onChange?.(dateParsed);
-  };
-
-  const handleSubtractMonth = () => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .minus({ months: 1 })
-      .toJSDate();
-
-    onChange?.(dateParsed);
-  };
-
-  const handleChangeYear = (year: number) => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .set({ year: year })
-      .toJSDate();
-
-    onChange?.(dateParsed);
-  };
-
-  const handleDateChange = (date: Date) => {
-    const dateParsed = DateTime.fromJSDate(internalDate, {
-      zone: isDateTimeInput ? timeZone : 'local',
-    })
-      .set({
-        day: date.getDate(),
-        month: date.getMonth() + 1,
-        year: date.getFullYear(),
-      })
-      .toJSDate();
-
-    onChange?.(dateParsed);
-  };
-
-  const handleDateSelect = (date: Date) => {
-    const dateParsed = DateTime.fromJSDate(internalDate, {
-      zone: isDateTimeInput ? timeZone : 'local',
-    })
-      .set({
-        day: date.getDate(),
-        month: date.getMonth() + 1,
-        year: date.getFullYear(),
-      })
-      .toJSDate();
-
-    handleClose?.(dateParsed);
-  };
-
   const dateWithoutTime = DateTime.fromJSDate(internalDate)
     .toLocal()
     .set({
@@ -439,6 +364,104 @@ export const DateTimePicker = ({
 
   const selectedDates = isRelative ? highlightedDates : [dateToUse];
 
+  const [datePickerMonth, setDatePickerMonth] = useState(
+    endOfDayInLocalTimezone.getMonth(),
+  );
+
+  const [datePickerYear, setDatePickerYear] = useState(
+    endOfDayInLocalTimezone.getFullYear(),
+  );
+
+  const openToDate = DateTime.now()
+    .set({
+      day: dateParsed.get('day'),
+      month: datePickerMonth + 1,
+      year: datePickerYear,
+      hour: 23,
+      minute: 59,
+      second: 59,
+      millisecond: 999,
+    })
+    .toJSDate();
+
+  const handleChangeMonth = (month: number) => {
+    setDatePickerMonth(month);
+  };
+
+  const handleChangeYear = (year: number) => {
+    setDatePickerYear(year);
+  };
+
+  const handleSubtractMonth = () => {
+    if (datePickerMonth === 0) {
+      handleChangeMonth(11);
+      handleChangeYear(datePickerYear - 1);
+    } else {
+      handleChangeMonth(datePickerMonth - 1);
+    }
+  };
+
+  const handleAddMonth = () => {
+    if (datePickerMonth === 11) {
+      handleChangeMonth(0);
+      handleChangeYear(datePickerYear + 1);
+    } else {
+      handleChangeMonth(datePickerMonth + 1);
+    }
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    if (!date) {
+      onChange?.(null);
+      return;
+    }
+    const dateParsed = DateTime.fromJSDate(internalDate, {
+      zone: isDateTimeInput ? timeZone : 'local',
+    })
+      .set({
+        day: date.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear(),
+      })
+      .toJSDate();
+
+    setDatePickerMonth(dateParsed.getMonth());
+    setDatePickerYear(dateParsed.getFullYear());
+    onChange?.(dateParsed);
+  };
+
+  const handleDateSelect = (date: Date) => {
+    const dateParsed = DateTime.fromJSDate(internalDate, {
+      zone: isDateTimeInput ? timeZone : 'local',
+    })
+      .set({
+        day: date.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear(),
+      })
+      .toJSDate();
+
+    setDatePickerMonth(dateParsed.getMonth());
+    setDatePickerYear(dateParsed.getFullYear());
+    handleClose?.(dateParsed);
+  };
+
+  const handleClear = () => {
+    closeDropdowns();
+    onClear?.();
+  };
+
+  const closeDropdowns = () => {
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
+  };
+
+  const handleClose = (newDate: Date) => {
+    closeDropdowns();
+    onClose?.(newDate);
+  };
+
   return (
     <StyledContainer calendarDisabled={isRelative}>
       <div className={clearable ? 'clearable ' : ''}>
@@ -446,14 +469,14 @@ export const DateTimePicker = ({
           open={true}
           selected={dateToUse}
           selectedDates={selectedDates}
-          openToDate={isDefined(dateToUse) ? dateToUse : undefined}
+          openToDate={openToDate}
           disabledKeyboardNavigation
-          onChange={handleDateChange as any}
+          onChange={handleDateChange}
           customInput={
             <DateTimeInput
               date={internalDate}
               isDateTimeInput={isDateTimeInput}
-              onChange={onChange}
+              onChange={handleDateChange}
               userTimezone={timeZone}
             />
           }
@@ -471,7 +494,9 @@ export const DateTimePicker = ({
             ) : (
               <AbsoluteDatePickerHeader
                 date={internalDate}
-                onChange={onChange}
+                onChange={handleDateChange}
+                month={datePickerMonth}
+                year={datePickerYear}
                 onChangeMonth={handleChangeMonth}
                 onChangeYear={handleChangeYear}
                 onAddMonth={handleAddMonth}
