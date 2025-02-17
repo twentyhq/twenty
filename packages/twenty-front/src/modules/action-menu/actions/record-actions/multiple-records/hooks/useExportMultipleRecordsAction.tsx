@@ -1,3 +1,4 @@
+import { useContextStoreCurrentViewIdOrThrow } from '@/context-store/hooks/useContextStoreCurrentViewIdOrThrow';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { useExportRecords } from '@/object-record/record-index/export/hooks/useExportRecords';
@@ -7,10 +8,12 @@ export const useExportMultipleRecordsAction = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
+  const currentViewId = useContextStoreCurrentViewIdOrThrow();
+
   const { download } = useExportRecords({
     delayMs: 100,
     objectMetadataItem,
-    recordIndexId: objectMetadataItem.namePlural,
+    recordIndexId: `${objectMetadataItem.namePlural}-${currentViewId}`,
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
