@@ -1,12 +1,12 @@
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 export const useOpenSettingsMenu = () => {
-  const [, setIsNavigationDrawerExpanded] = useRecoilState(
+  const setIsNavigationDrawerExpanded = useSetRecoilState(
     isNavigationDrawerExpandedState,
   );
-  const [, setCurrentMobileNavigationDrawer] = useRecoilState(
+  const setCurrentMobileNavigationDrawer = useSetRecoilState(
     currentMobileNavigationDrawerState,
   );
 

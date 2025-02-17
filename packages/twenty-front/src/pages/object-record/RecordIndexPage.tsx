@@ -43,7 +43,8 @@ export const RecordIndexPage = () => {
     mainContextStoreComponentInstanceId,
   );
 
-  const recordIndexId = `${objectNamePlural}-${contextStoreCurrentViewId}`;
+  // Todo: if we want the recordIndexId to contain the viewId, we need to remove the Effects otherwise we will have race condition on view change
+  const recordIndexId = `${objectNamePlural}`;
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,

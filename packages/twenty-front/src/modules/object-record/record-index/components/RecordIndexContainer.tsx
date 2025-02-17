@@ -26,7 +26,7 @@ import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActio
 import { ContextStoreCurrentViewTypeEffect } from '@/context-store/components/ContextStoreCurrentViewTypeEffect';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
+import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
@@ -180,8 +180,9 @@ export const RecordIndexContainer = () => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const { filterableFieldMetadataItems } =
-    useFilterableFieldMetadataItemsInRecordIndexContext();
+  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
+    objectMetadataItem.id,
+  );
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,

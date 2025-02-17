@@ -1,5 +1,5 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
+import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -16,8 +16,9 @@ export const useDefaultHomePagePath = () => {
   const { activeObjectMetadataItems, alphaSortedActiveObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-  const { lastVisitedObjectMetadataItemId } =
-    useLastVisitedObjectMetadataItem();
+  const lastVisitedObjectMetadataItemId = useRecoilValue(
+    lastVisitedObjectMetadataItemIdState,
+  );
 
   const getActiveObjectMetadataItemMatchingId = useCallback(
     (objectMetadataId: string) => {
