@@ -5,6 +5,7 @@ import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/em
 import { EmailThread } from '@/activities/emails/types/EmailThread';
 import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 
+import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
@@ -159,11 +160,28 @@ export const useRightDrawerEmailThread = () => {
     })
     .filter(isDefined);
 
+  const { records: connectedAccountData } =
+    useFindManyRecords<ConnectedAccount>({
+      filter: {
+        id: {
+          eq: messageChannelData?.[0]?.connectedAccountId ?? '',
+        },
+      },
+      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+      recordGqlFields: {
+        id: true,
+        provider: true,
+      },
+      skip: !messageChannelData?.[0]?.connectedAccountId,
+    });
+  const connectedAccountProvider =
+    connectedAccountData.length > 0 ? connectedAccountData[0].provider : null;
   return {
     thread,
     messages: messagesWithSender,
     messageThreadExternalId,
     connectedAccountHandle,
+    connectedAccountProvider,
     threadLoading: messagesLoading,
     messageChannelLoading,
     fetchMoreMessages,

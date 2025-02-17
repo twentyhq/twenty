@@ -36,5 +36,6 @@ export type MessageChannel = {
   syncCursor: string;
   syncStageStartedAt: Date;
   throttleFailureCount: number;
+  connectedAccountId: string;
   __typename: 'MessageChannel';
 };
