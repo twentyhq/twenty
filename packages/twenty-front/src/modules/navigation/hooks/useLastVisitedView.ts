@@ -1,25 +1,14 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 export const useLastVisitedView = () => {
-  const [
-    lastVisitedViewPerObjectMetadataItem,
-    setLastVisitedViewPerObjectMetadataItem,
-  ] = useRecoilState(lastVisitedViewPerObjectMetadataItemState);
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
 
   const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
-
-  const setFallbackForLastVisitedView = (objectMetadataItemId: string) => {
-    /* ...{} allows us to pass value as undefined to remove that particular key
-     even though param type is of type Record<string,string> */
-
-    setLastVisitedViewPerObjectMetadataItem({
-      ...{},
-      [objectMetadataItemId]: undefined,
-    });
-  };
 
   const getLastVisitedViewIdFromObjectNamePlural = (
     objectNamePlural: string,
@@ -39,6 +28,5 @@ export const useLastVisitedView = () => {
   return {
     getLastVisitedViewIdFromObjectNamePlural,
     getLastVisitedViewIdFromObjectMetadataItemId,
-    setFallbackForLastVisitedView,
   };
 };
