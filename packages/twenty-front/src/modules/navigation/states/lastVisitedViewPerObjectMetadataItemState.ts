@@ -1,9 +1,11 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createState } from 'twenty-ui';
 import { localStorageEffect } from '~/utils/recoil-effects';
 
-export const lastVisitedViewPerObjectMetadataItemState =
-  createComponentState<Record<string, string> | null>({
-    key: 'lastVisitedViewPerObjectMetadataItemState',
-    defaultValue: null,
-    effects: [localStorageEffect()],
-  });
+export const lastVisitedViewPerObjectMetadataItemState = createState<Record<
+  string,
+  string
+> | null>({
+  key: 'lastVisitedViewPerObjectMetadataItemState',
+  defaultValue: null,
+  effects: [localStorageEffect()],
+});
