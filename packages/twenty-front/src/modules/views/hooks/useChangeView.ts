@@ -8,6 +8,7 @@ export const useChangeView = (viewBarComponentId?: string) => {
   const { setViewInUrl } = useSetViewInUrl();
 
   const changeView = async (viewId: string) => {
+    console.log('changeView', viewId);
     setViewInUrl(viewId);
     resetUnsavedViewStates(viewId);
   };

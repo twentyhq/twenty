@@ -206,11 +206,18 @@ export const useLoadRecordIndexStates = () => {
           (view) => view.id === contextStoreCurrentViewId,
         );
 
+        console.log(contextStoreCurrentViewId);
+
+        console.log('view', view);
+        console.log('views', views);
+        console.log('objectMetadataItem', objectMetadataItem);
+
         if (!view || !objectMetadataItem) {
           return;
         }
 
         const recordIndexId = `${objectMetadataItem.namePlural}-${view.id}`;
+        console.log('recordIndexId', recordIndexId);
 
         const filterableFieldMetadataItems = snapshot
           .getLoadable(

@@ -1,20 +1,16 @@
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { ViewKey } from '@/views/types/ViewKey';
+import { View } from '@/views/types/View';
 import { selectorFamily } from 'recoil';
 
 export const prefetchViewFromViewIdFamilySelector = selectorFamily<
-  string | undefined,
-  { objectMetadataItemId: string }
+  View | undefined,
+  { viewId: string }
 >({
   key: 'prefetchViewFromViewIdFamilySelector',
   get:
-    ({ objectMetadataItemId }) =>
+    ({ viewId }) =>
     ({ get }) => {
       const views = get(prefetchViewsState);
-      return views?.find(
-        (view) =>
-          view.objectMetadataId === objectMetadataItemId &&
-          view.key === ViewKey.Index,
-      )?.id;
+      return views?.find((view) => view.id === viewId);
     },
 });

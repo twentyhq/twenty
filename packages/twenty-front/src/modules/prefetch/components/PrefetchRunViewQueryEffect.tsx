@@ -2,38 +2,23 @@ import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Favorite } from '@/favorites/types/Favorite';
-import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
-import { useUpsertRecordsInCacheForPrefetchKey } from '@/prefetch/hooks/internal/useUpsertRecordsInCacheForPrefetchKey';
+import { findAllViewsOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllViewsOperationSignatureFactory';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const PrefetchRunQueriesEffect = () => {
+export const PrefetchRunViewQueryEffect = () => {
   console.log('PrefetchRunQueriesEffect');
   const currentUser = useRecoilValue(currentUserState);
 
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
 
-  const { upsertRecordsInCache: upsertViewsInCache } =
-    useUpsertRecordsInCacheForPrefetchKey<View>({
-      prefetchKey: PrefetchKey.AllViews,
-    });
-
-  const { upsertRecordsInCache: upsertFavoritesInCache } =
-    useUpsertRecordsInCacheForPrefetchKey<Favorite>({
-      prefetchKey: PrefetchKey.AllFavorites,
-    });
-  const { upsertRecordsInCache: upsertFavoritesFoldersInCache } =
-    useUpsertRecordsInCacheForPrefetchKey<FavoriteFolder>({
-      prefetchKey: PrefetchKey.AllFavoritesFolders,
-    });
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const operationSignatures = Object.values(PREFETCH_CONFIG)
@@ -46,8 +31,16 @@ export const PrefetchRunQueriesEffect = () => {
       return operationSignatureFactory({ objectMetadataItem });
     });
 
-  const { result } = useCombinedFindManyRecords({
-    operationSignatures,
+  const findAllViewsOperationSignature = findAllViewsOperationSignatureFactory({
+    objectMetadataItem: objectMetadataItems.find(
+      (item) => item.nameSingular === CoreObjectNameSingular.View,
+    ),
+  });
+
+  const { records } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.View,
+    filter: findAllViewsOperationSignature.variables.filter,
+    recordGqlFields: findAllViewsOperationSignature.fields,
     skip: !currentUser || isWorkspaceSuspended,
   });
 
@@ -66,24 +59,10 @@ export const PrefetchRunQueriesEffect = () => {
   );
 
   useEffect(() => {
-    if (isDefined(result.views)) {
-      upsertViewsInCache(result.views as View[]);
-      setPrefetchViewsState(result.views as View[]);
+    if (isDefined(records)) {
+      setPrefetchViewsState(records as View[]);
     }
-
-    if (isDefined(result.favorites)) {
-      upsertFavoritesInCache(result.favorites as Favorite[]);
-    }
-    if (isDefined(result.favoriteFolders)) {
-      upsertFavoritesFoldersInCache(result.favoriteFolders as FavoriteFolder[]);
-    }
-  }, [
-    result,
-    upsertViewsInCache,
-    upsertFavoritesInCache,
-    upsertFavoritesFoldersInCache,
-    setPrefetchViewsState,
-  ]);
+  }, [records, setPrefetchViewsState]);
 
   return <></>;
 };

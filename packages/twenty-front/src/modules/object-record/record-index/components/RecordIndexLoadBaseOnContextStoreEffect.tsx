@@ -1,7 +1,9 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
+import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const RecordIndexLoadBaseOnContextStoreEffect = () => {
@@ -10,11 +12,26 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
+  const [loadedViewId, setLoadedViewId] = useState<string | undefined>(
+    undefined,
+  );
+
+  const view = useRecoilValue(
+    prefetchViewFromViewIdFamilySelector({
+      viewId: contextStoreCurrentViewId ?? '',
+    }),
+  );
+
   useEffect(() => {
-    if (isDefined(contextStoreCurrentViewId)) {
-      loadRecordIndexStates();
+    if (loadedViewId === contextStoreCurrentViewId) {
+      return;
     }
-  }, [contextStoreCurrentViewId, loadRecordIndexStates]);
+
+    if (isDefined(view)) {
+      loadRecordIndexStates();
+      setLoadedViewId(contextStoreCurrentViewId);
+    }
+  }, [contextStoreCurrentViewId, loadRecordIndexStates, loadedViewId, view]);
 
   return <></>;
 };

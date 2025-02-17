@@ -10,7 +10,7 @@ export const useContextStoreObjectMetadataItemOrThrow = (
   );
 
   if (!objectMetadataItem) {
-    throw new Error('Object metadata item is not se in context store');
+    throw new Error('Object metadata item is not set in context store');
   }
 
   return { objectMetadataItem };

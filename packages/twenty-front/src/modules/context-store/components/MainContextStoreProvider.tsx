@@ -31,7 +31,6 @@ const getViewId = (
 };
 
 export const MainContextStoreProvider = () => {
-  console.log('Provider');
   const { isMatchingLocation } = useIsMatchingLocation();
   const isRecordIndexPage = isMatchingLocation(AppPath.RecordIndexPage);
   const isRecordShowPage = isMatchingLocation(AppPath.RecordShowPage);
@@ -49,9 +48,11 @@ export const MainContextStoreProvider = () => {
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
-  );
+  const objectMetadataItem =
+    objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.namePlural === objectNamePlural,
+    ) ?? objectMetadataItems[0];
 
   const { getLastVisitedViewIdFromObjectNamePlural } = useLastVisitedView();
 

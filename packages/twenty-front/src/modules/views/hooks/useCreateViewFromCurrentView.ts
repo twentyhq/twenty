@@ -174,7 +174,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           );
         }
 
+        console.log('findManyViews before');
         await findManyViews();
+        console.log('findManyViews after');
         set(isPersistingViewFieldsCallbackState, false);
       },
     [

@@ -1,14 +1,16 @@
 import styled from '@emotion/styled';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
+import { isDefined } from 'twenty-shared';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -23,9 +25,14 @@ export const SignInBackgroundMockContainer = () => {
   const recordIndexId = 'sign-up-mock-record-table-id';
   const viewBarId = 'companies-mock';
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const objectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
+    'main-context-store',
+  );
+
+  if (!isDefined(objectMetadataItem)) {
+    return null;
+  }
 
   return (
     <StyledContainer>
@@ -47,7 +54,7 @@ export const SignInBackgroundMockContainer = () => {
           >
             <ContextStoreComponentInstanceContext.Provider
               value={{
-                instanceId: recordIndexId,
+                instanceId: 'main-context-store',
               }}
             >
               <ActionMenuComponentInstanceContext.Provider
