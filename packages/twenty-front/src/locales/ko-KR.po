@@ -53,7 +53,8 @@ msgstr "24시간 ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr "\\\n"
+msgstr ""
+"\\\n"
 "팀과 함께 고객 관계를 관리할 수 있는 공유 환경입니다."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:102
@@ -1556,6 +1557,7 @@ msgstr "러시아어"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "검색"
 
@@ -1585,6 +1587,7 @@ msgid "Search for an object..."
 msgstr "개체 검색..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "레코드 검색"
 
@@ -2062,4 +2065,3 @@ msgstr "귀하의 워크스페이스"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "워크스페이스가 비활성화됩니다"
-
