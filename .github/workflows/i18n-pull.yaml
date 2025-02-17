@@ -64,6 +64,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
+          git add .
           git stash
 
       - name: Pull translations from Crowdin
@@ -125,4 +126,3 @@ jobs:
         run: gh pr create -B main -H i18n --title 'i18n - translations' --body 'Created by Github action' || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-# End of Selection
