@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Hủy bỏ"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Về"
 
@@ -372,7 +372,7 @@ msgstr "Tiếng Trung — Phồn thể"
 msgid "Choose an object"
 msgstr "Chọn một đối tượng"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Chọn các trường sẽ xác định bản ghi của bạn"
 
@@ -543,7 +543,7 @@ msgstr "Tiếng Séc"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Khu vực nguy hiểm"
 
@@ -578,7 +578,7 @@ msgstr "Ngày và giờ"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Hủy kích hoạt"
@@ -588,7 +588,7 @@ msgstr "Hủy kích hoạt"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Hủy kích hoạt \"Đồng bộ nhãn Đối tượng và tên API\" để thiết lập tên API tùy chỉnh"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Hủy kích hoạt đối tượng"
 
@@ -1198,7 +1198,7 @@ msgstr "Tên"
 msgid "Name can not be empty"
 msgstr "Tên không thể để trống"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Tên độc lập cả hình thức số ít (ví dụ, 'Hóa đơn') và số nhiều (ví dụ, 'Các hóa đơn')."
 
@@ -1345,7 +1345,7 @@ msgstr "Lạc lối"
 msgid "Opened"
 msgstr "Đã mở"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Tùy chọn"
@@ -2063,3 +2063,4 @@ msgstr "Không gian làm việc của bạn"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Không gian làm việc của bạn sẽ bị vô hiệu hóa"
+

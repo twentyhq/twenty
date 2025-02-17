@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Megszakítás"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Rólunk"
 
@@ -372,7 +372,7 @@ msgstr "Kínai — Hagyományos"
 msgid "Choose an object"
 msgstr "Válasszon egy objektumot"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Válassza ki azon mezőket, amelyek azonosítják a bejegyzéseit"
 
@@ -543,7 +543,7 @@ msgstr "Cseh"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Veszélyzóna"
 
@@ -578,7 +578,7 @@ msgstr "Dátum és idő"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Deaktiválás"
@@ -588,7 +588,7 @@ msgstr "Deaktiválás"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Deaktiválja a \"Synchronize Objects Labels and API Names\" lehetőséget az egyedi API név beállításához"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Objektum kikapcsolása"
 
@@ -1198,7 +1198,7 @@ msgstr "Név"
 msgid "Name can not be empty"
 msgstr "A név nem lehet üres"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Név egyes (pl. 'Számla') és többes (pl. 'Számlák') alakban."
 
@@ -1345,7 +1345,7 @@ msgstr "A járatlan úton"
 msgid "Opened"
 msgstr "Megnyitva"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opciók"
@@ -2063,3 +2063,4 @@ msgstr "Az Ön munkaterülete"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "A munkaterületét le lesz tiltva"
+
