@@ -1,6 +1,7 @@
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/components/DocumentViewer';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -16,36 +17,20 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense, useMemo, useState } from 'react';
 import {
+  IconButton,
   IconCalendar,
   IconDownload,
   IconX,
-  LightIconButton,
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
-const PREVIEWABLE_EXTENSIONS = [
-  'pdf',
-  'doc',
-  'docx',
-  'ppt',
-  'pptx',
-  'xls',
-  'xlsx',
-  'png',
-  'jpg',
-  'jpeg',
-  'gif',
-];
-
-const DocumentViewerContent = lazy(() =>
-  import('@/activities/files/components/DocumentViewerModal').then(
-    (module) => ({
-      default: module.DocumentViewerContent,
-    }),
-  ),
+const DocumentViewer = lazy(() =>
+  import('@/activities/files/components/DocumentViewer').then((module) => ({
+    default: module.DocumentViewer,
+  })),
 );
 
 const StyledLeftContent = styled.div`
@@ -119,12 +104,20 @@ const StyledHeader = styled.div`
 
 const StyledTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledHeaderActions = styled.div`
+const StyledModalHeader = styled(Modal.Header)`
+  padding: 0;
+`;
+
+const StyledModalContent = styled(Modal.Content)`
+  padding-left: 0;
+  padding-right: 0;
+`;
+
+const StyledButtonContainer = styled.div`
   display: flex;
+  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -250,25 +243,24 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           isClosable
           onClose={() => setIsDocumentViewerOpen(false)}
         >
-          <Modal.Header>
+          <StyledModalHeader>
             <StyledHeader>
               <StyledTitle>{attachment.name}</StyledTitle>
-              <StyledHeaderActions>
-                <LightIconButton
+              <StyledButtonContainer>
+                <IconButton
                   Icon={IconDownload}
                   onClick={handleDownload}
-                  accent="tertiary"
-                  title="Download"
+                  size="small"
                 />
-                <LightIconButton
+                <IconButton
                   Icon={IconX}
                   onClick={() => setIsDocumentViewerOpen(false)}
-                  accent="tertiary"
+                  size="small"
                 />
-              </StyledHeaderActions>
+              </StyledButtonContainer>
             </StyledHeader>
-          </Modal.Header>
-          <Modal.Content>
+          </StyledModalHeader>
+          <StyledModalContent>
             <Suspense
               fallback={
                 <StyledLoadingContainer>
@@ -278,12 +270,12 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
                 </StyledLoadingContainer>
               }
             >
-              <DocumentViewerContent
+              <DocumentViewer
                 documentName={attachment.name}
                 documentUrl={attachment.fullPath}
               />
             </Suspense>
-          </Modal.Content>
+          </StyledModalContent>
         </Modal>
       )}
     </FieldContext.Provider>

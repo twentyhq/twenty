@@ -2,7 +2,6 @@ import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledDocumentViewerContainer = styled.div`
@@ -20,82 +19,78 @@ const StyledDocumentViewerContainer = styled.div`
     background: none;
   }
 
-  /* Hide all default controls and header */
-  div[class*='header-bar'] {
+  #react-doc-viewer #header-bar {
+    display: none;
+  }
+
+  #react-doc-viewer #pdf-controls {
     display: none !important;
   }
-
-  div[class*='pdf-viewer-controls'] {
-    display: none !important;
-  }
-
-  /* Remove any unwanted margins/padding */
-  div[class*='pdf-viewer'] {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
 `;
 
-const StyledUnsupportedFileContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: center;
-  width: 100%;
-  color: ${({ theme }) => theme.font.color.secondary};
-`;
-
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const StyledTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-right: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledHeaderActions = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-// Map of file extensions to MIME types
-const MIME_TYPE_MAPPING: Record<string, string> = {
-  pdf: 'application/pdf',
-  doc: 'application/msword',
-  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  xls: 'application/vnd.ms-excel',
-  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  ppt: 'application/vnd.ms-powerpoint',
-  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  txt: 'text/plain',
-  csv: 'text/csv',
-  png: 'image/png',
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  gif: 'image/gif',
-  svg: 'image/svg+xml',
-};
-
-type DocumentViewerContentProps = {
+type DocumentViewerProps = {
   documentName: string;
   documentUrl: string;
 };
 
-export const DocumentViewerContent = ({
+export const PREVIEWABLE_EXTENSIONS = [
+  'bmp',
+  'csv',
+  'odt',
+  'doc',
+  'docx',
+  'gif',
+  'htm',
+  'html',
+  'jpg',
+  'jpeg',
+  'pdf',
+  'png',
+  'ppt',
+  'pptx',
+  'tiff',
+  'txt',
+  'xls',
+  'xlsx',
+  'mp4',
+  'webp',
+];
+
+const MIME_TYPE_MAPPING: Record<
+  (typeof PREVIEWABLE_EXTENSIONS)[number],
+  string
+> = {
+  bmp: 'image/bmp',
+  csv: 'text/csv',
+  odt: 'application/vnd.oasis.opendocument.text',
+  doc: 'application/msword',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  gif: 'image/gif',
+  htm: 'text/html',
+  html: 'text/html',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  pdf: 'application/pdf',
+  png: 'image/png',
+  ppt: 'application/vnd.ms-powerpoint',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  tiff: 'image/tiff',
+  txt: 'text/plain',
+  xls: 'application/vnd.ms-excel',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  mp4: 'video/mp4',
+  webp: 'image/webp',
+};
+
+export const DocumentViewer = ({
   documentName,
   documentUrl,
-}: DocumentViewerContentProps) => {
+}: DocumentViewerProps) => {
+  const theme = useTheme();
+
   const { extension } = getFileNameAndExtension(documentName);
   const fileExtension = extension?.toLowerCase().replace('.', '') ?? '';
   const mimeType = MIME_TYPE_MAPPING[fileExtension];
-
-  const theme = useTheme();
 
   return (
     <StyledDocumentViewerContainer>
@@ -128,31 +123,9 @@ export const DocumentViewerContent = ({
           textPrimary: theme.font.color.primary,
           textSecondary: theme.font.color.secondary,
           textTertiary: theme.font.color.tertiary,
-          disableThemeScrollbar: false,
+          disableThemeScrollbar: true,
         }}
       />
     </StyledDocumentViewerContainer>
-  );
-};
-
-type DocumentViewerModalProps = DocumentViewerContentProps & {
-  isOpen: boolean;
-  onClose: () => void;
-};
-
-export const DocumentViewerModal = ({
-  isOpen,
-  documentName,
-  documentUrl,
-}: DocumentViewerModalProps) => {
-  if (!isOpen) {
-    return null;
-  }
-
-  return (
-    <DocumentViewerContent
-      documentName={documentName}
-      documentUrl={documentUrl}
-    />
   );
 };
