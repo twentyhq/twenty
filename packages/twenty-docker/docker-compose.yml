@@ -1,7 +1,8 @@
-name: twenty
+name: kvoipv2
 
 services:
   change-vol-ownership:
+    container_name: kvoipv2-change-vol-ownership
     image: ubuntu
     user: root
     volumes:
@@ -13,17 +14,22 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: twentycrm/twenty:${TAG:-latest}
+    container_name: kvoipv2-server
+    build:
+      context: ../..
+      dockerfile: ./packages/twenty-docker/twenty/Dockerfile
+    image: kvoipcrm/v2:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
       - ${SSL_KEY_PATH}:${SSL_KEY_PATH}
       - ${SSL_CERT_PATH}:${SSL_CERT_PATH}
+    env_file: "server.env"
     ports:
-      - "3000:3000"
+      - "${SERVER_PORT:-3000}:${SERVER_PORT:-3000}"
     environment:
-      NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
+      PORT: ${SERVER_PORT:-3000}
+      # PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE:-postgres}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
@@ -33,8 +39,6 @@ services:
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
       APP_SECRET: ${APP_SECRET}
-
-      FRONT_BASE_URL: ${SERVER_URL}
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
@@ -43,12 +47,14 @@ services:
     healthcheck:
       test: curl --fail http://localhost:3000/healthz
       interval: 10s
-      timeout: 120s
+      timeout: 5s
       retries: 10
-    restart: always
+      start_period: 600s
+    restart: on-failure
 
   worker:
-    image: twentycrm/twenty:${TAG:-latest}
+    container_name: kvoipv2-worker
+    image: kvoipcrm/v2:${TAG:-latest}
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE}
@@ -70,22 +76,30 @@ services:
     restart: always
 
   db:
-    image: twentycrm/twenty-postgres-spilo:${TAG:-latest}
+    container_name: kvoipv2-pg
+    image: kvoipcrm/v2-kvoip-pg-spilo:latest
+    build:
+      context: ../..
+      dockerfile: ./packages/twenty-docker/twenty-postgres-spilo/Dockerfile
     volumes:
       - db-data:/home/postgres/pgdata
     environment:
       PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
       PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
+      POSTGRES_DB: ${PG_DATABASE:-postgres}
       ALLOW_NOSSL: "true"
       SPILO_PROVIDER: "local"
+    ports: 
+      - "5433:5432"
     healthcheck:
-      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
+      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h db -d postgres
       interval: 5s
       timeout: 5s
       retries: 10
     restart: always
 
   redis:
+    container_name: kvoipv2-redis
     image: redis
     restart: always
 
