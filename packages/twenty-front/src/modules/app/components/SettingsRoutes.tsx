@@ -291,9 +291,15 @@ export const SettingsRoutes = ({
         path={SettingsPath.AccountsEmails}
         element={<SettingsAccountsEmails />}
       />
-      {isBillingEnabled && (
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            requiredFeatureFlag={FeatureFlagKey.IsBillingPlansEnabled}
+          />
+        }
+      >
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-      )}
+      </Route>
       <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
       <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       <Route
@@ -303,7 +309,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            feature={SettingsFeatures.DATA_MODEL}
+            settingsPermission={SettingsFeatures.DATA_MODEL}
           />
         }
       >
@@ -321,8 +327,8 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            feature={SettingsFeatures.ROLES}
-            requiresFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
+            settingsPermission={SettingsFeatures.ROLES}
+            requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
           />
         }
       >

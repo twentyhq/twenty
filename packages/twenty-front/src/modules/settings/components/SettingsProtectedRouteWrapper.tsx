@@ -8,25 +8,25 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;
-  feature: SettingsFeatures;
-  requiresFeatureFlag?: FeatureFlagKey;
+  settingsPermission?: SettingsFeatures;
+  requiredFeatureFlag?: FeatureFlagKey;
 };
 
 export const SettingsProtectedRouteWrapper = ({
   children,
-  feature,
-  requiresFeatureFlag,
+  settingsPermission,
+  requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
   const isPermissionsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsEnabled,
   );
-  const hasPermission = useHasSettingsPermission(feature);
+  const hasPermission = useHasSettingsPermission(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
-    requiresFeatureFlag || null,
+    requiredFeatureFlag || null,
   );
 
   if (
-    (requiresFeatureFlag && !requiredFeatureFlagEnabled) ||
+    (requiredFeatureFlag && !requiredFeatureFlagEnabled) ||
     (!hasPermission && isPermissionsEnabled)
   ) {
     return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;

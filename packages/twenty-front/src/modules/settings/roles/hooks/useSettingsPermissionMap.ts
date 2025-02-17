@@ -12,7 +12,10 @@ export const useSettingsPermissionMap = (): Record<
     currentUserWorkspace?.settingsPermissions;
 
   const initialPermissions = Object.fromEntries(
-    Object.values(SettingsFeatures).map((feature) => [feature, false]),
+    Object.values(SettingsFeatures).map((settingsPermission) => [
+      settingsPermission,
+      false,
+    ]),
   ) as Record<SettingsFeatures, boolean>;
 
   if (!currentUserWorkspaceSettingsPermissions) {

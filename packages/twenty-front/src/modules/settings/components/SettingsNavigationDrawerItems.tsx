@@ -23,7 +23,6 @@ import {
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
@@ -54,13 +53,9 @@ export const SettingsNavigationDrawerItems = () => {
 
   const { t } = useLingui();
 
-  const billing = useRecoilValue(billingState);
-
   // We want to disable this serverless function setting menu but keep the code
   // for now
   const isFunctionSettingsEnabled = false;
-
-  const isBillingPageEnabled = billing?.isBillingEnabled;
 
   const currentUser = useRecoilValue(currentUserState);
   const isAdminPageEnabled = currentUser?.canImpersonate;
@@ -134,7 +129,9 @@ export const SettingsNavigationDrawerItems = () => {
       </SettingsNavigationSectionWrapper>
 
       <SettingsNavigationSectionWrapper title={t`Workspace`}>
-        <SettingsNavigationItemWrapper feature={SettingsFeatures.WORKSPACE}>
+        <SettingsNavigationItemWrapper
+          settingsPermission={SettingsFeatures.WORKSPACE}
+        >
           <SettingsNavigationDrawerItem
             label={t`General`}
             path={SettingsPath.Workspace}
@@ -142,7 +139,7 @@ export const SettingsNavigationDrawerItems = () => {
           />
         </SettingsNavigationItemWrapper>
         <SettingsNavigationItemWrapper
-          feature={SettingsFeatures.WORKSPACE_USERS}
+          settingsPermission={SettingsFeatures.WORKSPACE_USERS}
         >
           <SettingsNavigationDrawerItem
             label={t`Members`}
@@ -150,15 +147,17 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconUsers}
           />
         </SettingsNavigationItemWrapper>
-        {isBillingPageEnabled && (
+        <SettingsNavigationItemWrapper
+          requiredFeatureFlag={FeatureFlagKey.IsBillingPlansEnabled}
+        >
           <SettingsNavigationDrawerItem
             label={t`Billing`}
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
           />
-        )}
+        </SettingsNavigationItemWrapper>
         <SettingsNavigationItemWrapper
-          feature={SettingsFeatures.ROLES}
+          settingsPermission={SettingsFeatures.ROLES}
           requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
         >
           <SettingsNavigationDrawerItem
@@ -167,7 +166,9 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconLock}
           />
         </SettingsNavigationItemWrapper>
-        <SettingsNavigationItemWrapper feature={SettingsFeatures.DATA_MODEL}>
+        <SettingsNavigationItemWrapper
+          settingsPermission={SettingsFeatures.DATA_MODEL}
+        >
           <SettingsNavigationDrawerItem
             label={t`Data model`}
             path={SettingsPath.Objects}
@@ -175,7 +176,7 @@ export const SettingsNavigationDrawerItems = () => {
           />
         </SettingsNavigationItemWrapper>
         <SettingsNavigationItemWrapper
-          feature={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
+          settingsPermission={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
         >
           <SettingsNavigationDrawerItem
             label={t`Integrations`}
@@ -183,47 +184,51 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconApps}
           />
         </SettingsNavigationItemWrapper>
-        <AdvancedSettingsWrapper navigationDrawerItem={true}>
-          <SettingsNavigationItemWrapper feature={SettingsFeatures.SECURITY}>
+        <SettingsNavigationItemWrapper
+          settingsPermission={SettingsFeatures.SECURITY}
+        >
+          <AdvancedSettingsWrapper navigationDrawerItem={true}>
             <SettingsNavigationDrawerItem
               label={t`Security`}
               path={SettingsPath.Security}
               Icon={IconKey}
             />
-          </SettingsNavigationItemWrapper>
-        </AdvancedSettingsWrapper>
+          </AdvancedSettingsWrapper>
+        </SettingsNavigationItemWrapper>
       </SettingsNavigationSectionWrapper>
 
       <SettingsNavigationSectionWrapper title={t`Developers`}>
-        <AdvancedSettingsWrapper navigationDrawerItem={true}>
-          <SettingsNavigationItemWrapper
-            feature={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
-          >
+        <SettingsNavigationItemWrapper
+          settingsPermission={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
+        >
+          <AdvancedSettingsWrapper navigationDrawerItem={true}>
             <SettingsNavigationDrawerItem
               label={t`API & Webhooks`}
               path={SettingsPath.Developers}
               Icon={IconCode}
             />
-          </SettingsNavigationItemWrapper>
-        </AdvancedSettingsWrapper>
+          </AdvancedSettingsWrapper>
+        </SettingsNavigationItemWrapper>
         {isFunctionSettingsEnabled && (
-          <AdvancedSettingsWrapper navigationDrawerItem={true}>
-            <SettingsNavigationItemWrapper
-              feature={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
-            >
+          <SettingsNavigationItemWrapper
+            settingsPermission={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
+          >
+            <AdvancedSettingsWrapper navigationDrawerItem={true}>
               <SettingsNavigationDrawerItem
                 label={t`Functions`}
                 path={SettingsPath.ServerlessFunctions}
                 Icon={IconFunction}
               />
-            </SettingsNavigationItemWrapper>
-          </AdvancedSettingsWrapper>
+            </AdvancedSettingsWrapper>
+          </SettingsNavigationItemWrapper>
         )}
       </SettingsNavigationSectionWrapper>
 
       <SettingsNavigationSectionWrapper title={t`Other`}>
         {isAdminPageEnabled && (
-          <SettingsNavigationItemWrapper feature={SettingsFeatures.ADMIN_PANEL}>
+          <SettingsNavigationItemWrapper
+            settingsPermission={SettingsFeatures.ADMIN_PANEL}
+          >
             <SettingsNavigationDrawerItem
               label={t`Server Admin`}
               path={SettingsPath.AdminPanel}

@@ -22,6 +22,9 @@ export const SettingsNavigationSectionWrapper = ({
   const settingsPermissionMap = useSettingsPermissionMap();
   const featureFlagsMap = useFeatureFlagsMap();
 
+  const hasPermissionEnabled =
+    featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled];
+
   const hasVisibleChildren = (children: ReactNode): boolean => {
     return Children.toArray(children).some((child) => {
       if (!isValidElement(child)) {
@@ -29,24 +32,22 @@ export const SettingsNavigationSectionWrapper = ({
       }
 
       if (child.type === SettingsNavigationItemWrapper) {
-        const { requiredFeatureFlag, feature } =
+        const { requiredFeatureFlag, settingsPermission } =
           child.props as SettingsNavigationItemWrapperProps;
 
-        const hasPermissionEnabled =
-          featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled];
-        const requiredFeatureFlagEnabled =
-          requiredFeatureFlag && featureFlagsMap[requiredFeatureFlag];
+        if (
+          isDefined(requiredFeatureFlag) &&
+          !featureFlagsMap[requiredFeatureFlag]
+        ) {
+          return false;
+        }
 
         if (!hasPermissionEnabled) {
           return true;
         }
 
-        if (!requiredFeatureFlagEnabled) {
-          return false;
-        }
-
-        if (isDefined(feature)) {
-          return settingsPermissionMap[feature];
+        if (isDefined(settingsPermission)) {
+          return settingsPermissionMap[settingsPermission];
         }
 
         return true;

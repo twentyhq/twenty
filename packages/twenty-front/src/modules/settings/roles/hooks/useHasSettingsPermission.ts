@@ -2,8 +2,14 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useRecoilValue } from 'recoil';
 import { SettingsFeatures } from 'twenty-shared';
 
-export const useHasSettingsPermission = (settingsFeature: SettingsFeatures) => {
+export const useHasSettingsPermission = (
+  settingsPermission?: SettingsFeatures,
+) => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
+
+  if (!settingsPermission) {
+    return true;
+  }
 
   const currentUserWorkspaceSettingsPermissions =
     currentUserWorkspace?.settingsPermissions;
@@ -12,5 +18,5 @@ export const useHasSettingsPermission = (settingsFeature: SettingsFeatures) => {
     return false;
   }
 
-  return currentUserWorkspaceSettingsPermissions.includes(settingsFeature);
+  return currentUserWorkspaceSettingsPermissions.includes(settingsPermission);
 };
