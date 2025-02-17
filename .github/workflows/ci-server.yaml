@@ -184,21 +184,18 @@ jobs:
           echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
+          echo "PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/test" >> .env.test
       - name: Restore server setup
         uses: ./.github/workflows/actions/restore-cache
         with:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name: Server / Build
         run: npx nx build twenty-server
-      - name: Build dependencies
-        run: |
-          npx nx build twenty-shared
-          npx nx build twenty-emails
       - name: Server / Create Test DB
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-          PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/test npx nx run twenty-server:database:init:prod
-          PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/test npx nx run twenty-server:database:migrate:prod
+          npx nx run twenty-server:database:init:prod
+          npx nx run twenty-server:database:migrate:prod
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
