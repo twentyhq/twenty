@@ -87,7 +87,7 @@ jobs:
           skip_untranslated_files: false
           push_translations: true
           create_pull_request: true
-          skip_ref_checkout: false
+          skip_ref_checkout: true
           dryrun_action: false
           github_base_url: 'github.com'
           github_user_name: 'Crowdin Bot'
