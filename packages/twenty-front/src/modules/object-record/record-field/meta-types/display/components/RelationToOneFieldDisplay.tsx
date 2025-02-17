@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useRelationToOneFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationToOneFieldDisplay';
 
@@ -12,6 +13,10 @@ export const RelationToOneFieldDisplay = () => {
     return null;
   }
 
+  const isClickable =
+    fieldDefinition.metadata.relationObjectMetadataNameSingular !==
+    CoreObjectNameSingular.WorkspaceMember;
+
   const recordChipData = generateRecordChipData(fieldValue);
 
   return (
@@ -19,6 +24,7 @@ export const RelationToOneFieldDisplay = () => {
       key={recordChipData.recordId}
       objectNameSingular={recordChipData.objectNameSingular}
       record={fieldValue}
+      isClickable={isClickable}
     />
   );
 };
