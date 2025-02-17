@@ -8,8 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -152,7 +151,7 @@ msgstr "Ajoutez votre premier {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Ajouté {beautifiedCreatedAt}"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
 msgstr "Filtre avancé"
 
@@ -226,7 +225,7 @@ msgstr "Noms des API (Pluriel)"
 msgid "API Name (Singular)"
 msgstr "Nom de l'API (Singulier)"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "Apparence"
 
@@ -397,7 +396,7 @@ msgstr "Configurer une connexion SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "Configurer et personnaliser vos préférences de calendrier."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "Configurer l'affichage des dates dans l'application"
 
@@ -425,7 +424,7 @@ msgstr "Se connecter avec Microsoft"
 msgid "Connected accounts"
 msgstr "Comptes connectés"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:107
 msgid "Context"
 msgstr "Contexte"
 
@@ -449,7 +448,7 @@ msgstr "Continuer avec Google"
 msgid "Continue with Microsoft"
 msgstr "Continuer avec Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Copilot"
 msgstr "Copilote"
 
@@ -515,6 +514,10 @@ msgstr "Créer un Webhook"
 msgid "Create your workspace"
 msgstr "Créez votre espace de travail"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "Domaine personnalisé"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "Objets personnalisés"
@@ -548,7 +551,7 @@ msgstr "Zone de danger"
 msgid "Danish"
 msgstr "Danois"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
 msgid "Dark"
 msgstr "Sombre"
 
@@ -569,7 +572,7 @@ msgstr "Type de données"
 msgid "Date"
 msgstr "Date"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "Date et heure"
 
@@ -705,9 +708,8 @@ msgid "Display as relative date"
 msgstr "Afficher comme date relative"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:185
-#: src/pages/settings/workspace/SettingsDomain.tsx:195
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "Domaine"
 
@@ -825,8 +827,8 @@ msgstr "Quitter les paramètres"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "Expérience"
@@ -944,7 +946,7 @@ msgstr "Fonctions"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "Général"
@@ -961,7 +963,7 @@ msgstr "Tirez le meilleur parti de votre espace de travail en invitant votre éq
 msgid "Get your subscription"
 msgstr "Obtenez votre abonnement"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Global"
 msgstr "Global"
 
@@ -1043,7 +1045,7 @@ msgstr "Email invalide"
 msgid "Invalid email or domain"
 msgstr "Email ou domaine invalide"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:166
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "Valeurs de formulaire invalides"
 
@@ -1087,7 +1089,7 @@ msgstr "Coréen"
 msgid "Lab"
 msgstr "Lab"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "Langue"
 
@@ -1103,7 +1105,7 @@ msgstr "Dernier"
 msgid "Latest date"
 msgstr "Dernière date"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
 msgid "Light"
 msgstr "Clair"
 
@@ -1322,7 +1324,7 @@ msgstr "Norvégien"
 msgid "Not empty"
 msgstr "Non vide"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Object"
 msgstr "Objet"
 
@@ -1475,7 +1477,7 @@ msgstr "Lire la documentation"
 msgid "Receive an email containing password update link"
 msgstr "Recevoir un email contenant un lien de mise à jour du mot de passe"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Record Selection"
 msgstr "Sélection des enregistrements"
 
@@ -1556,7 +1558,7 @@ msgstr "Russe"
 msgid "Search"
 msgstr "Recherche"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:95
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Rechercher ''{commandMenuSearch}'' avec..."
 
@@ -1573,7 +1575,7 @@ msgid "Search an index..."
 msgstr "Rechercher un index..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "Champs de recherche"
 
@@ -1617,7 +1619,7 @@ msgstr "Voir l'historique des versions"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Sélectionnez les événements à envoyer à ce point de terminaison"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "Sélectionnez votre langue préférée"
 
@@ -1642,11 +1644,15 @@ msgstr "Panneau d'administration du serveur"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Définir la visibilité des emails, gérer votre liste de blocage et plus encore."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
-msgid "Set the name of your domain"
-msgstr "Définir le nom de votre domaine"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "Définissez le nom de votre domaine personnalisé et configurez vos enregistrements DNS."
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "Définir le nom de votre sous-domaine"
 
@@ -1704,12 +1710,12 @@ msgstr "Espagnol"
 msgid "SSO"
 msgstr "SSO"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "Sous-domaine"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:111
-#: src/pages/settings/workspace/SettingsDomain.tsx:138
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "Sous-domaine déjà pris"
 
@@ -1758,7 +1764,7 @@ msgstr "Synchroniser l'étiquette du champ et le nom de l'API"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Synchroniser les libellés des objets et les noms des API"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
 msgstr "Paramètres du système"
 
@@ -1919,7 +1925,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Utilisez notre API ou ajoutez manuellement votre premier {objectLabel}"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
@@ -1990,7 +1996,7 @@ msgstr "Le workflow ne peut pas être testé"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18

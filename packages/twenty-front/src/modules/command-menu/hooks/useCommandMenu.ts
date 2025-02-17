@@ -13,6 +13,7 @@ import {
 } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
+import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -60,6 +61,7 @@ export const useCommandMenu = () => {
 
         set(isCommandMenuOpenedState, true);
         setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
+        set(hasUserSelectedCommandState, false);
       },
     [
       copyContextStoreStates,
@@ -89,6 +91,7 @@ export const useCommandMenu = () => {
           set(commandMenuSearchState, '');
           set(commandMenuNavigationStackState, []);
           resetSelectedItem();
+          set(hasUserSelectedCommandState, false);
           goBackToPreviousHotkeyScope();
 
           emitRightDrawerCloseEvent();
@@ -173,6 +176,7 @@ export const useCommandMenu = () => {
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
+        set(hasUserSelectedCommandState, false);
       };
     },
     [closeCommandMenu],
@@ -201,6 +205,8 @@ export const useCommandMenu = () => {
         title: newNavigationStackItem?.pageTitle,
         Icon: newNavigationStackItem?.pageIcon,
       });
+
+      set(hasUserSelectedCommandState, false);
     };
   }, []);
 
@@ -270,6 +276,8 @@ export const useCommandMenu = () => {
           title: undefined,
           Icon: undefined,
         });
+
+        set(hasUserSelectedCommandState, false);
       };
     },
     [copyContextStoreStates],

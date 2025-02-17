@@ -23,8 +23,9 @@ export const SelectableList = ({
   selectableItemIdArray,
   selectableItemIdMatrix,
   onEnter,
+  onSelect,
 }: SelectableListProps) => {
-  useSelectableListHotKeys(selectableListId, hotkeyScope);
+  useSelectableListHotKeys(selectableListId, hotkeyScope, onSelect);
 
   const { setSelectableItemIds, setSelectableListOnEnter, setSelectedItemId } =
     useSelectableList(selectableListId);
