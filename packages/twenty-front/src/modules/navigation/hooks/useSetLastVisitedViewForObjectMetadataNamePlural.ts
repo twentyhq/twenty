@@ -1,4 +1,3 @@
-import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useLazyPrefetchedData } from '@/prefetch/hooks/useLazyPrefetchData';
@@ -42,7 +41,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
         }
 
         const lastVisitedViewPerObjectMetadataItem = snapshot
-          .getLoadable(lastVisitedObjectMetadataItemIdState)
+          .getLoadable(lastVisitedViewPerObjectMetadataItemState)
           .getValue();
 
         const lastVisitedViewId =
@@ -50,6 +49,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
 
         if (isDefined(objectMetadataItem) && lastVisitedViewId !== viewId) {
           set(lastVisitedViewPerObjectMetadataItemState, {
+            ...lastVisitedViewPerObjectMetadataItem,
             [objectMetadataItem.id]: viewId,
           });
         }
