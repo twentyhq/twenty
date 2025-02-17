@@ -9,7 +9,6 @@ msgstr ""
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-01-01 00:00\n"
-": \n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -67,7 +66,7 @@ msgstr "Grupa powiązanych wiadomości (np. wątek e-mail, wątek czatu)"
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "Wiadomość wysłana lub otrzymana przez kanał komunikacyjny (e-mail, czat itp.)"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:46
+#: src/modules/note/standard-objects/note.workspace-entity.ts:44
 msgid "A note"
 msgstr "Notatka"
 
@@ -79,7 +78,7 @@ msgstr "Cel notatki"
 msgid "A person"
 msgstr "Osoba"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:48
+#: src/modules/task/standard-objects/task.workspace-entity.ts:46
 msgid "A task"
 msgstr "Zadanie"
 
@@ -99,7 +98,7 @@ msgstr "Przepływ pracy"
 msgid "A workflow event listener"
 msgstr "Słuchacz zdarzeń przepływu pracy"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:58
 msgid "A workflow run"
 msgstr "Uruchomienie przepływu pracy"
 
@@ -210,7 +209,7 @@ msgstr "ARR (Roczny Powtarzalny Przychód)"
 msgid "Assigned tasks"
 msgstr "Przydzielone zadania"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:168
+#: src/modules/task/standard-objects/task.workspace-entity.ts:163
 msgid "Assignee"
 msgstr "Przydzielony"
 
@@ -258,10 +257,10 @@ msgstr "Zadanie załącznika"
 msgid "Attachment type"
 msgstr "Typ załącznika"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:156
+#: src/modules/task/standard-objects/task.workspace-entity.ts:151
 #: src/modules/person/standard-objects/person.workspace-entity.ts:244
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
-#: src/modules/note/standard-objects/note.workspace-entity.ts:118
+#: src/modules/note/standard-objects/note.workspace-entity.ts:113
 #: src/modules/company/standard-objects/company.workspace-entity.ts:241
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
@@ -352,12 +351,15 @@ msgstr "Zablokowane identyfikatory"
 msgid "Blocklists"
 msgstr "Listy blokowanych"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:77
-#: src/modules/task/standard-objects/task.workspace-entity.ts:87
-#: src/modules/note/standard-objects/note.workspace-entity.ts:75
-#: src/modules/note/standard-objects/note.workspace-entity.ts:85
+#: src/modules/task/standard-objects/task.workspace-entity.ts:85
+#: src/modules/note/standard-objects/note.workspace-entity.ts:83
 msgid "Body"
 msgstr "Treść"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:75
+#: src/modules/note/standard-objects/note.workspace-entity.ts:73
+msgid "Body (deprecated)"
+msgstr "Treść (przestarzałe)"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
 msgid "Cached record name"
@@ -523,16 +525,16 @@ msgstr "Numery telefonu kontaktu"
 msgid "Contact’s X/Twitter account"
 msgstr "Konto X/Twitter kontaktu"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:150
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:151
 msgid "Context"
 msgstr "Kontekst"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
-#: src/modules/task/standard-objects/task.workspace-entity.ts:136
+#: src/modules/task/standard-objects/task.workspace-entity.ts:131
 #: src/modules/person/standard-objects/person.workspace-entity.ts:173
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
-#: src/modules/note/standard-objects/note.workspace-entity.ts:98
+#: src/modules/note/standard-objects/note.workspace-entity.ts:93
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
@@ -592,7 +594,7 @@ msgstr "Wartość wyświetlana"
 msgid "Domain Name"
 msgstr "Nazwa domeny"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:100
+#: src/modules/task/standard-objects/task.workspace-entity.ts:95
 msgid "Due Date"
 msgstr "Termin realizacji"
 
@@ -714,7 +716,7 @@ msgstr "Wyklucz grupowe emaile"
 msgid "Exclude non professional emails"
 msgstr "Wyklucz nieprofesjonalne emaile"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:131
 msgid "Executed by"
 msgstr "Wykonane przez"
 
@@ -786,12 +788,12 @@ msgstr "Ulubiony członek przestrzeni roboczej"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:200
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
-#: src/modules/task/standard-objects/task.workspace-entity.ts:197
+#: src/modules/task/standard-objects/task.workspace-entity.ts:192
 #: src/modules/person/standard-objects/person.workspace-entity.ts:232
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:143
+#: src/modules/note/standard-objects/note.workspace-entity.ts:138
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
 #: src/modules/company/standard-objects/company.workspace-entity.ts:228
@@ -811,7 +813,7 @@ msgstr "Ulubione powiązane z firmą"
 msgid "Favorites linked to the contact"
 msgstr "Ulubione powiązane z kontaktem"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:144
+#: src/modules/note/standard-objects/note.workspace-entity.ts:139
 msgid "Favorites linked to the note"
 msgstr "Ulubione powiązane z notatką"
 
@@ -819,7 +821,7 @@ msgstr "Ulubione powiązane z notatką"
 msgid "Favorites linked to the opportunity"
 msgstr "Ulubione powiązane z okazją"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:198
+#: src/modules/task/standard-objects/task.workspace-entity.ts:193
 msgid "Favorites linked to the task"
 msgstr "Ulubione powiązane z zadaniem"
 
@@ -831,7 +833,7 @@ msgstr "Ulubione powiązane z widokiem"
 msgid "Favorites linked to the workflow"
 msgstr "Ulubione powiązane z procesem"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:201
 msgid "Favorites linked to the workflow run"
 msgstr "Ulubione powiązane z uruchomieniem procesu"
 
@@ -973,7 +975,7 @@ msgstr "Stanowisko pracy"
 msgid "Json object to provide context (user, device, workspace, etc.)"
 msgstr "Obiekt Json do dostarczenia kontekstu (użytkownik, urządzenie, obszar roboczy itp.)"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:141
 msgid "Json object to provide output of the workflow run"
 msgstr "Obiekt Json do dostarczenia wyniku działania przepływu pracy"
 
@@ -1202,7 +1204,7 @@ msgstr "Token odświeżania dostawcy usług wiadomości"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:75
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:62
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:66
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
 #: src/modules/view/standard-objects/view.workspace-entity.ts:43
 #: src/modules/person/standard-objects/person.workspace-entity.ts:75
@@ -1221,28 +1223,28 @@ msgstr "Nazwa"
 msgid "Name of the favorite folder"
 msgstr "Nazwa folderu ulubionych"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:67
 msgid "Name of the workflow run"
 msgstr "Nazwa przebiegu pracy"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:44
+#: src/modules/note/standard-objects/note.workspace-entity.ts:42
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
 msgstr "Notatka"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:119
+#: src/modules/note/standard-objects/note.workspace-entity.ts:114
 msgid "Note attachments"
 msgstr "Załączniki notatki"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:76
-#: src/modules/note/standard-objects/note.workspace-entity.ts:86
+#: src/modules/note/standard-objects/note.workspace-entity.ts:74
+#: src/modules/note/standard-objects/note.workspace-entity.ts:84
 msgid "Note body"
 msgstr "Treść notatki"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:56
+#: src/modules/note/standard-objects/note.workspace-entity.ts:54
 msgid "Note record position"
 msgstr "Pozycja rekordu notatki"
 
@@ -1250,7 +1252,7 @@ msgstr "Pozycja rekordu notatki"
 msgid "Note Target"
 msgstr "Cel notatki"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:107
+#: src/modules/note/standard-objects/note.workspace-entity.ts:102
 msgid "Note targets"
 msgstr "Cele notatek"
 
@@ -1258,13 +1260,13 @@ msgstr "Cele notatek"
 msgid "Note Targets"
 msgstr "Cele notatek"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:67
+#: src/modules/note/standard-objects/note.workspace-entity.ts:65
 msgid "Note title"
 msgstr "Tytuł notatki"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:221
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
-#: src/modules/note/standard-objects/note.workspace-entity.ts:45
+#: src/modules/note/standard-objects/note.workspace-entity.ts:43
 #: src/modules/company/standard-objects/company.workspace-entity.ts:205
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
@@ -1392,7 +1394,7 @@ msgstr "Opcjonalna operacja agregacji"
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
 msgstr "Opcjonalny sekret używany do obliczania sygnatury HMAC dla ładunków webhooka. Ten sekret jest współdzielony między Twenty a konsumentem webhooka w celu uwierzytelnienia żądań webhooka."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:140
 msgid "Output"
 msgstr "Wynik"
 
@@ -1444,14 +1446,14 @@ msgstr "Osoba kontaktowa"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:156
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:160
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
-#: src/modules/task/standard-objects/task.workspace-entity.ts:57
+#: src/modules/task/standard-objects/task.workspace-entity.ts:55
 #: src/modules/person/standard-objects/person.workspace-entity.ts:162
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
-#: src/modules/note/standard-objects/note.workspace-entity.ts:55
+#: src/modules/note/standard-objects/note.workspace-entity.ts:53
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
 #: src/modules/company/standard-objects/company.workspace-entity.ts:145
@@ -1511,8 +1513,8 @@ msgstr "Token odświeżenia"
 msgid "Related user email address"
 msgstr "Adres e-mail powiązanego użytkownika"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:144
-#: src/modules/note/standard-objects/note.workspace-entity.ts:106
+#: src/modules/task/standard-objects/task.workspace-entity.ts:139
+#: src/modules/note/standard-objects/note.workspace-entity.ts:101
 msgid "Relations"
 msgstr "Relacje"
 
@@ -1561,7 +1563,7 @@ msgstr "Etap"
 msgid "Start Date"
 msgstr "Data rozpoczęcia"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:110
+#: src/modules/task/standard-objects/task.workspace-entity.ts:105
 msgid "Status"
 msgstr "Stan"
 
@@ -1610,35 +1612,35 @@ msgid "Target Url"
 msgstr "Docelowy URL"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
-#: src/modules/task/standard-objects/task.workspace-entity.ts:46
+#: src/modules/task/standard-objects/task.workspace-entity.ts:44
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
 msgid "Task"
 msgstr "Zadanie"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:169
+#: src/modules/task/standard-objects/task.workspace-entity.ts:164
 msgid "Task assignee"
 msgstr "Przypisany do zadania"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:157
+#: src/modules/task/standard-objects/task.workspace-entity.ts:152
 msgid "Task attachments"
 msgstr "Załączniki zadania"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:78
-#: src/modules/task/standard-objects/task.workspace-entity.ts:88
+#: src/modules/task/standard-objects/task.workspace-entity.ts:76
+#: src/modules/task/standard-objects/task.workspace-entity.ts:86
 msgid "Task body"
 msgstr "Treść zadania"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:101
+#: src/modules/task/standard-objects/task.workspace-entity.ts:96
 msgid "Task due date"
 msgstr "Termin zadania"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:58
+#: src/modules/task/standard-objects/task.workspace-entity.ts:56
 msgid "Task record position"
 msgstr "Pozycja rekordu zadania"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:111
+#: src/modules/task/standard-objects/task.workspace-entity.ts:106
 msgid "Task status"
 msgstr "Status zadania"
 
@@ -1646,7 +1648,7 @@ msgstr "Status zadania"
 msgid "Task Target"
 msgstr "Cel zadania"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:145
+#: src/modules/task/standard-objects/task.workspace-entity.ts:140
 msgid "Task targets"
 msgstr "Cele zadań"
 
@@ -1654,11 +1656,11 @@ msgstr "Cele zadań"
 msgid "Task Targets"
 msgstr "Cele Zadań"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:69
+#: src/modules/task/standard-objects/task.workspace-entity.ts:67
 msgid "Task title"
 msgstr "Tytuł zadania"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:47
+#: src/modules/task/standard-objects/task.workspace-entity.ts:45
 #: src/modules/person/standard-objects/person.workspace-entity.ts:210
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
 #: src/modules/company/standard-objects/company.workspace-entity.ts:194
@@ -1732,10 +1734,10 @@ msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "Adres URL strony internetowej firmy. Używamy tego adresu do pobrania ikony firmy"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
-#: src/modules/task/standard-objects/task.workspace-entity.ts:138
+#: src/modules/task/standard-objects/task.workspace-entity.ts:133
 #: src/modules/person/standard-objects/person.workspace-entity.ts:175
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
-#: src/modules/note/standard-objects/note.workspace-entity.ts:100
+#: src/modules/note/standard-objects/note.workspace-entity.ts:95
 #: src/modules/company/standard-objects/company.workspace-entity.ts:158
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
@@ -1749,7 +1751,7 @@ msgstr "Aktualne statusy wersji przepływów pracy"
 msgid "The date the message was received"
 msgstr "Data otrzymania wiadomości"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:133
 msgid "The executor of the workflow"
 msgstr "Executor przepływu pracy"
 
@@ -1806,11 +1808,11 @@ msgstr "Strefa czasowa"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:208
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:212
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
-#: src/modules/task/standard-objects/task.workspace-entity.ts:185
+#: src/modules/task/standard-objects/task.workspace-entity.ts:180
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
-#: src/modules/note/standard-objects/note.workspace-entity.ts:131
+#: src/modules/note/standard-objects/note.workspace-entity.ts:126
 #: src/modules/company/standard-objects/company.workspace-entity.ts:253
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
@@ -1820,7 +1822,7 @@ msgstr "Aktywności na osi czasu"
 msgid "Timeline Activities linked to the company"
 msgstr "Aktywności na osi czasu powiązane z firmą"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:132
+#: src/modules/note/standard-objects/note.workspace-entity.ts:127
 msgid "Timeline Activities linked to the note."
 msgstr "Aktywności na osi czasu powiązane z notatką."
 
@@ -1828,11 +1830,11 @@ msgstr "Aktywności na osi czasu powiązane z notatką."
 msgid "Timeline Activities linked to the opportunity."
 msgstr "Aktywności na osi czasu powiązane z szansą."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:213
 msgid "Timeline activities linked to the run"
 msgstr "Aktywności na osi czasu powiązane z przebiegiem"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:186
+#: src/modules/task/standard-objects/task.workspace-entity.ts:181
 msgid "Timeline Activities linked to the task."
 msgstr "Aktywności na osi czasu powiązane z zadaniem."
 
@@ -1852,8 +1854,8 @@ msgstr "Aktywności na osi czasu powiązane z {label}"
 msgid "Timeline Activity"
 msgstr "Aktywność na osi czasu"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:68
-#: src/modules/note/standard-objects/note.workspace-entity.ts:66
+#: src/modules/task/standard-objects/task.workspace-entity.ts:66
+#: src/modules/note/standard-objects/note.workspace-entity.ts:64
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
 msgid "Title"
@@ -2107,7 +2109,7 @@ msgstr "Webhooki"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:182
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
@@ -2120,7 +2122,7 @@ msgstr "Workflows"
 msgid "Workflow event listeners linked to the workflow."
 msgstr "Nasłuchiwanie zdarzeń przepływu pracy powiązane z przepływem pracy."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
 msgid "Workflow linked to the run."
 msgstr "Przepływ pracy powiązany z wykonaniem."
 
@@ -2128,31 +2130,31 @@ msgstr "Przepływ pracy powiązany z wykonaniem."
 msgid "Workflow record position"
 msgstr "Pozycja rekordu przepływu pracy"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:56
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
 msgid "Workflow Run"
 msgstr "Wykonanie przepływu pracy"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:85
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:86
 msgid "Workflow run ended at"
 msgstr "Wykonanie przepływu pracy zakończone o"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:161
 msgid "Workflow run position"
 msgstr "Pozycja wykonania przepływu pracy"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:75
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:76
 msgid "Workflow run started at"
 msgstr "Wykonanie przepływu pracy rozpoczęte o"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:95
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:96
 msgid "Workflow run status"
 msgstr "Status wykonania przepływu pracy"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:57
 msgid "Workflow Runs"
 msgstr "Wykonania przepływu pracy"
 
@@ -2164,7 +2166,7 @@ msgstr "Wykonania przepływu pracy powiązane z wersją."
 msgid "Workflow runs linked to the workflow."
 msgstr "Wykonania przepływu pracy powiązane z przepływem pracy."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
 msgid "Workflow version"
 msgstr "Wersja przepływu pracy"
 
@@ -2172,7 +2174,7 @@ msgstr "Wersja przepływu pracy"
 msgid "Workflow Version"
 msgstr "Wersja Przepływu Pracy"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
 msgid "Workflow version linked to the run."
 msgstr "Wersja przepływu pracy powiązana z wykonaniem."
 
@@ -2251,3 +2253,4 @@ msgstr "X"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Twój członek zespołu odpowiedzialny za zarządzanie kontem firmy"
+

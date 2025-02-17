@@ -8,8 +8,7 @@ msgstr ""
 "Language: el\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -152,7 +151,7 @@ msgstr "Προσθέστε το πρώτο σας {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Προστέθηκε {beautifiedCreatedAt}"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
 msgstr "Προηγμένο φίλτρο"
 
@@ -226,7 +225,7 @@ msgstr "Όνομα API (Πληθυντικός)"
 msgid "API Name (Singular)"
 msgstr "Όνομα API (Ενικός)"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "Εμφάνιση"
 
@@ -397,7 +396,7 @@ msgstr "Ρυθμίστε μια σύνδεση SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "Ρυθμίστε και προσαρμόστε τις προτιμήσεις του ημερολογίου σας."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "Ρυθμίστε πώς εμφανίζονται οι ημερομηνίες σε όλη την εφαρμογή"
 
@@ -425,7 +424,7 @@ msgstr "Συνδέστε με τη Microsoft"
 msgid "Connected accounts"
 msgstr "Συνδεδεμένοι λογαριασμοί"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:107
 msgid "Context"
 msgstr "Περιβάλλον"
 
@@ -449,7 +448,7 @@ msgstr "Συνέχεια με Google"
 msgid "Continue with Microsoft"
 msgstr "Συνέχεια με τη Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Copilot"
 msgstr "Πηδαλιούχος"
 
@@ -515,6 +514,10 @@ msgstr "Δημιουργήστε Webhook"
 msgid "Create your workspace"
 msgstr "Δημιουργήστε το χώρο εργασίας σας"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "Προσαρμοσμένο Όνομα Τομέα"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "Προσαρμοσμένα αντικείμενα"
@@ -548,7 +551,7 @@ msgstr "Ζώνη κινδύνου"
 msgid "Danish"
 msgstr "Δανέζικα"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
 msgid "Dark"
 msgstr "Σκοτεινό"
 
@@ -569,7 +572,7 @@ msgstr "Τύπος δεδομένων"
 msgid "Date"
 msgstr "Ημερομηνία"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "Ημερομηνία και ώρα"
 
@@ -705,9 +708,8 @@ msgid "Display as relative date"
 msgstr "Εμφάνιση σε σχετική ημερομηνία"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:185
-#: src/pages/settings/workspace/SettingsDomain.tsx:195
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "Τομέας"
 
@@ -832,8 +834,8 @@ msgstr "Έξοδος από Ρυθμίσεις"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "Εμπειρία"
@@ -951,7 +953,7 @@ msgstr "Λειτουργίες"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "Γενικά"
@@ -968,7 +970,7 @@ msgstr "Αξιοποιείστε τον χώρο εργασίας σας με τ
 msgid "Get your subscription"
 msgstr "Αποκτήστε τη συνδρομή σας"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Global"
 msgstr "Παγκόσμιο"
 
@@ -1050,7 +1052,7 @@ msgstr "Μη έγκυρο email"
 msgid "Invalid email or domain"
 msgstr "Μη έγκυρο email ή domain"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:166
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "Μη έγκυρες τιμές φόρμας"
 
@@ -1094,7 +1096,7 @@ msgstr "Κορεατικά"
 msgid "Lab"
 msgstr "Εργαστήριο"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "Γλώσσα"
 
@@ -1110,7 +1112,7 @@ msgstr "Τελευταίο"
 msgid "Latest date"
 msgstr "Τελευταία ημερομηνία"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
 msgid "Light"
 msgstr "Φωτεινό"
 
@@ -1329,7 +1331,7 @@ msgstr "Νορβηγικά"
 msgid "Not empty"
 msgstr "Όχι άδειο"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Object"
 msgstr "Αντικείμενο"
 
@@ -1482,7 +1484,7 @@ msgstr "Διαβάστε την τεκμηρίωση"
 msgid "Receive an email containing password update link"
 msgstr "Λάβετε ένα email που περιέχει τον σύνδεσμο ενημέρωσης κωδικού πρόσβασης"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Record Selection"
 msgstr "Επιλογή Εγγραφών"
 
@@ -1563,7 +1565,7 @@ msgstr "Ρωσικά"
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:95
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Αναζήτηση ''{commandMenuSearch}'' με..."
 
@@ -1580,7 +1582,7 @@ msgid "Search an index..."
 msgstr "Αναζήτηση ευρετηρίου..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "Αναζήτηση πεδίων"
 
@@ -1624,7 +1626,7 @@ msgstr "Δείτε το ιστορικό των εκδόσεων"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Επιλέξτε τα γεγονότα που επιθυμείτε να στείλετε σε αυτό το τελικό σημείο"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "Επιλέξτε την προτιμώμενη γλώσσα σας"
 
@@ -1649,11 +1651,15 @@ msgstr "Διαχειριστής Πίνακας Διακομιστή"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Ρυθμίστε την ορατότητα του email, διαχειριστείτε τη λίστα αποκλεισμού σας και άλλα."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
-msgid "Set the name of your domain"
-msgstr "Ορίστε το όνομα του τομέα σας"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "Ορίστε το όνομα του προσαρμοσμένου τομέα σας και διαμορφώστε τα αρχεία DNS σας."
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "Ορίστε το όνομα του υποτομέα σας"
 
@@ -1711,12 +1717,12 @@ msgstr "Ισπανικά"
 msgid "SSO"
 msgstr "Ενιαίο Σύστημα Εισόδου"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "Υποτομέας"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:111
-#: src/pages/settings/workspace/SettingsDomain.tsx:138
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "Ο υποτομέας έχει ήδη ληφθεί"
 
@@ -1765,7 +1771,7 @@ msgstr "Συγχρονίστε την Ετικέτα Πεδίου και το Ό
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Συγχρονισμός Ετικετών Αντικειμένων και Ονομάτων API"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
 msgstr "Ρυθμίσεις Συστήματος"
 
@@ -1926,7 +1932,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Χρησιμοποιήστε το API μας ή προσθέστε το πρώτο σας {objectLabel} χειροκίνητα"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
@@ -1997,7 +2003,7 @@ msgstr "Το Workflow δεν μπορεί να δοκιμαστεί"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18

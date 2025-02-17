@@ -8,8 +8,7 @@ msgstr ""
 "Language: sr_Cyrl\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Cyrillic)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -152,7 +151,7 @@ msgstr "Додајте свој први {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Додато {beautifiedCreatedAt}"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
 msgstr "Напредни филтер"
 
@@ -226,7 +225,7 @@ msgstr "Име API-ја (множина)"
 msgid "API Name (Singular)"
 msgstr "Назив API-а (једнина)"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "Изглед"
 
@@ -397,7 +396,7 @@ msgstr "Подесите везу SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "Подесите и прилагодите своје преференције за календар."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "Подесите како су датуми приказани широм апликације"
 
@@ -425,7 +424,7 @@ msgstr "Повежите се са Microsoft"
 msgid "Connected accounts"
 msgstr "Повезани налози"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:107
 msgid "Context"
 msgstr "Контекст"
 
@@ -449,7 +448,7 @@ msgstr "Настави са Google"
 msgid "Continue with Microsoft"
 msgstr "Настави са Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Copilot"
 msgstr "Ко-пилот"
 
@@ -515,6 +514,10 @@ msgstr "Креирај Webhook"
 msgid "Create your workspace"
 msgstr "Креирај свој радни простор"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "Кориснички домен"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "Прилагођени објекти"
@@ -548,7 +551,7 @@ msgstr "Опасна зона"
 msgid "Danish"
 msgstr "Дански"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
 msgid "Dark"
 msgstr "Тамни"
 
@@ -569,7 +572,7 @@ msgstr "Тип података"
 msgid "Date"
 msgstr "Датум"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "Датум и време"
 
@@ -705,9 +708,8 @@ msgid "Display as relative date"
 msgstr "Приказати као релативан датум"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:185
-#: src/pages/settings/workspace/SettingsDomain.tsx:195
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "Домен"
 
@@ -825,8 +827,8 @@ msgstr "Изађи из подешавања"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "Искуство"
@@ -944,7 +946,7 @@ msgstr "Функције"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "Опште"
@@ -961,7 +963,7 @@ msgstr "Искористите максимално свој радни прос
 msgid "Get your subscription"
 msgstr "Набави претплату"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Global"
 msgstr "Глобално"
 
@@ -1043,7 +1045,7 @@ msgstr "Невалидан имејл"
 msgid "Invalid email or domain"
 msgstr "Невалидан имејл или домен"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:166
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "Невалиде вредности формулара"
 
@@ -1087,7 +1089,7 @@ msgstr "Корејски"
 msgid "Lab"
 msgstr "Лабораторија"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "Језик"
 
@@ -1103,7 +1105,7 @@ msgstr "Најновије"
 msgid "Latest date"
 msgstr "Најновији датум"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
 msgid "Light"
 msgstr "Светли"
 
@@ -1322,7 +1324,7 @@ msgstr "Норвешки"
 msgid "Not empty"
 msgstr "Није празно"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Object"
 msgstr "Објекат"
 
@@ -1475,7 +1477,7 @@ msgstr "Прочитајте документацију"
 msgid "Receive an email containing password update link"
 msgstr "Примите имејл са везом за ажурирање лозинке"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Record Selection"
 msgstr "Избор записа"
 
@@ -1556,7 +1558,7 @@ msgstr "Руски"
 msgid "Search"
 msgstr "Претрага"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:95
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Претражите ''{commandMenuSearch}'' са..."
 
@@ -1573,7 +1575,7 @@ msgid "Search an index..."
 msgstr "Претражите индекс..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "Претражите поља"
 
@@ -1617,7 +1619,7 @@ msgstr "Погледајте историју верзија"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Изаберите догађаје које желите да пошаљете на овај крај"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "Изаберите жељени језик"
 
@@ -1642,11 +1644,15 @@ msgstr "Админ панел сервера"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Подесите видљивост имејла, управљајте вашом листом блокираних и још много тога."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
-msgid "Set the name of your domain"
-msgstr "Поставите име вашег домена"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "Поставите назив вашег корисничког домена и конфигуришите DNS записе."
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "Поставите име вашег поддомена"
 
@@ -1704,12 +1710,12 @@ msgstr "Шпански"
 msgid "SSO"
 msgstr "Јединствена пријава"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "Поддомен"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:111
-#: src/pages/settings/workspace/SettingsDomain.tsx:138
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "Поддомен је већ заузет"
 
@@ -1758,7 +1764,7 @@ msgstr "Синхронизуј назив поља и назив API-а"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Синхронизуј етикете и називе API-а објеката"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
 msgstr "Подешавања система"
 
@@ -1919,7 +1925,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Користите наш API или ручно додајте први {objectLabel}"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
@@ -1990,7 +1996,7 @@ msgstr "Радња не може бити тестирана"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18

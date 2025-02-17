@@ -8,8 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -152,7 +151,7 @@ msgstr "Legg til din første {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Lagt til {beautifiedCreatedAt}"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
 msgstr "Avansert filter"
 
@@ -226,7 +225,7 @@ msgstr "API-navn (flertall)"
 msgid "API Name (Singular)"
 msgstr "API-navn (Entall)"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "Utseende"
 
@@ -397,7 +396,7 @@ msgstr "Konfigurer en SSO-forbindelse"
 msgid "Configure and customize your calendar preferences."
 msgstr "Konfigurer og tilpass dine kalenderinnstillinger."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "Konfigurer hvordan datoer vises i hele appen"
 
@@ -425,7 +424,7 @@ msgstr "Koble til med Microsoft"
 msgid "Connected accounts"
 msgstr "Tilkoblede kontoer"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:107
 msgid "Context"
 msgstr "Kontekst"
 
@@ -449,7 +448,7 @@ msgstr "Fortsett med Google"
 msgid "Continue with Microsoft"
 msgstr "Fortsett med Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Copilot"
 msgstr "Kopilot"
 
@@ -515,6 +514,10 @@ msgstr "Opprett Webkrok"
 msgid "Create your workspace"
 msgstr "Opprett arbeidsomr\\fdet ditt"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "Tilpasset domene"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "Tilpassede objekter"
@@ -548,7 +551,7 @@ msgstr "Fareomr\\frede"
 msgid "Danish"
 msgstr "Dansk"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
 msgid "Dark"
 msgstr "Mørk"
 
@@ -569,7 +572,7 @@ msgstr "Datatype"
 msgid "Date"
 msgstr "Dato"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "Dato og tid"
 
@@ -705,9 +708,8 @@ msgid "Display as relative date"
 msgstr "Vis som relativ dato"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:185
-#: src/pages/settings/workspace/SettingsDomain.tsx:195
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "Domene"
 
@@ -825,8 +827,8 @@ msgstr "Avslutt innstillinger"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "Erfaring"
@@ -944,7 +946,7 @@ msgstr "Funksjoner"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "Generelt"
@@ -961,7 +963,7 @@ msgstr "Få mest mulig ut av arbeidsområdet ditt ved å invitere teamet ditt."
 msgid "Get your subscription"
 msgstr "Få abonnementet ditt"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Global"
 msgstr "Global"
 
@@ -1043,7 +1045,7 @@ msgstr "Ugyldig e-post"
 msgid "Invalid email or domain"
 msgstr "Ugyldig e-post eller domene"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:166
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "Ugyldige skjemaverdier"
 
@@ -1087,7 +1089,7 @@ msgstr "Koreansk"
 msgid "Lab"
 msgstr "Laboratorium"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "Spr\\u00e5k"
 
@@ -1103,7 +1105,7 @@ msgstr "Siste"
 msgid "Latest date"
 msgstr "Siste dato"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
 msgid "Light"
 msgstr "Lys"
 
@@ -1322,7 +1324,7 @@ msgstr "Norsk"
 msgid "Not empty"
 msgstr "Ikke tom"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Object"
 msgstr "Objekt"
 
@@ -1475,7 +1477,7 @@ msgstr "Les dokumentasjonen"
 msgid "Receive an email containing password update link"
 msgstr "Motta en e-post med lenke for å oppdatere passordet"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Record Selection"
 msgstr "Velg poster"
 
@@ -1556,7 +1558,7 @@ msgstr "Russisk"
 msgid "Search"
 msgstr "Søk"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:95
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Søk ''{commandMenuSearch}'' med..."
 
@@ -1573,7 +1575,7 @@ msgid "Search an index..."
 msgstr "Søk i et indeks..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "Søk etter felter"
 
@@ -1617,7 +1619,7 @@ msgstr "Se historikk over versjoner"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Velg hendelsene du ønsker å sende til dette sluttpunktet"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "Velg ditt foretrukne språk"
 
@@ -1642,11 +1644,15 @@ msgstr "Serveradministrasjonspanel"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Angi e-post synlighet, administrere blokkeringslisten og mer."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
-msgid "Set the name of your domain"
-msgstr "Angi navnet på domenet ditt"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "Angi navnet på ditt tilpassede domene og konfigurer DNS-oppføringene dine."
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "Angi navnet på underdomenet ditt"
 
@@ -1704,12 +1710,12 @@ msgstr "Spansk"
 msgid "SSO"
 msgstr "SSO"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "Underdomene"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:111
-#: src/pages/settings/workspace/SettingsDomain.tsx:138
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "Underdomenet er allerede tatt"
 
@@ -1758,7 +1764,7 @@ msgstr "Synkroniser feltetikett og API-navn"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Synkroniser objektetiketter og API-navn"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
 msgstr "Systeminnstillinger"
 
@@ -1919,7 +1925,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Bruk vår API eller legg til din første {objectLabel} manuelt"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
@@ -1990,7 +1996,7 @@ msgstr "Arbeidsflyten kan ikke testes"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18

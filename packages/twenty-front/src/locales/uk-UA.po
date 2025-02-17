@@ -8,8 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -152,7 +151,7 @@ msgstr "Додайте ваш перший {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Додано {beautifiedCreatedAt}"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
 msgstr "Розширений фільтр"
 
@@ -226,7 +225,7 @@ msgstr "Назва API (множина)"
 msgid "API Name (Singular)"
 msgstr "Назва API (однина)"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "Зовнішній вигляд"
 
@@ -397,7 +396,7 @@ msgstr "Сконфігуруйте з'єднання SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "Налаштувати та настроїти уподобання вашого календаря."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "Налаштуйте відображення дат у додатку"
 
@@ -425,7 +424,7 @@ msgstr "Під'єднатися через Microsoft"
 msgid "Connected accounts"
 msgstr "Під'єднані облікові записи"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:107
 msgid "Context"
 msgstr "Контекст"
 
@@ -449,7 +448,7 @@ msgstr "Продовжити з Google"
 msgid "Continue with Microsoft"
 msgstr "Продовжити з Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Copilot"
 msgstr "Штурман"
 
@@ -515,6 +514,10 @@ msgstr "Створити Webhook"
 msgid "Create your workspace"
 msgstr "Створіть свій робочий простір"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "Домашній домен"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "Користувацькі об'єкти"
@@ -548,7 +551,7 @@ msgstr "Небезпечна зона"
 msgid "Danish"
 msgstr "Данська"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
 msgid "Dark"
 msgstr "Темна"
 
@@ -569,7 +572,7 @@ msgstr "Тип даних"
 msgid "Date"
 msgstr "Дата"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "Дата та час"
 
@@ -731,9 +734,8 @@ msgstr "\n"
 "              Показувати як відносну дату"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:185
-#: src/pages/settings/workspace/SettingsDomain.tsx:195
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "\n"
 "              \n"
@@ -889,8 +891,8 @@ msgstr "Вийти з налаштувань"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "Досвід роботи"
@@ -1008,7 +1010,7 @@ msgstr "Функції"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "Загальні"
@@ -1025,7 +1027,7 @@ msgstr "Отримайте максимум від свого робочого �
 msgid "Get your subscription"
 msgstr "Отримайте свою передплату"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Global"
 msgstr "Глобальні"
 
@@ -1107,7 +1109,7 @@ msgstr "Недійсна електронна адреса"
 msgid "Invalid email or domain"
 msgstr "Недійсна електронна адреса або домен"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:166
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "Недійсні значення форми"
 
@@ -1151,7 +1153,7 @@ msgstr "Корейська"
 msgid "Lab"
 msgstr "Лабораторія"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "Мова"
 
@@ -1167,7 +1169,7 @@ msgstr "Останні"
 msgid "Latest date"
 msgstr "Остання дата"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
 msgid "Light"
 msgstr "Світла"
 
@@ -1386,7 +1388,7 @@ msgstr "Норвезька"
 msgid "Not empty"
 msgstr "Не пустий"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Object"
 msgstr "Об'єкт"
 
@@ -1539,7 +1541,7 @@ msgstr "Читати документацію"
 msgid "Receive an email containing password update link"
 msgstr "Отримати лист з посиланням для оновлення пароля"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Record Selection"
 msgstr "Вибір запису"
 
@@ -1620,7 +1622,7 @@ msgstr "Російська"
 msgid "Search"
 msgstr "Пошук"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:95
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Пошук ''{commandMenuSearch}'' за допомогою..."
 
@@ -1637,7 +1639,7 @@ msgid "Search an index..."
 msgstr "Пошук індексу..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "Пошук полів"
 
@@ -1681,7 +1683,7 @@ msgstr "Переглянути історію версій"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Оберіть події, які хочете надіслати до цього кінцевого пункту"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "Оберіть бажану мову"
 
@@ -1706,11 +1708,15 @@ msgstr "Панель адміністратора сервера"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Налаштуйте видимість електронної пошти, керуйте списком блокування та більше."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
-msgid "Set the name of your domain"
-msgstr "Встановіть назву вашого домену"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "Встановіть ім'я вашого домашнього домену та налаштуйте записи DNS."
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "Встановіть назву вашого субдомену"
 
@@ -1768,12 +1774,12 @@ msgstr "Іспанська"
 msgid "SSO"
 msgstr "Єдиний вхід"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "Субдомен"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:111
-#: src/pages/settings/workspace/SettingsDomain.tsx:138
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "Субдомен вже зайнятий"
 
@@ -1822,7 +1828,7 @@ msgstr "Синхронізувати мітку поля та API-назву"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Синхронізація міток об'єктів та назв API"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
 msgstr "Системні налаштування"
 
@@ -1983,7 +1989,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Скористайтеся нашим API або додайте ваш перший {objectLabel} вручну"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
@@ -2054,7 +2060,7 @@ msgstr "Неможливо протестувати процес роботи"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
