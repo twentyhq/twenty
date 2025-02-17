@@ -11,6 +11,7 @@ type Direction = 'up' | 'down' | 'left' | 'right';
 export const useSelectableListHotKeys = (
   scopeId: string,
   hotkeyScope: string,
+  onSelect?: (itemId: string) => void,
 ) => {
   const findPosition = (
     selectableItemIds: string[][],
@@ -105,6 +106,7 @@ export const useSelectableListHotKeys = (
           if (isNonEmptyString(nextId)) {
             set(isSelectedItemIdSelector(nextId), true);
             set(selectedItemIdState, nextId);
+            onSelect?.(nextId);
           }
 
           if (isNonEmptyString(selectedItemId)) {
@@ -112,7 +114,12 @@ export const useSelectableListHotKeys = (
           }
         }
       },
-    [isSelectedItemIdSelector, selectableItemIdsState, selectedItemIdState],
+    [
+      isSelectedItemIdSelector,
+      onSelect,
+      selectableItemIdsState,
+      selectedItemIdState,
+    ],
   );
 
   useScopedHotkeys(Key.ArrowUp, () => handleSelect('up'), hotkeyScope, []);

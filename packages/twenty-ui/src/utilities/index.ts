@@ -9,7 +9,7 @@ export * from './color/utils/stringToHslColor';
 export * from './device/getOsControlSymbol';
 export * from './device/getOsShortcutSeparator';
 export * from './device/getUserDevice';
-export * from './dimensions/components/ComputeNodeDimensions';
+export * from './dimensions/components/AutogrowWrapper';
 export * from './responsive/hooks/useIsMobile';
 export * from './screen-size/hooks/useScreenSize';
 export * from './state/utils/createState';

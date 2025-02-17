@@ -8,8 +8,7 @@ msgstr ""
 "Language: aa\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Afar\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -67,7 +66,7 @@ msgstr "crwdns839:0crwdne839:0"
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "crwdns841:0crwdne841:0"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:46
+#: src/modules/note/standard-objects/note.workspace-entity.ts:44
 msgid "A note"
 msgstr "crwdns843:0crwdne843:0"
 
@@ -79,7 +78,7 @@ msgstr "crwdns845:0crwdne845:0"
 msgid "A person"
 msgstr "crwdns847:0crwdne847:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:48
+#: src/modules/task/standard-objects/task.workspace-entity.ts:46
 msgid "A task"
 msgstr "crwdns849:0crwdne849:0"
 
@@ -99,7 +98,7 @@ msgstr "crwdns855:0crwdne855:0"
 msgid "A workflow event listener"
 msgstr "crwdns857:0crwdne857:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:58
 msgid "A workflow run"
 msgstr "crwdns859:0crwdne859:0"
 
@@ -210,7 +209,7 @@ msgstr "crwdns909:0crwdne909:0"
 msgid "Assigned tasks"
 msgstr "crwdns911:0crwdne911:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:168
+#: src/modules/task/standard-objects/task.workspace-entity.ts:163
 msgid "Assignee"
 msgstr "crwdns913:0crwdne913:0"
 
@@ -258,10 +257,10 @@ msgstr "crwdns933:0crwdne933:0"
 msgid "Attachment type"
 msgstr "crwdns935:0crwdne935:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:156
+#: src/modules/task/standard-objects/task.workspace-entity.ts:151
 #: src/modules/person/standard-objects/person.workspace-entity.ts:244
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
-#: src/modules/note/standard-objects/note.workspace-entity.ts:118
+#: src/modules/note/standard-objects/note.workspace-entity.ts:113
 #: src/modules/company/standard-objects/company.workspace-entity.ts:241
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
@@ -352,12 +351,15 @@ msgstr "crwdns975:0crwdne975:0"
 msgid "Blocklists"
 msgstr "crwdns977:0crwdne977:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:77
-#: src/modules/task/standard-objects/task.workspace-entity.ts:87
-#: src/modules/note/standard-objects/note.workspace-entity.ts:75
-#: src/modules/note/standard-objects/note.workspace-entity.ts:85
+#: src/modules/task/standard-objects/task.workspace-entity.ts:85
+#: src/modules/note/standard-objects/note.workspace-entity.ts:83
 msgid "Body"
 msgstr "crwdns979:0crwdne979:0"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:75
+#: src/modules/note/standard-objects/note.workspace-entity.ts:73
+msgid "Body (deprecated)"
+msgstr "crwdns4851:0crwdne4851:0"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
 msgid "Cached record name"
@@ -523,16 +525,16 @@ msgstr "crwdns1045:0crwdne1045:0"
 msgid "Contact’s X/Twitter account"
 msgstr "crwdns1047:0crwdne1047:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:150
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:151
 msgid "Context"
 msgstr "crwdns1781:0crwdne1781:0"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
-#: src/modules/task/standard-objects/task.workspace-entity.ts:136
+#: src/modules/task/standard-objects/task.workspace-entity.ts:131
 #: src/modules/person/standard-objects/person.workspace-entity.ts:173
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
-#: src/modules/note/standard-objects/note.workspace-entity.ts:98
+#: src/modules/note/standard-objects/note.workspace-entity.ts:93
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
@@ -592,7 +594,7 @@ msgstr "crwdns1069:0crwdne1069:0"
 msgid "Domain Name"
 msgstr "crwdns1071:0crwdne1071:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:100
+#: src/modules/task/standard-objects/task.workspace-entity.ts:95
 msgid "Due Date"
 msgstr "crwdns1073:0crwdne1073:0"
 
@@ -714,7 +716,7 @@ msgstr "crwdns1121:0crwdne1121:0"
 msgid "Exclude non professional emails"
 msgstr "crwdns1123:0crwdne1123:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:131
 msgid "Executed by"
 msgstr "crwdns1125:0crwdne1125:0"
 
@@ -786,12 +788,12 @@ msgstr "crwdns1157:0crwdne1157:0"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:196
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:200
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
-#: src/modules/task/standard-objects/task.workspace-entity.ts:197
+#: src/modules/task/standard-objects/task.workspace-entity.ts:192
 #: src/modules/person/standard-objects/person.workspace-entity.ts:232
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:143
+#: src/modules/note/standard-objects/note.workspace-entity.ts:138
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
 #: src/modules/company/standard-objects/company.workspace-entity.ts:228
@@ -811,7 +813,7 @@ msgstr "crwdns1163:0crwdne1163:0"
 msgid "Favorites linked to the contact"
 msgstr "crwdns1165:0crwdne1165:0"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:144
+#: src/modules/note/standard-objects/note.workspace-entity.ts:139
 msgid "Favorites linked to the note"
 msgstr "crwdns1167:0crwdne1167:0"
 
@@ -819,7 +821,7 @@ msgstr "crwdns1167:0crwdne1167:0"
 msgid "Favorites linked to the opportunity"
 msgstr "crwdns1169:0crwdne1169:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:198
+#: src/modules/task/standard-objects/task.workspace-entity.ts:193
 msgid "Favorites linked to the task"
 msgstr "crwdns1171:0crwdne1171:0"
 
@@ -831,7 +833,7 @@ msgstr "crwdns1173:0crwdne1173:0"
 msgid "Favorites linked to the workflow"
 msgstr "crwdns1175:0crwdne1175:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:197
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:201
 msgid "Favorites linked to the workflow run"
 msgstr "crwdns1177:0crwdne1177:0"
 
@@ -973,7 +975,7 @@ msgstr "crwdns1231:0crwdne1231:0"
 msgid "Json object to provide context (user, device, workspace, etc.)"
 msgstr "crwdns1233:0crwdne1233:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:141
 msgid "Json object to provide output of the workflow run"
 msgstr "crwdns1235:0crwdne1235:0"
 
@@ -1202,7 +1204,7 @@ msgstr "crwdns1329:0crwdne1329:0"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:75
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:62
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:66
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
 #: src/modules/view/standard-objects/view.workspace-entity.ts:43
 #: src/modules/person/standard-objects/person.workspace-entity.ts:75
@@ -1221,28 +1223,28 @@ msgstr "crwdns1331:0crwdne1331:0"
 msgid "Name of the favorite folder"
 msgstr "crwdns1333:0crwdne1333:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:67
 msgid "Name of the workflow run"
 msgstr "crwdns1335:0crwdne1335:0"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:44
+#: src/modules/note/standard-objects/note.workspace-entity.ts:42
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
 msgstr "crwdns1337:0crwdne1337:0"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:119
+#: src/modules/note/standard-objects/note.workspace-entity.ts:114
 msgid "Note attachments"
 msgstr "crwdns1339:0crwdne1339:0"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:76
-#: src/modules/note/standard-objects/note.workspace-entity.ts:86
+#: src/modules/note/standard-objects/note.workspace-entity.ts:74
+#: src/modules/note/standard-objects/note.workspace-entity.ts:84
 msgid "Note body"
 msgstr "crwdns1341:0crwdne1341:0"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:56
+#: src/modules/note/standard-objects/note.workspace-entity.ts:54
 msgid "Note record position"
 msgstr "crwdns1343:0crwdne1343:0"
 
@@ -1250,7 +1252,7 @@ msgstr "crwdns1343:0crwdne1343:0"
 msgid "Note Target"
 msgstr "crwdns1345:0crwdne1345:0"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:107
+#: src/modules/note/standard-objects/note.workspace-entity.ts:102
 msgid "Note targets"
 msgstr "crwdns1347:0crwdne1347:0"
 
@@ -1258,13 +1260,13 @@ msgstr "crwdns1347:0crwdne1347:0"
 msgid "Note Targets"
 msgstr "crwdns1349:0crwdne1349:0"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:67
+#: src/modules/note/standard-objects/note.workspace-entity.ts:65
 msgid "Note title"
 msgstr "crwdns1351:0crwdne1351:0"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:221
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
-#: src/modules/note/standard-objects/note.workspace-entity.ts:45
+#: src/modules/note/standard-objects/note.workspace-entity.ts:43
 #: src/modules/company/standard-objects/company.workspace-entity.ts:205
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
@@ -1392,7 +1394,7 @@ msgstr "crwdns1407:0crwdne1407:0"
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
 msgstr "crwdns1409:0crwdne1409:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:140
 msgid "Output"
 msgstr "crwdns1411:0crwdne1411:0"
 
@@ -1444,14 +1446,14 @@ msgstr "crwdns1429:0crwdne1429:0"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:156
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:160
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
-#: src/modules/task/standard-objects/task.workspace-entity.ts:57
+#: src/modules/task/standard-objects/task.workspace-entity.ts:55
 #: src/modules/person/standard-objects/person.workspace-entity.ts:162
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
-#: src/modules/note/standard-objects/note.workspace-entity.ts:55
+#: src/modules/note/standard-objects/note.workspace-entity.ts:53
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
 #: src/modules/company/standard-objects/company.workspace-entity.ts:145
@@ -1511,8 +1513,8 @@ msgstr "crwdns1453:0crwdne1453:0"
 msgid "Related user email address"
 msgstr "crwdns1455:0crwdne1455:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:144
-#: src/modules/note/standard-objects/note.workspace-entity.ts:106
+#: src/modules/task/standard-objects/task.workspace-entity.ts:139
+#: src/modules/note/standard-objects/note.workspace-entity.ts:101
 msgid "Relations"
 msgstr "crwdns1457:0crwdne1457:0"
 
@@ -1561,7 +1563,7 @@ msgstr "crwdns1475:0crwdne1475:0"
 msgid "Start Date"
 msgstr "crwdns1477:0crwdne1477:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:110
+#: src/modules/task/standard-objects/task.workspace-entity.ts:105
 msgid "Status"
 msgstr "crwdns1479:0crwdne1479:0"
 
@@ -1610,35 +1612,35 @@ msgid "Target Url"
 msgstr "crwdns1495:0crwdne1495:0"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
-#: src/modules/task/standard-objects/task.workspace-entity.ts:46
+#: src/modules/task/standard-objects/task.workspace-entity.ts:44
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
 msgid "Task"
 msgstr "crwdns1497:0crwdne1497:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:169
+#: src/modules/task/standard-objects/task.workspace-entity.ts:164
 msgid "Task assignee"
 msgstr "crwdns1499:0crwdne1499:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:157
+#: src/modules/task/standard-objects/task.workspace-entity.ts:152
 msgid "Task attachments"
 msgstr "crwdns1501:0crwdne1501:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:78
-#: src/modules/task/standard-objects/task.workspace-entity.ts:88
+#: src/modules/task/standard-objects/task.workspace-entity.ts:76
+#: src/modules/task/standard-objects/task.workspace-entity.ts:86
 msgid "Task body"
 msgstr "crwdns1503:0crwdne1503:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:101
+#: src/modules/task/standard-objects/task.workspace-entity.ts:96
 msgid "Task due date"
 msgstr "crwdns1505:0crwdne1505:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:58
+#: src/modules/task/standard-objects/task.workspace-entity.ts:56
 msgid "Task record position"
 msgstr "crwdns1507:0crwdne1507:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:111
+#: src/modules/task/standard-objects/task.workspace-entity.ts:106
 msgid "Task status"
 msgstr "crwdns1509:0crwdne1509:0"
 
@@ -1646,7 +1648,7 @@ msgstr "crwdns1509:0crwdne1509:0"
 msgid "Task Target"
 msgstr "crwdns1511:0crwdne1511:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:145
+#: src/modules/task/standard-objects/task.workspace-entity.ts:140
 msgid "Task targets"
 msgstr "crwdns1513:0crwdne1513:0"
 
@@ -1654,11 +1656,11 @@ msgstr "crwdns1513:0crwdne1513:0"
 msgid "Task Targets"
 msgstr "crwdns1515:0crwdne1515:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:69
+#: src/modules/task/standard-objects/task.workspace-entity.ts:67
 msgid "Task title"
 msgstr "crwdns1517:0crwdne1517:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:47
+#: src/modules/task/standard-objects/task.workspace-entity.ts:45
 #: src/modules/person/standard-objects/person.workspace-entity.ts:210
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
 #: src/modules/company/standard-objects/company.workspace-entity.ts:194
@@ -1732,10 +1734,10 @@ msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "crwdns1551:0crwdne1551:0"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
-#: src/modules/task/standard-objects/task.workspace-entity.ts:138
+#: src/modules/task/standard-objects/task.workspace-entity.ts:133
 #: src/modules/person/standard-objects/person.workspace-entity.ts:175
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
-#: src/modules/note/standard-objects/note.workspace-entity.ts:100
+#: src/modules/note/standard-objects/note.workspace-entity.ts:95
 #: src/modules/company/standard-objects/company.workspace-entity.ts:158
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
@@ -1749,7 +1751,7 @@ msgstr "crwdns1555:0crwdne1555:0"
 msgid "The date the message was received"
 msgstr "crwdns1557:0crwdne1557:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:133
 msgid "The executor of the workflow"
 msgstr "crwdns1559:0crwdne1559:0"
 
@@ -1806,11 +1808,11 @@ msgstr "crwdns1583:0crwdne1583:0"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:208
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:212
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
-#: src/modules/task/standard-objects/task.workspace-entity.ts:185
+#: src/modules/task/standard-objects/task.workspace-entity.ts:180
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
-#: src/modules/note/standard-objects/note.workspace-entity.ts:131
+#: src/modules/note/standard-objects/note.workspace-entity.ts:126
 #: src/modules/company/standard-objects/company.workspace-entity.ts:253
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
@@ -1820,7 +1822,7 @@ msgstr "crwdns1585:0crwdne1585:0"
 msgid "Timeline Activities linked to the company"
 msgstr "crwdns1587:0crwdne1587:0"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:132
+#: src/modules/note/standard-objects/note.workspace-entity.ts:127
 msgid "Timeline Activities linked to the note."
 msgstr "crwdns1589:0crwdne1589:0"
 
@@ -1828,11 +1830,11 @@ msgstr "crwdns1589:0crwdne1589:0"
 msgid "Timeline Activities linked to the opportunity."
 msgstr "crwdns1591:0crwdne1591:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:209
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:213
 msgid "Timeline activities linked to the run"
 msgstr "crwdns1593:0crwdne1593:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:186
+#: src/modules/task/standard-objects/task.workspace-entity.ts:181
 msgid "Timeline Activities linked to the task."
 msgstr "crwdns1595:0crwdne1595:0"
 
@@ -1852,8 +1854,8 @@ msgstr "crwdns1601:0{label}crwdne1601:0"
 msgid "Timeline Activity"
 msgstr "crwdns1603:0crwdne1603:0"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:68
-#: src/modules/note/standard-objects/note.workspace-entity.ts:66
+#: src/modules/task/standard-objects/task.workspace-entity.ts:66
+#: src/modules/note/standard-objects/note.workspace-entity.ts:64
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
 msgid "Title"
@@ -2107,7 +2109,7 @@ msgstr "crwdns1715:0crwdne1715:0"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:182
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
@@ -2120,7 +2122,7 @@ msgstr "crwdns1717:0crwdne1717:0"
 msgid "Workflow event listeners linked to the workflow."
 msgstr "crwdns1719:0crwdne1719:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:183
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
 msgid "Workflow linked to the run."
 msgstr "crwdns1721:0crwdne1721:0"
 
@@ -2128,31 +2130,31 @@ msgstr "crwdns1721:0crwdne1721:0"
 msgid "Workflow record position"
 msgstr "crwdns1723:0crwdne1723:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:56
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
 msgid "Workflow Run"
 msgstr "crwdns1725:0crwdne1725:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:85
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:86
 msgid "Workflow run ended at"
 msgstr "crwdns1727:0crwdne1727:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:157
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:161
 msgid "Workflow run position"
 msgstr "crwdns1729:0crwdne1729:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:75
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:76
 msgid "Workflow run started at"
 msgstr "crwdns1731:0crwdne1731:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:95
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:96
 msgid "Workflow run status"
 msgstr "crwdns1733:0crwdne1733:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:57
 msgid "Workflow Runs"
 msgstr "crwdns1735:0crwdne1735:0"
 
@@ -2164,7 +2166,7 @@ msgstr "crwdns1737:0crwdne1737:0"
 msgid "Workflow runs linked to the workflow."
 msgstr "crwdns1739:0crwdne1739:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:168
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
 msgid "Workflow version"
 msgstr "crwdns1741:0crwdne1741:0"
 
@@ -2172,7 +2174,7 @@ msgstr "crwdns1741:0crwdne1741:0"
 msgid "Workflow Version"
 msgstr "crwdns1743:0crwdne1743:0"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:169
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
 msgid "Workflow version linked to the run."
 msgstr "crwdns1745:0crwdne1745:0"
 
