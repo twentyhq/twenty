@@ -189,7 +189,13 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     );
   };
 
-  const handleOpenDocument = () => {
+  const handleOpenDocument = (e: React.MouseEvent) => {
+    // Cmd+click opens new tab but simple click opens a modal
+    if (e.metaKey || e.ctrlKey) {
+      return;
+    }
+
+    e.preventDefault();
     setIsDocumentViewerOpen(true);
   };
 
@@ -209,7 +215,10 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           ) : (
             <StyledLinkContainer>
               {isPreviewable ? (
-                <StyledLink as="button" onClick={handleOpenDocument}>
+                <StyledLink
+                  onClick={handleOpenDocument}
+                  href={attachment.fullPath}
+                >
                   <OverflowingTextWithTooltip text={attachment.name} />
                 </StyledLink>
               ) : (
