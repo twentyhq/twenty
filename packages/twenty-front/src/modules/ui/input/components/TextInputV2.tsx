@@ -11,12 +11,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  ComputeNodeDimensions,
-  IconComponent,
-  IconEye,
-  IconEyeOff,
-} from 'twenty-ui';
+import { AutogrowWrapper, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -64,6 +59,8 @@ const StyledInput = styled.input<
     inheritFontStyles ? 'inherit' : theme.font.weight.regular};
   height: ${({ sizeVariant }) =>
     sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+  line-height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   outline: none;
   padding: ${({ theme, sizeVariant, autoGrow }) =>
     autoGrow
@@ -80,7 +77,6 @@ const StyledInput = styled.input<
   width: ${({ theme, width }) =>
     width ? `calc(${width}px + ${theme.spacing(0.5)})` : '100%'};
   max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
-
   &::placeholder,
   &::-webkit-input-placeholder {
     color: ${({ theme }) => theme.font.color.light};
@@ -296,13 +292,13 @@ const TextInputV2Component = forwardRef<
   },
 );
 
-const StyledComputeNodeDimensions = styled(ComputeNodeDimensions)<{
+const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
   sizeVariant?: TextInputV2Size;
 }>`
   border: 1px solid transparent;
   height: ${({ sizeVariant }) =>
     sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  padding: 0 ${({ theme }) => theme.spacing(1.25)};
   box-sizing: border-box;
 `;
 
@@ -313,19 +309,17 @@ const TextInputV2WithAutoGrowWrapper = forwardRef<
   return (
     <>
       {props.autoGrow ? (
-        <StyledComputeNodeDimensions
+        <StyledAutogrowWrapper
           sizeVariant={props.sizeVariant}
           node={props.value || props.placeholder}
         >
-          {(nodeDimensions) => (
-            <TextInputV2Component
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
-              ref={ref}
-              width={nodeDimensions?.width}
-            />
-          )}
-        </StyledComputeNodeDimensions>
+          <TextInputV2Component
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...props}
+            ref={ref}
+            fullWidth={true}
+          />
+        </StyledAutogrowWrapper>
       ) : (
         <TextInputV2Component
           // eslint-disable-next-line react/jsx-props-no-spreading
