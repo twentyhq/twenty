@@ -1,19 +1,8 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { lastVisitedViewPerObjectMetadataItemStateSelector } from '@/navigation/states/selectors/lastVisitedViewPerObjectMetadataItemStateSelector';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { useRecoilState } from 'recoil';
 
 export const useLastVisitedView = () => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const scopeId = currentWorkspace?.id ?? '';
-
-  const lastVisitedViewPerObjectMetadataItemState = extractComponentState(
-    lastVisitedViewPerObjectMetadataItemStateSelector,
-    scopeId,
-  );
-
   const [
     lastVisitedViewPerObjectMetadataItem,
     setLastVisitedViewPerObjectMetadataItem,
@@ -32,23 +21,6 @@ export const useLastVisitedView = () => {
     });
   };
 
-  const setLastVisitedView = ({
-    objectNamePlural,
-    viewId,
-  }: {
-    objectNamePlural: string;
-    viewId: string;
-  }) => {
-    const objectMetadataItem =
-      findActiveObjectMetadataItemByNamePlural(objectNamePlural);
-
-    if (isDefined(objectMetadataItem)) {
-      setLastVisitedViewPerObjectMetadataItem({
-        [objectMetadataItem.id]: viewId,
-      });
-    }
-  };
-
   const getLastVisitedViewIdFromObjectNamePlural = (
     objectNamePlural: string,
   ) => {
@@ -65,7 +37,6 @@ export const useLastVisitedView = () => {
     return lastVisitedViewPerObjectMetadataItem?.[objectMetadataItemId];
   };
   return {
-    setLastVisitedView,
     getLastVisitedViewIdFromObjectNamePlural,
     getLastVisitedViewIdFromObjectMetadataItemId,
     setFallbackForLastVisitedView,

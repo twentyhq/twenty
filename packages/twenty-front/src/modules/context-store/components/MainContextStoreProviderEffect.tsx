@@ -1,8 +1,8 @@
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
-import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
-import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
+import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
+import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useEffect } from 'react';
@@ -17,20 +17,20 @@ export const MainContextStoreProviderEffect = ({
   viewId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
+  console.log(
+    'mainContextStoreComponentInstanceIdToSet',
+    mainContextStoreComponentInstanceIdToSet,
+  );
   const [
     mainContextStoreComponentInstanceId,
     setMainContextStoreComponentInstanceId,
   ] = useRecoilState(mainContextStoreComponentInstanceIdState);
 
-  const { getLastVisitedViewIdFromObjectNamePlural, setLastVisitedView } =
-    useLastVisitedView();
+  const { setLastVisitedViewForObjectMetadataNamePlural } =
+    useSetLastVisitedViewForObjectMetadataNamePlural();
 
-  const { lastVisitedObjectMetadataItemId, setLastVisitedObjectMetadataItem } =
-    useLastVisitedObjectMetadataItem();
-
-  const lastVisitedViewId = getLastVisitedViewIdFromObjectNamePlural(
-    objectMetadataItem.namePlural,
-  );
+  const { setLastVisitedObjectMetadataId } =
+    useSetLastVisitedObjectMetadataId();
 
   const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
     useRecoilComponentStateV2(
@@ -60,16 +60,14 @@ export const MainContextStoreProviderEffect = ({
       );
     }
 
-    if (viewId !== lastVisitedViewId) {
-      setLastVisitedView({
-        objectNamePlural: objectMetadataItem.namePlural,
-        viewId: viewId,
-      });
-    }
+    setLastVisitedViewForObjectMetadataNamePlural({
+      objectNamePlural: objectMetadataItem.namePlural,
+      viewId: viewId,
+    });
 
-    if (objectMetadataItem.id !== lastVisitedObjectMetadataItemId) {
-      setLastVisitedObjectMetadataItem(objectMetadataItem.namePlural);
-    }
+    setLastVisitedObjectMetadataId({
+      objectMetadataItemId: objectMetadataItem.id,
+    });
 
     if (contextStoreCurrentViewId !== viewId) {
       setContextStoreCurrentViewId(viewId);
@@ -77,16 +75,14 @@ export const MainContextStoreProviderEffect = ({
   }, [
     contextStoreCurrentObjectMetadataId,
     contextStoreCurrentViewId,
-    lastVisitedObjectMetadataItemId,
-    lastVisitedViewId,
     mainContextStoreComponentInstanceId,
     mainContextStoreComponentInstanceIdToSet,
     objectMetadataItem,
     objectMetadataItem.namePlural,
     setContextStoreCurrentObjectMetadataId,
     setContextStoreCurrentViewId,
-    setLastVisitedObjectMetadataItem,
-    setLastVisitedView,
+    setLastVisitedObjectMetadataId,
+    setLastVisitedViewForObjectMetadataNamePlural,
     setMainContextStoreComponentInstanceId,
     viewId,
   ]);

@@ -9,7 +9,6 @@ import {
   useIcons,
 } from 'twenty-ui';
 
-import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
@@ -48,8 +47,6 @@ export const SettingsObjectSummaryCard = ({
 
   const { closeDropdown } = useDropdown(dropdownId);
   const { setFallbackForLastVisitedView } = useLastVisitedView();
-  const { setFallbackForLastVisitedObjectMetadataItem } =
-    useLastVisitedObjectMetadataItem();
 
   const handleEdit = () => {
     onEdit();
@@ -57,7 +54,6 @@ export const SettingsObjectSummaryCard = ({
   };
 
   const handleDeactivate = () => {
-    setFallbackForLastVisitedObjectMetadataItem(objectMetadataItemId);
     setFallbackForLastVisitedView(objectMetadataItemId);
     onDeactivate();
     closeDropdown();
