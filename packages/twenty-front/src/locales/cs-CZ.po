@@ -8,8 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -152,7 +151,7 @@ msgstr "Přidejte svůj první {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Přidáno {beautifiedCreatedAt}"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
 msgstr "Pokročilý filtr"
 
@@ -226,7 +225,7 @@ msgstr "Název API (množné číslo)"
 msgid "API Name (Singular)"
 msgstr "API název (jednotné číslo)"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "Vzhled"
 
@@ -397,7 +396,7 @@ msgstr "Nakonfigurujte připojení SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "Nakonfigurujte a přizpůsobte si předvolby kalendáře."
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "Nakonfigurujte, jak se mají zobrazovat data v aplikaci"
 
@@ -425,7 +424,7 @@ msgstr "Připojit s Microsoft"
 msgid "Connected accounts"
 msgstr "Připojené účty"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:107
 msgid "Context"
 msgstr "Kontext"
 
@@ -449,7 +448,7 @@ msgstr "Pokračovat s Google"
 msgid "Continue with Microsoft"
 msgstr "Pokračovat s Microsoftem"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Copilot"
 msgstr "Kopilot"
 
@@ -515,6 +514,10 @@ msgstr "Vytvořit Webhook"
 msgid "Create your workspace"
 msgstr "Vytvořte svůj pracovní prostor"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "Vlastní doména"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "Vlastní objekty"
@@ -548,7 +551,7 @@ msgstr "Nebezpečná zóna"
 msgid "Danish"
 msgstr "Dánština"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
 msgid "Dark"
 msgstr "Tmavý"
 
@@ -569,7 +572,7 @@ msgstr "Datový typ"
 msgid "Date"
 msgstr "Datum"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "Datum a čas"
 
@@ -705,9 +708,8 @@ msgid "Display as relative date"
 msgstr "Zobrazit jako relativní datum"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:185
-#: src/pages/settings/workspace/SettingsDomain.tsx:195
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "Doména"
 
@@ -825,8 +827,8 @@ msgstr "Opustit nastavení"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "Zkušenosti"
@@ -944,7 +946,7 @@ msgstr "Funkce"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "Obecné"
@@ -961,7 +963,7 @@ msgstr "Získejte maximum ze svého pracovního prostoru tím, že pozvete svůj
 msgid "Get your subscription"
 msgstr "Získejte své předplatné"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Global"
 msgstr "Globální"
 
@@ -1044,7 +1046,7 @@ msgstr "Neplatný e-mail"
 msgid "Invalid email or domain"
 msgstr "Neplatný e-mail nebo doména"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:166
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "Neplatné hodnoty formuláře"
 
@@ -1088,7 +1090,7 @@ msgstr "Korejština"
 msgid "Lab"
 msgstr "Laboratoř"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "Jazyk"
 
@@ -1104,7 +1106,7 @@ msgstr "Nejnovější"
 msgid "Latest date"
 msgstr "Nejnovější datum"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
 msgid "Light"
 msgstr "Světlý"
 
@@ -1323,7 +1325,7 @@ msgstr "Norština"
 msgid "Not empty"
 msgstr "Není prázdný"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Object"
 msgstr "Objekt"
 
@@ -1476,7 +1478,7 @@ msgstr "Přečtěte si dokumentaci"
 msgid "Receive an email containing password update link"
 msgstr "Obdržíte e-mail s odkazem na aktualizaci hesla"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Record Selection"
 msgstr "Výběr záznamů"
 
@@ -1557,7 +1559,7 @@ msgstr "Ruština"
 msgid "Search"
 msgstr "Hledat"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:95
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Hledat ''{commandMenuSearch}'' s..."
 
@@ -1574,7 +1576,7 @@ msgid "Search an index..."
 msgstr "Hledat v indexu..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "Hledání ve sloupcích"
 
@@ -1618,7 +1620,7 @@ msgstr "Zobrazit historii verzí"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Vyberte události, které chcete poslat na tento koncový bod"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "Vyberte preferovaný jazyk"
 
@@ -1643,11 +1645,15 @@ msgstr "Administrační panel serveru"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Nastavte viditelnost emailu, spravujte váš seznam blokovaných a další."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
-msgid "Set the name of your domain"
-msgstr "Nastavte název vaší domény"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "Nastavte název vaší vlastní domény a nakonfigurujte záznamy DNS."
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "Nastavte název vaší subdomény"
 
@@ -1705,12 +1711,12 @@ msgstr "Španělština"
 msgid "SSO"
 msgstr "Jednotné přihlášení"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "Subdoména"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:111
-#: src/pages/settings/workspace/SettingsDomain.tsx:138
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "Subdoména je již zabraná"
 
@@ -1759,7 +1765,7 @@ msgstr "Synchronizace popisku pole a API názvu"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Synchronizace popisků objektů a API názvů"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
 msgstr "Systémová nastavení"
 
@@ -1920,7 +1926,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Použijte naše API nebo ručně přidejte první {objectLabel}"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
@@ -1991,7 +1997,7 @@ msgstr "Není možné testovat pracovní postup"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18

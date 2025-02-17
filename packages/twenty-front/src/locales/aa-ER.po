@@ -8,8 +8,7 @@ msgstr ""
 "Language: aa\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Afar\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -152,7 +151,7 @@ msgstr "crwdns91:0{objectLabel}crwdne91:0"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "crwdns93:0{beautifiedCreatedAt}crwdne93:0"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
 msgstr "crwdns3979:0crwdne3979:0"
 
@@ -226,7 +225,7 @@ msgstr "crwdns3981:0crwdne3981:0"
 msgid "API Name (Singular)"
 msgstr "crwdns3983:0crwdne3983:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "crwdns123:0crwdne123:0"
 
@@ -397,7 +396,7 @@ msgstr "crwdns187:0crwdne187:0"
 msgid "Configure and customize your calendar preferences."
 msgstr "crwdns189:0crwdne189:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "crwdns191:0crwdne191:0"
 
@@ -425,7 +424,7 @@ msgstr "crwdns199:0crwdne199:0"
 msgid "Connected accounts"
 msgstr "crwdns201:0crwdne201:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:107
 msgid "Context"
 msgstr "crwdns203:0crwdne203:0"
 
@@ -449,7 +448,7 @@ msgstr "crwdns209:0crwdne209:0"
 msgid "Continue with Microsoft"
 msgstr "crwdns211:0crwdne211:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Copilot"
 msgstr "crwdns213:0crwdne213:0"
 
@@ -515,6 +514,10 @@ msgstr "crwdns239:0crwdne239:0"
 msgid "Create your workspace"
 msgstr "crwdns241:0crwdne241:0"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "crwdns4847:0crwdne4847:0"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "crwdns243:0crwdne243:0"
@@ -548,7 +551,7 @@ msgstr "crwdns251:0crwdne251:0"
 msgid "Danish"
 msgstr "crwdns1803:0crwdne1803:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
 msgid "Dark"
 msgstr "crwdns3989:0crwdne3989:0"
 
@@ -569,7 +572,7 @@ msgstr "crwdns255:0crwdne255:0"
 msgid "Date"
 msgstr "crwdns257:0crwdne257:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "crwdns259:0crwdne259:0"
 
@@ -705,9 +708,8 @@ msgid "Display as relative date"
 msgstr "crwdns305:0crwdne305:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:185
-#: src/pages/settings/workspace/SettingsDomain.tsx:195
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "crwdns307:0crwdne307:0"
 
@@ -825,8 +827,8 @@ msgstr "crwdns355:0crwdne355:0"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "crwdns357:0crwdne357:0"
@@ -944,7 +946,7 @@ msgstr "crwdns399:0crwdne399:0"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "crwdns401:0crwdne401:0"
@@ -961,7 +963,7 @@ msgstr "crwdns405:0crwdne405:0"
 msgid "Get your subscription"
 msgstr "crwdns407:0crwdne407:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Global"
 msgstr "crwdns409:0crwdne409:0"
 
@@ -1043,7 +1045,7 @@ msgstr "crwdns435:0crwdne435:0"
 msgid "Invalid email or domain"
 msgstr "crwdns437:0crwdne437:0"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:166
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "crwdns439:0crwdne439:0"
 
@@ -1087,7 +1089,7 @@ msgstr "crwdns455:0crwdne455:0"
 msgid "Lab"
 msgstr "crwdns457:0crwdne457:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "crwdns459:0crwdne459:0"
 
@@ -1103,7 +1105,7 @@ msgstr "crwdns463:0crwdne463:0"
 msgid "Latest date"
 msgstr "crwdns465:0crwdne465:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
 msgid "Light"
 msgstr "crwdns3995:0crwdne3995:0"
 
@@ -1322,7 +1324,7 @@ msgstr "crwdns1825:0crwdne1825:0"
 msgid "Not empty"
 msgstr "crwdns537:0crwdne537:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Object"
 msgstr "crwdns539:0crwdne539:0"
 
@@ -1475,7 +1477,7 @@ msgstr "crwdns595:0crwdne595:0"
 msgid "Receive an email containing password update link"
 msgstr "crwdns597:0crwdne597:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Record Selection"
 msgstr "crwdns599:0crwdne599:0"
 
@@ -1556,7 +1558,7 @@ msgstr "crwdns1833:0crwdne1833:0"
 msgid "Search"
 msgstr "crwdns623:0crwdne623:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:95
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "crwdns625:0{commandMenuSearch}crwdne625:0"
 
@@ -1573,7 +1575,7 @@ msgid "Search an index..."
 msgstr "crwdns629:0crwdne629:0"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "crwdns631:0crwdne631:0"
 
@@ -1617,7 +1619,7 @@ msgstr "crwdns645:0crwdne645:0"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "crwdns647:0crwdne647:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "crwdns649:0crwdne649:0"
 
@@ -1642,11 +1644,15 @@ msgstr "crwdns653:0crwdne653:0"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "crwdns655:0crwdne655:0"
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
-msgid "Set the name of your domain"
-msgstr "crwdns657:0crwdne657:0"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "crwdns4849:0crwdne4849:0"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "crwdns659:0crwdne659:0"
 
@@ -1704,12 +1710,12 @@ msgstr "crwdns677:0crwdne677:0"
 msgid "SSO"
 msgstr "crwdns679:0crwdne679:0"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "crwdns681:0crwdne681:0"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:111
-#: src/pages/settings/workspace/SettingsDomain.tsx:138
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "crwdns683:0crwdne683:0"
 
@@ -1758,7 +1764,7 @@ msgstr "crwdns701:0crwdne701:0"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "crwdns4009:0crwdne4009:0"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
 msgstr "crwdns4011:0crwdne4011:0"
 
@@ -1919,7 +1925,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "crwdns767:0{objectLabel}crwdne767:0"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
@@ -1990,7 +1996,7 @@ msgstr "crwdns793:0crwdne793:0"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
