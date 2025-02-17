@@ -26,10 +26,8 @@ import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 
 export const useCreateAppRouter = (
-  isBillingEnabled?: boolean,
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
-  isPermissionsEnabled?: boolean,
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
@@ -61,10 +59,8 @@ export const useCreateAppRouter = (
             path={AppPath.SettingsCatchAll}
             element={
               <SettingsRoutes
-                isBillingEnabled={isBillingEnabled}
                 isFunctionSettingsEnabled={isFunctionSettingsEnabled}
                 isAdminPageEnabled={isAdminPageEnabled}
-                isPermissionsEnabled={isPermissionsEnabled}
               />
             }
           />

@@ -44,6 +44,7 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -71,6 +72,7 @@ export const useAuth = () => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
+  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setIsAppWaitingForFreshObjectMetadataState = useSetRecoilState(
     isAppWaitingForFreshObjectMetadataState,
   );
@@ -255,6 +257,10 @@ export const useAuth = () => {
       setCurrentWorkspaceMembers(workspaceMembers);
     }
 
+    if (isDefined(user.currentUserWorkspace)) {
+      setCurrentUserWorkspace(user.currentUserWorkspace);
+    }
+
     if (isDefined(user.workspaceMember)) {
       workspaceMember = {
         ...user.workspaceMember,
@@ -318,6 +324,7 @@ export const useAuth = () => {
     getCurrentUser,
     isOnAWorkspace,
     setCurrentUser,
+    setCurrentUserWorkspace,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setCurrentWorkspaceMembers,

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -29,6 +30,7 @@ export const UserProviderEffect = () => {
   );
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setWorkspaces = useSetRecoilState(workspacesState);
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
@@ -56,6 +58,10 @@ export const UserProviderEffect = () => {
 
     if (isDefined(queryData.currentUser.currentWorkspace)) {
       setCurrentWorkspace(queryData.currentUser.currentWorkspace);
+    }
+
+    if (isDefined(queryData.currentUser.currentUserWorkspace)) {
+      setCurrentUserWorkspace(queryData.currentUser.currentUserWorkspace);
     }
 
     const {
@@ -115,6 +121,7 @@ export const UserProviderEffect = () => {
     }
   }, [
     setCurrentUser,
+    setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
     isLoading,
     queryLoading,
