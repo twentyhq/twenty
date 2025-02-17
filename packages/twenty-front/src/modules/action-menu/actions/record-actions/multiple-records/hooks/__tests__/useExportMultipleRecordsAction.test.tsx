@@ -20,13 +20,10 @@ jest.mock('@/object-record/record-index/export/hooks/useExportRecords', () => ({
   }),
 }));
 
-jest.mock('@/context-store/hooks/useContextStoreCurrentViewIdOrThrow', () => ({
-  useContextStoreCurrentViewIdOrThrow: () => 'fake-current-view-id',
-}));
-
 const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: '1',
+  contextStoreCurrentViewId: '1',
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
   contextStoreTargetedRecordsRule: {
