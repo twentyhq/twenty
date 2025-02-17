@@ -11,13 +11,27 @@ import {
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo, useState } from 'react';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
+import { lazy, Suspense, useMemo, useState } from 'react';
+import {
+  IconCalendar,
+  IconX,
+  LightIconButton,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
+
+const DocumentViewerContent = lazy(() =>
+  import('@/activities/files/components/DocumentViewerModal').then(
+    (module) => ({
+      default: module.DocumentViewerContent,
+    }),
+  ),
+);
 
 const StyledLeftContent = styled.div`
   align-items: center;
@@ -43,10 +57,17 @@ const StyledCalendarIconContainer = styled.div`
 
 const StyledLink = styled.a`
   align-items: center;
+  appearance: none;
+  background: none;
+  border: none;
   color: ${({ theme }) => theme.font.color.primary};
+  cursor: pointer;
   display: flex;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  text-align: left;
   text-decoration: none;
-
   width: 100%;
 
   :hover {
@@ -59,9 +80,38 @@ const StyledLinkContainer = styled.div`
   width: 100%;
 `;
 
+const StyledLoadingContainer = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.background.primary};
+  display: flex;
+  height: 80vh;
+  justify-content: center;
+  width: 100%;
+`;
+
+const StyledLoadingText = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const StyledTitle = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
+  const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
 
   const { name: originalFileName, extension: attachmentFileExtension } =
     getFileNameAndExtension(attachment.name);
@@ -122,6 +172,17 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     );
   };
 
+  const handleOpenDocument = () => {
+    setIsDocumentViewerOpen(true);
+  };
+
+  const isViewableDocument = [
+    'TextDocument',
+    'Presentation',
+    'Spreadsheet',
+    'Image',
+  ].includes(attachment.type);
+
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <ActivityRow disabled>
@@ -137,13 +198,19 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             />
           ) : (
             <StyledLinkContainer>
-              <StyledLink
-                href={attachment.fullPath}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <OverflowingTextWithTooltip text={attachment.name} />
-              </StyledLink>
+              {isViewableDocument ? (
+                <StyledLink as="button" onClick={handleOpenDocument}>
+                  <OverflowingTextWithTooltip text={attachment.name} />
+                </StyledLink>
+              ) : (
+                <StyledLink
+                  href={attachment.fullPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <OverflowingTextWithTooltip text={attachment.name} />
+                </StyledLink>
+              )}
             </StyledLinkContainer>
           )}
         </StyledLeftContent>
@@ -160,6 +227,40 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           />
         </StyledRightContent>
       </ActivityRow>
+      {isDocumentViewerOpen && (
+        <Modal
+          size="large"
+          isClosable
+          onClose={() => setIsDocumentViewerOpen(false)}
+        >
+          <Modal.Header>
+            <StyledHeader>
+              <StyledTitle>{attachment.name}</StyledTitle>
+              <LightIconButton
+                Icon={IconX}
+                onClick={() => setIsDocumentViewerOpen(false)}
+                accent="tertiary"
+              />
+            </StyledHeader>
+          </Modal.Header>
+          <Modal.Content>
+            <Suspense
+              fallback={
+                <StyledLoadingContainer>
+                  <StyledLoadingText>
+                    Loading document viewer...
+                  </StyledLoadingText>
+                </StyledLoadingContainer>
+              }
+            >
+              <DocumentViewerContent
+                documentName={attachment.name}
+                documentUrl={attachment.fullPath}
+              />
+            </Suspense>
+          </Modal.Content>
+        </Modal>
+      )}
     </FieldContext.Provider>
   );
 };
