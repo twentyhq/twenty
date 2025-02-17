@@ -45,7 +45,11 @@ export const useOpenActivityRightDrawer = ({
     }
 
     if (isCommandMenuV2Enabled) {
-      openRecordInCommandMenu(activityId, objectNameSingular, false);
+      openRecordInCommandMenu({
+        recordId: activityId,
+        objectNameSingular,
+        isNewRecord: false,
+      });
     } else {
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       setViewableRecordId(activityId);

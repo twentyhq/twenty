@@ -126,7 +126,11 @@ export const useOpenCreateActivityDrawer = ({
     }
 
     if (isCommandMenuV2Enabled) {
-      openRecordInCommandMenu(activity.id, activityObjectNameSingular, true);
+      openRecordInCommandMenu({
+        recordId: activity.id,
+        objectNameSingular: activityObjectNameSingular,
+        isNewRecord: true,
+      });
     } else {
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     }

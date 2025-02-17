@@ -215,11 +215,15 @@ export const useCommandMenu = () => {
 
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set, snapshot }) => {
-      return (
-        recordId: string,
-        objectNameSingular: string,
+      return ({
+        recordId,
+        objectNameSingular,
         isNewRecord = false,
-      ) => {
+      }: {
+        recordId: string;
+        objectNameSingular: string;
+        isNewRecord?: boolean;
+      }) => {
         set(viewableRecordNameSingularState, objectNameSingular);
         set(viewableRecordIdState, recordId);
 
