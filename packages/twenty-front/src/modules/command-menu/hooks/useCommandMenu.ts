@@ -61,6 +61,7 @@ export const useCommandMenu = () => {
 
         set(isCommandMenuOpenedState, true);
         setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
+        set(hasUserSelectedCommandState, false);
       },
     [
       copyContextStoreStates,
@@ -175,6 +176,7 @@ export const useCommandMenu = () => {
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
+        set(hasUserSelectedCommandState, false);
       };
     },
     [closeCommandMenu],
@@ -203,6 +205,8 @@ export const useCommandMenu = () => {
         title: newNavigationStackItem?.pageTitle,
         Icon: newNavigationStackItem?.pageIcon,
       });
+
+      set(hasUserSelectedCommandState, false);
     };
   }, []);
 
@@ -272,6 +276,8 @@ export const useCommandMenu = () => {
           title: undefined,
           Icon: undefined,
         });
+
+        set(hasUserSelectedCommandState, false);
       };
     },
     [copyContextStoreStates],
