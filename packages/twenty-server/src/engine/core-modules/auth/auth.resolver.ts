@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { SettingsFeatures, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import omit from 'lodash.omit';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -47,6 +48,9 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
+import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -77,6 +81,7 @@ export class AuthResolver {
     private domainManagerService: DomainManagerService,
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
+    private sSOService: SSOService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -85,6 +90,16 @@ export class AuthResolver {
     @Args() checkUserExistsInput: CheckUserExistsInput,
   ): Promise<typeof UserExistsOutput> {
     return await this.authService.checkUserExists(checkUserExistsInput.email);
+  }
+
+  @Mutation(() => GetAuthorizationUrlForSSOOutput)
+  async getAuthorizationUrlForSSO(
+    @Args('input') params: GetAuthorizationUrlForSSOInput,
+  ) {
+    return await this.sSOService.getAuthorizationUrlForSSO(
+      params.identityProviderId,
+      omit(params, ['identityProviderId']),
+    );
   }
 
   @Query(() => WorkspaceInviteHashValid)

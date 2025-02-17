@@ -26,7 +26,7 @@ import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActio
 import { ContextStoreCurrentViewTypeEffect } from '@/context-store/components/ContextStoreCurrentViewTypeEffect';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useFilterDefinitionsFromFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterDefinitionsFromFilterableFieldMetadataItems';
+import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
@@ -180,8 +180,8 @@ export const RecordIndexContainer = () => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const { filterDefinitions } =
-    useFilterDefinitionsFromFilterableFieldMetadataItems();
+  const { filterableFieldMetadataItems } =
+    useFilterableFieldMetadataItemsInRecordIndexContext();
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
@@ -218,17 +218,23 @@ export const RecordIndexContainer = () => {
                 onViewGroupsChange(view.viewGroups);
                 setTableViewFilterGroups(view.viewFilterGroups ?? []);
                 setTableFilters(
-                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+                  mapViewFiltersToFilters(
+                    view.viewFilters,
+                    filterableFieldMetadataItems,
+                  ),
                 );
                 setRecordIndexFilters(
-                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+                  mapViewFiltersToFilters(
+                    view.viewFilters,
+                    filterableFieldMetadataItems,
+                  ),
                 );
                 setRecordIndexViewFilterGroups(view.viewFilterGroups ?? []);
                 setContextStoreTargetedRecordsRule((prev) => ({
                   ...prev,
                   filters: mapViewFiltersToFilters(
                     view.viewFilters,
-                    filterDefinitions,
+                    filterableFieldMetadataItems,
                   ),
                 }));
                 setTableSorts(

@@ -3,6 +3,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { FieldMetadataType } from '~/generated/graphql';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -37,12 +38,6 @@ describe('computeViewRecordGqlOperationFilter', () => {
       operand: RecordFilterOperand.Contains,
       type: 'TEXT',
       label: 'Name',
-      definition: {
-        type: 'TEXT',
-        fieldMetadataId: companyMockNameFieldMetadataId?.id,
-        label: 'Name',
-        iconName: 'text',
-      },
     };
 
     const result = computeViewRecordGqlOperationFilter(
@@ -76,12 +71,8 @@ describe('computeViewRecordGqlOperationFilter', () => {
       fieldMetadataId: companyMockNameFieldMetadataId?.id,
       displayValue: companiesMock[0].name,
       operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'TEXT',
-        fieldMetadataId: companyMockNameFieldMetadataId?.id,
-        label: 'Name',
-        iconName: 'text',
-      },
+      type: FieldMetadataType.TEXT,
+      label: 'Name',
     };
 
     const employeesFilter: RecordFilter = {
@@ -90,12 +81,8 @@ describe('computeViewRecordGqlOperationFilter', () => {
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
       operand: ViewFilterOperand.GreaterThan,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      type: FieldMetadataType.NUMBER,
+      label: 'Employees',
     };
 
     const result = computeViewRecordGqlOperationFilter(
@@ -135,12 +122,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '123 Main St',
       operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'ADDRESS',
-        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
-        label: 'Address',
-        iconName: 'address',
-      },
+      type: FieldMetadataType.ADDRESS,
+      label: 'Address',
     };
 
     const addressFilterDoesNotContain: RecordFilter = {
@@ -149,12 +132,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '123 Main St',
       operand: ViewFilterOperand.DoesNotContain,
-      definition: {
-        type: 'ADDRESS',
-        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
-        label: 'Address',
-        iconName: 'address',
-      },
+      type: FieldMetadataType.ADDRESS,
+      label: 'Address',
     };
 
     const addressFilterIsEmpty: RecordFilter = {
@@ -163,12 +142,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'ADDRESS',
-        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
-        label: 'Address',
-        iconName: 'address',
-      },
+      type: FieldMetadataType.ADDRESS,
+      label: 'Address',
     };
 
     const addressFilterIsNotEmpty: RecordFilter = {
@@ -177,12 +152,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'ADDRESS',
-        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
-        label: 'Address',
-        iconName: 'address',
-      },
+      label: 'Address',
+      type: FieldMetadataType.ADDRESS,
     };
 
     const result = computeViewRecordGqlOperationFilter(
@@ -518,12 +489,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '1234567890',
       operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'PHONES',
-        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
-        label: 'Phones',
-        iconName: 'phone',
-      },
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
     };
 
     const phonesFilterDoesNotContain: RecordFilter = {
@@ -532,12 +499,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '1234567890',
       operand: ViewFilterOperand.DoesNotContain,
-      definition: {
-        type: 'PHONES',
-        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
-        label: 'Phones',
-        iconName: 'phone',
-      },
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
     };
 
     const phonesFilterIsEmpty: RecordFilter = {
@@ -546,12 +509,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'PHONES',
-        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
-        label: 'Phones',
-        iconName: 'phone',
-      },
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
     };
 
     const phonesFilterIsNotEmpty: RecordFilter = {
@@ -560,12 +519,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'PHONES',
-        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
-        label: 'Phones',
-        iconName: 'phone',
-      },
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
     };
 
     const result = computeViewRecordGqlOperationFilter(
@@ -668,12 +623,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: 'test@test.com',
       operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'EMAILS',
-        fieldMetadataId: personMockEmailFieldMetadataId?.id,
-        iconName: 'email',
-        label: 'Emails',
-      },
+      label: 'Emails',
+      type: FieldMetadataType.EMAILS,
     };
 
     const emailsFilterDoesNotContain: RecordFilter = {
@@ -682,12 +633,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: 'test@test.com',
       operand: ViewFilterOperand.DoesNotContain,
-      definition: {
-        type: 'EMAILS',
-        fieldMetadataId: personMockEmailFieldMetadataId?.id,
-        label: 'Emails',
-        iconName: 'email',
-      },
+      label: 'Emails',
+      type: FieldMetadataType.EMAILS,
     };
 
     const emailsFilterIsEmpty: RecordFilter = {
@@ -696,12 +643,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'EMAILS',
-        label: 'Emails',
-        iconName: 'email',
-        fieldMetadataId: personMockEmailFieldMetadataId?.id,
-      },
+      label: 'Emails',
+      type: FieldMetadataType.EMAILS,
     };
 
     const emailsFilterIsNotEmpty: RecordFilter = {
@@ -710,12 +653,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'EMAILS',
-        label: 'Emails',
-        iconName: 'email',
-        fieldMetadataId: personMockEmailFieldMetadataId?.id,
-      },
+      label: 'Emails',
+      type: FieldMetadataType.EMAILS,
     };
 
     const result = computeViewRecordGqlOperationFilter(
@@ -810,12 +749,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
       operand: ViewFilterOperand.IsAfter,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
     const dateFilterIsBefore: RecordFilter = {
@@ -824,12 +759,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
       operand: ViewFilterOperand.IsBefore,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
     const dateFilterIs: RecordFilter = {
@@ -838,12 +769,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
       operand: ViewFilterOperand.Is,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
     const dateFilterIsEmpty: RecordFilter = {
@@ -852,12 +779,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
     const dateFilterIsNotEmpty: RecordFilter = {
@@ -866,12 +789,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
     const result = computeViewRecordGqlOperationFilter(
@@ -941,12 +860,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
       operand: ViewFilterOperand.GreaterThan,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      label: 'Employees',
+      type: FieldMetadataType.NUMBER,
     };
 
     const employeesFilterIsLessThan: RecordFilter = {
@@ -955,12 +870,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
       operand: ViewFilterOperand.LessThan,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      label: 'Employees',
+      type: FieldMetadataType.NUMBER,
     };
 
     const employeesFilterIsEmpty: RecordFilter = {
@@ -969,12 +880,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      label: 'Employees',
+      type: FieldMetadataType.NUMBER,
     };
 
     const employeesFilterIsNotEmpty: RecordFilter = {
@@ -983,12 +890,8 @@ describe('should work as expected for the different field types', () => {
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      label: 'Employees',
+      type: FieldMetadataType.NUMBER,
     };
 
     const result = computeViewRecordGqlOperationFilter(

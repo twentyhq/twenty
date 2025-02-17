@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class MessageImportException extends CustomException {
-  code: MessageImportExceptionCode;
   constructor(message: string, code: MessageImportExceptionCode) {
     super(message, code);
   }

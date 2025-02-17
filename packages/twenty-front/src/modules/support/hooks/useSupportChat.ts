@@ -12,15 +12,18 @@ const insertScript = ({
   src,
   innerHTML,
   onLoad,
+  defer = false,
 }: {
   src?: string;
   innerHTML?: string;
   onLoad?: (...args: any[]) => void;
+  defer?: boolean;
 }) => {
   const script = document.createElement('script');
   if (isNonEmptyString(src)) script.src = src;
   if (isNonEmptyString(innerHTML)) script.innerHTML = innerHTML;
   if (isDefined(onLoad)) script.onload = onLoad;
+  script.defer = defer;
   document.body.appendChild(script);
 };
 
@@ -50,6 +53,7 @@ export const useSupportChat = () => {
 
       insertScript({
         src: url,
+        defer: true,
         onLoad: () => {
           window.FrontChat?.('init', {
             chatId,
@@ -76,11 +80,13 @@ export const useSupportChat = () => {
       isDefined(currentWorkspaceMember) &&
       !isFrontChatLoaded
     ) {
-      configureFront(
-        supportChat.supportFrontChatId,
-        currentUser,
-        currentWorkspaceMember,
-      );
+      setTimeout(() => {
+        configureFront(
+          supportChat.supportFrontChatId as string,
+          currentUser,
+          currentWorkspaceMember,
+        );
+      }, 500);
     }
   }, [
     configureFront,

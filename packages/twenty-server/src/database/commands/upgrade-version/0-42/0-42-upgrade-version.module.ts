@@ -14,6 +14,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       [ObjectMetadataEntity, FieldMetadataEntity],
       'metadata',
     ),
+    WorkspaceSyncMetadataCommandsModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceMigrationModule,
     WorkspaceMetadataVersionModule,

@@ -1,24 +1,33 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import styled from '@emotion/styled';
-import { capitalize } from 'twenty-shared';
+import { FieldMetadataType, capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
   overflow-x: hidden;
+  width: 100%;
 `;
 
 const StyledEditableTitlePrefix = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  flex: 1 0 auto;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(0.75)};
+`;
+
+const StyledTitle = styled.div`
+  max-width: 100%;
+  overflow: hidden;
+  padding-right: ${({ theme }) => theme.spacing(1)};
+  width: fit-content;
 `;
 
 export const ObjectRecordShowPageBreadcrumb = ({
@@ -40,21 +49,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
     },
   });
 
-  const { updateOneRecord } = useUpdateOneRecord({
+  const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
-    recordGqlFields: {
-      [labelIdentifierFieldMetadataItem?.name ?? 'name']: true,
-    },
+    objectRecordId,
+    recordFromStore: record ?? null,
   });
-
-  const handleSubmit = (value: string) => {
-    updateOneRecord({
-      idToUpdate: objectRecordId,
-      updateOneRecordInput: {
-        name: value,
-      },
-    });
-  };
 
   if (loading) {
     return null;
@@ -66,13 +65,35 @@ export const ObjectRecordShowPageBreadcrumb = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      <EditableBreadcrumbItem
-        defaultValue={record?.name ?? ''}
-        noValuePlaceholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
-        placeholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
-        onSubmit={handleSubmit}
-        hotkeyScope="editable-breadcrumb-item"
-      />
+      <StyledTitle>
+        <FieldContext.Provider
+          value={{
+            recordId: objectRecordId,
+            recoilScopeId:
+              objectRecordId + labelIdentifierFieldMetadataItem?.id,
+            isLabelIdentifier: false,
+            fieldDefinition: {
+              type:
+                labelIdentifierFieldMetadataItem?.type ||
+                FieldMetadataType.TEXT,
+              iconName: '',
+              fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
+              label: labelIdentifierFieldMetadataItem?.label || '',
+              metadata: {
+                fieldName: labelIdentifierFieldMetadataItem?.name || '',
+                objectMetadataNameSingular: objectNameSingular,
+              },
+              defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
+            },
+            useUpdateRecord: useUpdateOneObjectRecordMutation,
+            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+            isCentered: false,
+            isDisplayModeFixHeight: true,
+          }}
+        >
+          <RecordTitleCell sizeVariant="sm" />
+        </FieldContext.Provider>
+      </StyledTitle>
     </StyledEditableTitleContainer>
   );
 };

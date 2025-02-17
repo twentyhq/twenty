@@ -1,9 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import {
-  formatFieldMetadataItemAsFilterDefinition,
-  getFilterTypeFromFieldType,
-} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -85,10 +82,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
     const defaultFieldMetadataItem = getDefaultFieldMetadataItem();
 
-    const defaultFilterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: defaultFieldMetadataItem,
-    });
-
     const filterType = getFilterTypeFromFieldType(
       defaultFieldMetadataItem.type,
     );
@@ -100,11 +93,11 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       operand: getRecordFilterOperands({
         filterType,
       })[0],
-      definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
       viewFilterGroupId: viewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
+      label: defaultFieldMetadataItem.label,
     });
   };
 
@@ -127,10 +120,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
     const defaultFieldMetadataItem = getDefaultFieldMetadataItem();
 
-    const defaultFilterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: defaultFieldMetadataItem,
-    });
-
     const filterType = getFilterTypeFromFieldType(
       defaultFieldMetadataItem.type,
     );
@@ -142,11 +131,11 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       operand: getRecordFilterOperands({
         filterType,
       })[0],
-      definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
       viewFilterGroupId: newViewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
+      label: defaultFieldMetadataItem.label,
     });
   };
 

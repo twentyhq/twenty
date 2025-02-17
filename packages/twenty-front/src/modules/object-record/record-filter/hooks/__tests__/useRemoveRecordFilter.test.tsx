@@ -5,6 +5,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { FieldMetadataType } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useRemoveRecordFilter } from '../useRemoveRecordFilter';
 import { useUpsertRecordFilter } from '../useUpsertRecordFilter';
@@ -41,14 +42,8 @@ describe('useRemoveRecordFilter', () => {
       value: 'test-value',
       operand: ViewFilterOperand.Contains,
       displayValue: 'test-value',
-      definition: {
-        type: 'TEXT',
-        fieldMetadataId: 'field-1',
-        label: 'Test Field',
-        iconName: 'IconText',
-      },
       label: 'Test Field',
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
     };
 
     // First add a filter
@@ -92,14 +87,8 @@ describe('useRemoveRecordFilter', () => {
       value: 'test-value',
       operand: ViewFilterOperand.Contains,
       displayValue: 'test-value',
-      definition: {
-        type: 'TEXT',
-        fieldMetadataId: 'field-1',
-        label: 'Test Field',
-        iconName: 'IconText',
-      },
       label: 'Test Field',
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
     };
 
     // Add a filter

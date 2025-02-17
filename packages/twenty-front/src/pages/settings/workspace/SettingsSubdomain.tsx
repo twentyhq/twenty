@@ -7,6 +7,7 @@ import { H2Title, Section } from 'twenty-ui';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
@@ -25,6 +26,8 @@ const StyledDomain = styled.h2`
 export const SettingsSubdomain = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
   const { t } = useLingui();
+
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { control } = useFormContext<{
     subdomain: string;
@@ -47,6 +50,7 @@ export const SettingsSubdomain = () => {
                 type="text"
                 onChange={onChange}
                 error={error?.message}
+                disabled={!!currentWorkspace?.customDomain}
                 fullWidth
               />
               {isDefined(domainConfiguration.frontDomain) && (

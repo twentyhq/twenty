@@ -6,7 +6,10 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { ResolverArgsType } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
-import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
+import {
+  RecordPositionFactory,
+  RecordPositionFactoryCreateArgs,
+} from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 describe('QueryRunnerArgsFactory', () => {
@@ -104,12 +107,14 @@ describe('QueryRunnerArgsFactory', () => {
         ResolverArgsType.CreateMany,
       );
 
-      expect(recordPositionFactory.create).toHaveBeenCalledWith(
-        'last',
-        { isCustom: true, nameSingular: 'testNumber' },
+      const expectedArgs: RecordPositionFactoryCreateArgs = {
+        value: 'last',
+        objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
         workspaceId,
-        0,
-      );
+        index: 0,
+      };
+
+      expect(recordPositionFactory.create).toHaveBeenCalledWith(expectedArgs);
       expect(result).toEqual({
         id: 'uuid',
         data: [{ position: 2, testNumber: 1 }],
@@ -128,12 +133,14 @@ describe('QueryRunnerArgsFactory', () => {
         ResolverArgsType.CreateMany,
       );
 
-      expect(recordPositionFactory.create).toHaveBeenCalledWith(
-        'first',
-        { isCustom: true, nameSingular: 'testNumber' },
+      const expectedArgs: RecordPositionFactoryCreateArgs = {
+        value: 'first',
+        objectMetadata: { isCustom: true, nameSingular: 'testNumber' },
         workspaceId,
-        0,
-      );
+        index: 0,
+      };
+
+      expect(recordPositionFactory.create).toHaveBeenCalledWith(expectedArgs);
       expect(result).toEqual({
         id: 'uuid',
         data: [{ position: 2, testNumber: 1 }],

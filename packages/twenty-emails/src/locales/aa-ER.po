@@ -8,7 +8,7 @@ msgstr ""
 "Language: aa\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-12 07:13\n"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Afar\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -115,6 +115,10 @@ msgid "Verify Email"
 msgstr "crwdns41:0crwdne41:0"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "crwdns43:0{workspaceDisplayName}crwdnd43:0{inactiveDaysBeforeDelete}crwdne43:0"
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+msgstr "crwdns4845:0{workspaceDisplayName}crwdnd4845:0{daysSinceInactive}crwdne4845:0"
+
+#: src/emails/clean-suspended-workspace.email.tsx:27
+#~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+#~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 

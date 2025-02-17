@@ -8,8 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -152,7 +151,7 @@ msgstr "最初の{objectLabel}を追加"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "{beautifiedCreatedAt}に追加"
 
-#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:132
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
 msgstr "\\\\u9ad8\\\\u5ea6\\\\u306a\\\\u30d5\\\\u30a3\\\\u30eb\\\\u30bf\\\\u30fc"
 
@@ -226,7 +225,7 @@ msgstr "API名（複数形）"
 msgid "API Name (Singular)"
 msgstr "API名<b>（</b>単数形<b>）</b>"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "外観"
 
@@ -397,7 +396,7 @@ msgstr "SSO接続を設定"
 msgid "Configure and customize your calendar preferences."
 msgstr "カレンダーの設定を行い、カスタマイズする。"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:49
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "アプリ全体の日付の表示方法を設定"
 
@@ -425,7 +424,7 @@ msgstr "Microsoftと接続"
 msgid "Connected accounts"
 msgstr "接続されたアカウント"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:107
 msgid "Context"
 msgstr "コンテキスト"
 
@@ -449,7 +448,7 @@ msgstr "Googleで続行"
 msgid "Continue with Microsoft"
 msgstr "Microsoftで続行"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Copilot"
 msgstr "コパイロット"
 
@@ -515,6 +514,10 @@ msgstr "Webhookを作成"
 msgid "Create your workspace"
 msgstr "ワークスペースの作成"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "カスタムドメイン"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "カスタムオブジェクト"
@@ -548,7 +551,7 @@ msgstr "危険ゾーン"
 msgid "Danish"
 msgstr "デンマーク語"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
 msgid "Dark"
 msgstr "\\\\u30c0\\\\u30fc\\\\u30af"
 
@@ -569,7 +572,7 @@ msgstr "データ型"
 msgid "Date"
 msgstr "日付"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:48
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "日付と時間"
 
@@ -705,9 +708,8 @@ msgid "Display as relative date"
 msgstr "相対日付で表示"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:185
-#: src/pages/settings/workspace/SettingsDomain.tsx:195
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "ドメイン"
 
@@ -825,8 +827,8 @@ msgstr "設定を終了"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "経験"
@@ -944,7 +946,7 @@ msgstr "機能"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:192
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "一般"
@@ -961,7 +963,7 @@ msgstr "チームを招待して、ワークスペースを最大限に活用し
 msgid "Get your subscription"
 msgstr "サブスクリプションを取得"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Global"
 msgstr "グローバル"
 
@@ -1043,7 +1045,7 @@ msgstr "無効なメールアドレス"
 msgid "Invalid email or domain"
 msgstr "無効なメールアドレスまたはドメイン"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:166
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "無効なフォーム値"
 
@@ -1087,7 +1089,7 @@ msgstr "韓国語"
 msgid "Lab"
 msgstr "ラボ"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:57
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "言語"
 
@@ -1103,7 +1105,7 @@ msgstr "最新"
 msgid "Latest date"
 msgstr "最新の日付"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:41
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
 msgid "Light"
 msgstr "\\\\u660e\\\\u308b\\\\u3044"
 
@@ -1322,7 +1324,7 @@ msgstr "ノルウェー語"
 msgid "Not empty"
 msgstr "空ではない"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:85
 msgid "Object"
 msgstr "オブジェクト"
 
@@ -1475,7 +1477,7 @@ msgstr "ドキュメントを読む"
 msgid "Receive an email containing password update link"
 msgstr "パスワード更新リンクを含むメールを受け取る"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Record Selection"
 msgstr "レコード選択"
 
@@ -1556,7 +1558,7 @@ msgstr "ロシア語"
 msgid "Search"
 msgstr "検索"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:95
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "''{commandMenuSearch}''で検索..."
 
@@ -1573,7 +1575,7 @@ msgid "Search an index..."
 msgstr "インデックスを検索..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "フィールドを検索"
 
@@ -1617,7 +1619,7 @@ msgstr "バージョン履歴を見る"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "このエンドポイントに送信したいイベントを選択してください"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:58
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "希望の言語を選択してください"
 
@@ -1642,11 +1644,15 @@ msgstr "サーバー管理パネル"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "メールの可視性を設定し、ブロックリストを管理するなど。"
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
-msgid "Set the name of your domain"
-msgstr "ドメイン名を設定"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "カスタムドメインの名前を設定し、DNSレコードを構成します。"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "サブドメイン名を設定"
 
@@ -1704,12 +1710,12 @@ msgstr "スペイン語"
 msgid "SSO"
 msgstr "SSO"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "サブドメイン"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:111
-#: src/pages/settings/workspace/SettingsDomain.tsx:138
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "サブドメインは既に使用されています"
 
@@ -1758,7 +1764,7 @@ msgstr "フィールドラベルとAPI名を同期する"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "\\\\\\\\u30aa\\\\u30d6\\\\u30b8\\\\u30a7\\\\u30af\\\\u30c8\\\\u306e\\\\u30e9\\\\u30d9\\\\u30eb\\\\u3068API\\\\u540d\\\\u3092\\\\u540c\\\\u6642\\\\u306b\\\\u540c\\\\u671f\\\\u3055\\\\u305b\\\\u308b"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
 msgstr "\\\\\\\\u30b7\\\\u30b9\\\\u30c6\\\\u30e0\\\\u8a2d\\\\u5b9a"
 
@@ -1919,7 +1925,7 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "APIを使用するか、最初の{objectLabel}を手動で追加してください"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
@@ -1990,7 +1996,7 @@ msgstr "ワークフローをテストできません"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:188
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:115
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
