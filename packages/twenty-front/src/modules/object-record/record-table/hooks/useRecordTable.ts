@@ -22,7 +22,6 @@ import { onColumnsChangeComponentState } from '@/object-record/record-table/stat
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
 import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
-import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
@@ -53,11 +52,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     recordTableId,
   );
 
-  const tableColumnsState = useRecoilComponentCallbackStateV2(
-    tableColumnsComponentState,
-    recordTableId,
-  );
-
   const setAvailableTableColumns = useRecoilCallback(
     ({ snapshot, set }) =>
       (columns: ColumnDefinition<FieldMetadata>[]) => {
@@ -72,19 +66,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
         set(availableTableColumnsState, columns);
       },
     [availableTableColumnsState],
-  );
-
-  const setTableColumns = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (columns: ColumnDefinition<FieldMetadata>[]) => {
-        const tableColumns = getSnapshotValue(snapshot, tableColumnsState);
-
-        if (isDeeplyEqual(tableColumns, columns)) {
-          return;
-        }
-        set(tableColumnsState, columns);
-      },
-    [tableColumnsState],
   );
 
   const setOnEntityCountChange = useSetRecoilComponentStateV2(
@@ -260,7 +241,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setTableSorts,
     setOnEntityCountChange,
     setRecordTableData,
-    setTableColumns,
     leaveTableFocus,
     setRowSelected,
     resetTableRowSelection,

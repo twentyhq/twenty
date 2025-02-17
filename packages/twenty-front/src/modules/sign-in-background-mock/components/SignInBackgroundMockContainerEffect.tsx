@@ -4,6 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockSortDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
@@ -21,10 +22,11 @@ export const SignInBackgroundMockContainerEffect = ({
   recordTableId,
   viewId,
 }: SignInBackgroundMockContainerEffectProps) => {
-  const { setAvailableTableColumns, setOnEntityCountChange, setTableColumns } =
-    useRecordTable({
-      recordTableId,
-    });
+  const { setAvailableTableColumns, setOnEntityCountChange } = useRecordTable({
+    recordTableId,
+  });
+
+  const { setTableColumns } = useSetTableColumns(recordTableId);
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,

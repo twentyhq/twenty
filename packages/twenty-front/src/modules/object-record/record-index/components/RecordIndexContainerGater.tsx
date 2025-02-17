@@ -54,8 +54,6 @@ export const RecordIndexContainerGater = () => {
     recordIndexId,
   });
 
-  console.log('recordIndexId', recordIndexId);
-
   return (
     <>
       <RecordIndexContextProvider

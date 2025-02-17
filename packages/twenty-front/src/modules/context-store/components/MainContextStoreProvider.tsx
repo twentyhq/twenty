@@ -1,10 +1,8 @@
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
-import { View } from '@/views/types/View';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -14,7 +12,7 @@ import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const getViewId = (
   viewIdFromQueryParams: string | null,
-  indexView?: View,
+  indexViewId?: string,
   lastVisitedViewId?: string,
 ) => {
   if (isDefined(viewIdFromQueryParams)) {
@@ -25,8 +23,8 @@ const getViewId = (
     return lastVisitedViewId;
   }
 
-  if (isDefined(indexView)) {
-    return indexView.id;
+  if (isDefined(indexViewId)) {
+    return indexViewId;
   }
 
   return undefined;
@@ -48,9 +46,6 @@ export const MainContextStoreProvider = () => {
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
-  // Todo: this is triggering a lot of re-renders as we update the viewFields, we should introduce a state here
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
@@ -63,23 +58,20 @@ export const MainContextStoreProvider = () => {
     objectMetadataItem?.namePlural ?? '',
   );
 
-  const viewsOnCurrentObject = views.filter(
-    (view) => view.objectMetadataId === objectMetadataItem?.id,
+  const indexViewId = useRecoilValue(
+    prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem?.id,
+    }),
   );
-  const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
 
-  const viewId = getViewId(viewIdQueryParam, indexView, lastVisitedViewId);
+  const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
 
   const mainContextStoreComponentInstanceId = `${pageName}-${objectMetadataItem?.namePlural}-${viewId}`;
 
-  const view = viewsOnCurrentObject.find((view) => view.id === viewId);
-
-  console.log('Provider');
   if (
     !isDefined(pageName) ||
     !isDefined(objectMetadataItem) ||
-    !isNonEmptyString(viewId) ||
-    !isDefined(view)
+    !isNonEmptyString(viewId)
   ) {
     return null;
   }
@@ -89,7 +81,7 @@ export const MainContextStoreProvider = () => {
       mainContextStoreComponentInstanceIdToSet={
         mainContextStoreComponentInstanceId
       }
-      view={view}
+      viewId={viewId}
       objectMetadataItem={objectMetadataItem}
     />
   );

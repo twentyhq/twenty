@@ -5,17 +5,16 @@ import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLast
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { View } from '@/views/types/View';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 export const MainContextStoreProviderEffect = ({
   mainContextStoreComponentInstanceIdToSet,
-  view,
+  viewId,
   objectMetadataItem,
 }: {
   mainContextStoreComponentInstanceIdToSet: string;
-  view: View;
+  viewId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const [
@@ -46,8 +45,6 @@ export const MainContextStoreProviderEffect = ({
 
   useEffect(() => {
     if (contextStoreCurrentObjectMetadataItem?.id !== objectMetadataItem.id) {
-      console.log('Setting object metadata item');
-      console.log('objectMetadataItem', objectMetadataItem);
       setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
     }
 
@@ -62,15 +59,15 @@ export const MainContextStoreProviderEffect = ({
 
     setLastVisitedViewForObjectMetadataNamePlural({
       objectNamePlural: objectMetadataItem.namePlural,
-      viewId: view.id,
+      viewId: viewId,
     });
 
     setLastVisitedObjectMetadataId({
       objectMetadataItemId: objectMetadataItem.id,
     });
 
-    if (contextStoreCurrentViewId !== view.id) {
-      setContextStoreCurrentViewId(view.id);
+    if (contextStoreCurrentViewId !== viewId) {
+      setContextStoreCurrentViewId(viewId);
     }
   }, [
     contextStoreCurrentObjectMetadataItem,
@@ -84,7 +81,7 @@ export const MainContextStoreProviderEffect = ({
     setLastVisitedObjectMetadataId,
     setLastVisitedViewForObjectMetadataNamePlural,
     setMainContextStoreComponentInstanceId,
-    view,
+    viewId,
   ]);
 
   return null;

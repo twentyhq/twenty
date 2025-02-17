@@ -8,7 +8,6 @@ export const useContextStoreObjectMetadataItemOrThrow = (
     contextStoreCurrentObjectMetadataItemComponentState,
     contextStoreInstanceId,
   );
-  console.log('objectMetadataItem', objectMetadataItem);
 
   if (!objectMetadataItem) {
     throw new Error('Object metadata item is not se in context store');

@@ -4,6 +4,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
+import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
@@ -15,9 +16,11 @@ type useRecordTableProps = {
 };
 
 export const useTableColumns = (props?: useRecordTableProps) => {
-  const { onColumnsChange, setTableColumns } = useRecordTable({
+  const { onColumnsChange } = useRecordTable({
     recordTableId: props?.recordTableId,
   });
+
+  const { setTableColumns } = useSetTableColumns(props?.recordTableId);
 
   const availableTableColumns = useRecoilComponentValueV2(
     availableTableColumnsComponentState,

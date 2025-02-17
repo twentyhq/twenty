@@ -3,12 +3,20 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
+import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 export const RecordIndexPage = () => {
+  const prefetchIsLoaded = useRecoilValue(
+    prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
+  );
+
+  console.log('prefetchIsLoaded', prefetchIsLoaded);
+
   const mainContextStoreComponentInstanceId = useRecoilValue(
     mainContextStoreComponentInstanceIdState,
   );
@@ -25,7 +33,8 @@ export const RecordIndexPage = () => {
 
   if (
     isUndefined(objectMetadataItem) ||
-    isUndefined(contextStoreCurrentViewId)
+    !isNonEmptyString(contextStoreCurrentViewId) ||
+    !prefetchIsLoaded
   ) {
     return null;
   }

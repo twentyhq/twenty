@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
@@ -8,10 +8,12 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { useUpsertRecordsInCacheForPrefetchKey } from '@/prefetch/hooks/internal/useUpsertRecordsInCacheForPrefetchKey';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { isDefined } from 'twenty-shared';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
@@ -48,9 +50,24 @@ export const PrefetchRunQueriesEffect = () => {
     skip: !currentUser || isWorkspaceSuspended,
   });
 
+  const setPrefetchViewsState = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (views: View[]) => {
+        const existingViews = snapshot
+          .getLoadable(prefetchViewsState)
+          .getValue();
+
+        if (!isDeeplyEqual(existingViews, views)) {
+          set(prefetchViewsState, views);
+        }
+      },
+    [],
+  );
+
   useEffect(() => {
     if (isDefined(result.views)) {
       upsertViewsInCache(result.views as View[]);
+      setPrefetchViewsState(result.views as View[]);
     }
 
     if (isDefined(result.favorites)) {
@@ -64,6 +81,7 @@ export const PrefetchRunQueriesEffect = () => {
     upsertViewsInCache,
     upsertFavoritesInCache,
     upsertFavoritesFoldersInCache,
+    setPrefetchViewsState,
   ]);
 
   return <></>;
