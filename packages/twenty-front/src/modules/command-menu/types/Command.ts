@@ -4,6 +4,7 @@ export enum CommandType {
   Create = 'Create',
   StandardAction = 'StandardAction',
   WorkflowRun = 'WorkflowRun',
+  Fallback = 'Fallback',
 }
 
 export enum CommandScope {
