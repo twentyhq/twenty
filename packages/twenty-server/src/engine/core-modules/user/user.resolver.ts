@@ -116,6 +116,7 @@ export class UserResolver {
       const { settingsPermissions, objectRecordsPermissions } =
         await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId: currentUserWorkspace.id,
+          workspaceId: workspace.id,
         });
 
       const permittedFeatures: SettingsFeatures[] = (
@@ -222,9 +223,12 @@ export class UserResolver {
       );
 
       rolesByUserWorkspaces =
-        await this.userRoleService.getRolesByUserWorkspaces(
-          userWorkspaces.map((userWorkspace) => userWorkspace.id),
-        );
+        await this.userRoleService.getRolesByUserWorkspaces({
+          userWorkspaceIds: userWorkspaces.map(
+            (userWorkspace) => userWorkspace.id,
+          ),
+          workspaceId: workspace.id,
+        });
     }
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {

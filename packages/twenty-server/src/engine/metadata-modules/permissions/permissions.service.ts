@@ -14,14 +14,19 @@ export class PermissionsService {
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,
+    workspaceId,
   }: {
     userWorkspaceId: string;
+    workspaceId: string;
   }): Promise<{
     settingsPermissions: Record<SettingsFeatures, boolean>;
     objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
   }> {
     const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces([userWorkspaceId])
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId,
+      })
       .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
     let hasPermissionOnSettingFeature = false;
@@ -60,13 +65,18 @@ export class PermissionsService {
 
   public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
+    workspaceId,
     _setting,
   }: {
     userWorkspaceId: string;
+    workspaceId: string;
     _setting: SettingsFeatures;
   }): Promise<boolean> {
     const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces([userWorkspaceId])
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId,
+      })
       .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
     if (roleOfUserWorkspace?.canUpdateAllSettings === true) {

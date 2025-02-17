@@ -60,7 +60,10 @@ export class UserRoleService {
       );
     }
 
-    const roles = await this.getRolesByUserWorkspaces([userWorkspace.id]);
+    const roles = await this.getRolesByUserWorkspaces({
+      userWorkspaceIds: [userWorkspace.id],
+      workspaceId,
+    });
 
     const currentRole = roles.get(userWorkspace.id)?.[0];
 
@@ -98,9 +101,13 @@ export class UserRoleService {
     });
   }
 
-  public async getRolesByUserWorkspaces(
-    userWorkspaceIds: string[],
-  ): Promise<Map<string, RoleDTO[]>> {
+  public async getRolesByUserWorkspaces({
+    userWorkspaceIds,
+    workspaceId,
+  }: {
+    userWorkspaceIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, RoleDTO[]>> {
     if (!userWorkspaceIds.length) {
       return new Map();
     }
@@ -108,6 +115,7 @@ export class UserRoleService {
     const allUserWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
       where: {
         userWorkspaceId: In(userWorkspaceIds),
+        workspaceId,
       },
       relations: {
         role: true,
@@ -180,7 +188,10 @@ export class UserRoleService {
     userWorkspaceId: string,
     workspaceId: string,
   ): Promise<void> {
-    const roles = await this.getRolesByUserWorkspaces([userWorkspaceId]);
+    const roles = await this.getRolesByUserWorkspaces({
+      userWorkspaceIds: [userWorkspaceId],
+      workspaceId,
+    });
 
     const currentRoles = roles.get(userWorkspaceId);
 
