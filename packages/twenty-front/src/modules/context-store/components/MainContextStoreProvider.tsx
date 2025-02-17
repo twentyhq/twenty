@@ -48,6 +48,7 @@ export const MainContextStoreProvider = () => {
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
+  // Todo: this is triggering a lot of re-renders as we update the viewFields, we should introduce a state here
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
