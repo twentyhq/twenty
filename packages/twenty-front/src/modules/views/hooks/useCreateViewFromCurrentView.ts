@@ -1,3 +1,4 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -12,7 +13,6 @@ import { useGetViewFilterGroupsCombined } from '@/views/hooks/useGetCombinedView
 import { useGetViewFiltersCombined } from '@/views/hooks/useGetCombinedViewFilters';
 import { useGetViewSortsCombined } from '@/views/hooks/useGetCombinedViewSorts';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
@@ -25,7 +25,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
-    currentViewIdComponentState,
+    contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
 

@@ -45,7 +45,7 @@ export const useResetContextStoreStates = () => {
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId,
         }),
-        null,
+        undefined,
       );
 
       set(

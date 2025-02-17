@@ -1,11 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared';
@@ -75,7 +75,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
-              currentViewIdComponentState.atomFamily({
+              contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
@@ -131,7 +131,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
-              currentViewIdComponentState.atomFamily({
+              contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
@@ -180,7 +180,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
-              currentViewIdComponentState.atomFamily({
+              contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,

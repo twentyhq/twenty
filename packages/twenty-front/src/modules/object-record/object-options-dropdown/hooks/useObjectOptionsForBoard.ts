@@ -32,7 +32,7 @@ export const useObjectOptionsForBoard = ({
     useRecoilState(recordIndexFieldDefinitionsState);
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
-  const { updateCurrentView } = useUpdateCurrentView(viewBarId);
+  const { updateCurrentView } = useUpdateCurrentView();
 
   const [isCompactModeActive, setIsCompactModeActive] =
     useRecoilComponentStateV2(

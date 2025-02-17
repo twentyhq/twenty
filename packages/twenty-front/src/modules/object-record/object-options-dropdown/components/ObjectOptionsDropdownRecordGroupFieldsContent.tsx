@@ -64,9 +64,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const {
     handleRecordGroupFieldChange: setRecordGroupField,
     resetRecordGroupField,
-  } = useHandleRecordGroupField({
-    viewBarComponentId: recordIndexId,
-  });
+  } = useHandleRecordGroupField();
 
   const newSelectFieldSettingsUrl = getSettingsPath(
     SettingsPath.ObjectNewFieldConfigure,

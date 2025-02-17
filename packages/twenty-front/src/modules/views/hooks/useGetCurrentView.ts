@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -7,7 +8,6 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isCurrentViewKeyIndexComponentState } from '@/views/states/isCurrentViewIndexComponentState';
 import { unsavedToDeleteViewFilterGroupIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterGroupIdsComponentFamilyState';
 import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentFamilyState';
@@ -32,8 +32,7 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   const currentViewId = useRecoilComponentValueV2(
-    currentViewIdComponentState,
-    instanceId,
+    contextStoreCurrentViewIdComponentState,
   );
 
   const viewObjectMetadataId = useRecoilComponentValueV2(
