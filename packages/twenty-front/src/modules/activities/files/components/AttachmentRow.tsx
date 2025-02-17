@@ -17,6 +17,7 @@ import styled from '@emotion/styled';
 import { lazy, Suspense, useMemo, useState } from 'react';
 import {
   IconCalendar,
+  IconDownload,
   IconX,
   LightIconButton,
   OverflowingTextWithTooltip,
@@ -24,6 +25,20 @@ import {
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
+
+const PREVIEWABLE_EXTENSIONS = [
+  'pdf',
+  'doc',
+  'docx',
+  'ppt',
+  'pptx',
+  'xls',
+  'xlsx',
+  'png',
+  'jpg',
+  'jpeg',
+  'gif',
+];
 
 const DocumentViewerContent = lazy(() =>
   import('@/activities/files/components/DocumentViewerModal').then(
@@ -108,6 +123,11 @@ const StyledTitle = styled.span`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledHeaderActions = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
@@ -115,6 +135,10 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
 
   const { name: originalFileName, extension: attachmentFileExtension } =
     getFileNameAndExtension(attachment.name);
+
+  const fileExtension =
+    attachmentFileExtension?.toLowerCase().replace('.', '') ?? '';
+  const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
 
   const [attachmentFileName, setAttachmentFileName] =
     useState(originalFileName);
@@ -176,13 +200,6 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     setIsDocumentViewerOpen(true);
   };
 
-  const isViewableDocument = [
-    'TextDocument',
-    'Presentation',
-    'Spreadsheet',
-    'Image',
-  ].includes(attachment.type);
-
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <ActivityRow disabled>
@@ -198,7 +215,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             />
           ) : (
             <StyledLinkContainer>
-              {isViewableDocument ? (
+              {isPreviewable ? (
                 <StyledLink as="button" onClick={handleOpenDocument}>
                   <OverflowingTextWithTooltip text={attachment.name} />
                 </StyledLink>
@@ -236,11 +253,19 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           <Modal.Header>
             <StyledHeader>
               <StyledTitle>{attachment.name}</StyledTitle>
-              <LightIconButton
-                Icon={IconX}
-                onClick={() => setIsDocumentViewerOpen(false)}
-                accent="tertiary"
-              />
+              <StyledHeaderActions>
+                <LightIconButton
+                  Icon={IconDownload}
+                  onClick={handleDownload}
+                  accent="tertiary"
+                  title="Download"
+                />
+                <LightIconButton
+                  Icon={IconX}
+                  onClick={() => setIsDocumentViewerOpen(false)}
+                  accent="tertiary"
+                />
+              </StyledHeaderActions>
             </StyledHeader>
           </Modal.Header>
           <Modal.Content>

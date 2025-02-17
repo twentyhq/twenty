@@ -1,9 +1,8 @@
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconX, LightIconButton } from 'twenty-ui';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledDocumentViewerContainer = styled.div`
@@ -12,34 +11,39 @@ const StyledDocumentViewerContainer = styled.div`
   height: calc(100vh - 200px);
   min-height: 500px;
   width: 100%;
+  background: ${({ theme }) => theme.background.secondary};
 
-  // Override default react-doc-viewer styles
-  .react-pdf__Document {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  // Container that holds the document
-  > div {
-    flex: 1;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-  }
-
-  // Main document container
   .react-doc-viewer {
     height: 100%;
     width: 100%;
-    overflow: hidden;
-    background-color: ${({ theme }) => theme.background.secondary};
+    overflow: auto;
+    background: none;
   }
 
-  // Document wrapper
-  .react-doc-viewer > div {
-    height: 100%;
+  /* Hide all default controls and header */
+  div[class*='header-bar'] {
+    display: none !important;
   }
+
+  div[class*='pdf-viewer-controls'] {
+    display: none !important;
+  }
+
+  /* Remove any unwanted margins/padding */
+  div[class*='pdf-viewer'] {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+`;
+
+const StyledUnsupportedFileContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 const StyledHeader = styled.div`
@@ -53,6 +57,11 @@ const StyledTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-right: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledHeaderActions = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 // Map of file extensions to MIME types
@@ -86,6 +95,8 @@ export const DocumentViewerContent = ({
   const fileExtension = extension?.toLowerCase().replace('.', '') ?? '';
   const mimeType = MIME_TYPE_MAPPING[fileExtension];
 
+  const theme = useTheme();
+
   return (
     <StyledDocumentViewerContainer>
       <DocViewer
@@ -101,7 +112,23 @@ export const DocumentViewerContent = ({
         config={{
           header: {
             disableHeader: true,
+            disableFileName: true,
+            retainURLParams: false,
           },
+          pdfVerticalScrollByDefault: true,
+          pdfZoom: {
+            defaultZoom: 1,
+            zoomJump: 0.1,
+          },
+        }}
+        theme={{
+          primary: theme.background.primary,
+          secondary: theme.background.secondary,
+          tertiary: theme.background.tertiary,
+          textPrimary: theme.font.color.primary,
+          textSecondary: theme.font.color.secondary,
+          textTertiary: theme.font.color.tertiary,
+          disableThemeScrollbar: false,
         }}
       />
     </StyledDocumentViewerContainer>
@@ -115,7 +142,6 @@ type DocumentViewerModalProps = DocumentViewerContentProps & {
 
 export const DocumentViewerModal = ({
   isOpen,
-  onClose,
   documentName,
   documentUrl,
 }: DocumentViewerModalProps) => {
@@ -124,19 +150,9 @@ export const DocumentViewerModal = ({
   }
 
   return (
-    <Modal size="large" isClosable onClose={onClose}>
-      <Modal.Header>
-        <StyledHeader>
-          <StyledTitle>{documentName}</StyledTitle>
-          <LightIconButton Icon={IconX} onClick={onClose} accent="tertiary" />
-        </StyledHeader>
-      </Modal.Header>
-      <Modal.Content>
-        <DocumentViewerContent
-          documentName={documentName}
-          documentUrl={documentUrl}
-        />
-      </Modal.Content>
-    </Modal>
+    <DocumentViewerContent
+      documentName={documentName}
+      documentUrl={documentUrl}
+    />
   );
 };
