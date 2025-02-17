@@ -2061,4 +2061,3 @@ msgstr "Työtilasi"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Työtilasi poistetaan käytöstä"
-
