@@ -54,7 +54,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
           });
         }
       },
-    [],
+    [findManyRecords, views],
   );
 
   return {
