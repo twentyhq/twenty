@@ -5,6 +5,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -45,32 +46,36 @@ export const SignInBackgroundMockContainer = () => {
           <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
           >
-            <ContextStoreComponentInstanceContext.Provider
-              value={{
-                instanceId: recordIndexId,
-              }}
+            <RecordSortsComponentInstanceContext.Provider
+              value={{ instanceId: recordIndexId }}
             >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{ instanceId: recordIndexId }}
+              <ContextStoreComponentInstanceContext.Provider
+                value={{
+                  instanceId: recordIndexId,
+                }}
               >
-                <ViewBar
-                  viewBarId={viewBarId}
-                  onCurrentViewChange={() => {}}
-                  optionsDropdownButton={<></>}
-                />
-                <SignInBackgroundMockContainerEffect
-                  objectNamePlural={objectNamePlural}
-                  recordTableId={recordIndexId}
-                  viewId={viewBarId}
-                />
-                <RecordTableWithWrappers
-                  objectNameSingular={objectNameSingular}
-                  recordTableId={recordIndexId}
-                  viewBarId={viewBarId}
-                  updateRecordMutation={() => {}}
-                />
-              </ActionMenuComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
+                <ActionMenuComponentInstanceContext.Provider
+                  value={{ instanceId: recordIndexId }}
+                >
+                  <ViewBar
+                    viewBarId={viewBarId}
+                    onCurrentViewChange={() => {}}
+                    optionsDropdownButton={<></>}
+                  />
+                  <SignInBackgroundMockContainerEffect
+                    objectNamePlural={objectNamePlural}
+                    recordTableId={recordIndexId}
+                    viewId={viewBarId}
+                  />
+                  <RecordTableWithWrappers
+                    objectNameSingular={objectNameSingular}
+                    recordTableId={recordIndexId}
+                    viewBarId={viewBarId}
+                    updateRecordMutation={() => {}}
+                  />
+                </ActionMenuComponentInstanceContext.Provider>
+              </ContextStoreComponentInstanceContext.Provider>
+            </RecordSortsComponentInstanceContext.Provider>
           </RecordFiltersComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
       </RecordIndexContextProvider>

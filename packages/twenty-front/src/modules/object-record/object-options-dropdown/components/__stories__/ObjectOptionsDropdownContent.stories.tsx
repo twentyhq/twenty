@@ -9,6 +9,7 @@ import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dro
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -41,22 +42,26 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
         <RecordFiltersComponentInstanceContext.Provider
           value={{ instanceId: 'object-options-dropdown' }}
         >
-          <RecordTableComponentInstanceContext.Provider
-            value={{ instanceId, onColumnsChange: () => {} }}
+          <RecordSortsComponentInstanceContext.Provider
+            value={{ instanceId: 'object-options-dropdown' }}
           >
-            <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-              <ContextStoreComponentInstanceContext.Provider
-                value={{ instanceId }}
-              >
-                <MemoryRouter
-                  initialEntries={['/one', '/two', { pathname: '/three' }]}
-                  initialIndex={1}
+            <RecordTableComponentInstanceContext.Provider
+              value={{ instanceId, onColumnsChange: () => {} }}
+            >
+              <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                <ContextStoreComponentInstanceContext.Provider
+                  value={{ instanceId }}
                 >
-                  <Story />
-                </MemoryRouter>
-              </ContextStoreComponentInstanceContext.Provider>
-            </ViewComponentInstanceContext.Provider>
-          </RecordTableComponentInstanceContext.Provider>
+                  <MemoryRouter
+                    initialEntries={['/one', '/two', { pathname: '/three' }]}
+                    initialIndex={1}
+                  >
+                    <Story />
+                  </MemoryRouter>
+                </ContextStoreComponentInstanceContext.Provider>
+              </ViewComponentInstanceContext.Provider>
+            </RecordTableComponentInstanceContext.Provider>
+          </RecordSortsComponentInstanceContext.Provider>
         </RecordFiltersComponentInstanceContext.Provider>
       );
     },
