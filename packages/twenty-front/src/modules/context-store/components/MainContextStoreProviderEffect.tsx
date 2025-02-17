@@ -17,10 +17,6 @@ export const MainContextStoreProviderEffect = ({
   viewId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  console.log(
-    'mainContextStoreComponentInstanceIdToSet',
-    mainContextStoreComponentInstanceIdToSet,
-  );
   const [
     mainContextStoreComponentInstanceId,
     setMainContextStoreComponentInstanceId,

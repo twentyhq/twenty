@@ -187,8 +187,6 @@ export const RecordIndexContainer = () => {
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
-  console.log(columnDefinitions);
-
   return (
     <>
       <ContextStoreCurrentViewTypeEffect
