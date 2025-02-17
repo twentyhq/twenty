@@ -8,7 +8,6 @@ import {
   SEED_ACME_WORKSPACE_ID,
   SEED_APPLE_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -297,10 +296,5 @@ export class WorkspaceManagerService {
         roleId: memberRole.id,
       });
     }
-
-    await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IsPermissionsEnabled],
-      workspaceId,
-    );
   }
 }
