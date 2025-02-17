@@ -2063,4 +2063,3 @@ msgstr "Çalışma Alanınız"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Çalışma alanınız devre dışı bırakılacak"
-

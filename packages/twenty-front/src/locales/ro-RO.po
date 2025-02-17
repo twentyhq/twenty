@@ -2063,4 +2063,3 @@ msgstr "Spațiul tău de lucru"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Spațiul tău de lucru va fi dezactivat"
-
