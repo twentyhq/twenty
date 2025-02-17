@@ -1,12 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import {
-  GithubVersionLink,
-  H2Title,
-  IconWorld,
-  Section,
-  UndecoratedLink,
-} from 'twenty-ui';
+import { H2Title, IconWorld, Section, UndecoratedLink } from 'twenty-ui';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -18,7 +12,6 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import packageJson from '../../../package.json';
 
 export const SettingsWorkspace = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
@@ -69,9 +62,6 @@ export const SettingsWorkspace = () => {
         )}
         <Section>
           <DeleteWorkspace />
-        </Section>
-        <Section>
-          <GithubVersionLink version={packageJson.version} />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
