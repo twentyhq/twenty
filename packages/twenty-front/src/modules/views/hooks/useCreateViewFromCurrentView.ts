@@ -1,6 +1,7 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -33,6 +34,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
     isPersistingViewFieldsComponentState,
     viewBarComponentId,
   );
+
+  const { findManyRecords: findManyViews } = useLazyFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
   const { getViewFromCache } = useGetViewFromCache();
 
@@ -169,21 +174,23 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           );
         }
 
+        await findManyViews();
         set(isPersistingViewFieldsCallbackState, false);
       },
     [
-      objectMetadataItem,
-      createViewSortRecords,
-      createViewFilterRecords,
-      createOneRecord,
-      createViewFieldRecords,
-      getViewSortsCombined,
-      getViewFiltersCombined,
-      getViewFilterGroupsCombined,
       currentViewIdCallbackState,
       getViewFromCache,
       isPersistingViewFieldsCallbackState,
+      createOneRecord,
+      createViewFieldRecords,
+      findManyViews,
+      objectMetadataItem?.fields,
       createViewGroupRecords,
+      getViewFilterGroupsCombined,
+      getViewFiltersCombined,
+      getViewSortsCombined,
+      createViewSortRecords,
+      createViewFilterRecords,
       createViewFilterGroupRecords,
     ],
   );

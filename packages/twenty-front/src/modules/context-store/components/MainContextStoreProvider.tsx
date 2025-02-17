@@ -31,6 +31,7 @@ const getViewId = (
 };
 
 export const MainContextStoreProvider = () => {
+  console.log('Provider');
   const { isMatchingLocation } = useIsMatchingLocation();
   const isRecordIndexPage = isMatchingLocation(AppPath.RecordIndexPage);
   const isRecordShowPage = isMatchingLocation(AppPath.RecordShowPage);
@@ -66,8 +67,6 @@ export const MainContextStoreProvider = () => {
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
 
-  const mainContextStoreComponentInstanceId = `${pageName}-${objectMetadataItem?.namePlural}-${viewId}`;
-
   if (
     !isDefined(pageName) ||
     !isDefined(objectMetadataItem) ||
@@ -78,9 +77,7 @@ export const MainContextStoreProvider = () => {
 
   return (
     <MainContextStoreProviderEffect
-      mainContextStoreComponentInstanceIdToSet={
-        mainContextStoreComponentInstanceId
-      }
+      mainContextStoreComponentInstanceIdToSet={'main-context-store'}
       viewId={viewId}
       objectMetadataItem={objectMetadataItem}
     />

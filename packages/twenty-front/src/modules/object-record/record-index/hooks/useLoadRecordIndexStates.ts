@@ -1,8 +1,11 @@
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
-import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
@@ -12,12 +15,15 @@ import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-in
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
+import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
+import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
+import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewGroup } from '@/views/types/ViewGroup';
@@ -31,22 +37,11 @@ import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
-    contextStoreCurrentViewIdComponentState,
-  );
-
   const setContextStoreTargetedRecordsRuleComponentState =
     useSetRecoilComponentStateV2(contextStoreTargetedRecordsRuleComponentState);
 
-  const recordIndexId = `${objectMetadataItem.namePlural}-${contextStoreCurrentViewId}`;
-
   const setRecordIndexViewFilterGroups = useSetRecoilState(
     recordIndexViewFilterGroupsState,
-  );
-
-  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
-    objectMetadataItem?.id ?? '',
   );
 
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
@@ -61,28 +56,66 @@ export const useLoadRecordIndexStates = () => {
   const setRecordIndexViewKanbanAggregateOperationState = useSetRecoilState(
     recordIndexKanbanAggregateOperationState,
   );
-  const setRecordGroup = useSetRecordGroup(recordIndexId);
-  const { setTableViewFilterGroups, setTableFilters, setTableSorts } =
-    useRecordTable({
-      recordTableId: recordIndexId,
-    });
+  const setRecordGroup = useSetRecordGroup();
 
-  const { setTableColumns } = useSetTableColumns(recordIndexId);
-
-  const { columnDefinitions, sortDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+  const { setTableColumns } = useSetTableColumns();
 
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
-      (viewFields: ViewField[]) => {
-        if (!objectMetadataItem) {
-          return;
-        }
+      (
+        viewFields: ViewField[],
+        objectMetadataItem: ObjectMetadataItem,
+        recordIndexId: string,
+      ) => {
+        const activeFieldMetadataItems = objectMetadataItem.fields.filter(
+          ({ isActive, isSystem }) => isActive && !isSystem,
+        );
+
+        const filterableFieldMetadataItems = snapshot
+          .getLoadable(
+            availableFieldMetadataItemsForFilterFamilySelector({
+              objectMetadataItemId: objectMetadataItem.id,
+            }),
+          )
+          .getValue();
+
+        const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
+          fields: activeFieldMetadataItems,
+        });
+
+        const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
+          activeFieldMetadataItems
+            .map((field, index) =>
+              formatFieldMetadataItemAsColumnDefinition({
+                position: index,
+                field,
+                objectMetadataItem,
+              }),
+            )
+            .filter(filterAvailableTableColumns)
+            .map((column) => {
+              const existsInFilterDefinitions =
+                filterableFieldMetadataItems.some(
+                  (fieldMetadataItem) =>
+                    fieldMetadataItem.id === column.fieldMetadataId,
+                );
+              const existsInSortDefinitions = sortDefinitions.some(
+                (sort) => sort.fieldMetadataId === column.fieldMetadataId,
+              );
+              return {
+                ...column,
+                isFilterable: existsInFilterDefinitions,
+                isSortable: existsInSortDefinitions,
+              };
+            });
+
         const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
           viewFields,
           columnDefinitions,
         });
-        setTableColumns(newFieldDefinitions);
+
+        setTableColumns(newFieldDefinitions, recordIndexId);
+
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
@@ -94,10 +127,12 @@ export const useLoadRecordIndexStates = () => {
         ) {
           set(recordIndexFieldDefinitionsState, newFieldDefinitions);
         }
+
         for (const viewField of viewFields) {
           const viewFieldMetadataType = objectMetadataItem.fields?.find(
             (field) => field.id === viewField.fieldMetadataId,
           )?.type;
+
           const aggregateOperationForViewField = snapshot
             .getLoadable(
               viewFieldAggregateOperationState({
@@ -113,6 +148,7 @@ export const useLoadRecordIndexStates = () => {
                 viewFieldMetadataType,
               )
             : viewField.aggregateOperation;
+
           if (
             aggregateOperationForViewField !==
             convertedViewFieldAggregateOperation
@@ -126,42 +162,76 @@ export const useLoadRecordIndexStates = () => {
           }
         }
       },
-    [],
+    [setTableColumns],
   );
 
   const onViewGroupsChange = useCallback(
-    (viewGroups: ViewGroup[]) => {
-      if (!objectMetadataItem) {
-        return;
-      }
-
+    (
+      viewGroups: ViewGroup[],
+      objectMetadataItem: ObjectMetadataItem,
+      recordIndexId: string,
+    ) => {
       const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
         objectMetadataItem,
         viewGroups,
       });
 
-      setRecordGroup(newGroupDefinitions);
+      setRecordGroup(newGroupDefinitions, recordIndexId);
     },
-    [objectMetadataItem, setRecordGroup],
+    [setRecordGroup],
   );
 
   const loadRecordIndexStates = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       async () => {
+        const objectMetadataItem = snapshot
+          .getLoadable(
+            contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+              instanceId: 'main-context-store',
+            }),
+          )
+          .getValue();
+
+        const contextStoreCurrentViewId = snapshot
+          .getLoadable(
+            contextStoreCurrentViewIdComponentState.atomFamily({
+              instanceId: 'main-context-store',
+            }),
+          )
+          .getValue();
+
         const views = snapshot.getLoadable(prefetchViewsState).getValue();
 
         const view = views.find(
           (view) => view.id === contextStoreCurrentViewId,
         );
 
-        if (!view) {
+        if (!view || !objectMetadataItem) {
           return;
         }
 
-        onViewFieldsChange(view.viewFields);
-        onViewGroupsChange(view.viewGroups);
-        setTableViewFilterGroups(view.viewFilterGroups ?? []);
-        setTableFilters(
+        const recordIndexId = `${objectMetadataItem.namePlural}-${view.id}`;
+
+        const filterableFieldMetadataItems = snapshot
+          .getLoadable(
+            availableFieldMetadataItemsForFilterFamilySelector({
+              objectMetadataItemId: objectMetadataItem.id,
+            }),
+          )
+          .getValue();
+
+        onViewFieldsChange(view.viewFields, objectMetadataItem, recordIndexId);
+        onViewGroupsChange(view.viewGroups, objectMetadataItem, recordIndexId);
+        set(
+          tableViewFilterGroupsComponentState.atomFamily({
+            instanceId: recordIndexId,
+          }),
+          view.viewFilterGroups ?? [],
+        );
+        set(
+          tableFiltersComponentState.atomFamily({
+            instanceId: recordIndexId,
+          }),
           mapViewFiltersToFilters(
             view.viewFilters,
             filterableFieldMetadataItems,
@@ -181,7 +251,21 @@ export const useLoadRecordIndexStates = () => {
             filterableFieldMetadataItems,
           ),
         }));
-        setTableSorts(mapViewSortsToSorts(view.viewSorts, sortDefinitions));
+
+        const activeFieldMetadataItems = objectMetadataItem.fields.filter(
+          ({ isActive, isSystem }) => isActive && !isSystem,
+        );
+
+        const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
+          fields: activeFieldMetadataItems,
+        });
+
+        set(
+          tableSortsComponentState.atomFamily({
+            instanceId: recordIndexId,
+          }),
+          mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+        );
         setRecordIndexSorts(
           mapViewSortsToSorts(view.viewSorts, sortDefinitions),
         );
@@ -206,9 +290,6 @@ export const useLoadRecordIndexStates = () => {
         setRecordIndexIsCompactModeActive(view.isCompact);
       },
     [
-      contextStoreCurrentViewId,
-      filterableFieldMetadataItems,
-      objectMetadataItem.fields,
       onViewFieldsChange,
       onViewGroupsChange,
       setContextStoreTargetedRecordsRuleComponentState,
@@ -219,10 +300,6 @@ export const useLoadRecordIndexStates = () => {
       setRecordIndexViewKanbanAggregateOperationState,
       setRecordIndexViewKanbanFieldMetadataIdState,
       setRecordIndexViewType,
-      setTableFilters,
-      setTableSorts,
-      setTableViewFilterGroups,
-      sortDefinitions,
     ],
   );
 

@@ -15,8 +15,6 @@ export const RecordIndexPage = () => {
     prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
   );
 
-  console.log('prefetchIsLoaded', prefetchIsLoaded);
-
   const mainContextStoreComponentInstanceId = useRecoilValue(
     mainContextStoreComponentInstanceIdState,
   );

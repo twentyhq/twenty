@@ -25,7 +25,6 @@ import { onToggleColumnSortComponentState } from '@/object-record/record-table/s
 import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
-import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -70,11 +69,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setOnEntityCountChange = useSetRecoilComponentStateV2(
     onEntityCountChangeComponentState,
-    recordTableId,
-  );
-
-  const setTableViewFilterGroups = useSetRecoilComponentStateV2(
-    tableViewFilterGroupsComponentState,
     recordTableId,
   );
 
@@ -236,7 +230,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   return {
     onColumnsChange,
     setAvailableTableColumns,
-    setTableViewFilterGroups,
     setTableFilters,
     setTableSorts,
     setOnEntityCountChange,

@@ -26,7 +26,7 @@ export const SignInBackgroundMockContainerEffect = ({
     recordTableId,
   });
 
-  const { setTableColumns } = useSetTableColumns(recordTableId);
+  const { setTableColumns } = useSetTableColumns();
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -57,6 +57,7 @@ export const SignInBackgroundMockContainerEffect = ({
         viewFields: SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS,
         columnDefinitions: SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS,
       }),
+      recordTableId,
     );
   }, [
     setViewObjectMetadataId,
@@ -65,6 +66,7 @@ export const SignInBackgroundMockContainerEffect = ({
     objectMetadataItem,
     setAvailableTableColumns,
     setTableColumns,
+    recordTableId,
   ]);
 
   useEffect(() => {

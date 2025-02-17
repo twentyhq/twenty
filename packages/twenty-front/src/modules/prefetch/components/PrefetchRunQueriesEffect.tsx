@@ -16,6 +16,7 @@ import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunQueriesEffect = () => {
+  console.log('PrefetchRunQueriesEffect');
   const currentUser = useRecoilValue(currentUserState);
 
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
