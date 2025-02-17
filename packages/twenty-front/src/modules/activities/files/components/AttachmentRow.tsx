@@ -190,8 +190,8 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   };
 
   const handleOpenDocument = (e: React.MouseEvent) => {
-    // Cmd+click opens new tab but simple click opens a modal
-    if (e.metaKey || e.ctrlKey) {
+    // Cmd/Ctrl+click opens new tab, right click opens context menu, simple click opens modal
+    if (e.metaKey || e.ctrlKey || e.button === 2) {
       return;
     }
 

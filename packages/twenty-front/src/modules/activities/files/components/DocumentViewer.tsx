@@ -90,7 +90,9 @@ export const DocumentViewer = ({
 
   const { extension } = getFileNameAndExtension(documentName);
   const fileExtension = extension?.toLowerCase().replace('.', '') ?? '';
-  const mimeType = MIME_TYPE_MAPPING[fileExtension];
+  const mimeType = PREVIEWABLE_EXTENSIONS.includes(fileExtension)
+    ? MIME_TYPE_MAPPING[fileExtension]
+    : undefined;
 
   return (
     <StyledDocumentViewerContainer>
