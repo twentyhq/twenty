@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -42,6 +44,7 @@ export class WorkspaceManagerService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   /**
@@ -276,5 +279,10 @@ export class WorkspaceManagerService {
       userWorkspaceId: DEV_SEED_USER_WORKSPACE_IDS.JONY,
       roleId: memberRole.id,
     });
+
+    await this.featureFlagService.enableFeatureFlags(
+      [FeatureFlagKey.IsPermissionsEnabled],
+      workspaceId,
+    );
   }
 }
