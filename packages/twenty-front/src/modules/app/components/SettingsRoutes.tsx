@@ -267,13 +267,11 @@ const SettingsRoleEdit = lazy(() =>
 );
 
 type SettingsRoutesProps = {
-  isBillingEnabled?: boolean;
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
-  isBillingEnabled,
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
 }: SettingsRoutesProps) => (
