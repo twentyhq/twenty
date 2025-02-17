@@ -13,6 +13,7 @@ import {
 } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
+import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -89,6 +90,7 @@ export const useCommandMenu = () => {
           set(commandMenuSearchState, '');
           set(commandMenuNavigationStackState, []);
           resetSelectedItem();
+          set(hasUserSelectedCommandState, false);
           goBackToPreviousHotkeyScope();
 
           emitRightDrawerCloseEvent();
