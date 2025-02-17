@@ -7,8 +7,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 
 export const RecordIndexPage = () => {
-  console.log('RecordIndexPage');
-
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
     'main-context-store',

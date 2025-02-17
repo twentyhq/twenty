@@ -4,10 +4,8 @@ import { useRecoilValue } from 'recoil';
 
 export const useViewOrDefaultViewFromPrefetchedViews = ({
   objectMetadataItemId,
-  viewId,
 }: {
   objectMetadataItemId: string;
-  viewId: string | null | undefined;
 }) => {
   const indexViewId = useRecoilValue(
     prefetchIndexViewIdFromObjectMetadataItemFamilySelector({

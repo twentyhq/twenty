@@ -41,11 +41,9 @@ export const MainContextStoreProviderEffect = ({
     contextStoreCurrentObjectMetadataItemComponentState,
     mainContextStoreComponentInstanceId,
   );
-  console.log('Provider effect');
 
   useEffect(() => {
     if (contextStoreCurrentObjectMetadataItem?.id !== objectMetadataItem.id) {
-      console.log('Setting object metadata item');
       setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
     }
 
@@ -53,7 +51,6 @@ export const MainContextStoreProviderEffect = ({
       mainContextStoreComponentInstanceIdToSet !==
       mainContextStoreComponentInstanceId
     ) {
-      console.log('Setting main context store component instance id');
       setMainContextStoreComponentInstanceId(
         mainContextStoreComponentInstanceIdToSet,
       );
@@ -69,7 +66,6 @@ export const MainContextStoreProviderEffect = ({
     });
 
     if (contextStoreCurrentViewId !== viewId) {
-      console.log('Setting context store current view id');
       setContextStoreCurrentViewId(viewId);
     }
   }, [

@@ -12,7 +12,6 @@ export const usePrefetchedData = <T extends ObjectRecord>(
   prefetchKey: PrefetchKey,
   filter?: RecordGqlOperationFilter,
 ) => {
-  console.log('prefetchKey', prefetchKey);
   const isDataPrefetched = useRecoilValue(
     prefetchIsLoadedFamilyState(prefetchKey),
   );

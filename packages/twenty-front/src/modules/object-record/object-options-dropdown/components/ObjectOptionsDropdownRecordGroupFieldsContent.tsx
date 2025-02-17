@@ -36,7 +36,6 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const {
     viewType,
     currentContentId,
-    recordIndexId,
     objectMetadataItem,
     onContentChange,
     resetContent,

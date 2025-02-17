@@ -11,7 +11,6 @@ import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader'
 export const ObjectMetadataItemsProvider = ({
   children,
 }: React.PropsWithChildren) => {
-  console.log('ObjectMetadataItemsProvider');
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const shouldDisplayChildren = objectMetadataItems.length > 0;

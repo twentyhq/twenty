@@ -5,7 +5,6 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { findAllViewsOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllViewsOperationSignatureFactory';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { View } from '@/views/types/View';
@@ -14,22 +13,11 @@ import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunViewQueryEffect = () => {
-  console.log('PrefetchRunQueriesEffect');
   const currentUser = useRecoilValue(currentUserState);
 
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
-  const operationSignatures = Object.values(PREFETCH_CONFIG)
-
-    .map(({ objectNameSingular, operationSignatureFactory }) => {
-      const objectMetadataItem = objectMetadataItems.find(
-        (item) => item.nameSingular === objectNameSingular,
-      );
-
-      return operationSignatureFactory({ objectMetadataItem });
-    });
 
   const findAllViewsOperationSignature = findAllViewsOperationSignatureFactory({
     objectMetadataItem: objectMetadataItems.find(
