@@ -8,8 +8,8 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
+": \n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -116,6 +116,9 @@ msgid "Verify Email"
 msgstr "אמת דוא\"ל"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "המרחב שלך <0>{workspaceDisplayName}</0> נמחק כי המנוי שלך פג תוקף לפני {inactiveDaysBeforeDelete} ימים."
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+msgstr ""
 
+#: src/emails/clean-suspended-workspace.email.tsx:27
+#~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+#~ msgstr "המרחב שלך <0>{workspaceDisplayName}</0> נמחק כי המנוי שלך פג תוקף לפני {inactiveDaysBeforeDelete} ימים."

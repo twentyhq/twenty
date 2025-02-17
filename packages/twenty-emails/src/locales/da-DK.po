@@ -8,8 +8,8 @@ msgstr ""
 "Language: da\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
+": \n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -116,6 +116,9 @@ msgid "Verify Email"
 msgstr "Bekræft e-mail"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "Dit arbejdsområde <0>{workspaceDisplayName}</0> er blevet slettet, da dit abonnement udløb for {inactiveDaysBeforeDelete} dage siden."
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+msgstr ""
 
+#: src/emails/clean-suspended-workspace.email.tsx:27
+#~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+#~ msgstr "Dit arbejdsområde <0>{workspaceDisplayName}</0> er blevet slettet, da dit abonnement udløb for {inactiveDaysBeforeDelete} dage siden."

@@ -8,8 +8,8 @@ msgstr ""
 "Language: pl\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00
-"
+"PO-Revision-Date: 2025-01-01 00:00\n"
+": \n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -116,6 +116,9 @@ msgid "Verify Email"
 msgstr "Zweryfikuj Email"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "Twoja przestrzeń robocza <0>{workspaceDisplayName}</0> została usunięta, ponieważ Twoja subskrypcja wygasła {inactiveDaysBeforeDelete} dni temu."
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+msgstr ""
 
+#: src/emails/clean-suspended-workspace.email.tsx:27
+#~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+#~ msgstr "Twoja przestrzeń robocza <0>{workspaceDisplayName}</0> została usunięta, ponieważ Twoja subskrypcja wygasła {inactiveDaysBeforeDelete} dni temu."
