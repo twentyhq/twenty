@@ -13,6 +13,7 @@ import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { ConnectedAccountProvider } from 'twenty-shared';
 import { Button, IconArrowBackUp } from 'twenty-ui';
 
 const StyledWrapper = styled.div`
@@ -52,6 +53,7 @@ export const RightDrawerEmailThread = () => {
     messageThreadExternalId,
     connectedAccountHandle,
     messageChannelLoading,
+    connectedAccountProvider,
   } = useRightDrawerEmailThread();
 
   useEffect(() => {
@@ -99,11 +101,23 @@ export const RightDrawerEmailThread = () => {
   }, [connectedAccountHandle, lastMessage, messageThreadExternalId]);
 
   const handleReplyClick = () => {
-    if (!canReply) {
+    if (!canReply || !connectedAccountProvider) {
       return;
     }
 
-    const url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
+    let url: string;
+    switch (connectedAccountProvider) {
+      case ConnectedAccountProvider.MICROSOFT:
+        url = `https://outlook.office365.com/mail/inbox/id/${messageThreadExternalId}`;
+        break;
+      case ConnectedAccountProvider.GOOGLE:
+        url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
+        break;
+      default:
+        url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
+        break;
+    }
+
     window.open(url, '_blank');
   };
   if (!thread || !messages.length) {
