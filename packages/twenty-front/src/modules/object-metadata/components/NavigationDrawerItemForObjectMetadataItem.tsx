@@ -1,4 +1,6 @@
-import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
@@ -7,9 +9,11 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { AnimatedExpandableContainer, useIcons } from 'twenty-ui';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
@@ -27,20 +31,29 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     views,
   );
 
-  const { getIcon } = useIcons();
-  const currentPath = useLocation().pathname;
-  const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
-
-  const lastVisitedViewId = getLastVisitedViewIdFromObjectMetadataItemId(
-    objectMetadataItem.id,
+  const mainContextStoreComponentInstanceId = useRecoilValue(
+    mainContextStoreComponentInstanceIdState,
   );
 
-  const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
+  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+    contextStoreCurrentViewIdComponentState,
+    mainContextStoreComponentInstanceId,
+  );
+
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
+
+  const lastVisitedViewId =
+    lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
+
+  const { getIcon } = useIcons();
+  const currentPath = useLocation().pathname;
 
   const navigationPath = getAppPath(
     AppPath.RecordIndexPage,
     { objectNamePlural: objectMetadataItem.namePlural },
-    viewId ? { viewId } : undefined,
+    lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
   );
 
   const isActive =
@@ -62,7 +75,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   );
 
   const selectedSubItemIndex = sortedObjectMetadataViews.findIndex(
-    (view) => viewId === view.id,
+    (view) => contextStoreCurrentViewId === view.id,
   );
 
   const subItemArrayLength = sortedObjectMetadataViews.length;
@@ -93,7 +106,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
               { objectNamePlural: objectMetadataItem.namePlural },
               { viewId: view.id },
             )}
-            active={viewId === view.id}
+            active={contextStoreCurrentViewId === view.id}
             subItemState={getNavigationSubItemLeftAdornment({
               index,
               arrayLength: subItemArrayLength,
