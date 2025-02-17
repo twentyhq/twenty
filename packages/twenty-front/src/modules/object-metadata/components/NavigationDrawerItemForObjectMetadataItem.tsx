@@ -1,5 +1,6 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
@@ -39,15 +40,20 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     mainContextStoreComponentInstanceId,
   );
 
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
+
+  const lastVisitedViewId =
+    lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
+
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
 
   const navigationPath = getAppPath(
     AppPath.RecordIndexPage,
     { objectNamePlural: objectMetadataItem.namePlural },
-    contextStoreCurrentViewId
-      ? { viewId: contextStoreCurrentViewId }
-      : undefined,
+    lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
   );
 
   const isActive =

@@ -1,7 +1,10 @@
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { AppPath } from '@/types/AppPath';
+import { View } from '@/views/types/View';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -11,6 +14,7 @@ import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const getViewId = (
   viewIdFromQueryParams: string | null,
+  indexView?: View,
   lastVisitedViewId?: string,
 ) => {
   if (isDefined(viewIdFromQueryParams)) {
@@ -19,6 +23,10 @@ const getViewId = (
 
   if (isDefined(lastVisitedViewId)) {
     return lastVisitedViewId;
+  }
+
+  if (isDefined(indexView)) {
+    return indexView.id;
   }
 
   return undefined;
@@ -40,6 +48,9 @@ export const MainContextStoreProvider = () => {
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
+  // Todo: this is triggering a lot of re-renders as we update the viewFields, we should introduce a state here
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
@@ -52,7 +63,12 @@ export const MainContextStoreProvider = () => {
     objectMetadataItem?.namePlural ?? '',
   );
 
-  const viewId = getViewId(viewIdQueryParam, lastVisitedViewId);
+  const viewsOnCurrentObject = views.filter(
+    (view) => view.objectMetadataId === objectMetadataItem?.id,
+  );
+  const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
+
+  const viewId = getViewId(viewIdQueryParam, indexView, lastVisitedViewId);
 
   const mainContextStoreComponentInstanceId = `${pageName}-${objectMetadataItem?.namePlural}-${viewId}`;
 

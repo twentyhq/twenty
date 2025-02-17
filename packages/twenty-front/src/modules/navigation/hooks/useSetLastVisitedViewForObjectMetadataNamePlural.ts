@@ -33,7 +33,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
           (item) => item.namePlural === objectNamePlural,
         );
 
-        if (!isDefined(objectMetadataItem)) {
+        if (!isDefined(objectMetadataItem) || !isDefined(view)) {
           return;
         }
 
