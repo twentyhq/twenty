@@ -13,7 +13,7 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { SettingsFeatures } from 'twenty-shared';
+import { PermissionsOnAllObjectRecords, SettingsFeatures } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
@@ -113,16 +113,22 @@ export class UserResolver {
       if (!currentUserWorkspace) {
         throw new Error('Current user workspace not found');
       }
-      const permissions =
-        await this.permissionsService.getUserWorkspaceSettingsPermissions({
+      const { settingsPermissions, objectRecordsPermissions } =
+        await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId: currentUserWorkspace.id,
         });
 
       const permittedFeatures: SettingsFeatures[] = (
-        Object.keys(permissions) as SettingsFeatures[]
-      ).filter((feature) => permissions[feature] === true);
+        Object.keys(settingsPermissions) as SettingsFeatures[]
+      ).filter((feature) => settingsPermissions[feature] === true);
+
+      const permittedObjectRecordsPermissions = (
+        Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
+      ).filter((permission) => objectRecordsPermissions[permission] === true);
 
       currentUserWorkspace.settingsPermissions = permittedFeatures;
+      currentUserWorkspace.objectRecordsPermissions =
+        permittedObjectRecordsPermissions;
       user.currentUserWorkspace = currentUserWorkspace;
     }
 
@@ -254,6 +260,11 @@ export class UserResolver {
             description: roleEntity.description,
             isEditable: roleEntity.isEditable,
             userWorkspaceRoles: roleEntity.userWorkspaceRoles,
+            canReadAllObjectRecords: roleEntity.canReadAllObjectRecords,
+            canUpdateAllObjectRecords: roleEntity.canUpdateAllObjectRecords,
+            canSoftDeleteAllObjectRecords:
+              roleEntity.canSoftDeleteAllObjectRecords,
+            canDestroyAllObjectRecords: roleEntity.canDestroyAllObjectRecords,
           };
         });
 

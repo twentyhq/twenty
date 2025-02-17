@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { SettingsFeatures } from 'twenty-shared';
+import { PermissionsOnAllObjectRecords, SettingsFeatures } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
@@ -23,6 +23,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(SettingsFeatures, {
   name: 'SettingsFeatures',
+});
+
+registerEnumType(PermissionsOnAllObjectRecords, {
+  name: 'PermissionsOnAllObjectRecords',
 });
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
@@ -74,5 +78,8 @@ export class UserWorkspace {
   twoFactorMethods: Relation<TwoFactorMethod[]>;
 
   @Field(() => [SettingsFeatures], { nullable: true })
-  settingsPermissions?: SettingsFeatures[];
+  settingsPermissions?: (SettingsFeatures | PermissionsOnAllObjectRecords)[];
+
+  @Field(() => [PermissionsOnAllObjectRecords], { nullable: true })
+  objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
 }
