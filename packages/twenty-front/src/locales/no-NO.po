@@ -9,7 +9,6 @@ msgstr ""
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-01-01 00:00\n"
-": \n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -463,7 +462,7 @@ msgstr "Kopier lenke"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
-msgstr "Kopier denne n\fkelen da den ikke vil v\fre synlig igjen"
+msgstr "Kopier denne nkelen da den ikke vil vre synlig igjen"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
@@ -488,11 +487,11 @@ msgstr "Tell unike verdier"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
 msgid "Create a workflow and return here to view its versions"
-msgstr "Opprett en arbeidsflyt og kom tilbake her for \fn vise versjonene"
+msgstr "Opprett en arbeidsflyt og kom tilbake her for n vise versjonene"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
-msgstr "Opprett API-n\fkkel"
+msgstr "Opprett API-nkkel"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
@@ -517,7 +516,7 @@ msgstr "Opprett arbeidsomr\\fdet ditt"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
 msgid "Custom Domain"
-msgstr ""
+msgstr "Tilpasset domene"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -1647,11 +1646,11 @@ msgstr "Angi e-post synlighet, administrere blokkeringslisten og mer."
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
 msgid "Set the name of your custom domain and configure your DNS records."
-msgstr ""
+msgstr "Angi navnet på ditt tilpassede domene og konfigurer DNS-oppføringene dine."
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 #~ msgid "Set the name of your domain"
-#~ msgstr "Angi navnet på domenet ditt"
+#~ msgstr "Set the name of your domain"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
@@ -2062,3 +2061,4 @@ msgstr "Ditt Arbeidsområde"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ditt arbeidsområde vil bli deaktivert"
+

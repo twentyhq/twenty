@@ -9,7 +9,6 @@ msgstr ""
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-01-01 00:00\n"
-": \n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Cyrillic)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -517,7 +516,7 @@ msgstr "Креирај свој радни простор"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
 msgid "Custom Domain"
-msgstr ""
+msgstr "Кориснички домен"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -1647,11 +1646,11 @@ msgstr "Подесите видљивост имејла, управљајте �
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
 msgid "Set the name of your custom domain and configure your DNS records."
-msgstr ""
+msgstr "Поставите назив вашег корисничког домена и конфигуришите DNS записе."
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 #~ msgid "Set the name of your domain"
-#~ msgstr "Поставите име вашег домена"
+#~ msgstr "Set the name of your domain"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
@@ -2062,3 +2061,4 @@ msgstr "Ваш радни простор"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ваш радни простор ће бити онемогућен"
+

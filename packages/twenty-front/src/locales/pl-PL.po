@@ -9,7 +9,6 @@ msgstr ""
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-01-01 00:00\n"
-": \n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -517,7 +516,7 @@ msgstr "Stwórz swoją przestrzeń pracy"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
 msgid "Custom Domain"
-msgstr ""
+msgstr "Domena niestandardowa"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -1647,11 +1646,11 @@ msgstr "Ustaw widoczność e-maila, zarządzaj swoją listą blokowanych i więc
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
 msgid "Set the name of your custom domain and configure your DNS records."
-msgstr ""
+msgstr "Ustaw nazwę swojej domeny niestandardowej i skonfiguruj swoje rekordy DNS."
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 #~ msgid "Set the name of your domain"
-#~ msgstr "Ustaw nazwę swojej domeny"
+#~ msgstr "Set the name of your domain"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
@@ -2062,3 +2061,4 @@ msgstr "Twoje miejsce pracy"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Twoje miejsce pracy zostanie wyłączone"
+

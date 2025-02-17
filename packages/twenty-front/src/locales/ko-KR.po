@@ -9,7 +9,6 @@ msgstr ""
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-01-01 00:00\n"
-": \n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -54,8 +53,7 @@ msgstr "24시간 ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr ""
-"\\\n"
+msgstr "\\\n"
 "팀과 함께 고객 관계를 관리할 수 있는 공유 환경입니다."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:102
@@ -519,7 +517,7 @@ msgstr "워크스페이스 만들기"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
 msgid "Custom Domain"
-msgstr ""
+msgstr "사용자 지정 도메인"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -1649,11 +1647,11 @@ msgstr "이메일 공개 여부 설정, 차단 목록 관리 등을 할 수 있�
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
 msgid "Set the name of your custom domain and configure your DNS records."
-msgstr ""
+msgstr "사용자 지정 도메인의 이름을 설정하고 DNS 레코드를 구성하십시오."
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 #~ msgid "Set the name of your domain"
-#~ msgstr "도메인 이름 설정"
+#~ msgstr "Set the name of your domain"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
@@ -2064,3 +2062,4 @@ msgstr "귀하의 워크스페이스"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "워크스페이스가 비활성화됩니다"
+

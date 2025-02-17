@@ -9,7 +9,6 @@ msgstr ""
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-01-01 00:00\n"
-": \n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -517,7 +516,7 @@ msgstr "Crea il tuo spazio di lavoro"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
 msgid "Custom Domain"
-msgstr ""
+msgstr "Dominio personalizzato"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -1647,11 +1646,11 @@ msgstr "Imposta la visibilità dell'email, gestisci la tua blocklist e altro."
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
 msgid "Set the name of your custom domain and configure your DNS records."
-msgstr ""
+msgstr "Imposta il nome del tuo dominio personalizzato e configura i record DNS."
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
 #~ msgid "Set the name of your domain"
-#~ msgstr "Imposta il nome del dominio"
+#~ msgstr "Set the name of your domain"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
@@ -2062,3 +2061,4 @@ msgstr "Il tuo spazio di lavoro"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Il tuo workspace sarà disabilitato"
+
