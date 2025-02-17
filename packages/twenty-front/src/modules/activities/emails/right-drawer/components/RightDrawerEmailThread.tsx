@@ -96,12 +96,20 @@ export const RightDrawerEmailThread = () => {
 
   const canReply = useMemo(() => {
     return (
-      connectedAccountHandle && lastMessage && messageThreadExternalId != null
+      connectedAccountHandle &&
+      connectedAccountProvider &&
+      lastMessage &&
+      messageThreadExternalId != null
     );
-  }, [connectedAccountHandle, lastMessage, messageThreadExternalId]);
+  }, [
+    connectedAccountHandle,
+    connectedAccountProvider,
+    lastMessage,
+    messageThreadExternalId,
+  ]);
 
   const handleReplyClick = () => {
-    if (!canReply || !connectedAccountProvider) {
+    if (!canReply) {
       return;
     }
 
@@ -114,8 +122,7 @@ export const RightDrawerEmailThread = () => {
         url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
         break;
       default:
-        url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
-        break;
+        throw new Error('Account provider not supported yet');
     }
 
     window.open(url, '_blank');
