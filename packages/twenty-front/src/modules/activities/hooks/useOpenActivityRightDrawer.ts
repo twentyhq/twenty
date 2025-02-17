@@ -1,5 +1,6 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
@@ -7,7 +8,6 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconList } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -33,6 +33,8 @@ export const useOpenActivityRightDrawer = ({
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
+  const { openRecordInCommandMenu } = useCommandMenu();
+
   return (activityId: string) => {
     if (
       isRightDrawerOpen &&
@@ -43,16 +45,19 @@ export const useOpenActivityRightDrawer = ({
     }
 
     if (isCommandMenuV2Enabled) {
-      setHotkeyScope(AppHotkeyScope.CommandMenuOpen, { goto: false });
+      openRecordInCommandMenu({
+        recordId: activityId,
+        objectNameSingular,
+        isNewRecord: false,
+      });
     } else {
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+      setViewableRecordId(activityId);
+      setViewableRecordNameSingular(objectNameSingular);
+      openRightDrawer(RightDrawerPages.ViewRecord, {
+        title: objectNameSingular,
+        Icon: IconList,
+      });
     }
-
-    setViewableRecordId(activityId);
-    setViewableRecordNameSingular(objectNameSingular);
-    openRightDrawer(RightDrawerPages.ViewRecord, {
-      title: objectNameSingular,
-      Icon: IconList,
-    });
   };
 };
