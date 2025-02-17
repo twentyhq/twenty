@@ -38,13 +38,17 @@ export class RoleResolver {
     return roles.map((role) => ({
       id: role.id,
       label: role.label,
-      canUpdateAllSettings: role.canUpdateAllSettings,
       description: role.description,
       workspaceId: role.workspaceId,
       createdAt: role.createdAt,
       updatedAt: role.updatedAt,
       isEditable: role.isEditable,
       userWorkspaceRoles: role.userWorkspaceRoles,
+      canUpdateAllSettings: role.canUpdateAllSettings,
+      canReadAllObjectRecords: role.canReadAllObjectRecords,
+      canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
+      canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
+      canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
     }));
   }
 
