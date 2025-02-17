@@ -1,5 +1,4 @@
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
-import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export type RecordFilter = {
@@ -7,12 +6,11 @@ export type RecordFilter = {
   fieldMetadataId: string;
   value: string;
   displayValue: string;
-  type?: FilterableFieldType;
+  type: FilterableFieldType;
   viewFilterGroupId?: string;
   displayAvatarUrl?: string;
   operand: ViewFilterOperand;
   positionInViewFilterGroup?: number | null;
-  definition: RecordFilterDefinition;
-  label?: string;
+  label: string;
   subFieldName?: string | null | undefined;
 };

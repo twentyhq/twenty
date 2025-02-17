@@ -53,6 +53,9 @@ export const Default: Story = {
     expect(await canvas.findByText('Support')).toBeInTheDocument();
     await userEvent.click(canvas.getByText('Support'));
 
+    // Add delay to account for the timeout in useSupportChat
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
     expect(await canvas.findByText('Documentation')).toBeInTheDocument();
     expect(await canvas.findByText('Talk to us')).toBeInTheDocument();
   },

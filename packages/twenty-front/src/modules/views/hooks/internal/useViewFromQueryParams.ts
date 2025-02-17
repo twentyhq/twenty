@@ -10,7 +10,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
@@ -18,7 +17,6 @@ import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { isDefined } from 'twenty-shared';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const filterQueryParamsSchema = z.object({
   viewId: z.string().optional(),
@@ -84,13 +82,6 @@ export const useViewFromQueryParams = () => {
                 );
 
                 if (!fieldMetadataItem) return null;
-
-                const filterDefinition =
-                  formatFieldMetadataItemAsFilterDefinition({
-                    field: fieldMetadataItem,
-                  });
-
-                if (isUndefinedOrNull(filterDefinition)) return null;
 
                 const relationObjectMetadataNameSingular =
                   fieldMetadataItem.relationDefinition?.targetObjectMetadata
@@ -178,7 +169,6 @@ export const useViewFromQueryParams = () => {
                   value: filterValueAsString,
                   displayValue:
                     relationRecordNames?.join(', ') ?? filterValueAsString,
-                  definition: filterDefinition,
                   persistAction: 'NONE',
                 };
               },

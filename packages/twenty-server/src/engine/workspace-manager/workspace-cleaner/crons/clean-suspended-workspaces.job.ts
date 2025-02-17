@@ -24,6 +24,7 @@ export class CleanSuspendedWorkspacesJob {
       where: {
         activationStatus: WorkspaceActivationStatus.SUSPENDED,
       },
+      withDeleted: true,
     });
 
     await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
