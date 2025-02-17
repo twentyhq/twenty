@@ -1,6 +1,5 @@
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -12,7 +11,6 @@ import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const ViewBarRecordFilterEffect = () => {
@@ -24,15 +22,8 @@ export const ViewBarRecordFilterEffect = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
-  );
-
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-
-  const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.id === contextStoreCurrentObjectMetadataId,
+  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
   );
 
   const [
@@ -54,14 +45,17 @@ export const ViewBarRecordFilterEffect = () => {
   );
 
   const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
-    objectMetadataItem?.id,
+    contextStoreCurrentObjectMetadataItem?.id,
   );
 
   useEffect(() => {
     if (isDataPrefetched && !hasInitializedCurrentRecordFilters) {
       const currentView = views.find((view) => view.id === currentViewId);
 
-      if (currentView?.objectMetadataId !== objectMetadataItem?.id) {
+      if (
+        currentView?.objectMetadataId !==
+        contextStoreCurrentObjectMetadataItem?.id
+      ) {
         return;
       }
 
@@ -84,7 +78,7 @@ export const ViewBarRecordFilterEffect = () => {
     currentRecordFilters,
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
-    objectMetadataItem?.id,
+    contextStoreCurrentObjectMetadataItem?.id,
   ]);
 
   return null;

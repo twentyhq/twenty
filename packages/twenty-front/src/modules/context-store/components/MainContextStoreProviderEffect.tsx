@@ -1,20 +1,21 @@
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { View } from '@/views/types/View';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 export const MainContextStoreProviderEffect = ({
   mainContextStoreComponentInstanceIdToSet,
-  viewId,
+  view,
   objectMetadataItem,
 }: {
   mainContextStoreComponentInstanceIdToSet: string;
-  viewId: string;
+  view: View;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const [
@@ -35,16 +36,19 @@ export const MainContextStoreProviderEffect = ({
     );
 
   const [
-    contextStoreCurrentObjectMetadataId,
-    setContextStoreCurrentObjectMetadataId,
+    contextStoreCurrentObjectMetadataItem,
+    setContextStoreCurrentObjectMetadataItem,
   ] = useRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
+    contextStoreCurrentObjectMetadataItemComponentState,
     mainContextStoreComponentInstanceId,
   );
+  console.log('Provider effect');
 
   useEffect(() => {
-    if (contextStoreCurrentObjectMetadataId !== objectMetadataItem.id) {
-      setContextStoreCurrentObjectMetadataId(objectMetadataItem.id);
+    if (contextStoreCurrentObjectMetadataItem?.id !== objectMetadataItem.id) {
+      console.log('Setting object metadata item');
+      console.log('objectMetadataItem', objectMetadataItem);
+      setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
     }
 
     if (
@@ -58,29 +62,29 @@ export const MainContextStoreProviderEffect = ({
 
     setLastVisitedViewForObjectMetadataNamePlural({
       objectNamePlural: objectMetadataItem.namePlural,
-      viewId: viewId,
+      viewId: view.id,
     });
 
     setLastVisitedObjectMetadataId({
       objectMetadataItemId: objectMetadataItem.id,
     });
 
-    if (contextStoreCurrentViewId !== viewId) {
-      setContextStoreCurrentViewId(viewId);
+    if (contextStoreCurrentViewId !== view.id) {
+      setContextStoreCurrentViewId(view.id);
     }
   }, [
-    contextStoreCurrentObjectMetadataId,
+    contextStoreCurrentObjectMetadataItem,
     contextStoreCurrentViewId,
     mainContextStoreComponentInstanceId,
     mainContextStoreComponentInstanceIdToSet,
     objectMetadataItem,
     objectMetadataItem.namePlural,
-    setContextStoreCurrentObjectMetadataId,
+    setContextStoreCurrentObjectMetadataItem,
     setContextStoreCurrentViewId,
     setLastVisitedObjectMetadataId,
     setLastVisitedViewForObjectMetadataNamePlural,
     setMainContextStoreComponentInstanceId,
-    viewId,
+    view,
   ]);
 
   return null;

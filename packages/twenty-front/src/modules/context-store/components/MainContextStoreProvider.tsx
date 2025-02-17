@@ -72,10 +72,14 @@ export const MainContextStoreProvider = () => {
 
   const mainContextStoreComponentInstanceId = `${pageName}-${objectMetadataItem?.namePlural}-${viewId}`;
 
+  const view = viewsOnCurrentObject.find((view) => view.id === viewId);
+
+  console.log('Provider');
   if (
     !isDefined(pageName) ||
     !isDefined(objectMetadataItem) ||
-    !isNonEmptyString(viewId)
+    !isNonEmptyString(viewId) ||
+    !isDefined(view)
   ) {
     return null;
   }
@@ -85,7 +89,7 @@ export const MainContextStoreProvider = () => {
       mainContextStoreComponentInstanceIdToSet={
         mainContextStoreComponentInstanceId
       }
-      viewId={viewId}
+      view={view}
       objectMetadataItem={objectMetadataItem}
     />
   );

@@ -53,11 +53,7 @@ export const SignInBackgroundMockContainer = () => {
               <ActionMenuComponentInstanceContext.Provider
                 value={{ instanceId: recordIndexId }}
               >
-                <ViewBar
-                  viewBarId={viewBarId}
-                  onCurrentViewChange={() => {}}
-                  optionsDropdownButton={<></>}
-                />
+                <ViewBar viewBarId={viewBarId} optionsDropdownButton={<></>} />
                 <SignInBackgroundMockContainerEffect
                   objectNamePlural={objectNamePlural}
                   recordTableId={recordIndexId}

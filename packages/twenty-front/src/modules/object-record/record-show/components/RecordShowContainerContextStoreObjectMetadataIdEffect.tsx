@@ -1,4 +1,4 @@
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
@@ -10,8 +10,8 @@ export const RecordShowContainerContextStoreObjectMetadataIdEffect = ({
   recordId: string;
   objectNameSingular: string;
 }) => {
-  const setContextStoreCurrentObjectMetadataId = useSetRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
+  const setContextStoreCurrentObjectMetadataItem = useSetRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -19,12 +19,17 @@ export const RecordShowContainerContextStoreObjectMetadataIdEffect = ({
   });
 
   useEffect(() => {
-    setContextStoreCurrentObjectMetadataId(objectMetadataItem?.id);
+    setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
 
     return () => {
-      setContextStoreCurrentObjectMetadataId(null);
+      setContextStoreCurrentObjectMetadataItem(undefined);
     };
-  }, [recordId, setContextStoreCurrentObjectMetadataId, objectMetadataItem.id]);
+  }, [
+    recordId,
+    objectMetadataItem.id,
+    setContextStoreCurrentObjectMetadataItem,
+    objectMetadataItem,
+  ]);
 
   return null;
 };
