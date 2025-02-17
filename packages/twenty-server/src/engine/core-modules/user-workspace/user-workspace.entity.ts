@@ -78,7 +78,7 @@ export class UserWorkspace {
   twoFactorMethods: Relation<TwoFactorMethod[]>;
 
   @Field(() => [SettingsFeatures], { nullable: true })
-  settingsPermissions?: (SettingsFeatures | PermissionsOnAllObjectRecords)[];
+  settingsPermissions?: SettingsFeatures[];
 
   @Field(() => [PermissionsOnAllObjectRecords], { nullable: true })
   objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
