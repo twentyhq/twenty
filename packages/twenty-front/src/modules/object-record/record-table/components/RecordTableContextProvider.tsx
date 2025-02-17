@@ -5,9 +5,6 @@ import { RecordTableContextProvider as RecordTableContextInternalProvider } from
 
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 type RecordTableContextProviderProps = {
   viewBarId: string;
