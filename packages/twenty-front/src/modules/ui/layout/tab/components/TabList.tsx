@@ -2,12 +2,14 @@ import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabList
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import * as React from 'react';
 import { useEffect } from 'react';
-import { IconComponent } from 'twenty-ui';
 import { Tab } from './Tab';
+import { MoreTabsDropdown } from './TabMoreDropdown';
+import { IconComponent, IconChevronDown } from 'twenty-ui';
+import { TAB_CONSTANTS } from '../constants/TabConstants';
+
+const MAX_VISIBLE_TABS = TAB_CONSTANTS.MAX_VISIBLE_TABS;
 
 export type SingleTabProps = {
   title: string;
@@ -38,17 +40,24 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
+const StyledDropdownContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const TabList = ({
   tabs,
   tabListInstanceId,
-  loading,
+  loading = false,
   behaveAsLinks = true,
-  isInRightDrawer,
+  isInRightDrawer = false,
   className,
 }: TabListProps) => {
-  const visibleTabs = tabs.filter((tab) => !tab.hide);
-
   const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
+  const visibleTabs = tabs.filter((tab) => !tab.hide);
+  const truncatedTabs = visibleTabs.slice(0, MAX_VISIBLE_TABS);
+  const remainingTabs = visibleTabs.slice(MAX_VISIBLE_TABS, visibleTabs.length);
 
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
@@ -60,39 +69,63 @@ export const TabList = ({
     return null;
   }
 
+  const handleTabClick = (tabId: string) => {
+    if (!behaveAsLinks) {
+      setActiveTabId(tabId);
+    }
+  };
+
   return (
     <TabListScope tabListScopeId={tabListInstanceId}>
       <TabListFromUrlOptionalEffect
-        isInRightDrawer={!!isInRightDrawer}
+        isInRightDrawer={isInRightDrawer}
         componentInstanceId={tabListInstanceId}
         tabListIds={tabs.map((tab) => tab.id)}
       />
-      <ScrollWrapper
-        defaultEnableYScroll={false}
-        contextProviderName="tabList"
-        componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
-      >
-        <StyledContainer className={className}>
-          {visibleTabs.map((tab) => (
-            <Tab
-              id={tab.id}
-              key={tab.id}
-              title={tab.title}
-              Icon={tab.Icon}
-              logo={tab.logo}
-              active={tab.id === activeTabId}
-              disabled={tab.disabled ?? loading}
-              pill={tab.pill}
-              to={behaveAsLinks ? `#${tab.id}` : undefined}
-              onClick={() => {
-                if (!behaveAsLinks) {
-                  setActiveTabId(tab.id);
-                }
-              }}
-            />
-          ))}
-        </StyledContainer>
-      </ScrollWrapper>
+      <StyledContainer className={className}>
+        {truncatedTabs.map((tab) => (
+          <Tab
+            key={tab.id}
+            id={tab.id}
+            title={tab.title}
+            Icon={tab.Icon}
+            logo={tab.logo}
+            active={tab.id === activeTabId}
+            disabled={tab.disabled ?? loading}
+            pill={tab.pill}
+            to={behaveAsLinks ? `#${tab.id}` : undefined}
+            onClick={() => handleTabClick(tab.id)}
+            inDropdown={false}
+          />
+        ))}
+        {remainingTabs.length > 0 && (
+          <MoreTabsDropdown
+            id="more-button"
+            title={`+${remainingTabs.length} More`}
+            Icon={IconChevronDown}
+            dropdownContent={
+              <StyledDropdownContainer>
+                {remainingTabs.map((tab) => (
+                  <Tab
+                    key={tab.id}
+                    id={tab.id}
+                    title={tab.title}
+                    Icon={tab.Icon}
+                    logo={tab.logo}
+                    active={tab.id === activeTabId}
+                    disabled={tab.disabled ?? loading}
+                    pill={tab.pill}
+                    to={behaveAsLinks ? `#${tab.id}` : undefined}
+                    onClick={() => handleTabClick(tab.id)}
+                    inDropdown={true}
+                  />
+                ))}
+              </StyledDropdownContainer>
+            }
+            dropdownPlacement="bottom-start"
+          />
+        )}
+      </StyledContainer>
     </TabListScope>
   );
 };

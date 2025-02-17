@@ -14,7 +14,6 @@ export type ContextProviderName =
   | 'dropdownMenuItemsContainer'
   | 'showPageContainer'
   | 'showPageLeftContainer'
-  | 'tabList'
   | 'releases'
   | 'test'
   | 'showPageActivityContainer'
@@ -44,8 +43,6 @@ export const ShowPageContainerScrollWrapperContext =
   createScrollWrapperContext('showPageContainer');
 export const ShowPageLeftContainerScrollWrapperContext =
   createScrollWrapperContext('showPageLeftContainer');
-export const TabListScrollWrapperContext =
-  createScrollWrapperContext('tabList');
 export const ReleasesScrollWrapperContext =
   createScrollWrapperContext('releases');
 export const ShowPageActivityContainerScrollWrapperContext =
@@ -78,8 +75,6 @@ export const getContextByProviderName = (
       return ShowPageContainerScrollWrapperContext;
     case 'showPageLeftContainer':
       return ShowPageLeftContainerScrollWrapperContext;
-    case 'tabList':
-      return TabListScrollWrapperContext;
     case 'releases':
       return ReleasesScrollWrapperContext;
     case 'test':
