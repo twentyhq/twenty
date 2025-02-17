@@ -16,6 +16,7 @@ import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-r
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
@@ -95,20 +96,25 @@ export const RecordIndexPage = () => {
             <RecordFiltersComponentInstanceContext.Provider
               value={{ instanceId: recordIndexId }}
             >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{
-                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                }}
+              <RecordSortsComponentInstanceContext.Provider
+                value={{ instanceId: recordIndexId }}
               >
-                <PageTitle title={`${capitalize(objectNamePlural)}`} />
-                <RecordIndexPageHeader />
-                <PageBody>
-                  <StyledIndexContainer>
-                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                    <RecordIndexContainer />
-                  </StyledIndexContainer>
-                </PageBody>
-              </ActionMenuComponentInstanceContext.Provider>
+                <ActionMenuComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                  }}
+                >
+                  <PageTitle title={`${capitalize(objectNamePlural)}`} />
+                  <RecordIndexPageHeader />
+                  <PageBody>
+                    <StyledIndexContainer>
+                      <RecordIndexContainerContextStoreObjectMetadataEffect />
+                      <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                      <RecordIndexContainer />
+                    </StyledIndexContainer>
+                  </PageBody>
+                </ActionMenuComponentInstanceContext.Provider>
+              </RecordSortsComponentInstanceContext.Provider>
             </RecordFiltersComponentInstanceContext.Provider>
           </ViewComponentInstanceContext.Provider>
         </RecordIndexContextProvider>

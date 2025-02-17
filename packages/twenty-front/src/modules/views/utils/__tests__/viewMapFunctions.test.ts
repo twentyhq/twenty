@@ -73,6 +73,8 @@ describe('mapViewFiltersToFilters', () => {
         operand: ViewFilterOperand.Is,
         label: baseFieldMetadataItem.label,
         type: FieldMetadataType.FULL_NAME,
+        positionInViewFilterGroup: undefined,
+        viewFilterGroupId: undefined,
       },
     ];
     expect(

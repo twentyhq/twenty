@@ -21,6 +21,7 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -52,17 +53,21 @@ const ContextStoreDecorator: Decorator = (Story) => {
     <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
     >
-      <ContextStoreComponentInstanceContext.Provider
+      <RecordSortsComponentInstanceContext.Provider
         value={{ instanceId: 'command-menu' }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <ContextStoreComponentInstanceContext.Provider
           value={{ instanceId: 'command-menu' }}
         >
-          <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
-            <Story />
-          </JestContextStoreSetter>
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'command-menu' }}
+          >
+            <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
+              <Story />
+            </JestContextStoreSetter>
+          </ActionMenuComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </RecordSortsComponentInstanceContext.Provider>
     </RecordFiltersComponentInstanceContext.Provider>
   );
 };
