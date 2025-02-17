@@ -67,7 +67,6 @@ const StyledInput = styled.input<
   width: ${({ theme, width }) =>
     width ? `calc(${width}px + ${theme.spacing(0.5)})` : '100%'};
   max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
-
   &::placeholder,
   &::-webkit-input-placeholder {
     color: ${({ theme }) => theme.font.color.light};
@@ -273,19 +272,17 @@ const TextInputV2WithAutoGrowWrapper = forwardRef<
   return (
     <>
       {props.autoGrow ? (
-        <StyledComputeNodeDimensions
+        <StyledAutogrowWrapper
           sizeVariant={props.sizeVariant}
           node={props.value || props.placeholder}
         >
-          {(nodeDimensions) => (
-            <TextInputV2Component
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
-              ref={ref}
-              width={nodeDimensions?.width}
-            />
-          )}
-        </StyledComputeNodeDimensions>
+          <TextInputV2Component
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...props}
+            ref={ref}
+            fullWidth={true}
+          />
+        </StyledAutogrowWrapper>
       ) : (
         <TextInputV2Component
           // eslint-disable-next-line react/jsx-props-no-spreading
