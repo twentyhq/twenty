@@ -48,4 +48,29 @@ export class FileService {
 
     return signedPayload;
   }
+
+  async deleteFile({
+    folderPath,
+    filename,
+    workspaceId,
+  }: {
+    folderPath: string;
+    filename: string;
+    workspaceId: string;
+  }) {
+    const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
+
+    return await this.fileStorageService.delete({
+      folderPath: workspaceFolderPath,
+      filename,
+    });
+  }
+
+  async deleteWorkspaceFolder(workspaceId: string) {
+    const workspaceFolderPath = `workspace-${workspaceId}`;
+
+    return await this.fileStorageService.delete({
+      folderPath: workspaceFolderPath,
+    });
+  }
 }
