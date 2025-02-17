@@ -97,15 +97,12 @@ export const CommandMenuContainer = ({
               onActionExecutedCallback: ({ key }) => {
                 if (
                   key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
-                  key !==
-                    `${RecordAgnosticActionsKey.SEARCH_RECORDS}-fallback` &&
+                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
                   key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
                 ) {
                   toggleCommandMenu();
                 }
-                if (
-                  key !== `${RecordAgnosticActionsKey.SEARCH_RECORDS}-fallback`
-                ) {
+                if (key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK) {
                   setCommandMenuSearch('');
                 }
               },
