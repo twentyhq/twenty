@@ -42,7 +42,7 @@ export const tasksAssignedToMeView = (
         isVisible: true,
         size: 210,
       },
-      {
+      /*{
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
             TASK_STANDARD_FIELD_IDS.status
@@ -50,7 +50,7 @@ export const tasksAssignedToMeView = (
         position: 2,
         isVisible: true,
         size: 150,
-      },
+      },*/
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
