@@ -85,7 +85,10 @@ export class RoleResolver {
     }
 
     const roles = await this.userRoleService
-      .getRolesByUserWorkspaces([userWorkspace.id])
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspace.id],
+        workspaceId: workspace.id,
+      })
       .then(
         (rolesByUserWorkspaces) =>
           rolesByUserWorkspaces?.get(userWorkspace.id) ?? [],

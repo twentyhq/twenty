@@ -91,8 +91,10 @@ export class UserRoleService {
     workspaceId: string;
   }): Promise<void> {
     await this.validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow(
-      userWorkspaceId,
-      workspaceId,
+      {
+        userWorkspaceId,
+        workspaceId,
+      },
     );
 
     await this.userWorkspaceRoleRepository.delete({
@@ -184,10 +186,13 @@ export class UserRoleService {
     return workspaceMembers;
   }
 
-  private async validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow(
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  private async validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const roles = await this.getRolesByUserWorkspaces({
       userWorkspaceIds: [userWorkspaceId],
       workspaceId,
