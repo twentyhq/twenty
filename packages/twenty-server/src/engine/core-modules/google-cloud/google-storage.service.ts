@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { exec } from 'child_process';
-import { promisify } from 'util';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import { promisify } from 'util';
 
 import { Bucket, Storage } from '@google-cloud/storage';
 import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { folderName } from 'src/engine/core-modules/google-cloud/types/FolderNames';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const execAsync = promisify(exec);
 
@@ -20,7 +20,8 @@ export class GoogleStorageService {
   private readonly storage: Storage;
 
   bucketProjectId = this.environmentService.get('BUCKET_PROJECT_ID');
-  bucketKeyFilename = this.environmentService.get('BUCKET_KEYFILENAME');
+  bucketKeyFilename =
+    process.cwd() + this.environmentService.get('BUCKET_KEYFILENAME');
   bucketName = this.environmentService.get('BUCKET_NAME');
 
   constructor(

@@ -22,14 +22,12 @@ services:
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
-      - ${SSL_KEY_PATH}:${SSL_KEY_PATH}
-      - ${SSL_CERT_PATH}:${SSL_CERT_PATH}
     env_file: "server.env"
     ports:
       - "${SERVER_PORT:-3000}:${SERVER_PORT:-3000}"
     environment:
-      PORT: ${SERVER_PORT:-3000}
-      # PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE:-postgres}
+      NODE_PORT: ${SERVER_PORT:-3000}
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE:-postgres}
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
@@ -45,11 +43,11 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: curl --fail http://localhost:3000/healthz
+      test: curl --fail http://localhost:${SERVER_PORT}/healthz
       interval: 10s
       timeout: 5s
-      retries: 10
-      start_period: 600s
+      retries: 20
+      start_period: 120s
     restart: on-failure
 
   worker:
@@ -105,5 +103,5 @@ services:
 
 volumes:
   docker-data:
-  db-data:
   server-local-data:
+  db-data:
