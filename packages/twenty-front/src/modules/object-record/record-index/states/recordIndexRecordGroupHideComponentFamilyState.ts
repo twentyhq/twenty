@@ -10,7 +10,7 @@ export const recordIndexRecordGroupHideComponentFamilyState =
         case ViewType.Kanban:
           return false;
         case ViewType.Table:
-          return true;
+          return false;
         default:
           return false;
       }

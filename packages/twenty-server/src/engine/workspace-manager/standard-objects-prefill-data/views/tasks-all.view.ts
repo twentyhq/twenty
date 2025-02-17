@@ -87,7 +87,7 @@ export const tasksAllView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.body
+            TASK_STANDARD_FIELD_IDS.bodyV2
           ],
         position: 7,
         isVisible: true,

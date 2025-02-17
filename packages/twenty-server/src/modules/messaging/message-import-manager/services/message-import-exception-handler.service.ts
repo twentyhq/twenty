@@ -91,8 +91,10 @@ export class MessageImportExceptionHandlerService {
         [messageChannel.id],
         workspaceId,
       );
-
-      return;
+      throw new MessageImportException(
+        `Unknown error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}`,
+        MessageImportExceptionCode.UNKNOWN,
+      );
     }
 
     const messageChannelRepository =

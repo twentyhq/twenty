@@ -1,10 +1,15 @@
-export const mockWorkspaceMembers = [
+import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+
+export const mockWorkspaceMembers: WorkspaceMember[] = [
   {
     id: '20202020-1553-45c6-a028-5a9064cce07f',
     name: {
       firstName: 'Jane',
       lastName: 'Doe',
     },
+    __typename: 'WorkspaceMember',
+    userEmail: 'jane.doe@twenty.com',
     locale: 'en',
     avatarUrl: '',
     createdAt: '2023-12-18T09:51:19.645Z',
@@ -18,6 +23,8 @@ export const mockWorkspaceMembers = [
       firstName: 'John',
       lastName: 'Wick',
     },
+    userEmail: 'john.wick@twenty.com',
+    __typename: 'WorkspaceMember',
     locale: 'en',
     avatarUrl: '',
     createdAt: '2023-12-18T09:51:19.645Z',
@@ -26,3 +33,26 @@ export const mockWorkspaceMembers = [
     colorScheme: 'Dark' as const,
   },
 ];
+
+export const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
+  mockWorkspaceMembers.map(
+    ({
+      id,
+      locale,
+      name,
+      avatarUrl,
+      colorScheme,
+      dateFormat,
+      timeFormat,
+      timeZone,
+    }) => ({
+      id,
+      locale,
+      name,
+      avatarUrl,
+      colorScheme,
+      dateFormat,
+      timeFormat,
+      timeZone,
+    }),
+  );

@@ -1,7 +1,6 @@
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
-import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { getRecordFilterOperandsForRecordFilterDefinition } from '../../../record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 
 describe('getOperandsForFilterType', () => {
   const emptyOperands = [
@@ -49,9 +48,9 @@ describe('getOperandsForFilterType', () => {
 
   testCases.forEach(([filterType, expectedOperands]) => {
     it(`should return correct operands for FilterType.${filterType}`, () => {
-      const result = getRecordFilterOperandsForRecordFilterDefinition({
-        type: filterType as FilterableFieldType,
-      } as RecordFilterDefinition);
+      const result = getRecordFilterOperands({
+        filterType: filterType as FilterableFieldType,
+      });
       expect(result).toEqual(expectedOperands);
     });
   });

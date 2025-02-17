@@ -9,27 +9,27 @@ type FeatureFlagMetadata = {
 export type PublicFeatureFlag = {
   key: Extract<
     FeatureFlagKey,
-    FeatureFlagKey.IsLocalizationEnabled | FeatureFlagKey.IsWorkflowEnabled
+    FeatureFlagKey.IsWorkflowEnabled | FeatureFlagKey.IsCommandMenuV2Enabled
   >;
   metadata: FeatureFlagMetadata;
 };
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IsLocalizationEnabled,
-    metadata: {
-      label: 'Localization',
-      description:
-        "Enable this and go to Settings > Experience to change your account's language. You can also help us improve the translations on Github.",
-      imagePath: 'https://twenty.com/images/releases/labs/translation.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IsWorkflowEnabled,
     metadata: {
       label: 'Workflows',
       description: 'Create custom workflows to automate your work.',
       imagePath: 'https://twenty.com/images/lab/is-workflow-enabled.png',
+    },
+  },
+  {
+    key: FeatureFlagKey.IsCommandMenuV2Enabled,
+    metadata: {
+      label: 'Side Panel',
+      description:
+        'Click on the 3 dots menu at the top right or press command K to open your new side panel.',
+      imagePath: 'https://twenty.com/images/lab/side-panel.png',
     },
   },
 ];

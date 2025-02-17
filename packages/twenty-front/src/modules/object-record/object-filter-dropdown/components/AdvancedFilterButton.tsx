@@ -1,9 +1,10 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -106,19 +107,23 @@ export const AdvancedFilterButton = () => {
         throw new Error('Missing default filter definition');
       }
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: defaultFieldMetadataItem,
-      });
+      const filterType = getFilterTypeFromFieldType(
+        defaultFieldMetadataItem.type,
+      );
+
+      const firstOperand = getRecordFilterOperands({
+        filterType,
+      })[0];
 
       upsertCombinedViewFilter({
         id: v4(),
         fieldMetadataId: defaultFieldMetadataItem.id,
-        operand:
-          getRecordFilterOperandsForRecordFilterDefinition(filterDefinition)[0],
-        definition: filterDefinition,
+        operand: firstOperand,
         value: '',
         displayValue: '',
         viewFilterGroupId: newViewFilterGroup.id,
+        type: getFilterTypeFromFieldType(defaultFieldMetadataItem.type),
+        label: defaultFieldMetadataItem.label,
       });
     }
 

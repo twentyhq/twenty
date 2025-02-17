@@ -3,17 +3,13 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
-import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
+
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import {
-  formatFieldMetadataItemAsFilterDefinition,
-  getFilterTypeFromFieldType,
-} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -35,11 +31,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
-
-  const [, setObjectFilterDropdownFirstLevelFilterDefinition] =
-    useRecoilComponentStateV2(
-      objectFilterDropdownFirstLevelFilterDefinitionComponentState,
-    );
 
   const [, setObjectFilterDropdownSubMenuFieldType] = useRecoilComponentStateV2(
     objectFilterDropdownSubMenuFieldTypeComponentState,
@@ -66,10 +57,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     selectedOperandInDropdownComponentState,
   );
 
-  const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
-    filterDefinitionUsedInDropdownComponentState,
-  );
-
   const advancedFilterViewFilterId = useRecoilComponentValueV2(
     advancedFilterViewFilterIdComponentState,
   );
@@ -85,22 +72,15 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
 
-    const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: fieldMetadataItem,
-    });
+    const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
-    setFilterDefinitionUsedInDropdown(filterDefinition);
-
-    if (
-      filterDefinition.type === 'RELATION' ||
-      filterDefinition.type === 'SELECT'
-    ) {
+    if (filterType === 'RELATION' || filterType === 'SELECT') {
       setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
     }
 
     setSelectedOperandInDropdown(
       getRecordFilterOperands({
-        filterType: filterDefinition.type,
+        filterType,
       })[0],
     );
 
@@ -123,11 +103,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     if (isCompositeField(filterType)) {
       setObjectFilterDropdownSubMenuFieldType(filterType);
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemToSelect,
-      });
-
-      setObjectFilterDropdownFirstLevelFilterDefinition(filterDefinition);
       setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemToSelect.id);
       setObjectFilterDropdownIsSelectingCompositeField(true);
     } else {

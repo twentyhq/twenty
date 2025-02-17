@@ -1,18 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import isEmpty from 'lodash.isempty';
 import { Repository } from 'typeorm';
 
+import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -53,7 +49,13 @@ export class WorkspaceManagerService {
    * @param workspaceId
    * @returns Promise<void>
    */
-  public async init(workspaceId: string): Promise<void> {
+  public async init({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }): Promise<void> {
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
@@ -74,7 +76,7 @@ export class WorkspaceManagerService {
       await this.permissionsService.isPermissionsEnabled();
 
     if (permissionsEnabled === true) {
-      await this.initPermissions(workspaceId);
+      await this.initPermissions({ workspaceId, userId });
     }
 
     await this.prefillWorkspaceWithStandardObjects(
@@ -129,7 +131,7 @@ export class WorkspaceManagerService {
       await this.permissionsService.isPermissionsEnabled();
 
     if (permissionsEnabled === true) {
-      await this.initPermissions(workspaceId);
+      await this.initPermissionsDev(workspaceId);
     }
   }
 
@@ -229,30 +231,50 @@ export class WorkspaceManagerService {
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
   }
 
-  private async initPermissions(workspaceId: string) {
+  private async initPermissions({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }) {
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
 
-    const userWorkspaces = await this.userWorkspaceRepository.find({
+    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
       where: {
         workspaceId,
+        userId,
       },
     });
 
-    if (isEmpty(userWorkspaces)) {
-      throw new PermissionsException(
-        'User workspace not found',
-        PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
+    await this.userRoleService.assignRoleToUserWorkspace({
+      workspaceId,
+      userWorkspaceId: userWorkspace[0].id,
+      roleId: adminRole.id,
+    });
+  }
 
-    for (const userWorkspace of userWorkspaces) {
-      await this.userRoleService.assignRoleToUserWorkspace({
-        workspaceId,
-        userWorkspaceId: userWorkspace.id,
-        roleId: adminRole.id,
-      });
-    }
+  private async initPermissionsDev(workspaceId: string) {
+    const adminRole = await this.roleService.createAdminRole({
+      workspaceId,
+    });
+
+    await this.userRoleService.assignRoleToUserWorkspace({
+      workspaceId,
+      userWorkspaceId: DEV_SEED_USER_WORKSPACE_IDS.TIM,
+      roleId: adminRole.id,
+    });
+
+    const memberRole = await this.roleService.createMemberRole({
+      workspaceId,
+    });
+
+    await this.userRoleService.assignRoleToUserWorkspace({
+      workspaceId,
+      userWorkspaceId: DEV_SEED_USER_WORKSPACE_IDS.JONY,
+      roleId: memberRole.id,
+    });
   }
 }

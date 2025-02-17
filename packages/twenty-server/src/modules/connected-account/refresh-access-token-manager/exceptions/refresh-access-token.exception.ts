@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class RefreshAccessTokenException extends CustomException {
-  code: RefreshAccessTokenExceptionCode;
   constructor(message: string, code: RefreshAccessTokenExceptionCode) {
     super(message, code);
   }

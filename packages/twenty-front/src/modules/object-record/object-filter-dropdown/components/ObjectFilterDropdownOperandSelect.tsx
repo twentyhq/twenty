@@ -1,9 +1,6 @@
 import { v4 } from 'uuid';
 
-import {
-  formatFieldMetadataItemAsFilterDefinition,
-  getFilterTypeFromFieldType,
-} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -68,17 +65,14 @@ export const ObjectFilterDropdownOperandSelect = () => {
     setSelectedOperandInDropdown(newOperand);
 
     if (isValuelessOperand && isDefined(fieldMetadataItemUsedInDropdown)) {
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemUsedInDropdown,
-      });
-
       applyRecordFilter({
         id: v4(),
         fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         displayValue: '',
         operand: newOperand,
         value: '',
-        definition: filterDefinition,
+        type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
+        label: fieldMetadataItemUsedInDropdown.label,
       });
       return;
     }
@@ -98,17 +92,14 @@ export const ObjectFilterDropdownOperandSelect = () => {
         selectedFilter.displayValue,
       );
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: fieldMetadataItemUsedInDropdown,
-      });
-
       applyRecordFilter({
         id: selectedFilter.id ? selectedFilter.id : v4(),
         fieldMetadataId: selectedFilter.fieldMetadataId,
         displayValue,
         operand: newOperand,
         value,
-        definition: filterDefinition,
+        type: filterType,
+        label: fieldMetadataItemUsedInDropdown.label,
       });
     }
   };

@@ -112,65 +112,6 @@ export const MyComponent = () => {
 
 </ArticleTabs>
 
-
-## Entity Title Double Text Input 
-
-Displays a pair of text inputs side by side, allowing the user to edit two related values simultaneously.
-
-<ArticleTabs label1="Usage" label2="Props">
-
-<ArticleTab>
-
-<SandpackEditor content={`import { RecoilRoot } from "recoil";
-import React, { useState } from "react";
-import { EntityTitleDoubleTextInput } from "@/ui/input/components/EntityTitleDoubleTextInput";
-
-export const MyComponent = () => {
-
-    const [firstValue, setFirstValue] = useState(
-      "First Value"
-    );
-    const [secondValue, setSecondValue] = useState(
-      "Second Value"
-    );
-
-    const handleInputChange = (newFirstValue, newSecondValue) => {
-      setFirstValue(newFirstValue);
-      setSecondValue(newSecondValue);
-    };
-
-
-  return (
-    <RecoilRoot>
-      <EntityTitleDoubleTextInput
-        firstValue={firstValue}
-        secondValue={secondValue}
-        firstValuePlaceholder="Enter First Value"
-        secondValuePlaceholder="Enter Second Value"
-        onChange={handleInputChange}
-      />
-    </RecoilRoot>
-  );
-};`} />
-
-
-</ArticleTab>
-
-<ArticleTab>
-
-<ArticlePropsTable options={[
-  ['firstValue', 'string', 'The value for the first text input'],
-  ['secondValue', 'string', 'The value for the second text input'],
-  ['firstValuePlaceholder', 'string', 'Placeholder text for the first text input, displayed when the input is empty'],
-  ['secondValuePlaceholder', 'string', 'Placeholder text for the second text input, displayed when the input is empty'],
-  ['onChange', 'function', 'The callback function you want to trigger when the text input changes']
-]} />
-
-
-</ArticleTab>
-</ArticleTabs>
-
-
 ## Text Area
 
 Allows you to create multi-line text inputs. 

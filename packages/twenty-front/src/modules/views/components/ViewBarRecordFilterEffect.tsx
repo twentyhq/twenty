@@ -1,4 +1,3 @@
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -45,16 +44,12 @@ export const ViewBarRecordFilterEffect = () => {
     if (isDataPrefetched && !hasInitializedCurrentRecordFilters) {
       const currentView = views.find((view) => view.id === currentViewId);
 
-      const filterDefinitions = filterableFieldMetadataItems.map(
-        (fieldMetadataItem) =>
-          formatFieldMetadataItemAsFilterDefinition({
-            field: fieldMetadataItem,
-          }),
-      );
-
       if (isDefined(currentView)) {
         setCurrentRecordFilters(
-          mapViewFiltersToFilters(currentView.viewFilters, filterDefinitions),
+          mapViewFiltersToFilters(
+            currentView.viewFilters,
+            filterableFieldMetadataItems,
+          ),
         );
         setHasInitializedCurrentRecordFilters(true);
       }
