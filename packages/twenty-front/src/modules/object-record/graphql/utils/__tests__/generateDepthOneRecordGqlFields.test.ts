@@ -1,13 +1,13 @@
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import {
-  getPersonObjectMetadataItem,
-  getPersonRecord,
+    getMockPersonObjectMetadataItem,
+    getMockPersonRecord,
 } from '~/testing/mock-data/people';
 
 describe('generateDepthOneRecordGqlFields', () => {
-  const objectMetadataItem = getPersonObjectMetadataItem();
+  const objectMetadataItem = getMockPersonObjectMetadataItem();
   it('Should handle basic call with both objectMetadataItem and record', () => {
-    const personRecord = getPersonRecord();
+    const personRecord = getMockPersonRecord();
     const result = generateDepthOneRecordGqlFields({
       objectMetadataItem,
       record: personRecord,

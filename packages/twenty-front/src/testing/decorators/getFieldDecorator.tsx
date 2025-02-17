@@ -6,15 +6,15 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import {
-  RecordFieldValueSelectorContextProvider,
-  useSetRecordValue,
+    RecordFieldValueSelectorContextProvider,
+    useSetRecordValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 
 const RecordMockSetterEffect = ({
@@ -71,7 +71,7 @@ export const getFieldDecorator =
           ]
         : companiesMock;
 
-    const peopleMock = getPeopleMock();
+    const peopleMock = getPeopleRecordConnectionMock();
 
     const people =
       objectNameSingular === 'person' && isDefined(fieldValue)

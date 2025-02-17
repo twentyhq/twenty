@@ -9,7 +9,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';
@@ -423,7 +423,7 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        people: getPeopleMock(),
+        people: getPeopleRecordConnectionMock(),
       },
     })),
   },

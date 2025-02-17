@@ -2,18 +2,18 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import {
-  GetJestMetadataAndApolloMocksAndActionMenuWrapperProps,
-  getJestMetadataAndApolloMocksAndActionMenuWrapper,
+    GetJestMetadataAndApolloMocksAndActionMenuWrapperProps,
+    getJestMetadataAndApolloMocksAndActionMenuWrapper,
 } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { useAddToFavoritesSingleRecordAction } from '../useAddToFavoritesSingleRecordAction';
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
 
-const peopleMock = getPeopleMock();
+const peopleMock = getPeopleRecordConnectionMock();
 
 const favoritesMock = [
   {

@@ -7,14 +7,14 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  getCompaniesMock,
-  getCompanyDuplicateMock,
+    getCompaniesMock,
+    getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNotes } from '~/testing/mock-data/notes';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
@@ -24,14 +24,14 @@ import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getP
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import {
-  getWorkflowMock,
-  getWorkflowVersionsMock,
-  workflowQueryResult,
+    getWorkflowMock,
+    getWorkflowVersionsMock,
+    workflowQueryResult,
 } from '~/testing/mock-data/workflow';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
-const peopleMock = getPeopleMock();
+const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
 
