@@ -793,7 +793,8 @@ msgstr "Απολαύστε μια δωρεάν δοκιμαστική περίο
 
 #: src/pages/settings/security/SettingsSecurity.tsx:51
 msgid "Enterprise"
-msgstr "\n"
+msgstr ""
+"\n"
 "        {\"Enterprise\": \"{0, plural, one {Επιχείρηση} other {Επιχειρήσεις}}\",\n"
 "        \"broken_translation\": \"Επιχειρήσεις\",\n"
 "        \"qa_issues\": [\"Translation is the same as the source text\"],\n"
@@ -1562,6 +1563,7 @@ msgstr "Ρωσικά"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "Αναζήτηση"
 
@@ -1591,6 +1593,7 @@ msgid "Search for an object..."
 msgstr "Αναζήτηση αντικειμένου..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "Αναζήτηση εγγραφών"
 
@@ -2068,4 +2071,3 @@ msgstr "Ο χώρος εργασίας σας"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ο χώρος εργασίας σας θα απενεργοποιηθεί"
-

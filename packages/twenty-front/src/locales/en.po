@@ -1550,6 +1550,7 @@ msgstr "Russian"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "Search"
 
@@ -1579,6 +1580,7 @@ msgid "Search for an object..."
 msgstr "Search for an object..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "Search records"
 
