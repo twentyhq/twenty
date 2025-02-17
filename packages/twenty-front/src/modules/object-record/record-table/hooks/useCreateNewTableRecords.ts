@@ -89,7 +89,7 @@ export const useCreateNewTableRecord = ({
 
       await createOneRecord({ id: recordId });
 
-      openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
+      openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular, true);
 
       openRecordTitleCell({
         recordId,

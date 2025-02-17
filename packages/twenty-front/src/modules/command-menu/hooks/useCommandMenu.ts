@@ -25,7 +25,7 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared';
 import { IconDotsVertical, IconList, IconSearch } from 'twenty-ui';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
@@ -212,12 +212,19 @@ export const useCommandMenu = () => {
 
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set }) => {
-      return (recordId: string, objectNameSingular: string) => {
+      return (
+        recordId: string,
+        objectNameSingular: string,
+        isNewRecord = false,
+      ) => {
         set(viewableRecordNameSingularState, objectNameSingular);
         set(viewableRecordIdState, recordId);
+
         navigateCommandMenu({
           page: CommandMenuPages.ViewRecord,
-          pageTitle: objectNameSingular,
+          pageTitle: isNewRecord
+            ? `New ${capitalize(objectNameSingular)}`
+            : capitalize(objectNameSingular),
           pageIcon: IconList,
         });
       };
