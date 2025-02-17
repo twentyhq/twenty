@@ -197,7 +197,7 @@ export const SettingsNavigationDrawerItems = () => {
         </SettingsNavigationItemWrapper>
       </SettingsNavigationSectionWrapper>
 
-      <SettingsNavigationSectionWrapper title={t`Developers`}>
+      <SettingsNavigationSectionWrapper title={t`Developers`} isAdvanced={true}>
         <SettingsNavigationItemWrapper
           settingsPermission={SettingsFeatures.API_KEYS_AND_WEBHOOKS}
         >

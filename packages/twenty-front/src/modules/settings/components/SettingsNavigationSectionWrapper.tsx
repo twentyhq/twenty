@@ -1,3 +1,4 @@
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
@@ -13,11 +14,13 @@ import {
 type SettingsNavigationSectionWrapperProps = {
   title: string;
   children: ReactNode;
+  isAdvanced?: boolean;
 };
 
 export const SettingsNavigationSectionWrapper = ({
   title,
   children,
+  isAdvanced = false,
 }: SettingsNavigationSectionWrapperProps) => {
   const settingsPermissionMap = useSettingsPermissionMap();
   const featureFlagsMap = useFeatureFlagsMap();
@@ -67,7 +70,14 @@ export const SettingsNavigationSectionWrapper = ({
 
   return (
     <NavigationDrawerSection>
-      <NavigationDrawerSectionTitle label={title} />
+      {isAdvanced ? (
+        <AdvancedSettingsWrapper hideIcon={true}>
+          <NavigationDrawerSectionTitle label={title} />
+        </AdvancedSettingsWrapper>
+      ) : (
+        <NavigationDrawerSectionTitle label={title} />
+      )}
+
       {children}
     </NavigationDrawerSection>
   );
