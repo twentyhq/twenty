@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Query, Mutation, Resolver } from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -21,7 +21,7 @@ export class WorkspaceTrustedDomainResolver {
 
   @Mutation(() => WorkspaceTrustedDomain)
   async createWorkspaceTrustedDomain(
-    @Args() { domain }: CreateTrustedDomainInput,
+    @Args('input') { domain }: CreateTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
     @AuthUser() currentUser: User,
   ): Promise<WorkspaceTrustedDomain> {
@@ -32,32 +32,37 @@ export class WorkspaceTrustedDomainResolver {
     );
   }
 
-  @Mutation(() => null)
+  @Mutation(() => Boolean)
   async sendTrustedDomainVerificationEmail(
-    @Args() { email, trustedDomainId }: SendTrustedDomainVerificationEmailInput,
+    @Args('input')
+    { email, trustedDomainId }: SendTrustedDomainVerificationEmailInput,
     @AuthWorkspace() currentWorkspace: Workspace,
     @AuthUser() currentUser: User,
-  ): Promise<void> {
-    return await this.workspaceTrustedDomainService.sendTrustedDomainValidationEmail(
+  ): Promise<boolean> {
+    await this.workspaceTrustedDomainService.sendTrustedDomainValidationEmail(
       currentUser,
       email,
       currentWorkspace,
       trustedDomainId,
     );
+
+    return true;
   }
 
-  @Mutation(() => null)
+  @Mutation(() => Boolean)
   async deleteWorkspaceTrustedDomain(
-    @Args() { id }: DeleteTrustedDomainInput,
+    @Args('input') { id }: DeleteTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
-  ): Promise<void> {
-    return await this.workspaceTrustedDomainService.deleteTrustedDomain(
+  ): Promise<boolean> {
+    await this.workspaceTrustedDomainService.deleteTrustedDomain(
       currentWorkspace,
       id,
     );
+
+    return true;
   }
 
-  @Mutation(() => [WorkspaceTrustedDomain])
+  @Query(() => [WorkspaceTrustedDomain])
   async getAllWorkspaceTrustedDomains(
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<Array<WorkspaceTrustedDomain>> {

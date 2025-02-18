@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const LIST_WORKSPACE_TRUSTED_DOMAINS = gql`
-  query ListWorkspaceTrustedDomains {
-    listWorkspaceTrustedDomainsByWorkspaceId {
+export const GET_ALL_WORKSPACE_TRUSTED_DOMAINS = gql`
+  query GetAllWorkspaceTrustedDomains {
+    getAllWorkspaceTrustedDomains {
       id
       createdAt
       domain

@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -257,6 +256,7 @@ export type ClientConfig = {
   debugMode: Scalars['Boolean']['output'];
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
+  isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
@@ -367,6 +367,10 @@ export type CreateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type CreateTrustedDomainInput = {
+  domain: Scalars['String']['input'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** New step type */
   stepType: Scalars['String']['input'];
@@ -423,6 +427,10 @@ export type DeleteSsoInput = {
 export type DeleteSsoOutput = {
   __typename?: 'DeleteSsoOutput';
   identityProviderId: Scalars['String']['output'];
+};
+
+export type DeleteTrustedDomainInput = {
+  id: Scalars['String']['input'];
 };
 
 export type DeleteWorkflowVersionStepInput = {
@@ -809,6 +817,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
   buildDraftServerlessFunction: ServerlessFunction;
+  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -821,6 +830,7 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
+  createWorkspaceTrustedDomain: WorkspaceTrustedDomain;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
@@ -832,6 +842,7 @@ export type Mutation = {
   deleteUser: User;
   deleteWorkflowVersionStep: WorkflowAction;
   deleteWorkspaceInvitation: Scalars['String']['output'];
+  deleteWorkspaceTrustedDomain: Scalars['Boolean']['output'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -850,6 +861,7 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
+  sendTrustedDomainVerificationEmail: Scalars['Boolean']['output'];
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   syncRemoteTable: RemoteTable;
@@ -960,6 +972,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 };
 
 
+export type MutationCreateWorkspaceTrustedDomainArgs = {
+  input: CreateTrustedDomainInput;
+};
+
+
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String']['input'];
 };
@@ -1002,6 +1019,11 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteWorkspaceTrustedDomainArgs = {
+  input: DeleteTrustedDomainInput;
 };
 
 
@@ -1082,6 +1104,11 @@ export type MutationRunWorkflowVersionArgs = {
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']['input']>;
+};
+
+
+export type MutationSendTrustedDomainVerificationEmailArgs = {
+  input: SendTrustedDomainVerificationEmailInput;
 };
 
 
@@ -1305,6 +1332,13 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['ConnectionCursor']['output']>;
 };
 
+export enum PermissionsOnAllObjectRecords {
+  DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
+  READ_ALL_OBJECT_RECORDS = 'READ_ALL_OBJECT_RECORDS',
+  SOFT_DELETE_ALL_OBJECT_RECORDS = 'SOFT_DELETE_ALL_OBJECT_RECORDS',
+  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
+}
+
 export type PostgresCredentials = {
   __typename?: 'PostgresCredentials';
   id: Scalars['UUID']['output'];
@@ -1343,7 +1377,6 @@ export type PublishServerlessFunctionInput = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: BillingSessionOutput;
-  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -1359,6 +1392,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAllWorkspaceTrustedDomains: Array<WorkspaceTrustedDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -1633,6 +1667,10 @@ export type ResendEmailVerificationTokenOutput = {
 
 export type Role = {
   __typename?: 'Role';
+  canDestroyAllObjectRecords: Scalars['Boolean']['output'];
+  canReadAllObjectRecords: Scalars['Boolean']['output'];
+  canSoftDeleteAllObjectRecords: Scalars['Boolean']['output'];
+  canUpdateAllObjectRecords: Scalars['Boolean']['output'];
   canUpdateAllSettings: Scalars['Boolean']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -1678,6 +1716,11 @@ export type SendInvitationsOutput = {
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
+};
+
+export type SendTrustedDomainVerificationEmailInput = {
+  email: Scalars['String']['input'];
+  trustedDomainId: Scalars['String']['input'];
 };
 
 export type Sentry = {
@@ -2050,8 +2093,8 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
-  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
+  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];
@@ -2186,6 +2229,14 @@ export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+};
+
+export type WorkspaceTrustedDomain = {
+  __typename?: 'WorkspaceTrustedDomain';
+  createdAt: Scalars['DateTime']['output'];
+  domain: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  isValidated: Scalars['Boolean']['output'];
 };
 
 export type WorkspaceUrlsAndId = {

@@ -395,9 +395,14 @@ export const SettingsRoutes = ({
         element={<SettingsSecuritySSOIdentifyProvider />}
       />
       <Route
+        path={SettingsPath.EditTrustedDomain}
+        element={<SettingsSecurityTrustedDomain />}
+      />
+      <Route
         path={SettingsPath.NewTrustedDomain}
         element={<SettingsSecurityTrustedDomain />}
       />
+
       {isAdminPageEnabled && (
         <>
           <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />

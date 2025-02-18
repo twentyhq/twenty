@@ -13,27 +13,14 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { z } from 'zod';
 import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import {
-  useCreateWorkspaceTrustDomainMutation,
-  useSendTrustedDomainVerificationEmailMutation,
-  WorkspaceTrustedDomain,
-} from '~/generated/graphql';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCreateWorkspaceTrustDomainMutation } from '~/generated/graphql';
 
-export const SettingsSecurityTrustedDomain = () => {
+export const SettingsWorkspaceTrustedDomainSetupForm = () => {
   const navigate = useNavigateSettings();
 
   const { enqueueSnackBar } = useSnackBar();
-  const workspaceTrustedDomainIdFromParams = useParams().trustedDomainId;
 
   const [createWorkspaceTrustDomain] = useCreateWorkspaceTrustDomainMutation();
-
-  const [sendTrustedDomainVerificationEmail] =
-    useSendTrustedDomainVerificationEmailMutation();
-
-  const [currentWorkspaceTrustDomain, setCurrentWorkspaceTrustDomain] =
-    useState<WorkspaceTrustedDomain | undefined>();
 
   const formConfig = useForm<{ domain: string; email: string }>({
     mode: 'onChange',
@@ -41,54 +28,29 @@ export const SettingsSecurityTrustedDomain = () => {
       z
         .object({
           domain: domainSchema,
-          email: z.string(),
         })
         .strict(),
     ),
     defaultValues: {
-      email: '',
       domain: '',
     },
   });
 
-  const createWorkspaceTrustDomainHandler = (domain: string) => {
+  const createWorkspaceTrustedDomainHandler = (domain: string) => {
     createWorkspaceTrustDomain({
       variables: {
         input: {
           domain,
         },
       },
-      onCompleted: (workspaceTrustDomain) => {
-        if (workspaceTrustDomain.createWorkspaceTrustedDomain.isValidated) {
+      onCompleted: (workspaceTrustedDomain) => {
+        if (workspaceTrustedDomain.createWorkspaceTrustedDomain.isValidated) {
           return navigate(SettingsPath.Security);
         }
 
-        setCurrentWorkspaceTrustDomain(
-          workspaceTrustDomain.createWorkspaceTrustedDomain,
+        setCurrentWorkspaceTrustedDomain(
+          workspaceTrustedDomain.createWorkspaceTrustedDomain,
         );
-      },
-      onError: (error) => {
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
-        });
-      },
-    });
-  };
-  const sendWorkspaceTrustedDomainVerificationEmailHandler = (
-    workspaceTrustDomain: WorkspaceTrustedDomain,
-  ) => {
-    sendTrustedDomainVerificationEmail({
-      variables: {
-        input: {
-          email:
-            formConfig.getValues('email') + '@' + workspaceTrustDomain.domain,
-          trustedDomainId: workspaceTrustDomain.id,
-        },
-      },
-      onCompleted: () => {
-        enqueueSnackBar('Email sent successfully', {
-          variant: SnackBarVariant.Success,
-        });
       },
       onError: (error) => {
         enqueueSnackBar((error as Error).message, {
@@ -100,18 +62,9 @@ export const SettingsSecurityTrustedDomain = () => {
 
   const handleSave = async () => {
     try {
-      if (!currentWorkspaceTrustDomain) {
-        return createWorkspaceTrustDomainHandler(
+      if (!currentWorkspaceTrustedDomain) {
+        return createWorkspaceTrustedDomainHandler(
           formConfig.getValues('domain'),
-        );
-      }
-
-      if (
-        currentWorkspaceTrustDomain &&
-        !currentWorkspaceTrustDomain.isValidated
-      ) {
-        return sendWorkspaceTrustedDomainVerificationEmailHandler(
-          currentWorkspaceTrustDomain,
         );
       }
     } catch (error) {
@@ -154,31 +107,9 @@ export const SettingsSecurityTrustedDomain = () => {
                 autoComplete="off"
                 label="Domain"
                 value={value}
-                onChange={(domain: string) => {
-                  setCurrentWorkspaceTrustDomain(undefined);
-                  onChange(domain);
-                }}
-                fullWidth
-                placeholder="yourdomain.com"
-              />
-            )}
-          />
-        </Section>
-        <Section>
-          <H2Title
-            title="Email verification"
-            description="We will send your a link to verify domain ownership"
-          />
-          <Controller
-            name="email"
-            control={formConfig.control}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                autoComplete="off"
-                label="Email"
-                value={value.split('@')[0]}
                 onChange={onChange}
                 fullWidth
+                placeholder="yourdomain.com"
               />
             )}
           />

@@ -14,25 +14,42 @@ import { z } from 'zod';
 import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  useCreateWorkspaceTrustDomainMutation,
+  useGetAllWorkspaceTrustedDomainsQuery,
   useSendTrustedDomainVerificationEmailMutation,
   WorkspaceTrustedDomain,
 } from '~/generated/graphql';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared';
 import { useParams } from 'react-router-dom';
 
-export const SettingsSecurityTrustedDomain = () => {
+export const SettingsWorkspaceTrustedDomainValidationForm = () => {
   const navigate = useNavigateSettings();
 
   const { enqueueSnackBar } = useSnackBar();
-  const workspaceTrustedDomainIdFromParams = useParams().trustedDomainId;
+  const params = useParams();
 
-  const [createWorkspaceTrustDomain] = useCreateWorkspaceTrustDomainMutation();
+  useGetAllWorkspaceTrustedDomainsQuery({
+    onCompleted: (data) => {
+      if (
+        isDefined(params.trustedDomainId) &&
+        data.getAllWorkspaceTrustedDomains.length > 0
+      ) {
+        const workspaceTrustedDomain = data.getAllWorkspaceTrustedDomains.find(
+          (workspaceTrustedDomain) =>
+            workspaceTrustedDomain.id === params.trustedDomainId,
+        );
+        if (isDefined(workspaceTrustedDomain)) {
+          setCurrentWorkspaceTrustedDomain(workspaceTrustedDomain);
+          formConfig.setValue('domain', workspaceTrustedDomain.domain);
+        }
+      }
+    },
+  });
 
   const [sendTrustedDomainVerificationEmail] =
     useSendTrustedDomainVerificationEmailMutation();
 
-  const [currentWorkspaceTrustDomain, setCurrentWorkspaceTrustDomain] =
+  const [currentWorkspaceTrustedDomain, setCurrentWorkspaceTrustedDomain] =
     useState<WorkspaceTrustedDomain | undefined>();
 
   const formConfig = useForm<{ domain: string; email: string }>({
@@ -51,29 +68,6 @@ export const SettingsSecurityTrustedDomain = () => {
     },
   });
 
-  const createWorkspaceTrustDomainHandler = (domain: string) => {
-    createWorkspaceTrustDomain({
-      variables: {
-        input: {
-          domain,
-        },
-      },
-      onCompleted: (workspaceTrustDomain) => {
-        if (workspaceTrustDomain.createWorkspaceTrustedDomain.isValidated) {
-          return navigate(SettingsPath.Security);
-        }
-
-        setCurrentWorkspaceTrustDomain(
-          workspaceTrustDomain.createWorkspaceTrustedDomain,
-        );
-      },
-      onError: (error) => {
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
-        });
-      },
-    });
-  };
   const sendWorkspaceTrustedDomainVerificationEmailHandler = (
     workspaceTrustDomain: WorkspaceTrustedDomain,
   ) => {
@@ -98,20 +92,20 @@ export const SettingsSecurityTrustedDomain = () => {
     });
   };
 
-  const handleSave = async () => {
+  const handleSend = async () => {
     try {
-      if (!currentWorkspaceTrustDomain) {
-        return createWorkspaceTrustDomainHandler(
+      if (!currentWorkspaceTrustedDomain) {
+        return createWorkspaceTrustedDomainHandler(
           formConfig.getValues('domain'),
         );
       }
 
       if (
-        currentWorkspaceTrustDomain &&
-        !currentWorkspaceTrustDomain.isValidated
+        currentWorkspaceTrustedDomain &&
+        !currentWorkspaceTrustedDomain.isValidated
       ) {
         return sendWorkspaceTrustedDomainVerificationEmailHandler(
-          currentWorkspaceTrustDomain,
+          currentWorkspaceTrustedDomain,
         );
       }
     } catch (error) {
@@ -128,7 +122,7 @@ export const SettingsSecurityTrustedDomain = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!formConfig.formState.isValid}
           onCancel={() => navigate(SettingsPath.Security)}
-          onSave={handleSave}
+          onSave={handleSend}
         />
       }
       links={[
@@ -140,30 +134,10 @@ export const SettingsSecurityTrustedDomain = () => {
           children: <Trans>Security</Trans>,
           href: getSettingsPath(SettingsPath.Security),
         },
-        { children: <Trans>New Trusted Domain</Trans> },
+        { children: <Trans>Validate Trusted Domain</Trans> },
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title title="Domain" description="The name of your Domain" />
-          <Controller
-            name="domain"
-            control={formConfig.control}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                autoComplete="off"
-                label="Domain"
-                value={value}
-                onChange={(domain: string) => {
-                  setCurrentWorkspaceTrustDomain(undefined);
-                  onChange(domain);
-                }}
-                fullWidth
-                placeholder="yourdomain.com"
-              />
-            )}
-          />
-        </Section>
         <Section>
           <H2Title
             title="Email verification"

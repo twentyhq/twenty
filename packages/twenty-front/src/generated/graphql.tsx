@@ -304,6 +304,10 @@ export type CreateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type CreateTrustedDomainInput = {
+  domain: Scalars['String'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** New step type */
   stepType: Scalars['String'];
@@ -355,6 +359,10 @@ export type DeleteSsoInput = {
 export type DeleteSsoOutput = {
   __typename?: 'DeleteSsoOutput';
   identityProviderId: Scalars['String'];
+};
+
+export type DeleteTrustedDomainInput = {
+  id: Scalars['String'];
 };
 
 export type DeleteWorkflowVersionStepInput = {
@@ -745,6 +753,7 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
+  createWorkspaceTrustedDomain: WorkspaceTrustedDomain;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
@@ -754,6 +763,7 @@ export type Mutation = {
   deleteUser: User;
   deleteWorkflowVersionStep: WorkflowAction;
   deleteWorkspaceInvitation: Scalars['String'];
+  deleteWorkspaceTrustedDomain: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -772,6 +782,7 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
+  sendTrustedDomainVerificationEmail: Scalars['Boolean'];
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
@@ -858,6 +869,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 };
 
 
+export type MutationCreateWorkspaceTrustedDomainArgs = {
+  input: CreateTrustedDomainInput;
+};
+
+
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
 };
@@ -890,6 +906,11 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationDeleteWorkspaceTrustedDomainArgs = {
+  input: DeleteTrustedDomainInput;
 };
 
 
@@ -970,6 +991,11 @@ export type MutationRunWorkflowVersionArgs = {
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
+};
+
+
+export type MutationSendTrustedDomainVerificationEmailArgs = {
+  input: SendTrustedDomainVerificationEmailInput;
 };
 
 
@@ -1230,6 +1256,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAllWorkspaceTrustedDomains: Array<WorkspaceTrustedDomain>;
   getAvailablePackages: Scalars['JSON'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -1485,6 +1512,11 @@ export type SendInvitationsOutput = {
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type SendTrustedDomainVerificationEmailInput = {
+  email: Scalars['String'];
+  trustedDomainId: Scalars['String'];
 };
 
 export type Sentry = {
@@ -1977,6 +2009,14 @@ export type WorkspaceNameAndId = {
   id: Scalars['String'];
 };
 
+export type WorkspaceTrustedDomain = {
+  __typename?: 'WorkspaceTrustedDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
+  isValidated: Scalars['Boolean'];
+};
+
 export type WorkspaceUrlsAndId = {
   __typename?: 'WorkspaceUrlsAndId';
   id: Scalars['String'];
@@ -2286,12 +2326,26 @@ export type CreateSamlIdentityProviderMutationVariables = Exact<{
 
 export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
+export type CreateWorkspaceTrustDomainMutationVariables = Exact<{
+  input: CreateTrustedDomainInput;
+}>;
+
+
+export type CreateWorkspaceTrustDomainMutation = { __typename?: 'Mutation', createWorkspaceTrustedDomain: { __typename?: 'WorkspaceTrustedDomain', id: any, domain: string, isValidated: boolean, createdAt: string } };
+
 export type DeleteSsoIdentityProviderMutationVariables = Exact<{
   input: DeleteSsoInput;
 }>;
 
 
 export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSsoOutput', identityProviderId: string } };
+
+export type DeleteWorkspaceTrustDomainMutationVariables = Exact<{
+  input: DeleteTrustedDomainInput;
+}>;
+
+
+export type DeleteWorkspaceTrustDomainMutation = { __typename?: 'Mutation', deleteWorkspaceTrustedDomain: boolean };
 
 export type EditSsoIdentityProviderMutationVariables = Exact<{
   input: EditSsoInput;
@@ -2300,10 +2354,22 @@ export type EditSsoIdentityProviderMutationVariables = Exact<{
 
 export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
+export type SendTrustedDomainVerificationEmailMutationVariables = Exact<{
+  input: SendTrustedDomainVerificationEmailInput;
+}>;
+
+
+export type SendTrustedDomainVerificationEmailMutation = { __typename?: 'Mutation', sendTrustedDomainVerificationEmail: boolean };
+
 export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+
+export type GetAllWorkspaceTrustedDomainsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllWorkspaceTrustedDomainsQuery = { __typename?: 'Query', getAllWorkspaceTrustedDomains: Array<{ __typename?: 'WorkspaceTrustedDomain', id: any, createdAt: string, domain: string, isValidated: boolean }> };
 
 export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingsFeatures> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> };
 
@@ -4148,6 +4214,42 @@ export function useCreateSamlIdentityProviderMutation(baseOptions?: Apollo.Mutat
 export type CreateSamlIdentityProviderMutationHookResult = ReturnType<typeof useCreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationResult = Apollo.MutationResult<CreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationOptions = Apollo.BaseMutationOptions<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>;
+export const CreateWorkspaceTrustDomainDocument = gql`
+    mutation CreateWorkspaceTrustDomain($input: CreateTrustedDomainInput!) {
+  createWorkspaceTrustedDomain(input: $input) {
+    id
+    domain
+    isValidated
+    createdAt
+  }
+}
+    `;
+export type CreateWorkspaceTrustDomainMutationFn = Apollo.MutationFunction<CreateWorkspaceTrustDomainMutation, CreateWorkspaceTrustDomainMutationVariables>;
+
+/**
+ * __useCreateWorkspaceTrustDomainMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkspaceTrustDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkspaceTrustDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkspaceTrustDomainMutation, { data, loading, error }] = useCreateWorkspaceTrustDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateWorkspaceTrustDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceTrustDomainMutation, CreateWorkspaceTrustDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateWorkspaceTrustDomainMutation, CreateWorkspaceTrustDomainMutationVariables>(CreateWorkspaceTrustDomainDocument, options);
+      }
+export type CreateWorkspaceTrustDomainMutationHookResult = ReturnType<typeof useCreateWorkspaceTrustDomainMutation>;
+export type CreateWorkspaceTrustDomainMutationResult = Apollo.MutationResult<CreateWorkspaceTrustDomainMutation>;
+export type CreateWorkspaceTrustDomainMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceTrustDomainMutation, CreateWorkspaceTrustDomainMutationVariables>;
 export const DeleteSsoIdentityProviderDocument = gql`
     mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
   deleteSSOIdentityProvider(input: $input) {
@@ -4181,6 +4283,37 @@ export function useDeleteSsoIdentityProviderMutation(baseOptions?: Apollo.Mutati
 export type DeleteSsoIdentityProviderMutationHookResult = ReturnType<typeof useDeleteSsoIdentityProviderMutation>;
 export type DeleteSsoIdentityProviderMutationResult = Apollo.MutationResult<DeleteSsoIdentityProviderMutation>;
 export type DeleteSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>;
+export const DeleteWorkspaceTrustDomainDocument = gql`
+    mutation DeleteWorkspaceTrustDomain($input: DeleteTrustedDomainInput!) {
+  deleteWorkspaceTrustedDomain(input: $input)
+}
+    `;
+export type DeleteWorkspaceTrustDomainMutationFn = Apollo.MutationFunction<DeleteWorkspaceTrustDomainMutation, DeleteWorkspaceTrustDomainMutationVariables>;
+
+/**
+ * __useDeleteWorkspaceTrustDomainMutation__
+ *
+ * To run a mutation, you first call `useDeleteWorkspaceTrustDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteWorkspaceTrustDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteWorkspaceTrustDomainMutation, { data, loading, error }] = useDeleteWorkspaceTrustDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteWorkspaceTrustDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkspaceTrustDomainMutation, DeleteWorkspaceTrustDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteWorkspaceTrustDomainMutation, DeleteWorkspaceTrustDomainMutationVariables>(DeleteWorkspaceTrustDomainDocument, options);
+      }
+export type DeleteWorkspaceTrustDomainMutationHookResult = ReturnType<typeof useDeleteWorkspaceTrustDomainMutation>;
+export type DeleteWorkspaceTrustDomainMutationResult = Apollo.MutationResult<DeleteWorkspaceTrustDomainMutation>;
+export type DeleteWorkspaceTrustDomainMutationOptions = Apollo.BaseMutationOptions<DeleteWorkspaceTrustDomainMutation, DeleteWorkspaceTrustDomainMutationVariables>;
 export const EditSsoIdentityProviderDocument = gql`
     mutation EditSSOIdentityProvider($input: EditSsoInput!) {
   editSSOIdentityProvider(input: $input) {
@@ -4218,6 +4351,37 @@ export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.Mutation
 export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
+export const SendTrustedDomainVerificationEmailDocument = gql`
+    mutation SendTrustedDomainVerificationEmail($input: SendTrustedDomainVerificationEmailInput!) {
+  sendTrustedDomainVerificationEmail(input: $input)
+}
+    `;
+export type SendTrustedDomainVerificationEmailMutationFn = Apollo.MutationFunction<SendTrustedDomainVerificationEmailMutation, SendTrustedDomainVerificationEmailMutationVariables>;
+
+/**
+ * __useSendTrustedDomainVerificationEmailMutation__
+ *
+ * To run a mutation, you first call `useSendTrustedDomainVerificationEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendTrustedDomainVerificationEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendTrustedDomainVerificationEmailMutation, { data, loading, error }] = useSendTrustedDomainVerificationEmailMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendTrustedDomainVerificationEmailMutation(baseOptions?: Apollo.MutationHookOptions<SendTrustedDomainVerificationEmailMutation, SendTrustedDomainVerificationEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendTrustedDomainVerificationEmailMutation, SendTrustedDomainVerificationEmailMutationVariables>(SendTrustedDomainVerificationEmailDocument, options);
+      }
+export type SendTrustedDomainVerificationEmailMutationHookResult = ReturnType<typeof useSendTrustedDomainVerificationEmailMutation>;
+export type SendTrustedDomainVerificationEmailMutationResult = Apollo.MutationResult<SendTrustedDomainVerificationEmailMutation>;
+export type SendTrustedDomainVerificationEmailMutationOptions = Apollo.BaseMutationOptions<SendTrustedDomainVerificationEmailMutation, SendTrustedDomainVerificationEmailMutationVariables>;
 export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     query ListSSOIdentityProvidersByWorkspaceId {
   listSSOIdentityProvidersByWorkspaceId {
@@ -4256,6 +4420,43 @@ export function useListSsoIdentityProvidersByWorkspaceIdLazyQuery(baseOptions?: 
 export type ListSsoIdentityProvidersByWorkspaceIdQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdQuery>;
 export type ListSsoIdentityProvidersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdLazyQuery>;
 export type ListSsoIdentityProvidersByWorkspaceIdQueryResult = Apollo.QueryResult<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>;
+export const GetAllWorkspaceTrustedDomainsDocument = gql`
+    query GetAllWorkspaceTrustedDomains {
+  getAllWorkspaceTrustedDomains {
+    id
+    createdAt
+    domain
+    isValidated
+  }
+}
+    `;
+
+/**
+ * __useGetAllWorkspaceTrustedDomainsQuery__
+ *
+ * To run a query within a React component, call `useGetAllWorkspaceTrustedDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllWorkspaceTrustedDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllWorkspaceTrustedDomainsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllWorkspaceTrustedDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>(GetAllWorkspaceTrustedDomainsDocument, options);
+      }
+export function useGetAllWorkspaceTrustedDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>(GetAllWorkspaceTrustedDomainsDocument, options);
+        }
+export type GetAllWorkspaceTrustedDomainsQueryHookResult = ReturnType<typeof useGetAllWorkspaceTrustedDomainsQuery>;
+export type GetAllWorkspaceTrustedDomainsLazyQueryHookResult = ReturnType<typeof useGetAllWorkspaceTrustedDomainsLazyQuery>;
+export type GetAllWorkspaceTrustedDomainsQueryResult = Apollo.QueryResult<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUser {
