@@ -163,7 +163,7 @@ msgstr "Afrikánština"
 msgid "All"
 msgstr "Vše"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Vše ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Připojit s Microsoft"
 msgid "Connected accounts"
 msgstr "Připojené účty"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Kontext"
 
@@ -448,7 +448,7 @@ msgstr "Pokračovat s Google"
 msgid "Continue with Microsoft"
 msgstr "Pokračovat s Microsoftem"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Kopilot"
 
@@ -963,7 +963,7 @@ msgstr "Získejte maximum ze svého pracovního prostoru tím, že pozvete svůj
 msgid "Get your subscription"
 msgstr "Získejte své předplatné"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Globální"
 
@@ -1242,6 +1242,10 @@ msgstr "Přejít na předchozí workflow"
 msgid "New"
 msgstr "Nový"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Nový {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Nový účet"
@@ -1325,7 +1329,7 @@ msgstr "Norština"
 msgid "Not empty"
 msgstr "Není prázdný"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objekt"
 
@@ -1478,7 +1482,7 @@ msgstr "Přečtěte si dokumentaci"
 msgid "Receive an email containing password update link"
 msgstr "Obdržíte e-mail s odkazem na aktualizaci hesla"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Výběr záznamů"
 
@@ -1560,7 +1564,7 @@ msgstr "Ruština"
 msgid "Search"
 msgstr "Hledat"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Hledat ''{commandMenuSearch}'' s..."
 

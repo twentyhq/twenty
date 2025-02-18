@@ -163,7 +163,7 @@ msgstr "アフリカーンス語"
 msgid "All"
 msgstr "すべて"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "すべて ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Microsoftと接続"
 msgid "Connected accounts"
 msgstr "接続されたアカウント"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "コンテキスト"
 
@@ -448,7 +448,7 @@ msgstr "Googleで続行"
 msgid "Continue with Microsoft"
 msgstr "Microsoftで続行"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "コパイロット"
 
@@ -963,7 +963,7 @@ msgstr "チームを招待して、ワークスペースを最大限に活用し
 msgid "Get your subscription"
 msgstr "サブスクリプションを取得"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "グローバル"
 
@@ -1241,6 +1241,10 @@ msgstr "前のワークフローに移動"
 msgid "New"
 msgstr "新規"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "新しい{capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "新しいアカウント"
@@ -1324,7 +1328,7 @@ msgstr "ノルウェー語"
 msgid "Not empty"
 msgstr "空ではない"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "オブジェクト"
 
@@ -1477,7 +1481,7 @@ msgstr "ドキュメントを読む"
 msgid "Receive an email containing password update link"
 msgstr "パスワード更新リンクを含むメールを受け取る"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "レコード選択"
 
@@ -1559,7 +1563,7 @@ msgstr "ロシア語"
 msgid "Search"
 msgstr "検索"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "''{commandMenuSearch}''で検索..."
 

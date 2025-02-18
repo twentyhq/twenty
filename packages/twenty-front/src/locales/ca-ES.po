@@ -163,7 +163,7 @@ msgstr "Afrikaans"
 msgid "All"
 msgstr "Tots"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Tots ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Connecta amb Microsoft"
 msgid "Connected accounts"
 msgstr "Comptes connectats"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Context"
 
@@ -448,7 +448,7 @@ msgstr "Continua amb Google"
 msgid "Continue with Microsoft"
 msgstr "Continua amb Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Copilot"
 
@@ -963,7 +963,7 @@ msgstr "Treu el màxim partit al teu espai de treball convidant al teu equip."
 msgid "Get your subscription"
 msgstr "Obteniu la vostra subscripció"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Global"
 
@@ -1241,6 +1241,10 @@ msgstr "Navega al workflow anterior"
 msgid "New"
 msgstr "Nou"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Nou {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Nou compte"
@@ -1324,7 +1328,7 @@ msgstr "Noruec"
 msgid "Not empty"
 msgstr "No buit"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objecte"
 
@@ -1477,7 +1481,7 @@ msgstr "Llegeix la documentació"
 msgid "Receive an email containing password update link"
 msgstr "Rep un correu que conté l'enllaç per actualitzar la contrasenya"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Selecció d'enregistrament"
 
@@ -1559,7 +1563,7 @@ msgstr "Rus"
 msgid "Search"
 msgstr "Cerca"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Cerca ''{commandMenuSearch}'' amb..."
 

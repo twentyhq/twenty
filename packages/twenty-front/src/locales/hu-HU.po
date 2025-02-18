@@ -163,7 +163,7 @@ msgstr "Afrikaans"
 msgid "All"
 msgstr "Minden"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Minden ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Csatlakozás Microsofttal"
 msgid "Connected accounts"
 msgstr "Csatlakoztatott fiókok"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Összefüggés"
 
@@ -448,7 +448,7 @@ msgstr "Folytatás Google-lel"
 msgid "Continue with Microsoft"
 msgstr "Folytatás Microsofttal"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Segédpilóta"
 
@@ -963,7 +963,7 @@ msgstr "Maximalizálja munkaterületét csapatának meghívásával."
 msgid "Get your subscription"
 msgstr "Szerezze meg előfizetését"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Globális"
 
@@ -1241,6 +1241,10 @@ msgstr "Navigálás az előző munkafolyamatra"
 msgid "New"
 msgstr "Új"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Új {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Új fiók"
@@ -1324,7 +1328,7 @@ msgstr "Norvég"
 msgid "Not empty"
 msgstr "Nem üres"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objektum"
 
@@ -1477,7 +1481,7 @@ msgstr "Dokumentáció olvasása"
 msgid "Receive an email containing password update link"
 msgstr "E-mail küldése a jelszó frissítési linkkel"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Bejegyzések kiválasztása"
 
@@ -1559,7 +1563,7 @@ msgstr "Orosz"
 msgid "Search"
 msgstr "Keresés"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Keresés a következővel: ''{commandMenuSearch}''..."
 

@@ -163,7 +163,7 @@ msgstr "南非荷兰语"
 msgid "All"
 msgstr "全部"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "全部 ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "连接 Microsoft"
 msgid "Connected accounts"
 msgstr "已连接账户"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "上下文"
 
@@ -448,7 +448,7 @@ msgstr "继续使用 Google"
 msgid "Continue with Microsoft"
 msgstr "继续使用 Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "副驾驶"
 
@@ -963,7 +963,7 @@ msgstr "邀请您的团队，充分利用您的工作区。"
 msgid "Get your subscription"
 msgstr "获取订阅"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "全局"
 
@@ -1241,6 +1241,10 @@ msgstr "导航到上一个工作流"
 msgid "New"
 msgstr "新"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "新{capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "新账户"
@@ -1324,7 +1328,7 @@ msgstr "挪威语"
 msgid "Not empty"
 msgstr "非空"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "对象"
 
@@ -1477,7 +1481,7 @@ msgstr "阅读文档"
 msgid "Receive an email containing password update link"
 msgstr "接收包含密码更新链接的电子邮件"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "记录选择"
 
@@ -1559,7 +1563,7 @@ msgstr "俄语"
 msgid "Search"
 msgstr "搜索"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "用\"'{commandMenuSearch}'\"搜索..."
 
