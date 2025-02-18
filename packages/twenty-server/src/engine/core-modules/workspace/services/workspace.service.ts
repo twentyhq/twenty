@@ -152,11 +152,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.validateSecurityPermissions({
         payload,
         userWorkspaceId,
+        workspaceId: workspace.id,
       });
 
       await this.validateWorkspacePermissions({
         payload,
         userWorkspaceId,
+        workspaceId: workspace.id,
       });
     }
 
@@ -378,9 +380,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   private async validateSecurityPermissions({
     payload,
     userWorkspaceId,
+    workspaceId,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
+    workspaceId: string;
   }) {
     if (
       'isGoogleAuthEnabled' in payload ||
@@ -396,6 +400,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           _setting: SettingsFeatures.SECURITY,
+          workspaceId: workspaceId,
         });
 
       if (!userHasPermission) {
@@ -410,9 +415,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   private async validateWorkspacePermissions({
     payload,
     userWorkspaceId,
+    workspaceId,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
+    workspaceId: string;
   }) {
     if (
       'displayName' in payload ||
@@ -427,6 +434,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
+          workspaceId,
           _setting: SettingsFeatures.WORKSPACE,
         });
 

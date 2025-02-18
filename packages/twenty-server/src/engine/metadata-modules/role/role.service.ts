@@ -30,6 +30,10 @@ export class RoleService {
       label: ADMIN_ROLE_LABEL,
       description: 'Admin role',
       canUpdateAllSettings: true,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
       isEditable: false,
       workspaceId,
     });
@@ -44,6 +48,10 @@ export class RoleService {
       label: MEMBER_ROLE_LABEL,
       description: 'Member role',
       canUpdateAllSettings: false,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
       isEditable: false,
       workspaceId,
     });

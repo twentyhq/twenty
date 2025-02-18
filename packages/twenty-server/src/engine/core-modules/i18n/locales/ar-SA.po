@@ -1584,7 +1584,9 @@ msgstr "مؤشر التزامن"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr "\n"
+msgstr ""
+"\n"
+""
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
@@ -2253,4 +2255,3 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "العضو في فريقك المسئول عن إدارة حساب الشركة"
-

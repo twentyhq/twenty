@@ -2253,4 +2253,3 @@ msgstr "X"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Uw teamlid verantwoordelijk voor het beheer van het bedrijfsaccount"
-
