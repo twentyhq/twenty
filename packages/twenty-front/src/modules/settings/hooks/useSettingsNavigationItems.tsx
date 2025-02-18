@@ -47,6 +47,7 @@ export type SettingsNavigationItem = {
   isHidden?: boolean;
   subItems?: SettingsNavigationItem[];
   isAdvanced?: boolean;
+  soon?: boolean;
 };
 
 export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {

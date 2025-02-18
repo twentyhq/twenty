@@ -14,6 +14,8 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useLingui } from '@lingui/react/macro';
+import { matchPath, resolvePath, useLocation } from 'react-router-dom';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
@@ -22,31 +24,22 @@ export const SettingsNavigationDrawerItems = () => {
   const settingsNavigationItems: SettingsNavigationSection[] =
     useSettingsNavigationItems();
 
-  const renderNavigationItem = (
-    item: SettingsNavigationItem,
-    index: number,
-    totalItems: number,
-  ) => (
-    <SettingsNavigationDrawerItem
-      key={item.path}
-      Icon={item.Icon}
-      label={item.label}
-      path={item.path}
-      indentationLevel={item.indentationLevel}
-      matchSubPages={item.matchSubPages}
-      isAdvanced={item.isAdvanced}
-      isHidden={item.isHidden}
-      subItemState={
-        item.indentationLevel
-          ? getNavigationSubItemLeftAdornment({
-              arrayLength: totalItems,
-              index,
-              selectedIndex: index,
-            })
-          : undefined
-      }
-    />
-  );
+  const currentPathName = useLocation().pathname;
+
+  const getSelectedIndexForSubItems = (subItems: SettingsNavigationItem[]) => {
+    return subItems.findIndex((subItem) => {
+      const href = getSettingsPath(subItem.path);
+      const pathName = resolvePath(href).pathname;
+
+      return matchPath(
+        {
+          path: pathName,
+          end: subItem.matchSubPages === false,
+        },
+        currentPathName,
+      );
+    });
+  };
 
   return (
     <>
@@ -68,16 +61,56 @@ export const SettingsNavigationDrawerItems = () => {
             {section.items.map((item, index) => {
               const subItems = item.subItems;
               if (Array.isArray(subItems) && subItems.length > 0) {
+                const selectedSubItemIndex =
+                  getSelectedIndexForSubItems(subItems);
+
                 return (
                   <NavigationDrawerItemGroup key={item.path}>
-                    {renderNavigationItem(item, index, section.items.length)}
-                    {subItems.map((subItem, subIndex) =>
-                      renderNavigationItem(subItem, subIndex, subItems.length),
-                    )}
+                    <SettingsNavigationDrawerItem
+                      item={item}
+                      subItemState={
+                        item.indentationLevel
+                          ? getNavigationSubItemLeftAdornment({
+                              arrayLength: section.items.length,
+                              index,
+                              selectedIndex: selectedSubItemIndex,
+                            })
+                          : undefined
+                      }
+                    />
+                    {subItems.map((subItem, subIndex) => (
+                      <SettingsNavigationDrawerItem
+                        key={subItem.path}
+                        item={subItem}
+                        subItemState={
+                          subItem.indentationLevel
+                            ? getNavigationSubItemLeftAdornment({
+                                arrayLength: subItems.length,
+                                index: subIndex,
+                                selectedIndex: selectedSubItemIndex,
+                              })
+                            : undefined
+                        }
+                      />
+                    ))}
                   </NavigationDrawerItemGroup>
                 );
               }
-              return renderNavigationItem(item, index, section.items.length);
+              return (
+                <SettingsNavigationDrawerItem
+                  key={item.path}
+                  item={item}
+                  subItemState={
+                    item.indentationLevel
+                      ? getNavigationSubItemLeftAdornment({
+                          arrayLength: section.items.length,
+                          index,
+                          selectedIndex: index,
+                        })
+                      : undefined
+                  }
+                />
+              );
             })}
           </NavigationDrawerSection>
         );
