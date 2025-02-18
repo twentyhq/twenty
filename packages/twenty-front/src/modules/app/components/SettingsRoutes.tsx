@@ -248,6 +248,14 @@ const SettingsAdminContent = lazy(() =>
   ),
 );
 
+const SettingsAdminIndicatorHealthStatus = lazy(() =>
+  import(
+    '~/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus'
+  ).then((module) => ({
+    default: module.SettingsAdminIndicatorHealthStatus,
+  })),
+);
+
 const SettingsLab = lazy(() =>
   import('~/pages/settings/lab/SettingsLab').then((module) => ({
     default: module.SettingsLab,
@@ -406,6 +414,10 @@ export const SettingsRoutes = ({
           <Route
             path={SettingsPath.FeatureFlags}
             element={<SettingsAdminContent />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelIndicatorHealthStatus}
+            element={<SettingsAdminIndicatorHealthStatus />}
           />
         </>
       )}
