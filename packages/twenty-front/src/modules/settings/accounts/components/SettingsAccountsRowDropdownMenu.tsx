@@ -100,7 +100,7 @@ export const SettingsAccountsRowDropdownMenu = ({
     {isModalOpen && (
       <Modal
         title="Data deletion"
-        description="All emails and events linked to this account will be deleted."
+        description="All emails and events linked to this account will be permanently deleted."
         onClose={() => setIsModalOpen(false)}
         actions={[
           { text: 'Cancel', onClick: () => setIsModalOpen(false) },
