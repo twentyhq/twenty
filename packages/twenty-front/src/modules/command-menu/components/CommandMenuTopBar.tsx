@@ -182,9 +182,7 @@ export const CommandMenuTopBar = () => {
               accent="default"
               hotkeys={[getOsControlSymbol(), 'K']}
               ariaLabel="Close command menu"
-              onClick={() => {
-                closeCommandMenu();
-              }}
+              onClick={closeCommandMenu}
             />
           ) : (
             <StyledCloseButtonContainer>
@@ -192,9 +190,7 @@ export const CommandMenuTopBar = () => {
                 accent={'tertiary'}
                 size={'medium'}
                 Icon={IconX}
-                onClick={() => {
-                  closeCommandMenu();
-                }}
+                onClick={closeCommandMenu}
               />
             </StyledCloseButtonContainer>
           )}
