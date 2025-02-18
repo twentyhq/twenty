@@ -201,7 +201,7 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
-          npx nx run twenty-server:workspace:seed:dev
+          npx nx run twenty-server:command workspace:seed:dev
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
