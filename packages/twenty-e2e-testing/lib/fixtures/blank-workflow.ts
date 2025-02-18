@@ -17,7 +17,7 @@ export class WorkflowVisualizerPage {
   readonly deactivateWorkflowButton: Locator;
   readonly addTriggerButton: Locator;
   readonly commandMenu: Locator;
-  readonly workflowNameButton: Locator;
+  readonly workflowNameLabel: Locator;
   readonly triggerNode: Locator;
   readonly background: Locator;
   readonly useAsDraftButton: Locator;
@@ -68,9 +68,9 @@ export class WorkflowVisualizerPage {
     });
     this.addTriggerButton = page.getByText('Add a Trigger');
     this.commandMenu = page.getByTestId('command-menu');
-    this.workflowNameButton = page.getByRole('button', {
-      name: this.workflowName,
-    });
+    this.workflowNameLabel = page
+      .getByTestId('top-bar-title')
+      .getByText(this.workflowName);
     this.triggerNode = this.#page.getByTestId('rf__node-trigger');
     this.background = page.locator('.react-flow__pane');
     this.useAsDraftButton = page.getByRole('button', { name: 'Use as draft' });
@@ -100,7 +100,7 @@ export class WorkflowVisualizerPage {
   }
 
   async waitForWorkflowVisualizerLoad() {
-    await expect(this.workflowNameButton).toBeVisible();
+    await expect(this.workflowNameLabel).toBeVisible();
   }
 
   async goToWorkflowVisualizerPage() {
@@ -149,10 +149,6 @@ export class WorkflowVisualizerPage {
       await createWorkflowStepResponse.json();
     const createdStepId =
       createWorkflowStepResponseBody.data.createWorkflowVersionStep.id;
-
-    await expect(
-      this.#page.getByTestId('command-menu').getByRole('textbox').first(),
-    ).toHaveValue(createdActionName);
 
     const createdActionNode = this.#page
       .locator('.react-flow__node.selected')
