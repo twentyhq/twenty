@@ -15,10 +15,11 @@ import { useInlineCell } from '../hooks/useInlineCell';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { hasRecordInlineCellDangerBorderScopedState } from '@/object-record/record-inline-cell/states/hasRecordInlineCellDangerBorderScopedState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
@@ -33,6 +34,13 @@ type RecordInlineCellProps = {
 export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const { fieldDefinition, recordId, isCentered, isDisplayModeFixHeight } =
     useContext(FieldContext);
+
+  const setHasRecordInlineCellDangerBorder = useSetRecoilState(
+    hasRecordInlineCellDangerBorderScopedState(
+      recordId + fieldDefinition.fieldMetadataId,
+    ),
+  );
+
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -94,6 +102,10 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
   );
 
+  const handleError = (hasError: boolean, hasItem: boolean) => {
+    setHasRecordInlineCellDangerBorder(hasError && !hasItem);
+  };
+
   const { getIcon } = useIcons();
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
@@ -110,6 +122,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     showLabel: fieldDefinition.showLabel,
     isCentered,
     editModeContent: (
+      //here I know if I have a recordInlineCell / instead of recordTablecell - so it's from here I can toggle the right container border
       <FieldInput
         recordFieldInputdId={getRecordFieldInputId(
           recordId,
@@ -122,6 +135,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
+        onError={handleError}
         isReadOnly={isFieldReadOnly}
       />
     ),

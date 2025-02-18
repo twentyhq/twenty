@@ -54,6 +54,7 @@ type FieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
+  onError?: (hasError: boolean, hasItem: boolean) => void;
   isReadOnly?: boolean;
 };
 
@@ -67,6 +68,7 @@ export const FieldInput = ({
   onTab,
   onClickOutside,
   isReadOnly,
+  onError,
 }: FieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
@@ -95,6 +97,7 @@ export const FieldInput = ({
         <EmailsFieldInput
           onCancel={onCancel}
           onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+          onError={onError}
         />
       ) : isFieldFullName(fieldDefinition) ? (
         <FullNameFieldInput
@@ -132,6 +135,7 @@ export const FieldInput = ({
         <LinksFieldInput
           onCancel={onCancel}
           onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+          onError={onError}
         />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldInput

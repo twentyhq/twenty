@@ -21,8 +21,9 @@ const StyledInput = styled.input<{
       border: 1px solid ${theme.border.color.medium};
     `}
   
-  ${({ hasError, theme }) =>
+  ${({ hasError, hasItem, theme }) =>
     hasError &&
+    hasItem &&
     css`
       border: 1px solid ${theme.border.color.danger};
     `}

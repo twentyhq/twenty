@@ -5,10 +5,11 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { hasRecordTableCellDangerBorderScopedState } from '@/object-record/record-table/record-table-cell/states/hasRecordTableCellDangerBorderScopedState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
@@ -17,6 +18,12 @@ export const RecordTableCellFieldInput = () => {
     useRecordTableBodyContextOrThrow();
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
+
+  const setHasRecordTableCellDangerBorder = useSetRecoilState(
+    hasRecordTableCellDangerBorderScopedState(
+      recordId + fieldDefinition.fieldMetadataId,
+    ),
+  );
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
@@ -105,6 +112,10 @@ export const RecordTableCellFieldInput = () => {
     onMoveFocus('left');
   };
 
+  const handleError = (hasError: boolean, hasItem: boolean) => {
+    setHasRecordTableCellDangerBorder(hasError && !hasItem);
+  };
+
   return (
     <FieldInput
       recordFieldInputdId={getRecordFieldInputId(
@@ -119,6 +130,7 @@ export const RecordTableCellFieldInput = () => {
       onSubmit={handleSubmit}
       onTab={handleTab}
       isReadOnly={isFieldReadOnly}
+      onError={handleError}
     />
   );
 };
