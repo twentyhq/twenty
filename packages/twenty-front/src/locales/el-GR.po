@@ -163,7 +163,7 @@ msgstr "Αφρικανικά"
 msgid "All"
 msgstr "Όλα"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Όλα ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Συνδέστε με τη Microsoft"
 msgid "Connected accounts"
 msgstr "Συνδεδεμένοι λογαριασμοί"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Περιβάλλον"
 
@@ -448,7 +448,7 @@ msgstr "Συνέχεια με Google"
 msgid "Continue with Microsoft"
 msgstr "Συνέχεια με τη Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Πηδαλιούχος"
 
@@ -970,7 +970,7 @@ msgstr "Αξιοποιείστε τον χώρο εργασίας σας με τ
 msgid "Get your subscription"
 msgstr "Αποκτήστε τη συνδρομή σας"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Παγκόσμιο"
 
@@ -1248,6 +1248,10 @@ msgstr "Μετάβαση στον προηγούμενο workflow"
 msgid "New"
 msgstr "Νέο"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Νέο {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Νέος λογαριασμός"
@@ -1331,7 +1335,7 @@ msgstr "Νορβηγικά"
 msgid "Not empty"
 msgstr "Όχι άδειο"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Αντικείμενο"
 
@@ -1484,7 +1488,7 @@ msgstr "Διαβάστε την τεκμηρίωση"
 msgid "Receive an email containing password update link"
 msgstr "Λάβετε ένα email που περιέχει τον σύνδεσμο ενημέρωσης κωδικού πρόσβασης"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Επιλογή Εγγραφών"
 
@@ -1566,7 +1570,7 @@ msgstr "Ρωσικά"
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Αναζήτηση ''{commandMenuSearch}'' με..."
 

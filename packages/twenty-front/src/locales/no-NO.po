@@ -163,7 +163,7 @@ msgstr "Afrikaans"
 msgid "All"
 msgstr "Alle"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Alle ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Koble til med Microsoft"
 msgid "Connected accounts"
 msgstr "Tilkoblede kontoer"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Kontekst"
 
@@ -448,7 +448,7 @@ msgstr "Fortsett med Google"
 msgid "Continue with Microsoft"
 msgstr "Fortsett med Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Kopilot"
 
@@ -963,7 +963,7 @@ msgstr "Få mest mulig ut av arbeidsområdet ditt ved å invitere teamet ditt."
 msgid "Get your subscription"
 msgstr "Få abonnementet ditt"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Global"
 
@@ -1241,6 +1241,10 @@ msgstr "Naviger til forrige workflow"
 msgid "New"
 msgstr "Ny"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Nytt {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Ny konto"
@@ -1324,7 +1328,7 @@ msgstr "Norsk"
 msgid "Not empty"
 msgstr "Ikke tom"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objekt"
 
@@ -1477,7 +1481,7 @@ msgstr "Les dokumentasjonen"
 msgid "Receive an email containing password update link"
 msgstr "Motta en e-post med lenke for å oppdatere passordet"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Velg poster"
 
@@ -1559,7 +1563,7 @@ msgstr "Russisk"
 msgid "Search"
 msgstr "Søk"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Søk ''{commandMenuSearch}'' med..."
 

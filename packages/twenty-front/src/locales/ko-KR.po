@@ -164,7 +164,7 @@ msgstr "아프리칸스어"
 msgid "All"
 msgstr "전체"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "전체 ({relationRecordsCount})"
 
@@ -425,7 +425,7 @@ msgstr "Microsoft와 연결"
 msgid "Connected accounts"
 msgstr "연결된 계정"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "컨텍스트"
 
@@ -449,7 +449,7 @@ msgstr "Google로 계속"
 msgid "Continue with Microsoft"
 msgstr "Microsoft로 계속"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "부조종사"
 
@@ -964,7 +964,7 @@ msgstr "팀을 초대하여 워크스페이스를 최대한 활용하세요."
 msgid "Get your subscription"
 msgstr "구독 신청"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "글로벌"
 
@@ -1242,6 +1242,10 @@ msgstr "이전 워크플로로 이동"
 msgid "New"
 msgstr "새로운"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "새 {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "새 계정"
@@ -1325,7 +1329,7 @@ msgstr "노르웨이어"
 msgid "Not empty"
 msgstr "비어 있지 않음"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "개체"
 
@@ -1478,7 +1482,7 @@ msgstr "문서 읽기"
 msgid "Receive an email containing password update link"
 msgstr "비밀번호 업데이트 링크가 포함된 이메일 받기"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "레코드 선택"
 
@@ -1560,7 +1564,7 @@ msgstr "러시아어"
 msgid "Search"
 msgstr "검색"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "''{commandMenuSearch}''으로 검색..."
 

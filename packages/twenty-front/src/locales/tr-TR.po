@@ -163,7 +163,7 @@ msgstr "Afrikaanca"
 msgid "All"
 msgstr "Tüm"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Tüm ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Microsoft ile Bağlan"
 msgid "Connected accounts"
 msgstr "Bağlı hesaplar"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Bağlam"
 
@@ -448,7 +448,7 @@ msgstr "Google ile Devam Et"
 msgid "Continue with Microsoft"
 msgstr "Microsoft ile devam et"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Yardımcı Pilot"
 
@@ -963,7 +963,7 @@ msgstr "Ekibinizi davet ederek çalışma alanınızdan en iyi şekilde yararlan
 msgid "Get your subscription"
 msgstr "Aboneliğinizi alın"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Küresel"
 
@@ -1241,6 +1241,10 @@ msgstr "Önceki iş akışına git"
 msgid "New"
 msgstr "Yeni"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Yeni {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Yeni hesap"
@@ -1324,7 +1328,7 @@ msgstr "Norveççe"
 msgid "Not empty"
 msgstr "Boş değil"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Nesne"
 
@@ -1477,7 +1481,7 @@ msgstr "Dökümanları Oku"
 msgid "Receive an email containing password update link"
 msgstr "Şifre güncelleme bağlantısı içeren e-posta alın"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Kayıt Seçimi"
 
@@ -1559,7 +1563,7 @@ msgstr "Rusça"
 msgid "Search"
 msgstr "Arama"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "''{commandMenuSearch}'' ile ara..."
 

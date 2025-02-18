@@ -163,7 +163,7 @@ msgstr "crwdns1787:0crwdne1787:0"
 msgid "All"
 msgstr "crwdns95:0crwdne95:0"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "crwdns97:0{relationRecordsCount}crwdne97:0"
 
@@ -424,7 +424,7 @@ msgstr "crwdns199:0crwdne199:0"
 msgid "Connected accounts"
 msgstr "crwdns201:0crwdne201:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "crwdns203:0crwdne203:0"
 
@@ -448,7 +448,7 @@ msgstr "crwdns209:0crwdne209:0"
 msgid "Continue with Microsoft"
 msgstr "crwdns211:0crwdne211:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "crwdns213:0crwdne213:0"
 
@@ -963,7 +963,7 @@ msgstr "crwdns405:0crwdne405:0"
 msgid "Get your subscription"
 msgstr "crwdns407:0crwdne407:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "crwdns409:0crwdne409:0"
 
@@ -1241,6 +1241,10 @@ msgstr "crwdns513:0crwdne513:0"
 msgid "New"
 msgstr "crwdns515:0crwdne515:0"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "crwdns4853:0{capitalizedObjectNameSingular}crwdne4853:0"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "crwdns517:0crwdne517:0"
@@ -1324,7 +1328,7 @@ msgstr "crwdns1825:0crwdne1825:0"
 msgid "Not empty"
 msgstr "crwdns537:0crwdne537:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "crwdns539:0crwdne539:0"
 
@@ -1477,7 +1481,7 @@ msgstr "crwdns595:0crwdne595:0"
 msgid "Receive an email containing password update link"
 msgstr "crwdns597:0crwdne597:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "crwdns599:0crwdne599:0"
 
@@ -1559,7 +1563,7 @@ msgstr "crwdns1833:0crwdne1833:0"
 msgid "Search"
 msgstr "crwdns623:0crwdne623:0"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "crwdns625:0{commandMenuSearch}crwdne625:0"
 

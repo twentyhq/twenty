@@ -163,7 +163,7 @@ msgstr "Afrikaans"
 msgid "All"
 msgstr "Alle"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Alles ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Verbind met Microsoft"
 msgid "Connected accounts"
 msgstr "Verbonden accounts"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Context"
 
@@ -448,7 +448,7 @@ msgstr "Doorgaan met Google"
 msgid "Continue with Microsoft"
 msgstr "Doorgaan met Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Copiloot"
 
@@ -963,7 +963,7 @@ msgstr "Haal het meeste uit je werkruimte door je team uit te nodigen."
 msgid "Get your subscription"
 msgstr "Krijg je abonnement"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Globaal"
 
@@ -1241,6 +1241,10 @@ msgstr "Navigeer naar de vorige workflow"
 msgid "New"
 msgstr "Nieuw"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Nieuwe {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Nieuwe account"
@@ -1324,7 +1328,7 @@ msgstr "Noors"
 msgid "Not empty"
 msgstr "Niet leeg"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Object"
 
@@ -1477,7 +1481,7 @@ msgstr "Lees documentatie"
 msgid "Receive an email containing password update link"
 msgstr "Ontvang een e-mail met een link om het wachtwoord bij te werken"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Selectie opnemen"
 
@@ -1559,7 +1563,7 @@ msgstr "Russisch"
 msgid "Search"
 msgstr "Zoeken"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Zoek ''{commandMenuSearch}'' met..."
 

@@ -163,7 +163,7 @@ msgstr "אפריקאנס"
 msgid "All"
 msgstr "כולם"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "כולם ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "התחבר עם Microsoft"
 msgid "Connected accounts"
 msgstr "חשבונות מחוברים"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "הקשר"
 
@@ -448,7 +448,7 @@ msgstr "המשך עם Google"
 msgid "Continue with Microsoft"
 msgstr "המשך עם מיקרוסופט"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "קו-טייס"
 
@@ -963,7 +963,7 @@ msgstr "נצלו את המרחב שלכם על ידי הזמנת הצוות של
 msgid "Get your subscription"
 msgstr "השיגו את המנוי שלכם"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "גלובלי"
 
@@ -1241,6 +1241,10 @@ msgstr "נווט לזרימת עבודה הקודמת"
 msgid "New"
 msgstr "חדש"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "חדש {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "חשבון חדש"
@@ -1324,7 +1328,7 @@ msgstr "נורווגית"
 msgid "Not empty"
 msgstr "לא ריק"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "אובייקט"
 
@@ -1477,7 +1481,7 @@ msgstr "\\"
 msgid "Receive an email containing password update link"
 msgstr "\\"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "\\"
 
@@ -1559,7 +1563,7 @@ msgstr "רוסית"
 msgid "Search"
 msgstr "\\"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "חפש \\\"{commandMenuSearch}\\\" עם..."
 
