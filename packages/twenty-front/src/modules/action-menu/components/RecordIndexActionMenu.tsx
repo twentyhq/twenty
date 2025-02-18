@@ -8,8 +8,7 @@ import { RecordIndexActionMenuButtons } from '@/action-menu/components/RecordInd
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -18,8 +17,8 @@ import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
-  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
+  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
   );
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
@@ -39,7 +38,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
 
   return (
     <>
-      {contextStoreCurrentObjectMetadataId && (
+      {contextStoreCurrentObjectMetadataItem && (
         <ActionMenuContext.Provider
           value={{
             isInRightDrawer: false,
