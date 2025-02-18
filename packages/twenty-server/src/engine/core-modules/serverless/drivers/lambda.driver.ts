@@ -1,7 +1,9 @@
 import * as fs from 'fs/promises';
 import { join } from 'path';
 
+import ts, { transpileModule } from 'typescript';
 import {
+  CreateFunctionCommandInput,
   CreateFunctionCommand,
   DeleteFunctionCommand,
   GetFunctionCommand,
@@ -13,18 +15,10 @@ import {
   ListLayerVersionsCommandInput,
   PublishLayerVersionCommand,
   PublishLayerVersionCommandInput,
-  PublishVersionCommand,
-  PublishVersionCommandInput,
   ResourceNotFoundException,
-  UpdateFunctionCodeCommand,
-  UpdateFunctionConfigurationCommand,
-  UpdateFunctionConfigurationCommandInput,
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
-import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
-import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
-import dotenv from 'dotenv';
 import { isDefined } from 'twenty-shared';
 
 import {
@@ -34,10 +28,7 @@ import {
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
-import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
-import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { compileTypescript } from 'src/engine/core-modules/serverless/drivers/utils/compile-typescript';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
 import {
@@ -54,6 +45,9 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
+import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
+import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 10 * 60 * 60; // 10h
@@ -230,115 +224,58 @@ export class LambdaDriver implements ServerlessDriver {
     return join(SERVERLESS_TMPDIR_FOLDER, serverlessFunction.id, version);
   };
 
-  async build(serverlessFunction: ServerlessFunctionEntity, version: 'draft') {
-    if (version !== 'draft') {
-      throw new Error("We can only build 'draft' version with lambda driver");
-    }
-
-    const inMemoryServerlessFunctionFolderPath =
-      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
-
-    const folderPath = getServerlessFolder({
-      serverlessFunction,
-      version,
-    });
-
-    await this.fileStorageService.download({
-      from: { folderPath },
-      to: { folderPath: inMemoryServerlessFunctionFolderPath },
-    });
-
-    compileTypescript(inMemoryServerlessFunctionFolderPath);
-
-    const lambdaZipPath = join(
-      inMemoryServerlessFunctionFolderPath,
-      'lambda.zip',
-    );
-
-    await createZipFile(
-      join(inMemoryServerlessFunctionFolderPath, OUTDIR_FOLDER),
-      lambdaZipPath,
-    );
-
-    const envFileContent = await fs.readFile(
-      join(inMemoryServerlessFunctionFolderPath, ENV_FILE_NAME),
-    );
-
-    const envVariables = dotenv.parse(envFileContent);
-
+  async createLambdaExecutorIfNotExists(
+    serverlessFunction: ServerlessFunctionEntity,
+  ) {
     const functionExists = await this.checkFunctionExists(
       serverlessFunction.id,
     );
 
-    if (!functionExists) {
-      const layerArn = await this.createLayerIfNotExists(
-        serverlessFunction.layerVersion,
-      );
-
-      const params: CreateFunctionCommandInput = {
-        Code: {
-          ZipFile: await fs.readFile(lambdaZipPath),
-        },
-        FunctionName: serverlessFunction.id,
-        Handler: 'src/index.main',
-        Layers: [layerArn],
-        Environment: {
-          Variables: envVariables,
-        },
-        Role: this.options.lambdaRole,
-        Runtime: serverlessFunction.runtime,
-        Description: 'Lambda function to run user script',
-        Timeout: serverlessFunction.timeoutSeconds,
-      };
-
-      const command = new CreateFunctionCommand(params);
-
-      await (await this.getLambdaClient()).send(command);
-    } else {
-      const updateCodeParams: UpdateFunctionCodeCommandInput = {
-        ZipFile: await fs.readFile(lambdaZipPath),
-        FunctionName: serverlessFunction.id,
-      };
-
-      const updateCodeCommand = new UpdateFunctionCodeCommand(updateCodeParams);
-
-      await (await this.getLambdaClient()).send(updateCodeCommand);
-
-      const updateConfigurationParams: UpdateFunctionConfigurationCommandInput =
-        {
-          Environment: {
-            Variables: envVariables,
-          },
-          FunctionName: serverlessFunction.id,
-          Timeout: serverlessFunction.timeoutSeconds,
-        };
-
-      const updateConfigurationCommand = new UpdateFunctionConfigurationCommand(
-        updateConfigurationParams,
-      );
-
-      await this.waitFunctionUpdates(serverlessFunction.id);
-
-      await (await this.getLambdaClient()).send(updateConfigurationCommand);
+    if (functionExists) {
+      return;
     }
 
-    await this.waitFunctionUpdates(serverlessFunction.id);
+    const layerArn = await this.createLayerIfNotExists(
+      serverlessFunction.layerVersion,
+    );
+
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await lambdaBuildDirectoryManager.init();
+
+    await copyExecutor(sourceTemporaryDir);
+
+    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+    const params: CreateFunctionCommandInput = {
+      Code: {
+        ZipFile: await fs.readFile(lambdaZipPath),
+      },
+      FunctionName: serverlessFunction.id,
+      Layers: [layerArn],
+      Handler: 'index.handler',
+      Role: this.options.lambdaRole,
+      Runtime: serverlessFunction.runtime,
+      Description: 'User script executor',
+      Timeout: serverlessFunction.timeoutSeconds,
+    };
+
+    const command = new CreateFunctionCommand(params);
+
+    await (await this.getLambdaClient()).send(command);
+
+    await lambdaBuildDirectoryManager.clean();
+  }
+
+  async build(serverlessFunction: ServerlessFunctionEntity) {
+    await this.createLambdaExecutorIfNotExists(serverlessFunction);
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {
-    await this.build(serverlessFunction, 'draft');
-    const params: PublishVersionCommandInput = {
-      FunctionName: serverlessFunction.id,
-    };
-
-    const command = new PublishVersionCommand(params);
-
-    const result = await (await this.getLambdaClient()).send(command);
-    const newVersion = result.Version;
-
-    if (!newVersion) {
-      throw new Error('New published version is undefined');
-    }
+    const newVersion = serverlessFunction.latestVersion
+      ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
+      : '1';
 
     const draftFolderPath = getServerlessFolder({
       serverlessFunction: serverlessFunction,
@@ -358,27 +295,41 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   async execute(
-    functionToExecute: ServerlessFunctionEntity,
+    serverlessFunction: ServerlessFunctionEntity,
     payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult> {
-    const computedVersion =
-      version === 'latest' ? functionToExecute.latestVersion : version;
-
-    const functionName =
-      computedVersion === 'draft'
-        ? functionToExecute.id
-        : `${functionToExecute.id}:${computedVersion}`;
-
-    if (version === 'draft') {
-      await this.waitFunctionUpdates(functionToExecute.id);
-    }
-
     const startTime = Date.now();
+    const computedVersion =
+      version === 'latest' ? serverlessFunction.latestVersion : version;
+
+    const folderPath = getServerlessFolder({
+      serverlessFunction,
+      version: computedVersion,
+    });
+
+    const tsCodeStream = await this.fileStorageService.read({
+      folderPath: join(folderPath, 'src'),
+      filename: INDEX_FILE_NAME,
+    });
+
+    const tsCode = await readFileContent(tsCodeStream);
+
+    const compiledCode = transpileModule(tsCode, {
+      compilerOptions: {
+        module: ts.ModuleKind.ESNext,
+        target: ts.ScriptTarget.ES2017,
+      },
+    }).outputText;
+
+    const executorPayload = {
+      params: payload,
+      code: compiledCode,
+    };
 
     const params: InvokeCommandInput = {
-      FunctionName: functionName,
-      Payload: JSON.stringify(payload),
+      FunctionName: serverlessFunction.id,
+      Payload: JSON.stringify(executorPayload),
     };
 
     const command = new InvokeCommand(params);

@@ -59,16 +59,10 @@ export class LocalDriver implements ServerlessDriver {
   async delete() {}
 
   async build(serverlessFunction: ServerlessFunctionEntity, version: string) {
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
-
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
 
     const inMemoryServerlessFunctionFolderPath =
-      this.getInMemoryServerlessFunctionFolderPath(
-        serverlessFunction,
-        computedVersion,
-      );
+      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
 
     const folderPath = getServerlessFolder({
       serverlessFunction,
