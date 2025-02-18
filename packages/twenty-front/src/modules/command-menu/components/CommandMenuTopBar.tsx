@@ -16,6 +16,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
@@ -80,6 +81,10 @@ const StyledCloseButtonContainer = styled.div`
   justify-content: center;
 `;
 
+const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
+  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+`;
+
 export const CommandMenuTopBar = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
@@ -123,6 +128,11 @@ export const CommandMenuTopBar = () => {
       });
   }, [commandMenuNavigationStack, theme.icon.size.sm]);
 
+  const location = useLocation();
+  const isButtonVisible =
+    !location.pathname.startsWith('/objects/') &&
+    !location.pathname.startsWith('/object/');
+
   return (
     <StyledInputContainer>
       <StyledContentContainer>
@@ -162,7 +172,7 @@ export const CommandMenuTopBar = () => {
         )}
       </StyledContentContainer>
       {!isMobile && (
-        <>
+        <StyledCloseButtonWrapper isVisible={isButtonVisible}>
           {isCommandMenuV2Enabled ? (
             <Button
               Icon={IconX}
@@ -184,7 +194,7 @@ export const CommandMenuTopBar = () => {
               />
             </StyledCloseButtonContainer>
           )}
-        </>
+        </StyledCloseButtonWrapper>
       )}
     </StyledInputContainer>
   );

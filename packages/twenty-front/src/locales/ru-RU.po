@@ -163,7 +163,7 @@ msgstr "Африкаанс"
 msgid "All"
 msgstr "Все"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Все ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Подключить через Microsoft"
 msgid "Connected accounts"
 msgstr "Подключенные аккаунты"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Контекст"
 
@@ -448,7 +448,7 @@ msgstr "Продолжить через Google"
 msgid "Continue with Microsoft"
 msgstr "Продолжить с помощью Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Копилот"
 
@@ -963,7 +963,7 @@ msgstr "Добейтесь максимальной эффективности �
 msgid "Get your subscription"
 msgstr "Приобрести подписку"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Глобальный"
 
@@ -1241,6 +1241,10 @@ msgstr "Перейти к предыдущему Workflow"
 msgid "New"
 msgstr "Новый"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Новый {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Новый аккаунт"
@@ -1324,7 +1328,7 @@ msgstr "Норвежский"
 msgid "Not empty"
 msgstr "Не пусто"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Объект"
 
@@ -1477,7 +1481,7 @@ msgstr "Прочитать документацию"
 msgid "Receive an email containing password update link"
 msgstr "Получить письмо со ссылкой для обновления пароля"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Выбор записей"
 
@@ -1559,7 +1563,7 @@ msgstr "Русский"
 msgid "Search"
 msgstr "Поиск"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Искать ''{commandMenuSearch}'' с помощью..."
 

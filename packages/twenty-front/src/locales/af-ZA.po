@@ -163,7 +163,7 @@ msgstr "Afrikaans"
 msgid "All"
 msgstr "Almal"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Almal ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Verbind met Microsoft"
 msgid "Connected accounts"
 msgstr "Verbonde rekeninge"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Konteks"
 
@@ -448,7 +448,7 @@ msgstr "Gaan voort met Google"
 msgid "Continue with Microsoft"
 msgstr "Gaan voort met Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Medevlieënier"
 
@@ -963,7 +963,7 @@ msgstr "Benut jou werkruimte optimaal deur jou span uit te nooi."
 msgid "Get your subscription"
 msgstr "Kry jou inskrywing"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Globaal"
 
@@ -1241,6 +1241,10 @@ msgstr "Navigeer na vorige werkstroom"
 msgid "New"
 msgstr "Nuut"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Nuwe {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Nuwe rekening"
@@ -1324,7 +1328,7 @@ msgstr "Noors"
 msgid "Not empty"
 msgstr "Nie leeg nie"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objek"
 
@@ -1477,7 +1481,7 @@ msgstr "Lees dokumentasie"
 msgid "Receive an email containing password update link"
 msgstr "Ontvang 'n e-pos met skakel om wagwoord op te dateer"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Rekord Seleksie"
 
@@ -1559,7 +1563,7 @@ msgstr "Russies"
 msgid "Search"
 msgstr "Soek"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Soek ''{commandMenuSearch}'' met..."
 
