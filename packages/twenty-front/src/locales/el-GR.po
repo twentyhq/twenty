@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Ακύρωση"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Περίπου"
 
@@ -372,7 +372,7 @@ msgstr "Κινέζικα — Παραδοσιακά"
 msgid "Choose an object"
 msgstr "Επιλέξτε ένα αντικείμενο"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Επιλέξτε τα πεδία που θα ταυτοποιήσουν τις εγγραφές σας"
 
@@ -543,7 +543,7 @@ msgstr "Τσέχικα"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Ζώνη κινδύνου"
 
@@ -578,7 +578,7 @@ msgstr "Ημερομηνία και ώρα"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Απενεργοποίηση"
@@ -588,7 +588,7 @@ msgstr "Απενεργοποίηση"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Απενεργοποιήστε τη συγχρονισμό των ετικετών αντικειμένων και των ονομάτων API για να ορίσετε ένα προσαρμοσμένο όνομα API"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Απενεργοποίηση αντικειμένου"
 
@@ -1205,7 +1205,7 @@ msgstr "Όνομα"
 msgid "Name can not be empty"
 msgstr "Το όνομα δεν μπορεί να είναι κενό"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Όνομα και σε ενικό (π.χ., 'Τιμολόγιο') και σε πληθυντικό (π.χ., 'Τιμολόγια') αριθμό."
 
@@ -1352,7 +1352,7 @@ msgstr "Εκτός της συνηθισμένης πορείας"
 msgid "Opened"
 msgstr "Ανοίχτηκε"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Επιλογές"
@@ -1562,6 +1562,7 @@ msgstr "Ρωσικά"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "Αναζήτηση"
 
@@ -1591,6 +1592,7 @@ msgid "Search for an object..."
 msgstr "Αναζήτηση αντικειμένου..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "Αναζήτηση εγγραφών"
 

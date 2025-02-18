@@ -1,8 +1,7 @@
-import { useContextStoreCurrentObjectMetadataIdOrThrow } from '@/context-store/hooks/useContextStoreCurrentObjectMetadataIdOrThrow';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -14,12 +13,10 @@ export const useFindManyRecordsSelectedInContextStore = ({
   instanceId?: string;
   limit?: number;
 }) => {
-  const objectMetadataId =
-    useContextStoreCurrentObjectMetadataIdOrThrow(instanceId);
-
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId,
-  });
+  const objectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
+    instanceId,
+  );
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
@@ -36,12 +33,13 @@ export const useFindManyRecordsSelectedInContextStore = ({
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
-    objectMetadataItem,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    objectMetadataItem!,
     filterValueDependencies,
   );
 
   const { records, loading, totalCount } = useFindManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
     filter: queryFilter,
     withSoftDeleted: true,
     orderBy: [
