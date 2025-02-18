@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared';
 
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
-import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
+import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -24,7 +24,7 @@ export const buildCreatedByFromAuthContext = async ({
   switch (true) {
     // TODO: remove that code once we have the workspace member id in all tokens
     case isDefined(workspaceMemberId) && isDefined(user): {
-      return buildCreatedByFromWorkspaceMember({
+      return buildCreatedByFromFullNameMetadata({
         fullNameMetadata: {
           firstName: user.firstName,
           lastName: user.lastName,
@@ -46,7 +46,7 @@ export const buildCreatedByFromAuthContext = async ({
         },
       });
 
-      return buildCreatedByFromWorkspaceMember({
+      return buildCreatedByFromFullNameMetadata({
         fullNameMetadata: workspaceMember.name,
         workspaceMemberId: workspaceMember.id,
       });

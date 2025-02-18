@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
+import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -80,7 +80,7 @@ export class WorkflowTriggerWorkspaceService {
       this.getWorkspaceId(),
       workflowVersionId,
       payload,
-      buildCreatedByFromWorkspaceMember({
+      buildCreatedByFromFullNameMetadata({
         fullNameMetadata: { firstName, lastName },
         workspaceMemberId,
       }),

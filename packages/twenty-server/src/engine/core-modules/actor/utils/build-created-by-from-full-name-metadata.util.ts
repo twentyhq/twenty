@@ -8,7 +8,7 @@ type BuildCreatedByFromWorkspaceMember = {
   workspaceMemberId: string;
   fullNameMetadata: FullNameMetadata;
 };
-export const buildCreatedByFromWorkspaceMember = ({
+export const buildCreatedByFromFullNameMetadata = ({
   fullNameMetadata,
   workspaceMemberId,
 }: BuildCreatedByFromWorkspaceMember): ActorMetadata => ({
