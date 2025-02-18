@@ -970,6 +970,15 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES = 5;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Enable or disable the attachment preview feature',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_ATTACHMENT_PREVIEW_ENABLED = true;
 }
 
 export const validate = (
