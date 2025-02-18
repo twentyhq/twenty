@@ -118,17 +118,17 @@ export const RightDrawerEmailThread = () => {
     switch (connectedAccountProvider) {
       case ConnectedAccountProvider.MICROSOFT:
         url = `https://outlook.office365.com/mail/inbox/id/${messageThreadExternalId}`;
+        window.open(url, '_blank');
         break;
       case ConnectedAccountProvider.GOOGLE:
         url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
+        window.open(url, '_blank');
         break;
       case null:
         throw new Error('Account provider not provided');
       default:
         assertUnreachable(connectedAccountProvider);
     }
-
-    window.open(url, '_blank');
   };
   if (!thread || !messages.length) {
     return null;
