@@ -1,5 +1,6 @@
 import { useMatch, useResolvedPath } from 'react-router-dom';
 
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
   NavigationDrawerItem,
@@ -15,6 +16,8 @@ type SettingsNavigationDrawerItemProps = Pick<
   matchSubPages?: boolean;
   path: SettingsPath;
   subItemState?: NavigationDrawerSubItemState;
+  isAdvanced?: boolean;
+  isHidden?: boolean;
 };
 
 export const SettingsNavigationDrawerItem = ({
@@ -25,16 +28,21 @@ export const SettingsNavigationDrawerItem = ({
   path,
   soon,
   subItemState,
+  isAdvanced = false,
+  isHidden = false,
 }: SettingsNavigationDrawerItemProps) => {
   const href = getSettingsPath(path);
   const pathName = useResolvedPath(href).pathname;
-
   const isActive = !!useMatch({
     path: pathName,
     end: !matchSubPages,
   });
 
-  return (
+  if (isHidden) {
+    return null;
+  }
+
+  const navigationItem = (
     <NavigationDrawerItem
       indentationLevel={indentationLevel}
       subItemState={subItemState}
@@ -45,4 +53,14 @@ export const SettingsNavigationDrawerItem = ({
       soon={soon}
     />
   );
+
+  if (isAdvanced) {
+    return (
+      <AdvancedSettingsWrapper navigationDrawerItem>
+        {navigationItem}
+      </AdvancedSettingsWrapper>
+    );
+  }
+
+  return navigationItem;
 };

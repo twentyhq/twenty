@@ -14,7 +14,6 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
 
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
@@ -27,39 +26,27 @@ export const SettingsNavigationDrawerItems = () => {
     item: SettingsNavigationItem,
     index: number,
     totalItems: number,
-  ) => {
-    if (isDefined(item.isHidden) && item.isHidden) {
-      return null;
-    }
-
-    const navigationItem = (
-      <SettingsNavigationDrawerItem
-        key={item.path}
-        label={item.label}
-        path={item.path}
-        Icon={item.Icon}
-        indentationLevel={item.indentationLevel}
-        matchSubPages={item.matchSubPages}
-        subItemState={
-          item.indentationLevel
-            ? getNavigationSubItemLeftAdornment({
-                arrayLength: totalItems,
-                index,
-                selectedIndex: index,
-              })
-            : undefined
-        }
-      />
-    );
-
-    return item.isAdvanced ? (
-      <AdvancedSettingsWrapper key={item.path} navigationDrawerItem>
-        {navigationItem}
-      </AdvancedSettingsWrapper>
-    ) : (
-      navigationItem
-    );
-  };
+  ) => (
+    <SettingsNavigationDrawerItem
+      key={item.path}
+      Icon={item.Icon}
+      label={item.label}
+      path={item.path}
+      indentationLevel={item.indentationLevel}
+      matchSubPages={item.matchSubPages}
+      isAdvanced={item.isAdvanced}
+      isHidden={item.isHidden}
+      subItemState={
+        item.indentationLevel
+          ? getNavigationSubItemLeftAdornment({
+              arrayLength: totalItems,
+              index,
+              selectedIndex: index,
+            })
+          : undefined
+      }
+    />
+  );
 
   return (
     <>
