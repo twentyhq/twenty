@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-43/0-43-add-tasks-assigned-to-me-view.command';
+import { StandardizationOfActorCompositeContextTypeCommand_043 } from 'src/database/commands/upgrade-version/0-43/0-43-standardization-of-actor-composite-context-type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Command({
@@ -17,6 +18,7 @@ export class UpgradeTo0_43Command extends ActiveWorkspacesCommandRunner {
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly addTasksAssignedToMeViewCommand: AddTasksAssignedToMeViewCommand,
+    private readonly standardizationOfActorCompositeContextTypeCommand: StandardizationOfActorCompositeContextTypeCommand_043,
   ) {
     super(workspaceRepository);
   }
@@ -29,6 +31,12 @@ export class UpgradeTo0_43Command extends ActiveWorkspacesCommandRunner {
     this.logger.log('Running command to upgrade to 0.43');
 
     await this.addTasksAssignedToMeViewCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
+    await this.standardizationOfActorCompositeContextTypeCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
