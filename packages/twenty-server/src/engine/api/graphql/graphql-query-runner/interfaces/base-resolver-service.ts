@@ -83,13 +83,13 @@ export abstract class GraphqlQueryBaseResolverService<
 
       await this.validate(args, options);
 
-      const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsEnabled,
-        authContext.workspace.id,
-      );
+      const featureFlagsMap =
+        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+          authContext.workspace.id,
+        );
 
       if (
-        permissionsEnabled === true &&
+        featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
         objectMetadataItemWithFieldMaps.isSystem === true
       ) {
         await this.validateSystemObjectPermissions(options);
@@ -118,11 +118,6 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
       );
 
-      const featureFlagsMap =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-          authContext.workspace.id,
-        );
-
       const graphqlQueryParser = new GraphqlQueryParser(
         objectMetadataItemWithFieldMaps.fieldsByName,
         options.objectMetadataMaps,
@@ -146,7 +141,10 @@ export abstract class GraphqlQueryBaseResolverService<
         graphqlQuerySelectedFieldsResult,
       };
 
-      const results = await this.resolve(graphqlQueryResolverExecutionArgs);
+      const results = await this.resolve(
+        graphqlQueryResolverExecutionArgs,
+        featureFlagsMap,
+      );
 
       const resultWithGetters = await this.queryResultGettersFactory.create(
         results,
@@ -214,6 +212,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
   protected abstract resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<Input>,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<Response>;
 
   protected abstract validate(
