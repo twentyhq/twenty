@@ -138,7 +138,6 @@ export const SettingsAdminGeneral = () => {
             placeholder="Enter user ID or email address"
             fullWidth
             disabled={isUserLookupLoading}
-            sizeVariant="lg"
           />
           <Button
             Icon={IconSearch}
