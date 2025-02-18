@@ -1,37 +1,42 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ObjectType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'workspaceTrustedDomain', schema: 'core' })
 @ObjectType()
 export class WorkspaceTrustedDomain {
-  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
+
   @Column({ type: 'varchar', nullable: false })
   domain: string;
 
-  @Field()
   @Column({ type: 'boolean', default: false, nullable: false })
   isValidated: boolean;
 
-  @Field()
   @Column({ type: 'varchar', nullable: false })
   validationToken: string;
+
+  @Column()
+  workspaceId: string;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.trustDomains, {
     onDelete: 'CASCADE',

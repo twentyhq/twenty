@@ -2,22 +2,14 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceInvitationResolver } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.resolver';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceTrustedDomain } from 'src/engine/core-modules/workspace-trusted-domain/workspace-trusted-domain.entity';
+import { WorkspaceTrustedDomainService } from 'src/engine/core-modules/workspace-trusted-domain/services/workspace-trusted-domain.service';
 
 @Module({
   imports: [
-    DomainManagerModule,
-    NestjsQueryTypeOrmModule.forFeature(
-      [AppToken, UserWorkspace, Workspace],
-      'core',
-    ),
+    NestjsQueryTypeOrmModule.forFeature([WorkspaceTrustedDomain], 'core'),
   ],
-  exports: [WorkspaceInvitationService],
-  providers: [WorkspaceInvitationService, WorkspaceInvitationResolver],
+  exports: [WorkspaceTrustedDomainService],
+  providers: [WorkspaceTrustedDomainService],
 })
 export class WorkspaceTrustedDomainModule {}
