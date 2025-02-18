@@ -36,7 +36,7 @@ const TITLE_FIELD_NAME = 'title';
 
 const BODY_V2_FIELD_NAME = 'bodyV2';
 
-export const SEARCH_FIELDS_FOR_TASK: FieldTypeAndNameMetadata[] = [
+export const SEARCH_FIELDS_FOR_TASKS: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
 ];
@@ -208,7 +208,9 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconUser',
     generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields(SEARCH_FIELDS_FOR_TASK),
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_TASKS,
+    ),
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
