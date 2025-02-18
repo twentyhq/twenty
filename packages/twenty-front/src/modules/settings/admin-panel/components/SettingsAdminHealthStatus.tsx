@@ -1,21 +1,12 @@
 import { SettingsAdminHealthMessageSyncCountersTable } from '@/settings/admin-panel/components/SettingsAdminHealthMessageSyncCountersTable';
-import { SettingsAdminQueueExpandableContainer } from '@/settings/admin-panel/components/SettingsAdminQueueExpandableContainer';
-import { SettingsAdminQueueHealthButtons } from '@/settings/admin-panel/components/SettingsAdminQueueHealthButtons';
 import { SettingsHealthStatusListCard } from '@/settings/admin-panel/components/SettingsHealthStatusListCard';
 import { AdminHealthService } from '@/settings/admin-panel/types/AdminHealthService';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { H2Title, Section } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
   useGetSystemHealthStatusQuery,
 } from '~/generated/graphql';
-
-const StyledTitleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-`;
 
 const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.color.red};
@@ -27,36 +18,20 @@ export const SettingsAdminHealthStatus = () => {
     fetchPolicy: 'network-only',
   });
 
-  const [selectedQueue, setSelectedQueue] = useState<string | null>(null);
-  const [expandedService, setExpandedService] = useState<string | null>(null);
-
-  const toggleQueueVisibility = (queueName: string) => {
-    setSelectedQueue(selectedQueue === queueName ? null : queueName);
-  };
-
-  const toggleServiceExpansion = (serviceId: string) => {
-    setExpandedService(expandedService === serviceId ? null : serviceId);
-  };
-
   const services = [
     {
-      id: 'database',
+      id: 'DATABASE',
       name: 'Database Status',
       ...data?.getSystemHealthStatus.database,
     },
-    { id: 'redis', name: 'Redis Status', ...data?.getSystemHealthStatus.redis },
+    { id: 'REDIS', name: 'Redis Status', ...data?.getSystemHealthStatus.redis },
     {
-      id: 'worker',
+      id: 'WORKER',
       name: 'Worker Status',
       status: data?.getSystemHealthStatus.worker.status,
       queues: data?.getSystemHealthStatus.worker.queues,
     },
   ].filter((service): service is AdminHealthService => !!service.status);
-
-  const isWorkerDown =
-    !data?.getSystemHealthStatus.worker.status ||
-    data?.getSystemHealthStatus.worker.status ===
-      AdminPanelHealthServiceStatus.OUTAGE;
 
   const isMessageSyncCounterDown =
     !data?.getSystemHealthStatus.messageSync.status ||
@@ -67,38 +42,9 @@ export const SettingsAdminHealthStatus = () => {
     <>
       <Section>
         <H2Title title="Health Status" description="How your system is doing" />
-        <SettingsHealthStatusListCard
-          services={services}
-          loading={loading}
-          onServiceClick={toggleServiceExpansion}
-          expandedService={expandedService}
-        />
+        <SettingsHealthStatusListCard services={services} loading={loading} />
       </Section>
-      <Section>
-        <StyledTitleContainer>
-          <H2Title
-            title="Queue Status"
-            description="Background job processing status and metrics"
-          />
-        </StyledTitleContainer>
-        {isWorkerDown && !loading ? (
-          <StyledErrorMessage>
-            Queue information is not available because the worker is down
-          </StyledErrorMessage>
-        ) : (
-          <>
-            <SettingsAdminQueueHealthButtons
-              queues={data?.getSystemHealthStatus.worker.queues ?? []}
-              selectedQueue={selectedQueue}
-              toggleQueueVisibility={toggleQueueVisibility}
-            />
-            <SettingsAdminQueueExpandableContainer
-              queues={data?.getSystemHealthStatus.worker.queues ?? []}
-              selectedQueue={selectedQueue}
-            />
-          </>
-        )}
-      </Section>
+
       <Section>
         <H2Title
           title="Message Sync Status"

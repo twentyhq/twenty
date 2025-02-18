@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HealthIndicatorResult } from '@nestjs/terminus';
 
+import { AdminPanelHealthServiceData } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
+import { AdminPanelIndicatorHealthStatusInputEnum } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-indicator-health-status.input';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
@@ -16,6 +18,13 @@ export class AdminPanelHealthService {
     private readonly workerHealth: WorkerHealthIndicator,
     private readonly messageSyncHealth: MessageSyncHealthIndicator,
   ) {}
+
+  private readonly healthIndicators = {
+    database: this.databaseHealth,
+    redis: this.redisHealth,
+    worker: this.workerHealth,
+    messageSync: this.messageSyncHealth,
+  };
 
   private getServiceStatus(
     result: PromiseSettledResult<HealthIndicatorResult>,
@@ -39,6 +48,34 @@ export class AdminPanelHealthService {
       status: AdminPanelHealthServiceStatus.OUTAGE,
       details: result.reason?.message,
     };
+  }
+
+  async getIndicatorHealthStatus(
+    indicatorName: AdminPanelIndicatorHealthStatusInputEnum,
+  ): Promise<AdminPanelHealthServiceData> {
+    const healthIndicator = this.healthIndicators[indicatorName];
+
+    if (!healthIndicator) {
+      throw new Error(`Health indicator not found: ${indicatorName}`);
+    }
+
+    const result = await Promise.allSettled([healthIndicator.isHealthy()]);
+    const indicatorStatus = this.getServiceStatus(result[0]);
+
+    if (indicatorName === 'worker') {
+      return {
+        ...indicatorStatus,
+        queues: (indicatorStatus?.queues ?? []).map((queue) => ({
+          ...queue,
+          status:
+            queue.workers > 0
+              ? AdminPanelHealthServiceStatus.OPERATIONAL
+              : AdminPanelHealthServiceStatus.OUTAGE,
+        })),
+      };
+    }
+
+    return indicatorStatus;
   }
 
   async getSystemHealthStatus(): Promise<SystemHealth> {

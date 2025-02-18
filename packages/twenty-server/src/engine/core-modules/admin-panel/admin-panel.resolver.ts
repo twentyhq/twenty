@@ -15,6 +15,9 @@ import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
+import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-data.dto';
+import { AdminPanelIndicatorHealthStatusInputEnum } from './dtos/admin-panel-indicator-health-status.input';
+
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AdminPanelResolver {
@@ -63,5 +66,15 @@ export class AdminPanelResolver {
   @Query(() => SystemHealth)
   async getSystemHealthStatus(): Promise<SystemHealth> {
     return this.adminPanelHealthService.getSystemHealthStatus();
+  }
+
+  @Query(() => AdminPanelHealthServiceData)
+  async getIndicatorHealthStatus(
+    @Args('indicatorName', {
+      type: () => AdminPanelIndicatorHealthStatusInputEnum,
+    })
+    indicatorName: AdminPanelIndicatorHealthStatusInputEnum,
+  ): Promise<AdminPanelHealthServiceData> {
+    return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorName);
   }
 }

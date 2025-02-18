@@ -4,7 +4,7 @@ import { AdminPanelWorkerQueueHealth } from 'src/engine/core-modules/admin-panel
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 
 @ObjectType()
-export class AdminPanelHealthService {
+export class AdminPanelHealthServiceData {
   @Field(() => AdminPanelHealthServiceStatus)
   status: AdminPanelHealthServiceStatus;
 

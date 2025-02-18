@@ -1,9 +1,9 @@
 import {
-  AdminPanelHealthService,
+  AdminPanelHealthServiceData,
   AdminPanelWorkerQueueHealth,
 } from '~/generated/graphql';
 
-type AdminWorkerService = AdminPanelHealthService & {
+type AdminWorkerService = AdminPanelHealthServiceData & {
   id: string;
   name: string;
   queues: AdminPanelWorkerQueueHealth[] | null | undefined;
