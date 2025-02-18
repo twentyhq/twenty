@@ -8,7 +8,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
@@ -108,19 +108,19 @@ export class PermissionsService {
       })
       .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
-    const permissionField =
-      this.getRoleFieldForRequiredPermission(requiredPermission);
+    const roleColumn =
+      this.getRoleColumnForRequiredPermission(requiredPermission);
 
-    return roleOfUserWorkspace?.[permissionField] === true;
+    return roleOfUserWorkspace?.[roleColumn] === true;
   }
 
   public async isPermissionsEnabled(): Promise<boolean> {
     return this.environmentService.get('PERMISSIONS_ENABLED') === true;
   }
 
-  private getRoleFieldForRequiredPermission(
+  private getRoleColumnForRequiredPermission(
     requiredPermission: PermissionsOnAllObjectRecords,
-  ): keyof RoleDTO {
+  ): keyof RoleEntity {
     switch (requiredPermission) {
       case PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS:
         return 'canReadAllObjectRecords';
