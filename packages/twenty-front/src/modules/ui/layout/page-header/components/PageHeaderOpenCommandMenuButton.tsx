@@ -2,7 +2,6 @@ import {
   AnimatedButton,
   IconButton,
   IconDotsVertical,
-  IconX,
   getOsControlSymbol,
   useIsMobile,
 } from 'twenty-ui';
@@ -117,8 +116,6 @@ export const PageHeaderOpenCommandMenuButton = () => {
   const ariaLabel = isCommandMenuOpened
     ? t`Close command menu`
     : t`Open command menu`;
-
-  const Icon = isCommandMenuOpened ? IconX : IconDotsVertical;
 
   const theme = useTheme();
 
