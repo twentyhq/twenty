@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentFamilyState';
 import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
 import { isDefined } from 'twenty-shared';
@@ -22,11 +22,11 @@ export const useDeleteCombinedViewFilters = (viewBarComponentId?: string) => {
     );
 
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
-    currentViewIdComponentState,
+    contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
 
-  const { getViewFromCache } = useGetViewFromCache();
+  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
   const deleteCombinedViewFilter = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -50,7 +50,7 @@ export const useDeleteCombinedViewFilters = (viewBarComponentId?: string) => {
           return;
         }
 
-        const currentView = await getViewFromCache(currentViewId);
+        const currentView = await getViewFromPrefetchState(currentViewId);
 
         if (!currentView) {
           return;
@@ -89,7 +89,7 @@ export const useDeleteCombinedViewFilters = (viewBarComponentId?: string) => {
       },
     [
       currentViewIdCallbackState,
-      getViewFromCache,
+      getViewFromPrefetchState,
       unsavedToDeleteViewFilterIdsCallbackState,
       unsavedToUpsertViewFiltersCallbackState,
     ],

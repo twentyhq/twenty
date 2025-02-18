@@ -55,6 +55,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     lastShowPageRecordIdState,
   );
 
+  const [hasInitialized, setHasInitialized] = useState(false);
+
   const { scrollToPosition } = useScrollToPosition();
 
   useEffect(() => {
@@ -141,8 +143,11 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
       return;
     }
 
-    findManyRecords();
-  }, [currentWorkspaceMember, findManyRecords]);
+    if (!hasInitialized) {
+      findManyRecords();
+      setHasInitialized(true);
+    }
+  }, [currentWorkspaceMember, findManyRecords, hasInitialized]);
 
   return <></>;
 };

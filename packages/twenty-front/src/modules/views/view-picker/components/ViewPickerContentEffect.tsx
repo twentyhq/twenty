@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -14,6 +15,7 @@ import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-pick
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const ViewPickerContentEffect = () => {
@@ -44,7 +46,13 @@ export const ViewPickerContentEffect = () => {
     viewPickerIsPersistingComponentState,
   );
 
-  const { viewsOnCurrentObject } = useGetCurrentView();
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const viewsOnCurrentObject = useRecoilValue(
+    prefetchViewsFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
   const referenceView = viewsOnCurrentObject.find(
     (view) => view.id === viewPickerReferenceViewId,
   );
