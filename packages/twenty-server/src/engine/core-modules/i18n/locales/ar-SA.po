@@ -66,7 +66,7 @@ msgstr "مجموعة من الرسائل المتعلقة (مثل سلسلة ا�
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "رسالة مرسلة أو مستلمة من خلال قناة المراسلة (البريد الإلكتروني، الدردشة، إلخ.)"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:44
+#: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "A note"
 msgstr "ملاحظة"
 
@@ -78,7 +78,7 @@ msgstr "هدف الملاحظة"
 msgid "A person"
 msgstr "شخص"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:46
+#: src/modules/task/standard-objects/task.workspace-entity.ts:49
 msgid "A task"
 msgstr "مهمة"
 
@@ -209,7 +209,7 @@ msgstr "مصفوفة"
 msgid "Assigned tasks"
 msgstr "المهام المعينة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:163
+#: src/modules/task/standard-objects/task.workspace-entity.ts:166
 msgid "Assignee"
 msgstr "الموكِل"
 
@@ -257,10 +257,10 @@ msgstr "مهمة المرفق"
 msgid "Attachment type"
 msgstr "نوع المرفق"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:151
+#: src/modules/task/standard-objects/task.workspace-entity.ts:154
 #: src/modules/person/standard-objects/person.workspace-entity.ts:244
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
-#: src/modules/note/standard-objects/note.workspace-entity.ts:113
+#: src/modules/note/standard-objects/note.workspace-entity.ts:115
 #: src/modules/company/standard-objects/company.workspace-entity.ts:241
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
@@ -351,13 +351,13 @@ msgstr "مقابض في القائمة السوداء"
 msgid "Blocklists"
 msgstr "القوائم السوداء"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:85
-#: src/modules/note/standard-objects/note.workspace-entity.ts:83
+#: src/modules/task/standard-objects/task.workspace-entity.ts:88
+#: src/modules/note/standard-objects/note.workspace-entity.ts:85
 msgid "Body"
 msgstr "النص"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:75
-#: src/modules/note/standard-objects/note.workspace-entity.ts:73
+#: src/modules/task/standard-objects/task.workspace-entity.ts:78
+#: src/modules/note/standard-objects/note.workspace-entity.ts:75
 msgid "Body (deprecated)"
 msgstr "النص الأساسي (مهمل)"
 
@@ -531,10 +531,10 @@ msgid "Context"
 msgstr "السياق"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
-#: src/modules/task/standard-objects/task.workspace-entity.ts:131
+#: src/modules/task/standard-objects/task.workspace-entity.ts:134
 #: src/modules/person/standard-objects/person.workspace-entity.ts:173
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
-#: src/modules/note/standard-objects/note.workspace-entity.ts:93
+#: src/modules/note/standard-objects/note.workspace-entity.ts:95
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
@@ -594,7 +594,7 @@ msgstr "قيمة العرض"
 msgid "Domain Name"
 msgstr "اسم النطاق"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:95
+#: src/modules/task/standard-objects/task.workspace-entity.ts:98
 msgid "Due Date"
 msgstr "تاريخ الاستحقاق"
 
@@ -790,10 +790,10 @@ msgstr "عضو مفضل في المساحة العملية"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:200
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
-#: src/modules/task/standard-objects/task.workspace-entity.ts:192
+#: src/modules/task/standard-objects/task.workspace-entity.ts:195
 #: src/modules/person/standard-objects/person.workspace-entity.ts:232
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:138
+#: src/modules/note/standard-objects/note.workspace-entity.ts:140
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
 #: src/modules/company/standard-objects/company.workspace-entity.ts:228
@@ -813,7 +813,7 @@ msgstr "المفضلات المرتبطة بالشركة"
 msgid "Favorites linked to the contact"
 msgstr "المفضلات المرتبطة بالجهة الاتصال"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:139
+#: src/modules/note/standard-objects/note.workspace-entity.ts:141
 msgid "Favorites linked to the note"
 msgstr "المفضلات المرتبطة بالملاحظة"
 
@@ -821,7 +821,7 @@ msgstr "المفضلات المرتبطة بالملاحظة"
 msgid "Favorites linked to the opportunity"
 msgstr "المفضلات المرتبطة بالفرصة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:193
+#: src/modules/task/standard-objects/task.workspace-entity.ts:196
 msgid "Favorites linked to the task"
 msgstr "المفضلات المرتبطة بالمهمة"
 
@@ -1228,23 +1228,23 @@ msgid "Name of the workflow run"
 msgstr "اسم تشغيل السيرة الذاتية"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:42
+#: src/modules/note/standard-objects/note.workspace-entity.ts:44
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
 msgstr "ملاحظة"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:114
+#: src/modules/note/standard-objects/note.workspace-entity.ts:116
 msgid "Note attachments"
 msgstr "مرفقات الملاحظة"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:74
-#: src/modules/note/standard-objects/note.workspace-entity.ts:84
+#: src/modules/note/standard-objects/note.workspace-entity.ts:76
+#: src/modules/note/standard-objects/note.workspace-entity.ts:86
 msgid "Note body"
 msgstr "نص الملاحظة"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:54
+#: src/modules/note/standard-objects/note.workspace-entity.ts:56
 msgid "Note record position"
 msgstr "موقع سجل الملاحظة"
 
@@ -1252,7 +1252,7 @@ msgstr "موقع سجل الملاحظة"
 msgid "Note Target"
 msgstr "هدف الملاحظة"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:102
+#: src/modules/note/standard-objects/note.workspace-entity.ts:104
 msgid "Note targets"
 msgstr "أهداف الملاحظة"
 
@@ -1260,13 +1260,13 @@ msgstr "أهداف الملاحظة"
 msgid "Note Targets"
 msgstr "أهداف الملاحظات"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:65
+#: src/modules/note/standard-objects/note.workspace-entity.ts:67
 msgid "Note title"
 msgstr "عنوان الملاحظة"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:221
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
-#: src/modules/note/standard-objects/note.workspace-entity.ts:43
+#: src/modules/note/standard-objects/note.workspace-entity.ts:45
 #: src/modules/company/standard-objects/company.workspace-entity.ts:205
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
@@ -1450,10 +1450,10 @@ msgstr "نقطة الاتصال"
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
-#: src/modules/task/standard-objects/task.workspace-entity.ts:55
+#: src/modules/task/standard-objects/task.workspace-entity.ts:58
 #: src/modules/person/standard-objects/person.workspace-entity.ts:162
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
-#: src/modules/note/standard-objects/note.workspace-entity.ts:53
+#: src/modules/note/standard-objects/note.workspace-entity.ts:55
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
 #: src/modules/company/standard-objects/company.workspace-entity.ts:145
@@ -1513,8 +1513,8 @@ msgstr "رمز التحديث"
 msgid "Related user email address"
 msgstr "عنوان البريد الإلكتروني للمستخدم المرتبط"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:139
-#: src/modules/note/standard-objects/note.workspace-entity.ts:101
+#: src/modules/task/standard-objects/task.workspace-entity.ts:142
+#: src/modules/note/standard-objects/note.workspace-entity.ts:103
 msgid "Relations"
 msgstr "العلاقات"
 
@@ -1563,7 +1563,7 @@ msgstr "المرحلة"
 msgid "Start Date"
 msgstr "تاريخ البداية"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:105
+#: src/modules/task/standard-objects/task.workspace-entity.ts:108
 msgid "Status"
 msgstr "الحالة"
 
@@ -1584,9 +1584,7 @@ msgstr "مؤشر التزامن"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr ""
-"\n"
-""
+msgstr "\n"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
@@ -1614,35 +1612,35 @@ msgid "Target Url"
 msgstr "عنوان Url المستهدف"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
-#: src/modules/task/standard-objects/task.workspace-entity.ts:44
+#: src/modules/task/standard-objects/task.workspace-entity.ts:47
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
 msgid "Task"
 msgstr "مهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:164
+#: src/modules/task/standard-objects/task.workspace-entity.ts:167
 msgid "Task assignee"
 msgstr "مُعين المهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:152
+#: src/modules/task/standard-objects/task.workspace-entity.ts:155
 msgid "Task attachments"
 msgstr "مرفقات المهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:76
-#: src/modules/task/standard-objects/task.workspace-entity.ts:86
+#: src/modules/task/standard-objects/task.workspace-entity.ts:79
+#: src/modules/task/standard-objects/task.workspace-entity.ts:89
 msgid "Task body"
 msgstr "نص المهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:96
+#: src/modules/task/standard-objects/task.workspace-entity.ts:99
 msgid "Task due date"
 msgstr "تاريخ استحقاق المهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:56
+#: src/modules/task/standard-objects/task.workspace-entity.ts:59
 msgid "Task record position"
 msgstr "موضع سجل المهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:106
+#: src/modules/task/standard-objects/task.workspace-entity.ts:109
 msgid "Task status"
 msgstr "حالة المهمة"
 
@@ -1650,7 +1648,7 @@ msgstr "حالة المهمة"
 msgid "Task Target"
 msgstr "هدف المهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:140
+#: src/modules/task/standard-objects/task.workspace-entity.ts:143
 msgid "Task targets"
 msgstr "أهداف المهمة"
 
@@ -1658,11 +1656,11 @@ msgstr "أهداف المهمة"
 msgid "Task Targets"
 msgstr "أهداف المهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:67
+#: src/modules/task/standard-objects/task.workspace-entity.ts:70
 msgid "Task title"
 msgstr "عنوان المهمة"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:45
+#: src/modules/task/standard-objects/task.workspace-entity.ts:48
 #: src/modules/person/standard-objects/person.workspace-entity.ts:210
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
 #: src/modules/company/standard-objects/company.workspace-entity.ts:194
@@ -1736,10 +1734,10 @@ msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "عنوان URL لموقع الشركة الإلكتروني. نستخدم هذا الرابط لجلب أيقونة الشركة"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
-#: src/modules/task/standard-objects/task.workspace-entity.ts:133
+#: src/modules/task/standard-objects/task.workspace-entity.ts:136
 #: src/modules/person/standard-objects/person.workspace-entity.ts:175
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
-#: src/modules/note/standard-objects/note.workspace-entity.ts:95
+#: src/modules/note/standard-objects/note.workspace-entity.ts:97
 #: src/modules/company/standard-objects/company.workspace-entity.ts:158
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
@@ -1812,9 +1810,9 @@ msgstr "المنطقة الزمنية"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:212
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
-#: src/modules/task/standard-objects/task.workspace-entity.ts:180
+#: src/modules/task/standard-objects/task.workspace-entity.ts:183
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
-#: src/modules/note/standard-objects/note.workspace-entity.ts:126
+#: src/modules/note/standard-objects/note.workspace-entity.ts:128
 #: src/modules/company/standard-objects/company.workspace-entity.ts:253
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
@@ -1824,7 +1822,7 @@ msgstr "أنشطة الجدول الزمني"
 msgid "Timeline Activities linked to the company"
 msgstr "أنشطة الجدول الزمني المرتبطة بالشركة"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:127
+#: src/modules/note/standard-objects/note.workspace-entity.ts:129
 msgid "Timeline Activities linked to the note."
 msgstr "أنشطة الجدول الزمني المرتبطة بالملاحظة."
 
@@ -1836,7 +1834,7 @@ msgstr "أنشطة الجدول الزمني المرتبطة بالفرصة."
 msgid "Timeline activities linked to the run"
 msgstr "أنشطة الجدول الزمني المرتبطة بالتشغيل"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:181
+#: src/modules/task/standard-objects/task.workspace-entity.ts:184
 msgid "Timeline Activities linked to the task."
 msgstr "أنشطة الجدول الزمني المرتبطة بالمهمة."
 
@@ -1856,8 +1854,8 @@ msgstr "أنشطة الجدول الزمني المتصلة بـ {label}"
 msgid "Timeline Activity"
 msgstr "نشاط الجدول الزمني"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:66
-#: src/modules/note/standard-objects/note.workspace-entity.ts:64
+#: src/modules/task/standard-objects/task.workspace-entity.ts:69
+#: src/modules/note/standard-objects/note.workspace-entity.ts:66
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
 msgid "Title"
@@ -2255,3 +2253,4 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "العضو في فريقك المسئول عن إدارة حساب الشركة"
+

@@ -388,6 +388,10 @@ msgstr "crwdns183:0crwdne183:0"
 msgid "Close"
 msgstr "crwdns185:0crwdne185:0"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "crwdns4859:0crwdne4859:0"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "crwdns187:0crwdne187:0"
@@ -1353,6 +1357,10 @@ msgstr "crwdns541:0crwdne541:0"
 msgid "Off the beaten path"
 msgstr "crwdns543:0crwdne543:0"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "crwdns4861:0crwdne4861:0"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "crwdns545:0crwdne545:0"
@@ -1898,7 +1906,7 @@ msgstr "crwdns1845:0crwdne1845:0"
 msgid "Type"
 msgstr "crwdns749:0crwdne749:0"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "crwdns751:0crwdne751:0"
 

@@ -66,7 +66,7 @@ msgstr "Un grup de missatges relacionats (per exemple, fil d'email, fil de xat)"
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "Un missatge enviat o rebut a través d'un canal de missatgeria (correu electrònic, xat, etc.)"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:44
+#: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "A note"
 msgstr "Una nota"
 
@@ -78,7 +78,7 @@ msgstr "Un objectiu de nota"
 msgid "A person"
 msgstr "Una persona"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:46
+#: src/modules/task/standard-objects/task.workspace-entity.ts:49
 msgid "A task"
 msgstr "Una tasca"
 
@@ -209,7 +209,7 @@ msgstr "RRA"
 msgid "Assigned tasks"
 msgstr "Tasques assignades"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:163
+#: src/modules/task/standard-objects/task.workspace-entity.ts:166
 msgid "Assignee"
 msgstr "Assignat"
 
@@ -257,10 +257,10 @@ msgstr "Tasca de l'adjunció"
 msgid "Attachment type"
 msgstr "Tipus de l'adjunció"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:151
+#: src/modules/task/standard-objects/task.workspace-entity.ts:154
 #: src/modules/person/standard-objects/person.workspace-entity.ts:244
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
-#: src/modules/note/standard-objects/note.workspace-entity.ts:113
+#: src/modules/note/standard-objects/note.workspace-entity.ts:115
 #: src/modules/company/standard-objects/company.workspace-entity.ts:241
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
@@ -351,13 +351,13 @@ msgstr "Manetes bloquejades"
 msgid "Blocklists"
 msgstr "Llistes de blocatge"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:85
-#: src/modules/note/standard-objects/note.workspace-entity.ts:83
+#: src/modules/task/standard-objects/task.workspace-entity.ts:88
+#: src/modules/note/standard-objects/note.workspace-entity.ts:85
 msgid "Body"
 msgstr "Cos"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:75
-#: src/modules/note/standard-objects/note.workspace-entity.ts:73
+#: src/modules/task/standard-objects/task.workspace-entity.ts:78
+#: src/modules/note/standard-objects/note.workspace-entity.ts:75
 msgid "Body (deprecated)"
 msgstr "Cos (obsolet)"
 
@@ -531,10 +531,10 @@ msgid "Context"
 msgstr "Context"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
-#: src/modules/task/standard-objects/task.workspace-entity.ts:131
+#: src/modules/task/standard-objects/task.workspace-entity.ts:134
 #: src/modules/person/standard-objects/person.workspace-entity.ts:173
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
-#: src/modules/note/standard-objects/note.workspace-entity.ts:93
+#: src/modules/note/standard-objects/note.workspace-entity.ts:95
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
@@ -594,7 +594,7 @@ msgstr "Valor Visible"
 msgid "Domain Name"
 msgstr "Nom de Domini"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:95
+#: src/modules/task/standard-objects/task.workspace-entity.ts:98
 msgid "Due Date"
 msgstr "Data de Venciment"
 
@@ -790,10 +790,10 @@ msgstr "Membre de l'Espai de Treball Preferit"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:200
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
-#: src/modules/task/standard-objects/task.workspace-entity.ts:192
+#: src/modules/task/standard-objects/task.workspace-entity.ts:195
 #: src/modules/person/standard-objects/person.workspace-entity.ts:232
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:138
+#: src/modules/note/standard-objects/note.workspace-entity.ts:140
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
 #: src/modules/company/standard-objects/company.workspace-entity.ts:228
@@ -813,7 +813,7 @@ msgstr "Preferits vinculats a l'empresa"
 msgid "Favorites linked to the contact"
 msgstr "Preferits vinculats al contacte"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:139
+#: src/modules/note/standard-objects/note.workspace-entity.ts:141
 msgid "Favorites linked to the note"
 msgstr "Preferits vinculats a la nota"
 
@@ -821,7 +821,7 @@ msgstr "Preferits vinculats a la nota"
 msgid "Favorites linked to the opportunity"
 msgstr "Preferits vinculats a l'oportunitat"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:193
+#: src/modules/task/standard-objects/task.workspace-entity.ts:196
 msgid "Favorites linked to the task"
 msgstr "Preferits vinculats a la tasca"
 
@@ -1228,23 +1228,23 @@ msgid "Name of the workflow run"
 msgstr "Nom de l'execució del flux de treball"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:42
+#: src/modules/note/standard-objects/note.workspace-entity.ts:44
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
 msgstr "Nota"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:114
+#: src/modules/note/standard-objects/note.workspace-entity.ts:116
 msgid "Note attachments"
 msgstr "Adjunts de la nota"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:74
-#: src/modules/note/standard-objects/note.workspace-entity.ts:84
+#: src/modules/note/standard-objects/note.workspace-entity.ts:76
+#: src/modules/note/standard-objects/note.workspace-entity.ts:86
 msgid "Note body"
 msgstr "Cos de la nota"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:54
+#: src/modules/note/standard-objects/note.workspace-entity.ts:56
 msgid "Note record position"
 msgstr "Posició del registre de la nota"
 
@@ -1252,7 +1252,7 @@ msgstr "Posició del registre de la nota"
 msgid "Note Target"
 msgstr "Objectiu de la nota"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:102
+#: src/modules/note/standard-objects/note.workspace-entity.ts:104
 msgid "Note targets"
 msgstr "Objectius de la nota"
 
@@ -1260,13 +1260,13 @@ msgstr "Objectius de la nota"
 msgid "Note Targets"
 msgstr "Objectius de la nota"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:65
+#: src/modules/note/standard-objects/note.workspace-entity.ts:67
 msgid "Note title"
 msgstr "Títol de la nota"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:221
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
-#: src/modules/note/standard-objects/note.workspace-entity.ts:43
+#: src/modules/note/standard-objects/note.workspace-entity.ts:45
 #: src/modules/company/standard-objects/company.workspace-entity.ts:205
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
@@ -1450,10 +1450,10 @@ msgstr "Punt de contacte"
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
-#: src/modules/task/standard-objects/task.workspace-entity.ts:55
+#: src/modules/task/standard-objects/task.workspace-entity.ts:58
 #: src/modules/person/standard-objects/person.workspace-entity.ts:162
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
-#: src/modules/note/standard-objects/note.workspace-entity.ts:53
+#: src/modules/note/standard-objects/note.workspace-entity.ts:55
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
 #: src/modules/company/standard-objects/company.workspace-entity.ts:145
@@ -1513,8 +1513,8 @@ msgstr "Token d'actualització"
 msgid "Related user email address"
 msgstr "Adreça electrònica de l'usuari relacionat"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:139
-#: src/modules/note/standard-objects/note.workspace-entity.ts:101
+#: src/modules/task/standard-objects/task.workspace-entity.ts:142
+#: src/modules/note/standard-objects/note.workspace-entity.ts:103
 msgid "Relations"
 msgstr "Relacions"
 
@@ -1563,7 +1563,7 @@ msgstr "Etapa"
 msgid "Start Date"
 msgstr "Data d'inici"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:105
+#: src/modules/task/standard-objects/task.workspace-entity.ts:108
 msgid "Status"
 msgstr "Estat"
 
@@ -1612,35 +1612,35 @@ msgid "Target Url"
 msgstr "URL de destí"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
-#: src/modules/task/standard-objects/task.workspace-entity.ts:44
+#: src/modules/task/standard-objects/task.workspace-entity.ts:47
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
 msgid "Task"
 msgstr "Tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:164
+#: src/modules/task/standard-objects/task.workspace-entity.ts:167
 msgid "Task assignee"
 msgstr "Assignat de la tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:152
+#: src/modules/task/standard-objects/task.workspace-entity.ts:155
 msgid "Task attachments"
 msgstr "Adjunts de la tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:76
-#: src/modules/task/standard-objects/task.workspace-entity.ts:86
+#: src/modules/task/standard-objects/task.workspace-entity.ts:79
+#: src/modules/task/standard-objects/task.workspace-entity.ts:89
 msgid "Task body"
 msgstr "Cos de la tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:96
+#: src/modules/task/standard-objects/task.workspace-entity.ts:99
 msgid "Task due date"
 msgstr "Data de venciment de la tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:56
+#: src/modules/task/standard-objects/task.workspace-entity.ts:59
 msgid "Task record position"
 msgstr "Posició del registre de la tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:106
+#: src/modules/task/standard-objects/task.workspace-entity.ts:109
 msgid "Task status"
 msgstr "Estat de la tasca"
 
@@ -1648,7 +1648,7 @@ msgstr "Estat de la tasca"
 msgid "Task Target"
 msgstr "Objectiu de la tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:140
+#: src/modules/task/standard-objects/task.workspace-entity.ts:143
 msgid "Task targets"
 msgstr "Objectius de la tasca"
 
@@ -1656,11 +1656,11 @@ msgstr "Objectius de la tasca"
 msgid "Task Targets"
 msgstr "Objectius de la tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:67
+#: src/modules/task/standard-objects/task.workspace-entity.ts:70
 msgid "Task title"
 msgstr "Títol de la tasca"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:45
+#: src/modules/task/standard-objects/task.workspace-entity.ts:48
 #: src/modules/person/standard-objects/person.workspace-entity.ts:210
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
 #: src/modules/company/standard-objects/company.workspace-entity.ts:194
@@ -1734,10 +1734,10 @@ msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "La URL del lloc web de l'empresa. Fem servir aquesta url per obtenir la icona de l'empresa"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
-#: src/modules/task/standard-objects/task.workspace-entity.ts:133
+#: src/modules/task/standard-objects/task.workspace-entity.ts:136
 #: src/modules/person/standard-objects/person.workspace-entity.ts:175
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
-#: src/modules/note/standard-objects/note.workspace-entity.ts:95
+#: src/modules/note/standard-objects/note.workspace-entity.ts:97
 #: src/modules/company/standard-objects/company.workspace-entity.ts:158
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
@@ -1810,9 +1810,9 @@ msgstr "Zona horària"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:212
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
-#: src/modules/task/standard-objects/task.workspace-entity.ts:180
+#: src/modules/task/standard-objects/task.workspace-entity.ts:183
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
-#: src/modules/note/standard-objects/note.workspace-entity.ts:126
+#: src/modules/note/standard-objects/note.workspace-entity.ts:128
 #: src/modules/company/standard-objects/company.workspace-entity.ts:253
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
@@ -1822,7 +1822,7 @@ msgstr "Activitats de la línia de temps"
 msgid "Timeline Activities linked to the company"
 msgstr "Activitats de la línia de temps vinculades a l'empresa"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:127
+#: src/modules/note/standard-objects/note.workspace-entity.ts:129
 msgid "Timeline Activities linked to the note."
 msgstr "Activitats de la línia de temps vinculades a la nota."
 
@@ -1834,7 +1834,7 @@ msgstr "Activitats de la línia de temps vinculades a l'oportunitat."
 msgid "Timeline activities linked to the run"
 msgstr "Activitats de la línia de temps vinculades a l'execució"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:181
+#: src/modules/task/standard-objects/task.workspace-entity.ts:184
 msgid "Timeline Activities linked to the task."
 msgstr "Activitats de la línia de temps vinculades a la tasca."
 
@@ -1854,8 +1854,8 @@ msgstr "Activitats de la línia de temps associades a {label}"
 msgid "Timeline Activity"
 msgstr "Activitat de la línia de temps"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:66
-#: src/modules/note/standard-objects/note.workspace-entity.ts:64
+#: src/modules/task/standard-objects/task.workspace-entity.ts:69
+#: src/modules/note/standard-objects/note.workspace-entity.ts:66
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
 msgid "Title"
@@ -2253,3 +2253,4 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "El teu membre de l'equip responsable de la gestió del compte de l'empresa"
+

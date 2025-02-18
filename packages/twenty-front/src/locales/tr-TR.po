@@ -388,6 +388,10 @@ msgstr "Deneme Sürümünüzü Seçin"
 msgid "Close"
 msgstr "Kapat"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Komut menüsünü kapat"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "SSO bağlantısı yapılandırın"
@@ -1353,6 +1357,10 @@ msgstr "Nesneler"
 msgid "Off the beaten path"
 msgstr "Alışılmışın dışında"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Komut menüsünü aç"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Açık"
@@ -1898,7 +1906,7 @@ msgstr "Türkçe"
 msgid "Type"
 msgstr "Tür"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Bir şeyler yazın"
 
@@ -2077,3 +2085,4 @@ msgstr "Çalışma Alanınız"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Çalışma alanınız devre dışı bırakılacak"
+

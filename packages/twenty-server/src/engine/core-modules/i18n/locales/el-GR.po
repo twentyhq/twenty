@@ -66,7 +66,7 @@ msgstr "Μια ομάδα σχετικών μηνυμάτων (π.χ. αλληλ
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "Ένα μήνυμα που στάλθηκε ή ελήφθη μέσω ενός καναλιού μηνυμάτων (email, chat κλπ.)"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:44
+#: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "A note"
 msgstr "Ένα σημείωμα"
 
@@ -78,7 +78,7 @@ msgstr "Ένας στόχος σημειώματος"
 msgid "A person"
 msgstr "Ένα άτομο"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:46
+#: src/modules/task/standard-objects/task.workspace-entity.ts:49
 msgid "A task"
 msgstr "Μια εργασία"
 
@@ -209,7 +209,7 @@ msgstr "ΑΠΠ"
 msgid "Assigned tasks"
 msgstr "Ανατεθειμένες εργασίες"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:163
+#: src/modules/task/standard-objects/task.workspace-entity.ts:166
 msgid "Assignee"
 msgstr "Ανατέθηκε"
 
@@ -257,10 +257,10 @@ msgstr "Συνημμένο εργασίας"
 msgid "Attachment type"
 msgstr "Τύπος συνημμένου"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:151
+#: src/modules/task/standard-objects/task.workspace-entity.ts:154
 #: src/modules/person/standard-objects/person.workspace-entity.ts:244
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
-#: src/modules/note/standard-objects/note.workspace-entity.ts:113
+#: src/modules/note/standard-objects/note.workspace-entity.ts:115
 #: src/modules/company/standard-objects/company.workspace-entity.ts:241
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
@@ -351,13 +351,13 @@ msgstr "Χειριστήρια στην Μαύρη Λίστα"
 msgid "Blocklists"
 msgstr "Μαύρες Λίστες"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:85
-#: src/modules/note/standard-objects/note.workspace-entity.ts:83
+#: src/modules/task/standard-objects/task.workspace-entity.ts:88
+#: src/modules/note/standard-objects/note.workspace-entity.ts:85
 msgid "Body"
 msgstr "Κείμενο"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:75
-#: src/modules/note/standard-objects/note.workspace-entity.ts:73
+#: src/modules/task/standard-objects/task.workspace-entity.ts:78
+#: src/modules/note/standard-objects/note.workspace-entity.ts:75
 msgid "Body (deprecated)"
 msgstr "Σώμα (παρωχημένο)"
 
@@ -531,10 +531,10 @@ msgid "Context"
 msgstr "Συνάφεια"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
-#: src/modules/task/standard-objects/task.workspace-entity.ts:131
+#: src/modules/task/standard-objects/task.workspace-entity.ts:134
 #: src/modules/person/standard-objects/person.workspace-entity.ts:173
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
-#: src/modules/note/standard-objects/note.workspace-entity.ts:93
+#: src/modules/note/standard-objects/note.workspace-entity.ts:95
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
@@ -594,7 +594,7 @@ msgstr "Εμφανιζόμενη Αξία"
 msgid "Domain Name"
 msgstr "Όνομα Domain"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:95
+#: src/modules/task/standard-objects/task.workspace-entity.ts:98
 msgid "Due Date"
 msgstr "Ημερομηνία Λήξης"
 
@@ -790,10 +790,10 @@ msgstr "Αγαπημένο μέλος χώρου εργασίας"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:200
 #: src/modules/view/standard-objects/view.workspace-entity.ts:177
-#: src/modules/task/standard-objects/task.workspace-entity.ts:192
+#: src/modules/task/standard-objects/task.workspace-entity.ts:195
 #: src/modules/person/standard-objects/person.workspace-entity.ts:232
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:138
+#: src/modules/note/standard-objects/note.workspace-entity.ts:140
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
 #: src/modules/company/standard-objects/company.workspace-entity.ts:228
@@ -813,7 +813,7 @@ msgstr "Αγαπημένα συνδεδεμένα με την εταιρεία"
 msgid "Favorites linked to the contact"
 msgstr "Αγαπημένα συνδεδεμένα με την επαφή"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:139
+#: src/modules/note/standard-objects/note.workspace-entity.ts:141
 msgid "Favorites linked to the note"
 msgstr "Αγαπημένα συνδεδεμένα με τη σημείωση"
 
@@ -821,7 +821,7 @@ msgstr "Αγαπημένα συνδεδεμένα με τη σημείωση"
 msgid "Favorites linked to the opportunity"
 msgstr "Αγαπημένα συνδεδεμένα με την ευκαιρία"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:193
+#: src/modules/task/standard-objects/task.workspace-entity.ts:196
 msgid "Favorites linked to the task"
 msgstr "Αγαπημένα συνδεδεμένα με την εργασία"
 
@@ -1228,23 +1228,23 @@ msgid "Name of the workflow run"
 msgstr "Όνομα της εκτέλεσης των Workflow"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:42
+#: src/modules/note/standard-objects/note.workspace-entity.ts:44
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
 msgstr "Σημείωση"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:114
+#: src/modules/note/standard-objects/note.workspace-entity.ts:116
 msgid "Note attachments"
 msgstr "Συνημμένα σημείωσης"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:74
-#: src/modules/note/standard-objects/note.workspace-entity.ts:84
+#: src/modules/note/standard-objects/note.workspace-entity.ts:76
+#: src/modules/note/standard-objects/note.workspace-entity.ts:86
 msgid "Note body"
 msgstr "Σημείωμα κειμένου"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:54
+#: src/modules/note/standard-objects/note.workspace-entity.ts:56
 msgid "Note record position"
 msgstr "Θέση εγγραφής σημειώματος"
 
@@ -1252,7 +1252,7 @@ msgstr "Θέση εγγραφής σημειώματος"
 msgid "Note Target"
 msgstr "Στόχος Σημειώματος"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:102
+#: src/modules/note/standard-objects/note.workspace-entity.ts:104
 msgid "Note targets"
 msgstr "Στόχοι Σημειωμάτων"
 
@@ -1260,13 +1260,13 @@ msgstr "Στόχοι Σημειωμάτων"
 msgid "Note Targets"
 msgstr "Στόχοι Σημειωμάτων"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:65
+#: src/modules/note/standard-objects/note.workspace-entity.ts:67
 msgid "Note title"
 msgstr "Τίτλος Σημειώματος"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:221
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
-#: src/modules/note/standard-objects/note.workspace-entity.ts:43
+#: src/modules/note/standard-objects/note.workspace-entity.ts:45
 #: src/modules/company/standard-objects/company.workspace-entity.ts:205
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
@@ -1450,10 +1450,10 @@ msgstr "\\\\"
 #: src/modules/view/standard-objects/view.workspace-entity.ts:98
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
-#: src/modules/task/standard-objects/task.workspace-entity.ts:55
+#: src/modules/task/standard-objects/task.workspace-entity.ts:58
 #: src/modules/person/standard-objects/person.workspace-entity.ts:162
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
-#: src/modules/note/standard-objects/note.workspace-entity.ts:53
+#: src/modules/note/standard-objects/note.workspace-entity.ts:55
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
 #: src/modules/company/standard-objects/company.workspace-entity.ts:145
@@ -1513,8 +1513,8 @@ msgstr "Κωδικός ανανέωσης"
 msgid "Related user email address"
 msgstr "Σχετική διεύθυνση email χρήστη"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:139
-#: src/modules/note/standard-objects/note.workspace-entity.ts:101
+#: src/modules/task/standard-objects/task.workspace-entity.ts:142
+#: src/modules/note/standard-objects/note.workspace-entity.ts:103
 msgid "Relations"
 msgstr "Σχέσεις"
 
@@ -1563,7 +1563,7 @@ msgstr "Στάδιο"
 msgid "Start Date"
 msgstr "Ημερομηνία έναρξης"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:105
+#: src/modules/task/standard-objects/task.workspace-entity.ts:108
 msgid "Status"
 msgstr "Κατάσταση"
 
@@ -1612,35 +1612,35 @@ msgid "Target Url"
 msgstr "Url Προορισμού"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
-#: src/modules/task/standard-objects/task.workspace-entity.ts:44
+#: src/modules/task/standard-objects/task.workspace-entity.ts:47
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
 msgid "Task"
 msgstr "Εργασία"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:164
+#: src/modules/task/standard-objects/task.workspace-entity.ts:167
 msgid "Task assignee"
 msgstr "Αναθέτης Εργασίας"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:152
+#: src/modules/task/standard-objects/task.workspace-entity.ts:155
 msgid "Task attachments"
 msgstr "Συνημμένα Εργασίας"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:76
-#: src/modules/task/standard-objects/task.workspace-entity.ts:86
+#: src/modules/task/standard-objects/task.workspace-entity.ts:79
+#: src/modules/task/standard-objects/task.workspace-entity.ts:89
 msgid "Task body"
 msgstr "Περιεχόμενο Εργασίας"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:96
+#: src/modules/task/standard-objects/task.workspace-entity.ts:99
 msgid "Task due date"
 msgstr "Προθεσμία Εργασίας"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:56
+#: src/modules/task/standard-objects/task.workspace-entity.ts:59
 msgid "Task record position"
 msgstr "Θέση εγγραφής Εργασίας"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:106
+#: src/modules/task/standard-objects/task.workspace-entity.ts:109
 msgid "Task status"
 msgstr "Κατάσταση Εργασίας"
 
@@ -1648,7 +1648,7 @@ msgstr "Κατάσταση Εργασίας"
 msgid "Task Target"
 msgstr "Στόχος Εργασίας"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:140
+#: src/modules/task/standard-objects/task.workspace-entity.ts:143
 msgid "Task targets"
 msgstr "Στόχοι Εργασίας"
 
@@ -1656,11 +1656,11 @@ msgstr "Στόχοι Εργασίας"
 msgid "Task Targets"
 msgstr "Στόχοι Εργασίας"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:67
+#: src/modules/task/standard-objects/task.workspace-entity.ts:70
 msgid "Task title"
 msgstr "Τίτλος Εργασίας"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:45
+#: src/modules/task/standard-objects/task.workspace-entity.ts:48
 #: src/modules/person/standard-objects/person.workspace-entity.ts:210
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
 #: src/modules/company/standard-objects/company.workspace-entity.ts:194
@@ -1734,10 +1734,10 @@ msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "Η διεύθυνση URL της ιστοσελίδας της εταιρείας. Χρησιμοποιούμε αυτήν την url για να ανακτήσουμε το εικονίδιο της εταιρείας"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
-#: src/modules/task/standard-objects/task.workspace-entity.ts:133
+#: src/modules/task/standard-objects/task.workspace-entity.ts:136
 #: src/modules/person/standard-objects/person.workspace-entity.ts:175
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
-#: src/modules/note/standard-objects/note.workspace-entity.ts:95
+#: src/modules/note/standard-objects/note.workspace-entity.ts:97
 #: src/modules/company/standard-objects/company.workspace-entity.ts:158
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
@@ -1810,9 +1810,9 @@ msgstr "Ζώνη ώρας"
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:212
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
-#: src/modules/task/standard-objects/task.workspace-entity.ts:180
+#: src/modules/task/standard-objects/task.workspace-entity.ts:183
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
-#: src/modules/note/standard-objects/note.workspace-entity.ts:126
+#: src/modules/note/standard-objects/note.workspace-entity.ts:128
 #: src/modules/company/standard-objects/company.workspace-entity.ts:253
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
@@ -1822,7 +1822,7 @@ msgstr "Δραστηριότητες Χρονοδιαγράμματος"
 msgid "Timeline Activities linked to the company"
 msgstr "Δραστηριότητες Χρονοδιαγράμματος συνδεδεμένες με την εταιρία"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:127
+#: src/modules/note/standard-objects/note.workspace-entity.ts:129
 msgid "Timeline Activities linked to the note."
 msgstr "Δραστηριότητες Χρονοδιαγράμματος συνδεδεμένες με τη σημείωση."
 
@@ -1834,7 +1834,7 @@ msgstr "Δραστηριότητες Χρονοδιαγράμματος συνδ
 msgid "Timeline activities linked to the run"
 msgstr "Δραστηριότητες χρονοδιαγράμματος συνδεδεμένες με την εκτέλεση"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:181
+#: src/modules/task/standard-objects/task.workspace-entity.ts:184
 msgid "Timeline Activities linked to the task."
 msgstr "Δραστηριότητες Χρονοδιαγράμματος συνδεδεμένες με την εργασία."
 
@@ -1854,8 +1854,8 @@ msgstr "Δραστηριότητες Χρονοδιαγράμματος συνδ
 msgid "Timeline Activity"
 msgstr "Δραστηριότητα Χρονοδιαγράμματος"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:66
-#: src/modules/note/standard-objects/note.workspace-entity.ts:64
+#: src/modules/task/standard-objects/task.workspace-entity.ts:69
+#: src/modules/note/standard-objects/note.workspace-entity.ts:66
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
 msgid "Title"
@@ -2253,3 +2253,4 @@ msgstr "Χ"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Το μέλος της ομάδας σας υπεύθυνο για τη διαχείριση του λογαριασμού της εταιρείας"
+

@@ -388,6 +388,10 @@ msgstr "Vælg din prøveperiode"
 msgid "Close"
 msgstr "Luk"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Luk kommandomenu"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Konfigurer en SSO-forbindelse"
@@ -1353,6 +1357,10 @@ msgstr "Objekter"
 msgid "Off the beaten path"
 msgstr "Uden for alfarvej"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Åbn kommandomenu"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Åbnet"
@@ -1898,7 +1906,7 @@ msgstr "Tyrkisk"
 msgid "Type"
 msgstr "Type"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Skriv noget"
 
@@ -2077,3 +2085,4 @@ msgstr "Dit arbejdsområde"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Dit arbejdsområde vil blive deaktiveret"
+

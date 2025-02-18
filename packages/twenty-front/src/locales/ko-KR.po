@@ -53,8 +53,7 @@ msgstr "24시간 ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr ""
-"\\\n"
+msgstr "\\\n"
 "팀과 함께 고객 관계를 관리할 수 있는 공유 환경입니다."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx:102
@@ -389,6 +388,10 @@ msgstr "평가판 선택"
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
 msgstr "닫기"
+
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "명령 메뉴 닫기"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -1355,6 +1358,10 @@ msgstr "개체"
 msgid "Off the beaten path"
 msgstr "잘 알려지지 않은 길"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "명령 메뉴 열기"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "열림"
@@ -1900,7 +1907,7 @@ msgstr "터키어"
 msgid "Type"
 msgstr "유형"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "아무거나 입력하세요"
 
@@ -2079,3 +2086,4 @@ msgstr "귀하의 워크스페이스"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "워크스페이스가 비활성화됩니다"
+

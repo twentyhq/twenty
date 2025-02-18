@@ -388,6 +388,10 @@ msgstr "選擇試用"
 msgid "Close"
 msgstr "關閉"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "關閉指令選單"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "配置 SSO 連接"
@@ -1353,6 +1357,10 @@ msgstr "對象"
 msgid "Off the beaten path"
 msgstr "偏離常規路線"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "打開指令選單"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "已開啟"
@@ -1898,7 +1906,7 @@ msgstr "土耳其語"
 msgid "Type"
 msgstr "類型"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "輸入任何內容"
 
@@ -2077,3 +2085,4 @@ msgstr "您的工作區"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "您的工作區將被禁用"
+

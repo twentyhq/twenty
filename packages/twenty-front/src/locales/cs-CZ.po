@@ -388,6 +388,10 @@ msgstr "Vyberte si Trial"
 msgid "Close"
 msgstr "Zavřít"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Zavřít příkazové menu"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Nakonfigurujte připojení SSO"
@@ -1038,8 +1042,7 @@ msgstr "Neplatný poskytovatel ověřování"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:48
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
-"Neplatná vlastní doména. Vlastní domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat mezery, nesmí obsahovat žádné speciální znaky jako jsou _~\n"
+msgstr "Neplatná vlastní doména. Vlastní domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat mezery, nesmí obsahovat žádné speciální znaky jako jsou _~\n"
 "`!@#$%^*()=+{}[]|\\;:'\"<>/? a nesmí začínat ani končit znakem '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
@@ -1354,6 +1357,10 @@ msgstr "Objekty"
 #: src/pages/not-found/NotFound.tsx:47
 msgid "Off the beaten path"
 msgstr "Mimo ušlapané cesty"
+
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Otevřít příkazové menu"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
@@ -1900,7 +1907,7 @@ msgstr "Turečtina"
 msgid "Type"
 msgstr "Typ"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Napište cokoli"
 
@@ -2079,3 +2086,4 @@ msgstr "Váš pracovní prostor"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Váš pracovní prostor bude deaktivován"
+

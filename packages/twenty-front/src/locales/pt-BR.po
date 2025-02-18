@@ -153,8 +153,7 @@ msgstr "Adicionado {beautifiedCreatedAt}"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
-msgstr ""
-"Filtro avan\n"
+msgstr "Filtro avan\n"
 "cado"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
@@ -389,6 +388,10 @@ msgstr "Escolha seu Teste"
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
 msgstr "Fechar"
+
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Fechar menu de comandos"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -1355,6 +1358,10 @@ msgstr "Objetos"
 msgid "Off the beaten path"
 msgstr "Fora do caminho comum"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Abrir menu de comandos"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Aberto"
@@ -1697,8 +1704,7 @@ msgstr "Alterar o rótulo de um campo também deve alterar o nome da API?"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
 msgid "Should changing an object's label also change the API?"
-msgstr ""
-"Alterar o r\n"
+msgstr "Alterar o r\n"
 "tulo de um objeto tamb\n"
 "m deve alterar a API?"
 
@@ -1783,14 +1789,12 @@ msgstr "Sincronizar o rótulo do campo e o nome da API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
 msgid "Synchronize Objects Labels and API Names"
-msgstr ""
-"Sincronizar r\n"
+msgstr "Sincronizar r\n"
 "tulos dos Objetos e Nomes da API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
-msgstr ""
-"Configura\n"
+msgstr "Configura\n"
 "es do sistema"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
@@ -1907,7 +1911,7 @@ msgstr "Turco"
 msgid "Type"
 msgstr "Tipo"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Digite qualquer coisa"
 
@@ -2086,3 +2090,4 @@ msgstr "Seu Workspace"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Seu workspace será desativado"
+

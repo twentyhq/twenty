@@ -388,6 +388,10 @@ msgstr "Välj din provperiod"
 msgid "Close"
 msgstr "Stäng"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Stäng kommandomenyn"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Konfigurera en SSO-anslutning"
@@ -1353,6 +1357,10 @@ msgstr "Objekt"
 msgid "Off the beaten path"
 msgstr "Utanför den vältrampade stigen"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Öppna kommandomenyn"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Öppnad"
@@ -1898,7 +1906,7 @@ msgstr "Turkish"
 msgid "Type"
 msgstr "Typ"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Skriv något"
 
@@ -2077,3 +2085,4 @@ msgstr "Din arbetsyta"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Din arbetsyta kommer att bli inaktiverad"
+

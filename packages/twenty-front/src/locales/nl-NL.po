@@ -388,6 +388,10 @@ msgstr "Kies uw proefperiode"
 msgid "Close"
 msgstr "Sluiten"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Sluit opdrachtmenu"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Configureer een SSO-verbinding"
@@ -1353,6 +1357,10 @@ msgstr "Objecten"
 msgid "Off the beaten path"
 msgstr "Buiten de gebaande paden"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Open opdrachtmenu"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Geopend"
@@ -1898,7 +1906,7 @@ msgstr "Turks"
 msgid "Type"
 msgstr "Soort"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Typ iets"
 
@@ -2077,3 +2085,4 @@ msgstr "Uw werkruimte"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Uw werkruimte wordt uitgeschakeld"
+

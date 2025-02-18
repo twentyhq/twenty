@@ -388,6 +388,10 @@ msgstr "اختر تجربتك"
 msgid "Close"
 msgstr "إغلاق"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "إغلاق قائمة الأوامر"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "تهيئة اتصال SSO"
@@ -1353,6 +1357,10 @@ msgstr "كائنات"
 msgid "Off the beaten path"
 msgstr "خارج المألوف"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "فتح قائمة الأوامر"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "تم الفتح"
@@ -1898,7 +1906,7 @@ msgstr "التركية"
 msgid "Type"
 msgstr "النوع"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "اكتب أي شيء"
 
@@ -2077,3 +2085,4 @@ msgstr "مساحة عملك"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "سيتم تعطيل مساحة عملك"
+

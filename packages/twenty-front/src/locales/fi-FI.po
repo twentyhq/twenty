@@ -388,6 +388,10 @@ msgstr "Valitse kokeilusi"
 msgid "Close"
 msgstr "Sulje"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Sulje komento-valikko"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Määritä SSO-yhteys"
@@ -1353,6 +1357,10 @@ msgstr "Objektit"
 msgid "Off the beaten path"
 msgstr "Kulkemattomia polkuja pitkin"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Avaa komento-valikko"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Avattu"
@@ -1898,7 +1906,7 @@ msgstr "Turkki"
 msgid "Type"
 msgstr "Tyyppi"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Kirjoita jotain"
 
@@ -2077,3 +2085,4 @@ msgstr "Työtilasi"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Työtilasi poistetaan käytöstä"
+

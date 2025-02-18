@@ -388,6 +388,10 @@ msgstr "Escolha o seu teste"
 msgid "Close"
 msgstr "Fechar"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Fechar menu de comandos"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Configurar uma ligação SSO"
@@ -1353,6 +1357,10 @@ msgstr "Objetos"
 msgid "Off the beaten path"
 msgstr "Fora do caminho comum"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Abrir menu de comandos"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Aberto"
@@ -1898,7 +1906,7 @@ msgstr "Turco"
 msgid "Type"
 msgstr "Tipo"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Digite qualquer coisa"
 
@@ -2077,3 +2085,4 @@ msgstr "O seu Espaço de Trabalho"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "O seu espaço de trabalho será desativado"
+

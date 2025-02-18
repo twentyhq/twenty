@@ -388,6 +388,10 @@ msgstr "Wybierz swój okres próbny"
 msgid "Close"
 msgstr "Zamknij"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Zamknij menu poleceń"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Skonfiguruj połączenie SSO"
@@ -1353,6 +1357,10 @@ msgstr "Obiekty"
 msgid "Off the beaten path"
 msgstr "Na uboczu"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Otwórz menu poleceń"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Otwarty"
@@ -1898,7 +1906,7 @@ msgstr "turecki"
 msgid "Type"
 msgstr "Typ"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Wpisz cokolwiek"
 
@@ -2077,3 +2085,4 @@ msgstr "Twoje miejsce pracy"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Twoje miejsce pracy zostanie wyłączone"
+
