@@ -76,7 +76,7 @@ jobs:
           download_translations: true
           export_only_approved: false
           localization_branch_name: i18n
-          commit_message: 'i18n - translations'
+          commit_message: 'i18n - pull translations'
           pull_request_title: 'i18n - translations'
           base_url: 'https://twenty.api.crowdin.com'
           auto_approve_imported: false

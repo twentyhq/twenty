@@ -40,14 +40,8 @@ jobs:
           npx nx run twenty-emails:lingui:extract
           npx nx run twenty-front:lingui:extract
 
-      - name: Compile translations
-        run: |
-          npx nx run twenty-server:lingui:compile
-          npx nx run twenty-emails:lingui:compile
-          npx nx run twenty-front:lingui:compile
-
-      - name: Check and commit any files created
-        id: check_changes
+      - name: Check and commit extracted files
+        id: check_extract_changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
@@ -59,12 +53,31 @@ jobs:
             echo "changes_detected=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Compile translations
+        run: |
+          npx nx run twenty-server:lingui:compile
+          npx nx run twenty-emails:lingui:compile
+          npx nx run twenty-front:lingui:compile
+
+      - name: Check and commit compiled files
+        id: check_compile_changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          git add .
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: compile translations"
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Push changes and create remote branch if needed
-        if: steps.check_changes.outputs.changes_detected == 'true'
+        if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
         run: git push origin HEAD:i18n
 
       - name: Upload missing translations
-        if: steps.check_changes.outputs.changes_detected == 'true'
+        if: steps.check_extract_changes.outputs.changes_detected == 'true'
         uses: crowdin/github-action@v2
         with:
           upload_sources: true
@@ -80,7 +93,7 @@ jobs:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Create a pull request
-        if: steps.check_changes.outputs.changes_detected == 'true'
+        if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
         run: gh pr create -B main -H i18n --title 'i18n - translations' --body 'Created by Github action' || true
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
