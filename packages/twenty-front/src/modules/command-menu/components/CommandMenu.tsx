@@ -5,12 +5,10 @@ import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContex
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
@@ -50,23 +48,19 @@ export const CommandMenu = () => {
     )
     .filter(isDefined);
 
-  const previousContextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
-    'command-menu-previous',
-  );
+  const previousContextStoreCurrentObjectMetadataItem =
+    useRecoilComponentValueV2(
+      contextStoreCurrentObjectMetadataItemComponentState,
+      'command-menu-previous',
+    );
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const currentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
-  );
-
-  const currentObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.id === currentObjectMetadataId,
+  const currentObjectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
   );
 
   const selectableItemIds = selectableItems.map((item) => item.id);
 
-  if (isNonEmptyString(previousContextStoreCurrentObjectMetadataId)) {
+  if (isDefined(previousContextStoreCurrentObjectMetadataItem)) {
     selectableItemIds.unshift(RESET_CONTEXT_TO_SELECTION);
   }
 
@@ -103,7 +97,7 @@ export const CommandMenu = () => {
       selectableItemIds={selectableItemIds}
       noResults={noResults}
     >
-      {isNonEmptyString(previousContextStoreCurrentObjectMetadataId) && (
+      {isDefined(previousContextStoreCurrentObjectMetadataItem) && (
         <CommandGroup heading={t`Context`}>
           <SelectableItem itemId={RESET_CONTEXT_TO_SELECTION}>
             <ResetContextToSelectionCommandButton />

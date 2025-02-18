@@ -1,16 +1,11 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useLazyPrefetchedData } from '@/prefetch/hooks/useLazyPrefetchData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { View } from '@/views/types/View';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
-  const { records: views, findManyRecords } = useLazyPrefetchedData<View>(
-    PrefetchKey.AllViews,
-  );
-
   const setLastVisitedViewForObjectMetadataNamePlural = useRecoilCallback(
     ({ set, snapshot }) =>
       async ({
@@ -20,7 +15,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
         objectNamePlural: string;
         viewId: string;
       }) => {
-        await findManyRecords();
+        const views = snapshot.getLoadable(prefetchViewsState).getValue();
 
         const view = views.find((view: View) => view.id === viewId);
 
@@ -54,7 +49,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
           });
         }
       },
-    [findManyRecords, views],
+    [],
   );
 
   return {
