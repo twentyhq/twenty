@@ -5,6 +5,7 @@ import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/
 import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
@@ -91,44 +92,50 @@ export const CommandMenuContainer = ({
         <ContextStoreComponentInstanceContext.Provider
           value={{ instanceId: 'command-menu' }}
         >
-          <ActionMenuContext.Provider
-            value={{
-              isInRightDrawer: false,
-              onActionExecutedCallback: ({ key }) => {
-                if (
-                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
-                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
-                  key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
-                ) {
-                  toggleCommandMenu();
-                }
-                if (key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK) {
-                  setCommandMenuSearch('');
-                }
-              },
-            }}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'command-menu' }}
           >
-            <RecordActionMenuEntriesSetter />
-            <RecordAgnosticActionMenuEntriesSetter />
-            {isWorkflowEnabled && (
-              <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
-            )}
-            <ActionMenuConfirmationModals />
-            {isCommandMenuOpened && (
-              <StyledCommandMenu
-                data-testid="command-menu"
-                ref={commandMenuRef}
-                className="command-menu"
-                animate={targetVariantForAnimation}
-                initial="closed"
-                exit="closed"
-                variants={COMMAND_MENU_ANIMATION_VARIANTS}
-                transition={{ duration: theme.animation.duration.normal }}
-              >
-                {children}
-              </StyledCommandMenu>
-            )}
-          </ActionMenuContext.Provider>
+            <ActionMenuContext.Provider
+              value={{
+                isInRightDrawer: false,
+                onActionExecutedCallback: ({ key }) => {
+                  if (
+                    key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
+                    key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
+                    key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
+                  ) {
+                    toggleCommandMenu();
+                  }
+                  if (
+                    key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK
+                  ) {
+                    setCommandMenuSearch('');
+                  }
+                },
+              }}
+            >
+              <RecordActionMenuEntriesSetter />
+              <RecordAgnosticActionMenuEntriesSetter />
+              {isWorkflowEnabled && (
+                <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+              )}
+              <ActionMenuConfirmationModals />
+              {isCommandMenuOpened && (
+                <StyledCommandMenu
+                  data-testid="command-menu"
+                  ref={commandMenuRef}
+                  className="command-menu"
+                  animate={targetVariantForAnimation}
+                  initial="closed"
+                  exit="closed"
+                  variants={COMMAND_MENU_ANIMATION_VARIANTS}
+                  transition={{ duration: theme.animation.duration.normal }}
+                >
+                  {children}
+                </StyledCommandMenu>
+              )}
+            </ActionMenuContext.Provider>
+          </ActionMenuComponentInstanceContext.Provider>
         </ContextStoreComponentInstanceContext.Provider>
       </RecordSortsComponentInstanceContext.Provider>
     </RecordFiltersComponentInstanceContext.Provider>
