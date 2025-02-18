@@ -4,23 +4,13 @@ import { isDefined } from 'twenty-shared';
 
 type ReturnType = {
   labelPlural: string;
-  view: View | null;
+  view: Pick<View, 'id' | 'name' | 'objectMetadataId'>;
 };
 
 export const getObjectMetadataLabelPluralFromViewId = (
-  views: View[],
+  view: Pick<View, 'id' | 'name' | 'objectMetadataId'>,
   objectMetadataItems: ObjectMetadataItem[],
-  viewId: string,
 ): ReturnType => {
-  const view = views.find((view) => view.id === viewId);
-
-  if (!view) {
-    return {
-      labelPlural: '',
-      view: null,
-    };
-  }
-
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.id === view.objectMetadataId,
   );

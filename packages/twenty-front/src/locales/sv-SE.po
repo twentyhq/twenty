@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Avbryt"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Om"
 
@@ -163,7 +163,7 @@ msgstr "Afrikaans"
 msgid "All"
 msgstr "Alla"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Alla ({relationRecordsCount})"
 
@@ -372,7 +372,7 @@ msgstr "Kinesiska — Traditionell"
 msgid "Choose an object"
 msgstr "Välj ett objekt"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Välj de fält som kommer att identifiera dina poster"
 
@@ -424,7 +424,7 @@ msgstr "Anslut med Microsoft"
 msgid "Connected accounts"
 msgstr "Anslutna konton"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Sammanhang"
 
@@ -448,7 +448,7 @@ msgstr "Fortsätt med Google"
 msgid "Continue with Microsoft"
 msgstr "Fortsätt med Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Kopilot"
 
@@ -543,7 +543,7 @@ msgstr "Czech"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Faraområde"
 
@@ -578,7 +578,7 @@ msgstr "Datum och tid"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Inaktivera"
@@ -588,7 +588,7 @@ msgstr "Inaktivera"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Inaktivera \"Synkronisering av objektetiketter och API-namn\" för att ange ett anpassat API-namn"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Inaktivera objekt"
 
@@ -963,7 +963,7 @@ msgstr "Få ut det mesta av din arbetsyta genom att bjuda in ditt team."
 msgid "Get your subscription"
 msgstr "Skaffa din prenumeration"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Global"
 
@@ -1198,7 +1198,7 @@ msgstr "Namn"
 msgid "Name can not be empty"
 msgstr "Namnet f\\u00e5r inte vara tomt"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Namn i både singular (t.ex. 'Faktura') och plural (t.ex. 'Fakturor') former."
 
@@ -1240,6 +1240,10 @@ msgstr "Navigera till föregående arbetsflöde"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "Ny"
+
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Ny {capitalizedObjectNameSingular}"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -1324,7 +1328,7 @@ msgstr "Norwegian"
 msgid "Not empty"
 msgstr "Inte tom"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objekt"
 
@@ -1345,7 +1349,7 @@ msgstr "Utanför den vältrampade stigen"
 msgid "Opened"
 msgstr "Öppnad"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Alternativ"
@@ -1477,7 +1481,7 @@ msgstr "Läs dokumentationen"
 msgid "Receive an email containing password update link"
 msgstr "Ta emot ett e-postmeddelande med länk för att uppdatera lösenordet"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Välj post"
 
@@ -1555,10 +1559,11 @@ msgstr "Russian"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "Sök"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Sök ''{commandMenuSearch}'' med..."
 
@@ -1584,6 +1589,7 @@ msgid "Search for an object..."
 msgstr "Sök efter ett objekt..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "Sök poster"
 

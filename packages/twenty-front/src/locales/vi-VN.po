@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Hủy bỏ"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Về"
 
@@ -163,7 +163,7 @@ msgstr "Tiếng Afrikaans"
 msgid "All"
 msgstr "Tất cả"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Tất cả ({relationRecordsCount})"
 
@@ -372,7 +372,7 @@ msgstr "Tiếng Trung — Phồn thể"
 msgid "Choose an object"
 msgstr "Chọn một đối tượng"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Chọn các trường sẽ xác định bản ghi của bạn"
 
@@ -424,7 +424,7 @@ msgstr "Kết nối với Microsoft"
 msgid "Connected accounts"
 msgstr "Tài khoản đã kết nối"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Ngữ cảnh"
 
@@ -448,7 +448,7 @@ msgstr "Tiếp tục với Google"
 msgid "Continue with Microsoft"
 msgstr "Tiếp tục với Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Trợ lý lái"
 
@@ -543,7 +543,7 @@ msgstr "Tiếng Séc"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Khu vực nguy hiểm"
 
@@ -578,7 +578,7 @@ msgstr "Ngày và giờ"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Hủy kích hoạt"
@@ -588,7 +588,7 @@ msgstr "Hủy kích hoạt"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Hủy kích hoạt \"Đồng bộ nhãn Đối tượng và tên API\" để thiết lập tên API tùy chỉnh"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Hủy kích hoạt đối tượng"
 
@@ -963,7 +963,7 @@ msgstr "Tối ưu hóa không gian làm việc của bạn bằng cách mời te
 msgid "Get your subscription"
 msgstr "\\"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "\\"
 
@@ -1198,7 +1198,7 @@ msgstr "Tên"
 msgid "Name can not be empty"
 msgstr "Tên không thể để trống"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Tên độc lập cả hình thức số ít (ví dụ, 'Hóa đơn') và số nhiều (ví dụ, 'Các hóa đơn')."
 
@@ -1240,6 +1240,10 @@ msgstr "Điều hướng đến quy trình trước đó"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "Mới"
+
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "{capitalizedObjectNameSingular} Mới"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -1324,7 +1328,7 @@ msgstr "Tiếng Na Uy"
 msgid "Not empty"
 msgstr "Không trống"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Đối tượng"
 
@@ -1345,7 +1349,7 @@ msgstr "Lạc lối"
 msgid "Opened"
 msgstr "Đã mở"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Tùy chọn"
@@ -1477,7 +1481,7 @@ msgstr "Đọc tài liệu"
 msgid "Receive an email containing password update link"
 msgstr "Nhận email chứa đường link cập nhật mật khẩu"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Chọn Lọc Hồ sơ"
 
@@ -1555,10 +1559,11 @@ msgstr "Tiếng Nga"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "Tìm kiếm"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Tìm kiếm ''{commandMenuSearch}'' với..."
 
@@ -1584,6 +1589,7 @@ msgid "Search for an object..."
 msgstr "Tìm kiếm một đối tượng..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "Tìm kiếm hồ sơ"
 

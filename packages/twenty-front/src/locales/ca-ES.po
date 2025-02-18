@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Avorta"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Sobre"
 
@@ -163,7 +163,7 @@ msgstr "Afrikaans"
 msgid "All"
 msgstr "Tots"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Tots ({relationRecordsCount})"
 
@@ -372,7 +372,7 @@ msgstr "Xinès — Tradicional"
 msgid "Choose an object"
 msgstr "Trieu un objecte"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Trieu els camps que identificaran els vostres registres"
 
@@ -424,7 +424,7 @@ msgstr "Connecta amb Microsoft"
 msgid "Connected accounts"
 msgstr "Comptes connectats"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Context"
 
@@ -448,7 +448,7 @@ msgstr "Continua amb Google"
 msgid "Continue with Microsoft"
 msgstr "Continua amb Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Copilot"
 
@@ -543,7 +543,7 @@ msgstr "Txec"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Zona de perill"
 
@@ -578,7 +578,7 @@ msgstr "Data i hora"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Desactiva"
@@ -588,7 +588,7 @@ msgstr "Desactiva"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Desactiva \"Sincronitza Etiquetes d'Objectes i Noms d'API\" per establir un nom d'API personalitzat"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Desactiva l'objecte"
 
@@ -963,7 +963,7 @@ msgstr "Treu el màxim partit al teu espai de treball convidant al teu equip."
 msgid "Get your subscription"
 msgstr "Obteniu la vostra subscripció"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Global"
 
@@ -1198,7 +1198,7 @@ msgstr "Nom"
 msgid "Name can not be empty"
 msgstr "El nom no pot estar buit"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Nom tant en singular (p. ex., 'Factura') com en plural (p. ex., 'Factures')."
 
@@ -1240,6 +1240,10 @@ msgstr "Navega al workflow anterior"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "Nou"
+
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Nou {capitalizedObjectNameSingular}"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -1324,7 +1328,7 @@ msgstr "Noruec"
 msgid "Not empty"
 msgstr "No buit"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objecte"
 
@@ -1345,7 +1349,7 @@ msgstr "Fora del camí conegut"
 msgid "Opened"
 msgstr "Obert"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opcions"
@@ -1477,7 +1481,7 @@ msgstr "Llegeix la documentació"
 msgid "Receive an email containing password update link"
 msgstr "Rep un correu que conté l'enllaç per actualitzar la contrasenya"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Selecció d'enregistrament"
 
@@ -1555,10 +1559,11 @@ msgstr "Rus"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "Cerca"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Cerca ''{commandMenuSearch}'' amb..."
 
@@ -1584,6 +1589,7 @@ msgid "Search for an object..."
 msgstr "Cerca un objecte..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "Cerca enregistraments"
 

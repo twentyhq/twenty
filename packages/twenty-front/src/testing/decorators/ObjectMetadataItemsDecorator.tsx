@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
@@ -16,11 +17,13 @@ export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
     currentWorkspaceMemberState,
   );
   const setCurrentUser = useSetRecoilState(currentUserState);
+  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
 
   useEffect(() => {
     setCurrentWorkspaceMember(mockWorkspaceMembers[0]);
     setCurrentUser(mockedUserData);
-  }, [setCurrentUser, setCurrentWorkspaceMember]);
+    setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
+  }, [setCurrentUser, setCurrentWorkspaceMember, setCurrentUserWorkspace]);
 
   return (
     <>
