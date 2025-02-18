@@ -132,8 +132,10 @@ export class WorkflowVisualizerPage {
 
     const actionToCreateOption = this.commandMenu.getByText(actionName);
 
-    const [createWorkflowStepResponse] = await Promise.all([
-      this.#page.waitForResponse((response) => {
+    await actionToCreateOption.click();
+
+    const createWorkflowStepResponse = await this.#page.waitForResponse(
+      (response) => {
         if (!response.url().endsWith('/graphql')) {
           return false;
         }
@@ -141,10 +143,9 @@ export class WorkflowVisualizerPage {
         const requestBody = response.request().postDataJSON();
 
         return requestBody.operationName === 'CreateWorkflowVersionStep';
-      }),
+      },
+    );
 
-      actionToCreateOption.click(),
-    ]);
     const createWorkflowStepResponseBody =
       await createWorkflowStepResponse.json();
     const createdStepId =
