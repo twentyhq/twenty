@@ -75,7 +75,7 @@ msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:80
 msgid "Accounts"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr ""
 msgid "All ({relationRecordsCount})"
 msgstr ""
 
-#: src/pages/settings/roles/SettingsRoles.tsx:124
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 msgid "All roles"
 msgstr ""
 
@@ -195,7 +195,7 @@ msgid "and"
 msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:156
 msgid "API & Webhooks"
 msgstr ""
 
@@ -245,7 +245,7 @@ msgstr ""
 msgid "Assign {workspaceMemberName}?"
 msgstr ""
 
-#: src/pages/settings/roles/SettingsRoles.tsx:125
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "Assign roles to specify each member's access permissions"
 msgstr ""
 
@@ -257,7 +257,7 @@ msgstr ""
 msgid "Assigned members"
 msgstr ""
 
-#: src/pages/settings/roles/SettingsRoles.tsx:134
+#: src/pages/settings/roles/SettingsRoles.tsx:128
 msgid "Assigned to"
 msgstr ""
 
@@ -292,7 +292,7 @@ msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:117
 msgid "Billing"
 msgstr ""
 
@@ -318,7 +318,7 @@ msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:92
 msgid "Calendars"
 msgstr ""
 
@@ -497,7 +497,7 @@ msgstr ""
 msgid "Create profile"
 msgstr ""
 
-#: src/pages/settings/roles/SettingsRoles.tsx:200
+#: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
 msgstr ""
 
@@ -521,7 +521,7 @@ msgstr ""
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr ""
 
-#: src/pages/settings/SettingsWorkspace.tsx:56
+#: src/pages/settings/SettingsWorkspace.tsx:49
 msgid "Customize Domain"
 msgstr ""
 
@@ -551,7 +551,7 @@ msgid "Dark"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:131
 msgid "Data model"
 msgstr ""
 
@@ -688,7 +688,7 @@ msgstr ""
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:152
 msgid "Developers"
 msgstr ""
 
@@ -702,7 +702,7 @@ msgstr ""
 msgid "Display as relative date"
 msgstr ""
 
-#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/workspace/SettingsDomain.tsx:186
 #: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
@@ -733,7 +733,7 @@ msgstr ""
 msgid "Edit payment method, see your invoices and more"
 msgstr ""
 
-#: src/pages/settings/SettingsWorkspace.tsx:52
+#: src/pages/settings/SettingsWorkspace.tsx:45
 msgid "Edit your subdomain name or set a custom domain."
 msgstr ""
 
@@ -755,7 +755,7 @@ msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:86
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr ""
@@ -824,7 +824,7 @@ msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:75
 msgid "Experience"
 msgstr ""
 
@@ -935,14 +935,14 @@ msgstr ""
 msgid "Full access"
 msgstr ""
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:163
 msgid "Functions"
 msgstr ""
 
-#: src/pages/settings/SettingsWorkspace.tsx:29
-#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/SettingsWorkspace.tsx:22
+#: src/pages/settings/SettingsWorkspace.tsx:28
 #: src/pages/settings/workspace/SettingsDomain.tsx:193
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:105
 msgid "General"
 msgstr ""
 
@@ -962,12 +962,16 @@ msgstr ""
 msgid "Global"
 msgstr ""
 
-#: src/pages/settings/SettingsWorkspace.tsx:65
+#: src/pages/settings/SettingsWorkspace.tsx:58
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
+msgstr ""
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
+msgid "Health Status"
 msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
@@ -1019,7 +1023,7 @@ msgstr ""
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:137
 msgid "Integrations"
 msgstr ""
 
@@ -1080,7 +1084,7 @@ msgstr ""
 msgid "Korean"
 msgstr ""
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:181
 msgid "Lab"
 msgstr ""
 
@@ -1117,7 +1121,7 @@ msgstr ""
 msgid "Log out"
 msgstr ""
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:120
 msgid "Logout"
 msgstr ""
 
@@ -1149,7 +1153,7 @@ msgstr ""
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:111
 msgid "Members"
 msgstr ""
 
@@ -1173,9 +1177,9 @@ msgstr ""
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/SettingsRoles.tsx:125
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
@@ -1202,7 +1206,7 @@ msgstr ""
 msgid "Name of your API key"
 msgstr ""
 
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 msgid "Name of your workspace"
 msgstr ""
 
@@ -1304,7 +1308,11 @@ msgid "No more members to assign"
 msgstr ""
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
-msgid "No Result"
+#~ msgid "No Result"
+#~ msgstr ""
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Results"
 msgstr ""
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
@@ -1353,8 +1361,9 @@ msgstr ""
 msgid "or"
 msgstr ""
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:67
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:172
 msgid "Other"
 msgstr ""
 
@@ -1404,7 +1413,7 @@ msgstr ""
 msgid "Permissions"
 msgstr ""
 
-#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsWorkspace.tsx:33
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr ""
@@ -1460,7 +1469,7 @@ msgstr ""
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:70
 msgid "Profile"
 msgstr ""
 
@@ -1495,7 +1504,7 @@ msgstr ""
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:187
 msgid "Releases"
 msgstr ""
 
@@ -1533,9 +1542,9 @@ msgstr ""
 msgid "Results"
 msgstr ""
 
+#: src/pages/settings/roles/SettingsRoles.tsx:106
 #: src/pages/settings/roles/SettingsRoles.tsx:112
-#: src/pages/settings/roles/SettingsRoles.tsx:118
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:123
 msgid "Roles"
 msgstr ""
 
@@ -1590,7 +1599,7 @@ msgstr ""
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:143
 msgid "Security"
 msgstr ""
 
@@ -1633,10 +1642,11 @@ msgid "Serbian (Cyrillic)"
 msgstr ""
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:175
 msgid "Server Admin"
 msgstr ""
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:71
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr ""
@@ -1737,7 +1747,7 @@ msgstr ""
 msgid "Sum"
 msgstr ""
 
-#: src/pages/settings/SettingsWorkspace.tsx:63
+#: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Support"
 msgstr ""
 
@@ -1930,7 +1940,7 @@ msgstr ""
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:67
 msgid "User"
 msgstr ""
 
@@ -1994,12 +2004,12 @@ msgid "Workflow cannot be tested"
 msgstr ""
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
-#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsWorkspace.tsx:25
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
 #: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:115
+#: src/pages/settings/roles/SettingsRoles.tsx:109
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
@@ -2011,7 +2021,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:102
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr ""

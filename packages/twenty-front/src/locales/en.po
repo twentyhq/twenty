@@ -75,7 +75,7 @@ msgstr "Account Deletion"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:80
 msgid "Accounts"
 msgstr "Accounts"
 
@@ -162,7 +162,7 @@ msgstr "All"
 msgid "All ({relationRecordsCount})"
 msgstr "All ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:124
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 msgid "All roles"
 msgstr "All roles"
 
@@ -195,7 +195,7 @@ msgid "and"
 msgstr "and"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:156
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -245,7 +245,7 @@ msgstr "Ascending"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Assign {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:125
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Assign roles to specify each member's access permissions"
 
@@ -257,7 +257,7 @@ msgstr "Assign to member"
 msgid "Assigned members"
 msgstr "Assigned members"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:134
+#: src/pages/settings/roles/SettingsRoles.tsx:128
 msgid "Assigned to"
 msgstr "Assigned to"
 
@@ -292,7 +292,7 @@ msgstr "Back to content"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:117
 msgid "Billing"
 msgstr "Billing"
 
@@ -318,7 +318,7 @@ msgstr "Calendar"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:92
 msgid "Calendars"
 msgstr "Calendars"
 
@@ -497,7 +497,7 @@ msgstr "Create new record"
 msgid "Create profile"
 msgstr "Create profile"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:200
+#: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
 msgstr "Create Role"
 
@@ -521,7 +521,7 @@ msgstr "Custom objects"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "Customise the fields available in the {objectLabelSingular} views."
 
-#: src/pages/settings/SettingsWorkspace.tsx:56
+#: src/pages/settings/SettingsWorkspace.tsx:49
 msgid "Customize Domain"
 msgstr "Customize Domain"
 
@@ -551,7 +551,7 @@ msgid "Dark"
 msgstr "Dark"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:131
 msgid "Data model"
 msgstr "Data model"
 
@@ -688,7 +688,7 @@ msgstr "Destroy"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:152
 msgid "Developers"
 msgstr "Developers"
 
@@ -702,7 +702,7 @@ msgstr "Discard Draft"
 msgid "Display as relative date"
 msgstr "Display as relative date"
 
-#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/workspace/SettingsDomain.tsx:186
 #: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
@@ -733,7 +733,7 @@ msgstr "Edit billing interval"
 msgid "Edit payment method, see your invoices and more"
 msgstr "Edit payment method, see your invoices and more"
 
-#: src/pages/settings/SettingsWorkspace.tsx:52
+#: src/pages/settings/SettingsWorkspace.tsx:45
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Edit your subdomain name or set a custom domain."
 
@@ -755,7 +755,7 @@ msgstr "Email or domain is already in blocklist"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:86
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "Emails"
@@ -824,7 +824,7 @@ msgstr "Exit Settings"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:75
 msgid "Experience"
 msgstr "Experience"
 
@@ -935,14 +935,14 @@ msgstr "from yearly to monthly"
 msgid "Full access"
 msgstr "Full access"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:163
 msgid "Functions"
 msgstr "Functions"
 
-#: src/pages/settings/SettingsWorkspace.tsx:29
-#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/SettingsWorkspace.tsx:22
+#: src/pages/settings/SettingsWorkspace.tsx:28
 #: src/pages/settings/workspace/SettingsDomain.tsx:193
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:105
 msgid "General"
 msgstr "General"
 
@@ -962,13 +962,17 @@ msgstr "Get your subscription"
 msgid "Global"
 msgstr "Global"
 
-#: src/pages/settings/SettingsWorkspace.tsx:65
+#: src/pages/settings/SettingsWorkspace.tsx:58
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
 msgstr "Greek"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
+msgid "Health Status"
+msgstr "Health Status"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
@@ -1019,7 +1023,7 @@ msgstr "Instances"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:137
 msgid "Integrations"
 msgstr "Integrations"
 
@@ -1080,7 +1084,7 @@ msgstr "Japanese"
 msgid "Korean"
 msgstr "Korean"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:181
 msgid "Lab"
 msgstr "Lab"
 
@@ -1117,7 +1121,7 @@ msgstr "Listings"
 msgid "Log out"
 msgstr "Log out"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:120
 msgid "Logout"
 msgstr "Logout"
 
@@ -1149,7 +1153,7 @@ msgstr "Max"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:111
 msgid "Members"
 msgstr "Members"
 
@@ -1173,9 +1177,9 @@ msgstr "Move right"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/SettingsRoles.tsx:125
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
@@ -1202,7 +1206,7 @@ msgstr "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') fo
 msgid "Name of your API key"
 msgstr "Name of your API key"
 
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 msgid "Name of your workspace"
 msgstr "Name of your workspace"
 
@@ -1304,8 +1308,12 @@ msgid "No more members to assign"
 msgstr "No more members to assign"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
-msgid "No Result"
-msgstr "No Result"
+#~ msgid "No Result"
+#~ msgstr "No Result"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Results"
+msgstr "No Results"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1353,8 +1361,9 @@ msgstr "Options"
 msgid "or"
 msgstr "or"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:67
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:172
 msgid "Other"
 msgstr "Other"
 
@@ -1404,7 +1413,7 @@ msgstr "Permanently destroy workflows"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsWorkspace.tsx:33
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr "Picture"
@@ -1460,7 +1469,7 @@ msgstr "Privacy Policy"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:70
 msgid "Profile"
 msgstr "Profile"
 
@@ -1495,7 +1504,7 @@ msgstr "Regenerate Key"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:187
 msgid "Releases"
 msgstr "Releases"
 
@@ -1533,9 +1542,9 @@ msgstr "Reset to"
 msgid "Results"
 msgstr "Results"
 
+#: src/pages/settings/roles/SettingsRoles.tsx:106
 #: src/pages/settings/roles/SettingsRoles.tsx:112
-#: src/pages/settings/roles/SettingsRoles.tsx:118
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:123
 msgid "Roles"
 msgstr "Roles"
 
@@ -1590,7 +1599,7 @@ msgstr "Search records"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:143
 msgid "Security"
 msgstr "Security"
 
@@ -1633,10 +1642,11 @@ msgid "Serbian (Cyrillic)"
 msgstr "Serbian (Cyrillic)"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:175
 msgid "Server Admin"
 msgstr "Server Admin"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:71
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "Server Admin Panel"
@@ -1737,7 +1747,7 @@ msgstr "Subscription has been switched {to}"
 msgid "Sum"
 msgstr "Sum"
 
-#: src/pages/settings/SettingsWorkspace.tsx:63
+#: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Support"
 msgstr "Support"
 
@@ -1930,7 +1940,7 @@ msgstr "Use our API or add your first {objectLabel} manually"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:67
 msgid "User"
 msgstr "User"
 
@@ -1994,12 +2004,12 @@ msgid "Workflow cannot be tested"
 msgstr "Workflow cannot be tested"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
-#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsWorkspace.tsx:25
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
 #: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:115
+#: src/pages/settings/roles/SettingsRoles.tsx:109
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
@@ -2011,7 +2021,7 @@ msgstr "Workflow cannot be tested"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:102
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "Workspace"
