@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -56,6 +56,7 @@ msgid "Abort"
 msgstr "中止"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "關於"
 
@@ -135,11 +136,19 @@ msgstr "添加您的第一個 {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "已添加 {beautifiedCreatedAt}"
 
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
+msgid "Advanced filter"
+msgstr "高級篩選"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "Afrikaans"
+msgstr "南非荷蘭語"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
 msgstr "全部"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "全部 ({relationRecordsCount})"
 
@@ -193,7 +202,15 @@ msgstr "API 密鑰"
 msgid "API Name"
 msgstr "API 名稱"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
+msgid "API Name (Plural)"
+msgstr "API 名稱 (複數)"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
+msgid "API Name (Singular)"
+msgstr "API 名稱（單數）"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "外觀"
 
@@ -320,6 +337,10 @@ msgstr "繁體中文"
 msgid "Choose an object"
 msgstr "選擇對象"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
+msgid "Choose the fields that will identify your records"
+msgstr "選擇將識別您記錄的欄位"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
 msgstr "選擇服務提供商"
@@ -364,7 +385,7 @@ msgstr "連接到 Microsoft"
 msgid "Connected accounts"
 msgstr "已連接帳戶"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "上下文"
 
@@ -388,7 +409,7 @@ msgstr "繼續使用 Google"
 msgid "Continue with Microsoft"
 msgstr "繼續使用 Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "副駕駛"
 
@@ -450,6 +471,10 @@ msgstr "創建 Webhook"
 msgid "Create your workspace"
 msgstr "創建您的工作區"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "自定義域名"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "自定義對象"
@@ -471,8 +496,17 @@ msgstr "自定義工作區安全"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "危險區"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Danish"
+msgstr "丹麥語"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
+msgid "Dark"
+msgstr "深色模式"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -497,6 +531,7 @@ msgstr "日期和時間"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "停用"
@@ -504,6 +539,10 @@ msgstr "停用"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "停用 \"同步對象標籤和 API 名稱\" 以設置自定義 API 名稱"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
+msgid "Deactivate object"
+msgstr "停用對象"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -621,9 +660,8 @@ msgid "Display as relative date"
 msgstr "顯示為相對日期"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsHostname.tsx:25
-#: src/pages/settings/workspace/SettingsDomain.tsx:183
-#: src/pages/settings/workspace/SettingsDomain.tsx:193
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "域名"
 
@@ -735,8 +773,8 @@ msgstr "退出設置"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "體驗"
@@ -850,7 +888,7 @@ msgstr "功能"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:190
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "常規"
@@ -867,7 +905,7 @@ msgstr "邀請您的團隊，充分利用您的工作區。"
 msgid "Get your subscription"
 msgstr "獲取訂閱"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "全局"
 
@@ -936,7 +974,7 @@ msgstr "無效的電子郵件"
 msgid "Invalid email or domain"
 msgstr "無效的電子郵件或域名"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:164
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "無效的表單值"
 
@@ -976,7 +1014,7 @@ msgstr "韓語"
 msgid "Lab"
 msgstr "實驗室"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "語言"
 
@@ -991,6 +1029,10 @@ msgstr "最新"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
 msgid "Latest date"
 msgstr "最新日期"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
+msgid "Light"
+msgstr "淺色模式"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 msgid "Link copied to clipboard"
@@ -1073,6 +1115,10 @@ msgstr "名稱"
 msgid "Name can not be empty"
 msgstr "名稱不能為空"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
+msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+msgstr "名稱需包含單數（例如，'發票'）和複數（例如，'發票們'）形式。"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
@@ -1111,6 +1157,10 @@ msgstr "導航至上一個工作流程"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "新"
+
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "新{capitalizedObjectNameSingular}"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -1163,7 +1213,7 @@ msgstr "尚無工作流程版本"
 msgid "Not empty"
 msgstr "非空"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "對象"
 
@@ -1182,6 +1232,7 @@ msgstr "偏離常規路線"
 msgid "Opened"
 msgstr "已開啟"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "選項"
@@ -1305,7 +1356,7 @@ msgstr "閱讀文檔"
 msgid "Receive an email containing password update link"
 msgstr "接收包含密碼更新鏈接的電子郵件"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "記錄選擇"
 
@@ -1369,10 +1420,11 @@ msgstr "運行工作流程並返回此處查看其執行情況"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "搜索"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "用\"'{commandMenuSearch}'\"搜索..."
 
@@ -1385,7 +1437,7 @@ msgid "Search an index..."
 msgstr "搜索索引..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "搜索字段"
 
@@ -1394,6 +1446,7 @@ msgid "Search for an object..."
 msgstr "搜索對象..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "搜索記錄"
 
@@ -1429,7 +1482,7 @@ msgstr "查看版本歷史"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "選擇要發送到此端點的事件"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "選擇您偏好的語言"
 
@@ -1445,11 +1498,15 @@ msgstr "服務器管理面板"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "設置電子郵件可見性，管理您的屏蔽列表等。"
 
-#: src/pages/settings/workspace/SettingsHostname.tsx:25
-msgid "Set the name of your domain"
-msgstr "設置您的域名"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "設置您的自定義域名名稱並配置您的DNS記錄。"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "設置您的子域名"
 
@@ -1497,12 +1554,12 @@ msgstr "西班牙語"
 msgid "SSO"
 msgstr "單點登錄"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "子域"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:109
-#: src/pages/settings/workspace/SettingsDomain.tsx:136
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "子域名已被佔用"
 
@@ -1542,6 +1599,14 @@ msgstr "切換計費 {to}"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "同步字段標籤和 API 名稱"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
+msgid "Synchronize Objects Labels and API Names"
+msgstr "同步對象標籤和 API 名稱"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "System settings"
+msgstr "系統設置"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1684,7 +1749,8 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "使用我們的 API 或手動添加您的第一個 {objectLabel}"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
@@ -1751,7 +1817,7 @@ msgstr "無法測試工作流程"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:110
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18

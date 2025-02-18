@@ -1,3 +1,4 @@
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -11,12 +12,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  IconComponent,
-  IconEye,
-  IconEyeOff,
-  RGBA
-} from 'twenty-ui';
+import { AutogrowWrapper, IconComponent, IconEye, IconEyeOff, RGBA } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -56,9 +52,16 @@ const StyledInput = styled.input<
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-grow: 1;
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  height: ${({ sizeVariant }) => (sizeVariant === 'sm' ? '20px' : '32px')};
+  font-family: ${({ theme, inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : theme.font.family};
+  font-size: ${({ theme, inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : theme.font.size.md};
+  font-weight: ${({ theme, inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : theme.font.weight.regular};
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+  line-height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   outline: none;
   padding: ${({ theme, sizeVariant }) =>
     sizeVariant === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
@@ -251,19 +254,73 @@ const TextInputV2Component = (
               )}
             </StyledTrailingIcon>
           )}
-          {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
-            <StyledTrailingIcon>
-              <RightIcon size={theme.icon.size.md} />
-            </StyledTrailingIcon>
-          )}
-        </StyledTrailingIconContainer>
-      </StyledInputContainer>
-      {error && !noErrorHelper && (
-        <StyledErrorHelper>{error}</StyledErrorHelper>
-      )}
-    </StyledContainer>
-  );
-};
+
+          <StyledInput
+            id={inputId}
+            width={width}
+            data-testid={dataTestId}
+            autoComplete={autoComplete || 'off'}
+            ref={combinedRef}
+            tabIndex={tabIndex ?? 0}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            type={passwordVisible ? 'text' : type}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              onChange?.(
+                turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+              );
+            }}
+            onKeyDown={onKeyDown}
+            {...{
+              autoFocus,
+              disabled,
+              placeholder,
+              required,
+              value,
+              LeftIcon,
+              maxLength,
+              error,
+              sizeVariant,
+              inheritFontStyles,
+              autoGrow,
+            }}
+          />
+
+          <StyledTrailingIconContainer {...{ error }}>
+            {!error && type === INPUT_TYPE_PASSWORD && (
+              <StyledTrailingIcon
+                onClick={handleTogglePasswordVisibility}
+                data-testid="reveal-password-button"
+              >
+                {passwordVisible ? (
+                  <IconEyeOff size={theme.icon.size.md} />
+                ) : (
+                  <IconEye size={theme.icon.size.md} />
+                )}
+              </StyledTrailingIcon>
+            )}
+            {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
+              <StyledTrailingIcon>
+                <RightIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            )}
+          </StyledTrailingIconContainer>
+        </StyledInputContainer>
+        <InputErrorHelper isVisible={!noErrorHelper}>{error}</InputErrorHelper>
+      </StyledContainer>
+    );
+  },
+);
+
+const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
+  sizeVariant?: TextInputV2Size;
+}>`
+  border: 1px solid transparent;
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+  padding: 0 ${({ theme }) => theme.spacing(1.25)};
+  box-sizing: border-box;
+`;
 
 const TextInputV2WithAutoGrowWrapper = forwardRef<
   HTMLInputElement,

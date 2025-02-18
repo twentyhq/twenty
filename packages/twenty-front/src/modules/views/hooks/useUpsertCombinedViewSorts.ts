@@ -1,11 +1,11 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewSortIdsComponentFamilyState';
 import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/unsavedToUpsertViewSortsComponentFamilyState';
 import { ViewSort } from '@/views/types/ViewSort';
@@ -13,8 +13,7 @@ import { isDefined } from 'twenty-shared';
 
 export const useUpsertCombinedViewSorts = (viewBarComponentId?: string) => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
-    currentViewIdComponentState,
-    viewBarComponentId,
+    contextStoreCurrentViewIdComponentState,
   );
 
   const unsavedToUpsertViewSortsCallbackState =
@@ -29,7 +28,7 @@ export const useUpsertCombinedViewSorts = (viewBarComponentId?: string) => {
       viewBarComponentId,
     );
 
-  const { getViewFromCache } = useGetViewFromCache();
+  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
   const upsertCombinedViewSort = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -53,7 +52,7 @@ export const useUpsertCombinedViewSorts = (viewBarComponentId?: string) => {
           return;
         }
 
-        const currentView = await getViewFromCache(currentViewId);
+        const currentView = await getViewFromPrefetchState(currentViewId);
 
         if (!currentView) {
           return;
@@ -111,7 +110,7 @@ export const useUpsertCombinedViewSorts = (viewBarComponentId?: string) => {
       },
     [
       currentViewIdCallbackState,
-      getViewFromCache,
+      getViewFromPrefetchState,
       unsavedToDeleteViewSortIdsCallbackState,
       unsavedToUpsertViewSortsCallbackState,
     ],

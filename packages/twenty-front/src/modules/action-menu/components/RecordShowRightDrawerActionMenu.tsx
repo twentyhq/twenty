@@ -4,15 +4,14 @@ import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RightDrawerActionMenuDropdown } from '@/action-menu/components/RightDrawerActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RecordShowRightDrawerActionMenu = () => {
-  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
+  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
   );
 
   const isWorkflowEnabled = useIsFeatureEnabled(
@@ -21,7 +20,7 @@ export const RecordShowRightDrawerActionMenu = () => {
 
   return (
     <>
-      {contextStoreCurrentObjectMetadataId && (
+      {contextStoreCurrentObjectMetadataItem && (
         <ActionMenuContext.Provider value={{ isInRightDrawer: true }}>
           <RightDrawerActionMenuDropdown />
           <ActionMenuConfirmationModals />

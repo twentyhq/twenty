@@ -60,7 +60,10 @@ export class UserRoleService {
       );
     }
 
-    const roles = await this.getRolesByUserWorkspaces([userWorkspace.id]);
+    const roles = await this.getRolesByUserWorkspaces({
+      userWorkspaceIds: [userWorkspace.id],
+      workspaceId,
+    });
 
     const currentRole = roles.get(userWorkspace.id)?.[0];
 
@@ -88,8 +91,10 @@ export class UserRoleService {
     workspaceId: string;
   }): Promise<void> {
     await this.validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow(
-      userWorkspaceId,
-      workspaceId,
+      {
+        userWorkspaceId,
+        workspaceId,
+      },
     );
 
     await this.userWorkspaceRoleRepository.delete({
@@ -98,9 +103,13 @@ export class UserRoleService {
     });
   }
 
-  public async getRolesByUserWorkspaces(
-    userWorkspaceIds: string[],
-  ): Promise<Map<string, RoleDTO[]>> {
+  public async getRolesByUserWorkspaces({
+    userWorkspaceIds,
+    workspaceId,
+  }: {
+    userWorkspaceIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, RoleDTO[]>> {
     if (!userWorkspaceIds.length) {
       return new Map();
     }
@@ -108,6 +117,7 @@ export class UserRoleService {
     const allUserWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
       where: {
         userWorkspaceId: In(userWorkspaceIds),
+        workspaceId,
       },
       relations: {
         role: true,
@@ -176,11 +186,17 @@ export class UserRoleService {
     return workspaceMembers;
   }
 
-  private async validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow(
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<void> {
-    const roles = await this.getRolesByUserWorkspaces([userWorkspaceId]);
+  private async validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const roles = await this.getRolesByUserWorkspaces({
+      userWorkspaceIds: [userWorkspaceId],
+      workspaceId,
+    });
 
     const currentRoles = roles.get(userWorkspaceId);
 

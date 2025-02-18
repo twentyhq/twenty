@@ -166,8 +166,8 @@ export const ObjectOptionsDropdownMenuContent = () => {
             />
             <MenuItem
               onClick={() => {
-                openObjectRecordsSpreasheetImportDialog();
                 closeDropdown();
+                openObjectRecordsSpreasheetImportDialog();
               }}
               LeftIcon={IconFileImport}
               text="Import"

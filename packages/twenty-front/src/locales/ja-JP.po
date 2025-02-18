@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -56,6 +56,7 @@ msgid "Abort"
 msgstr "中止"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "概要"
 
@@ -135,11 +136,19 @@ msgstr "最初の{objectLabel}を追加"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "{beautifiedCreatedAt}に追加"
 
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
+msgid "Advanced filter"
+msgstr "\\\\u9ad8\\\\u5ea6\\\\u306a\\\\u30d5\\\\u30a3\\\\u30eb\\\\u30bf\\\\u30fc"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "Afrikaans"
+msgstr "アフリカーンス語"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
 msgstr "すべて"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "すべて ({relationRecordsCount})"
 
@@ -193,7 +202,15 @@ msgstr "APIキー"
 msgid "API Name"
 msgstr "API名"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
+msgid "API Name (Plural)"
+msgstr "API名（複数形）"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
+msgid "API Name (Singular)"
+msgstr "API名<b>（</b>単数形<b>）</b>"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "外観"
 
@@ -320,6 +337,10 @@ msgstr "中国語（繁体字）"
 msgid "Choose an object"
 msgstr "オブジェクトを選択"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
+msgid "Choose the fields that will identify your records"
+msgstr "レコードを識別するフィールドを選択してください"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
 msgstr "プロバイダーを選択"
@@ -364,7 +385,7 @@ msgstr "Microsoftと接続"
 msgid "Connected accounts"
 msgstr "接続されたアカウント"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "コンテキスト"
 
@@ -388,7 +409,7 @@ msgstr "Googleで続行"
 msgid "Continue with Microsoft"
 msgstr "Microsoftで続行"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "コパイロット"
 
@@ -450,6 +471,10 @@ msgstr "Webhookを作成"
 msgid "Create your workspace"
 msgstr "ワークスペースの作成"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "カスタムドメイン"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
 msgstr "カスタムオブジェクト"
@@ -471,8 +496,17 @@ msgstr "ワークスペースのセキュリティをカスタマイズ"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "危険ゾーン"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Danish"
+msgstr "デンマーク語"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
+msgid "Dark"
+msgstr "\\\\u30c0\\\\u30fc\\\\u30af"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
@@ -497,6 +531,7 @@ msgstr "日付と時間"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "無効化"
@@ -504,6 +539,10 @@ msgstr "無効化"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "カスタムAPI名を設定するには、「オブジェクトラベルとAPI名の同期」を無効にする"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
+msgid "Deactivate object"
+msgstr "\\\\u30aa\\\\u30d6\\\\u30b8\\\\u30a7\\\\u30af\\\\u30c8\\\\u3092\\\\u7121\\\\u52b9\\\\u5316\\\\u3059\\\\u308b"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -621,9 +660,8 @@ msgid "Display as relative date"
 msgstr "相対日付で表示"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsHostname.tsx:25
-#: src/pages/settings/workspace/SettingsDomain.tsx:183
-#: src/pages/settings/workspace/SettingsDomain.tsx:193
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "ドメイン"
 
@@ -735,8 +773,8 @@ msgstr "設定を終了"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "経験"
@@ -850,7 +888,7 @@ msgstr "機能"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:190
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "一般"
@@ -867,7 +905,7 @@ msgstr "チームを招待して、ワークスペースを最大限に活用し
 msgid "Get your subscription"
 msgstr "サブスクリプションを取得"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "グローバル"
 
@@ -936,7 +974,7 @@ msgstr "無効なメールアドレス"
 msgid "Invalid email or domain"
 msgstr "無効なメールアドレスまたはドメイン"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:164
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "無効なフォーム値"
 
@@ -976,7 +1014,7 @@ msgstr "韓国語"
 msgid "Lab"
 msgstr "ラボ"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "言語"
 
@@ -991,6 +1029,10 @@ msgstr "最新"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
 msgid "Latest date"
 msgstr "最新の日付"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
+msgid "Light"
+msgstr "\\\\u660e\\\\u308b\\\\u3044"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 msgid "Link copied to clipboard"
@@ -1073,6 +1115,10 @@ msgstr "名前"
 msgid "Name can not be empty"
 msgstr "名前は空にできません"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
+msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+msgstr "単数形<b>（</b>例えば、「Invoice」<b>）</b>および複数形<b>（</b>例えば、「Invoices」<b>）</b>の名前。"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
@@ -1111,6 +1157,10 @@ msgstr "前のワークフローに移動"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "新規"
+
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "新しい{capitalizedObjectNameSingular}"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -1163,7 +1213,7 @@ msgstr "ワークフローのバージョンはまだありません"
 msgid "Not empty"
 msgstr "空ではない"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "オブジェクト"
 
@@ -1182,6 +1232,7 @@ msgstr "道を外れた"
 msgid "Opened"
 msgstr "開いた"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "オプション"
@@ -1305,7 +1356,7 @@ msgstr "ドキュメントを読む"
 msgid "Receive an email containing password update link"
 msgstr "パスワード更新リンクを含むメールを受け取る"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "レコード選択"
 
@@ -1369,10 +1420,11 @@ msgstr "ワークフローを実行し、その実行内容を見るためにこ
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "検索"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "''{commandMenuSearch}''で検索..."
 
@@ -1385,7 +1437,7 @@ msgid "Search an index..."
 msgstr "インデックスを検索..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "フィールドを検索"
 
@@ -1394,6 +1446,7 @@ msgid "Search for an object..."
 msgstr "オブジェクトを検索..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "レコードを検索"
 
@@ -1429,7 +1482,7 @@ msgstr "バージョン履歴を見る"
 msgid "Select the events you wish to send to this endpoint"
 msgstr "このエンドポイントに送信したいイベントを選択してください"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "希望の言語を選択してください"
 
@@ -1445,11 +1498,15 @@ msgstr "サーバー管理パネル"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "メールの可視性を設定し、ブロックリストを管理するなど。"
 
-#: src/pages/settings/workspace/SettingsHostname.tsx:25
-msgid "Set the name of your domain"
-msgstr "ドメイン名を設定"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "カスタムドメインの名前を設定し、DNSレコードを構成します。"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "サブドメイン名を設定"
 
@@ -1497,12 +1554,12 @@ msgstr "スペイン語"
 msgid "SSO"
 msgstr "SSO"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "サブドメイン"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:109
-#: src/pages/settings/workspace/SettingsDomain.tsx:136
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "サブドメインは既に使用されています"
 
@@ -1542,6 +1599,14 @@ msgstr "請求を{to}に切り替える"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "フィールドラベルとAPI名を同期する"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
+msgid "Synchronize Objects Labels and API Names"
+msgstr "\\\\\\\\u30aa\\\\u30d6\\\\u30b8\\\\u30a7\\\\u30af\\\\u30c8\\\\u306e\\\\u30e9\\\\u30d9\\\\u30eb\\\\u3068API\\\\u540d\\\\u3092\\\\u540c\\\\u6642\\\\u306b\\\\u540c\\\\u671f\\\\u3055\\\\u305b\\\\u308b"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "System settings"
+msgstr "\\\\\\\\u30b7\\\\u30b9\\\\u30c6\\\\u30e0\\\\u8a2d\\\\u5b9a"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1684,7 +1749,8 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "APIを使用するか、最初の{objectLabel}を手動で追加してください"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
@@ -1751,7 +1817,7 @@ msgstr "ワークフローをテストできません"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/roles/SettingsRoles.tsx:110
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18

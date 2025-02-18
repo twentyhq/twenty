@@ -32,6 +32,7 @@
   "dependencies": {
     "@blocknote/xl-docx-exporter": "^0.22.0",
     "@blocknote/xl-pdf-exporter": "^0.22.0",
+    "@cyntler/react-doc-viewer": "^1.17.0",
     "@lingui/detect-locale": "^5.2.0",
     "@nivo/calendar": "^0.87.0",
     "@nivo/core": "^0.87.0",

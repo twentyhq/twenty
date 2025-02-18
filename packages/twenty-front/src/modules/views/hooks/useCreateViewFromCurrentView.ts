@@ -1,6 +1,9 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
@@ -11,9 +14,7 @@ import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistView
 import { useGetViewFilterGroupsCombined } from '@/views/hooks/useGetCombinedViewFilterGroups';
 import { useGetViewFiltersCombined } from '@/views/hooks/useGetCombinedViewFilters';
 import { useGetViewSortsCombined } from '@/views/hooks/useGetCombinedViewSorts';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
-import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
+import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
 import { ViewGroup } from '@/views/types/ViewGroup';
@@ -25,16 +26,9 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
-    currentViewIdComponentState,
+    contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
-
-  const isPersistingViewFieldsCallbackState = useRecoilComponentCallbackStateV2(
-    isPersistingViewFieldsComponentState,
-    viewBarComponentId,
-  );
-
-  const { getViewFromCache } = useGetViewFromCache();
 
   const { createOneRecord } = useCreateOneRecord<View>({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -57,6 +51,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { createViewFilterGroupRecords } = usePersistViewFilterGroupRecords();
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
+
+  const { findManyRecords } = useLazyFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.View,
+    fetchPolicy: 'network-only',
+  });
 
   const createViewFromCurrentView = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -84,14 +83,19 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           return;
         }
 
-        // Here we might instead want to get view from unsaved filters ?
-        const sourceView = await getViewFromCache(currentViewId);
+        const sourceView = snapshot
+          .getLoadable(
+            prefetchViewFromViewIdFamilySelector({
+              viewId: currentViewId,
+            }),
+          )
+          .getValue();
 
         if (!isDefined(sourceView)) {
           return;
         }
 
-        set(isPersistingViewFieldsCallbackState, true);
+        set(isPersistingViewFieldsState, true);
 
         const newView = await createOneRecord({
           id: id ?? v4(),
@@ -123,7 +127,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           }
 
           const viewGroupsToCreate =
-            objectMetadataItem?.fields
+            objectMetadataItem.fields
               ?.find((field) => field.id === kanbanFieldMetadataId)
               ?.options?.map(
                 (option, index) =>
@@ -169,21 +173,21 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           );
         }
 
-        set(isPersistingViewFieldsCallbackState, false);
+        await findManyRecords();
+        set(isPersistingViewFieldsState, false);
       },
     [
-      objectMetadataItem,
-      createViewSortRecords,
-      createViewFilterRecords,
+      currentViewIdCallbackState,
       createOneRecord,
       createViewFieldRecords,
-      getViewSortsCombined,
-      getViewFiltersCombined,
-      getViewFilterGroupsCombined,
-      currentViewIdCallbackState,
-      getViewFromCache,
-      isPersistingViewFieldsCallbackState,
+      findManyRecords,
+      objectMetadataItem.fields,
       createViewGroupRecords,
+      getViewFilterGroupsCombined,
+      getViewFiltersCombined,
+      getViewSortsCombined,
+      createViewSortRecords,
+      createViewFilterRecords,
       createViewFilterGroupRecords,
     ],
   );

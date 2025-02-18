@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { UpdateAgentInput } from '@/settings/service-center/agents/types/UpdateAgentInput';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2223,6 +2224,7 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   settingsPermissions?: Maybe<Array<SettingsFeatures>>;
+  objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];

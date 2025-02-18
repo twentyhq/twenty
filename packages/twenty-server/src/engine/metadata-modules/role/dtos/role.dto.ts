@@ -13,9 +13,6 @@ export class RoleDTO {
   @Field({ nullable: false })
   label: string;
 
-  @Field({ nullable: false })
-  canUpdateAllSettings: boolean;
-
   @Field({ nullable: true })
   description: string;
 
@@ -27,4 +24,19 @@ export class RoleDTO {
 
   @Field(() => [WorkspaceMember], { nullable: true })
   workspaceMembers?: WorkspaceMember[];
+
+  @Field({ nullable: false })
+  canUpdateAllSettings: boolean;
+
+  @Field({ nullable: false })
+  canReadAllObjectRecords: boolean;
+
+  @Field({ nullable: false })
+  canUpdateAllObjectRecords: boolean;
+
+  @Field({ nullable: false })
+  canSoftDeleteAllObjectRecords: boolean;
+
+  @Field({ nullable: false })
+  canDestroyAllObjectRecords: boolean;
 }
