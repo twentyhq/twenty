@@ -57,9 +57,7 @@ export const buildCreatedByFromAuthContext = async ({
       });
     }
     default: {
-      // TODO handle gracefully
-      // Not managed from now
-      throw new Error('TODO');
+      throw new Error(`Could not build createdBy from authContext`);
     }
   }
 };
