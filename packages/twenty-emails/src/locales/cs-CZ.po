@@ -121,4 +121,3 @@ msgstr "Váš pracovní prostor <0>{workspaceDisplayName}</0> byl odstraněn, pr
 #: src/emails/clean-suspended-workspace.email.tsx:27
 #~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 #~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-

@@ -1481,7 +1481,8 @@ msgstr "F\"or\"aldrade f\"argschema"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
 msgid "Preferred language"
-msgstr "F\"or\"aldrat spr\n"
+msgstr ""
+"F\"or\"aldrat spr\n"
 "k"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
@@ -1585,7 +1586,8 @@ msgstr "Synkkurs"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr "Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
+msgstr ""
+"Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
 "n kalenderleverant\"oren"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
@@ -2255,4 +2257,3 @@ msgstr "X"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Ditt teammedlem ansvarig för att hantera företagskontot"
-
