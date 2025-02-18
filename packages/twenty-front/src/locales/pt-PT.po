@@ -2063,4 +2063,3 @@ msgstr "O seu Espaço de Trabalho"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "O seu espaço de trabalho será desativado"
-
