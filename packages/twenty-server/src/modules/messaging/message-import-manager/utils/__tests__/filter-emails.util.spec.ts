@@ -2,11 +2,9 @@ import { messagingGetMessagesServiceGetMessages } from 'src/modules/messaging/me
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 
 describe('filterEmails', () => {
-  it('Should not filter out if primary handle is a personal email', () => {
+  it('Should not filter at all if primary handle is a personal email', () => {
     const primaryHandle = 'guillim@gmail.com';
-    const messages = messagingGetMessagesServiceGetMessages.filter(
-      (message) => message.externalId === 'AA-work-emails-external',
-    );
+    const messages = messagingGetMessagesServiceGetMessages;
 
     const filteredMessages = filterEmails(primaryHandle, [], messages, []);
 

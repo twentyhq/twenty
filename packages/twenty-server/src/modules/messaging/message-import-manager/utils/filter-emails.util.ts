@@ -19,7 +19,6 @@ export const filterEmails = (
   if (isWorkEmail(primaryHandle)) {
     const intern = filterOutInternals(
       primaryHandle,
-      handleAliases,
       messagesWithoutBlocklisted,
     );
 
@@ -64,7 +63,6 @@ const filterOutIcsAttachments = (messages: MessageWithParticipants[]) => {
 
 const filterOutInternals = (
   primaryHandle: string,
-  handleAliases: string[],
   messages: MessageWithParticipants[],
 ) => {
   return messages.filter((message) => {
