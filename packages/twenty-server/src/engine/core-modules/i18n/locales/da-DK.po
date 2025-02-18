@@ -1540,7 +1540,8 @@ msgstr "Køringer"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
 msgid "Scopes"
-msgstr "R\n"
+msgstr ""
+"R\n"
 "ettigheder"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
@@ -2254,4 +2255,3 @@ msgstr ""
 #: src/modules/company/standard-objects/company.workspace-entity.ts:179
 msgid "Your team member responsible for managing the company account"
 msgstr "Dit teammedlem ansvarlig for at forvalte virksomhedens konto"
-
