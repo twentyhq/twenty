@@ -5,7 +5,7 @@ import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCard';
-import { SettingsSecurityOptionsList } from '@/settings/security/components/SettingsSecurityOptionsList';
+import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -21,7 +21,7 @@ const StyledMainContent = styled.div`
   min-height: 200px;
 `;
 
-const StyledSSOSection = styled(Section)`
+const StyledSection = styled(Section)`
   flex-shrink: 0;
 `;
 
@@ -42,7 +42,7 @@ export const SettingsSecurity = () => {
     >
       <SettingsPageContainer>
         <StyledMainContent>
-          <StyledSSOSection>
+          <StyledSection>
             <H2Title
               title={t`SSO`}
               description={t`Configure an SSO connection`}
@@ -56,14 +56,21 @@ export const SettingsSecurity = () => {
               }
             />
             <SettingsSSOIdentitiesProvidersListCard />
-          </StyledSSOSection>
+          </StyledSection>
+          <StyledSection>
+            <H2Title
+              title={t`Approved Email Domain`}
+              description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
+            />
+            {/*<SettingsSSOIdentitiesProvidersListCard />*/}
+          </StyledSection>
           <Section>
             <StyledContainer>
               <H2Title
                 title={t`Authentication`}
                 description={t`Customize your workspace security`}
               />
-              <SettingsSecurityOptionsList />
+              <SettingsSecurityAuthProvidersOptionsList />
             </StyledContainer>
           </Section>
         </StyledMainContent>

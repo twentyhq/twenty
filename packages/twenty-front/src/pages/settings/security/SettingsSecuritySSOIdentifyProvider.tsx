@@ -11,6 +11,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans } from '@lingui/react/macro';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -64,14 +65,14 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
       }
       links={[
         {
-          children: 'Workspace',
+          children: <Trans>Workspace</Trans>,
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: 'Security',
+          children: <Trans>Security</Trans>,
           href: getSettingsPath(SettingsPath.Security),
         },
-        { children: 'New' },
+        { children: <Trans>New SSO provider</Trans> },
       ]}
     >
       <FormProvider

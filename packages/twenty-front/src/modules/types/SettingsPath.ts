@@ -29,7 +29,7 @@ export enum SettingsPath {
   IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',
-  EditSSOIdentityProvider = 'security/sso/:identityProviderId',
+  NewTrustedDomain = 'security/trusted-domain/new',
   DevelopersNewWebhookDetail = 'developers/webhooks/:webhookId',
   Releases = 'releases',
   AdminPanel = 'admin-panel',

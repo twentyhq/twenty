@@ -20,7 +20,7 @@ export class WorkspaceTrustedDomainResolver {
   ) {}
 
   @Mutation(() => WorkspaceTrustedDomain)
-  async create(
+  async createWorkspaceTrustedDomain(
     @Args() { domain }: CreateTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
     @AuthUser() currentUser: User,
@@ -47,7 +47,7 @@ export class WorkspaceTrustedDomainResolver {
   }
 
   @Mutation(() => null)
-  async deleteTrustedDomain(
+  async deleteWorkspaceTrustedDomain(
     @Args() { id }: DeleteTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<void> {
@@ -58,7 +58,7 @@ export class WorkspaceTrustedDomainResolver {
   }
 
   @Mutation(() => [WorkspaceTrustedDomain])
-  async getAllTrustedDomains(
+  async getAllWorkspaceTrustedDomains(
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<Array<WorkspaceTrustedDomain>> {
     return await this.workspaceTrustedDomainService.getAllTrustedDomainsByWorkspace(
