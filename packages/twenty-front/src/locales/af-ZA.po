@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Staak"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Omtrent"
 
@@ -372,7 +372,7 @@ msgstr "Chinees — Tradisioneel"
 msgid "Choose an object"
 msgstr "Kies 'n voorwerp"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Kies die velde wat jou rekords sal identifiseer"
 
@@ -543,7 +543,7 @@ msgstr "Tsjeggies"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Gevaarsone"
 
@@ -578,7 +578,7 @@ msgstr "Datum en tyd"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Deaktiveer"
@@ -588,7 +588,7 @@ msgstr "Deaktiveer"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Deaktiveer \"Sinkroniseer Voorwerpe Etikette en API Name\" om 'n pasgemaakte API-naam in te stel"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Deaktiveer objek"
 
@@ -1198,7 +1198,7 @@ msgstr "Naam"
 msgid "Name can not be empty"
 msgstr "Naam kan nie leeg wees nie"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Naam in beide enkelvoudige (bv. 'Faktuur') en meervoudige (bv. 'Fakture') vorme."
 
@@ -1345,7 +1345,7 @@ msgstr "\"Van die gebaande pad af\""
 msgid "Opened"
 msgstr "Oopgemaak"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opsies"
@@ -2063,3 +2063,4 @@ msgstr "Jou Werkruimte"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Jou werkskerm sal onaktief gemaak word"
+

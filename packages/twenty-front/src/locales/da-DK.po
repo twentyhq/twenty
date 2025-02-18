@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Afbryd"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Om"
 
@@ -372,7 +372,7 @@ msgstr "Kinesisk — Traditionelt"
 msgid "Choose an object"
 msgstr "Vælg et objekt"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Vælg de felter, der vil identificere dine poster"
 
@@ -543,7 +543,7 @@ msgstr "Tjekkisk"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Risikoområde"
 
@@ -578,7 +578,7 @@ msgstr "Dato og tid"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Deaktiver"
@@ -588,7 +588,7 @@ msgstr "Deaktiver"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Deaktiver \"Synkronisér Objekters Etiketter og API Navne\" for at sætte et brugerdefineret API navn"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Deaktiver objekt"
 
@@ -1198,7 +1198,7 @@ msgstr "Navn"
 msgid "Name can not be empty"
 msgstr "Navnet kan ikke være tomt"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Navngivelse i b\\u00e5de ental (f.eks. 'Faktura') og flertal (f.eks. 'Fakturaer') former."
 
@@ -1345,7 +1345,7 @@ msgstr "Uden for alfarvej"
 msgid "Opened"
 msgstr "Åbnet"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Muligheder"
@@ -2063,3 +2063,4 @@ msgstr "Dit arbejdsområde"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Dit arbejdsområde vil blive deaktiveret"
+

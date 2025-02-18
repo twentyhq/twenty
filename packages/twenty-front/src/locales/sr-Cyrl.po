@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Прекид"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "О томе"
 
@@ -372,7 +372,7 @@ msgstr "Кинески — Традиционални"
 msgid "Choose an object"
 msgstr "Изаберите објекат"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Изаберите поља која ће идентификовати ваше записе"
 
@@ -543,7 +543,7 @@ msgstr "Чешки"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Опасна зона"
 
@@ -578,7 +578,7 @@ msgstr "Датум и време"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Деактивирај"
@@ -588,7 +588,7 @@ msgstr "Деактивирај"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Деактивирајте \"Синхронизацију ознака објеката и API имена\" да бисте поставили прилагођено API име"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Деактивирај објекат"
 
@@ -1198,7 +1198,7 @@ msgstr "Име"
 msgid "Name can not be empty"
 msgstr "Име не може бити празно"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Име у једнини и множини формама (нпр., 'Фактура') и множина (нпр., 'Фактуре')."
 
@@ -1345,7 +1345,7 @@ msgstr "Ван утабаних стаза"
 msgid "Opened"
 msgstr "Отворено"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Опције"
@@ -2063,3 +2063,4 @@ msgstr "Ваш радни простор"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ваш радни простор ће бити онемогућен"
+

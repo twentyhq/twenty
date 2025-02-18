@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Прервать"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "О системе"
 
@@ -372,7 +372,7 @@ msgstr "Китайский — традиционный"
 msgid "Choose an object"
 msgstr "Выберите объект"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Выберите поля, которые будут идентифицировать ваши записи"
 
@@ -543,7 +543,7 @@ msgstr "Чешский"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Опасная зона"
 
@@ -578,7 +578,7 @@ msgstr "Дата и время"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Деактивировать"
@@ -588,7 +588,7 @@ msgstr "Деактивировать"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Деактивируйте \"Синхронизировать метки объектов и API-имена\", чтобы установить пользовательское API-имя"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Деактивировать объект"
 
@@ -1198,7 +1198,7 @@ msgstr "Имя"
 msgid "Name can not be empty"
 msgstr "Имя не может быть пустым"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Указание названия в единственном (например, 'Счет-фактура') и множественном (например, 'Счета-фактуры') числах."
 
@@ -1345,7 +1345,7 @@ msgstr "В стороне от пути"
 msgid "Opened"
 msgstr "Открыто"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Настройки"
@@ -2063,3 +2063,4 @@ msgstr "Ваше рабочее пространство"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ваше рабочее пространство будет отключено"
+

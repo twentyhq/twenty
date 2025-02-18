@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Avbryt"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Om"
 
@@ -372,7 +372,7 @@ msgstr "Kinesisk — Tradisjonell"
 msgid "Choose an object"
 msgstr "Velg et objekt"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Velg feltene som vil identifisere postene dine"
 
@@ -462,7 +462,7 @@ msgstr "Kopier lenke"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
-msgstr "Kopier denne n\fkelen da den ikke vil v\fre synlig igjen"
+msgstr "Kopier denne nkelen da den ikke vil vre synlig igjen"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
@@ -487,11 +487,11 @@ msgstr "Tell unike verdier"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
 msgid "Create a workflow and return here to view its versions"
-msgstr "Opprett en arbeidsflyt og kom tilbake her for \fn vise versjonene"
+msgstr "Opprett en arbeidsflyt og kom tilbake her for n vise versjonene"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
-msgstr "Opprett API-n\fkkel"
+msgstr "Opprett API-nkkel"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
@@ -543,7 +543,7 @@ msgstr "Tsjekkisk"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Fareomr\\frede"
 
@@ -578,7 +578,7 @@ msgstr "Dato og tid"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Deaktiver"
@@ -588,7 +588,7 @@ msgstr "Deaktiver"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Deaktiver \\"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Deaktiver objekt"
 
@@ -1198,7 +1198,7 @@ msgstr "Navn"
 msgid "Name can not be empty"
 msgstr "Navn kan ikke v\\u00e6re tomt"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Navn i både entall (f.eks. 'Faktura') og flertall (f.eks. 'Fakturaer') former."
 
@@ -1345,7 +1345,7 @@ msgstr "Utenfor allfarvei"
 msgid "Opened"
 msgstr "Åpnet"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Alternativer"
@@ -2063,3 +2063,4 @@ msgstr "Ditt Arbeidsområde"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ditt arbeidsområde vil bli deaktivert"
+

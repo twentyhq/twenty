@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "crwdns61:0crwdne61:0"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "crwdns63:0crwdne63:0"
 
@@ -372,7 +372,7 @@ msgstr "crwdns177:0crwdne177:0"
 msgid "Choose an object"
 msgstr "crwdns179:0crwdne179:0"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "crwdns3985:0crwdne3985:0"
 
@@ -543,7 +543,7 @@ msgstr "crwdns1801:0crwdne1801:0"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "crwdns251:0crwdne251:0"
 
@@ -578,7 +578,7 @@ msgstr "crwdns259:0crwdne259:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "crwdns261:0crwdne261:0"
@@ -588,7 +588,7 @@ msgstr "crwdns261:0crwdne261:0"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "crwdns263:0crwdne263:0"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "crwdns3991:0crwdne3991:0"
 
@@ -1198,7 +1198,7 @@ msgstr "crwdns495:0crwdne495:0"
 msgid "Name can not be empty"
 msgstr "crwdns497:0crwdne497:0"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "crwdns3999:0crwdne3999:0"
 
@@ -1345,7 +1345,7 @@ msgstr "crwdns543:0crwdne543:0"
 msgid "Opened"
 msgstr "crwdns545:0crwdne545:0"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "crwdns547:0crwdne547:0"

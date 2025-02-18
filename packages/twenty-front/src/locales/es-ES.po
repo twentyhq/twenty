@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Abortar"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Acerca de"
 
@@ -372,7 +372,7 @@ msgstr "Chino tradicional"
 msgid "Choose an object"
 msgstr "Elija un objeto"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Elige los campos que identificarán tus registros"
 
@@ -543,7 +543,7 @@ msgstr "Checo"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Zona de peligro"
 
@@ -578,7 +578,7 @@ msgstr "Fecha y hora"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Desactivar"
@@ -588,7 +588,7 @@ msgstr "Desactivar"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Desactive \"Sincronizar etiquetas de objetos y nombres de API\" para establecer un nombre de API personalizado"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Desactivar objeto"
 
@@ -1198,7 +1198,7 @@ msgstr "Nombre"
 msgid "Name can not be empty"
 msgstr "El nombre no puede estar vacío"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Nombre tanto en forma singular (ej., 'Factura') como en plural (ej., 'Facturas')."
 
@@ -1345,7 +1345,7 @@ msgstr "Fuera del camino trillado"
 msgid "Opened"
 msgstr "Abierto"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opciones"
@@ -2063,3 +2063,4 @@ msgstr "Tu espacio de trabajo"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Tu espacio de trabajo se desactivará"
+

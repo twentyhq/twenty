@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Avorta"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Sobre"
 
@@ -372,7 +372,7 @@ msgstr "Xinès — Tradicional"
 msgid "Choose an object"
 msgstr "Trieu un objecte"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Trieu els camps que identificaran els vostres registres"
 
@@ -543,7 +543,7 @@ msgstr "Txec"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Zona de perill"
 
@@ -578,7 +578,7 @@ msgstr "Data i hora"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Desactiva"
@@ -588,7 +588,7 @@ msgstr "Desactiva"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Desactiva \"Sincronitza Etiquetes d'Objectes i Noms d'API\" per establir un nom d'API personalitzat"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Desactiva l'objecte"
 
@@ -1198,7 +1198,7 @@ msgstr "Nom"
 msgid "Name can not be empty"
 msgstr "El nom no pot estar buit"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Nom tant en singular (p. ex., 'Factura') com en plural (p. ex., 'Factures')."
 
@@ -1345,7 +1345,7 @@ msgstr "Fora del camí conegut"
 msgid "Opened"
 msgstr "Obert"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opcions"
@@ -2063,3 +2063,4 @@ msgstr "El vostre Espai de Treball"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "El vostre espai de treball serà desactivat"
+

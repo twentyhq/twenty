@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Anulează"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Despre"
 
@@ -372,7 +372,7 @@ msgstr "Chineză — Tradițională"
 msgid "Choose an object"
 msgstr "Alegeți un obiect"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Alegeți câmpurile care vor identifica înregistrările dvs"
 
@@ -543,7 +543,7 @@ msgstr "Cehă"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Zonă periculoasă"
 
@@ -578,7 +578,7 @@ msgstr "Dată și oră"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Dezactivează"
@@ -588,7 +588,7 @@ msgstr "Dezactivează"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Dezactivează \"Sincronizarea Etichetelor Obiectelor și Numelor API\" pentru a seta un nume API personalizat"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Dezactivează obiectul"
 
@@ -1198,7 +1198,7 @@ msgstr "Nume"
 msgid "Name can not be empty"
 msgstr "Numele nu poate fi gol"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Numele în ambele forme, singular (de exemplu, 'Factură') și plural (de exemplu, 'Facturi')."
 
@@ -1345,7 +1345,7 @@ msgstr "În afara cărărilor bătătorite"
 msgid "Opened"
 msgstr "Deschis"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opțiuni"
@@ -2063,3 +2063,4 @@ msgstr "Spațiul tău de lucru"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Spațiul tău de lucru va fi dezactivat"
+

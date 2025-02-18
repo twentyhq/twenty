@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Abortar"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Sobre"
 
@@ -153,8 +153,7 @@ msgstr "Adicionado {beautifiedCreatedAt}"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
 msgid "Advanced filter"
-msgstr ""
-"Filtro avan\n"
+msgstr "Filtro avan\n"
 "cado"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
@@ -374,7 +373,7 @@ msgstr "Chinês - Tradicional"
 msgid "Choose an object"
 msgstr "Escolha um Objeto"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Escolha os campos que irão identificar seus registros"
 
@@ -545,7 +544,7 @@ msgstr "Tcheco"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Zona de Perigo"
 
@@ -580,7 +579,7 @@ msgstr "Data e Hora"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Desativar"
@@ -590,7 +589,7 @@ msgstr "Desativar"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Desative \"Sincronizar Rótulos de Objetos e Nomes de API\" para definir um nome de API personalizado"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Desativar objeto"
 
@@ -1200,7 +1199,7 @@ msgstr "Nome"
 msgid "Name can not be empty"
 msgstr "O nome n\\u00e3o pode estar vazio"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Nome no singular (ex: 'Fatura') e no plural (ex: 'Faturas')."
 
@@ -1347,7 +1346,7 @@ msgstr "Fora do caminho comum"
 msgid "Opened"
 msgstr "Aberto"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opções"
@@ -1683,8 +1682,7 @@ msgstr "Alterar o rótulo de um campo também deve alterar o nome da API?"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
 msgid "Should changing an object's label also change the API?"
-msgstr ""
-"Alterar o r\n"
+msgstr "Alterar o r\n"
 "tulo de um objeto tamb\n"
 "m deve alterar a API?"
 
@@ -1769,14 +1767,12 @@ msgstr "Sincronizar o rótulo do campo e o nome da API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
 msgid "Synchronize Objects Labels and API Names"
-msgstr ""
-"Sincronizar r\n"
+msgstr "Sincronizar r\n"
 "tulos dos Objetos e Nomes da API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "System settings"
-msgstr ""
-"Configura\n"
+msgstr "Configura\n"
 "es do sistema"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
@@ -2072,3 +2068,4 @@ msgstr "Seu Workspace"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Seu workspace será desativado"
+

@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Přerušit"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "O aplikaci"
 
@@ -372,7 +372,7 @@ msgstr "Čínština — tradiční"
 msgid "Choose an object"
 msgstr "Vyberte objekt"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Vyberte pole, která budou identifikovat vaše záznamy"
 
@@ -543,7 +543,7 @@ msgstr "Čeština"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Nebezpečná zóna"
 
@@ -578,7 +578,7 @@ msgstr "Datum a čas"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Deaktivovat"
@@ -588,7 +588,7 @@ msgstr "Deaktivovat"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Deaktivujte \"Synchronizace štítků objektů a API názvů\" pro nastavení vlastního API názvu"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Deaktivovat objekt"
 
@@ -1034,8 +1034,7 @@ msgstr "Neplatný poskytovatel ověřování"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:48
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
-"Neplatná vlastní doména. Vlastní domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat mezery, nesmí obsahovat žádné speciální znaky jako jsou _~\n"
+msgstr "Neplatná vlastní doména. Vlastní domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat mezery, nesmí obsahovat žádné speciální znaky jako jsou _~\n"
 "`!@#$%^*()=+{}[]|\\;:'\"<>/? a nesmí začínat ani končit znakem '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
@@ -1200,7 +1199,7 @@ msgstr "Název"
 msgid "Name can not be empty"
 msgstr "Název nesmí být prázdný"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Název v jednotném (<b>např.</b>, 'Faktura') i množném (<b>např.</b>, 'Faktury') čísle."
 
@@ -1347,7 +1346,7 @@ msgstr "Mimo ušlapané cesty"
 msgid "Opened"
 msgstr "Otevřený"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Možnosti"
@@ -2065,3 +2064,4 @@ msgstr "Váš pracovní prostor"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Váš pracovní prostor bude deaktivován"
+
