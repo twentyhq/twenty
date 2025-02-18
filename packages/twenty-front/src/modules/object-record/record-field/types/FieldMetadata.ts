@@ -278,7 +278,7 @@ export type FieldRichTextV2Value = {
 
 export type FieldRichTextValue = null | string;
 
-const FieldActorSource = z.union([
+const FieldActorSourceSchema = z.union([
   z.literal('API'),
   z.literal('IMPORT'),
   z.literal('EMAIL'),
@@ -287,10 +287,9 @@ const FieldActorSource = z.union([
   z.literal('SYSTEM'),
   z.literal('WORKFLOW'),
 ]);
-type FieldActorSource = z.infer<typeof FieldActorSource>;
 
-export const FieldActorValue = z.object({
-  source: FieldActorSource,
+export const FieldActorValueSchema = z.object({
+  source: FieldActorSourceSchema,
   workspaceMemberId: z.string().nullable(),
   name: z.string(),
   context: z
@@ -299,7 +298,7 @@ export const FieldActorValue = z.object({
     })
     .nullable(),
 });
-export type FieldActorValue = z.infer<typeof FieldActorValue>;
+export type FieldActorValue = z.infer<typeof FieldActorValueSchema>;
 
 export type FieldActorForInputValue = Pick<
   FieldActorValue,

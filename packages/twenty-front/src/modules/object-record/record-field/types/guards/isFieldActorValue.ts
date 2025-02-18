@@ -1,6 +1,9 @@
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import {
+  FieldActorValue,
+  FieldActorValueSchema,
+} from '@/object-record/record-field/types/FieldMetadata';
 
 export const isFieldActorValue = (
   fieldValue: unknown,
 ): fieldValue is FieldActorValue =>
-  FieldActorValue.safeParse(fieldValue).success;
+  FieldActorValueSchema.safeParse(fieldValue).success;
