@@ -44,7 +44,7 @@ export const SettingsAccountsBlocklistSection = () => {
     <Section>
       <H2Title
         title={t`Blocklist`}
-        description={t`Exclude the following people and domains from my email sync`}
+        description={t`Exclude the following people and domains from my email sync. Internal conversations will not be imported`}
       />
       <SettingsAccountsBlocklistInput
         blockedEmailOrDomainList={blocklist.map((item) => item.handle)}
