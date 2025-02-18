@@ -163,7 +163,7 @@ msgstr "Africană"
 msgid "All"
 msgstr "Toate"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Toate ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Conectați-vă cu Microsoft"
 msgid "Connected accounts"
 msgstr "Conturi conectate"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Context"
 
@@ -448,7 +448,7 @@ msgstr "Continuați cu Google"
 msgid "Continue with Microsoft"
 msgstr "Continuați cu Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Copilot"
 
@@ -963,7 +963,7 @@ msgstr "Maximizați potențialul spațiului de lucru invitați echipa."
 msgid "Get your subscription"
 msgstr "Obțineți abonamentul"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Global"
 
@@ -1241,6 +1241,10 @@ msgstr "Navigați la workflow-ul anterior"
 msgid "New"
 msgstr "Nou"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Nou {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Cont nou"
@@ -1324,7 +1328,7 @@ msgstr "Norvegiană"
 msgid "Not empty"
 msgstr "Nu este gol"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Obiect"
 
@@ -1477,7 +1481,7 @@ msgstr "Citește documentația"
 msgid "Receive an email containing password update link"
 msgstr "Primește un email cu linkul de actualizare a parolei"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Selecția înregistrărilor"
 
@@ -1559,7 +1563,7 @@ msgstr "Rusă"
 msgid "Search"
 msgstr "Caută"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Caută ''{commandMenuSearch}'' cu..."
 
