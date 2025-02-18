@@ -62,7 +62,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     __typename: 'View',
   };
 
-  const wrapper = it('should apply filters from current view', () => {
+  it('should apply filters from current view', () => {
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
