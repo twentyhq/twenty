@@ -75,7 +75,7 @@ export const RecordTableWithWrappers = ({
     ActionBarHotkeyScope.ActionBar,
   );
 
-  const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
+  const { saveViewFields } = useSaveCurrentViewFields();
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 

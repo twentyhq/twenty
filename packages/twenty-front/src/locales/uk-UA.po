@@ -64,7 +64,7 @@ msgid "Abort"
 msgstr "Скасувати"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:189
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Про"
 
@@ -163,7 +163,7 @@ msgstr "Африкаанс"
 msgid "All"
 msgstr "Всі"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Всі ({relationRecordsCount})"
 
@@ -372,7 +372,7 @@ msgstr "Китайська — традиційна"
 msgid "Choose an object"
 msgstr "Виберіть об'єкт"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:204
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
 msgid "Choose the fields that will identify your records"
 msgstr "Виберіть поля, які будуть ідентифікувати ваші записи"
 
@@ -424,7 +424,7 @@ msgstr "Під'єднатися через Microsoft"
 msgid "Connected accounts"
 msgstr "Під'єднані облікові записи"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Контекст"
 
@@ -448,7 +448,7 @@ msgstr "Продовжити з Google"
 msgid "Continue with Microsoft"
 msgstr "Продовжити з Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Штурман"
 
@@ -543,7 +543,7 @@ msgstr "Чеська"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:215
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Небезпечна зона"
 
@@ -578,7 +578,7 @@ msgstr "Дата та час"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:220
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Деактивувати"
@@ -588,7 +588,7 @@ msgstr "Деактивувати"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Деактивуйте \"Синхронізувати назви об'єктів та API-імена\" для установки користувацького API-імені"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:216
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
 msgid "Deactivate object"
 msgstr "Деактивувати об'єкт"
 
@@ -1027,7 +1027,7 @@ msgstr "Отримайте максимум від свого робочого �
 msgid "Get your subscription"
 msgstr "Отримайте свою передплату"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Глобальні"
 
@@ -1262,7 +1262,7 @@ msgstr "Ім'я"
 msgid "Name can not be empty"
 msgstr "Ім'я не може бути порожнім"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Назва в однині <b>(</b>наприклад, 'Рахунок') та множині <b>(</b>наприклад, 'Рахунки')."
 
@@ -1304,6 +1304,10 @@ msgstr "Перейти до попереднього Workflow"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "Новий"
+
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Новий {capitalizedObjectNameSingular}"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -1388,7 +1392,7 @@ msgstr "Норвезька"
 msgid "Not empty"
 msgstr "Не пустий"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Об'єкт"
 
@@ -1409,7 +1413,7 @@ msgstr "Не по традиційному шляху"
 msgid "Opened"
 msgstr "Відкрився"
 
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:203
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Опції"
@@ -1541,7 +1545,7 @@ msgstr "Читати документацію"
 msgid "Receive an email containing password update link"
 msgstr "Отримати лист з посиланням для оновлення пароля"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Вибір запису"
 
@@ -1619,10 +1623,11 @@ msgstr "Російська"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "Пошук"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Пошук ''{commandMenuSearch}'' за допомогою..."
 
@@ -1648,6 +1653,7 @@ msgid "Search for an object..."
 msgstr "Пошук об'єкта..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "Пошук записів"
 

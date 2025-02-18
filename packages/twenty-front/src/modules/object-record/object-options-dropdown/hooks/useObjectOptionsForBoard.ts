@@ -26,13 +26,12 @@ type useObjectOptionsForBoardParams = {
 export const useObjectOptionsForBoard = ({
   objectNameSingular,
   recordBoardId,
-  viewBarId,
 }: useObjectOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
     useRecoilState(recordIndexFieldDefinitionsState);
 
-  const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
-  const { updateCurrentView } = useUpdateCurrentView(viewBarId);
+  const { saveViewFields } = useSaveCurrentViewFields();
+  const { updateCurrentView } = useUpdateCurrentView();
 
   const [isCompactModeActive, setIsCompactModeActive] =
     useRecoilComponentStateV2(
