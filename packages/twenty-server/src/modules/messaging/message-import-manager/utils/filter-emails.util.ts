@@ -17,12 +17,7 @@ export const filterEmails = (
   );
 
   if (isWorkEmail(primaryHandle)) {
-    const intern = filterOutInternals(
-      primaryHandle,
-      messagesWithoutBlocklisted,
-    );
-
-    return intern;
+    return filterOutInternals(primaryHandle, messagesWithoutBlocklisted);
   }
 
   return messagesWithoutBlocklisted;
