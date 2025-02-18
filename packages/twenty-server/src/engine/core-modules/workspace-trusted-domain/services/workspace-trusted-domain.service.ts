@@ -56,24 +56,16 @@ export class WorkspaceTrustedDomainService {
     sender: User,
     to: string,
     workspace: Workspace,
-    trustedDomainId: string,
+    workspaceTrustedDomain: WorkspaceTrustedDomainEntity,
   ) {
-    const trustedDomain = await this.workspaceTrustedDomainRepository.findOneBy(
-      {
-        id: trustedDomainId,
-      },
-    );
-
-    workspaceTrustedDomainValidator.assertIsDefinedOrThrow(trustedDomain);
-
-    if (trustedDomain.isValidated) {
+    if (workspaceTrustedDomain.isValidated) {
       throw new WorkspaceTrustedDomainException(
         'Trusted domain has already been validated',
         WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_ALREADY_VERIFIED,
       );
     }
 
-    if (!to.endsWith(trustedDomain.domain)) {
+    if (!to.endsWith(workspaceTrustedDomain.domain)) {
       throw new WorkspaceTrustedDomainException(
         'Trusted domain does not match validator email',
         WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_DOES_NOT_MATCH_VALIDATOR_EMAIL,
@@ -84,14 +76,14 @@ export class WorkspaceTrustedDomainService {
       workspace,
       pathname: `settings/security`,
       searchParams: {
-        validationToken: trustedDomain.validationToken,
+        validationToken: this.generateUniqueHash(workspaceTrustedDomain),
       },
     });
 
     const emailTemplate = SendTrustDomainValidation({
       link: link.toString(),
       workspace: { name: workspace.displayName, logo: workspace.logo },
-      domain: trustedDomain.domain,
+      domain: workspaceTrustedDomain.domain,
       sender: {
         email: sender.email,
         firstName: sender.firstName,
@@ -114,17 +106,49 @@ export class WorkspaceTrustedDomainService {
     });
   }
 
+  private generateUniqueHash(
+    workspaceTrustedDomain: WorkspaceTrustedDomainEntity,
+  ) {
+    return crypto
+      .createHash('sha256')
+      .update(
+        JSON.stringify({
+          id: workspaceTrustedDomain.id,
+          domain: workspaceTrustedDomain.domain,
+          key: this.environmentService.get('APP_SECRET'),
+        }),
+      )
+      .digest('hex');
+  }
+
+  compareHash(
+    hash: string,
+    workspaceTrustedDomain: WorkspaceTrustedDomainEntity,
+  ) {
+    return this.generateUniqueHash(workspaceTrustedDomain) === hash;
+  }
+
   async createTrustedDomain(
     domain: string,
     inWorkspace: Workspace,
     fromUser: User,
+    emailToValidateDomain: string,
   ): Promise<WorkspaceTrustedDomain> {
-    return await this.workspaceTrustedDomainRepository.save({
-      workspaceId: inWorkspace.id,
-      domain,
-      isVerified: this.checkIsVerified(domain, inWorkspace, fromUser),
-      validationToken: crypto.randomBytes(32).toString('hex'),
-    });
+    const workspaceTrustedDomain =
+      await this.workspaceTrustedDomainRepository.save({
+        workspaceId: inWorkspace.id,
+        domain,
+        isVerified: this.checkIsVerified(domain, inWorkspace, fromUser),
+      });
+
+    await this.sendTrustedDomainValidationEmail(
+      fromUser,
+      emailToValidateDomain,
+      inWorkspace,
+      workspaceTrustedDomain,
+    );
+
+    return workspaceTrustedDomain;
   }
 
   async deleteTrustedDomain(workspace: Workspace, trustedDomainId: string) {

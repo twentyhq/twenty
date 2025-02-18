@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -16,6 +17,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'workspaceTrustedDomain', schema: 'core' })
 @ObjectType()
+@Unique('IndexOnDomainAndWorkspaceId', ['domain', 'workspaceId'])
 export class WorkspaceTrustedDomain {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -31,9 +33,6 @@ export class WorkspaceTrustedDomain {
 
   @Column({ type: 'boolean', default: false, nullable: false })
   isValidated: boolean;
-
-  @Column({ type: 'varchar', nullable: false })
-  validationToken: string;
 
   @Column()
   workspaceId: string;

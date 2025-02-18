@@ -188,7 +188,6 @@ describe('WorkspaceTrustedDomainService - createTrustedDomain and checkIsVerifie
         workspaceId: 'workspace-id',
         domain,
         isVerified: true,
-        validationToken: expect.any(String),
       };
 
       jest
@@ -197,10 +196,15 @@ describe('WorkspaceTrustedDomainService - createTrustedDomain and checkIsVerifie
           expectedTrustedDomain as unknown as WorkspaceTrustedDomain,
         );
 
+      jest
+        .spyOn(service, 'sendTrustedDomainValidationEmail')
+        .mockResolvedValue();
+
       const result = await service.createTrustedDomain(
         domain,
         inWorkspace,
         fromUser,
+        'validator@custom-domain.com',
       );
 
       expect(workspaceTrustedDomainRepository.save).toHaveBeenCalledWith(
@@ -208,7 +212,6 @@ describe('WorkspaceTrustedDomainService - createTrustedDomain and checkIsVerifie
           workspaceId: 'workspace-id',
           domain,
           isVerified: true,
-          validationToken: expect.any(String),
         }),
       );
       expect(result).toEqual(expectedTrustedDomain);
@@ -269,18 +272,21 @@ describe('WorkspaceTrustedDomainService - createTrustedDomain and checkIsVerifie
       const workspace = {} as Workspace;
       const email = 'validator@example.com';
 
+      const trustedDomain = {
+        id: trustedDomainId,
+        isValidated: true,
+      } as WorkspaceTrustedDomain;
+
       jest
         .spyOn(workspaceTrustedDomainRepository, 'findOneBy')
-        .mockResolvedValue({
-          isValidated: true,
-        } as unknown as WorkspaceTrustedDomain);
+        .mockResolvedValue(trustedDomain);
 
       await expect(
         service.sendTrustedDomainValidationEmail(
           sender,
           email,
           workspace,
-          trustedDomainId,
+          trustedDomain,
         ),
       ).rejects.toThrowError(
         new WorkspaceTrustedDomainException(
@@ -295,20 +301,22 @@ describe('WorkspaceTrustedDomainService - createTrustedDomain and checkIsVerifie
       const sender = {} as User;
       const workspace = {} as Workspace;
       const email = 'validator@different.com';
+      const trustedDomain = {
+        id: trustedDomainId,
+        isValidated: false,
+        domain: 'example.com',
+      } as WorkspaceTrustedDomain;
 
       jest
         .spyOn(workspaceTrustedDomainRepository, 'findOneBy')
-        .mockResolvedValue({
-          isValidated: false,
-          domain: 'example.com',
-        } as unknown as WorkspaceTrustedDomain);
+        .mockResolvedValue(trustedDomain);
 
       await expect(
         service.sendTrustedDomainValidationEmail(
           sender,
           email,
           workspace,
-          trustedDomainId,
+          trustedDomain,
         ),
       ).rejects.toThrowError(
         new WorkspaceTrustedDomainException(
@@ -319,7 +327,6 @@ describe('WorkspaceTrustedDomainService - createTrustedDomain and checkIsVerifie
     });
 
     it('should send a validation email if all conditions are met', async () => {
-      const trustedDomainId = 'trusted-domain-id';
       const sender = {
         email: 'sender@example.com',
         firstName: 'John',
@@ -333,7 +340,6 @@ describe('WorkspaceTrustedDomainService - createTrustedDomain and checkIsVerifie
       const trustedDomain = {
         isValidated: false,
         domain: 'custom-domain.com',
-        validationToken: 'test-token',
       } as WorkspaceTrustedDomain;
 
       jest
@@ -355,13 +361,13 @@ describe('WorkspaceTrustedDomainService - createTrustedDomain and checkIsVerifie
         sender,
         email,
         workspace,
-        trustedDomainId,
+        trustedDomain,
       );
 
       expect(domainManagerService.buildWorkspaceURL).toHaveBeenCalledWith({
         workspace: workspace,
         pathname: 'settings/security',
-        searchParams: { validationToken: 'test-token' },
+        searchParams: { validationToken: expect.any(String) },
       });
 
       expect(emailService.send).toHaveBeenCalledWith({

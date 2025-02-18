@@ -9,7 +9,6 @@ import { WorkspaceTrustedDomain } from 'src/engine/core-modules/workspace-truste
 import { CreateTrustedDomainInput } from 'src/engine/core-modules/workspace-trusted-domain/dtos/create-trusted-domain.input';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { SendTrustedDomainVerificationEmailInput } from 'src/engine/core-modules/workspace-trusted-domain/dtos/send-trusted-domain-verification-email.input';
 import { DeleteTrustedDomainInput } from 'src/engine/core-modules/workspace-trusted-domain/dtos/delete-trusted-domain.input';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -21,34 +20,21 @@ export class WorkspaceTrustedDomainResolver {
 
   @Mutation(() => WorkspaceTrustedDomain)
   async create(
-    @Args() { domain }: CreateTrustedDomainInput,
+    @Args('input') { domain, email }: CreateTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
     @AuthUser() currentUser: User,
   ): Promise<WorkspaceTrustedDomain> {
-    return this.workspaceTrustedDomainService.createTrustedDomain(
+    return await this.workspaceTrustedDomainService.createTrustedDomain(
       domain,
       currentWorkspace,
       currentUser,
-    );
-  }
-
-  @Mutation(() => null)
-  async sendTrustedDomainVerificationEmail(
-    @Args() { email, trustedDomainId }: SendTrustedDomainVerificationEmailInput,
-    @AuthWorkspace() currentWorkspace: Workspace,
-    @AuthUser() currentUser: User,
-  ): Promise<void> {
-    return await this.workspaceTrustedDomainService.sendTrustedDomainValidationEmail(
-      currentUser,
       email,
-      currentWorkspace,
-      trustedDomainId,
     );
   }
 
   @Mutation(() => null)
   async deleteTrustedDomain(
-    @Args() { id }: DeleteTrustedDomainInput,
+    @Args('input') { id }: DeleteTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<void> {
     return await this.workspaceTrustedDomainService.deleteTrustedDomain(
