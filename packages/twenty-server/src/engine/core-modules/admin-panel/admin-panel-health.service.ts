@@ -5,8 +5,8 @@ import { AdminPanelHealthServiceData } from 'src/engine/core-modules/admin-panel
 import { AdminPanelIndicatorHealthStatusInputEnum } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-indicator-health-status.input';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
+import { AccountSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/account-sync.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
-import { MessageSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/message-sync.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 
@@ -16,14 +16,14 @@ export class AdminPanelHealthService {
     private readonly databaseHealth: DatabaseHealthIndicator,
     private readonly redisHealth: RedisHealthIndicator,
     private readonly workerHealth: WorkerHealthIndicator,
-    private readonly messageSyncHealth: MessageSyncHealthIndicator,
+    private readonly accountSyncHealth: AccountSyncHealthIndicator,
   ) {}
 
   private readonly healthIndicators = {
     database: this.databaseHealth,
     redis: this.redisHealth,
     worker: this.workerHealth,
-    messageSync: this.messageSyncHealth,
+    accountSync: this.accountSyncHealth,
   };
 
   private getServiceStatus(
@@ -79,30 +79,19 @@ export class AdminPanelHealthService {
   }
 
   async getSystemHealthStatus(): Promise<SystemHealth> {
-    const [databaseResult, redisResult, workerResult, messageSyncResult] =
+    const [databaseResult, redisResult, workerResult, accountSyncResult] =
       await Promise.allSettled([
         this.databaseHealth.isHealthy(),
         this.redisHealth.isHealthy(),
         this.workerHealth.isHealthy(),
-        this.messageSyncHealth.isHealthy(),
+        this.accountSyncHealth.isHealthy(),
       ]);
 
-    const workerStatus = this.getServiceStatus(workerResult);
-
     return {
-      database: this.getServiceStatus(databaseResult),
-      redis: this.getServiceStatus(redisResult),
-      worker: {
-        ...workerStatus,
-        queues: (workerStatus?.queues ?? []).map((queue) => ({
-          ...queue,
-          status:
-            queue.workers > 0
-              ? AdminPanelHealthServiceStatus.OPERATIONAL
-              : AdminPanelHealthServiceStatus.OUTAGE,
-        })),
-      },
-      messageSync: this.getServiceStatus(messageSyncResult),
+      database: this.getServiceStatus(databaseResult).status,
+      redis: this.getServiceStatus(redisResult).status,
+      worker: this.getServiceStatus(workerResult).status,
+      accountSync: this.getServiceStatus(accountSyncResult).status,
     };
   }
 }

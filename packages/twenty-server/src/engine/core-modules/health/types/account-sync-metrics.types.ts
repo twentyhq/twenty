@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class MessageChannelSyncJobByStatusCounter {
+export class AccountSyncJobByStatusCounter {
   @Field(() => Number, { nullable: true })
   NOT_SYNCED?: number;
 

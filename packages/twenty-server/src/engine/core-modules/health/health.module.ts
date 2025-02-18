@@ -3,7 +3,7 @@ import { TerminusModule } from '@nestjs/terminus';
 
 import { HealthController } from 'src/engine/core-modules/health/controllers/health.controller';
 import { MetricsController } from 'src/engine/core-modules/health/controllers/metrics.controller';
-import { MessageSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/message-sync.health';
+import { AccountSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/account-sync.health';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 
 import { HealthCacheService } from './health-cache.service';
@@ -19,14 +19,14 @@ import { WorkerHealthIndicator } from './indicators/worker.health';
     DatabaseHealthIndicator,
     RedisHealthIndicator,
     WorkerHealthIndicator,
-    MessageSyncHealthIndicator,
+    AccountSyncHealthIndicator,
   ],
   exports: [
     HealthCacheService,
     DatabaseHealthIndicator,
     RedisHealthIndicator,
     WorkerHealthIndicator,
-    MessageSyncHealthIndicator,
+    AccountSyncHealthIndicator,
   ],
 })
 export class HealthModule {}

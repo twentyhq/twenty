@@ -38,8 +38,8 @@ export enum AdminPanelHealthServiceStatus {
 }
 
 export enum AdminPanelIndicatorHealthStatusInputEnum {
+  ACCOUNT_SYNC = 'ACCOUNT_SYNC',
   DATABASE = 'DATABASE',
-  MESSAGE_SYNC = 'MESSAGE_SYNC',
   REDIS = 'REDIS',
   WORKER = 'WORKER'
 }
@@ -1641,10 +1641,10 @@ export type Support = {
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
-  database: AdminPanelHealthServiceData;
-  messageSync: AdminPanelHealthServiceData;
-  redis: AdminPanelHealthServiceData;
-  worker: AdminPanelHealthServiceData;
+  accountSync: AdminPanelHealthServiceStatus;
+  database: AdminPanelHealthServiceStatus;
+  redis: AdminPanelHealthServiceStatus;
+  worker: AdminPanelHealthServiceStatus;
 };
 
 export type TimelineCalendarEvent = {
@@ -2312,7 +2312,7 @@ export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicator
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null }, redis: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null }, worker: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', name: string, workers: number, status: AdminPanelHealthServiceStatus, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null }, messageSync: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null } } };
+export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: AdminPanelHealthServiceStatus, redis: AdminPanelHealthServiceStatus, worker: AdminPanelHealthServiceStatus, accountSync: AdminPanelHealthServiceStatus } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -4076,34 +4076,10 @@ export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicato
 export const GetSystemHealthStatusDocument = gql`
     query GetSystemHealthStatus {
   getSystemHealthStatus {
-    database {
-      status
-      details
-    }
-    redis {
-      status
-      details
-    }
-    worker {
-      status
-      queues {
-        name
-        workers
-        status
-        metrics {
-          failed
-          completed
-          waiting
-          active
-          delayed
-          prioritized
-        }
-      }
-    }
-    messageSync {
-      status
-      details
-    }
+    database
+    redis
+    worker
+    accountSync
   }
 }
     `;

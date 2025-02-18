@@ -1,18 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { AdminPanelHealthServiceData } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
+import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 
 @ObjectType()
 export class SystemHealth {
-  @Field(() => AdminPanelHealthServiceData)
-  database: AdminPanelHealthServiceData;
+  @Field(() => AdminPanelHealthServiceStatus)
+  database: AdminPanelHealthServiceStatus;
 
-  @Field(() => AdminPanelHealthServiceData)
-  redis: AdminPanelHealthServiceData;
+  @Field(() => AdminPanelHealthServiceStatus)
+  redis: AdminPanelHealthServiceStatus;
 
-  @Field(() => AdminPanelHealthServiceData)
-  worker: AdminPanelHealthServiceData;
+  @Field(() => AdminPanelHealthServiceStatus)
+  worker: AdminPanelHealthServiceStatus;
 
-  @Field(() => AdminPanelHealthServiceData)
-  messageSync: AdminPanelHealthServiceData;
+  @Field(() => AdminPanelHealthServiceStatus)
+  accountSync: AdminPanelHealthServiceStatus;
 }

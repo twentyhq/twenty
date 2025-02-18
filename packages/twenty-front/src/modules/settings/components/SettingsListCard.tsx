@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ComponentType } from 'react';
-import { IconComponent, IconPlus, Card, CardFooter } from 'twenty-ui';
+import { Card, CardFooter, IconComponent, IconPlus } from 'twenty-ui';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 

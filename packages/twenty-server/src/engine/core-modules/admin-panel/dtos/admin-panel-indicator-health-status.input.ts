@@ -4,7 +4,7 @@ export enum AdminPanelIndicatorHealthStatusInputEnum {
   DATABASE = 'database',
   REDIS = 'redis',
   WORKER = 'worker',
-  MESSAGE_SYNC = 'messageSync',
+  ACCOUNT_SYNC = 'accountSync',
 }
 
 registerEnumType(AdminPanelIndicatorHealthStatusInputEnum, {
