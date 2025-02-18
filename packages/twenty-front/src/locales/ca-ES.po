@@ -390,7 +390,7 @@ msgstr "Tanca"
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
 msgid "Close command menu"
-msgstr ""
+msgstr "Tanca el menú de comandament"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -1359,7 +1359,7 @@ msgstr "Fora del camí conegut"
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
 msgid "Open command menu"
-msgstr ""
+msgstr "Obre el menú de comandament"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
@@ -2085,3 +2085,4 @@ msgstr "El vostre Espai de Treball"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "El vostre espai de treball serà desactivat"
+

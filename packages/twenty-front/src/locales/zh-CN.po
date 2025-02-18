@@ -390,7 +390,7 @@ msgstr "关闭"
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
 msgid "Close command menu"
-msgstr ""
+msgstr "关闭命令菜单"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -1359,7 +1359,7 @@ msgstr "偏离常规路线"
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
 msgid "Open command menu"
-msgstr ""
+msgstr "打开命令菜单"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
@@ -2085,3 +2085,4 @@ msgstr "您的工作区"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "您的工作区将被禁用"
+
