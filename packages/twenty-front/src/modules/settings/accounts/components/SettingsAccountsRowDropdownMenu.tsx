@@ -16,6 +16,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useState } from 'react';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsAccountsRowDropdownMenuProps = {
@@ -35,7 +37,20 @@ export const SettingsAccountsRowDropdownMenu = ({
   });
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleRemoveClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    destroyOneRecord(account.id);
+    setIsModalOpen(false);
+    closeDropdown();
+  };
+
   return (
+   <> 
     <Dropdown
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
@@ -76,13 +91,23 @@ export const SettingsAccountsRowDropdownMenu = ({
             accent="danger"
             LeftIcon={IconTrash}
             text="Remove account"
-            onClick={() => {
-              destroyOneRecord(account.id);
-              closeDropdown();
-            }}
+            onClick={handleRemoveClick}
           />
         </DropdownMenuItemsContainer>
       }
     />
+
+    {isModalOpen && (
+      <Modal
+        title="Data deletion"
+        description="All emails and events linked to this account will be deleted."
+        onClose={() => setIsModalOpen(false)}
+        actions={[
+          { text: 'Cancel', onClick: () => setIsModalOpen(false) },
+          { text: 'Delete Account', onClick: handleConfirmDelete, accent: 'danger' },
+        ]}
+      />
+    )}
+  </>
   );
 };
