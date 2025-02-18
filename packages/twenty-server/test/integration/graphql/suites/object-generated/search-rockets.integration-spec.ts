@@ -2,12 +2,12 @@ import request from 'supertest';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('searchRocketsResolver (e2e)', () => {
-  it('should find many searchRockets', () => {
+describe('searchPetsResolver (e2e)', () => {
+  it('should find many searchPets', () => {
     const queryData = {
       query: `
-        query searchRockets {
-          searchRockets {
+        query searchPets {
+          searchPets {
             edges {
               node {
                 id
@@ -26,7 +26,7 @@ describe('searchRocketsResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -34,7 +34,7 @@ describe('searchRocketsResolver (e2e)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.searchRockets;
+        const data = res.body.data.searchPets;
 
         expect(data).toBeDefined();
         expect(Array.isArray(data.edges)).toBe(true);
@@ -42,15 +42,15 @@ describe('searchRocketsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const searchRockets = edges[0].node;
+          const searchPets = edges[0].node;
 
-          expect(searchRockets).toHaveProperty('id');
-          expect(searchRockets).toHaveProperty('name');
-          expect(searchRockets).toHaveProperty('createdAt');
-          expect(searchRockets).toHaveProperty('updatedAt');
-          expect(searchRockets).toHaveProperty('deletedAt');
-          expect(searchRockets).toHaveProperty('position');
-          expect(searchRockets).toHaveProperty('searchVector');
+          expect(searchPets).toHaveProperty('id');
+          expect(searchPets).toHaveProperty('name');
+          expect(searchPets).toHaveProperty('createdAt');
+          expect(searchPets).toHaveProperty('updatedAt');
+          expect(searchPets).toHaveProperty('deletedAt');
+          expect(searchPets).toHaveProperty('position');
+          expect(searchPets).toHaveProperty('searchVector');
         }
       });
   });

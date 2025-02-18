@@ -16,6 +16,8 @@ import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
@@ -82,7 +84,14 @@ export const TaskRow = ({ task }: { task: Task }) => {
     objectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const body = getActivitySummary(task.body);
+  const isRichTextV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsRichTextV2Enabled,
+  );
+
+  const body = getActivitySummary(
+    isRichTextV2Enabled ? (task?.bodyV2?.blocknote ?? null) : task?.body,
+  );
+
   const { completeTask } = useCompleteTask(task);
 
   const { FieldContextProvider: TaskTargetsContextProvider } = useFieldContext({

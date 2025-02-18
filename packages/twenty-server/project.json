@@ -121,7 +121,8 @@
     },
     "lint": {
       "options": {
-        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"]
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
+        "maxWarnings": 0
       },
       "configurations": {
         "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },

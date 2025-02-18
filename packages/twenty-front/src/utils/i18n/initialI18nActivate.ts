@@ -1,5 +1,10 @@
 import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
-import { APP_LOCALES, isDefined, isValidLocale } from 'twenty-shared';
+import {
+  APP_LOCALES,
+  isDefined,
+  isValidLocale,
+  SOURCE_LOCALE,
+} from 'twenty-shared';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const initialI18nActivate = () => {
@@ -22,7 +27,7 @@ export const initialI18nActivate = () => {
   } else if (isDefined(navigatorLocale) && isValidLocale(navigatorLocale)) {
     // TODO: remove when we're ready to launch
     // locale = navigatorLocale;
-    locale = 'en';
+    locale = SOURCE_LOCALE;
   }
 
   dynamicActivate(locale);

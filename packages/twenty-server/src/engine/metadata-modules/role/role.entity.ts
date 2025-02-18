@@ -21,6 +21,18 @@ export class RoleEntity {
   @Column({ nullable: false, default: false })
   canUpdateAllSettings: boolean;
 
+  @Column({ nullable: false, default: false })
+  canReadAllObjectRecords: boolean;
+
+  @Column({ nullable: false, default: false })
+  canUpdateAllObjectRecords: boolean;
+
+  @Column({ nullable: false, default: false })
+  canSoftDeleteAllObjectRecords: boolean;
+
+  @Column({ nullable: false, default: false })
+  canDestroyAllObjectRecords: boolean;
+
   @Column({ nullable: true, type: 'text' })
   description: string;
 

@@ -37,6 +37,7 @@ import { SAMLRequest } from 'src/engine/core-modules/auth/strategies/saml.auth.s
 import { OIDCRequest } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth')
 export class SSOAuthController {
@@ -44,6 +45,8 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly guardRedirectService: GuardRedirectService,
+    private readonly domainManagerService: DomainManagerService,
+
     private readonly sSOService: SSOService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -157,7 +160,7 @@ export class SSOAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
             workspaceIdentityProvider?.workspace,
           ),
         ),

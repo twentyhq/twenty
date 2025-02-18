@@ -23,7 +23,8 @@ describe('attachmentsResolver (e2e)', () => {
                 personId
                 companyId
                 opportunityId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -33,7 +34,7 @@ describe('attachmentsResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -64,7 +65,8 @@ describe('attachmentsResolver (e2e)', () => {
           expect(attachments).toHaveProperty('personId');
           expect(attachments).toHaveProperty('companyId');
           expect(attachments).toHaveProperty('opportunityId');
-          expect(attachments).toHaveProperty('rocketId');
+          expect(attachments).toHaveProperty('petId');
+          expect(attachments).toHaveProperty('surveyResultId');
         }
       });
   });

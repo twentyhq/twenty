@@ -1,9 +1,11 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
+  FieldActorForInputValue,
   FieldAddressValue,
   FieldEmailsValue,
   FieldLinksValue,
   FieldPhonesValue,
+  FieldRichTextV2Value,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
@@ -14,10 +16,14 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
-export const buildRecordFromImportedStructuredRow = (
-  importedStructuredRow: ImportedStructuredRow<any>,
-  fields: FieldMetadataItem[],
-) => {
+type BuildRecordFromImportedStructuredRowArgs = {
+  importedStructuredRow: ImportedStructuredRow<any>;
+  fields: FieldMetadataItem[];
+};
+export const buildRecordFromImportedStructuredRow = ({
+  fields,
+  importedStructuredRow,
+}: BuildRecordFromImportedStructuredRowArgs) => {
   const recordToBuild: Record<string, any> = {};
 
   const {
@@ -36,6 +42,7 @@ export const buildRecordFromImportedStructuredRow = (
     LINKS: { primaryLinkUrlLabel },
     EMAILS: { primaryEmailLabel },
     PHONES: { primaryPhoneNumberLabel, primaryPhoneCountryCodeLabel },
+    RICH_TEXT_V2: { blocknoteLabel, markdownLabel },
   } = COMPOSITE_FIELD_IMPORT_LABELS;
 
   for (const field of fields) {
@@ -158,6 +165,24 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       }
+      case FieldMetadataType.RICH_TEXT_V2: {
+        if (
+          isDefined(
+            importedStructuredRow[`${blocknoteLabel} (${field.name})`] ||
+              importedStructuredRow[`${markdownLabel} (${field.name})`],
+          )
+        ) {
+          recordToBuild[field.name] = {
+            blocknote: castToString(
+              importedStructuredRow[`${blocknoteLabel} (${field.name})`],
+            ),
+            markdown: castToString(
+              importedStructuredRow[`${markdownLabel} (${field.name})`],
+            ),
+          } satisfies FieldRichTextV2Value;
+        }
+        break;
+      }
       case FieldMetadataType.EMAILS: {
         if (
           isDefined(
@@ -199,7 +224,8 @@ export const buildRecordFromImportedStructuredRow = (
       case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
           source: 'IMPORT',
-        };
+          context: {},
+        } satisfies FieldActorForInputValue;
         break;
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.MULTI_SELECT: {

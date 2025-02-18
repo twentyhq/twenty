@@ -74,7 +74,7 @@ describe('getWorkflowVersionDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Record is created",
         "nodeType": "trigger",
@@ -133,7 +133,8 @@ describe('getWorkflowVersionDiagram', () => {
     {
       "deletable": false,
       "id": "8f3b2121-f194-4ba4-9fbf-0",
-      "markerEnd": "arrow-rounded",
+      "markerEnd": "workflow-edge-arrow-rounded",
+      "markerStart": "workflow-edge-gray-circle",
       "selectable": false,
       "source": "trigger",
       "target": "step-1",
@@ -142,7 +143,7 @@ describe('getWorkflowVersionDiagram', () => {
   "nodes": [
     {
       "data": {
-        "icon": "IconPlus",
+        "icon": "IconPlaylistAdd",
         "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
@@ -163,8 +164,8 @@ describe('getWorkflowVersionDiagram', () => {
       },
       "id": "step-1",
       "position": {
-        "x": 150,
-        "y": 100,
+        "x": 0,
+        "y": 150,
       },
     },
   ],

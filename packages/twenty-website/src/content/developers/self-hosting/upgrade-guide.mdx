@@ -26,7 +26,19 @@ If you want to upgrade your instance by few versions, e.g. from 0.33.0 to 0.35.0
 
 ## Version-specific upgrade steps
 
+### v0.41.0 to v0.42.0
 
+Upgrade your Twenty instance to use v0.42.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**Environment Variables**
+
+- Removed: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- Added: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
 
 ### v0.40.0 to v0.41.0
 

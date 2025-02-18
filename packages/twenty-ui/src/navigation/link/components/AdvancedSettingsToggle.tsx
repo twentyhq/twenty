@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
 import { MAIN_COLORS } from '@ui/theme';
 import { useId } from 'react';
-
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
@@ -46,6 +46,7 @@ export const AdvancedSettingsToggle = ({
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
 }: AdvancedSettingsToggleProps) => {
+  const { t } = useLingui();
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
   };
@@ -61,7 +62,7 @@ export const AdvancedSettingsToggle = ({
         />
       </StyledIconContainer>
       <StyledToggleContainer htmlFor={inputId}>
-        <StyledText>Advanced:</StyledText>
+        <StyledText>{t`Advanced:`}</StyledText>
 
         <Toggle
           id={inputId}

@@ -8,14 +8,6 @@ const StyledGroupContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledSubGroupContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(4)};
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  padding: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledGroupVariablesContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -25,20 +17,24 @@ const StyledGroupVariablesContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledSubGroupTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSubGroupDescription = styled.div``;
-
 const StyledGroupDescription = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledShowMoreButton = styled(Button)``;
+const StyledButtonsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledShowMoreButton = styled(Button)<{ isSelected?: boolean }>`
+  ${({ isSelected, theme }) =>
+    isSelected &&
+    `
+    background-color: ${theme.background.transparent.light};
+  `}
+`;
 
 export const SettingsAdminEnvVariables = () => {
   const { data: environmentVariables } = useGetEnvironmentVariablesGroupedQuery(
@@ -47,67 +43,90 @@ export const SettingsAdminEnvVariables = () => {
     },
   );
 
-  const [showHiddenGroups, setShowHiddenGroups] = useState<
-    Record<string, boolean>
-  >({});
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 
   const toggleGroupVisibility = (groupName: string) => {
-    setShowHiddenGroups((prev) => ({
-      ...prev,
-      [groupName]: !prev[groupName],
-    }));
+    setSelectedGroup(selectedGroup === groupName ? null : groupName);
   };
 
+  const hiddenGroups =
+    environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
+      (group) => group.isHiddenOnLoad,
+    ) ?? [];
+
+  const visibleGroups =
+    environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
+      (group) => !group.isHiddenOnLoad,
+    ) ?? [];
+
+  const selectedGroupData =
+    environmentVariables?.getEnvironmentVariablesGrouped.groups.find(
+      (group) => group.name === selectedGroup,
+    );
+
   return (
-    <Section>
-      {environmentVariables?.getEnvironmentVariablesGrouped.groups.map(
-        (group) => {
-          const isHidden =
-            group.isHiddenOnLoad && !showHiddenGroups[group.name];
-          if (isHidden === true) {
-            return (
-              <StyledShowMoreButton
-                key={group.name}
-                onClick={() => toggleGroupVisibility(group.name)}
-                title={
-                  showHiddenGroups[group.name] ? 'Show Less' : 'Show More...'
-                }
-              ></StyledShowMoreButton>
-            );
-          }
-          return (
-            <StyledGroupContainer key={group.name}>
-              <H1Title
-                title={group.name}
-                fontColor={H1TitleFontColor.Primary}
-              />
-              {group.description !== '' && (
-                <StyledGroupDescription>
-                  {group.description}
-                </StyledGroupDescription>
-              )}
-              {group.variables.length > 0 && (
-                <StyledGroupVariablesContainer>
-                  <SettingsAdminEnvVariablesTable variables={group.variables} />
-                </StyledGroupVariablesContainer>
-              )}
-              {group.subgroups.map((subgroup) => (
-                <StyledSubGroupContainer key={subgroup.name}>
-                  <StyledSubGroupTitle>{subgroup.name}</StyledSubGroupTitle>
-                  {subgroup.description !== '' && (
-                    <StyledSubGroupDescription>
-                      {subgroup.description}
-                    </StyledSubGroupDescription>
-                  )}
-                  <SettingsAdminEnvVariablesTable
-                    variables={subgroup.variables}
-                  />
-                </StyledSubGroupContainer>
+    <>
+      <Section>
+        These are only the server values. Ensure your worker environment has the
+        same variables and values, this is required for asynchronous tasks like
+        email sync.
+      </Section>
+      <Section>
+        {visibleGroups.map((group) => (
+          <StyledGroupContainer key={group.name}>
+            <H1Title title={group.name} fontColor={H1TitleFontColor.Primary} />
+            {group.description !== '' && (
+              <StyledGroupDescription>
+                {group.description}
+              </StyledGroupDescription>
+            )}
+            {group.variables.length > 0 && (
+              <StyledGroupVariablesContainer>
+                <SettingsAdminEnvVariablesTable variables={group.variables} />
+              </StyledGroupVariablesContainer>
+            )}
+          </StyledGroupContainer>
+        ))}
+
+        {hiddenGroups.length > 0 && (
+          <>
+            <StyledButtonsRow>
+              {hiddenGroups.map((group) => (
+                <StyledShowMoreButton
+                  key={group.name}
+                  onClick={() => toggleGroupVisibility(group.name)}
+                  title={group.name}
+                  variant="secondary"
+                  isSelected={selectedGroup === group.name}
+                >
+                  {group.name} variables
+                </StyledShowMoreButton>
               ))}
-            </StyledGroupContainer>
-          );
-        },
-      )}
-    </Section>
+            </StyledButtonsRow>
+
+            {selectedGroupData && (
+              <StyledGroupContainer>
+                <H1Title
+                  title={selectedGroupData.name}
+                  fontColor={H1TitleFontColor.Primary}
+                />
+                {selectedGroupData.description !== '' && (
+                  <StyledGroupDescription>
+                    {selectedGroupData.description}
+                  </StyledGroupDescription>
+                )}
+                {selectedGroupData.variables.length > 0 && (
+                  <StyledGroupVariablesContainer>
+                    <SettingsAdminEnvVariablesTable
+                      variables={selectedGroupData.variables}
+                    />
+                  </StyledGroupVariablesContainer>
+                )}
+              </StyledGroupContainer>
+            )}
+          </>
+        )}
+      </Section>
+    </>
   );
 };

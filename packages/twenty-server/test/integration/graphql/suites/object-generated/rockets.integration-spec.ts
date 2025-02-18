@@ -2,12 +2,12 @@ import request from 'supertest';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('rocketsResolver (e2e)', () => {
-  it('should find many rockets', () => {
+describe('petsResolver (e2e)', () => {
+  it('should find many pets', () => {
     const queryData = {
       query: `
-        query rockets {
-          rockets {
+        query pets {
+          pets {
             edges {
               node {
                 id
@@ -26,7 +26,7 @@ describe('rocketsResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -34,7 +34,7 @@ describe('rocketsResolver (e2e)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.rockets;
+        const data = res.body.data.pets;
 
         expect(data).toBeDefined();
         expect(Array.isArray(data.edges)).toBe(true);
@@ -42,15 +42,15 @@ describe('rocketsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const rockets = edges[0].node;
+          const pets = edges[0].node;
 
-          expect(rockets).toHaveProperty('id');
-          expect(rockets).toHaveProperty('name');
-          expect(rockets).toHaveProperty('createdAt');
-          expect(rockets).toHaveProperty('updatedAt');
-          expect(rockets).toHaveProperty('deletedAt');
-          expect(rockets).toHaveProperty('position');
-          expect(rockets).toHaveProperty('searchVector');
+          expect(pets).toHaveProperty('id');
+          expect(pets).toHaveProperty('name');
+          expect(pets).toHaveProperty('createdAt');
+          expect(pets).toHaveProperty('updatedAt');
+          expect(pets).toHaveProperty('deletedAt');
+          expect(pets).toHaveProperty('position');
+          expect(pets).toHaveProperty('searchVector');
         }
       });
   });

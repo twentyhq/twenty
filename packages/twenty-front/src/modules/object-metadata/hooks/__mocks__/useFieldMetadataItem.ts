@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType, PermissionsOnAllObjectRecords } from '~/generated/graphql';
 
 export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
 export const FIELD_RELATION_METADATA_ID =
@@ -147,6 +147,7 @@ export const queries = {
       }
       currentUserWorkspace {
         settingsPermissions
+        objectRecordsPermissions
       }
       currentWorkspace {
         id
@@ -161,7 +162,7 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEnterpriseKey
-        hostname
+        customDomain
         workspaceUrls {
           subdomainUrl
           customUrl
@@ -190,7 +191,7 @@ export const queries = {
           logo
           displayName
           subdomain
-          hostname
+          customDomain
           workspaceUrls {
             subdomainUrl
             customUrl
@@ -209,6 +210,7 @@ export const queries = {
       colorScheme
       avatarUrl
       locale
+      userEmail
       timeZone
       dateFormat
       timeFormat
@@ -308,7 +310,13 @@ export const responseData = {
       },
       workspaceMembers: [],
       currentUserWorkspace: {
-        settingsPermissions: ['DATA_MODEL']
+        settingsPermissions: ['DATA_MODEL'],
+        objectRecordsPermissions: [
+          PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS,
+        ],
       },
       currentWorkspace: {
         id: 'test-workspace-id',
@@ -323,7 +331,7 @@ export const responseData = {
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,
         subdomain: 'test',
-        hostname: null,
+        customDomain: null,
         workspaceUrls: {
           customUrl: undefined,
           subdomainUrl: 'https://test.twenty.com/',

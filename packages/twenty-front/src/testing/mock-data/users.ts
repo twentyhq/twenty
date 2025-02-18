@@ -1,7 +1,9 @@
+import { CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
   OnboardingStatus,
+  SettingsFeatures,
   SubscriptionInterval,
   SubscriptionStatus,
   User,
@@ -29,6 +31,7 @@ type MockedUser = Pick<
   currentWorkspace: Workspace;
   workspaces: Array<{ workspace: Workspace }>;
   workspaceMembers: WorkspaceMember[];
+  currentUserWorkspace: CurrentUserWorkspace;
 };
 
 export const avatarUrl =
@@ -48,6 +51,7 @@ export const mockCurrentWorkspace: Workspace = {
   hasValidEnterpriseKey: false,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
+  isCustomDomainEnabled: false,
   workspaceUrls: {
     customUrl: undefined,
     subdomainUrl: 'twenty.twenty.com',
@@ -124,6 +128,9 @@ export const mockedUserData: MockedUser = {
     'a95afad9ff6f0b364e2a3fd3e246a1a852c22b6e55a3ca33745a86c201f9c10d',
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
+  currentUserWorkspace: {
+    settingsPermissions: [SettingsFeatures.WORKSPACE_USERS],
+  },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],
   workspaceMembers: [mockedWorkspaceMemberData],

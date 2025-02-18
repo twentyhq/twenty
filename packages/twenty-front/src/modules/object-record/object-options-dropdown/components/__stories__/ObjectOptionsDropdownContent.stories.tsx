@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
@@ -16,6 +15,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -45,21 +45,18 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
             value={{ instanceId, onColumnsChange: () => {} }}
           >
             <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-              <ContextStoreComponentInstanceContext.Provider
-                value={{ instanceId }}
+              <MemoryRouter
+                initialEntries={['/one', '/two', { pathname: '/three' }]}
+                initialIndex={1}
               >
-                <MemoryRouter
-                  initialEntries={['/one', '/two', { pathname: '/three' }]}
-                  initialIndex={1}
-                >
-                  <Story />
-                </MemoryRouter>
-              </ContextStoreComponentInstanceContext.Provider>
+                <Story />
+              </MemoryRouter>
             </ViewComponentInstanceContext.Provider>
           </RecordTableComponentInstanceContext.Provider>
         </RecordFiltersComponentInstanceContext.Provider>
       );
     },
+    ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     ComponentDecorator,

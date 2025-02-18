@@ -1,3 +1,3 @@
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { RecordGqlFieldsDeprecated } from '@/object-record/graphql/types/RecordGqlFieldsDeprecated';
 
-export type RecordGqlOperationGqlRecordFields = RecordGqlFields;
+export type RecordGqlOperationGqlRecordFields = RecordGqlFieldsDeprecated;

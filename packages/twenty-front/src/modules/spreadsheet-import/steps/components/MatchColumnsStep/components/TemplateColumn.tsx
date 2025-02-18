@@ -4,6 +4,9 @@ import { IconForbid } from 'twenty-ui';
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FieldMetadataType } from 'twenty-shared';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { Columns, ColumnType } from '../MatchColumnsStep';
 
 const StyledContainer = styled.div`
@@ -24,26 +27,35 @@ export const TemplateColumn = <T extends string>({
   columnIndex,
   onChange,
 }: TemplateColumnProps<T>) => {
+  const isRichTextV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsRichTextV2Enabled,
+  );
   const { fields } = useSpreadsheetImportInternal<T>();
   const column = columns[columnIndex];
   const isIgnored = column.type === ColumnType.ignored;
 
-  const fieldOptions = fields.map(({ icon, label, key }) => {
-    const isSelected =
-      columns.findIndex((column) => {
-        if ('value' in column) {
-          return column.value === key;
-        }
-        return false;
-      }) !== -1;
+  const fieldOptions = fields
+    .filter((field) =>
+      isRichTextV2Enabled
+        ? field.fieldMetadataType !== FieldMetadataType.RICH_TEXT
+        : true,
+    )
+    .map(({ icon, label, key }) => {
+      const isSelected =
+        columns.findIndex((column) => {
+          if ('value' in column) {
+            return column.value === key;
+          }
+          return false;
+        }) !== -1;
 
-    return {
-      icon: icon,
-      value: key,
-      label: label,
-      disabled: isSelected,
-    } as const;
-  });
+      return {
+        icon: icon,
+        value: key,
+        label: label,
+        disabled: isSelected,
+      } as const;
+    });
 
   const selectOptions = [
     {

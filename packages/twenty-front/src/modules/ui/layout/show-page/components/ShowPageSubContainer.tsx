@@ -38,6 +38,7 @@ const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;
   overflow-y: auto;
+  background: ${({ theme }) => theme.background.primary};
   padding-bottom: ${({ theme, isInRightDrawer }) =>
     isInRightDrawer ? theme.spacing(16) : 0};
 `;

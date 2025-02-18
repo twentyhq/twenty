@@ -74,6 +74,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const end = performance.now();
 
+    // eslint-disable-next-line no-console
     console.log(`metadata query time: ${end - start} ms`);
 
     return result;
@@ -410,9 +411,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
   public async deleteObjectsMetadata(workspaceId: string) {
     await this.objectMetadataRepository.delete({ workspaceId });
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
   }
 
   public async getObjectMetadataStandardIdToIdMap(workspaceId: string) {
