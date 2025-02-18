@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -19,12 +19,12 @@ export class WorkspaceTrustedDomainResolver {
   ) {}
 
   @Mutation(() => WorkspaceTrustedDomain)
-  async create(
+  async createWorkspaceTrustedDomain(
     @Args('input') { domain, email }: CreateTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
     @AuthUser() currentUser: User,
   ): Promise<WorkspaceTrustedDomain> {
-    return await this.workspaceTrustedDomainService.createTrustedDomain(
+    return this.workspaceTrustedDomainService.createTrustedDomain(
       domain,
       currentWorkspace,
       currentUser,
@@ -32,19 +32,21 @@ export class WorkspaceTrustedDomainResolver {
     );
   }
 
-  @Mutation(() => null)
-  async deleteTrustedDomain(
+  @Mutation(() => Boolean)
+  async deleteWorkspaceTrustedDomain(
     @Args('input') { id }: DeleteTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
-  ): Promise<void> {
-    return await this.workspaceTrustedDomainService.deleteTrustedDomain(
+  ): Promise<boolean> {
+    await this.workspaceTrustedDomainService.deleteTrustedDomain(
       currentWorkspace,
       id,
     );
+
+    return true;
   }
 
-  @Mutation(() => [WorkspaceTrustedDomain])
-  async getAllTrustedDomains(
+  @Query(() => [WorkspaceTrustedDomain])
+  async getAllWorkspaceTrustedDomains(
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<Array<WorkspaceTrustedDomain>> {
     return await this.workspaceTrustedDomainService.getAllTrustedDomainsByWorkspace(

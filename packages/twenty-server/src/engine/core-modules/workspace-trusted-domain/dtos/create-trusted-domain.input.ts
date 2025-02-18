@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsString } from 'class-validator';
+import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class CreateTrustedDomainInput {
