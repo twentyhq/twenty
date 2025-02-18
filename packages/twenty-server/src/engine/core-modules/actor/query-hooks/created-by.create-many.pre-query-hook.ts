@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common/services/logger.service';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -16,7 +17,6 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { isDefined } from 'twenty-shared';
 
 type CustomWorkspaceItem = Omit<
   CustomWorkspaceEntity,
