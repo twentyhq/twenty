@@ -138,6 +138,16 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   })
   userId: string;
 
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.agentId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Agent Id`,
+    description: msg`Associated Agent Id`,
+    icon: 'IconCircleUsers',
+  })
+  @WorkspaceIsNullable()
+  agentId: string | null;
+
   // Relations
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,

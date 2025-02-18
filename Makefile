@@ -12,7 +12,7 @@ kvoip-v2-postgres-on-docker:
 	-e ALLOW_NOSSL=true \
 	-v kvoip-v2_db_data:/home/postgres/pgdata \
 	-p 5433:5432 \
-	kvoipcrm-v2/kvoip-pg-spilo:latest
+	kvoipcrm/v2-kvoip-pg-spilo:latest
 	@echo "Waiting for PostgreSQL to be ready..."
 	@until docker exec kvoipv2_pg psql -U postgres -d postgres \
 		-c 'SELECT pg_is_in_recovery();' 2>/dev/null | grep -q 'f'; do \

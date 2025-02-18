@@ -36,6 +36,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useLingui } from '@lingui/react/macro';
+import { IconIdBadge2, IconMessageCircleCog, IconPhone } from '@tabler/icons-react';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -81,6 +82,27 @@ export const SettingsNavigationDrawerItems = () => {
     },
   ];
 
+  const serviceCenterSubSettings: SettingsNavigationItem[] = [
+    {
+      label: 'Agents',
+      path: SettingsPath.ServiceCenterAgents,
+      Icon: IconUsers,
+      indentationLevel: 2,
+    },
+    {
+      label: 'Sectors',
+      path: SettingsPath.ServiceCenterSectors,
+      Icon: IconIdBadge2,
+      indentationLevel: 2,
+    },
+    {
+      label: 'Service Level',
+      path: SettingsPath.ServiceCenterServiceLevel,
+      Icon: IconMessageCircleCog,
+      indentationLevel: 2,
+    },
+  ];
+
   const selectedIndex = accountSubSettings.findIndex((accountSubSetting) => {
     const href = getSettingsPath(accountSubSetting.path);
     const pathName = resolvePath(href).pathname;
@@ -93,6 +115,23 @@ export const SettingsNavigationDrawerItems = () => {
       currentPathName,
     );
   });
+
+  
+  const selectedServiceCenter = serviceCenterSubSettings.findIndex(
+    (serviceCenterSubSetting) => {
+      const href = getSettingsPath(serviceCenterSubSetting.path);
+      const pathName = resolvePath(href).pathname;
+
+      return matchPath(
+        {
+          path: pathName,
+          end: serviceCenterSubSetting.matchSubPages === false,
+        },
+        currentPathName,
+      );
+    },
+  );
+
 
   return (
     <>
@@ -143,6 +182,25 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
+        <SettingsNavigationDrawerItem
+          label={'Service Center'}
+          path={SettingsPath.ServiceCenter}
+          Icon={IconPhone}
+        />
+        {serviceCenterSubSettings.map((navigationItem, index) => (
+          <SettingsNavigationDrawerItem
+            key={index}
+            label={navigationItem.label}
+            path={navigationItem.path}
+            Icon={navigationItem.Icon}
+            indentationLevel={navigationItem.indentationLevel}
+            subItemState={getNavigationSubItemLeftAdornment({
+              arrayLength: serviceCenterSubSettings.length,
+              index,
+              selectedIndex: selectedServiceCenter,
+            })}
+          />
+        ))}
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
             label={t`Billing`}

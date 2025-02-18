@@ -57,6 +57,9 @@ RUN npm install -g tsx
 
 RUN apk add --no-cache postgresql-client
 
+# Install ffmpeg
+RUN apk add --no-cache ffmpeg
+
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 WORKDIR /app/packages/twenty-server
