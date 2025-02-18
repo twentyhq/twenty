@@ -26,11 +26,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       objectMetadataItemId: objectMetadataItem.id,
     }),
   );
-  console.log(
-    'views from navigation drawer item',
-    objectMetadataItem.namePlural,
-    views,
-  );
 
   const mainContextStoreComponentInstanceId = useRecoilValue(
     mainContextStoreComponentInstanceIdState,

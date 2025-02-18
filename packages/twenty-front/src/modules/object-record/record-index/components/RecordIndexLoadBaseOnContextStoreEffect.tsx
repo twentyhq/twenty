@@ -27,9 +27,6 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     contextStoreCurrentObjectMetadataItemComponentState,
   );
 
-  console.log('objectMetadataItem', objectMetadataItem);
-  console.log(view);
-
   useEffect(() => {
     if (loadedViewId === contextStoreCurrentViewId) {
       return;
@@ -40,7 +37,6 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     }
 
     if (isDefined(view)) {
-      console.log('view', view);
       loadRecordIndexStates(view, objectMetadataItem);
       setLoadedViewId(contextStoreCurrentViewId);
     }

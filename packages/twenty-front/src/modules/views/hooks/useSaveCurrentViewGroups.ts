@@ -67,7 +67,11 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
           { ...viewGroupToSave, id: existingField.id },
         ]);
       },
-    [currentViewIdCallbackState, getViewFromPrefetchState, updateViewGroupRecords],
+    [
+      currentViewIdCallbackState,
+      getViewFromPrefetchState,
+      updateViewGroupRecords,
+    ],
   );
 
   const saveViewGroups = useRecoilCallback(

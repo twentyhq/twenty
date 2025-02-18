@@ -51,7 +51,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { createViewFilterGroupRecords } = usePersistViewFilterGroupRecords();
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
-  console.log('re-render');
 
   const { findManyRecords } = useLazyFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.View,
