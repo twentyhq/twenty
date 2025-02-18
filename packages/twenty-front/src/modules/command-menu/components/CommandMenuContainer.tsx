@@ -20,7 +20,7 @@ import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/wo
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
@@ -65,6 +65,7 @@ export const CommandMenuContainer = ({
     callback: closeCommandMenu,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
+    excludeClassNames: ['page-header-command-menu-button'],
   });
 
   const isMobile = useIsMobile();
@@ -114,20 +115,22 @@ export const CommandMenuContainer = ({
               <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
             )}
             <ActionMenuConfirmationModals />
-            {isCommandMenuOpened && (
-              <StyledCommandMenu
-                data-testid="command-menu"
-                ref={commandMenuRef}
-                className="command-menu"
-                animate={targetVariantForAnimation}
-                initial="closed"
-                exit="closed"
-                variants={COMMAND_MENU_ANIMATION_VARIANTS}
-                transition={{ duration: theme.animation.duration.normal }}
-              >
-                {children}
-              </StyledCommandMenu>
-            )}
+            <AnimatePresence mode="wait">
+              {isCommandMenuOpened && (
+                <StyledCommandMenu
+                  data-testid="command-menu"
+                  ref={commandMenuRef}
+                  className="command-menu"
+                  animate={targetVariantForAnimation}
+                  initial="closed"
+                  exit="closed"
+                  variants={COMMAND_MENU_ANIMATION_VARIANTS}
+                  transition={{ duration: theme.animation.duration.normal }}
+                >
+                  {children}
+                </StyledCommandMenu>
+              )}
+            </AnimatePresence>
           </ActionMenuContext.Provider>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
