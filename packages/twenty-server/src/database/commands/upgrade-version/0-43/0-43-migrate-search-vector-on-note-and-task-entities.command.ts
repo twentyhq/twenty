@@ -11,12 +11,12 @@ import {
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { SEARCH_FIELDS_FOR_NOTES } from 'src/modules/note/standard-objects/note.workspace-entity';
+import { SEARCH_FIELDS_FOR_TASKS } from 'src/modules/task/standard-objects/task.workspace-entity';
 
 @Command({
   name: 'upgrade-0.43:migrate-search-vector-on-note-and-task-entities',
@@ -30,8 +30,6 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorks
     protected readonly featureFlagRepository: Repository<FeatureFlag>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
-    protected readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly searchService: SearchService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
@@ -98,7 +96,7 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorks
 
       await this.searchService.updateSearchVector(
         taskObjectMetadata.id,
-        SEARCH_FIELDS_FOR_NOTES,
+        SEARCH_FIELDS_FOR_TASKS,
         workspaceId,
       );
 
