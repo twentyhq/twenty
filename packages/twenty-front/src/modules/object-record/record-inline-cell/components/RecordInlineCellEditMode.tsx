@@ -32,7 +32,7 @@ export const RecordInlineCellEditMode = ({
 
   const hasRecordInlineCellDangerBorder = useRecoilValue(
     hasRecordInlineCellDangerBorderScopedState(
-      recordId + fieldDefinition.fieldMetadataId,
+      `${recordId}-${fieldDefinition.fieldMetadataId}`,
     ),
   );
 

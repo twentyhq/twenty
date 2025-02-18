@@ -29,7 +29,7 @@ export const RecordTableCellEditMode = ({
 
   const hasRecordTableCellDangerBorder = useRecoilValue(
     hasRecordTableCellDangerBorderScopedState(
-      recordId + fieldDefinition.fieldMetadataId,
+      `${recordId}-${fieldDefinition.fieldMetadataId}`,
     ),
   );
   const { refs, floatingStyles } = useFloating({

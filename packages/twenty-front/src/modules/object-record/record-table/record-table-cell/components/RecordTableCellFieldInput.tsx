@@ -21,7 +21,7 @@ export const RecordTableCellFieldInput = () => {
 
   const setHasRecordTableCellDangerBorder = useSetRecoilState(
     hasRecordTableCellDangerBorderScopedState(
-      recordId + fieldDefinition.fieldMetadataId,
+      `${recordId}-${fieldDefinition.fieldMetadataId}`,
     ),
   );
 

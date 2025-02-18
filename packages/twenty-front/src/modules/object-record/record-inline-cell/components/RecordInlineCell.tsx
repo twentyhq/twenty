@@ -37,7 +37,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
 
   const setHasRecordInlineCellDangerBorder = useSetRecoilState(
     hasRecordInlineCellDangerBorderScopedState(
-      recordId + fieldDefinition.fieldMetadataId,
+      `${recordId}-${fieldDefinition.fieldMetadataId}`,
     ),
   );
 

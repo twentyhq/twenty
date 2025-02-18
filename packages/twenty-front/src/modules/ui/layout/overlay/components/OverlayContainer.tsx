@@ -17,7 +17,7 @@ export const OverlayContainer = styled.div<{
   background: ${({ theme }) => theme.background.transparent.primary};
   border: 1px solid
     ${({ theme, hasDangerBorder }) =>
-      hasDangerBorder ? theme.border.color.danger : theme.border.color.medium};
+      theme.border.color[hasDangerBorder ? 'danger' : 'medium']};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   overflow: hidden;
