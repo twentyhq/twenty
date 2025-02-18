@@ -147,9 +147,9 @@ export const PageHeaderOpenCommandMenuButton = () => {
         />
       ) : (
         <IconButton
-          Icon={Icon}
+          Icon={IconDotsVertical}
           size="medium"
-          dataTestId="command-menu-button"
+          dataTestId="more-showpage-button"
           accent="default"
           variant="secondary"
           onClick={toggleCommandMenu}
