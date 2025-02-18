@@ -292,10 +292,9 @@ export const FieldActorValueSchema = z.object({
   source: FieldActorSourceSchema,
   workspaceMemberId: z.string().nullable(),
   name: z.string(),
-  context: z
-    .object({
-      provider: z.nativeEnum(ConnectedAccountProvider).optional(),
-    })
+  context: z.object({
+    provider: z.nativeEnum(ConnectedAccountProvider).optional(),
+  }),
 });
 export type FieldActorValue = z.infer<typeof FieldActorValueSchema>;
 
