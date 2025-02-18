@@ -1,3 +1,4 @@
+import { isAttachmentPreviewEnabledState } from '@/client-config/attachmentPreviewEnabledState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
@@ -77,6 +78,10 @@ export const ClientConfigProviderEffect = () => {
     isGoogleCalendarEnabledState,
   );
 
+  const setIsAttachmentPreviewEnabled = useSetRecoilState(
+    isAttachmentPreviewEnabledState,
+  );
+
   const { data, loading, error } = useGetClientConfigQuery({
     skip: clientConfigApiStatus.isLoaded,
   });
@@ -149,6 +154,9 @@ export const ClientConfigProviderEffect = () => {
     setMicrosoftCalendarEnabled(data?.clientConfig?.isMicrosoftCalendarEnabled);
     setGoogleMessagingEnabled(data?.clientConfig?.isGoogleMessagingEnabled);
     setGoogleCalendarEnabled(data?.clientConfig?.isGoogleCalendarEnabled);
+    setIsAttachmentPreviewEnabled(
+      data?.clientConfig?.isAttachmentPreviewEnabled,
+    );
   }, [
     data,
     setIsDebugMode,
@@ -173,6 +181,7 @@ export const ClientConfigProviderEffect = () => {
     setMicrosoftCalendarEnabled,
     setGoogleMessagingEnabled,
     setGoogleCalendarEnabled,
+    setIsAttachmentPreviewEnabled,
   ]);
 
   return <></>;

@@ -12,26 +12,14 @@ import {
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { lazy, Suspense, useMemo, useState } from 'react';
-import {
-  IconButton,
-  IconCalendar,
-  IconDownload,
-  IconX,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui';
+import { useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared';
+import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
-
-const DocumentViewer = lazy(() =>
-  import('@/activities/files/components/DocumentViewer').then((module) => ({
-    default: module.DocumentViewer,
-  })),
-);
 
 const StyledLeftContent = styled.div`
   align-items: center;
@@ -80,51 +68,17 @@ const StyledLinkContainer = styled.div`
   width: 100%;
 `;
 
-const StyledLoadingContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.primary};
-  display: flex;
-  height: 80vh;
-  justify-content: center;
-  width: 100%;
-`;
+type AttachmentRowProps = {
+  attachment: Attachment;
+  onPreview?: (attachment: Attachment) => void;
+};
 
-const StyledLoadingText = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const StyledTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-`;
-
-const StyledModalHeader = styled(Modal.Header)`
-  padding: 0;
-`;
-
-const StyledModalContent = styled(Modal.Content)`
-  padding-left: 0;
-  padding-right: 0;
-`;
-
-const StyledButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
+export const AttachmentRow = ({
+  attachment,
+  onPreview,
+}: AttachmentRowProps) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
-  const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
 
   const { name: originalFileName, extension: attachmentFileExtension } =
     getFileNameAndExtension(attachment.name);
@@ -190,13 +144,16 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   };
 
   const handleOpenDocument = (e: React.MouseEvent) => {
-    // Cmd/Ctrl+click opens new tab, right click opens context menu, simple click opens modal
+    // Cmd/Ctrl+click opens new tab, right click opens context menu
     if (e.metaKey || e.ctrlKey || e.button === 2) {
       return;
     }
 
-    e.preventDefault();
-    setIsDocumentViewerOpen(true);
+    // Only prevent default and use preview if onPreview is provided
+    if (isDefined(onPreview)) {
+      e.preventDefault();
+      onPreview(attachment);
+    }
   };
 
   return (
@@ -246,47 +203,6 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           />
         </StyledRightContent>
       </ActivityRow>
-      {isDocumentViewerOpen && (
-        <Modal
-          size="large"
-          isClosable
-          onClose={() => setIsDocumentViewerOpen(false)}
-        >
-          <StyledModalHeader>
-            <StyledHeader>
-              <StyledTitle>{attachment.name}</StyledTitle>
-              <StyledButtonContainer>
-                <IconButton
-                  Icon={IconDownload}
-                  onClick={handleDownload}
-                  size="small"
-                />
-                <IconButton
-                  Icon={IconX}
-                  onClick={() => setIsDocumentViewerOpen(false)}
-                  size="small"
-                />
-              </StyledButtonContainer>
-            </StyledHeader>
-          </StyledModalHeader>
-          <StyledModalContent>
-            <Suspense
-              fallback={
-                <StyledLoadingContainer>
-                  <StyledLoadingText>
-                    Loading document viewer...
-                  </StyledLoadingText>
-                </StyledLoadingContainer>
-              }
-            >
-              <DocumentViewer
-                documentName={attachment.name}
-                documentUrl={attachment.fullPath}
-              />
-            </Suspense>
-          </StyledModalContent>
-        </Modal>
-      )}
     </FieldContext.Provider>
   );
 };
