@@ -296,8 +296,6 @@ export const FieldActorValueSchema = z.object({
     .object({
       provider: z.nativeEnum(ConnectedAccountProvider).optional(),
     })
-    // TODO adding .optional() until we've double checked that we do not need a migration command to standardize createdBy.context in db
-    .nullable().optional(),
 });
 export type FieldActorValue = z.infer<typeof FieldActorValueSchema>;
 
