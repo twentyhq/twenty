@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkspaceMetadataVersionException extends CustomException {
-  code: WorkspaceMetadataVersionExceptionCode;
   constructor(message: string, code: WorkspaceMetadataVersionExceptionCode) {
     super(message, code);
   }

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { JSX } from 'react';
+import { Label } from '@ui/display';
 
 type HorizontalSeparatorProps = {
   visible?: boolean;
@@ -31,9 +32,7 @@ const StyledLine = styled.div<HorizontalSeparatorProps>`
 `;
 
 const StyledText = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
   margin: 0 ${({ theme }) => theme.spacing(2)};
-  white-space: nowrap;
 `;
 
 export const HorizontalSeparator = ({
@@ -46,7 +45,9 @@ export const HorizontalSeparator = ({
     {text ? (
       <StyledSeparatorContainer noMargin={noMargin}>
         <StyledLine visible={visible} />
-        {text && <StyledText>{text}</StyledText>}
+        <Label>
+          <StyledText>{text}</StyledText>
+        </Label>
         <StyledLine visible={visible} />
       </StyledSeparatorContainer>
     ) : (

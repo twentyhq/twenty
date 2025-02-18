@@ -6,7 +6,7 @@ import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks
 import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
+
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -23,7 +23,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { useSelectFilterUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterUsedInDropdown';
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
@@ -124,8 +124,7 @@ export const ObjectFilterDropdownFilterSelect = ({
     (fieldMetadataItem) => fieldMetadataItem.id,
   );
 
-  const { selectFilterDefinitionUsedInDropdown } =
-    useSelectFilterDefinitionUsedInDropdown();
+  const { selectFilterUsedInDropdown } = useSelectFilterUsedInDropdown();
 
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
@@ -144,12 +143,8 @@ export const ObjectFilterDropdownFilterSelect = ({
 
     resetSelectedItem();
 
-    const selectedFilterDefinition = formatFieldMetadataItemAsFilterDefinition({
-      field: selectedFieldMetadataItem,
-    });
-
-    selectFilterDefinitionUsedInDropdown({
-      filterDefinition: selectedFilterDefinition,
+    selectFilterUsedInDropdown({
+      fieldMetadataItemId,
     });
 
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);

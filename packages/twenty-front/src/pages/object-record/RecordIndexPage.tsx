@@ -1,114 +1,38 @@
-import styled from '@emotion/styled';
-import { useParams } from 'react-router-dom';
-
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
-import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
-import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreObjectMetadataEffect';
-import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
-import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
-import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
-import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { useRecoilCallback } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
-
-const StyledIndexContainer = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-`;
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 
 export const RecordIndexPage = () => {
-  const objectNamePlural = useParams().objectNamePlural ?? '';
-
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
-    objectNamePlural,
+    'main-context-store',
   );
 
-  const recordIndexId = `${objectNamePlural}-${contextStoreCurrentViewId}`;
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
-    objectMetadataItem,
-    recordIndexId,
-  });
-
-  const handleIndexRecordsLoaded = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        // TODO: find a better way to reset this state ?
-        set(lastShowPageRecordIdState, null);
-      },
-    [],
+  const objectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
+    'main-context-store',
   );
 
-  if (!isDefined(contextStoreCurrentViewId)) {
-    return;
+  if (
+    isUndefined(objectMetadataItem) ||
+    !isNonEmptyString(contextStoreCurrentViewId)
+  ) {
+    return null;
   }
 
   return (
     <PageContainer>
-      <RecordIndexContextProvider
+      <ContextStoreComponentInstanceContext.Provider
         value={{
-          recordIndexId,
-          objectNamePlural,
-          objectNameSingular,
-          objectMetadataItem,
-          onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          indexIdentifierUrl,
+          instanceId: 'main-context-store',
         }}
       >
-        <ViewComponentInstanceContext.Provider
-          value={{ instanceId: recordIndexId }}
-        >
-          <RecordFiltersComponentInstanceContext.Provider
-            value={{ instanceId: recordIndexId }}
-          >
-            <ContextStoreComponentInstanceContext.Provider
-              value={{
-                instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-              }}
-            >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{
-                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                }}
-              >
-                <PageTitle title={`${capitalize(objectNamePlural)}`} />
-                <RecordIndexPageHeader />
-                <PageBody>
-                  <StyledIndexContainer>
-                    <RecordIndexContainerContextStoreObjectMetadataEffect />
-                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                    <MainContextStoreComponentInstanceIdSetterEffect />
-                    <RecordIndexContainer />
-                  </StyledIndexContainer>
-                </PageBody>
-              </ActionMenuComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
-        </ViewComponentInstanceContext.Provider>
-      </RecordIndexContextProvider>
+        <RecordIndexContainerGater />
+      </ContextStoreComponentInstanceContext.Provider>
     </PageContainer>
   );
 };

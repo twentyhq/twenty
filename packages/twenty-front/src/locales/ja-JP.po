@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -26,10 +26,14 @@ msgstr "{fieldLabel}の{aggregateLabel}"
 msgid "{apiKeyName} API Key"
 msgstr "{apiKeyName} APIキー"
 
-#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:40
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
 msgid "{name}"
 msgstr "{name}"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
+msgid "{workspaceMemberName} will be unassigned from the following role:"
+msgstr "{workspaceMemberName}が次の役割から割り当て解除されます："
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -51,11 +55,16 @@ msgstr "24時間 ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "チームと協力して顧客関係を管理できる共有環境です。"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "各オブジェクトと対話する能力"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "中止"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "概要"
 
@@ -69,10 +78,17 @@ msgstr "アカウント"
 msgid "Account Deletion"
 msgstr "アカウント削除"
 
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:80
 msgid "Accounts"
 msgstr "アカウント"
+
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
+msgid "Actions"
+msgstr "アクション"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
@@ -89,7 +105,7 @@ msgstr "ワークフローを有効化"
 msgid "Active"
 msgstr "アクティブ"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+#: src/pages/settings/developers/SettingsDevelopers.tsx:51
 msgid "Active API keys created by you or your team."
 msgstr "あなたまたはチームが作成したアクティブなAPIキー。"
 
@@ -135,15 +151,23 @@ msgstr "最初の{objectLabel}を追加"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "{beautifiedCreatedAt}に追加"
 
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
+msgid "Advanced filter"
+msgstr "\\\\u9ad8\\\\u5ea6\\\\u306a\\\\u30d5\\\\u30a3\\\\u30eb\\\\u30bf\\\\u30fc"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "Afrikaans"
+msgstr "アフリカーンス語"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
 msgstr "すべて"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "すべて ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:119
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 msgid "All roles"
 msgstr "すべてのロール"
 
@@ -167,7 +191,7 @@ msgstr "ユーザーがメールとパスワードでサインインできるよ
 msgid "An error occurred while updating password"
 msgstr "パスワードの更新中にエラーが発生しました"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:158
 msgid "An optional description"
 msgstr "任意の説明"
 
@@ -176,7 +200,7 @@ msgid "and"
 msgstr "および"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:156
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -185,7 +209,7 @@ msgstr "API & Webhooks"
 msgid "API Key"
 msgstr "APIキー"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "API keys"
 msgstr "APIキー"
 
@@ -193,32 +217,56 @@ msgstr "APIキー"
 msgid "API Name"
 msgstr "API名"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
+msgid "API Name (Plural)"
+msgstr "API名（複数形）"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
+msgid "API Name (Singular)"
+msgstr "API名<b>（</b>単数形<b>）</b>"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "外観"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+msgid "Arabic"
+msgstr "アラビア語"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "請求間隔を変更してもよろしいですか？"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
+msgid "Are you sure you want to assign this role?"
+msgstr "この役割を割り当ててもよろしいですか？"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Ascending"
 msgstr "昇順"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:120
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
+msgid "Assign {workspaceMemberName}?"
+msgstr "{workspaceMemberName}に割り当てますか？"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "Assign roles to specify each member's access permissions"
 msgstr "各メンバーのアクセス権限を指定するロールを割り当てる"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:14
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
+msgid "Assign to member"
+msgstr "メンバーへの割り当て"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "割り当てられたメンバー"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:129
+#: src/pages/settings/roles/SettingsRoles.tsx:128
 msgid "Assigned to"
 msgstr "担当"
 
-#: src/pages/settings/roles/SettingsRoleEdit.tsx:64
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:74
 msgid "Assignment"
 msgstr "割り当て"
 
@@ -249,7 +297,7 @@ msgstr "コンテンツに戻る"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:117
 msgid "Billing"
 msgstr "請求"
 
@@ -275,7 +323,7 @@ msgstr "カレンダー"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:92
 msgid "Calendars"
 msgstr "カレンダー"
 
@@ -298,6 +346,10 @@ msgstr "プランをキャンセル"
 msgid "Cancel your subscription"
 msgstr "サブスクリプションをキャンセル"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+msgid "Catalan"
+msgstr "カタルーニャ語"
+
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
 msgstr "{to}に変更"
@@ -308,17 +360,21 @@ msgstr "{to}に変更"
 msgid "Change Password"
 msgstr "パスワードを変更"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
 msgid "Chinese — Simplified"
 msgstr "中国語（簡体字）"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
 msgid "Chinese — Traditional"
 msgstr "中国語（繁体字）"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:187
 msgid "Choose an object"
 msgstr "オブジェクトを選択"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
+msgid "Choose the fields that will identify your records"
+msgstr "レコードを識別するフィールドを選択してください"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
@@ -348,6 +404,10 @@ msgstr "アプリ全体の日付の表示方法を設定"
 msgid "Configure your emails and calendar settings."
 msgstr "メールとカレンダーの設定を行う。"
 
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
+msgid "Confirm"
+msgstr "確認"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
 msgstr "新しいアカウントをワークスペースに接続"
@@ -364,7 +424,7 @@ msgstr "Microsoftと接続"
 msgid "Connected accounts"
 msgstr "接続されたアカウント"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "コンテキスト"
 
@@ -388,13 +448,17 @@ msgstr "Googleで続行"
 msgid "Continue with Microsoft"
 msgstr "Microsoftで続行"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "コパイロット"
 
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "招待リンクをコピー"
+
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
+msgid "Copy link"
+msgstr "リンクをコピー"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -425,7 +489,7 @@ msgstr "一意の値をカウント"
 msgid "Create a workflow and return here to view its versions"
 msgstr "ワークフローを作成し、ここに戻ってそのバージョンを表示"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+#: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
 msgstr "APIキーを作成"
 
@@ -442,13 +506,17 @@ msgstr "プロフィールの作成"
 msgid "Create Role"
 msgstr "ロールの作成"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:72
+#: src/pages/settings/developers/SettingsDevelopers.tsx:73
 msgid "Create Webhook"
 msgstr "Webhookを作成"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:113
 msgid "Create your workspace"
 msgstr "ワークスペースの作成"
+
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "カスタムドメイン"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -458,7 +526,7 @@ msgstr "カスタムオブジェクト"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "{objectLabelSingular}ビューで利用可能なフィールドをカスタマイズ"
 
-#: src/pages/settings/SettingsWorkspace.tsx:56
+#: src/pages/settings/SettingsWorkspace.tsx:49
 msgid "Customize Domain"
 msgstr "ドメインをカスタマイズ"
 
@@ -466,16 +534,29 @@ msgstr "ドメインをカスタマイズ"
 msgid "Customize your workspace security"
 msgstr "ワークスペースのセキュリティをカスタマイズ"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+msgid "Czech"
+msgstr "チェコ語"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "危険ゾーン"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Danish"
+msgstr "デンマーク語"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
+msgid "Dark"
+msgstr "\\\\u30c0\\\\u30fc\\\\u30af"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:131
 msgid "Data model"
 msgstr "データモデル"
 
@@ -497,13 +578,19 @@ msgstr "日付と時間"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "無効化"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:117
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "カスタムAPI名を設定するには、「オブジェクトラベルとAPI名の同期」を無効にする"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
+msgid "Deactivate object"
+msgstr "\\\\u30aa\\\\u30d6\\\\u30b8\\\\u30a7\\\\u30af\\\\u30c8\\\\u3092\\\\u7121\\\\u52b9\\\\u5316\\\\u3059\\\\u308b"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -517,7 +604,7 @@ msgstr "ワークフローを無効化"
 msgid "Define the name and description of your object"
 msgstr "オブジェクトの名前と説明を定義"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:252
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
@@ -556,13 +643,13 @@ msgstr "レコードを削除"
 msgid "Delete records"
 msgstr "レコードを削除"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:247
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
 msgstr "この統合を削除"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:261
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:269
 msgid "Delete webhook"
 msgstr "Webhookを削除"
 
@@ -588,7 +675,7 @@ msgstr "ワークスペース全体を削除"
 msgid "Descending"
 msgstr "降順"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
@@ -601,12 +688,12 @@ msgstr "説明"
 msgid "Destroy"
 msgstr "破棄"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:35
-#: src/pages/settings/developers/SettingsDevelopers.tsx:42
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:79
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
+#: src/pages/settings/developers/SettingsDevelopers.tsx:36
+#: src/pages/settings/developers/SettingsDevelopers.tsx:43
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:152
 msgid "Developers"
 msgstr "開発者"
 
@@ -620,12 +707,15 @@ msgstr "下書きを破棄"
 msgid "Display as relative date"
 msgstr "相対日付で表示"
 
-#: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsHostname.tsx:115
-#: src/pages/settings/workspace/SettingsDomain.tsx:115
-#: src/pages/settings/workspace/SettingsDomain.tsx:125
+#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "ドメイン"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+msgid "Dutch"
+msgstr "オランダ語"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
@@ -648,13 +738,14 @@ msgstr "請求間隔を編集"
 msgid "Edit payment method, see your invoices and more"
 msgstr "支払い方法の編集、請求書の確認など"
 
-#: src/pages/settings/SettingsWorkspace.tsx:52
+#: src/pages/settings/SettingsWorkspace.tsx:45
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "サブドメイン名を編集するか、カスタムドメインを設定する。"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:180
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:256
 #: src/pages/settings/SettingsProfile.tsx:42
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:21
 #: src/pages/auth/PasswordReset.tsx:206
 msgid "Email"
 msgstr "メール"
@@ -667,7 +758,9 @@ msgstr "メール統合"
 msgid "Email or domain is already in blocklist"
 msgstr "メールまたはドメインはすでにブロックリストに登録されています"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:86
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "メール"
@@ -686,12 +779,11 @@ msgstr "従業員"
 msgid "Empty"
 msgstr "空"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:141
 msgid "Endpoint URL"
 msgstr "エンドポイントURL"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "English"
 msgstr "英語"
 
@@ -715,7 +807,7 @@ msgstr "APIキーの再生成エラー：{err}"
 msgid "Error while switching subscription {to}."
 msgstr "サブスクリプション{to}の切り替え中にエラーが発生しました。"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+#: src/pages/settings/developers/SettingsDevelopers.tsx:67
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "非同期イベントの通知用にWebhookエンドポイントを設定する。"
 
@@ -735,9 +827,9 @@ msgstr "設定を終了"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:75
 msgid "Experience"
 msgstr "経験"
 
@@ -800,7 +892,7 @@ msgid "Field type"
 msgstr "フィールドタイプ"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:97
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
@@ -816,9 +908,13 @@ msgstr "フィールド数"
 msgid "Filter"
 msgstr "フィルター"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:171
 msgid "Filters"
 msgstr "フィルター"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+msgid "Finnish"
+msgstr "フィンランド語"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
@@ -828,7 +924,7 @@ msgstr "名"
 msgid "Forgot your password?"
 msgstr "パスワードを忘れましたか？"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
 msgid "French"
 msgstr "フランス語"
 
@@ -844,18 +940,18 @@ msgstr "年払いから月払いへ"
 msgid "Full access"
 msgstr "フルアクセス"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:163
 msgid "Functions"
 msgstr "機能"
 
-#: src/pages/settings/SettingsWorkspace.tsx:29
-#: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:122
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/pages/settings/SettingsWorkspace.tsx:22
+#: src/pages/settings/SettingsWorkspace.tsx:28
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:105
 msgid "General"
 msgstr "一般"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
 msgid "German"
 msgstr "ドイツ語"
 
@@ -867,13 +963,25 @@ msgstr "チームを招待して、ワークスペースを最大限に活用し
 msgid "Get your subscription"
 msgstr "サブスクリプションを取得"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "グローバル"
 
-#: src/pages/settings/SettingsWorkspace.tsx:65
+#: src/pages/settings/SettingsWorkspace.tsx:58
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Twentyサポートに一時的なアクセスを許可して、問題のトラブルシューティングやコンテンツの復旧を行います。アクセスはいつでも取り消せます。"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
+msgid "Greek"
+msgstr "ギリシャ語"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
+msgid "Health Status"
+msgstr "健康状態"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
+msgid "Hebrew"
+msgstr "ヘブライ語"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
@@ -882,6 +990,10 @@ msgstr "非表示"
 #: src/pages/onboarding/CreateProfile.tsx:157
 msgid "How you'll be identified on the app."
 msgstr "アプリ上での識別名です。"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
+msgid "Hungarian"
+msgstr "ハンガリー語"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -901,10 +1013,11 @@ msgstr "このキーを紛失した場合は再生成できますが、このキ
 msgid "Inactive"
 msgstr "非アクティブ"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:109
 msgid "Indexes"
 msgstr "インデックス"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:118
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "入力はキャメルケースで、数字で始めることはできません。"
@@ -915,13 +1028,17 @@ msgstr "インスタンス"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:137
 msgid "Integrations"
 msgstr "統合"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
 msgid "Invalid auth provider"
 msgstr "無効な認証プロバイダー"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:48
+msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr "無効なカスタムドメインです。カスタムドメインは256文字以下で、IPアドレスであってはならず、空白を含むことはできず、_~`!@#$%^*()=+{}[]|\\;:'\",<>/? のような特殊文字を含むことはできず、'-'文字で始まったり終わったりすることはできません。"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
@@ -932,9 +1049,13 @@ msgstr "無効なメールアドレス"
 msgid "Invalid email or domain"
 msgstr "無効なメールアドレスまたはドメイン"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:71
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "無効なフォーム値"
+
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
+msgid "Invite"
+msgstr "\\\\u62db\\\\u5f85"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -956,23 +1077,23 @@ msgstr "招待リンクがメールアドレスに送信されました"
 msgid "Invite your team"
 msgstr "チームを招待"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:129
 msgid "Italian"
 msgstr "イタリア語"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:133
 msgid "Japanese"
 msgstr "日本語"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:137
 msgid "Korean"
 msgstr "韓国語"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:181
 msgid "Lab"
 msgstr "ラボ"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "言語"
 
@@ -988,15 +1109,24 @@ msgstr "最新"
 msgid "Latest date"
 msgstr "最新の日付"
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
+msgid "Light"
+msgstr "\\\\u660e\\\\u308b\\\\u3044"
+
 #: src/pages/onboarding/InviteTeam.tsx:127
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
 msgid "Link copied to clipboard"
 msgstr "リンクがクリップボードにコピーされました"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
+msgid "Listings"
+msgstr "\\\\u30ea\\\\u30b9\\\\u30c8"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
 msgstr "ログアウト"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:120
 msgid "Logout"
 msgstr "ログアウト"
 
@@ -1028,7 +1158,7 @@ msgstr "最大"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:111
 msgid "Members"
 msgstr "メンバー"
 
@@ -1052,9 +1182,12 @@ msgstr "右に移動"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:126
+#: src/pages/settings/roles/SettingsRoles.tsx:125
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
@@ -1069,12 +1202,16 @@ msgstr "名前"
 msgid "Name can not be empty"
 msgstr "名前は空にできません"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
+msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+msgstr "単数形<b>（</b>例えば、「Invoice」<b>）</b>および複数形<b>（</b>例えば、「Invoices」<b>）</b>の名前。"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
 msgstr "APIキーの名前"
 
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 msgid "Name of your workspace"
 msgstr "ワークスペースの名前"
 
@@ -1108,9 +1245,17 @@ msgstr "前のワークフローに移動"
 msgid "New"
 msgstr "新規"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "新しい{capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "新しいアカウント"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
+msgid "New Field"
+msgstr "\\\\u65b0\\\\u898f\\\\u30d5\\\\u30a3\\\\u30fc\\\\u30eb\\\\u30c9"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1140,12 +1285,40 @@ msgstr "新しいレコード"
 #~ msgstr "New Role"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
-msgid "New Webhook"
-msgstr "新しいWebhook"
+#~ msgid "New Webhook"
+#~ msgstr "New Webhook"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
 msgid "No connected account"
 msgstr "接続されたアカウントがありません"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:187
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:186
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "これ以上のメンバーを割り当てることはできません"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+#~ msgid "No Result"
+#~ msgstr "No Result"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Results"
+msgstr "結果なし"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1155,16 +1328,22 @@ msgstr "ワークフローはまだ実行されていません"
 msgid "No workflow versions yet"
 msgstr "ワークフローのバージョンはまだありません"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
+msgid "Norwegian"
+msgstr "ノルウェー語"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
 msgstr "空ではない"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "オブジェクト"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
@@ -1178,6 +1357,7 @@ msgstr "道を外れた"
 msgid "Opened"
 msgstr "開いた"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "オプション"
@@ -1186,7 +1366,9 @@ msgstr "オプション"
 msgid "or"
 msgstr "または"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:67
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:172
 msgid "Other"
 msgstr "その他"
 
@@ -1232,17 +1414,16 @@ msgstr "レコードを永久に破壊する"
 msgid "Permanently destroy workflows"
 msgstr "ワークフローを永久に破壊する"
 
-#: src/pages/settings/roles/SettingsRoleEdit.tsx:70
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:80
 msgid "Permissions"
 msgstr "権限"
 
-#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsWorkspace.tsx:33
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr "写真"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
 msgid "Please enter a valid URL"
 msgstr "有効なURLを入力してください"
 
@@ -1250,19 +1431,27 @@ msgstr "有効なURLを入力してください"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "\"{confirmationValue}\"と入力して、このAPIキーを削除することを確認してください。このキーを使用しているスクリプトは動作しなくなりますのでご注意ください。"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "{confirmationText}と入力して、このWebhookを削除することを確認してください。"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
+msgid "Plural"
+msgstr "\\\\u8907\\\\u6570\\\\u5f62"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
+msgid "Polish"
+msgstr "ポーランド語"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
 #~ msgstr "Portuguese"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:153
 msgid "Portuguese — Brazil"
 msgstr "ポルトガル語 - ブラジル"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:149
 msgid "Portuguese — Portugal"
 msgstr "ポルトガル語 - ポルトガル"
 
@@ -1285,11 +1474,11 @@ msgstr "プライバシーポリシー"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:70
 msgid "Profile"
 msgstr "プロフィール"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:191
 msgid "Pseudo-English"
 msgstr "擬似英語"
 
@@ -1301,7 +1490,7 @@ msgstr "ドキュメントを読む"
 msgid "Receive an email containing password update link"
 msgstr "パスワード更新リンクを含むメールを受け取る"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "レコード選択"
 
@@ -1320,13 +1509,19 @@ msgstr "キーを再生成"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:187
 msgid "Releases"
 msgstr "リリース"
 
+#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx:72
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 #: src/modules/ui/input/components/ImageInput.tsx:172
 msgid "Remove"
 msgstr "削除"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
+msgid "Remove {workspaceMemberName}?"
+msgstr "{workspaceMemberName}を削除しますか？"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1348,27 +1543,36 @@ msgstr "パスワードをリセット"
 msgid "Reset to"
 msgstr "リセット"
 
-#: src/modules/command-menu/hooks/useSearchRecords.tsx:227
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:245
 msgid "Results"
 msgstr "結果"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:107
-#: src/pages/settings/roles/SettingsRoles.tsx:113
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+#: src/pages/settings/roles/SettingsRoles.tsx:106
+#: src/pages/settings/roles/SettingsRoles.tsx:112
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:123
 msgid "Roles"
 msgstr "役割"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
+msgid "Romanian"
+msgstr "ルーマニア語"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
 msgstr "ワークフローを実行し、その実行内容を見るためにここに戻る"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
+msgid "Russian"
+msgstr "ロシア語"
+
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "検索"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "''{commandMenuSearch}''で検索..."
 
@@ -1376,12 +1580,16 @@ msgstr "''{commandMenuSearch}''で検索..."
 msgid "Search a field..."
 msgstr "フィールドを検索..."
 
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
+msgid "Search a member"
+msgstr "メンバーを検索"
+
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
 msgstr "インデックスを検索..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "フィールドを検索"
 
@@ -1390,12 +1598,13 @@ msgid "Search for an object..."
 msgstr "オブジェクトを検索..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "レコードを検索"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:143
 msgid "Security"
 msgstr "セキュリティ"
 
@@ -1421,11 +1630,11 @@ msgstr "バージョンを見る"
 msgid "See versions history"
 msgstr "バージョン履歴を見る"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:172
 msgid "Select the events you wish to send to this endpoint"
 msgstr "このエンドポイントに送信したいイベントを選択してください"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "希望の言語を選択してください"
 
@@ -1433,7 +1642,17 @@ msgstr "希望の言語を選択してください"
 msgid "Send an invite email to your team"
 msgstr "チームに招待メールを送信"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
+msgid "Serbian (Cyrillic)"
+msgstr "セルビア語（キリル文字）"
+
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:175
+msgid "Server Admin"
+msgstr "\\\\u30b5\\\\u30fc\\\\u30d0\\\\u30fc\\\\u7ba1\\\\u7406\\\\u8005"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:71
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "サーバー管理パネル"
 
@@ -1441,20 +1660,30 @@ msgstr "サーバー管理パネル"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "メールの可視性を設定し、ブロックリストを管理するなど。"
 
-#: src/pages/settings/workspace/SettingsHostname.tsx:115
-msgid "Set the name of your domain"
-msgstr "ドメイン名を設定"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "カスタムドメインの名前を設定し、DNSレコードを構成します。"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "サブドメイン名を設定"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "設定"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "設定の権限"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1463,6 +1692,10 @@ msgstr "このリンクを共有して、ユーザーをワークスペースに
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
 msgid "Should changing a field's label also change the API name?"
 msgstr "フィールドのラベルを変更すると、API名も変更されますか？"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
+msgid "Should changing an object's label also change the API?"
+msgstr "オブジェクトのラベルを変更するとAPIも変更されるべきですか？"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1485,7 +1718,7 @@ msgstr "スキップ"
 msgid "Sort"
 msgstr "ソート"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:169
 msgid "Spanish"
 msgstr "スペイン語"
 
@@ -1493,19 +1726,20 @@ msgstr "スペイン語"
 msgid "SSO"
 msgstr "SSO"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "サブドメイン"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:89
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "サブドメインは既に使用されています"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:39
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "サブドメインは30文字以内にしてください"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:34
+#: src/pages/settings/workspace/SettingsDomain.tsx:38
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "サブドメインは3文字以上にしてください"
 
@@ -1518,9 +1752,13 @@ msgstr "サブスクリプションが{to}に切り替わりました"
 msgid "Sum"
 msgstr "合計"
 
-#: src/pages/settings/SettingsWorkspace.tsx:63
+#: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Support"
 msgstr "サポート"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
+msgid "Swedish"
+msgstr "スウェーデン語"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
@@ -1537,6 +1775,14 @@ msgstr "請求を{to}に切り替える"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "フィールドラベルとAPI名を同期する"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
+msgid "Synchronize Objects Labels and API Names"
+msgstr "\\\\\\\\u30aa\\\\u30d6\\\\u30b8\\\\u30a7\\\\u30af\\\\u30c8\\\\u306e\\\\u30e9\\\\u30d9\\\\u30eb\\\\u3068API\\\\u540d\\\\u3092\\\\u540c\\\\u6642\\\\u306b\\\\u540c\\\\u671f\\\\u3055\\\\u305b\\\\u308b"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "System settings"
+msgstr "\\\\\\\\u30b7\\\\u30b9\\\\u30c6\\\\u30e0\\\\u8a2d\\\\u5b9a"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1606,13 +1852,21 @@ msgstr "この操作は取り消せません。このユーザーは永久に削
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "この操作は取り消せません。ワークスペース全体が永久に削除されます。<0/> 確認のため、メールアドレスを入力してください"
 
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
+msgid "This member will be unassigned from this role."
+msgstr "このメンバーはこの役割から割り当て解除されます。"
+
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "このロールには以下の権限があります。"
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
-msgid "This Role is assigned to these workspace member."
-msgstr "このロールは、これらのワークスペースメンバーに割り当てられています。"
+#~ msgid "This Role is assigned to these workspace member."
+#~ msgstr "This Role is assigned to these workspace member."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+msgid "This role is assigned to these workspace members."
+msgstr "この役割はこれらのワークスペースメンバーに割り当てられています。"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1634,14 +1888,23 @@ msgstr "トリガータイプ"
 msgid "Trigger type should be Manual - when no record(s) are selected"
 msgstr "トリガータイプは、レコードが選択されていない場合は「手動」にする必要があります"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
+msgid "Turkish"
+msgstr "トルコ語"
+
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
 msgstr "タイプ"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
 msgid "Type anything"
 msgstr "何でも入力"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
+msgid "Ukrainian"
+msgstr "ウクライナ語"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
@@ -1660,8 +1923,7 @@ msgstr "連絡先無制限"
 msgid "Upload"
 msgstr "アップロード"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:145
 msgid "URL"
 msgstr "URL"
 
@@ -1670,7 +1932,7 @@ msgstr "URL"
 msgid "Use as draft"
 msgstr "ドラフトとして使用"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:37
+#: src/pages/settings/workspace/SettingsDomain.tsx:41
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "文字、数字、ダッシュのみ使用可能。文字または数字で始め、文字または数字で終わる"
 
@@ -1679,10 +1941,11 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "APIを使用するか、最初の{objectLabel}を手動で追加してください"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:67
 msgid "User"
 msgstr "ユーザー"
 
@@ -1697,6 +1960,10 @@ msgstr "ユーザーがログインしていません"
 msgid "Values"
 msgstr "値"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
+msgid "Vietnamese"
+msgstr "ベトナム語"
+
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
 msgstr "請求の詳細を表示"
@@ -1709,16 +1976,15 @@ msgstr "可視化"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "10MB以下の正方形のPNG、JPEG、GIFに対応しています"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:142
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "新しいイベントごとに、このエンドポイントにPOSTリクエストを送信します"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
 msgid "Webhook"
 msgstr "Webhook"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:65
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -1743,24 +2009,24 @@ msgid "Workflow cannot be tested"
 msgstr "ワークフローをテストできません"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
-#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsWorkspace.tsx:25
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:118
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:110
+#: src/pages/settings/roles/SettingsRoles.tsx:109
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
-#: src/pages/settings/developers/SettingsDevelopers.tsx:39
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
+#: src/pages/settings/developers/SettingsDevelopers.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:148
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:102
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "ワークスペース"
@@ -1777,11 +2043,13 @@ msgstr "ワークスペースのロゴ"
 msgid "Workspace name"
 msgstr "ワークスペースの名前"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
+#: src/pages/settings/roles/components/RoleSettings.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:220
 msgid "Write a description"
 msgstr "説明を記入"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:120
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr "はい"
@@ -1809,4 +2077,3 @@ msgstr "あなたのワークスペース"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "ワークスペースが無効になります"
-

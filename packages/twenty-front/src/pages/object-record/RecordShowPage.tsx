@@ -51,7 +51,7 @@ export const RecordShowPage = () => {
         value={{ instanceId: `record-show-${objectRecordId}` }}
       >
         <ContextStoreComponentInstanceContext.Provider
-          value={{ instanceId: `record-show-${objectRecordId}` }}
+          value={{ instanceId: `main-context-store` }}
         >
           <ActionMenuComponentInstanceContext.Provider
             value={{ instanceId: `record-show-${objectRecordId}` }}

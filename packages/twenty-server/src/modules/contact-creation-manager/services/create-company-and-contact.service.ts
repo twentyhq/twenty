@@ -77,6 +77,7 @@ export class CreateCompanyAndContactService {
     }
 
     const alreadyCreatedContacts = await personRepository.find({
+      withDeleted: true,
       where: {
         emails: { primaryEmail: Any(uniqueHandles) },
       },
@@ -116,8 +117,19 @@ export class CreateCompanyAndContactService {
         domainName?.domainName && isWorkDomain(domainName.domainName),
     );
 
+    const workDomainNamesToCreateFormatted = workDomainNamesToCreate.map(
+      (domainName) => ({
+        ...domainName,
+        createdBySource: source,
+        createdByWorkspaceMember: connectedAccount.accountOwner,
+        createdByContext: {
+          provider: connectedAccount.provider,
+        },
+      }),
+    );
+
     const companiesObject = await this.createCompaniesService.createCompanies(
-      workDomainNamesToCreate,
+      workDomainNamesToCreateFormatted,
       workspaceId,
       transactionManager,
     );

@@ -46,21 +46,33 @@ describe('RecordPositionFactory', () => {
     it('should return the value when value is a number', async () => {
       const value = 1;
 
-      const result = await factory.create(value, objectMetadata, workspaceId);
+      const result = await factory.create({
+        value,
+        objectMetadata,
+        workspaceId,
+      });
 
       expect(result).toEqual(value);
     });
 
     it('should return the existing position -1 when value is first', async () => {
       const value = 'first';
-      const result = await factory.create(value, objectMetadata, workspaceId);
+      const result = await factory.create({
+        value,
+        objectMetadata,
+        workspaceId,
+      });
 
       expect(result).toEqual(0);
     });
 
     it('should return the existing position + 1 when value is last', async () => {
       const value = 'last';
-      const result = await factory.create(value, objectMetadata, workspaceId);
+      const result = await factory.create({
+        value,
+        objectMetadata,
+        workspaceId,
+      });
 
       expect(result).toEqual(2);
     });

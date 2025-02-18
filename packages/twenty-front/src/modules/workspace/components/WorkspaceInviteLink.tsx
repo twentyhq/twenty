@@ -5,7 +5,7 @@ import { Button, IconCopy, IconLink } from 'twenty-ui';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-
+import { useLingui } from '@lingui/react/macro';
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
@@ -24,6 +24,7 @@ type WorkspaceInviteLinkProps = {
 export const WorkspaceInviteLink = ({
   inviteLink,
 }: WorkspaceInviteLinkProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -37,9 +38,9 @@ export const WorkspaceInviteLink = ({
         Icon={IconLink}
         variant="primary"
         accent="blue"
-        title="Copy link"
+        title={t`Copy link`}
         onClick={() => {
-          enqueueSnackBar('Link copied to clipboard', {
+          enqueueSnackBar(t`Link copied to clipboard`, {
             variant: SnackBarVariant.Success,
             icon: <IconCopy size={theme.icon.size.md} />,
             duration: 2000,

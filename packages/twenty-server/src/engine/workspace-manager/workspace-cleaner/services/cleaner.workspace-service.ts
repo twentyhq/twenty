@@ -2,11 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
+import { differenceInDays } from 'date-fns';
 import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -23,11 +24,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
-
 @Injectable()
 export class CleanerWorkspaceService {
   private readonly logger = new Logger(CleanerWorkspaceService.name);
+  private readonly inactiveDaysBeforeSoftDelete: number;
   private readonly inactiveDaysBeforeDelete: number;
   private readonly inactiveDaysBeforeWarn: number;
   private readonly maxNumberOfWorkspacesDeletedPerExecution: number;
@@ -43,6 +43,9 @@ export class CleanerWorkspaceService {
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {
+    this.inactiveDaysBeforeSoftDelete = this.environmentService.get(
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
+    );
     this.inactiveDaysBeforeDelete = this.environmentService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION',
     );
@@ -64,9 +67,9 @@ export class CleanerWorkspaceService {
           order: { updatedAt: 'DESC' },
         });
 
-      const daysSinceBillingInactivity = Math.floor(
-        (new Date().getTime() - lastSubscription.updatedAt.getTime()) /
-          MILLISECONDS_IN_ONE_DAY,
+      const daysSinceBillingInactivity = differenceInDays(
+        new Date(),
+        lastSubscription.updatedAt,
       );
 
       return daysSinceBillingInactivity;
@@ -104,7 +107,7 @@ export class CleanerWorkspaceService {
   ) {
     const emailData = {
       daysSinceInactive,
-      inactiveDaysBeforeDelete: this.inactiveDaysBeforeDelete,
+      inactiveDaysBeforeDelete: this.inactiveDaysBeforeSoftDelete,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName: `${workspaceDisplayName}`,
     };
@@ -124,7 +127,11 @@ export class CleanerWorkspaceService {
     });
   }
 
-  async warnWorkspaceMembers(workspace: Workspace, daysSinceInactive: number) {
+  async warnWorkspaceMembers(
+    workspace: Workspace,
+    daysSinceInactive: number,
+    dryRun: boolean,
+  ) {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
@@ -136,42 +143,45 @@ export class CleanerWorkspaceService {
 
     if (workspaceMembersWarned) {
       this.logger.log(
-        `Workspace ${workspace.id} ${workspace.displayName} already warned`,
+        `${dryRun ? 'DRY RUN - ' : ''}Workspace ${workspace.id} ${workspace.displayName} already warned`,
       );
 
       return;
     }
 
     this.logger.log(
-      `Sending ${workspace.id} ${
+      `${dryRun ? 'DRY RUN - ' : ''}Sending ${workspace.id} ${
         workspace.displayName
       } suspended since ${daysSinceInactive} days emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.userId)
         .join(', ')}']`,
     );
 
-    for (const workspaceMember of workspaceMembers) {
-      await this.userVarsService.set({
-        userId: workspaceMember.userId,
-        workspaceId: workspace.id,
-        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
-        value: true,
-      });
+    if (!dryRun) {
+      for (const workspaceMember of workspaceMembers) {
+        await this.userVarsService.set({
+          userId: workspaceMember.userId,
+          workspaceId: workspace.id,
+          key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+          value: true,
+        });
 
-      await this.sendWarningEmail(
-        workspaceMember,
-        workspace.displayName,
-        daysSinceInactive,
-      );
+        await this.sendWarningEmail(
+          workspaceMember,
+          workspace.displayName,
+          daysSinceInactive,
+        );
+      }
     }
   }
 
   async sendCleaningEmail(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
     workspaceDisplayName: string,
+    daysSinceInactive: number,
   ) {
     const emailData = {
-      inactiveDaysBeforeDelete: this.inactiveDaysBeforeDelete,
+      daysSinceInactive: daysSinceInactive,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName,
     };
@@ -191,73 +201,126 @@ export class CleanerWorkspaceService {
     });
   }
 
-  async informWorkspaceMembersAndDeleteWorkspace(workspace: Workspace) {
+  async informWorkspaceMembersAndSoftDeleteWorkspace(
+    workspace: Workspace,
+    daysSinceInactive: number,
+    dryRun: boolean,
+  ) {
+    if (isDefined(workspace.deletedAt)) {
+      this.logger.log(
+        `${dryRun ? 'DRY RUN - ' : ''}Workspace ${workspace.id} ${
+          workspace.displayName
+        } already soft deleted`,
+      );
+
+      return;
+    }
+
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
     this.logger.log(
-      `Sending workspace ${workspace.id} ${
+      `${dryRun ? 'DRY RUN - ' : ''}Sending workspace ${workspace.id} ${
         workspace.displayName
       } deletion emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.userId)
         .join(', ')}']`,
     );
 
-    for (const workspaceMember of workspaceMembers) {
-      await this.userVarsService.delete({
-        userId: workspaceMember.userId,
-        workspaceId: workspace.id,
-        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
-      });
+    if (!dryRun) {
+      for (const workspaceMember of workspaceMembers) {
+        await this.userVarsService.delete({
+          userId: workspaceMember.userId,
+          workspaceId: workspace.id,
+          key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+        });
 
-      await this.sendCleaningEmail(
-        workspaceMember,
-        workspace.displayName || '',
-      );
+        await this.sendCleaningEmail(
+          workspaceMember,
+          workspace.displayName || '',
+          daysSinceInactive,
+        );
+      }
+
+      await this.workspaceService.deleteWorkspace(workspace.id, true);
     }
-
-    await this.workspaceService.deleteWorkspace(workspace.id);
     this.logger.log(
-      `Cleaning Workspace ${workspace.id} ${workspace.displayName}`,
+      `${dryRun ? 'DRY RUN - ' : ''}Soft deleting Workspace ${workspace.id} ${workspace.displayName}`,
     );
   }
 
   async batchWarnOrCleanSuspendedWorkspaces(
     workspaceIds: string[],
+    dryRun = false,
   ): Promise<void> {
-    this.logger.log(`batchWarnOrCleanSuspendedWorkspaces running...`);
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
+    );
 
     const workspaces = await this.workspaceRepository.find({
       where: {
         id: In(workspaceIds),
         activationStatus: WorkspaceActivationStatus.SUSPENDED,
       },
+      withDeleted: true,
     });
 
     let deletedWorkspacesCount = 0;
 
     for (const workspace of workspaces) {
-      const workspaceInactivity =
-        await this.computeWorkspaceBillingInactivity(workspace);
+      try {
+        const workspaceInactivity =
+          await this.computeWorkspaceBillingInactivity(workspace);
 
-      if (
-        workspaceInactivity &&
-        workspaceInactivity > this.inactiveDaysBeforeDelete &&
-        deletedWorkspacesCount <= this.maxNumberOfWorkspacesDeletedPerExecution
-      ) {
-        await this.informWorkspaceMembersAndDeleteWorkspace(workspace);
-        deletedWorkspacesCount++;
+        const daysSinceSoftDeleted = workspace.deletedAt
+          ? differenceInDays(new Date(), workspace.deletedAt)
+          : 0;
 
-        continue;
-      }
-      if (
-        workspaceInactivity &&
-        workspaceInactivity > this.inactiveDaysBeforeWarn &&
-        workspaceInactivity <= this.inactiveDaysBeforeDelete
-      ) {
-        await this.warnWorkspaceMembers(workspace, workspaceInactivity);
+        if (
+          daysSinceSoftDeleted >
+          this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete
+        ) {
+          this.logger.log(
+            `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
+          );
+          if (!dryRun) {
+            await this.workspaceService.deleteWorkspace(workspace.id);
+          }
+
+          continue;
+        }
+        if (
+          workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
+          deletedWorkspacesCount <=
+            this.maxNumberOfWorkspacesDeletedPerExecution
+        ) {
+          await this.informWorkspaceMembersAndSoftDeleteWorkspace(
+            workspace,
+            workspaceInactivity,
+            dryRun,
+          );
+          deletedWorkspacesCount++;
+
+          continue;
+        }
+        if (
+          workspaceInactivity > this.inactiveDaysBeforeWarn &&
+          workspaceInactivity <= this.inactiveDaysBeforeSoftDelete
+        ) {
+          await this.warnWorkspaceMembers(
+            workspace,
+            workspaceInactivity,
+            dryRun,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error while processing workspace ${workspace.id} ${workspace.displayName}: ${error}`,
+        );
       }
     }
-    this.logger.log(`batchWarnOrCleanSuspendedWorkspaces done!`);
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces done!`,
+    );
   }
 }

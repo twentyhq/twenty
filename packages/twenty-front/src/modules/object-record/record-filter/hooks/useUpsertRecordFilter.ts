@@ -11,19 +11,11 @@ export const useUpsertRecordFilter = () => {
 
   const upsertRecordFilter = useRecoilCallback(
     ({ set, snapshot }) =>
-      (filter: RecordFilter) => {
+      (recordFilterToSet: RecordFilter) => {
         const currentRecordFilters = getSnapshotValue(
           snapshot,
           currentRecordFiltersCallbackState,
         );
-
-        // TODO: This is a temporary solution to ensure that the record filter is compatible with filter definitions
-        // Label and type will be set without definition
-        const recordFilterToSet: RecordFilter = {
-          ...filter,
-          label: filter.definition.label,
-          type: filter.definition.type,
-        };
 
         const foundRecordFilterInCurrentRecordFilters =
           currentRecordFilters.some(

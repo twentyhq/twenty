@@ -8,7 +8,7 @@ msgstr ""
 "Language: af\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 22:19\n"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -26,10 +26,14 @@ msgstr "{aggregateLabel} van {fieldLabel}"
 msgid "{apiKeyName} API Key"
 msgstr "{apiKeyName} API-sleutel"
 
-#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:40
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
 msgid "{name}"
 msgstr "{name}"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:31
+msgid "{workspaceMemberName} will be unassigned from the following role:"
+msgstr "{workspaceMemberName} sal ontkoppel word van die volgende rol:"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -51,11 +55,16 @@ msgstr "24u ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "'n Gedeelde omgewing waar jy jou kliënteverhoudinge saam met jou span sal kan bestuur."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:102
+msgid "Ability to interact with each object"
+msgstr "Vermoeë om met elke objek te interaksie"
+
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "Staak"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:164
 msgid "About"
 msgstr "Omtrent"
 
@@ -69,10 +78,17 @@ msgstr "Rekening"
 msgid "Account Deletion"
 msgstr "Rekeningverwydering"
 
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:80
 msgid "Accounts"
 msgstr "Rekeninge"
+
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:47
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:39
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:22
+msgid "Actions"
+msgstr "Aksies"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
@@ -89,7 +105,7 @@ msgstr "Aktiveer Werkstroom"
 msgid "Active"
 msgstr "Aktief"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+#: src/pages/settings/developers/SettingsDevelopers.tsx:51
 msgid "Active API keys created by you or your team."
 msgstr "Aktiewe API-sleutels geskep deur jou of jou span."
 
@@ -135,15 +151,23 @@ msgstr "Voeg jou eerste {objectLabel} by"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Bygevoeg {beautifiedCreatedAt}"
 
+#: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx:137
+msgid "Advanced filter"
+msgstr "Gevorderde filter"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+msgid "Afrikaans"
+msgstr "Afrikaans"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
 msgstr "Almal"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Almal ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:119
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 msgid "All roles"
 msgstr "Alle rolle"
 
@@ -167,7 +191,7 @@ msgstr "Laat toe dat gebruikers aanmeld met 'n e-pos en wagwoord."
 msgid "An error occurred while updating password"
 msgstr "'n Fout het voorgekom tydens die opdatering van wagwoord"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:158
 msgid "An optional description"
 msgstr "'n Opsionele beskrywing"
 
@@ -176,7 +200,7 @@ msgid "and"
 msgstr "en"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:156
 msgid "API & Webhooks"
 msgstr "API & Webtuistes"
 
@@ -185,7 +209,7 @@ msgstr "API & Webtuistes"
 msgid "API Key"
 msgstr "API-sleutel"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "API keys"
 msgstr "API-sleutels"
 
@@ -193,32 +217,56 @@ msgstr "API-sleutels"
 msgid "API Name"
 msgstr "API Naam"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:242
+msgid "API Name (Plural)"
+msgstr "API Naam (Meervoud)"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:234
+msgid "API Name (Singular)"
+msgstr "API Naam (Enkelvoudig)"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:31
 msgid "Appearance"
 msgstr "Voorkoms"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+msgid "Arabic"
+msgstr "Arabies"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "Is jy seker dat jy jou faktureringsinterval wil verander?"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:47
+msgid "Are you sure you want to assign this role?"
+msgstr "Is jy seker jy wil hierdie rol toeken?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Ascending"
 msgstr "Oplopend"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:120
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:30
+msgid "Assign {workspaceMemberName}?"
+msgstr "Ken {workspaceMemberName} toe?"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Ken rolle toe om elke lid se toegangsregte te spesifiseer"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx:14
+#: src/pages/settings/roles/components/RoleAssignment.tsx:200
+msgid "Assign to member"
+msgstr "Ken aan lid toe"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:167
 msgid "Assigned members"
 msgstr "Toegewysde lede"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:129
+#: src/pages/settings/roles/SettingsRoles.tsx:128
 msgid "Assigned to"
 msgstr "Toegewys aan"
 
-#: src/pages/settings/roles/SettingsRoleEdit.tsx:64
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:74
 msgid "Assignment"
 msgstr "Toewysing"
 
@@ -249,7 +297,7 @@ msgstr "Terug na inhoud"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:117
 msgid "Billing"
 msgstr "Fakturering"
 
@@ -275,7 +323,7 @@ msgstr "Kalender"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:92
 msgid "Calendars"
 msgstr "Kalenders"
 
@@ -298,6 +346,10 @@ msgstr "Kanselleer Plan"
 msgid "Cancel your subscription"
 msgstr "Kanselleer jou intekening"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+msgid "Catalan"
+msgstr "Katalaans"
+
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
 msgstr "Verander na {to}"
@@ -308,17 +360,21 @@ msgstr "Verander na {to}"
 msgid "Change Password"
 msgstr "Verander Wagwoord"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
 msgid "Chinese — Simplified"
 msgstr "Chinees — Vereenvoudig"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
 msgid "Chinese — Traditional"
 msgstr "Chinees — Tradisioneel"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:187
 msgid "Choose an object"
 msgstr "Kies 'n voorwerp"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:179
+msgid "Choose the fields that will identify your records"
+msgstr "Kies die velde wat jou rekords sal identifiseer"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
@@ -348,6 +404,10 @@ msgstr "Stel op hoe datums regdeur die app vertoon word"
 msgid "Configure your emails and calendar settings."
 msgstr "Stel jou e-posse en kalender instellings op."
 
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
+msgid "Confirm"
+msgstr "Bevestig"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
 msgstr "Verbind 'n nuwe rekening met jou werkruimte"
@@ -364,7 +424,7 @@ msgstr "Verbind met Microsoft"
 msgid "Connected accounts"
 msgstr "Verbonde rekeninge"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:97
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Konteks"
 
@@ -388,13 +448,17 @@ msgstr "Gaan voort met Google"
 msgid "Continue with Microsoft"
 msgstr "Gaan voort met Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:65
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Medevlieënier"
 
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "Kopieer uitnodigingskakel"
+
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:41
+msgid "Copy link"
+msgstr "Kopieer skakel"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
@@ -425,7 +489,7 @@ msgstr "Tel unieke waardes"
 msgid "Create a workflow and return here to view its versions"
 msgstr "Skep 'n werksvloei en kom terug hier om sy weergawes te besigtig"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+#: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
 msgstr "Skep API-sleutel"
 
@@ -442,13 +506,17 @@ msgstr "Skep profiel"
 msgid "Create Role"
 msgstr "Skep Rol"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:72
+#: src/pages/settings/developers/SettingsDevelopers.tsx:73
 msgid "Create Webhook"
 msgstr "Skep Webhaak"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:113
 msgid "Create your workspace"
 msgstr "Skep jou werksruimte"
+
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:36
+msgid "Custom Domain"
+msgstr "Pasgemaakte Domein"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -458,7 +526,7 @@ msgstr "Pasgemaakte voorwerpe"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "Pas die velde aan wat beskikbaar is in die {objectLabelSingular} aansigte."
 
-#: src/pages/settings/SettingsWorkspace.tsx:56
+#: src/pages/settings/SettingsWorkspace.tsx:49
 msgid "Customize Domain"
 msgstr "Pas Domein aan"
 
@@ -466,16 +534,29 @@ msgstr "Pas Domein aan"
 msgid "Customize your workspace security"
 msgstr "Pas jou werksruimte se sekuriteit aan"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+msgid "Czech"
+msgstr "Tsjeggies"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:246
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:190
 msgid "Danger zone"
 msgstr "Gevaarsone"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Danish"
+msgstr "Deens"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:36
+msgid "Dark"
+msgstr "Donker"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:131
 msgid "Data model"
 msgstr "Databasis model"
 
@@ -497,13 +578,19 @@ msgstr "Datum en tyd"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:195
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Deaktiveer"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:117
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Deaktiveer \"Sinkroniseer Voorwerpe Etikette en API Name\" om 'n pasgemaakte API-naam in te stel"
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:191
+msgid "Deactivate object"
+msgstr "Deaktiveer objek"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -517,7 +604,7 @@ msgstr "Deaktiveer Werksvloei"
 msgid "Define the name and description of your object"
 msgstr "Definieer die naam en beskrywing van jou voorwerp"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:252
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
@@ -556,13 +643,13 @@ msgstr "Verwyder rekord"
 msgid "Delete records"
 msgstr "Verwyder rekords"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:247
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
 msgstr "Verwyder hierdie integrasie"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:261
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:269
 msgid "Delete webhook"
 msgstr "Verwyder webhook"
 
@@ -588,7 +675,7 @@ msgstr "Verwyder jou hele werkruimte"
 msgid "Descending"
 msgstr "Aflopend"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
@@ -601,12 +688,12 @@ msgstr "Beskrywing"
 msgid "Destroy"
 msgstr "Vernietig"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:35
-#: src/pages/settings/developers/SettingsDevelopers.tsx:42
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:79
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
+#: src/pages/settings/developers/SettingsDevelopers.tsx:36
+#: src/pages/settings/developers/SettingsDevelopers.tsx:43
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:152
 msgid "Developers"
 msgstr "Ontwikkelaars"
 
@@ -620,12 +707,15 @@ msgstr "Verwerp Konsep"
 msgid "Display as relative date"
 msgstr "Vertoon as relatiewe datum"
 
-#: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsHostname.tsx:115
-#: src/pages/settings/workspace/SettingsDomain.tsx:115
-#: src/pages/settings/workspace/SettingsDomain.tsx:125
+#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/workspace/SettingsDomain.tsx:186
+#: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
 msgstr "Domein"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+msgid "Dutch"
+msgstr "Nederlands"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
@@ -648,13 +738,14 @@ msgstr "Redigeer faktureringsinterval"
 msgid "Edit payment method, see your invoices and more"
 msgstr "Redigeer betalingsmetode, sien jou fakture en meer"
 
-#: src/pages/settings/SettingsWorkspace.tsx:52
+#: src/pages/settings/SettingsWorkspace.tsx:45
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Redigeer jou subdomein naam of stel 'n persoonlike domein in."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:180
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:256
 #: src/pages/settings/SettingsProfile.tsx:42
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:21
 #: src/pages/auth/PasswordReset.tsx:206
 msgid "Email"
 msgstr "E-pos"
@@ -667,7 +758,9 @@ msgstr "E-pos integrasie"
 msgid "Email or domain is already in blocklist"
 msgstr "E-pos of domein is reeds in bloklys"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:86
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "E-posse"
@@ -686,12 +779,11 @@ msgstr "Werknemers"
 msgid "Empty"
 msgstr "Leeg"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:141
 msgid "Endpoint URL"
 msgstr "Eindpunt URL"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "English"
 msgstr "Engels"
 
@@ -715,7 +807,7 @@ msgstr "Fout met die hergenerering van API-sleutel: {err}"
 msgid "Error while switching subscription {to}."
 msgstr "Fout tydens die oorskakeling van subskripsie {to}."
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+#: src/pages/settings/developers/SettingsDevelopers.tsx:67
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Stel webhook-endpunte op vir kennisgewings oor asinchrone gebeure."
 
@@ -735,9 +827,9 @@ msgstr "Verlaat Instellings"
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:75
 msgid "Experience"
 msgstr "Ervaring"
 
@@ -800,7 +892,7 @@ msgid "Field type"
 msgstr "Veld tipe"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:97
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
@@ -816,9 +908,13 @@ msgstr "Velde Aantal"
 msgid "Filter"
 msgstr "Filtreer"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:171
 msgid "Filters"
 msgstr "Filtreerders"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
+msgid "Finnish"
+msgstr "Fins"
 
 #: src/pages/onboarding/CreateProfile.tsx:180
 msgid "First Name"
@@ -828,7 +924,7 @@ msgstr "Voornaam"
 msgid "Forgot your password?"
 msgstr "Het jy jou wagwoord vergeet?"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
 msgid "French"
 msgstr "Frans"
 
@@ -844,18 +940,18 @@ msgstr "van jaarliks na maandeliks"
 msgid "Full access"
 msgstr "Volle toegang"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:163
 msgid "Functions"
 msgstr "Funksies"
 
-#: src/pages/settings/SettingsWorkspace.tsx:29
-#: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:122
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/pages/settings/SettingsWorkspace.tsx:22
+#: src/pages/settings/SettingsWorkspace.tsx:28
+#: src/pages/settings/workspace/SettingsDomain.tsx:193
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:105
 msgid "General"
 msgstr "Algemeen"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
 msgid "German"
 msgstr "Duits"
 
@@ -867,13 +963,25 @@ msgstr "Benut jou werkruimte optimaal deur jou span uit te nooi."
 msgid "Get your subscription"
 msgstr "Kry jou inskrywing"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Globaal"
 
-#: src/pages/settings/SettingsWorkspace.tsx:65
+#: src/pages/settings/SettingsWorkspace.tsx:58
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Gee Twenty ondersteuning tydelike toegang tot jou werkruimte sodat ons probleme kan oplos of inhoud namens jou kan herwin. Jy kan toegang enige tyd herroep."
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
+msgid "Greek"
+msgstr "Grieks"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
+msgid "Health Status"
+msgstr "Gesondheidstatus"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
+msgid "Hebrew"
+msgstr "Hebreeus"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
@@ -882,6 +990,10 @@ msgstr "Steek weg"
 #: src/pages/onboarding/CreateProfile.tsx:157
 msgid "How you'll be identified on the app."
 msgstr "Hoe jy op die app geïdentifiseer sal word."
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:125
+msgid "Hungarian"
+msgstr "Hongaars"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -901,10 +1013,11 @@ msgstr "As jy hierdie sleutel verloor het, kan jy dit regenereer, maar wees bewu
 msgid "Inactive"
 msgstr "Onaktief"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:109
 msgid "Indexes"
 msgstr "Indekse"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:118
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "Invoer moet in kameelgeval wees en kan nie met 'n nommer begin nie"
@@ -915,13 +1028,17 @@ msgstr "Instansies"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:137
 msgid "Integrations"
 msgstr "Integrasies"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
 msgid "Invalid auth provider"
 msgstr "Ongeldig outentiekasieverskaffer"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:48
+msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr "Ongeldige persoonlike domein. Persoonlike domeine moet korter as 256 karakters wees, kan nie IP-adresse wees nie, mag geen spasies hê nie, mag nie enige spesiale karakters soos _~`!@#$%^*()=+{}[]|\\;:'\",<>/? bevat nie en mag nie begin of eindig met 'n '-' karakter nie."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
@@ -932,9 +1049,13 @@ msgstr "Ongeldige e-pos"
 msgid "Invalid email or domain"
 msgstr "Ongeldige e-pos of domein"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:71
+#: src/pages/settings/workspace/SettingsDomain.tsx:167
 msgid "Invalid form values"
 msgstr "Ongeldige vorm waardes"
+
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx:142
+msgid "Invite"
+msgstr "Nooi uit"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -956,23 +1077,23 @@ msgstr "Nooiskakel na e-posadresse gestuur"
 msgid "Invite your team"
 msgstr "Nooi jou span"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:129
 msgid "Italian"
 msgstr "Italiaans"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:133
 msgid "Japanese"
 msgstr "Japanees"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:137
 msgid "Korean"
 msgstr "Koreaans"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:181
 msgid "Lab"
 msgstr "Laboratorium"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:50
 msgid "Language"
 msgstr "Taal"
 
@@ -988,15 +1109,24 @@ msgstr "Nuutste"
 msgid "Latest date"
 msgstr "Nuutste datum"
 
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:35
+msgid "Light"
+msgstr "Lig"
+
 #: src/pages/onboarding/InviteTeam.tsx:127
+#: src/modules/workspace/components/WorkspaceInviteLink.tsx:43
 msgid "Link copied to clipboard"
 msgstr "Skakel na knipbord gekopieer"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:199
+msgid "Listings"
+msgstr "Lyste"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
 msgstr "Teken uit"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:120
 msgid "Logout"
 msgstr "Teken uit"
 
@@ -1028,7 +1158,7 @@ msgstr "Maks"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:111
 msgid "Members"
 msgstr "Lede"
 
@@ -1052,9 +1182,12 @@ msgstr "Skuif regs"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:126
+#: src/pages/settings/roles/SettingsRoles.tsx:125
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
+#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
+#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
@@ -1069,12 +1202,16 @@ msgstr "Naam"
 msgid "Name can not be empty"
 msgstr "Naam kan nie leeg wees nie"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:165
+msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+msgstr "Naam in beide enkelvoudige (bv. 'Faktuur') en meervoudige (bv. 'Fakture') vorme."
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
 msgstr "Naam van jou API-sleutel"
 
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 msgid "Name of your workspace"
 msgstr "Naam van jou werkruimte"
 
@@ -1108,9 +1245,17 @@ msgstr "Navigeer na vorige werkstroom"
 msgid "New"
 msgstr "Nuut"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Nuwe {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Nuwe rekening"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:160
+msgid "New Field"
+msgstr "Nuwe Veld"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
@@ -1140,12 +1285,40 @@ msgstr "Nuwe rekord"
 #~ msgstr "New Role"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
-msgid "New Webhook"
-msgstr "Nuwe Webhook"
+#~ msgid "New Webhook"
+#~ msgstr "New Webhook"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
 msgid "No connected account"
 msgstr "Geen gekoppelde rekening"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:187
+#~ msgid "No members assigned to this role yet"
+#~ msgstr "No members assigned to this role yet"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:56
+#~ msgid "No members matching this search"
+#~ msgstr "No members matching this search"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:186
+#~ msgid "No members matching your search"
+#~ msgstr "No members matching your search"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:57
+#~ msgid "No more members to add"
+#~ msgstr "No more members to add"
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:208
+msgid "No more members to assign"
+msgstr "Geen meer lede om toe te wys nie"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+#~ msgid "No Result"
+#~ msgstr "No Result"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Results"
+msgstr "Geen Resultate"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1155,16 +1328,22 @@ msgstr "Geen werkstroomlopies tot nou toe"
 msgid "No workflow versions yet"
 msgstr "Geen werkstroom weergawes tot nou toe"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:141
+msgid "Norwegian"
+msgstr "Noors"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
 msgstr "Nie leeg nie"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objek"
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:101
 #: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:151
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
@@ -1178,6 +1357,7 @@ msgstr "\"Van die gebaande pad af\""
 msgid "Opened"
 msgstr "Oopgemaak"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx:178
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
 msgid "Options"
 msgstr "Opsies"
@@ -1186,7 +1366,9 @@ msgstr "Opsies"
 msgid "or"
 msgstr "of"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:67
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:172
 msgid "Other"
 msgstr "Ander"
 
@@ -1232,17 +1414,16 @@ msgstr "Vernietig rekords permanent"
 msgid "Permanently destroy workflows"
 msgstr "Vernietig werkstroomme permanent"
 
-#: src/pages/settings/roles/SettingsRoleEdit.tsx:70
-#: src/pages/settings/roles/components/RolePermissions.tsx:14
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:80
 msgid "Permissions"
 msgstr "Permissies"
 
-#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsWorkspace.tsx:33
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr "Prent"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:150
 msgid "Please enter a valid URL"
 msgstr "Voer 'n geldige URL in"
 
@@ -1250,19 +1431,27 @@ msgstr "Voer 'n geldige URL in"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Tik asseblief \"{confirmationValue}\" om te bevestig jy wil hierdie API Sleutel verwyder. Wees bewus dat enige skrif wat hierdie sleutel gebruik sal ophou werk."
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:263
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Tik asseblief {confirmationText} om te bevestig jy wil hierdie webhook verwyder."
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:198
+msgid "Plural"
+msgstr "Meervoud"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:145
+msgid "Polish"
+msgstr "Pools"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 #~ msgid "Portuguese"
 #~ msgstr "Portuguese"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:153
 msgid "Portuguese — Brazil"
 msgstr "Portugees — Brasilië"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:149
 msgid "Portuguese — Portugal"
 msgstr "Portugees — Portugal"
 
@@ -1285,11 +1474,11 @@ msgstr "Privaatheidsbeleid"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:70
 msgid "Profile"
 msgstr "Profiel"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:191
 msgid "Pseudo-English"
 msgstr "Pseudo-Engels"
 
@@ -1301,7 +1490,7 @@ msgstr "Lees dokumentasie"
 msgid "Receive an email containing password update link"
 msgstr "Ontvang 'n e-pos met skakel om wagwoord op te dateer"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:69
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Rekord Seleksie"
 
@@ -1320,13 +1509,19 @@ msgstr "Regenereer Sleutel"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:187
 msgid "Releases"
 msgstr "Vrystellings"
 
+#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx:72
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:46
 #: src/modules/ui/input/components/ImageInput.tsx:172
 msgid "Remove"
 msgstr "Verwyder"
+
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx:31
+msgid "Remove {workspaceMemberName}?"
+msgstr "Verwyder {workspaceMemberName}?"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
@@ -1348,27 +1543,36 @@ msgstr "Herstel Wagwoord"
 msgid "Reset to"
 msgstr "Herstel na"
 
-#: src/modules/command-menu/hooks/useSearchRecords.tsx:227
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:245
 msgid "Results"
 msgstr "Resultate"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:107
-#: src/pages/settings/roles/SettingsRoles.tsx:113
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+#: src/pages/settings/roles/SettingsRoles.tsx:106
+#: src/pages/settings/roles/SettingsRoles.tsx:112
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:123
 msgid "Roles"
 msgstr "Rolle"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:157
+msgid "Romanian"
+msgstr "Roemeens"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
 msgstr "Voer 'n werkstroom uit en keer hier terug om die uitvoerings te sien"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:161
+msgid "Russian"
+msgstr "Russies"
+
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:37
 msgid "Search"
 msgstr "Soek"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Soek ''{commandMenuSearch}'' met..."
 
@@ -1376,12 +1580,16 @@ msgstr "Soek ''{commandMenuSearch}'' met..."
 msgid "Search a field..."
 msgstr "Soek 'n veld..."
 
+#: src/pages/settings/roles/components/RoleAssignment.tsx:174
+msgid "Search a member"
+msgstr "Soek 'n lid"
+
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
 msgstr "Soek 'n indeks..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:179
 msgid "Search fields"
 msgstr "Soek velde"
 
@@ -1390,12 +1598,13 @@ msgid "Search for an object..."
 msgstr "Soek vir 'n objek..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:36
 msgid "Search records"
 msgstr "Soek rekords"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:143
 msgid "Security"
 msgstr "Sekuriteit"
 
@@ -1421,11 +1630,11 @@ msgstr "Sien weergawes"
 msgid "See versions history"
 msgstr "Sien weergawes geskiedenis"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:172
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Kies die gebeure wat jy wil stuur na hierdie eindpunt"
 
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Select your preferred language"
 msgstr "Kies jou voorkeurtaal"
 
@@ -1433,7 +1642,17 @@ msgstr "Kies jou voorkeurtaal"
 msgid "Send an invite email to your team"
 msgstr "Stuur 'n uitnodiging e-pos na jou span"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:165
+msgid "Serbian (Cyrillic)"
+msgstr "Serwies (Sirillies)"
+
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:175
+msgid "Server Admin"
+msgstr "Bedieneradministrateur"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:71
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "Bediener Admin Paneel"
 
@@ -1441,20 +1660,30 @@ msgstr "Bediener Admin Paneel"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Stel e-pos sigbaarheid, bestuur jou blokkeerlys en meer."
 
-#: src/pages/settings/workspace/SettingsHostname.tsx:115
-msgid "Set the name of your domain"
-msgstr "Stel die naam van jou domein"
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:37
+msgid "Set the name of your custom domain and configure your DNS records."
+msgstr "Stel die naam van jou pasgemaakte domein en konfigureer jou DNS-rekords."
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx:25
+#~ msgid "Set the name of your domain"
+#~ msgstr "Set the name of your domain"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:40
 msgid "Set the name of your subdomain"
 msgstr "Stel die naam van jou subdomein"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:86
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:103
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "Instellings"
+
+#: src/pages/settings/roles/components/RolePermissions.tsx:113
+msgid "Settings permissions"
+msgstr "Instellings toestemming"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -1463,6 +1692,10 @@ msgstr "Deel hierdie skakel om gebruikers uit te nooi om by jou werkruimte aan t
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
 msgid "Should changing a field's label also change the API name?"
 msgstr "Behoort die verandering van 'n veld se etiket ook die API naam te verander?"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:314
+msgid "Should changing an object's label also change the API?"
+msgstr "Moet 'n verandering aan 'n objek se etiket ook die API verander?"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
@@ -1485,7 +1718,7 @@ msgstr "Slaan oor"
 msgid "Sort"
 msgstr "Sorteer"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:169
 msgid "Spanish"
 msgstr "Spaans"
 
@@ -1493,19 +1726,20 @@ msgstr "Spaans"
 msgid "SSO"
 msgstr "EGS"
 
-#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:39
 msgid "Subdomain"
 msgstr "Subdomein"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:89
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:139
 msgid "Subdomain already taken"
 msgstr "Subdomein reeds geneem"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:39
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Subdomein kan nie langer as 30 karakters wees nie"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:34
+#: src/pages/settings/workspace/SettingsDomain.tsx:38
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdomein kan nie korter as 3 karakters wees nie"
 
@@ -1518,9 +1752,13 @@ msgstr "Inschrijving is verander na {to}"
 msgid "Sum"
 msgstr "Som"
 
-#: src/pages/settings/SettingsWorkspace.tsx:63
+#: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Support"
 msgstr "Ondersteuning"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:173
+msgid "Swedish"
+msgstr "Sweeds"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
@@ -1537,6 +1775,14 @@ msgstr "Verander rekening na {to}"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "Sinkroniseer Veld Etiket en API Naam"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:313
+msgid "Synchronize Objects Labels and API Names"
+msgstr "Sinkroniseer Objekte se Etikette en API Name"
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "System settings"
+msgstr "Stelselinstellings"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
@@ -1606,13 +1852,21 @@ msgstr "Hierdie aksie kan nie ongedaan gemaak word nie. Dit sal hierdie gebruike
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Hierdie aksie kan nie ongedaan gemaak word nie. Dit sal jou hele werkruimte permanent uitvee. <0/> Tik asseblief jou e-pos in om te bevestig."
 
+#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx:48
+msgid "This member will be unassigned from this role."
+msgstr "Hierdie lid sal ontkoppel word van hierdie rol."
+
 #: src/pages/settings/roles/components/RolePermissions.tsx:15
-msgid "This Role has the following permissions."
-msgstr "Hierdie Rol het die volgende toestemmings."
+#~ msgid "This Role has the following permissions."
+#~ msgstr "This Role has the following permissions."
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:15
-msgid "This Role is assigned to these workspace member."
-msgstr "Hierdie Rol word toegewys aan hierdie werkruimte lede."
+#~ msgid "This Role is assigned to these workspace member."
+#~ msgstr "This Role is assigned to these workspace member."
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:168
+msgid "This role is assigned to these workspace members."
+msgstr "Hierdie rol is toegeken aan hierdie werkspasie lede."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
@@ -1634,14 +1888,23 @@ msgstr "Sneller Tipe"
 msgid "Trigger type should be Manual - when no record(s) are selected"
 msgstr "Sneller-tipe moet Handleiding wees - wanneer geen rekord(s) geselekteer is nie"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:177
+msgid "Turkish"
+msgstr "Turks"
+
+#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:46
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
 msgstr "Tipe"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
 msgid "Type anything"
 msgstr "Tik enigiets"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:181
+msgid "Ukrainian"
+msgstr "Oekraïens"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
@@ -1660,8 +1923,7 @@ msgstr "Onbeperkte kontakte"
 msgid "Upload"
 msgstr "Laai op"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:145
 msgid "URL"
 msgstr "URL"
 
@@ -1670,7 +1932,7 @@ msgstr "URL"
 msgid "Use as draft"
 msgstr "Gebruik as konsep"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:37
+#: src/pages/settings/workspace/SettingsDomain.tsx:41
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Gebruik letter, nommer en koppelteken alleenlik. Begin en eindig met 'n letter of 'n nommer"
 
@@ -1679,10 +1941,11 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Gebruik ons API of voeg jou eerste {objectLabel} handleiding by"
 
 #: src/pages/settings/SettingsProfile.tsx:22
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:23
+#: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:67
 msgid "User"
 msgstr "Gebruiker"
 
@@ -1697,6 +1960,10 @@ msgstr "Gebruiker is nie aangeteken nie"
 msgid "Values"
 msgstr "Waardes"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:185
+msgid "Vietnamese"
+msgstr "Viëtnamees"
+
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
 msgstr "Sien faktuurbesonderhede"
@@ -1709,16 +1976,15 @@ msgstr "Visualiseer"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Ons ondersteun jou vierkantige PNGs, JPEGs en GIFs onder 10MB"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:142
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Ons sal POST-versoeke na hierdie eindpunt stuur vir elke nuwe gebeurtenis"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:135
 msgid "Webhook"
 msgstr "Webhaak"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx:65
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Webhooks"
 msgstr "Webhake"
 
@@ -1743,24 +2009,24 @@ msgid "Workflow cannot be tested"
 msgstr "Werksvloei kan nie getoets word nie"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
-#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsWorkspace.tsx:25
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:118
+#: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:110
+#: src/pages/settings/roles/SettingsRoles.tsx:109
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
-#: src/pages/settings/developers/SettingsDevelopers.tsx:39
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
+#: src/pages/settings/developers/SettingsDevelopers.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:148
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:102
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "Werkruimte"
@@ -1777,11 +2043,13 @@ msgstr "Werkruimte logo"
 msgid "Workspace name"
 msgstr "Werkruimte naam"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
+#: src/pages/settings/roles/components/RoleSettings.tsx:40
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:161
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx:220
 msgid "Write a description"
 msgstr "Skryf 'n beskrywing"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:120
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr "ja"
@@ -1809,4 +2077,3 @@ msgstr "Jou Werkruimte"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Jou werkskerm sal onaktief gemaak word"
-

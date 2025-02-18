@@ -38,7 +38,7 @@ resource "kubernetes_deployment" "twentycrm_server" {
           tty   = true
 
           env {
-            name  = "PORT"
+            name  = "NODE_PORT"
             value = "3000"
           }
 
