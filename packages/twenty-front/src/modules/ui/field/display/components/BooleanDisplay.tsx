@@ -1,8 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconCheck, IconX, THEME_COMMON } from 'twenty-ui';
 
-import { isDefined } from 'twenty-shared';
-
 const spacing = THEME_COMMON.spacingMultiplicator * 1;
 const iconSizeSm = THEME_COMMON.icon.size.sm;
 
@@ -15,7 +13,7 @@ type BooleanDisplayProps = {
 };
 
 export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {
-  if (!isDefined(value)) {
+  if (value === null || value === undefined) {
     return <></>;
   }
 

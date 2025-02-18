@@ -83,7 +83,6 @@ export const WorkflowEditActionFormCreateRecord = ({
 
   const { view: indexView } = useViewOrDefaultViewFromPrefetchedViews({
     objectMetadataItemId: objectMetadataItem.id ?? '',
-    viewId: undefined,
   });
 
   const viewFields = indexView?.viewFields ?? [];
