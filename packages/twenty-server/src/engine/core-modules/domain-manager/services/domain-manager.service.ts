@@ -145,8 +145,7 @@ export class DomainManagerService {
 
     if (workspaces.length > 1) {
       Logger.warn(
-        `In single-workspace mode, there should be only one workspace. 
-        Today there are ${workspaces.length} workspaces. Apple workspace used as fallback if found`,
+        ` ${workspaces.length} workspaces found in database. In single-workspace mode, there should be only one workspace.Apple workspace will be used as fallback if it found`,
       );
     }
 
