@@ -80,7 +80,7 @@ msgstr "Smazání účtu"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:80
 msgid "Accounts"
 msgstr "Účty"
 
@@ -167,7 +167,7 @@ msgstr "Vše"
 msgid "All ({relationRecordsCount})"
 msgstr "Vše ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:124
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 msgid "All roles"
 msgstr "Všechny role"
 
@@ -200,7 +200,7 @@ msgid "and"
 msgstr "a"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:156
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -250,7 +250,7 @@ msgstr "Vzestupně"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Přiřadit uživatele {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:125
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Přiřaďte role pro specifikaci přístupových oprávnění každého člena"
 
@@ -262,7 +262,7 @@ msgstr "Přiřadit členu"
 msgid "Assigned members"
 msgstr "Přiřazení členové"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:134
+#: src/pages/settings/roles/SettingsRoles.tsx:128
 msgid "Assigned to"
 msgstr "Přiřazeno"
 
@@ -297,7 +297,7 @@ msgstr "Zpět k obsahu"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:117
 msgid "Billing"
 msgstr "Fakturace"
 
@@ -323,7 +323,7 @@ msgstr "Kalendář"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:92
 msgid "Calendars"
 msgstr "Kalendáře"
 
@@ -502,7 +502,7 @@ msgstr "Vytvořit nový záznam"
 msgid "Create profile"
 msgstr "Vytvořit profil"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:200
+#: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
 msgstr "Vytvořit roli"
 
@@ -526,7 +526,7 @@ msgstr "Vlastní objekty"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "Přizpůsobit pole dostupná ve zobrazeních {objectLabelSingular}."
 
-#: src/pages/settings/SettingsWorkspace.tsx:56
+#: src/pages/settings/SettingsWorkspace.tsx:49
 msgid "Customize Domain"
 msgstr "Přizpůsobit doménu"
 
@@ -556,7 +556,7 @@ msgid "Dark"
 msgstr "Tmavý"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:131
 msgid "Data model"
 msgstr "Datový model"
 
@@ -693,7 +693,7 @@ msgstr "\"\""
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:152
 msgid "Developers"
 msgstr "Vývojáři"
 
@@ -707,7 +707,7 @@ msgstr "Zrušit koncept"
 msgid "Display as relative date"
 msgstr "Zobrazit jako relativní datum"
 
-#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/workspace/SettingsDomain.tsx:186
 #: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
@@ -738,7 +738,7 @@ msgstr "Upravit fakturační interval"
 msgid "Edit payment method, see your invoices and more"
 msgstr "Upravit způsob platby, zobrazit faktury a další"
 
-#: src/pages/settings/SettingsWorkspace.tsx:52
+#: src/pages/settings/SettingsWorkspace.tsx:45
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Upravit název vaší subdomény nebo nastavit vlastní doménu."
 
@@ -760,7 +760,7 @@ msgstr "E-mail nebo doména již je v seznamu blokovaných"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:86
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "E-maily"
@@ -829,7 +829,7 @@ msgstr "Opustit nastavení"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:75
 msgid "Experience"
 msgstr "Zkušenosti"
 
@@ -940,14 +940,14 @@ msgstr "z ročního na měsíční"
 msgid "Full access"
 msgstr "Plný přístup"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:163
 msgid "Functions"
 msgstr "Funkce"
 
-#: src/pages/settings/SettingsWorkspace.tsx:29
-#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/SettingsWorkspace.tsx:22
+#: src/pages/settings/SettingsWorkspace.tsx:28
 #: src/pages/settings/workspace/SettingsDomain.tsx:193
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:105
 msgid "General"
 msgstr "Obecné"
 
@@ -967,13 +967,17 @@ msgstr "Získejte své předplatné"
 msgid "Global"
 msgstr "Globální"
 
-#: src/pages/settings/SettingsWorkspace.tsx:65
+#: src/pages/settings/SettingsWorkspace.tsx:58
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Twenty podpoře dočasně udělit přístup do vašeho pracovního prostoru, aby bylo možné řešit problémy nebo obnovit obsah za vás. Přístup můžete kdykoli zrušit."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
 msgstr "Řečtina"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
+msgid "Health Status"
+msgstr "Zdravotní stav"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
@@ -1024,7 +1028,7 @@ msgstr "Instance"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:137
 msgid "Integrations"
 msgstr "Integrace"
 
@@ -1034,7 +1038,8 @@ msgstr "Neplatný poskytovatel ověřování"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:48
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Neplatná vlastní doména. Vlastní domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat mezery, nesmí obsahovat žádné speciální znaky jako jsou _~\n"
+msgstr ""
+"Neplatná vlastní doména. Vlastní domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat mezery, nesmí obsahovat žádné speciální znaky jako jsou _~\n"
 "`!@#$%^*()=+{}[]|\\;:'\"<>/? a nesmí začínat ani končit znakem '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
@@ -1086,7 +1091,7 @@ msgstr "Japonština"
 msgid "Korean"
 msgstr "Korejština"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:181
 msgid "Lab"
 msgstr "Laboratoř"
 
@@ -1123,7 +1128,7 @@ msgstr "Výpisy"
 msgid "Log out"
 msgstr "Odhlásit se"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:120
 msgid "Logout"
 msgstr "Odhlásit"
 
@@ -1155,7 +1160,7 @@ msgstr "Maximální"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:111
 msgid "Members"
 msgstr "Členové"
 
@@ -1179,9 +1184,9 @@ msgstr "Posunout doprava"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/SettingsRoles.tsx:125
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
@@ -1208,7 +1213,7 @@ msgstr "Název v jednotném (<b>např.</b>, 'Faktura') i množném (<b>např.</b
 msgid "Name of your API key"
 msgstr "Název vašeho API klíče"
 
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 msgid "Name of your workspace"
 msgstr "Název vašeho pracovního prostoru"
 
@@ -1310,8 +1315,12 @@ msgid "No more members to assign"
 msgstr "Žádní další členové k přiřazení"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
-msgid "No Result"
-msgstr "Žádný výsledek"
+#~ msgid "No Result"
+#~ msgstr "No Result"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Results"
+msgstr "Žádné výsledky"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1359,8 +1368,9 @@ msgstr "Možnosti"
 msgid "or"
 msgstr "nebo"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:67
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:172
 msgid "Other"
 msgstr "Ostatní"
 
@@ -1410,7 +1420,7 @@ msgstr "Trvale zničit workflody"
 msgid "Permissions"
 msgstr "Oprávnění"
 
-#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsWorkspace.tsx:33
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr "Obrázek"
@@ -1466,7 +1476,7 @@ msgstr "Zásady ochrany osobních údajů"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:70
 msgid "Profile"
 msgstr "Profil"
 
@@ -1501,7 +1511,7 @@ msgstr "Znovu vygenerujte klíč"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:187
 msgid "Releases"
 msgstr "Verze"
 
@@ -1539,9 +1549,9 @@ msgstr "Obnovit na"
 msgid "Results"
 msgstr "Výsledky"
 
+#: src/pages/settings/roles/SettingsRoles.tsx:106
 #: src/pages/settings/roles/SettingsRoles.tsx:112
-#: src/pages/settings/roles/SettingsRoles.tsx:118
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:123
 msgid "Roles"
 msgstr "Role"
 
@@ -1596,7 +1606,7 @@ msgstr "Hledání záznamů"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:143
 msgid "Security"
 msgstr "Bezpečnost"
 
@@ -1639,10 +1649,11 @@ msgid "Serbian (Cyrillic)"
 msgstr "Srbština (cyrilice)"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:175
 msgid "Server Admin"
 msgstr "Správce serveru"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:71
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "Administrační panel serveru"
@@ -1743,7 +1754,7 @@ msgstr "Předplatné bylo změněno {to}"
 msgid "Sum"
 msgstr "Součet"
 
-#: src/pages/settings/SettingsWorkspace.tsx:63
+#: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Support"
 msgstr "Podpora"
 
@@ -1936,7 +1947,7 @@ msgstr "Použijte naše API nebo ručně přidejte první {objectLabel}"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:67
 msgid "User"
 msgstr "Uživatel"
 
@@ -2000,12 +2011,12 @@ msgid "Workflow cannot be tested"
 msgstr "Není možné testovat pracovní postup"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
-#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsWorkspace.tsx:25
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
 #: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:115
+#: src/pages/settings/roles/SettingsRoles.tsx:109
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
@@ -2017,7 +2028,7 @@ msgstr "Není možné testovat pracovní postup"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:102
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "Pracovní prostor"
@@ -2068,4 +2079,3 @@ msgstr "Váš pracovní prostor"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Váš pracovní prostor bude deaktivován"
-

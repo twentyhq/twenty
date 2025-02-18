@@ -80,7 +80,7 @@ msgstr "Брисање налога"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:80
 msgid "Accounts"
 msgstr "Налози"
 
@@ -167,7 +167,7 @@ msgstr "Сви"
 msgid "All ({relationRecordsCount})"
 msgstr "Сви ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:124
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 msgid "All roles"
 msgstr "Све улоге"
 
@@ -200,7 +200,7 @@ msgid "and"
 msgstr "и"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:156
 msgid "API & Webhooks"
 msgstr "API и Вебхукси"
 
@@ -250,7 +250,7 @@ msgstr "Растуће"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Доделите {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:125
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Доделите улоге да бисте одредили овлашћења за приступ члановима"
 
@@ -262,7 +262,7 @@ msgstr "Доделите члану"
 msgid "Assigned members"
 msgstr "Додељени чланови"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:134
+#: src/pages/settings/roles/SettingsRoles.tsx:128
 msgid "Assigned to"
 msgstr "Додељено"
 
@@ -297,7 +297,7 @@ msgstr "Назад на садржај"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:117
 msgid "Billing"
 msgstr "Наплата"
 
@@ -323,7 +323,7 @@ msgstr "Календар"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:92
 msgid "Calendars"
 msgstr "Календари"
 
@@ -502,7 +502,7 @@ msgstr "Креирај нови запис"
 msgid "Create profile"
 msgstr "Креирај профил"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:200
+#: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
 msgstr "Креирај улогу"
 
@@ -526,7 +526,7 @@ msgstr "Прилагођени објекти"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "Прилагоди доступна поља у приказима {objectLabelSingular}."
 
-#: src/pages/settings/SettingsWorkspace.tsx:56
+#: src/pages/settings/SettingsWorkspace.tsx:49
 msgid "Customize Domain"
 msgstr "Прилагоди домен"
 
@@ -556,7 +556,7 @@ msgid "Dark"
 msgstr "Тамни"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:131
 msgid "Data model"
 msgstr "Модел података"
 
@@ -693,7 +693,7 @@ msgstr "Уништи"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:152
 msgid "Developers"
 msgstr "Развојни програмери"
 
@@ -707,7 +707,7 @@ msgstr "Одбаци нацрт"
 msgid "Display as relative date"
 msgstr "Приказати као релативан датум"
 
-#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/workspace/SettingsDomain.tsx:186
 #: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
@@ -738,7 +738,7 @@ msgstr "Измени интервал наплате"
 msgid "Edit payment method, see your invoices and more"
 msgstr "Измени начин плаћања, погледај своје фактуре и још много тога"
 
-#: src/pages/settings/SettingsWorkspace.tsx:52
+#: src/pages/settings/SettingsWorkspace.tsx:45
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Уредите назив свог потдомена или поставите прилагођени домен."
 
@@ -760,7 +760,7 @@ msgstr "Имејл или домен су већ на листи блокира�
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:86
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "Имејлови"
@@ -829,7 +829,7 @@ msgstr "Изађи из подешавања"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:75
 msgid "Experience"
 msgstr "Искуство"
 
@@ -940,14 +940,14 @@ msgstr "са годишњег на месечни"
 msgid "Full access"
 msgstr "Потпун приступ"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:163
 msgid "Functions"
 msgstr "Функције"
 
-#: src/pages/settings/SettingsWorkspace.tsx:29
-#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/SettingsWorkspace.tsx:22
+#: src/pages/settings/SettingsWorkspace.tsx:28
 #: src/pages/settings/workspace/SettingsDomain.tsx:193
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:105
 msgid "General"
 msgstr "Опште"
 
@@ -967,13 +967,17 @@ msgstr "Набави претплату"
 msgid "Global"
 msgstr "Глобално"
 
-#: src/pages/settings/SettingsWorkspace.tsx:65
+#: src/pages/settings/SettingsWorkspace.tsx:58
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Омогућите Twenty подршци привремени приступ вашем радном простору како би могли да реше проблеме или поврате садржај у ваше име. У сваком тренутку можете укинути приступ."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
 msgstr "Грчки"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
+msgid "Health Status"
+msgstr "Статус здравља"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
@@ -1024,7 +1028,7 @@ msgstr "Појаве"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:137
 msgid "Integrations"
 msgstr "Интеграције"
 
@@ -1085,7 +1089,7 @@ msgstr "Јапански"
 msgid "Korean"
 msgstr "Корејски"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:181
 msgid "Lab"
 msgstr "Лабораторија"
 
@@ -1122,7 +1126,7 @@ msgstr "Огласи"
 msgid "Log out"
 msgstr "Одјавите се"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:120
 msgid "Logout"
 msgstr "Одјава"
 
@@ -1154,7 +1158,7 @@ msgstr "Максимум"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:111
 msgid "Members"
 msgstr "Чланови"
 
@@ -1178,9 +1182,9 @@ msgstr "Помери удесно"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/SettingsRoles.tsx:125
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
@@ -1207,7 +1211,7 @@ msgstr "Име у једнини и множини формама (нпр., 'Ф�
 msgid "Name of your API key"
 msgstr "Име Вашег API кључа"
 
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 msgid "Name of your workspace"
 msgstr "Име вашег простора"
 
@@ -1309,7 +1313,11 @@ msgid "No more members to assign"
 msgstr "Нема више чланова за доделу"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
-msgid "No Result"
+#~ msgid "No Result"
+#~ msgstr "No Result"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Results"
 msgstr "Нема резултата"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
@@ -1358,8 +1366,9 @@ msgstr "Опције"
 msgid "or"
 msgstr "или"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:67
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:172
 msgid "Other"
 msgstr "Остало"
 
@@ -1409,7 +1418,7 @@ msgstr "Трајно уништите радне процесе"
 msgid "Permissions"
 msgstr "Дозволе"
 
-#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsWorkspace.tsx:33
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr "Слика"
@@ -1465,7 +1474,7 @@ msgstr "Политика приватности"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:70
 msgid "Profile"
 msgstr "Профил"
 
@@ -1500,7 +1509,7 @@ msgstr "Регенеришите кључ"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:187
 msgid "Releases"
 msgstr "Издања"
 
@@ -1538,9 +1547,9 @@ msgstr "Ресетујте на"
 msgid "Results"
 msgstr "Резултати"
 
+#: src/pages/settings/roles/SettingsRoles.tsx:106
 #: src/pages/settings/roles/SettingsRoles.tsx:112
-#: src/pages/settings/roles/SettingsRoles.tsx:118
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:123
 msgid "Roles"
 msgstr "Улоге"
 
@@ -1595,7 +1604,7 @@ msgstr "Тражите записе"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:143
 msgid "Security"
 msgstr "Безбедност"
 
@@ -1638,10 +1647,11 @@ msgid "Serbian (Cyrillic)"
 msgstr "Српски (ћирилица)"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:175
 msgid "Server Admin"
 msgstr "Администратор сервера"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:71
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "Админ панел сервера"
@@ -1742,7 +1752,7 @@ msgstr "Претплата је промењена у {to}"
 msgid "Sum"
 msgstr "Збир"
 
-#: src/pages/settings/SettingsWorkspace.tsx:63
+#: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Support"
 msgstr "Подршка"
 
@@ -1935,7 +1945,7 @@ msgstr "Користите наш API или ручно додајте први 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:67
 msgid "User"
 msgstr "Корисник"
 
@@ -1999,12 +2009,12 @@ msgid "Workflow cannot be tested"
 msgstr "Радња не може бити тестирана"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
-#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsWorkspace.tsx:25
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
 #: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:115
+#: src/pages/settings/roles/SettingsRoles.tsx:109
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
@@ -2016,7 +2026,7 @@ msgstr "Радња не може бити тестирана"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:102
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "Радни простор"
@@ -2067,4 +2077,3 @@ msgstr "Ваш радни простор"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ваш радни простор ће бити онемогућен"
-

@@ -80,7 +80,7 @@ msgstr "刪除帳戶"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:80
 msgid "Accounts"
 msgstr "帳戶"
 
@@ -167,7 +167,7 @@ msgstr "全部"
 msgid "All ({relationRecordsCount})"
 msgstr "全部 ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:124
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 msgid "All roles"
 msgstr "所有角色"
 
@@ -200,7 +200,7 @@ msgid "and"
 msgstr "和"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:156
 msgid "API & Webhooks"
 msgstr "API 和 Webhooks"
 
@@ -250,7 +250,7 @@ msgstr "升序"
 msgid "Assign {workspaceMemberName}?"
 msgstr "指派 {workspaceMemberName}？"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:125
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "Assign roles to specify each member's access permissions"
 msgstr "分配角色以指定每個成員的訪問權限"
 
@@ -262,7 +262,7 @@ msgstr "指派給成員"
 msgid "Assigned members"
 msgstr "分配成員"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:134
+#: src/pages/settings/roles/SettingsRoles.tsx:128
 msgid "Assigned to"
 msgstr "分配給"
 
@@ -297,7 +297,7 @@ msgstr "返回內容"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:117
 msgid "Billing"
 msgstr "計費"
 
@@ -323,7 +323,7 @@ msgstr "日曆"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:92
 msgid "Calendars"
 msgstr "日曆"
 
@@ -502,7 +502,7 @@ msgstr "創建新記錄"
 msgid "Create profile"
 msgstr "創建個人檔案"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:200
+#: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
 msgstr "創建角色"
 
@@ -526,7 +526,7 @@ msgstr "自定義對象"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "自定義 {objectLabelSingular} 視圖中可用的字段。"
 
-#: src/pages/settings/SettingsWorkspace.tsx:56
+#: src/pages/settings/SettingsWorkspace.tsx:49
 msgid "Customize Domain"
 msgstr "自定義域名"
 
@@ -556,7 +556,7 @@ msgid "Dark"
 msgstr "深色模式"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:131
 msgid "Data model"
 msgstr "數據模型"
 
@@ -693,7 +693,7 @@ msgstr "銷毀"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:152
 msgid "Developers"
 msgstr "開發人員"
 
@@ -707,7 +707,7 @@ msgstr "放棄草稿"
 msgid "Display as relative date"
 msgstr "顯示為相對日期"
 
-#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/workspace/SettingsDomain.tsx:186
 #: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
@@ -738,7 +738,7 @@ msgstr "編輯計費間隔"
 msgid "Edit payment method, see your invoices and more"
 msgstr "編輯付款方式、查看發票等"
 
-#: src/pages/settings/SettingsWorkspace.tsx:52
+#: src/pages/settings/SettingsWorkspace.tsx:45
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "編輯您的子域名或設置自定義域名。"
 
@@ -760,7 +760,7 @@ msgstr "電子郵件或域名已在阻止列表中"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:86
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "電子郵件"
@@ -829,7 +829,7 @@ msgstr "退出設置"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:75
 msgid "Experience"
 msgstr "體驗"
 
@@ -940,14 +940,14 @@ msgstr "從每年到每月"
 msgid "Full access"
 msgstr "完全訪問"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:163
 msgid "Functions"
 msgstr "功能"
 
-#: src/pages/settings/SettingsWorkspace.tsx:29
-#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/SettingsWorkspace.tsx:22
+#: src/pages/settings/SettingsWorkspace.tsx:28
 #: src/pages/settings/workspace/SettingsDomain.tsx:193
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:105
 msgid "General"
 msgstr "常規"
 
@@ -967,13 +967,17 @@ msgstr "獲取訂閱"
 msgid "Global"
 msgstr "全局"
 
-#: src/pages/settings/SettingsWorkspace.tsx:65
+#: src/pages/settings/SettingsWorkspace.tsx:58
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "授予 Twenty 支持臨時訪問您的工作區，以便我們為您排除故障或恢復內容。您可以隨時撤銷訪問權限。"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
 msgstr "希臘語"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
+msgid "Health Status"
+msgstr "健康狀態"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
@@ -1024,7 +1028,7 @@ msgstr "實例"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:137
 msgid "Integrations"
 msgstr "集成"
 
@@ -1085,7 +1089,7 @@ msgstr "日語"
 msgid "Korean"
 msgstr "韓語"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:181
 msgid "Lab"
 msgstr "實驗室"
 
@@ -1122,7 +1126,7 @@ msgstr "列表"
 msgid "Log out"
 msgstr "登出"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:120
 msgid "Logout"
 msgstr "登出"
 
@@ -1154,7 +1158,7 @@ msgstr "最大"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:111
 msgid "Members"
 msgstr "成員"
 
@@ -1178,9 +1182,9 @@ msgstr "向右移動"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/SettingsRoles.tsx:125
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
@@ -1207,7 +1211,7 @@ msgstr "名稱需包含單數（例如，'發票'）和複數（例如，'發票
 msgid "Name of your API key"
 msgstr "API 密鑰名稱"
 
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 msgid "Name of your workspace"
 msgstr "工作區名稱"
 
@@ -1309,7 +1313,11 @@ msgid "No more members to assign"
 msgstr "沒有更多成員可以指派"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
-msgid "No Result"
+#~ msgid "No Result"
+#~ msgstr "No Result"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Results"
 msgstr "沒有結果"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
@@ -1358,8 +1366,9 @@ msgstr "選項"
 msgid "or"
 msgstr "或"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:67
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:172
 msgid "Other"
 msgstr "其他"
 
@@ -1409,7 +1418,7 @@ msgstr "永久銷毀工作流程"
 msgid "Permissions"
 msgstr "權限"
 
-#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsWorkspace.tsx:33
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr "圖片"
@@ -1465,7 +1474,7 @@ msgstr "隱私政策"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:70
 msgid "Profile"
 msgstr "個人資料"
 
@@ -1500,7 +1509,7 @@ msgstr "重新生成密鑰"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:187
 msgid "Releases"
 msgstr "版本"
 
@@ -1538,9 +1547,9 @@ msgstr "重置為"
 msgid "Results"
 msgstr "結果"
 
+#: src/pages/settings/roles/SettingsRoles.tsx:106
 #: src/pages/settings/roles/SettingsRoles.tsx:112
-#: src/pages/settings/roles/SettingsRoles.tsx:118
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:123
 msgid "Roles"
 msgstr "角色"
 
@@ -1595,7 +1604,7 @@ msgstr "搜索記錄"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:143
 msgid "Security"
 msgstr "安全"
 
@@ -1638,10 +1647,11 @@ msgid "Serbian (Cyrillic)"
 msgstr "塞爾維亞語（西里爾文）"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:175
 msgid "Server Admin"
 msgstr "服務器管理員"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:71
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "服務器管理面板"
@@ -1742,7 +1752,7 @@ msgstr "訂閱已切換 {to}"
 msgid "Sum"
 msgstr "總和"
 
-#: src/pages/settings/SettingsWorkspace.tsx:63
+#: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Support"
 msgstr "支援"
 
@@ -1935,7 +1945,7 @@ msgstr "使用我們的 API 或手動添加您的第一個 {objectLabel}"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:67
 msgid "User"
 msgstr "用戶"
 
@@ -1999,12 +2009,12 @@ msgid "Workflow cannot be tested"
 msgstr "無法測試工作流程"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
-#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsWorkspace.tsx:25
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
 #: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:115
+#: src/pages/settings/roles/SettingsRoles.tsx:109
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
@@ -2016,7 +2026,7 @@ msgstr "無法測試工作流程"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:102
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "工作區"
@@ -2067,4 +2077,3 @@ msgstr "您的工作區"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "您的工作區將被禁用"
-
