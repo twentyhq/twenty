@@ -2,20 +2,10 @@
 
 import { ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Relation } from 'typeorm';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { BaseEntity } from 'src/engine/utils/base-entities-fields';
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -46,12 +36,7 @@ registerEnumType(SSOIdentityProviderStatus, {
 
 @Entity({ name: 'workspaceSSOIdentityProvider', schema: 'core' })
 @ObjectType()
-export class WorkspaceSSOIdentityProvider {
-  // COMMON
-  @IDField(() => UUIDScalarType)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class WorkspaceSSOIdentityProvider extends BaseEntity {
   @Column()
   name: string;
 
@@ -74,12 +59,6 @@ export class WorkspaceSSOIdentityProvider {
 
   @Column()
   workspaceId: string;
-
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
 
   @Column({
     type: 'enum',

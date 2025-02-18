@@ -1,21 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
+import { Column, Entity, JoinColumn, ManyToOne, Relation } from 'typeorm';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { BaseSoftDeleteEntity } from 'src/engine/utils/base-entities-fields';
 
 export enum AppTokenType {
   RefreshToken = 'REFRESH_TOKEN',
@@ -30,11 +21,7 @@ export enum AppTokenType {
 @Entity({ name: 'appToken', schema: 'core' })
 @ObjectType()
 @BeforeCreateOne(BeforeCreateOneAppToken)
-export class AppToken {
-  @IDField(() => UUIDScalarType)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class AppToken extends BaseSoftDeleteEntity {
   @ManyToOne(() => User, (user) => user.appTokens, {
     onDelete: 'CASCADE',
   })
@@ -65,18 +52,7 @@ export class AppToken {
   expiresAt: Date;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: Date | null;
-
-  @Column({ nullable: true, type: 'timestamptz' })
   revokedAt: Date | null;
-
-  @Field()
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
 
   @Column({ nullable: true, type: 'jsonb' })
   context: { email: string } | null;

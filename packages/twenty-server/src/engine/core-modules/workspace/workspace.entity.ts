@@ -1,25 +1,15 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { WorkspaceActivationStatus } from 'twenty-shared';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, Relation } from 'typeorm';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { BaseSoftDeleteEntity } from 'src/engine/utils/base-entities-fields';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -27,11 +17,7 @@ registerEnumType(WorkspaceActivationStatus, {
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType()
-export class Workspace {
-  @IDField(() => UUIDScalarType)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Workspace extends BaseSoftDeleteEntity {
   @Field({ nullable: true })
   @Column({ nullable: true })
   displayName?: string;
@@ -43,18 +29,6 @@ export class Workspace {
   @Field({ nullable: true })
   @Column({ nullable: true })
   inviteHash?: string;
-
-  @Field({ nullable: true })
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date;
-
-  @Field()
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
 
   @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
     cascade: true,

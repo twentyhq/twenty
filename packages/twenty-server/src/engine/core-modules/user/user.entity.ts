@@ -1,25 +1,14 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, Index, OneToMany, Relation } from 'typeorm';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { BaseSoftDeleteEntity } from 'src/engine/utils/base-entities-fields';
 
 registerEnumType(OnboardingStatus, {
   name: 'OnboardingStatus',
@@ -32,11 +21,7 @@ registerEnumType(OnboardingStatus, {
   unique: true,
   where: '"deletedAt" IS NULL',
 })
-export class User {
-  @IDField(() => UUIDScalarType)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class User extends BaseSoftDeleteEntity {
   @Field()
   @Column({ default: '' })
   firstName: string;
@@ -68,18 +53,6 @@ export class User {
   @Field()
   @Column({ default: false })
   canImpersonate: boolean;
-
-  @Field()
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
-
-  @Field({ nullable: true })
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
 
   @Field(() => String, { nullable: false })
   @Column({ nullable: false, default: 'en' })
