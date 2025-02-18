@@ -15,8 +15,6 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
-import { ContextStoreCurrentViewTypeEffect } from '@/context-store/components/ContextStoreCurrentViewTypeEffect';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -55,13 +53,6 @@ export const RecordIndexContainer = () => {
 
   return (
     <>
-      <ContextStoreCurrentViewTypeEffect
-        viewType={
-          recordIndexViewType === ViewType.Table
-            ? ContextStoreViewType.Table
-            : ContextStoreViewType.Kanban
-        }
-      />
       <StyledContainer>
         <InformationBannerWrapper />
         <RecordFieldValueSelectorContextProvider>

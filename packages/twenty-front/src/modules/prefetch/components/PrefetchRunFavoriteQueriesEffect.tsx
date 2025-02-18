@@ -1,55 +1,110 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
-import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
-import { useUpsertRecordsInCacheForPrefetchKey } from '@/prefetch/hooks/internal/useUpsertRecordsInCacheForPrefetchKey';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { findAllFavoritesFolderOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllFavoritesFolderOperationSignatureFactory';
+import { findAllFavoritesOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllFavoritesOperationSignatureFactory';
+import { prefetchFavoriteFoldersState } from '@/prefetch/states/prefetchFavoriteFoldersState';
+import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
+import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { isDefined } from 'twenty-shared';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
 
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
 
-  const { upsertRecordsInCache: upsertFavoritesInCache } =
-    useUpsertRecordsInCacheForPrefetchKey<Favorite>({
-      prefetchKey: PrefetchKey.AllFavorites,
-    });
-  const { upsertRecordsInCache: upsertFavoritesFoldersInCache } =
-    useUpsertRecordsInCacheForPrefetchKey<FavoriteFolder>({
-      prefetchKey: PrefetchKey.AllFavoritesFolders,
-    });
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const operationSignatures = Object.values(PREFETCH_CONFIG)
+  const setIsPrefetchFavoritesLoaded = useSetRecoilState(
+    prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
+  );
 
-    .map(({ objectNameSingular, operationSignatureFactory }) => {
-      const objectMetadataItem = objectMetadataItems.find(
-        (item) => item.nameSingular === objectNameSingular,
-      );
+  const setIsPrefetchFavoritesFoldersLoaded = useSetRecoilState(
+    prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
+  );
 
-      return operationSignatureFactory({ objectMetadataItem });
+  const findAllFavoritesOperationSignature =
+    findAllFavoritesOperationSignatureFactory({
+      objectMetadataItem: objectMetadataItems.find(
+        (item) => item.nameSingular === CoreObjectNameSingular.Favorite,
+      ),
     });
 
-  const { result } = useCombinedFindManyRecords({
-    operationSignatures,
+  const findAllFavoriteFoldersOperationSignature =
+    findAllFavoritesFolderOperationSignatureFactory({
+      objectMetadataItem: objectMetadataItems.find(
+        (item) => item.nameSingular === CoreObjectNameSingular.FavoriteFolder,
+      ),
+    });
+
+  const { records: favorites } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Favorite,
+    filter: findAllFavoritesOperationSignature.variables.filter,
+    recordGqlFields: findAllFavoritesOperationSignature.fields,
     skip: !currentUser || isWorkspaceSuspended,
   });
 
+  const { records: favoriteFolders } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
+    filter: findAllFavoriteFoldersOperationSignature.variables.filter,
+    recordGqlFields: findAllFavoriteFoldersOperationSignature.fields,
+    skip: !currentUser || isWorkspaceSuspended,
+  });
+
+  const setPrefetchFavoritesState = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (favorites: Favorite[]) => {
+        const existingFavorites = snapshot
+          .getLoadable(prefetchFavoritesState)
+          .getValue();
+
+        if (!isDeeplyEqual(existingFavorites, favorites)) {
+          set(prefetchFavoritesState, favorites);
+        }
+      },
+    [],
+  );
+
+  const setPrefetchFavoriteFoldersState = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (favoriteFolders: FavoriteFolder[]) => {
+        const existingFavoriteFolders = snapshot
+          .getLoadable(prefetchFavoriteFoldersState)
+          .getValue();
+
+        if (!isDeeplyEqual(existingFavoriteFolders, favoriteFolders)) {
+          set(prefetchFavoriteFoldersState, favoriteFolders);
+        }
+      },
+    [],
+  );
+
   useEffect(() => {
-    if (isDefined(result.favorites)) {
-      upsertFavoritesInCache(result.favorites as Favorite[]);
+    if (isDefined(favorites)) {
+      setPrefetchFavoritesState(favorites as Favorite[]);
+      setIsPrefetchFavoritesLoaded(true);
     }
-    if (isDefined(result.favoriteFolders)) {
-      upsertFavoritesFoldersInCache(result.favoriteFolders as FavoriteFolder[]);
+  }, [favorites, setPrefetchFavoritesState, setIsPrefetchFavoritesLoaded]);
+
+  useEffect(() => {
+    if (isDefined(favoriteFolders)) {
+      setPrefetchFavoriteFoldersState(favoriteFolders as FavoriteFolder[]);
+      setIsPrefetchFavoritesFoldersLoaded(true);
     }
-  }, [result, upsertFavoritesInCache, upsertFavoritesFoldersInCache]);
+  }, [
+    favoriteFolders,
+    setPrefetchFavoriteFoldersState,
+    setIsPrefetchFavoritesFoldersLoaded,
+  ]);
 
   return <></>;
 };

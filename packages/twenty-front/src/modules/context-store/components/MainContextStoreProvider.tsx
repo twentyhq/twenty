@@ -3,11 +3,9 @@ import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { undefined } from 'zod';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const getViewId = (
@@ -42,17 +40,18 @@ export const MainContextStoreProvider = () => {
       : undefined;
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
+  const objectNameSingular = useParams().objectNameSingular ?? '';
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const objectMetadataItem =
-    objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.namePlural === objectNamePlural,
-    ) ?? objectMetadataItems[0];
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.namePlural === objectNamePlural ||
+      objectMetadataItem.nameSingular === objectNameSingular,
+  );
 
   const { getLastVisitedViewIdFromObjectNamePlural } = useLastVisitedView();
 
@@ -68,11 +67,7 @@ export const MainContextStoreProvider = () => {
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
 
-  if (
-    !isDefined(pageName) ||
-    !isDefined(objectMetadataItem) ||
-    !isNonEmptyString(viewId)
-  ) {
+  if (!isDefined(pageName) || !isDefined(objectMetadataItem)) {
     return null;
   }
 
@@ -81,6 +76,7 @@ export const MainContextStoreProvider = () => {
       mainContextStoreComponentInstanceIdToSet={'main-context-store'}
       viewId={viewId}
       objectMetadataItem={objectMetadataItem}
+      pageName={pageName}
     />
   );
 };
