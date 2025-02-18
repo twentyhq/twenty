@@ -80,7 +80,7 @@ msgstr "crwdns67:0crwdne67:0"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:21
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:80
 msgid "Accounts"
 msgstr "crwdns69:0crwdne69:0"
 
@@ -167,7 +167,7 @@ msgstr "crwdns95:0crwdne95:0"
 msgid "All ({relationRecordsCount})"
 msgstr "crwdns97:0{relationRecordsCount}crwdne97:0"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:124
+#: src/pages/settings/roles/SettingsRoles.tsx:118
 msgid "All roles"
 msgstr "crwdns99:0crwdne99:0"
 
@@ -200,7 +200,7 @@ msgid "and"
 msgstr "crwdns113:0crwdne113:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:156
 msgid "API & Webhooks"
 msgstr "crwdns115:0crwdne115:0"
 
@@ -250,7 +250,7 @@ msgstr "crwdns127:0crwdne127:0"
 msgid "Assign {workspaceMemberName}?"
 msgstr "crwdns1793:0{workspaceMemberName}crwdne1793:0"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:125
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "Assign roles to specify each member's access permissions"
 msgstr "crwdns129:0crwdne129:0"
 
@@ -262,7 +262,7 @@ msgstr "crwdns1795:0crwdne1795:0"
 msgid "Assigned members"
 msgstr "crwdns131:0crwdne131:0"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:134
+#: src/pages/settings/roles/SettingsRoles.tsx:128
 msgid "Assigned to"
 msgstr "crwdns133:0crwdne133:0"
 
@@ -297,7 +297,7 @@ msgstr "crwdns147:0crwdne147:0"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:117
 msgid "Billing"
 msgstr "crwdns149:0crwdne149:0"
 
@@ -323,7 +323,7 @@ msgstr "crwdns159:0crwdne159:0"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:92
 msgid "Calendars"
 msgstr "crwdns161:0crwdne161:0"
 
@@ -502,7 +502,7 @@ msgstr "crwdns233:0crwdne233:0"
 msgid "Create profile"
 msgstr "crwdns235:0crwdne235:0"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:200
+#: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
 msgstr "crwdns237:0crwdne237:0"
 
@@ -526,7 +526,7 @@ msgstr "crwdns243:0crwdne243:0"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "crwdns245:0{objectLabelSingular}crwdne245:0"
 
-#: src/pages/settings/SettingsWorkspace.tsx:56
+#: src/pages/settings/SettingsWorkspace.tsx:49
 msgid "Customize Domain"
 msgstr "crwdns247:0crwdne247:0"
 
@@ -556,7 +556,7 @@ msgid "Dark"
 msgstr "crwdns3989:0crwdne3989:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:131
 msgid "Data model"
 msgstr "crwdns253:0crwdne253:0"
 
@@ -693,7 +693,7 @@ msgstr "crwdns299:0crwdne299:0"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:132
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:152
 msgid "Developers"
 msgstr "crwdns301:0crwdne301:0"
 
@@ -707,7 +707,7 @@ msgstr "crwdns303:0crwdne303:0"
 msgid "Display as relative date"
 msgstr "crwdns305:0crwdne305:0"
 
-#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/workspace/SettingsDomain.tsx:186
 #: src/pages/settings/workspace/SettingsDomain.tsx:196
 msgid "Domain"
@@ -738,7 +738,7 @@ msgstr "crwdns315:0crwdne315:0"
 msgid "Edit payment method, see your invoices and more"
 msgstr "crwdns317:0crwdne317:0"
 
-#: src/pages/settings/SettingsWorkspace.tsx:52
+#: src/pages/settings/SettingsWorkspace.tsx:45
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "crwdns319:0crwdne319:0"
 
@@ -760,7 +760,7 @@ msgstr "crwdns325:0crwdne325:0"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:86
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "crwdns327:0crwdne327:0"
@@ -829,7 +829,7 @@ msgstr "crwdns355:0crwdne355:0"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:20
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:75
 msgid "Experience"
 msgstr "crwdns357:0crwdne357:0"
 
@@ -940,14 +940,14 @@ msgstr "crwdns395:0crwdne395:0"
 msgid "Full access"
 msgstr "crwdns397:0crwdne397:0"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:163
 msgid "Functions"
 msgstr "crwdns399:0crwdne399:0"
 
-#: src/pages/settings/SettingsWorkspace.tsx:29
-#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/SettingsWorkspace.tsx:22
+#: src/pages/settings/SettingsWorkspace.tsx:28
 #: src/pages/settings/workspace/SettingsDomain.tsx:193
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:105
 msgid "General"
 msgstr "crwdns401:0crwdne401:0"
 
@@ -967,13 +967,17 @@ msgstr "crwdns407:0crwdne407:0"
 msgid "Global"
 msgstr "crwdns409:0crwdne409:0"
 
-#: src/pages/settings/SettingsWorkspace.tsx:65
+#: src/pages/settings/SettingsWorkspace.tsx:58
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "crwdns411:0crwdne411:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Greek"
 msgstr "crwdns1809:0crwdne1809:0"
+
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
+msgid "Health Status"
+msgstr "crwdns4855:0crwdne4855:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
@@ -1024,7 +1028,7 @@ msgstr "crwdns429:0crwdne429:0"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:137
 msgid "Integrations"
 msgstr "crwdns431:0crwdne431:0"
 
@@ -1085,7 +1089,7 @@ msgstr "crwdns453:0crwdne453:0"
 msgid "Korean"
 msgstr "crwdns455:0crwdne455:0"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:181
 msgid "Lab"
 msgstr "crwdns457:0crwdne457:0"
 
@@ -1122,7 +1126,7 @@ msgstr "crwdns3997:0crwdne3997:0"
 msgid "Log out"
 msgstr "crwdns469:0crwdne469:0"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:120
 msgid "Logout"
 msgstr "crwdns471:0crwdne471:0"
 
@@ -1154,7 +1158,7 @@ msgstr "crwdns483:0crwdne483:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:111
 msgid "Members"
 msgstr "crwdns485:0crwdne485:0"
 
@@ -1178,9 +1182,9 @@ msgstr "crwdns493:0crwdne493:0"
 
 #: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:131
+#: src/pages/settings/roles/SettingsRoles.tsx:125
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx:45
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx:38
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx:20
@@ -1207,7 +1211,7 @@ msgstr "crwdns3999:0crwdne3999:0"
 msgid "Name of your API key"
 msgstr "crwdns499:0crwdne499:0"
 
-#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsWorkspace.tsx:37
 msgid "Name of your workspace"
 msgstr "crwdns501:0crwdne501:0"
 
@@ -1309,8 +1313,12 @@ msgid "No more members to assign"
 msgstr "crwdns4839:0crwdne4839:0"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
-msgid "No Result"
-msgstr "crwdns4841:0crwdne4841:0"
+#~ msgid "No Result"
+#~ msgstr "No Result"
+
+#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
+msgid "No Results"
+msgstr "crwdns4857:0crwdne4857:0"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -1358,8 +1366,9 @@ msgstr "crwdns547:0crwdne547:0"
 msgid "or"
 msgstr "crwdns549:0crwdne549:0"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:67
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:16
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:172
 msgid "Other"
 msgstr "crwdns551:0crwdne551:0"
 
@@ -1409,7 +1418,7 @@ msgstr "crwdns571:0crwdne571:0"
 msgid "Permissions"
 msgstr "crwdns573:0crwdne573:0"
 
-#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsWorkspace.tsx:33
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr "crwdns575:0crwdne575:0"
@@ -1465,7 +1474,7 @@ msgstr "crwdns589:0crwdne589:0"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:70
 msgid "Profile"
 msgstr "crwdns591:0crwdne591:0"
 
@@ -1500,7 +1509,7 @@ msgstr "crwdns605:0crwdne605:0"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:187
 msgid "Releases"
 msgstr "crwdns607:0crwdne607:0"
 
@@ -1538,9 +1547,9 @@ msgstr "crwdns615:0crwdne615:0"
 msgid "Results"
 msgstr "crwdns617:0crwdne617:0"
 
+#: src/pages/settings/roles/SettingsRoles.tsx:106
 #: src/pages/settings/roles/SettingsRoles.tsx:112
-#: src/pages/settings/roles/SettingsRoles.tsx:118
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:123
 msgid "Roles"
 msgstr "crwdns619:0crwdne619:0"
 
@@ -1595,7 +1604,7 @@ msgstr "crwdns635:0crwdne635:0"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:143
 msgid "Security"
 msgstr "crwdns637:0crwdne637:0"
 
@@ -1638,10 +1647,11 @@ msgid "Serbian (Cyrillic)"
 msgstr "crwdns1837:0crwdne1837:0"
 
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:13
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:175
 msgid "Server Admin"
 msgstr "crwdns4005:0crwdne4005:0"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:71
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx:19
 msgid "Server Admin Panel"
 msgstr "crwdns653:0crwdne653:0"
@@ -1742,7 +1752,7 @@ msgstr "crwdns689:0{to}crwdne689:0"
 msgid "Sum"
 msgstr "crwdns691:0crwdne691:0"
 
-#: src/pages/settings/SettingsWorkspace.tsx:63
+#: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Support"
 msgstr "crwdns693:0crwdne693:0"
 
@@ -1935,7 +1945,7 @@ msgstr "crwdns767:0{objectLabel}crwdne767:0"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:67
 msgid "User"
 msgstr "crwdns769:0crwdne769:0"
 
@@ -1999,12 +2009,12 @@ msgid "Workflow cannot be tested"
 msgstr "crwdns793:0crwdne793:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
-#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsWorkspace.tsx:25
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
 #: src/pages/settings/workspace/SettingsDomain.tsx:189
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:115
+#: src/pages/settings/roles/SettingsRoles.tsx:109
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:40
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:128
@@ -2016,7 +2026,7 @@ msgstr "crwdns793:0crwdne793:0"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx:102
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "crwdns795:0crwdne795:0"

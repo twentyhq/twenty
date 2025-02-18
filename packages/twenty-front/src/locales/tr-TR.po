@@ -977,7 +977,7 @@ msgstr "Yunanca"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
 msgid "Health Status"
-msgstr ""
+msgstr "Sağlık Durumu"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
@@ -1314,11 +1314,11 @@ msgstr "Atanacak başka üye yok"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
 #~ msgid "No Result"
-#~ msgstr "Sonuç Yok"
+#~ msgstr "No Result"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
 msgid "No Results"
-msgstr ""
+msgstr "Sonuç Yok"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -2077,3 +2077,4 @@ msgstr "Çalışma Alanınız"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Çalışma alanınız devre dışı bırakılacak"
+

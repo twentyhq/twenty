@@ -977,7 +977,7 @@ msgstr "Греческий"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
 msgid "Health Status"
-msgstr ""
+msgstr "Статус здоровья"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
@@ -1314,11 +1314,11 @@ msgstr "Больше нет участников для назначения"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
 #~ msgid "No Result"
-#~ msgstr "Нет результатов"
+#~ msgstr "No Result"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
 msgid "No Results"
-msgstr ""
+msgstr "Нет результатов"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -2077,3 +2077,4 @@ msgstr "Ваше рабочее пространство"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ваше рабочее пространство будет отключено"
+

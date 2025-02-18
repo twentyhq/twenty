@@ -977,7 +977,7 @@ msgstr "Grego"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx:75
 msgid "Health Status"
-msgstr ""
+msgstr "Estado de Saúde"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:121
 msgid "Hebrew"
@@ -1314,11 +1314,11 @@ msgstr "Sem mais membros para atribuir"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
 #~ msgid "No Result"
-#~ msgstr "Sem Resultado"
+#~ msgstr "No Result"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx:23
 msgid "No Results"
-msgstr ""
+msgstr "Sem Resultados"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
@@ -2077,3 +2077,4 @@ msgstr "O seu Espaço de Trabalho"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "O seu espaço de trabalho será desativado"
+
