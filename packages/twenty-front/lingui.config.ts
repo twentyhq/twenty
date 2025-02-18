@@ -1,4 +1,5 @@
 import { defineConfig } from '@lingui/cli';
+import { formatter } from '@lingui/format-po';
 import { APP_LOCALES } from 'twenty-shared';
 
 export default defineConfig({
@@ -16,4 +17,5 @@ export default defineConfig({
   ],
   catalogsMergePath: '<rootDir>/src/locales/generated/{locale}',
   compileNamespace: 'ts',
+  format: formatter({ lineNumbers: false }),
 });

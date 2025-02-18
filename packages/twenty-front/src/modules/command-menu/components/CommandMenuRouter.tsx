@@ -2,7 +2,9 @@ import { CommandMenuContainer } from '@/command-menu/components/CommandMenuConta
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuPagesConfig';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
@@ -20,9 +22,21 @@ export const CommandMenuRouter = () => {
     <></>
   );
 
+  const theme = useTheme();
+
   return (
     <CommandMenuContainer>
-      <CommandMenuTopBar />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          duration: theme.animation.duration.instant,
+          delay: 0.1,
+        }}
+      >
+        <CommandMenuTopBar />
+      </motion.div>
       <StyledCommandMenuContent>
         {commandMenuPageComponent}
       </StyledCommandMenuContent>
