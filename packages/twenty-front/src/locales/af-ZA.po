@@ -2063,3 +2063,4 @@ msgstr "Jou Werkruimte"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Jou werkskerm sal onaktief gemaak word"
+
