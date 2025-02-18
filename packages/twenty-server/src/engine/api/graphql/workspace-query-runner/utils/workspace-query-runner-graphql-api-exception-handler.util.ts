@@ -1,5 +1,5 @@
-import { QueryFailedError } from 'typeorm';
 import { isDefined } from 'twenty-shared';
+import { QueryFailedError } from 'typeorm';
 
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
@@ -18,6 +18,8 @@ import {
   TimeoutError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,
@@ -69,6 +71,10 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
     }
 
     throw error;
+  }
+
+  if (error instanceof PermissionsException) {
+    return permissionGraphqlApiExceptionHandler(error);
   }
 
   if (error instanceof WorkspaceQueryRunnerException) {
