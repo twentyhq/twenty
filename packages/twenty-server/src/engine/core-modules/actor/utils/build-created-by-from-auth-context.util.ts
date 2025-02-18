@@ -49,7 +49,6 @@ export const buildCreatedByFromAuthContext = async ({
         workspaceMemberId: workspaceMember.id,
       });
     }
-    // Could apiKey and user both defined ?
     case isDefined(apiKey): {
       return buildCreatedByFromApiKey({
         apiKey,
