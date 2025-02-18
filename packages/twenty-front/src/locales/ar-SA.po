@@ -163,7 +163,7 @@ msgstr "الأفريكانية"
 msgid "All"
 msgstr "الكل"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "الكل ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "الاتصال بـ Microsoft"
 msgid "Connected accounts"
 msgstr "الحسابات المتصلة"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "السياق"
 
@@ -448,7 +448,7 @@ msgstr "متابعة بـ Google"
 msgid "Continue with Microsoft"
 msgstr "الاستمرار باستخدام مايكروسوفت"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "كوبيلوت"
 
@@ -963,7 +963,7 @@ msgstr "استفد من مساحة العمل الخاصة بك عن طريق د
 msgid "Get your subscription"
 msgstr "احصل على اشتراكك"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "عالمي"
 
@@ -1241,6 +1241,10 @@ msgstr "الانتقال إلى عملية العمل السابقة"
 msgid "New"
 msgstr "جديد"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "{capitalizedObjectNameSingular} جديد"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "حساب جديد"
@@ -1324,7 +1328,7 @@ msgstr "النرويجية"
 msgid "Not empty"
 msgstr "ليس فارغاً"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "كائن"
 
@@ -1477,7 +1481,7 @@ msgstr "\\\\"
 msgid "Receive an email containing password update link"
 msgstr "\\\\"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "\\\\"
 
@@ -1559,7 +1563,7 @@ msgstr "الروسية"
 msgid "Search"
 msgstr "\\\\"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "ابحث عن ''{commandMenuSearch}'' بواسطة..."
 

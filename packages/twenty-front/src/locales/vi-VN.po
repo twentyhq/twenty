@@ -163,7 +163,7 @@ msgstr "Tiếng Afrikaans"
 msgid "All"
 msgstr "Tất cả"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Tất cả ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Kết nối với Microsoft"
 msgid "Connected accounts"
 msgstr "Tài khoản đã kết nối"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Ngữ cảnh"
 
@@ -448,7 +448,7 @@ msgstr "Tiếp tục với Google"
 msgid "Continue with Microsoft"
 msgstr "Tiếp tục với Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Trợ lý lái"
 
@@ -963,7 +963,7 @@ msgstr "Tối ưu hóa không gian làm việc của bạn bằng cách mời te
 msgid "Get your subscription"
 msgstr "\\"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "\\"
 
@@ -1241,6 +1241,10 @@ msgstr "Điều hướng đến quy trình trước đó"
 msgid "New"
 msgstr "Mới"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "{capitalizedObjectNameSingular} Mới"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Tài khoản mới"
@@ -1324,7 +1328,7 @@ msgstr "Tiếng Na Uy"
 msgid "Not empty"
 msgstr "Không trống"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Đối tượng"
 
@@ -1477,7 +1481,7 @@ msgstr "Đọc tài liệu"
 msgid "Receive an email containing password update link"
 msgstr "Nhận email chứa đường link cập nhật mật khẩu"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Chọn Lọc Hồ sơ"
 
@@ -1559,7 +1563,7 @@ msgstr "Tiếng Nga"
 msgid "Search"
 msgstr "Tìm kiếm"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Tìm kiếm ''{commandMenuSearch}'' với..."
 

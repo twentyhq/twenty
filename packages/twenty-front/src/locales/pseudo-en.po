@@ -158,7 +158,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr ""
 
@@ -419,7 +419,7 @@ msgstr ""
 msgid "Connected accounts"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr ""
 
@@ -443,7 +443,7 @@ msgstr ""
 msgid "Continue with Microsoft"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr ""
 
@@ -958,7 +958,7 @@ msgstr ""
 msgid "Get your subscription"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr ""
 
@@ -1236,6 +1236,10 @@ msgstr ""
 msgid "New"
 msgstr ""
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr ""
@@ -1319,7 +1323,7 @@ msgstr ""
 msgid "Not empty"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr ""
 
@@ -1472,7 +1476,7 @@ msgstr ""
 msgid "Receive an email containing password update link"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr ""
 
@@ -1554,7 +1558,7 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr ""
 
