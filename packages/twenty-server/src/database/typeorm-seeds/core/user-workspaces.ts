@@ -13,7 +13,7 @@ export const DEV_SEED_USER_WORKSPACE_IDS = {
   TIM: '20202020-9e3b-46d4-a556-88b9ddc2b035',
   JONY: '20202020-3957-4908-9c36-2929a23f8353',
   PHIL: '20202020-7169-42cf-bc47-1cfef15264b1',
-  TIM_ACME: '20202020-9e3b-46d4-a556-88b9ddc2b436',
+  TIM_ACME: '20202020-e10a-4c27-a90b-b08c57b02d44',
 };
 
 export const seedUserWorkspaces = async (

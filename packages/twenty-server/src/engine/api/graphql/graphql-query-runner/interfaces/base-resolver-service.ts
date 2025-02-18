@@ -199,6 +199,7 @@ export abstract class GraphqlQueryBaseResolverService<
           await this.permissionsService.userHasWorkspaceSettingPermission({
             userWorkspaceId: authContext.userWorkspaceId,
             _setting: permissionRequired,
+            workspaceId: authContext.workspace.id,
           });
 
         if (!userHasPermission) {
