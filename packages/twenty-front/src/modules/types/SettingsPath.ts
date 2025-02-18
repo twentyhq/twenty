@@ -30,11 +30,11 @@ export enum SettingsPath {
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',
   EditSSOIdentityProvider = 'security/sso/:identityProviderId',
-  DevelopersNewWebhook = 'developers/webhooks/new',
   DevelopersNewWebhookDetail = 'developers/webhooks/:webhookId',
   Releases = 'releases',
   AdminPanel = 'admin-panel',
   FeatureFlags = 'admin-panel/feature-flags',
   Lab = 'lab',
   Roles = 'roles',
+  RoleDetail = 'roles/:roleId',
 }

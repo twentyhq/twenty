@@ -1,5 +1,5 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const getViewFiltersToCreate = (
   currentViewFilters: ViewFilter[],

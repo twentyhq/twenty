@@ -2,7 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import {
   FeatureFlagKey,
   useUpdateLabPublicFeatureFlagMutation,
@@ -15,7 +15,29 @@ export const useLabPublicFeatureFlags = () => {
   );
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
-  const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation();
+  const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation({
+    onCompleted: (data) => {
+      if (isDefined(currentWorkspace)) {
+        const updatedFlag = data.updateLabPublicFeatureFlag;
+
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          featureFlags: [
+            ...(currentWorkspace.featureFlags?.filter(
+              (flag) => flag.key !== updatedFlag.key,
+            ) ?? []),
+            {
+              ...updatedFlag,
+              workspaceId: currentWorkspace.id,
+            },
+          ],
+        });
+      }
+    },
+    onError: (error) => {
+      setError(error.message);
+    },
+  });
 
   const handleLabPublicFeatureFlagUpdate = async (
     publicFeatureFlag: FeatureFlagKey,
@@ -35,19 +57,7 @@ export const useLabPublicFeatureFlags = () => {
           value,
         },
       },
-      onError: (error) => {
-        setError(error.message);
-      },
     });
-
-    if (isDefined(response.data)) {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        featureFlags: currentWorkspace.featureFlags?.map((flag) =>
-          flag.key === publicFeatureFlag ? { ...flag, value } : flag,
-        ),
-      });
-    }
 
     return !!response.data;
   };

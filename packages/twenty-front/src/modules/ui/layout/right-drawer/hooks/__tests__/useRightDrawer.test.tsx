@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
+import { IconList } from 'twenty-ui';
 import { isRightDrawerOpenState } from '../../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../../states/rightDrawerPageState';
 import { RightDrawerPages } from '../../types/RightDrawerPages';
@@ -33,7 +34,10 @@ describe('useRightDrawer', () => {
     expect(result.current.closeRightDrawer).toBeInstanceOf(Function);
 
     await act(async () => {
-      result.current.openRightDrawer(RightDrawerPages.ViewRecord);
+      result.current.openRightDrawer(RightDrawerPages.ViewRecord, {
+        title: 'Company',
+        Icon: IconList,
+      });
     });
 
     expect(result.current.rightDrawerPage).toEqual(RightDrawerPages.ViewRecord);

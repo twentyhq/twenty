@@ -5,10 +5,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -83,6 +86,18 @@ describe('AuthResolver', () => {
         },
         {
           provide: EmailVerificationTokenService,
+          useValue: {},
+        },
+        {
+          provide: PermissionsService,
+          useValue: {},
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: {},
+        },
+        {
+          provide: SSOService,
           useValue: {},
         },
         // {

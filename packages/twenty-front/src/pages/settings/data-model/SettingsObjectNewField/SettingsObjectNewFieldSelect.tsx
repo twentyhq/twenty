@@ -4,6 +4,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
+import { FieldType } from '@/settings/data-model/types/FieldType';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -12,7 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -44,10 +45,11 @@ export const SettingsObjectNewFieldSelect = () => {
       type: FieldMetadataType.TEXT,
     },
   });
-  const excludedFieldTypes: SettingsFieldType[] = (
+  const excludedFieldTypes: FieldType[] = (
     [
       FieldMetadataType.NUMERIC,
       FieldMetadataType.RICH_TEXT,
+      FieldMetadataType.RICH_TEXT_V2,
       FieldMetadataType.ACTOR,
     ] as const
   ).filter(isDefined);

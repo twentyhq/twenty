@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -28,7 +29,6 @@ import {
   WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { isDefined } from 'src/utils/is-defined';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -182,6 +182,26 @@ export class WorkflowVersionStepWorkspaceService {
             input: {
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecordId: '',
+            },
+          },
+        };
+      }
+      case WorkflowActionType.FIND_RECORDS: {
+        const activeObjectMetadataItem =
+          await this.objectMetadataRepository.findOne({
+            where: { workspaceId, isActive: true, isSystem: false },
+          });
+
+        return {
+          id: newStepId,
+          name: 'Search Records',
+          type: WorkflowActionType.FIND_RECORDS,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              objectName: activeObjectMetadataItem?.nameSingular || '',
+              limit: 1,
             },
           },
         };

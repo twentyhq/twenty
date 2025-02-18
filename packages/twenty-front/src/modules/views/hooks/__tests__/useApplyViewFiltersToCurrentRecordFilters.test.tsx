@@ -1,32 +1,40 @@
 import { act, renderHook } from '@testing-library/react';
 
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { isDefined } from 'twenty-shared';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useApplyViewFiltersToCurrentRecordFilters } from '../useApplyViewFiltersToCurrentRecordFilters';
 
+const mockObjectMetadataItemNameSingular = 'company';
+
 describe('useApplyViewFiltersToCurrentRecordFilters', () => {
-  const mockAvailableFilterDefinition: RecordFilterDefinition = {
-    fieldMetadataId: 'field-1',
-    label: 'Test Field',
-    type: 'TEXT',
-    iconName: 'IconText',
-  };
+  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
+  );
+
+  if (!isDefined(mockObjectMetadataItem)) {
+    throw new Error(
+      `Missing mock object metadata item with name singular ${mockObjectMetadataItemNameSingular}`,
+    );
+  }
+
+  const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
 
   const mockViewFilter: ViewFilter = {
     __typename: 'ViewFilter',
     id: 'filter-1',
-    fieldMetadataId: 'field-1',
+    fieldMetadataId: mockFieldMetadataItem.id,
     operand: ViewFilterOperand.Contains,
     value: 'test',
-    displayValue: 'test',
+    displayValue: mockFieldMetadataItem.label,
     viewFilterGroupId: 'group-1',
     positionInViewFilterGroup: 0,
-    definition: mockAvailableFilterDefinition,
   };
 
   it('should apply view filters to current record filters', () => {
@@ -42,15 +50,11 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         return { applyViewFiltersToCurrentRecordFilters, currentFilters };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              availableFilterDefinitionsComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              [mockAvailableFilterDefinition],
-            );
-          },
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
         }),
       },
     );
@@ -68,8 +72,9 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         operand: mockViewFilter.operand,
         viewFilterGroupId: mockViewFilter.viewFilterGroupId,
         positionInViewFilterGroup: mockViewFilter.positionInViewFilterGroup,
-        definition: mockAvailableFilterDefinition,
-      },
+        label: mockFieldMetadataItem.label,
+        type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
+      } satisfies RecordFilter,
     ]);
   });
 
@@ -86,15 +91,11 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         return { applyViewFiltersToCurrentRecordFilters, currentFilters };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              availableFilterDefinitionsComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              [mockAvailableFilterDefinition],
-            );
-          },
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
         }),
       },
     );

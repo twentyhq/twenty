@@ -1,41 +1,54 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
+import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   getRecordFromCache,
   GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
+import { GRAPHQL_TYPENAME_KEY } from '@/object-record/constants/GraphqlTypenameKey';
+import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/object-record/utils/buildOptimisticActorFieldValueFromCurrentWorkspaceMember';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
+  currentWorkspaceMember: CurrentWorkspaceMember | null;
 } & Pick<GetRecordFromCacheArgs, 'cache' | 'objectMetadataItems'>;
 export const computeOptimisticRecordFromInput = ({
   objectMetadataItem,
   recordInput,
   cache,
   objectMetadataItems,
+  currentWorkspaceMember,
 }: ComputeOptimisticCacheRecordInputArgs) => {
   const unknownRecordInputFields = Object.keys(recordInput).filter(
-    (fieldName) =>
-      objectMetadataItem.fields.find(({ name }) => name === fieldName) ===
-      undefined,
+    (recordKey) => {
+      const isUnknownMetadataItemField =
+        objectMetadataItem.fields.find((field) => field.name === recordKey) ===
+        undefined;
+      const isTypenameField = recordKey === GRAPHQL_TYPENAME_KEY;
+      return isUnknownMetadataItemField && !isTypenameField;
+    },
   );
   if (unknownRecordInputFields.length > 0) {
     throw new Error(
-      `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadaItem ${objectMetadataItem.nameSingular}`,
+      `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadataItem ${objectMetadataItem.nameSingular}`,
     );
   }
 
   const optimisticRecord: Partial<ObjectRecord> = {};
   for (const fieldMetadataItem of objectMetadataItem.fields) {
+    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
+
     if (isFieldUuid(fieldMetadataItem)) {
       const isRelationFieldId = objectMetadataItem.fields.some(
         ({ type, relationDefinition }) => {
@@ -60,10 +73,19 @@ export const computeOptimisticRecordFromInput = ({
       }
     }
 
+    if (isFieldActor(fieldMetadataItem) && isDefined(recordInputFieldValue)) {
+      const defaultActorFieldValue =
+        buildOptimisticActorFieldValueFromCurrentWorkspaceMember(
+          currentWorkspaceMember,
+        );
+      optimisticRecord[fieldMetadataItem.name] = {
+        ...defaultActorFieldValue,
+        ...(recordInputFieldValue as FieldActorValue),
+      };
+      continue;
+    }
+
     const isRelationField = isFieldRelation(fieldMetadataItem);
-
-    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
-
     if (!isRelationField) {
       if (!isDefined(recordInputFieldValue)) {
         continue;
@@ -93,7 +115,7 @@ export const computeOptimisticRecordFromInput = ({
 
     if (!isUndefined(recordInputFieldValue)) {
       throw new Error(
-        'Should never provide relation mutation through anything else than the fieldId e.g companyId',
+        `Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: ${fieldMetadataItem.name}`,
       );
     }
 

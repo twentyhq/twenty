@@ -1,20 +1,91 @@
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
+import {
+  AppTooltip,
+  Avatar,
+  Button,
+  H2Title,
+  IconChevronRight,
+  IconLock,
+  IconPlus,
+  IconUser,
+  Section,
+  TooltipDelay,
+} from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { useTheme } from '@emotion/react';
+import { FeatureFlagKey, useGetRolesQuery } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledRoleTableRow = styled.div`
+const StyledTable = styled(Table)`
+  margin-top: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledTableRow = styled(TableRow)`
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+    cursor: pointer;
+  }
+`;
+
+const StyledNameCell = styled.div`
   align-items: center;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledAssignedCell = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledAvatarGroup = styled.div`
+  align-items: center;
+  display: flex;
+  margin-right: ${({ theme }) => theme.spacing(1)};
+
+  > * {
+    margin-left: -5px;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+  }
+`;
+
+const StyledTableHeaderRow = styled(Table)`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledBottomSection = styled(Section)`
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const StyledIconChevronRight = styled(IconChevronRight)`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
+const StyledAvatarContainer = styled.div`
+  border: 0px;
+`;
+
+const StyledAssignedText = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
 `;
 
 export const SettingsRoles = () => {
@@ -22,38 +93,23 @@ export const SettingsRoles = () => {
   const isPermissionsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsEnabled,
   );
-
-  const GET_SETTINGS_ROLE_TABLE_METADATA = {
-    tableId: 'settingsRole',
-    fields: [
-      {
-        fieldName: 'name',
-        fieldLabel: t`Name`,
-        align: 'left' as const,
-      },
-      {
-        fieldName: 'assignedTo',
-        fieldLabel: t`Assigned to`,
-        align: 'left' as const,
-      },
-    ],
-  };
+  const theme = useTheme();
+  const navigateSettings = useNavigateSettings();
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
+    fetchPolicy: 'network-only',
+  });
 
   if (!isPermissionsEnabled) {
     return null;
   }
 
+  const handleRoleClick = (roleId: string) => {
+    navigateSettings(SettingsPath.RoleDetail, { roleId });
+  };
+
   return (
     <SubMenuTopBarContainer
       title={t`Roles`}
-      actionButton={
-        <Button
-          Icon={IconPlus}
-          title={t`New Role`}
-          accent="blue"
-          size="small"
-        />
-      }
       links={[
         {
           children: <Trans>Workspace</Trans>,
@@ -68,21 +124,85 @@ export const SettingsRoles = () => {
             title={t`All roles`}
             description={t`Assign roles to specify each member's access permissions`}
           />
-
-          <Table>
-            <StyledRoleTableRow>
-              {GET_SETTINGS_ROLE_TABLE_METADATA.fields.map(
-                (settingsRoleTableMetadataField) => (
-                  <TableHeader
-                    key={settingsRoleTableMetadataField.fieldName}
-                    align={settingsRoleTableMetadataField.align}
-                  >
-                    {settingsRoleTableMetadataField.fieldLabel}
-                  </TableHeader>
-                ),
-              )}
-            </StyledRoleTableRow>
-          </Table>
+          <StyledTable>
+            <StyledTableHeaderRow>
+              <TableRow>
+                <TableHeader>
+                  <Trans>Name</Trans>
+                </TableHeader>
+                <TableHeader align={'right'}>
+                  <Trans>Assigned to</Trans>
+                </TableHeader>
+                <TableHeader align={'right'}></TableHeader>
+              </TableRow>
+            </StyledTableHeaderRow>
+            {!rolesLoading &&
+              rolesData?.getRoles.map((role) => (
+                <StyledTableRow
+                  key={role.id}
+                  onClick={() => handleRoleClick(role.id)}
+                >
+                  <TableCell>
+                    <StyledNameCell>
+                      <IconUser size={theme.icon.size.md} />
+                      {role.label}
+                      {!role.isEditable && (
+                        <IconLock size={theme.icon.size.sm} />
+                      )}
+                    </StyledNameCell>
+                  </TableCell>
+                  <TableCell align={'right'}>
+                    <StyledAssignedCell>
+                      <StyledAvatarGroup>
+                        {role.workspaceMembers
+                          .slice(0, 5)
+                          .map((workspaceMember) => (
+                            <>
+                              <StyledAvatarContainer
+                                key={workspaceMember.id}
+                                id={`avatar-${workspaceMember.id}`}
+                              >
+                                <Avatar
+                                  avatarUrl={workspaceMember.avatarUrl}
+                                  placeholderColorSeed={workspaceMember.id}
+                                  placeholder={
+                                    workspaceMember.name.firstName ?? ''
+                                  }
+                                  type="rounded"
+                                  size="md"
+                                />
+                              </StyledAvatarContainer>
+                              <AppTooltip
+                                anchorSelect={`#avatar-${workspaceMember.id}`}
+                                content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                                noArrow
+                                place="top"
+                                positionStrategy="fixed"
+                                delay={TooltipDelay.shortDelay}
+                              />
+                            </>
+                          ))}
+                      </StyledAvatarGroup>
+                      <StyledAssignedText>
+                        {role.workspaceMembers.length}
+                      </StyledAssignedText>
+                    </StyledAssignedCell>
+                  </TableCell>
+                  <TableCell align={'right'}>
+                    <StyledIconChevronRight size={theme.icon.size.md} />
+                  </TableCell>
+                </StyledTableRow>
+              ))}
+          </StyledTable>
+          <StyledBottomSection>
+            <Button
+              Icon={IconPlus}
+              title={t`Create Role`}
+              variant="secondary"
+              size="small"
+              soon
+            />
+          </StyledBottomSection>
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

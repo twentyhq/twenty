@@ -1,7 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
+import { APP_LOCALES, FieldMetadataType, SOURCE_LOCALE } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -107,9 +107,9 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Language`,
     description: msg`Preferred language`,
     icon: 'IconLanguage',
-    defaultValue: "'en'",
+    defaultValue: `'${SOURCE_LOCALE}'`,
   })
-  locale: string;
+  locale: keyof typeof APP_LOCALES;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,

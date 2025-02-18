@@ -110,6 +110,9 @@ export class ClientConfig {
   @Field(() => Support)
   support: Support;
 
+  @Field(() => Boolean)
+  isAttachmentPreviewEnabled: boolean;
+
   @Field(() => Sentry)
   sentry: Sentry;
 
@@ -127,4 +130,16 @@ export class ClientConfig {
 
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
+
+  @Field(() => Boolean)
+  isMicrosoftMessagingEnabled: boolean;
+
+  @Field(() => Boolean)
+  isMicrosoftCalendarEnabled: boolean;
+
+  @Field(() => Boolean)
+  isGoogleMessagingEnabled: boolean;
+
+  @Field(() => Boolean)
+  isGoogleCalendarEnabled: boolean;
 }

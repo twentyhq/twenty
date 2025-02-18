@@ -18,7 +18,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
@@ -26,6 +26,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { useNavigate } from 'react-router-dom';
+import { IconList } from 'twenty-ui';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -123,7 +124,10 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           leaveTableFocus();
           setViewableRecordId(recordId);
           setViewableRecordNameSingular(objectNameSingular);
-          openRightDrawer(RightDrawerPages.ViewRecord);
+          openRightDrawer(RightDrawerPages.ViewRecord, {
+            title: objectNameSingular,
+            Icon: IconList,
+          });
 
           return;
         }

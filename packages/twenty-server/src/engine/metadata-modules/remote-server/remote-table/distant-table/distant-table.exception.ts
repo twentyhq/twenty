@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class DistantTableException extends CustomException {
-  code: DistantTableExceptionCode;
   constructor(message: string, code: DistantTableExceptionCode) {
     super(message, code);
   }

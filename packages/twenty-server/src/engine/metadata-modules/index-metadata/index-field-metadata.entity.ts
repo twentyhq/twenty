@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -31,6 +32,7 @@ export class IndexFieldMetadataEntity {
   indexMetadata: Relation<IndexMetadataEntity>;
 
   @Column({ nullable: false })
+  @Index('IndexOnFieldMetadataId')
   fieldMetadataId: string;
 
   @ManyToOne(

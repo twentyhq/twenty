@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { VerifyCallback } from 'passport-google-oauth20';
 import { Strategy } from 'passport-microsoft';
+import { APP_LOCALES } from 'twenty-shared';
 
 import {
   AuthException,
@@ -19,6 +20,7 @@ export type MicrosoftRequest = Omit<
     lastName?: string | null;
     email: string;
     picture: string | null;
+    locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
     workspaceId?: string;
@@ -38,24 +40,15 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     });
   }
 
-  authenticate(req: any, options: any) {
+  authenticate(req: Request, options: any) {
     options = {
       ...options,
       state: JSON.stringify({
-        workspaceInviteHash: req.params.workspaceInviteHash,
+        workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
-        ...(req.params.billingCheckoutSessionState
-          ? {
-              billingCheckoutSessionState:
-                req.params.billingCheckoutSessionState,
-            }
-          : {}),
-        ...(req.params.workspacePersonalInviteToken
-          ? {
-              workspacePersonalInviteToken:
-                req.params.workspacePersonalInviteToken,
-            }
-          : {}),
+        locale: req.query.locale,
+        billingCheckoutSessionState: req.query.billingCheckoutSessionState,
+        workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
       }),
     };
 
@@ -94,6 +87,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
       workspaceId: state.workspaceId,
       billingCheckoutSessionState: state.billingCheckoutSessionState,
+      locale: state.locale,
     };
 
     done(null, user);

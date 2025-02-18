@@ -7,6 +7,7 @@ import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
 @ObjectType()
 class SSOConnection {
@@ -34,11 +35,8 @@ export class AvailableWorkspaceOutput {
   @Field(() => String, { nullable: true })
   displayName?: string;
 
-  @Field(() => String)
-  subdomain: string;
-
-  @Field(() => String, { nullable: true })
-  hostname?: string;
+  @Field(() => workspaceUrls)
+  workspaceUrls: workspaceUrls;
 
   @Field(() => String, { nullable: true })
   logo?: string;

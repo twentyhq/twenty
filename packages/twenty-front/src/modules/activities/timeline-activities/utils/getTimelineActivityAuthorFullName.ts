@@ -1,6 +1,6 @@
 import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const getTimelineActivityAuthorFullName = (
   event: TimelineActivity,

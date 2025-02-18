@@ -34,10 +34,6 @@ spec:
               value: "false" # it already runs on the server
             - name: STORAGE_TYPE
               value: "local"
-            - name: "MESSAGE_QUEUE_TYPE"
-              value: "bull-mq"
-            - name: "CACHE_STORAGE_TYPE"
-              value: "redis"
             - name: "REDIS_URL"
               value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
             - name: APP_SECRET

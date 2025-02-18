@@ -3,10 +3,10 @@ import { LinkType, RoundedLink, SocialLink } from 'twenty-ui';
 
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { isDefined } from 'twenty-shared';
 import { checkUrlType } from '~/utils/checkUrlType';
-import { isDefined } from '~/utils/isDefined';
 import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
-import { getUrlHostName } from '~/utils/url/getUrlHostName';
+import { getUrlHostname } from '~/utils/url/getUrlHostname';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;
@@ -29,7 +29,7 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
           const absoluteUrl = getAbsoluteUrl(url);
           return {
             url: absoluteUrl,
-            label: label || getUrlHostName(absoluteUrl),
+            label: label || getUrlHostname(absoluteUrl),
             type: checkUrlType(absoluteUrl),
           };
         }),

@@ -10,10 +10,10 @@ import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
-import { isDefined } from '~/utils/isDefined';
 
 import { AppPath } from '@/types/AppPath';
 import { ApolloFactory, Options } from '../services/apollo.factory';
@@ -24,7 +24,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
-  const isMatchingLocation = useIsMatchingLocation();
+  const { isMatchingLocation } = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,

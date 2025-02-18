@@ -62,14 +62,6 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const SettingsDevelopersWebhooksNew = lazy(() =>
-  import(
-    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew'
-  ).then((module) => ({
-    default: module.SettingsDevelopersWebhooksNew,
-  })),
-);
-
 const Releases = lazy(() =>
   import('~/pages/settings/Releases').then((module) => ({
     default: module.Releases,
@@ -265,16 +257,24 @@ const SettingsRoles = lazy(() =>
   })),
 );
 
+const SettingsRoleEdit = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
+    default: module.SettingsRoleEdit,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
+  isPermissionsEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
+  isPermissionsEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -310,7 +310,15 @@ export const SettingsRoutes = ({
         element={<SettingsObjectDetailPage />}
       />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
-      <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
+      {isPermissionsEnabled && (
+        <>
+          <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
+          <Route
+            path={SettingsPath.RoleDetail}
+            element={<SettingsRoleEdit />}
+          />
+        </>
+      )}
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
@@ -319,10 +327,6 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.DevelopersApiKeyDetail}
         element={<SettingsDevelopersApiKeyDetail />}
-      />
-      <Route
-        path={SettingsPath.DevelopersNewWebhook}
-        element={<SettingsDevelopersWebhooksNew />}
       />
       <Route
         path={SettingsPath.DevelopersNewWebhookDetail}

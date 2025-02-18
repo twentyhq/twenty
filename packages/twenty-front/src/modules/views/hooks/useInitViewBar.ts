@@ -1,6 +1,5 @@
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { availableFieldDefinitionsComponentState } from '@/views/states/availableFieldDefinitionsComponentState';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 
@@ -15,11 +14,6 @@ export const useInitViewBar = (viewBarInstanceId?: string) => {
     viewBarInstanceId,
   );
 
-  const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
-    availableFilterDefinitionsComponentState,
-    viewBarInstanceId,
-  );
-
   const setViewObjectMetadataId = useSetRecoilComponentStateV2(
     viewObjectMetadataIdComponentState,
     viewBarInstanceId,
@@ -28,7 +22,6 @@ export const useInitViewBar = (viewBarInstanceId?: string) => {
   return {
     setAvailableFieldDefinitions,
     setAvailableSortDefinitions,
-    setAvailableFilterDefinitions,
     setViewObjectMetadataId,
   };
 };

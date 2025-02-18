@@ -29,4 +29,17 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     useAction: useSearchRecordsRecordAgnosticAction,
     hotKeys: ['/'],
   },
+  searchRecordsFallback: {
+    type: ActionMenuEntryType.Fallback,
+    scope: ActionMenuEntryScope.Global,
+    key: RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK,
+    label: msg`Search records`,
+    shortLabel: msg`Search`,
+    position: 1,
+    isPinned: false,
+    Icon: IconSearch,
+    availableOn: [ActionViewType.GLOBAL],
+    useAction: useSearchRecordsRecordAgnosticAction,
+    hotKeys: ['/'],
+  },
 };

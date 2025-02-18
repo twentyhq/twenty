@@ -3,7 +3,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class SSOException extends CustomException {
-  code: SSOExceptionCode;
   constructor(message: string, code: SSOExceptionCode) {
     super(message, code);
   }

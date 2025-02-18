@@ -5,16 +5,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly environmentService: EnvironmentService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super({
       prompt: 'select_account',
@@ -36,37 +36,14 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
         });
       }
 
-      const workspaceInviteHash = request.query.inviteHash;
-      const workspacePersonalInviteToken = request.query.inviteToken;
-
-      if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
-        request.params.workspaceInviteHash = workspaceInviteHash;
-      }
-
-      if (
-        workspacePersonalInviteToken &&
-        typeof workspacePersonalInviteToken === 'string'
-      ) {
-        request.params.workspacePersonalInviteToken =
-          workspacePersonalInviteToken;
-      }
-
-      if (
-        request.query.billingCheckoutSessionState &&
-        typeof request.query.billingCheckoutSessionState === 'string'
-      ) {
-        request.params.billingCheckoutSessionState =
-          request.query.billingCheckoutSessionState;
-      }
-
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        workspace ?? {
-          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-        },
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+          workspace,
+        ),
       );
 
       return false;

@@ -1,4 +1,5 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
@@ -8,6 +9,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -20,7 +22,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -77,6 +79,8 @@ export const CommandMenuContainer = ({
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
+  const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
+
   return (
     <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
@@ -91,8 +95,15 @@ export const CommandMenuContainer = ({
             value={{
               isInRightDrawer: false,
               onActionExecutedCallback: ({ key }) => {
-                if (key !== RecordAgnosticActionsKey.SEARCH_RECORDS) {
+                if (
+                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
+                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
+                  key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
+                ) {
                   toggleCommandMenu();
+                }
+                if (key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK) {
+                  setCommandMenuSearch('');
                 }
               },
             }}

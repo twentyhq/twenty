@@ -11,7 +11,7 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { isNull } from '@sniptt/guards';
 import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
@@ -85,7 +85,7 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
         onConfirmClick={() => {
           handleDeleteClick();
           if (isInRightDrawer) {
-            closeRightDrawer();
+            closeRightDrawer({ emitCloseEvent: false });
           }
         }}
         deleteButtonText={'Delete Record'}

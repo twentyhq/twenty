@@ -16,8 +16,10 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared';
 import {
   Button,
   H3Title,
@@ -28,7 +30,6 @@ import {
   IconSettings,
   MAIN_COLORS,
   UndecoratedLink,
-  isDefined,
 } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -54,6 +55,7 @@ const StyledTitleContainer = styled.div`
 
 export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
+  const { t } = useLingui();
 
   const { objectNamePlural = '' } = useParams();
   const { findActiveObjectMetadataItemByNamePlural } =
@@ -143,10 +145,10 @@ export const SettingsObjectDetailPage = () => {
         }
         links={[
           {
-            children: 'Workspace',
+            children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
           },
-          { children: 'Objects', href: getSettingsPath(SettingsPath.Objects) },
+          { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
           {
             children: objectMetadataItem.labelPlural,
           },
@@ -155,7 +157,7 @@ export const SettingsObjectDetailPage = () => {
           activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
             <UndecoratedLink to={'./new-field/select'}>
               <Button
-                title="New Field"
+                title={t`New Field`}
                 variant="primary"
                 size="small"
                 accent="blue"

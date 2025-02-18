@@ -9,8 +9,7 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/states/l
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
 import { AppPath } from '@/types/AppPath';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
-import { capitalize } from 'twenty-shared';
-import { isDefined } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useRecordShowPagePagination = (
@@ -68,11 +67,11 @@ export const useRecordShowPagePagination = (
         id: { neq: objectRecordId },
       },
       orderBy,
+      limit: isNonEmptyString(currentRecordCursorFromRequest) ? 1 : undefined,
       cursorFilter: isNonEmptyString(currentRecordCursorFromRequest)
         ? {
             cursorDirection: 'before',
             cursor: currentRecordCursorFromRequest,
-            limit: 1,
           }
         : undefined,
       objectNameSingular,
@@ -91,11 +90,11 @@ export const useRecordShowPagePagination = (
       },
       fetchPolicy: 'network-only',
       orderBy,
+      limit: isNonEmptyString(currentRecordCursorFromRequest) ? 1 : undefined,
       cursorFilter: currentRecordCursorFromRequest
         ? {
             cursorDirection: 'after',
             cursor: currentRecordCursorFromRequest,
-            limit: 1,
           }
         : undefined,
       objectNameSingular,

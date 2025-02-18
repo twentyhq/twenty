@@ -1,12 +1,34 @@
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useCallback, useMemo } from 'react';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useFilteredObjectMetadataItems = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const activeObjectMetadataItems = objectMetadataItems.filter(
-    ({ isActive, isSystem }) => isActive && !isSystem,
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
+
+  const isWorkflowToBeFiltered = useCallback(
+    (nameSingular: string) => {
+      return (
+        !isWorkflowEnabled && isWorkflowRelatedObjectMetadata(nameSingular)
+      );
+    },
+    [isWorkflowEnabled],
+  );
+
+  const activeObjectMetadataItems = useMemo(
+    () =>
+      objectMetadataItems.filter(
+        ({ isActive, isSystem, nameSingular }) =>
+          isActive && !isSystem && !isWorkflowToBeFiltered(nameSingular),
+      ),
+    [isWorkflowToBeFiltered, objectMetadataItems],
   );
 
   const alphaSortedActiveObjectMetadataItems = activeObjectMetadataItems.sort(

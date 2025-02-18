@@ -4,6 +4,7 @@ export enum CommandType {
   Create = 'Create',
   StandardAction = 'StandardAction',
   WorkflowRun = 'WorkflowRun',
+  Fallback = 'Fallback',
 }
 
 export enum CommandScope {
@@ -16,6 +17,7 @@ export type Command = {
   id: string;
   to?: string;
   label: string;
+  description?: string;
   type?: CommandType;
   scope?: CommandScope;
   Icon?: IconComponent;

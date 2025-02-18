@@ -9,6 +9,54 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainManagerService } from './domain-manager.service';
 
 describe('DomainManagerService', () => {
+  describe('getWorkspaceUrls', () => {
+    it('should return a URL containing the correct customDomain if customDomain is provided', () => {
+      jest
+        .spyOn(environmentService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+          };
+
+          return env[key];
+        });
+
+      const result = domainManagerService.getWorkspaceUrls({
+        subdomain: 'subdomain',
+        customDomain: 'custom-host.com',
+        isCustomDomainEnabled: true,
+      });
+
+      expect(result).toEqual({
+        customUrl: 'https://custom-host.com/',
+        subdomainUrl: 'https://example.com/',
+      });
+    });
+
+    it('should return a URL containing the correct subdomain if customDomain is not provided but subdomain is', () => {
+      jest
+        .spyOn(environmentService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+            IS_MULTIWORKSPACE_ENABLED: true,
+          };
+
+          return env[key];
+        });
+
+      const result = domainManagerService.getWorkspaceUrls({
+        subdomain: 'subdomain',
+        customDomain: null,
+        isCustomDomainEnabled: false,
+      });
+
+      expect(result).toEqual({
+        customUrl: undefined,
+        subdomainUrl: 'https://subdomain.example.com/',
+      });
+    });
+  });
   let domainManagerService: DomainManagerService;
   let environmentService: EnvironmentService;
 
@@ -35,13 +83,12 @@ describe('DomainManagerService', () => {
   });
 
   describe('buildBaseUrl', () => {
-    it('should build the base URL with protocol and domain from environment variables', () => {
+    it('should build the base URL from environment variables', () => {
       jest
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
           };
 
           return env[key];
@@ -57,8 +104,7 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
             IS_MULTIWORKSPACE_ENABLED: true,
             DEFAULT_SUBDOMAIN: 'test',
           };
@@ -70,24 +116,6 @@ describe('DomainManagerService', () => {
 
       expect(result.toString()).toBe('https://test.example.com/');
     });
-
-    it('should append port if FRONT_PORT is set', () => {
-      jest
-        .spyOn(environmentService, 'get')
-        .mockImplementation((key: string) => {
-          const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
-            FRONT_PORT: '8080',
-          };
-
-          return env[key];
-        });
-
-      const result = domainManagerService.getBaseUrl();
-
-      expect(result.toString()).toBe('https://example.com:8080/');
-    });
   });
 
   describe('buildWorkspaceURL', () => {
@@ -96,8 +124,7 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
             IS_MULTIWORKSPACE_ENABLED: true,
             DEFAULT_SUBDOMAIN: 'default',
           };
@@ -106,7 +133,11 @@ describe('DomainManagerService', () => {
         });
 
       const result = domainManagerService.buildWorkspaceURL({
-        subdomain: 'test',
+        workspace: {
+          subdomain: 'test',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
       });
 
       expect(result.toString()).toBe('https://test.example.com/');
@@ -117,15 +148,18 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
           };
 
           return env[key];
         });
 
       const result = domainManagerService.buildWorkspaceURL({
-        subdomain: 'subdomain',
+        workspace: {
+          subdomain: 'test',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
         pathname: '/path/to/resource',
       });
 
@@ -137,16 +171,18 @@ describe('DomainManagerService', () => {
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
           const env = {
-            FRONT_PROTOCOL: 'https',
-            FRONT_DOMAIN: 'example.com',
+            FRONTEND_URL: 'https://example.com',
           };
 
           return env[key];
         });
 
       const result = domainManagerService.buildWorkspaceURL({
-        subdomain: 'subdomain',
-
+        workspace: {
+          subdomain: 'test',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
         searchParams: {
           foo: 'bar',
           baz: 123,

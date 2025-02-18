@@ -3,7 +3,8 @@ import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
@@ -13,8 +14,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared';
 import { IconCheck } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   align-items: center;
@@ -39,8 +40,8 @@ export const ObjectFilterDropdownBooleanSelect = () => {
   const theme = useTheme();
   const options = [true, false];
 
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const selectedOperandInDropdown = useRecoilComponentValueV2(
@@ -65,7 +66,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
 
   const handleOptionSelect = (value: boolean) => {
     if (
-      !isDefined(filterDefinitionUsedInDropdown) ||
+      !isDefined(fieldMetadataItemUsedInDropdown) ||
       !isDefined(selectedOperandInDropdown)
     ) {
       return;
@@ -73,12 +74,13 @@ export const ObjectFilterDropdownBooleanSelect = () => {
 
     applyRecordFilter({
       id: selectedFilter?.id ?? v4(),
-      definition: filterDefinitionUsedInDropdown,
       operand: selectedOperandInDropdown,
       displayValue: value ? 'True' : 'False',
-      fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+      fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
       value: value.toString(),
       viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+      type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
+      label: fieldMetadataItemUsedInDropdown.label,
     });
 
     setSelectedValue(value);

@@ -6,7 +6,7 @@ import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectReco
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { formatMultiObjectRecordSearchResults } from '@/object-record/relation-picker/utils/formatMultiObjectRecordSearchResults';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap = ({
   multiObjectRecordsQueryResult,

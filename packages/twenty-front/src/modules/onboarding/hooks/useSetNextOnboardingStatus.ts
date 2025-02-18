@@ -5,8 +5,8 @@ import {
   CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
+import { isDefined } from 'twenty-shared';
 import { OnboardingStatus } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,

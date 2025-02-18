@@ -6,12 +6,13 @@ import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatching
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export type CommandGroupConfig = {
   heading: string;
@@ -32,6 +33,7 @@ export const CommandMenu = () => {
     matchingStandardActionGlobalCommands,
     matchingWorkflowRunGlobalCommands,
     matchingNavigateCommands,
+    fallbackCommands,
   } = useMatchingCommandMenuCommands({
     commandMenuSearch,
   });
@@ -44,12 +46,22 @@ export const CommandMenu = () => {
       matchingStandardActionGlobalCommands,
       matchingWorkflowRunGlobalCommands,
       matchingNavigateCommands,
+      fallbackCommands,
     )
     .filter(isDefined);
 
   const previousContextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
     'command-menu-previous',
+  );
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const currentObjectMetadataId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
+  );
+
+  const currentObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.id === currentObjectMetadataId,
   );
 
   const selectableItemIds = selectableItems.map((item) => item.id);
@@ -70,7 +82,7 @@ export const CommandMenu = () => {
       ),
     },
     {
-      heading: t`Object`,
+      heading: currentObjectMetadataItem?.labelPlural ?? t`Object`,
       items: matchingStandardActionObjectCommands,
     },
     {
@@ -78,6 +90,10 @@ export const CommandMenu = () => {
       items: matchingStandardActionGlobalCommands
         .concat(matchingNavigateCommands)
         .concat(matchingWorkflowRunGlobalCommands),
+    },
+    {
+      heading: t`Search ''${commandMenuSearch}'' with...`,
+      items: fallbackCommands,
     },
   ];
 

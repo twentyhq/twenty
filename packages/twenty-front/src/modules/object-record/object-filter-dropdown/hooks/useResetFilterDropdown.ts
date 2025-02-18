@@ -1,4 +1,4 @@
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
@@ -15,6 +15,12 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
       componentInstanceId,
     );
 
+  const fieldMetadataItemIdUsedInDropdownCallbackState =
+    useRecoilComponentCallbackStateV2(
+      fieldMetadataItemIdUsedInDropdownComponentState,
+      componentInstanceId,
+    );
+
   const objectFilterDropdownSelectedRecordIdsCallbackState =
     useRecoilComponentCallbackStateV2(
       objectFilterDropdownSelectedRecordIdsComponentState,
@@ -25,12 +31,6 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
     selectedFilterComponentState,
     componentInstanceId,
   );
-
-  const filterDefinitionUsedInDropdownCallbackState =
-    useRecoilComponentCallbackStateV2(
-      filterDefinitionUsedInDropdownComponentState,
-      componentInstanceId,
-    );
 
   const selectedOperandInDropdownCallbackState =
     useRecoilComponentCallbackStateV2(
@@ -56,19 +56,19 @@ export const useResetFilterDropdown = (componentInstanceId?: string) => {
         set(objectFilterDropdownSearchInputCallbackState, '');
         set(objectFilterDropdownSelectedRecordIdsCallbackState, []);
         set(selectedFilterCallbackState, undefined);
-        set(filterDefinitionUsedInDropdownCallbackState, null);
         set(selectedOperandInDropdownCallbackState, null);
         set(objectFilterDropdownFilterIsSelectedCallbackState, false);
         set(objectFilterDropdownIsSelectingCompositeFieldCallbackState, false);
+        set(fieldMetadataItemIdUsedInDropdownCallbackState, null);
       },
     [
-      filterDefinitionUsedInDropdownCallbackState,
       objectFilterDropdownSearchInputCallbackState,
       objectFilterDropdownSelectedRecordIdsCallbackState,
       selectedFilterCallbackState,
       selectedOperandInDropdownCallbackState,
       objectFilterDropdownFilterIsSelectedCallbackState,
       objectFilterDropdownIsSelectingCompositeFieldCallbackState,
+      fieldMetadataItemIdUsedInDropdownCallbackState,
     ],
   );
 

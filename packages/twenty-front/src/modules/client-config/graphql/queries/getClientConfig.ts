@@ -30,6 +30,7 @@ export const GET_CLIENT_CONFIG = gql`
       frontDomain
       debugMode
       analyticsEnabled
+      isAttachmentPreviewEnabled
       support {
         supportDriver
         supportFrontChatId
@@ -56,6 +57,10 @@ export const GET_CLIENT_CONFIG = gql`
           imagePath
         }
       }
+      isMicrosoftMessagingEnabled
+      isMicrosoftCalendarEnabled
+      isGoogleMessagingEnabled
+      isGoogleCalendarEnabled
     }
   }
 `;

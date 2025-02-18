@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -26,6 +27,9 @@ export class WorkspaceMember {
   name: FullName;
 
   @Field({ nullable: false })
+  userEmail: string;
+
+  @Field({ nullable: false })
   colorScheme: string;
 
   @Field({ nullable: true })
@@ -42,4 +46,10 @@ export class WorkspaceMember {
 
   @Field(() => WorkspaceMemberTimeFormatEnum, { nullable: true })
   timeFormat: WorkspaceMemberTimeFormatEnum;
+
+  @Field(() => [RoleDTO], { nullable: true })
+  roles?: RoleDTO[];
+
+  @Field(() => String, { nullable: true })
+  userWorkspaceId?: string;
 }

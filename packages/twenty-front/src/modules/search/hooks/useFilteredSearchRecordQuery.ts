@@ -4,7 +4,7 @@ import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { RecordsForMultipleRecordSelect } from '@/object-record/relation-picker/types/RecordsForMultipleRecordSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 // TODO: use this for all search queries, because we need selectedRecords and recordsToSelect each time we want to search
 // Filtered entities to select are

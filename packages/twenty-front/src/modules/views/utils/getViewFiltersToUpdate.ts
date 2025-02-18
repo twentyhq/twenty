@@ -1,6 +1,6 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { areViewFiltersEqual } from '@/views/utils/areViewFiltersEqual';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const getViewFiltersToUpdate = (
   currentViewFilters: ViewFilter[],

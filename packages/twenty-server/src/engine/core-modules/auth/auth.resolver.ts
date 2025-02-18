@@ -1,8 +1,10 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { SettingsFeatures, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import omit from 'lodash.omit';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -33,6 +35,7 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -41,8 +44,13 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
+import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -56,7 +64,7 @@ import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input
 import { AuthService } from './services/auth.service';
 
 @Resolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
     @InjectRepository(User, 'core')
@@ -73,6 +81,7 @@ export class AuthResolver {
     private domainManagerService: DomainManagerService,
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
+    private sSOService: SSOService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -81,6 +90,16 @@ export class AuthResolver {
     @Args() checkUserExistsInput: CheckUserExistsInput,
   ): Promise<typeof UserExistsOutput> {
     return await this.authService.checkUserExists(checkUserExistsInput.email);
+  }
+
+  @Mutation(() => GetAuthorizationUrlForSSOOutput)
+  async getAuthorizationUrlForSSO(
+    @Args('input') params: GetAuthorizationUrlForSSOInput,
+  ) {
+    return await this.sSOService.getAuthorizationUrlForSSO(
+      params.identityProviderId,
+      omit(params, ['identityProviderId']),
+    );
   }
 
   @Query(() => WorkspaceInviteHashValid)
@@ -196,6 +215,7 @@ export class AuthResolver {
     const { userData } = this.authService.formatUserDataPayload(
       {
         email: signUpInput.email,
+        locale: signUpInput.locale,
       },
       existingUser,
     );
@@ -220,7 +240,7 @@ export class AuthResolver {
     await this.emailVerificationService.sendVerificationEmail(
       user.id,
       user.email,
-      workspace.subdomain,
+      workspace,
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -232,7 +252,7 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        subdomain: workspace.subdomain,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
       },
     };
   }
@@ -320,7 +340,10 @@ export class AuthResolver {
     return { tokens: tokens };
   }
 
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingsFeatures.API_KEYS_AND_WEBHOOKS),
+  )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
     @Args() args: ApiKeyTokenInput,
@@ -336,6 +359,7 @@ export class AuthResolver {
   @Mutation(() => EmailPasswordResetLink)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
+    @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLink> {
     const resetToken =
       await this.resetPasswordService.generatePasswordResetToken(
@@ -345,6 +369,7 @@ export class AuthResolver {
     return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
+      context.req.headers['x-locale'] || SOURCE_LOCALE,
     );
   }
 
@@ -352,13 +377,18 @@ export class AuthResolver {
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
+    @Context() context: I18nContext,
   ): Promise<InvalidatePassword> {
     const { id } =
       await this.resetPasswordService.validatePasswordResetToken(
         passwordResetToken,
       );
 
-    await this.authService.updatePassword(id, newPassword);
+    await this.authService.updatePassword(
+      id,
+      newPassword,
+      context.req.headers['x-locale'] || SOURCE_LOCALE,
+    );
 
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }

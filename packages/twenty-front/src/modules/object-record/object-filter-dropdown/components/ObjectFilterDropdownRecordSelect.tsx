@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import { v4 } from 'uuid';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import {
+  getFilterTypeFromFieldType,
+  getRelationObjectMetadataNameSingular,
+} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
@@ -22,8 +21,9 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
+import { isDefined } from 'twenty-shared';
 import { IconUserCircle } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
+import { v4 } from 'uuid';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -39,10 +39,6 @@ type ObjectFilterDropdownRecordSelectProps = {
 export const ObjectFilterDropdownRecordSelect = ({
   viewComponentId,
 }: ObjectFilterDropdownRecordSelectProps) => {
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
-  );
-
   const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -67,8 +63,6 @@ export const ObjectFilterDropdownRecordSelect = ({
 
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
-
-  const [fieldId] = useState(v4());
 
   const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
     .catch({
@@ -183,10 +177,7 @@ export const ObjectFilterDropdownRecordSelect = ({
         ? `${selectedItemNames.length} ${objectLabelPlural.toLowerCase()}`
         : selectedItemNames.join(', ');
 
-    if (
-      isDefined(filterDefinitionUsedInDropdown) &&
-      isDefined(selectedOperandInDropdown)
-    ) {
+    if (isDefined(selectedOperandInDropdown)) {
       const newFilterValue =
         newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
           ? JSON.stringify({
@@ -200,17 +191,20 @@ export const ObjectFilterDropdownRecordSelect = ({
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (viewFilter) =>
             viewFilter.fieldMetadataId ===
-            filterDefinitionUsedInDropdown.fieldMetadataId,
+            fieldMetadataItemUsedInFilterDropdown.id,
         );
 
-      const filterId = viewFilter?.id ?? fieldId;
+      const filterId = viewFilter?.id ?? v4();
 
       applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : filterId,
-        definition: filterDefinitionUsedInDropdown,
+        type: getFilterTypeFromFieldType(
+          fieldMetadataItemUsedInFilterDropdown.type,
+        ),
+        label: fieldMetadataItemUsedInFilterDropdown.label,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,
-        fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+        fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
         value: newFilterValue,
         viewFilterGroupId: selectedFilter?.viewFilterGroupId,
       });

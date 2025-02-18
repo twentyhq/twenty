@@ -6,7 +6,7 @@ import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/compone
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
-import { ContextStoreViewIdEffect } from '@/context-store/components/ContextStoreViewIdEffect';
+import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsGater } from '@/object-metadata/components/ObjectMetadataItemsGater';
@@ -22,15 +22,13 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
-import { isNonEmptyString } from '@sniptt/guards';
 import { StrictMode } from 'react';
-import { Outlet, useLocation, useParams } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const AppRouterProviders = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
-  const objectNamePlural = useParams().objectNamePlural;
 
   return (
     <ApolloProvider>
@@ -64,11 +62,7 @@ export const AppRouterProviders = () => {
                       </PrefetchDataProvider>
                     </ObjectMetadataItemsGater>
                     <PageChangeEffect />
-                    {isNonEmptyString(objectNamePlural) && (
-                      <ContextStoreViewIdEffect
-                        objectNamePlural={objectNamePlural}
-                      />
-                    )}
+                    <MainContextStoreProvider />
                   </ObjectMetadataItemsProvider>
                 </ApolloMetadataClientProvider>
               </AuthProvider>

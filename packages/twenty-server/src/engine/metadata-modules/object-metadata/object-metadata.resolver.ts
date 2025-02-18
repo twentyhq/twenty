@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -8,10 +8,15 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { SettingsFeatures } from 'twenty-shared';
+
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
@@ -21,9 +26,11 @@ import {
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => ObjectMetadataDTO)
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class ObjectMetadataResolver {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
@@ -66,6 +73,7 @@ export class ObjectMetadataResolver {
     );
   }
 
+  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
@@ -81,6 +89,7 @@ export class ObjectMetadataResolver {
     }
   }
 
+  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,
@@ -95,6 +104,28 @@ export class ObjectMetadataResolver {
       );
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(error);
+    }
+  }
+
+  @ResolveField(() => [FieldMetadataDTO], { nullable: false })
+  async fieldsList(
+    @AuthWorkspace() workspace: Workspace,
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<FieldMetadataDTO[]> {
+    try {
+      const fieldMetadataItems = await context.loaders.fieldMetadataLoader.load(
+        {
+          objectMetadata,
+          workspaceId: workspace.id,
+        },
+      );
+
+      return fieldMetadataItems;
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+
+      return [];
     }
   }
 }

@@ -11,7 +11,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { capitalize } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared';
 import {
   IconComponent,
   Label,
@@ -19,7 +19,6 @@ import {
   Pill,
   TablerIconsProps,
 } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 

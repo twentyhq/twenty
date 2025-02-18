@@ -33,7 +33,7 @@ spec:
           image: twentycrm/twenty:latest
           imagePullPolicy: Always
           env:
-            - name: PORT
+            - name: NODE_PORT
               value: 3000
             - name: SERVER_URL
               value: "https://crm.example.com:443"
@@ -45,8 +45,6 @@ spec:
               value: "false"
             - name: STORAGE_TYPE
               value: "local"
-            - name: "MESSAGE_QUEUE_TYPE"
-              value: "bull-mq"
             - name: "ACCESS_TOKEN_EXPIRES_IN"
               value: "7d"
             - name: "LOGIN_TOKEN_EXPIRES_IN"

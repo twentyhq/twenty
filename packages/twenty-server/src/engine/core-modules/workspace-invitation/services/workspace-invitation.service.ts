@@ -7,6 +7,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -278,7 +279,7 @@ export class WorkspaceInvitationService {
     for (const invitation of invitationsPr) {
       if (invitation.status === 'fulfilled') {
         const link = this.domainManagerService.buildWorkspaceURL({
-          subdomain: workspace.subdomain,
+          workspace,
           pathname: `invite/${workspace?.inviteHash}`,
           searchParams: invitation.value.isPersonalInvitation
             ? {
@@ -296,13 +297,11 @@ export class WorkspaceInvitationService {
             lastName: sender.lastName,
           },
           serverUrl: this.environmentService.get('SERVER_URL'),
+          locale: 'en' as keyof typeof APP_LOCALES,
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);
-        const html = render(emailTemplate, {
-          pretty: true,
-        });
-
+        const html = render(emailTemplate);
         const text = render(emailTemplate, {
           plainText: true,
         });

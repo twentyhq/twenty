@@ -4,13 +4,14 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
-import { capitalize } from 'twenty-shared';
-import { isDefined } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared';
 
 export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
   switch (trigger.type) {
     case 'DATABASE_EVENT':
       return getDatabaseEventTriggerStepName(trigger);
+    case 'CRON':
+      return 'On a Schedule';
     case 'MANUAL':
       if (!isDefined(trigger.settings.objectType)) {
         return 'Manual trigger';

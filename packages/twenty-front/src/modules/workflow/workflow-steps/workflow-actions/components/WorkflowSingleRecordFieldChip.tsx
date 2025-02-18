@@ -32,6 +32,7 @@ type WorkflowSingleRecordFieldChipProps = {
   selectedRecord?: ObjectRecord;
   objectNameSingular: string;
   onRemove: () => void;
+  disabled?: boolean;
 };
 
 export const WorkflowSingleRecordFieldChip = ({
@@ -39,6 +40,7 @@ export const WorkflowSingleRecordFieldChip = ({
   selectedRecord,
   objectNameSingular,
   onRemove,
+  disabled,
 }: WorkflowSingleRecordFieldChipProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
@@ -50,7 +52,7 @@ export const WorkflowSingleRecordFieldChip = ({
     return (
       <VariableChipStandalone
         rawVariableName={objectMetadataItem.labelSingular}
-        onRemove={onRemove}
+        onRemove={disabled ? undefined : onRemove}
       />
     );
   }

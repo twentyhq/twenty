@@ -40,6 +40,9 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
           WorkspaceActivationStatus.SUSPENDED,
         ]),
       },
+      order: {
+        createdAt: 'ASC',
+      },
     });
 
     return activeWorkspaces.map((workspace) => workspace.id);

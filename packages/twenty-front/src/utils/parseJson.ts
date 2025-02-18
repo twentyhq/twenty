@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const parseJson = <T>(json: string | undefined | null) => {
   if (!isDefined(json)) {

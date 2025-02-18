@@ -10,18 +10,24 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/object-record/relation-picker/hooks/useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Avatar, IconCheckbox, IconNotes } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 const MAX_SEARCH_RESULTS_PER_OBJECT = 8;
 
 export const useSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
+
+  const isRichTextV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsRichTextV2Enabled,
+  );
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
 
@@ -45,7 +51,13 @@ export const useSearchRecords = () => {
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+          isRichTextV2Enabled
+            ? {
+                bodyV2: {
+                  markdown: { ilike: `%${deferredCommandMenuSearch}%` },
+                },
+              }
+            : { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
     limit: MAX_SEARCH_RESULTS_PER_OBJECT,
@@ -56,7 +68,13 @@ export const useSearchRecords = () => {
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+          isRichTextV2Enabled
+            ? {
+                bodyV2: {
+                  markdown: { ilike: `%${deferredCommandMenuSearch}%` },
+                },
+              }
+            : { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
     limit: MAX_SEARCH_RESULTS_PER_OBJECT,
@@ -77,6 +95,7 @@ export const useSearchRecords = () => {
       people?.map(({ id, name: { firstName, lastName }, avatarUrl }) => ({
         id,
         label: `${firstName} ${lastName}`,
+        description: 'Person',
         to: `object/person/${id}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (
@@ -96,6 +115,7 @@ export const useSearchRecords = () => {
       companies?.map((company) => ({
         id: company.id,
         label: company.name ?? '',
+        description: 'Company',
         to: `object/company/${company.id}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (
@@ -116,6 +136,7 @@ export const useSearchRecords = () => {
       opportunities?.map(({ id, name }) => ({
         id,
         label: name ?? '',
+        description: 'Opportunity',
         to: `object/opportunity/${id}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (
@@ -143,6 +164,7 @@ export const useSearchRecords = () => {
       notes?.map((note) => ({
         id: note.id,
         label: note.title ?? '',
+        description: 'Note',
         to: '',
         onCommandClick: () => openNoteRightDrawer(note.id),
         shouldCloseCommandMenuOnClick: true,
@@ -156,6 +178,7 @@ export const useSearchRecords = () => {
       tasks?.map((task) => ({
         id: task.id,
         label: task.title ?? '',
+        description: 'Task',
         to: '',
         onCommandClick: () => openTaskRightDrawer(task.id),
         shouldCloseCommandMenuOnClick: true,
@@ -182,6 +205,7 @@ export const useSearchRecords = () => {
       objectRecords.map((objectRecord) => ({
         id: objectRecord.record.id,
         label: objectRecord.recordIdentifier.name,
+        description: objectRecord.objectMetadataItem.labelSingular,
         to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (

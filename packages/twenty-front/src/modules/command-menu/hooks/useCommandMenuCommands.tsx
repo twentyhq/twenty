@@ -128,6 +128,21 @@ export const useCommandMenuCommands = () => {
       hotKeys: actionMenuEntry.hotKeys,
     }));
 
+  const fallbackCommands: Command[] = actionMenuEntries
+    ?.filter(
+      (actionMenuEntry) =>
+        actionMenuEntry.type === ActionMenuEntryType.Fallback,
+    )
+    ?.map((actionMenuEntry) => ({
+      id: actionMenuEntry.key,
+      label: i18n._(actionMenuEntry.label),
+      Icon: actionMenuEntry.Icon,
+      onCommandClick: actionMenuEntry.onClick,
+      type: CommandType.Fallback,
+      scope: CommandScope.Global,
+      hotKeys: actionMenuEntry.hotKeys,
+    }));
+
   return {
     copilotCommands,
     navigateCommands,
@@ -136,5 +151,6 @@ export const useCommandMenuCommands = () => {
     actionObjectCommands,
     workflowRunRecordSelectionCommands,
     workflowRunGlobalCommands,
+    fallbackCommands,
   };
 };

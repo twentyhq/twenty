@@ -8,6 +8,7 @@ import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflo
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
   WorkflowDiagramEdge,
+  WorkflowDiagramEdgeType,
   WorkflowDiagramNode,
   WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -17,19 +18,20 @@ import styled from '@emotion/styled';
 import {
   Background,
   EdgeChange,
+  EdgeProps,
   FitViewOptions,
   NodeChange,
   NodeProps,
   ReactFlow,
   applyEdgeChanges,
   applyNodeChanges,
-  getNodesBounds,
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { THEME_COMMON, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { THEME_COMMON } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -61,8 +63,6 @@ const StyledResetReactflowStyles = styled.div`
     cursor: pointer;
   }
 
-  --xy-edge-stroke: ${({ theme }) => theme.border.color.strong};
-
   --xy-node-border-radius: none;
   --xy-node-border: none;
   --xy-node-background-color: none;
@@ -85,6 +85,7 @@ const defaultFitViewOptions = {
 export const WorkflowDiagramCanvasBase = ({
   status,
   nodeTypes,
+  edgeTypes,
   children,
 }: {
   status: WorkflowVersionStatus;
@@ -93,6 +94,17 @@ export const WorkflowDiagramCanvasBase = ({
       WorkflowDiagramNodeType,
       React.ComponentType<
         NodeProps & {
+          data: any;
+          type: any;
+        }
+      >
+    >
+  >;
+  edgeTypes: Partial<
+    Record<
+      WorkflowDiagramEdgeType,
+      React.ComponentType<
+        EdgeProps & {
           data: any;
           type: any;
         }
@@ -175,7 +187,7 @@ export const WorkflowDiagramCanvasBase = ({
 
     const currentViewport = reactflow.getViewport();
 
-    const flowBounds = getNodesBounds(reactflow.getNodes());
+    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
 
     let visibleRightDrawerWidth = 0;
     if (rightDrawerState === 'normal') {
@@ -212,7 +224,7 @@ export const WorkflowDiagramCanvasBase = ({
             throw new Error('Expect the container ref to be defined');
           }
 
-          const flowBounds = getNodesBounds(reactflow.getNodes());
+          const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
 
           reactflow.setViewport({
             x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
@@ -223,6 +235,7 @@ export const WorkflowDiagramCanvasBase = ({
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
         onNodesChange={handleNodesChange}

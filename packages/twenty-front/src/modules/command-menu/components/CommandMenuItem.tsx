@@ -8,6 +8,7 @@ import { ReactNode } from 'react';
 
 export type CommandMenuItemProps = {
   label: string;
+  description?: string;
   to?: string;
   id: string;
   onClick?: () => void;
@@ -19,6 +20,7 @@ export type CommandMenuItemProps = {
 
 export const CommandMenuItem = ({
   label,
+  description,
   to,
   id,
   onClick,
@@ -40,6 +42,7 @@ export const CommandMenuItem = ({
     <MenuItemCommand
       LeftIcon={Icon}
       text={label}
+      description={description}
       hotKeys={hotKeys}
       onClick={() =>
         onItemClick({

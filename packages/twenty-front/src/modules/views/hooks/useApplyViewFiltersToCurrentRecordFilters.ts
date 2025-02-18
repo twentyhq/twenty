@@ -1,7 +1,7 @@
+import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 
@@ -10,8 +10,10 @@ export const useApplyViewFiltersToCurrentRecordFilters = () => {
     currentRecordFiltersComponentState,
   );
 
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+
+  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
+    objectMetadataItem.id,
   );
 
   const applyViewFiltersToCurrentRecordFilters = (
@@ -19,7 +21,7 @@ export const useApplyViewFiltersToCurrentRecordFilters = () => {
   ) => {
     const recordFiltersToApply = mapViewFiltersToFilters(
       viewFilters,
-      availableFilterDefinitions,
+      filterableFieldMetadataItems,
     );
 
     setCurrentRecordFilters(recordFiltersToApply);

@@ -3,6 +3,8 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import { Request } from 'express';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -10,22 +12,22 @@ import {
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class SAMLAuthGuard extends AuthGuard('saml') {
   constructor(
     private readonly sSOService: SSOService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super();
   }
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
 
     let identityProvider:
       | (SSOConfiguration & WorkspaceSSOIdentityProvider)
@@ -49,9 +51,9 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        identityProvider?.workspace ?? {
-          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-        },
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+          identityProvider?.workspace,
+        ),
       );
 
       return false;

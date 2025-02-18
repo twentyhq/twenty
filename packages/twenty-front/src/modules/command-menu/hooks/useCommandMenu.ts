@@ -1,14 +1,21 @@
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { IconDotsVertical, IconSearch, useIcons } from 'twenty-ui';
 
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
+import {
+  CommandMenuNavigationStackItem,
+  commandMenuNavigationStackState,
+} from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
+import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -19,7 +26,9 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
-import { IconSearch } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
+import { useCallback } from 'react';
+import { capitalize, isDefined } from 'twenty-shared';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
@@ -28,6 +37,7 @@ export const useCommandMenu = () => {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
+  const { getIcon } = useIcons();
 
   const mainContextStoreComponentInstanceId = useRecoilValue(
     mainContextStoreComponentInstanceIdState,
@@ -37,8 +47,16 @@ export const useCommandMenu = () => {
   const { resetContextStoreStates } = useResetContextStoreStates();
 
   const openCommandMenu = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       () => {
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
+
+        if (isCommandMenuOpened) {
+          return;
+        }
+
         copyContextStoreStates({
           instanceIdToCopyFrom: mainContextStoreComponentInstanceId,
           instanceIdToCopyTo: 'command-menu',
@@ -46,6 +64,7 @@ export const useCommandMenu = () => {
 
         set(isCommandMenuOpenedState, true);
         setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
+        set(hasUserSelectedCommandState, false);
       },
     [
       copyContextStoreStates,
@@ -73,7 +92,9 @@ export const useCommandMenu = () => {
           });
           set(isCommandMenuOpenedState, false);
           set(commandMenuSearchState, '');
+          set(commandMenuNavigationStackState, []);
           resetSelectedItem();
+          set(hasUserSelectedCommandState, false);
           goBackToPreviousHotkeyScope();
 
           emitRightDrawerCloseEvent();
@@ -81,6 +102,41 @@ export const useCommandMenu = () => {
       },
     [goBackToPreviousHotkeyScope, resetContextStoreStates, resetSelectedItem],
   );
+
+  const navigateCommandMenu = useRecoilCallback(
+    ({ snapshot, set }) => {
+      return ({
+        page,
+        pageTitle,
+        pageIcon,
+      }: CommandMenuNavigationStackItem) => {
+        set(commandMenuPageState, page);
+        set(commandMenuPageInfoState, {
+          title: pageTitle,
+          Icon: pageIcon,
+        });
+
+        const currentNavigationStack = snapshot
+          .getLoadable(commandMenuNavigationStackState)
+          .getValue();
+
+        set(commandMenuNavigationStackState, [
+          ...currentNavigationStack,
+          { page, pageTitle, pageIcon },
+        ]);
+        openCommandMenu();
+      };
+    },
+    [openCommandMenu],
+  );
+
+  const openRootCommandMenu = useCallback(() => {
+    navigateCommandMenu({
+      page: CommandMenuPages.Root,
+      pageTitle: 'Command Menu',
+      pageIcon: IconDotsVertical,
+    });
+  }, [navigateCommandMenu]);
 
   const toggleCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -94,37 +150,117 @@ export const useCommandMenu = () => {
         if (isCommandMenuOpened) {
           closeCommandMenu();
         } else {
-          openCommandMenu();
+          openRootCommandMenu();
         }
       },
-    [closeCommandMenu, openCommandMenu],
+    [closeCommandMenu, openRootCommandMenu],
   );
+
+  const goBackFromCommandMenu = useRecoilCallback(
+    ({ snapshot, set }) => {
+      return () => {
+        const currentNavigationStack = snapshot
+          .getLoadable(commandMenuNavigationStackState)
+          .getValue();
+
+        const newNavigationStack = currentNavigationStack.slice(0, -1);
+        const lastNavigationStackItem = newNavigationStack.at(-1);
+
+        if (!isDefined(lastNavigationStackItem)) {
+          closeCommandMenu();
+          return;
+        }
+
+        set(commandMenuPageState, lastNavigationStackItem.page);
+
+        set(commandMenuPageInfoState, {
+          title: lastNavigationStackItem.pageTitle,
+          Icon: lastNavigationStackItem.pageIcon,
+        });
+
+        set(commandMenuNavigationStackState, newNavigationStack);
+        set(hasUserSelectedCommandState, false);
+      };
+    },
+    [closeCommandMenu],
+  );
+
+  const navigateCommandMenuHistory = useRecoilCallback(({ snapshot, set }) => {
+    return (pageIndex: number) => {
+      const currentNavigationStack = snapshot
+        .getLoadable(commandMenuNavigationStackState)
+        .getValue();
+
+      const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
+
+      set(commandMenuNavigationStackState, newNavigationStack);
+
+      const newNavigationStackItem = newNavigationStack.at(-1);
+
+      if (!isDefined(newNavigationStackItem)) {
+        throw new Error(
+          `No command menu navigation stack item found for index ${pageIndex}`,
+        );
+      }
+
+      set(commandMenuPageState, newNavigationStackItem?.page);
+      set(commandMenuPageInfoState, {
+        title: newNavigationStackItem?.pageTitle,
+        Icon: newNavigationStackItem?.pageIcon,
+      });
+
+      set(hasUserSelectedCommandState, false);
+    };
+  }, []);
 
   const openRecordInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (recordId: string, objectNameSingular: string) => {
-        openCommandMenu();
-        set(commandMenuPageState, CommandMenuPages.ViewRecord);
+    ({ set, snapshot }) => {
+      return ({
+        recordId,
+        objectNameSingular,
+        isNewRecord = false,
+      }: {
+        recordId: string;
+        objectNameSingular: string;
+        isNewRecord?: boolean;
+      }) => {
         set(viewableRecordNameSingularState, objectNameSingular);
         set(viewableRecordIdState, recordId);
+
+        const objectMetadataItem = snapshot
+          .getLoadable(
+            objectMetadataItemFamilySelector({
+              objectName: objectNameSingular,
+              objectNameType: 'singular',
+            }),
+          )
+          .getValue();
+
+        const Icon = objectMetadataItem?.icon
+          ? getIcon(objectMetadataItem.icon)
+          : getIcon('IconList');
+
+        const capitalizedObjectNameSingular = capitalize(objectNameSingular);
+
+        navigateCommandMenu({
+          page: CommandMenuPages.ViewRecord,
+          pageTitle: isNewRecord
+            ? t`New ${capitalizedObjectNameSingular}`
+            : capitalizedObjectNameSingular,
+          pageIcon: Icon,
+        });
       };
     },
-    [openCommandMenu],
+    [getIcon, navigateCommandMenu],
   );
 
-  const openRecordsSearchPage = useRecoilCallback(
-    ({ set }) => {
-      return () => {
-        set(commandMenuPageState, CommandMenuPages.SearchRecords);
-        set(commandMenuPageInfoState, {
-          title: 'Search',
-          Icon: IconSearch,
-        });
-        openCommandMenu();
-      };
-    },
-    [openCommandMenu],
-  );
+  const openRecordsSearchPage = () => {
+    navigateCommandMenu({
+      page: CommandMenuPages.SearchRecords,
+      pageTitle: 'Search',
+      pageIcon: IconSearch,
+    });
+  };
 
   const setGlobalCommandMenuContext = useRecoilCallback(
     ({ set }) => {
@@ -169,14 +305,19 @@ export const useCommandMenu = () => {
           title: undefined,
           Icon: undefined,
         });
+
+        set(hasUserSelectedCommandState, false);
       };
     },
     [copyContextStoreStates],
   );
 
   return {
-    openCommandMenu,
+    openRootCommandMenu,
     closeCommandMenu,
+    navigateCommandMenu,
+    navigateCommandMenuHistory,
+    goBackFromCommandMenu,
     openRecordsSearchPage,
     openRecordInCommandMenu,
     toggleCommandMenu,

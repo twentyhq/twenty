@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType, PermissionsOnAllObjectRecords } from '~/generated/graphql';
 
 export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
 export const FIELD_RELATION_METADATA_ID =
@@ -145,6 +145,10 @@ export const queries = {
       workspaceMembers {
         ...WorkspaceMemberQueryFragment
       }
+      currentUserWorkspace {
+        settingsPermissions
+        objectRecordsPermissions
+      }
       currentWorkspace {
         id
         displayName
@@ -158,7 +162,11 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEnterpriseKey
-        hostname
+        customDomain
+        workspaceUrls {
+          subdomainUrl
+          customUrl
+        }
         featureFlags {
           id
           key
@@ -183,6 +191,11 @@ export const queries = {
           logo
           displayName
           subdomain
+          customDomain
+          workspaceUrls {
+            subdomainUrl
+            customUrl
+          }
         }
       }
       userVars
@@ -197,6 +210,7 @@ export const queries = {
       colorScheme
       avatarUrl
       locale
+      userEmail
       timeZone
       dateFormat
       timeFormat
@@ -295,6 +309,15 @@ export const responseData = {
         timeFormat: '24',
       },
       workspaceMembers: [],
+      currentUserWorkspace: {
+        settingsPermissions: ['DATA_MODEL'],
+        objectRecordsPermissions: [
+          PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS,
+          PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS,
+        ],
+      },
       currentWorkspace: {
         id: 'test-workspace-id',
         displayName: 'Test Workspace',
@@ -308,7 +331,11 @@ export const responseData = {
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,
         subdomain: 'test',
-        hostname: null,
+        customDomain: null,
+        workspaceUrls: {
+          customUrl: undefined,
+          subdomainUrl: 'https://test.twenty.com/',
+        },
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,
