@@ -2085,3 +2085,4 @@ msgstr "Twoje miejsce pracy"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Twoje miejsce pracy zostanie wyłączone"
+
