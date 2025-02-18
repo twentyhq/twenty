@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Query, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Query, Mutation, Resolver, Query } from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -9,7 +9,6 @@ import { WorkspaceTrustedDomain } from 'src/engine/core-modules/workspace-truste
 import { CreateTrustedDomainInput } from 'src/engine/core-modules/workspace-trusted-domain/dtos/create-trusted-domain.input';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { SendTrustedDomainVerificationEmailInput } from 'src/engine/core-modules/workspace-trusted-domain/dtos/send-trusted-domain-verification-email.input';
 import { DeleteTrustedDomainInput } from 'src/engine/core-modules/workspace-trusted-domain/dtos/delete-trusted-domain.input';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -21,7 +20,7 @@ export class WorkspaceTrustedDomainResolver {
 
   @Mutation(() => WorkspaceTrustedDomain)
   async createWorkspaceTrustedDomain(
-    @Args('input') { domain }: CreateTrustedDomainInput,
+    @Args('input') { domain, email }: CreateTrustedDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
     @AuthUser() currentUser: User,
   ): Promise<WorkspaceTrustedDomain> {
@@ -29,24 +28,8 @@ export class WorkspaceTrustedDomainResolver {
       domain,
       currentWorkspace,
       currentUser,
-    );
-  }
-
-  @Mutation(() => Boolean)
-  async sendTrustedDomainVerificationEmail(
-    @Args('input')
-    { email, trustedDomainId }: SendTrustedDomainVerificationEmailInput,
-    @AuthWorkspace() currentWorkspace: Workspace,
-    @AuthUser() currentUser: User,
-  ): Promise<boolean> {
-    await this.workspaceTrustedDomainService.sendTrustedDomainValidationEmail(
-      currentUser,
       email,
-      currentWorkspace,
-      trustedDomainId,
     );
-
-    return true;
   }
 
   @Mutation(() => Boolean)
