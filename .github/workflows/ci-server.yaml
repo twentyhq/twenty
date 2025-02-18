@@ -199,14 +199,11 @@ jobs:
           NODE_ENV: test
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-          npx nx run twenty-server:database:init:prod
-          npx nx run twenty-server:database:migrate:prod
-          npx nx run twenty-server:command workspace:seed:dev
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: 'test:integration --configuration=with-db-reset'
+          tasks: 'test:integration:with-db-reset'
       - name: Server / Upload reset-logs file
         if: always()
         uses: actions/upload-artifact@v4
