@@ -10,10 +10,12 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
-import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from 'twenty-shared';
 
 type UseLoadRecordIndexBoardProps = {
@@ -45,7 +47,16 @@ export const useLoadRecordIndexBoardColumn = ({
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
-  const recordIndexSorts = useRecoilValue(recordIndexSortsState);
+
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+
+  const viewsorts = currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [];
+
+  const sortDefinitions = useRecoilComponentValueV2(
+    availableSortDefinitionsComponentState,
+  );
+
+  const sorts = mapViewSortsToSorts(viewsorts, sortDefinitions);
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
@@ -55,7 +66,8 @@ export const useLoadRecordIndexBoardColumn = ({
     objectMetadataItem?.fields ?? [],
     recordIndexViewFilterGroups,
   );
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, recordIndexSorts);
+
+  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, sorts);
 
   const recordGqlFields = useRecordBoardRecordGqlFields({
     objectMetadataItem,
