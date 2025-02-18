@@ -46,7 +46,7 @@ export type WorkflowRunOutput = {
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
   };
-  stepsOutput: Record<string, StepRunOutput>;
+  stepsOutput?: Record<string, StepRunOutput>;
   error?: string;
 };
 
