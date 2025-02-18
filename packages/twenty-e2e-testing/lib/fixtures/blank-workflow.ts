@@ -227,6 +227,14 @@ export class WorkflowVisualizerPage {
       this.getDeleteNodeButton(this.triggerNode).click(),
     ]);
   }
+
+  async closeSidePanel() {
+    const closeButton = this.#page.getByTestId(
+      'page-header-close-command-menu-button',
+    );
+
+    await closeButton.click();
+  }
 }
 
 export const test = base.extend<{ workflowVisualizer: WorkflowVisualizerPage }>(
