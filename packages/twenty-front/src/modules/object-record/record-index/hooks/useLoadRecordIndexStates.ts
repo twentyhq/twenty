@@ -112,8 +112,6 @@ export const useLoadRecordIndexStates = () => {
           columnDefinitions,
         });
 
-        console.log('newFieldDefinitions', newFieldDefinitions);
-
         setTableColumns(newFieldDefinitions, recordIndexId);
 
         const existingRecordIndexFieldDefinitions = snapshot

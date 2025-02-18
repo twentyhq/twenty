@@ -42,6 +42,7 @@ export const useDefaultHomePagePath = () => {
       return null;
     }
 
+    console.log('firstObjectMetadataItem', firstObjectMetadataItem.id);
     const view = getFirstView(firstObjectMetadataItem?.id);
 
     return { objectMetadataItem: firstObjectMetadataItem, view };
