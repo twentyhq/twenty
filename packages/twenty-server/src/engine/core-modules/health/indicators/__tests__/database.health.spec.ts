@@ -19,7 +19,9 @@ describe('DatabaseHealthIndicator', () => {
 
     healthIndicatorService = {
       check: jest.fn().mockReturnValue({
-        up: jest.fn().mockReturnValue({ database: { status: 'up' } }),
+        up: jest.fn().mockImplementation((data) => ({
+          database: { status: 'up', ...data },
+        })),
         down: jest.fn().mockImplementation((error) => ({
           database: {
             status: 'down',
@@ -55,12 +57,30 @@ describe('DatabaseHealthIndicator', () => {
     expect(service).toBeDefined();
   });
 
-  it('should return up status when database responds', async () => {
-    dataSource.query.mockResolvedValueOnce([]);
+  it('should return up status with details when database responds', async () => {
+    const mockResponses = [
+      [{ version: 'PostgreSQL 15.6' }],
+      [{ count: '5' }],
+      [{ max_connections: '100' }],
+      [{ uptime: '3600' }],
+      [{ size: '1 GB' }],
+      [{ table_stats: [] }],
+      [{ ratio: '95.5' }],
+      [{ deadlocks: '0' }],
+      [{ count: '0' }],
+    ];
+
+    mockResponses.forEach((response) => {
+      dataSource.query.mockResolvedValueOnce(response);
+    });
 
     const result = await service.isHealthy();
 
     expect(result.database.status).toBe('up');
+    expect(result.database.details).toBeDefined();
+    expect(result.database.details.version).toBeDefined();
+    expect(result.database.details.connections).toBeDefined();
+    expect(result.database.details.performance).toBeDefined();
   });
 
   it('should return down status when database fails', async () => {

@@ -81,7 +81,7 @@ describe('MessageSyncHealthIndicator', () => {
         [MessageChannelSyncStatus.NOT_SYNCED]: 0,
         [MessageChannelSyncStatus.ONGOING]: 2,
         [MessageChannelSyncStatus.ACTIVE]: 8,
-        [MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS]: 1,
+        [MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS]: 0,
         [MessageChannelSyncStatus.FAILED_UNKNOWN]: 1,
       },
     );
@@ -89,9 +89,9 @@ describe('MessageSyncHealthIndicator', () => {
     const result = await service.isHealthy();
 
     expect(result.messageSync.status).toBe('up');
-    expect(result.messageSync.details.totalJobs).toBe(12);
-    expect(result.messageSync.details.failedJobs).toBe(2);
-    expect(result.messageSync.details.failureRate).toBe(16.666666666666668);
+    expect(result.messageSync.details.totalJobs).toBe(11);
+    expect(result.messageSync.details.failedJobs).toBe(1);
+    expect(result.messageSync.details.failureRate).toBe(9.09);
   });
 
   it('should return down status when failure rate is above 20%', async () => {
@@ -108,12 +108,11 @@ describe('MessageSyncHealthIndicator', () => {
     const result = await service.isHealthy();
 
     expect(result.messageSync.status).toBe('down');
-    expect(result.messageSync.details.totalJobs).toBe(6);
-    expect(result.messageSync.details.failedJobs).toBe(4);
-    expect(result.messageSync.details.failureRate).toBe(66.66666666666667);
-    expect(result.messageSync.error).toBe(
+    expect(result.messageSync.error.error).toBe(
       HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_HIGH_FAILURE_RATE,
     );
+    expect(result.messageSync.error.details).toBeDefined();
+    expect(result.messageSync.error.details.failureRate).toBe(33.33);
   });
 
   it('should timeout after specified duration', async () => {

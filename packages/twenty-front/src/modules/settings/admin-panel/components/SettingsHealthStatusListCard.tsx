@@ -26,7 +26,7 @@ export const SettingsHealthStatusListCard = ({
   return (
     <>
       {services.map((service) => (
-        <div key={service.id}>
+        <>
           <SettingsListCard
             items={[service]}
             getItemLabel={(service) => service.name}
@@ -41,7 +41,7 @@ export const SettingsHealthStatusListCard = ({
               {JSON.stringify(JSON.parse(service.details), null, 2)}
             </StyledDetailsContainer>
           )}
-        </div>
+        </>
       ))}
     </>
   );

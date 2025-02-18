@@ -32,27 +32,24 @@ export class MessageSyncHealthIndicator {
       const failedJobs = counters.FAILED_UNKNOWN || 0;
       //    +    (counters.FAILED_INSUFFICIENT_PERMISSIONS || 0)
 
-      const isHealthy = totalJobs === 0 || failedJobs / totalJobs < 0.2;
+      const failureRate =
+        totalJobs > 0
+          ? Math.round((failedJobs / totalJobs) * 100 * 100) / 100
+          : 0;
+      const details = {
+        counters,
+        totalJobs,
+        failedJobs,
+        failureRate,
+      };
 
-      if (isHealthy) {
-        return indicator.up({
-          details: {
-            counters,
-            totalJobs,
-            failedJobs,
-            failureRate: totalJobs > 0 ? (failedJobs / totalJobs) * 100 : 0,
-          },
-        });
+      if (totalJobs === 0 || failureRate < 20) {
+        return indicator.up({ details });
       }
 
       return indicator.down({
-        message: HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_HIGH_FAILURE_RATE,
-        details: {
-          counters,
-          totalJobs,
-          failedJobs,
-          failureRate: (failedJobs / totalJobs) * 100,
-        },
+        error: HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_HIGH_FAILURE_RATE,
+        details,
       });
     } catch (error) {
       const errorMessage =

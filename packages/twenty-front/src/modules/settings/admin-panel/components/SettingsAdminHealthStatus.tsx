@@ -5,27 +5,11 @@ import { SettingsHealthStatusListCard } from '@/settings/admin-panel/components/
 import { AdminHealthService } from '@/settings/admin-panel/types/AdminHealthService';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { H2Title, IconChevronRight, Section } from 'twenty-ui';
+import { H2Title, Section } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
   useGetSystemHealthStatusQuery,
 } from '~/generated/graphql';
-
-const StyledTransitionedIconChevronRight = styled(IconChevronRight)`
-  cursor: pointer;
-  transform: ${({ $isExpanded }: { $isExpanded: boolean }) =>
-    $isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
-  transition: ${({ theme }) =>
-    `transform ${theme.animation.duration.normal}s ease`};
-`;
-
-const StyledWorkerSectionHeader = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: space-between;
-`;
 
 const StyledTitleContainer = styled.div`
   display: flex;
@@ -36,14 +20,6 @@ const StyledTitleContainer = styled.div`
 const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.color.red};
   margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledDetailsContainer = styled.pre`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(3)};
-  white-space: pre-wrap;
 `;
 
 export const SettingsAdminHealthStatus = () => {
@@ -80,6 +56,11 @@ export const SettingsAdminHealthStatus = () => {
   const isWorkerDown =
     !data?.getSystemHealthStatus.worker.status ||
     data?.getSystemHealthStatus.worker.status ===
+      AdminPanelHealthServiceStatus.OUTAGE;
+
+  const isMessageSyncCounterDown =
+    !data?.getSystemHealthStatus.messageSync.status ||
+    data?.getSystemHealthStatus.messageSync.status ===
       AdminPanelHealthServiceStatus.OUTAGE;
 
   return (
@@ -123,19 +104,16 @@ export const SettingsAdminHealthStatus = () => {
           title="Message Sync Status"
           description="How your message sync is doing"
         />
-        <SettingsAdminHealthMessageSyncCountersTable
-          messageSync={{
-            NOT_SYNCED:
-              data?.getSystemHealthStatus.messageSync?.NOT_SYNCED ?? 0,
-            ONGOING: data?.getSystemHealthStatus.messageSync?.ONGOING ?? 0,
-            ACTIVE: data?.getSystemHealthStatus.messageSync?.ACTIVE ?? 0,
-            FAILED_INSUFFICIENT_PERMISSIONS:
-              data?.getSystemHealthStatus.messageSync
-                ?.FAILED_INSUFFICIENT_PERMISSIONS ?? 0,
-            FAILED_UNKNOWN:
-              data?.getSystemHealthStatus.messageSync?.FAILED_UNKNOWN ?? 0,
-          }}
-        />
+        {isMessageSyncCounterDown ? (
+          <StyledErrorMessage>
+            {data?.getSystemHealthStatus.messageSync.details ||
+              'Message sync status is unavailable'}
+          </StyledErrorMessage>
+        ) : (
+          <SettingsAdminHealthMessageSyncCountersTable
+            details={data?.getSystemHealthStatus.messageSync.details}
+          />
+        )}
       </Section>
     </>
   );
