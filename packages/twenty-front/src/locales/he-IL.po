@@ -2077,4 +2077,3 @@ msgstr "המרחב האישי שלך"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "המרחב האישי שלך יהפוך ללא פעיל"
-
