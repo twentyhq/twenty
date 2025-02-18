@@ -5,7 +5,6 @@ import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/em
 import { EmailThread } from '@/activities/emails/types/EmailThread';
 import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
@@ -133,7 +132,10 @@ export const useRightDrawerEmailThread = () => {
       recordGqlFields: {
         id: true,
         handle: true,
-        connectedAccountId: true,
+        connectedAccount: {
+          id: true,
+          provider: true,
+        },
       },
       skip: !lastMessageChannelId,
     });
@@ -160,22 +162,13 @@ export const useRightDrawerEmailThread = () => {
     })
     .filter(isDefined);
 
-  const { records: connectedAccountData } =
-    useFindManyRecords<ConnectedAccount>({
-      filter: {
-        id: {
-          eq: messageChannelData?.[0]?.connectedAccountId ?? '',
-        },
-      },
-      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-      recordGqlFields: {
-        id: true,
-        provider: true,
-      },
-      skip: !messageChannelData?.[0]?.connectedAccountId,
-    });
-  const connectedAccountProvider =
-    connectedAccountData.length > 0 ? connectedAccountData[0].provider : null;
+  const connectedAccount =
+    messageChannelData.length > 0
+      ? messageChannelData[0]?.connectedAccount
+      : null;
+  const connectedAccountProvider = connectedAccount
+    ? connectedAccount.provider
+    : null;
   return {
     thread,
     messages: messagesWithSender,

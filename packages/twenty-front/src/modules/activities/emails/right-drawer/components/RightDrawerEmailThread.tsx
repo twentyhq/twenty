@@ -13,6 +13,7 @@ import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { ConnectedAccountProvider } from 'twenty-shared';
 import { Button, IconArrowBackUp } from 'twenty-ui';
 
@@ -121,8 +122,10 @@ export const RightDrawerEmailThread = () => {
       case ConnectedAccountProvider.GOOGLE:
         url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
         break;
+      case null:
+        throw new Error('Account provider not provided');
       default:
-        throw new Error('Account provider not supported yet');
+        assertUnreachable(connectedAccountProvider);
     }
 
     window.open(url, '_blank');
