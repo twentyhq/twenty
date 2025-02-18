@@ -163,7 +163,7 @@ msgstr "afrikaans"
 msgid "All"
 msgstr "Kaikki"
 
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:181
 msgid "All ({relationRecordsCount})"
 msgstr "Kaikki ({relationRecordsCount})"
 
@@ -424,7 +424,7 @@ msgstr "Yhdistä Microsoftiin"
 msgid "Connected accounts"
 msgstr "Yhdistetyt tilit"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:107
+#: src/modules/command-menu/components/CommandMenu.tsx:101
 msgid "Context"
 msgstr "Yhteys"
 
@@ -448,7 +448,7 @@ msgstr "Jatka Googlella"
 msgid "Continue with Microsoft"
 msgstr "Jatka Microsoftin avulla"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:75
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Copilot"
 msgstr "Avustaja"
 
@@ -963,7 +963,7 @@ msgstr "Saa kaiken irti työtilastasi kutsuen tiimisi mukaan."
 msgid "Get your subscription"
 msgstr "Hanki tilaus"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:89
+#: src/modules/command-menu/components/CommandMenu.tsx:83
 msgid "Global"
 msgstr "Globaali"
 
@@ -1241,6 +1241,10 @@ msgstr "Siirry edelliseen työnkulkuun"
 msgid "New"
 msgstr "Uusi"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts:248
+msgid "New {capitalizedObjectNameSingular}"
+msgstr "Uusi {capitalizedObjectNameSingular}"
+
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
 msgstr "Uusi käyttäjätili"
@@ -1324,7 +1328,7 @@ msgstr "Norja"
 msgid "Not empty"
 msgstr "Ei tyhjä"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:85
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Object"
 msgstr "Objekti"
 
@@ -1477,7 +1481,7 @@ msgstr "Lue dokumentaatio"
 msgid "Receive an email containing password update link"
 msgstr "Vastaanota sähköposti salasanan päivityslinkillä"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:79
+#: src/modules/command-menu/components/CommandMenu.tsx:73
 msgid "Record Selection"
 msgstr "Valitse tietueet"
 
@@ -1559,7 +1563,7 @@ msgstr "Venäjä"
 msgid "Search"
 msgstr "Hae"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:95
+#: src/modules/command-menu/components/CommandMenu.tsx:89
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Hae ''{commandMenuSearch}'' avulla..."
 

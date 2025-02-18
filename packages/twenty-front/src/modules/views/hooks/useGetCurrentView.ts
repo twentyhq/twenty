@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
 
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
+import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
+import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isCurrentViewKeyIndexComponentState } from '@/views/states/isCurrentViewIndexComponentState';
 import { unsavedToDeleteViewFilterGroupIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterGroupIdsComponentFamilyState';
 import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentFamilyState';
@@ -15,12 +17,10 @@ import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/u
 import { unsavedToUpsertViewFilterGroupsComponentFamilyState } from '@/views/states/unsavedToUpsertViewFilterGroupsComponentFamilyState';
 import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
 import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/unsavedToUpsertViewSortsComponentFamilyState';
-import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
-import { View } from '@/views/types/View';
 import { getCombinedViewFilterGroups } from '@/views/utils/getCombinedViewFilterGroups';
 import { getCombinedViewFilters } from '@/views/utils/getCombinedViewFilters';
 import { getCombinedViewSorts } from '@/views/utils/getCombinedViewSorts';
-import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const useGetCurrentView = (viewBarInstanceId?: string) => {
@@ -29,16 +29,28 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
     viewBarInstanceId,
   );
 
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const currentViewId = useRecoilComponentValueV2(
-    currentViewIdComponentState,
-    instanceId,
+    contextStoreCurrentViewIdComponentState,
   );
 
-  const viewObjectMetadataId = useRecoilComponentValueV2(
-    viewObjectMetadataIdComponentState,
-    instanceId,
+  const indexViewId = useRecoilValue(
+    prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
+  const currentViewFromViewId = useRecoilValue(
+    prefetchViewFromViewIdFamilySelector({
+      viewId: currentViewId ?? '',
+    }),
+  );
+
+  const indexView = useRecoilValue(
+    prefetchViewFromViewIdFamilySelector({
+      viewId: indexViewId ?? '',
+    }),
   );
 
   const setIsCurrentViewKeyIndex = useSetRecoilComponentStateV2(
@@ -46,25 +58,17 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
     instanceId,
   );
 
-  const currentViewFromCurrentViewId = views.find(
-    (view) => view.id === currentViewId,
-  );
-  const indexView = views.find(
-    (view) =>
-      view.key === 'INDEX' && view.objectMetadataId === viewObjectMetadataId,
-  );
-
-  const currentView = currentViewId ? currentViewFromCurrentViewId : indexView;
-
   const viewId = currentViewId ?? indexView?.id;
+  const currentView = currentViewFromViewId ?? indexView;
 
   useEffect(() => {
     setIsCurrentViewKeyIndex(currentView?.key === 'INDEX');
   }, [currentView, setIsCurrentViewKeyIndex]);
 
-  const viewsOnCurrentObject = getObjectMetadataItemViews(
-    viewObjectMetadataId ?? '',
-    views,
+  const viewsOnCurrentObject = useRecoilValue(
+    prefetchViewsFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
   );
 
   const unsavedToUpsertViewFilters = useRecoilComponentFamilyValueV2(

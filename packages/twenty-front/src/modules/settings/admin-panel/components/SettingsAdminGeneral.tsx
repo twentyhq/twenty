@@ -15,6 +15,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
+  GithubVersionLink,
   H1Title,
   H1TitleFontColor,
   H2Title,
@@ -23,6 +24,8 @@ import {
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
+
+import packageJson from '../../../../../package.json';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -121,6 +124,11 @@ export const SettingsAdminGeneral = () => {
   return (
     <>
       <Section>
+        <H2Title title="About" description="Version of the application" />
+        <GithubVersionLink version={packageJson.version} />
+      </Section>
+
+      <Section>
         <H2Title
           title={
             canManageFeatureFlags
@@ -176,6 +184,7 @@ export const SettingsAdminGeneral = () => {
               behaveAsLinks={false}
             />
           </StyledTabListContainer>
+
           <StyledContentContainer>
             <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
           </StyledContentContainer>

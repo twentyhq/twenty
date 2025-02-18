@@ -1,18 +1,14 @@
 import { useRecoilCallback } from 'recoil';
 
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentFamilyState';
 import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
-import { View } from '@/views/types/View';
 import { getCombinedViewFilters } from '@/views/utils/getCombinedViewFilters';
 import { isDefined } from 'twenty-shared';
 
 export const useGetViewFiltersCombined = (viewBarComponentId?: string) => {
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-
   const unsavedToUpsertViewFiltersCallbackState =
     useRecoilComponentCallbackStateV2(
       unsavedToUpsertViewFiltersComponentFamilyState,
@@ -28,7 +24,13 @@ export const useGetViewFiltersCombined = (viewBarComponentId?: string) => {
   const getViewFiltersCombined = useRecoilCallback(
     ({ snapshot }) =>
       (viewId: string) => {
-        const view = views.find((view) => view.id === viewId);
+        const view = snapshot
+          .getLoadable(
+            prefetchViewFromViewIdFamilySelector({
+              viewId,
+            }),
+          )
+          .getValue();
 
         if (!isDefined(view)) {
           throw new Error(
@@ -55,7 +57,6 @@ export const useGetViewFiltersCombined = (viewBarComponentId?: string) => {
         return combinedViewFilters;
       },
     [
-      views,
       unsavedToDeleteViewFilterIdsCallbackState,
       unsavedToUpsertViewFiltersCallbackState,
     ],

@@ -103,39 +103,37 @@ export const SettingsRoleEdit = () => {
   };
 
   return (
-    <>
-      <SubMenuTopBarContainer
-        title={
-          <StyledTitleContainer>
-            <StyledIconUser size={16} />
-            <H3Title title={role.label} />
-          </StyledTitleContainer>
-        }
-        links={[
-          {
-            children: 'Workspace',
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          {
-            children: 'Roles',
-            href: getSettingsPath(SettingsPath.Roles),
-          },
-          {
-            children: role.label,
-          },
-        ]}
-      >
-        <SettingsPageContainer>
-          <TabList
-            tabListInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
-            tabs={tabs}
-            className="tab-list"
-          />
-          <StyledContentContainer>
-            {renderActiveTabContent()}
-          </StyledContentContainer>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </>
+    <SubMenuTopBarContainer
+      title={
+        <StyledTitleContainer>
+          <StyledIconUser size={16} />
+          <H3Title title={role.label} />
+        </StyledTitleContainer>
+      }
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Roles',
+          href: getSettingsPath(SettingsPath.Roles),
+        },
+        {
+          children: role.label,
+        },
+      ]}
+    >
+      <SettingsPageContainer>
+        <TabList
+          tabListInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
+          tabs={tabs}
+          className="tab-list"
+        />
+        <StyledContentContainer>
+          {renderActiveTabContent()}
+        </StyledContentContainer>
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };

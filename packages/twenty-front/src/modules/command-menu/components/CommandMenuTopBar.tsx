@@ -9,7 +9,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
@@ -96,8 +96,8 @@ export const CommandMenuTopBar = () => {
 
   const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
 
-  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
+  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
   );
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
@@ -137,11 +137,11 @@ export const CommandMenuTopBar = () => {
                 testId="command-menu-go-back-button"
               />
             )}
-            {isDefined(contextStoreCurrentObjectMetadataId) &&
+            {isDefined(contextStoreCurrentObjectMetadataItem) &&
             commandMenuPage !== CommandMenuPages.SearchRecords ? (
               <CommandMenuContextChipGroupsWithRecordSelection
                 contextChips={contextChips}
-                objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+                objectMetadataItemId={contextStoreCurrentObjectMetadataItem.id}
               />
             ) : (
               <CommandMenuContextChipGroups contextChips={contextChips} />
