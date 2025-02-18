@@ -132,7 +132,7 @@ export class DomainManagerService {
   private async getDefaultWorkspace() {
     if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
       throw new Error(
-        'Default workspace not exist when multi-workspace is enabled',
+        'Default workspace does not exist when multi-workspace is enabled',
       );
     }
 
