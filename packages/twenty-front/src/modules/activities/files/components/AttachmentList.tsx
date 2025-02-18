@@ -7,7 +7,7 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { isAttachmentPreviewEnabledState } from '@/client-config/attachmentPreviewEnabledState';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useRecoilValue } from 'recoil';
 
