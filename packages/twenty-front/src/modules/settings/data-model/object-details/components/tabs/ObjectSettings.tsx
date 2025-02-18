@@ -3,10 +3,8 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Button, H2Title, IconArchive, Section } from 'twenty-ui';
-import { z, ZodError } from 'zod';
+import { ZodError, z } from 'zod';
 
-import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
-import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import {
@@ -17,18 +15,16 @@ import {
 import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 
 const objectEditFormSchema = z
   .object({})
@@ -54,6 +50,7 @@ const StyledFormSection = styled(Section)`
 `;
 
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
+  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueSnackBar } = useSnackBar();
   const setUpdatedObjectNamePlural = useSetRecoilState(
@@ -61,19 +58,12 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   );
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
-  const { lastVisitedObjectMetadataItemId } =
-    useLastVisitedObjectMetadataItem();
-  const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
   const formConfig = useForm<SettingsDataModelObjectEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(objectEditFormSchema),
   });
   const { isDirty } = formConfig.formState;
-
-  const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState,
-  );
 
   const getUpdatePayload = (
     formValues: SettingsDataModelObjectEditFormValues,
@@ -141,19 +131,6 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
 
       formConfig.reset(undefined, { keepValues: true });
 
-      if (lastVisitedObjectMetadataItemId === objectMetadataItem.id) {
-        const lastVisitedView = getLastVisitedViewIdFromObjectMetadataItemId(
-          objectMetadataItem.id,
-        );
-        setNavigationMemorizedUrl(
-          getAppPath(
-            AppPath.RecordIndexPage,
-            { objectNamePlural: objectNamePluralForRedirection },
-            { viewId: lastVisitedView },
-          ),
-        );
-      }
-
       navigate(SettingsPath.ObjectDetail, {
         objectNamePlural: objectNamePluralForRedirection,
       });
@@ -184,8 +161,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
         <StyledContentContainer>
           <StyledFormSection>
             <H2Title
-              title="About"
-              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+              title={t`About`}
+              description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
             />
             <SettingsDataModelObjectAboutForm
               disableEdition={!objectMetadataItem.isCustom}
@@ -198,8 +175,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
           <StyledFormSection>
             <Section>
               <H2Title
-                title="Options"
-                description="Choose the fields that will identify your records"
+                title={t`Options`}
+                description={t`Choose the fields that will identify your records`}
               />
               <SettingsDataModelObjectSettingsFormCard
                 onBlur={() => formConfig.handleSubmit(handleSave)()}
@@ -209,10 +186,13 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
           </StyledFormSection>
           <StyledFormSection>
             <Section>
-              <H2Title title="Danger zone" description="Deactivate object" />
+              <H2Title
+                title={t`Danger zone`}
+                description={t`Deactivate object`}
+              />
               <Button
                 Icon={IconArchive}
-                title="Deactivate"
+                title={t`Deactivate`}
                 size="small"
                 onClick={handleDisable}
               />

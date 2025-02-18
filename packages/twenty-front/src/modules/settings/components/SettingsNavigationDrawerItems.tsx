@@ -184,7 +184,7 @@ export const SettingsNavigationDrawerItems = () => {
 
       <NavigationDrawerSection>
         <AdvancedSettingsWrapper hideIcon>
-          <NavigationDrawerSectionTitle label="Developers" />
+          <NavigationDrawerSectionTitle label={t`Developers`} />
         </AdvancedSettingsWrapper>
         <AdvancedSettingsWrapper navigationDrawerItem={true}>
           <SettingsNavigationDrawerItem
@@ -207,7 +207,7 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerSectionTitle label={t`Other`} />
         {isAdminPageEnabled && (
           <SettingsNavigationDrawerItem
-            label={t`Server Admin Panel`}
+            label={t`Server Admin`}
             path={SettingsPath.AdminPanel}
             Icon={IconServer}
           />

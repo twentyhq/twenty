@@ -18,7 +18,7 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
 const personMockObjectMetadataItemDeletedAtField =
   personMockObjectMetadataItem.fields.find((el) => el.name === 'deletedAt');
 if (personMockObjectMetadataItemDeletedAtField === undefined)
-  throw new Error('Should never occurs');
+  throw new Error('Should never occur');
 
 const [firstPeopleMock, secondPeopleMock] = getPeopleMock().map((record) => ({
   ...record,
@@ -90,12 +90,8 @@ describe('useDestroyMultipleRecordsAction', () => {
               value: '',
               displayValue: '',
               operand: ViewFilterOperand.IsNotEmpty,
-              definition: {
-                label: 'Deleted',
-                iconName: 'IconTrash',
-                fieldMetadataId: personMockObjectMetadataItemDeletedAtField.id,
-                type: 'DATE_TIME',
-              },
+              type: 'DATE_TIME',
+              label: 'Deleted',
             },
           ],
         }),

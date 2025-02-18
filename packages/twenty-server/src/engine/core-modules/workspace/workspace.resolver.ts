@@ -9,14 +9,17 @@ import {
 } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import assert from 'assert';
+
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined } from 'twenty-shared';
+import { isDefined, SettingsFeatures } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -32,26 +35,30 @@ import {
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
-import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
-import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-endpoints.dto';
 
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
 @Resolver(() => Workspace)
-@UseFilters(GraphqlValidationExceptionFilter)
+@UseFilters(
+  GraphqlValidationExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+)
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
@@ -71,7 +78,7 @@ export class WorkspaceResolver {
   async currentWorkspace(@AuthWorkspace() { id }: Workspace) {
     const workspace = await this.workspaceService.findById(id);
 
-    assert(workspace, 'User not found');
+    assert(workspace, 'Workspace not found');
 
     return workspace;
   }
@@ -98,11 +105,15 @@ export class WorkspaceResolver {
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
-        ...data,
-        id: workspace.id,
+        payload: {
+          ...data,
+          id: workspace.id,
+        },
+        userWorkspaceId,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
@@ -110,7 +121,10 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => String)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+  )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -151,7 +165,10 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+  )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
   }
@@ -217,17 +234,39 @@ export class WorkspaceResolver {
 
   @ResolveField(() => workspaceUrls)
   workspaceUrls(@Parent() workspace: Workspace) {
-    return this.domainManagerService.getworkspaceUrls(workspace);
+    return this.domainManagerService.getWorkspaceUrls(workspace);
   }
 
-  @Query(() => CustomHostnameDetails, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
-  async getHostnameDetails(
-    @AuthWorkspace() { hostname }: Workspace,
-  ): Promise<CustomHostnameDetails | undefined> {
-    if (!hostname) return undefined;
+  @ResolveField(() => Boolean)
+  isGoogleAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isGoogleAuthEnabled &&
+      this.environmentService.get('AUTH_GOOGLE_ENABLED')
+    );
+  }
 
-    return await this.domainManagerService.getCustomHostnameDetails(hostname);
+  @ResolveField(() => Boolean)
+  isMicrosoftAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isMicrosoftAuthEnabled &&
+      this.environmentService.get('AUTH_MICROSOFT_ENABLED')
+    );
+  }
+
+  @ResolveField(() => Boolean)
+  isPasswordAuthEnabled(@Parent() workspace: Workspace) {
+    return (
+      workspace.isPasswordAuthEnabled &&
+      this.environmentService.get('AUTH_PASSWORD_ENABLED')
+    );
+  }
+
+  @Mutation(() => CustomDomainValidRecords, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard)
+  async checkCustomDomainValidRecords(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<CustomDomainValidRecords | undefined> {
+    return this.workspaceService.checkCustomDomainValidRecords(workspace);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
@@ -268,7 +307,7 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        workspaceUrls: this.domainManagerService.getworkspaceUrls(workspace),
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

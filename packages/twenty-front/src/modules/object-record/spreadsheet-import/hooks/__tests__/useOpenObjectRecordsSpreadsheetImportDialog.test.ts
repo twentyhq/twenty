@@ -8,6 +8,7 @@ import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spread
 
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 
+import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
@@ -74,7 +75,8 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   type
                   updatedAt
@@ -107,8 +109,9 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   position
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   viewId
@@ -143,7 +146,8 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   updatedAt
                 }
               }
@@ -242,7 +246,8 @@ const companyMocks = [
                   id
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   updatedAt
                 }
@@ -264,8 +269,9 @@ const companyMocks = [
                   noteId
                   opportunityId
                   personId
+                  petId
                   properties
-                  rocketId
+                  surveyResultId
                   taskId
                   updatedAt
                   workflowId
@@ -289,7 +295,10 @@ const companyMocks = [
       variables: {
         data: [
           {
-            createdBy: { source: 'IMPORT' },
+            createdBy: {
+              source: 'IMPORT',
+              context: {},
+            } satisfies FieldActorForInputValue,
             employees: 0,
             idealCustomerProfile: true,
             name: 'Example Company',

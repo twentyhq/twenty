@@ -1,5 +1,5 @@
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -11,10 +11,10 @@ export const useResetContextStoreStates = () => {
   const resetContextStoreStates = useRecoilCallback(({ set }) => {
     return (instanceId: string) => {
       set(
-        contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
+        contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
           instanceId,
         }),
-        null,
+        undefined,
       );
 
       set(
@@ -45,7 +45,7 @@ export const useResetContextStoreStates = () => {
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId,
         }),
-        null,
+        undefined,
       );
 
       set(

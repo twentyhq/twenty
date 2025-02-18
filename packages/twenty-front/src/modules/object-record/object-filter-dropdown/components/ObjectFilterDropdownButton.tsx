@@ -1,7 +1,7 @@
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
+import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityObjectFilterDropdownButton } from './SingleEntityObjectFilterDropdownButton';
 
@@ -14,7 +14,8 @@ export const ObjectFilterDropdownButton = ({
   filterDropdownId,
   hotkeyScope,
 }: ObjectFilterDropdownButtonProps) => {
-  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems();
+  const { filterableFieldMetadataItems } =
+    useFilterableFieldMetadataItemsInRecordIndexContext();
 
   const hasOnlyOneEntityFilter =
     filterableFieldMetadataItems.length === 1 &&

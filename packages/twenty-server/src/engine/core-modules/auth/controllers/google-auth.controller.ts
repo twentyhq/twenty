@@ -18,8 +18,9 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -28,6 +29,7 @@ export class GoogleAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly guardRedirectService: GuardRedirectService,
+    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -51,6 +53,7 @@ export class GoogleAuthController {
       workspaceInviteHash,
       workspaceId,
       billingCheckoutSessionState,
+      locale,
     } = req.user;
 
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
@@ -79,6 +82,7 @@ export class GoogleAuthController {
           lastName,
           email,
           picture,
+          locale,
         },
         existingUser,
       );
@@ -116,7 +120,7 @@ export class GoogleAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
             currentWorkspace,
           ),
         ),

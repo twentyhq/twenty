@@ -19,6 +19,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(OnboardingStatus, {
   name: 'OnboardingStatus',
@@ -80,6 +81,10 @@ export class User {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
+  @Field(() => String, { nullable: false })
+  @Column({ nullable: false, default: 'en' })
+  locale: string;
+
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
   })
@@ -99,4 +104,10 @@ export class User {
 
   @Field(() => OnboardingStatus, { nullable: true })
   onboardingStatus: OnboardingStatus;
+
+  @Field(() => Workspace, { nullable: true })
+  currentWorkspace: Relation<Workspace>;
+
+  @Field(() => UserWorkspace, { nullable: true })
+  currentUserWorkspace?: Relation<UserWorkspace>;
 }

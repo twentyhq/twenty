@@ -2,7 +2,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined } from 'twenty-shared';
+import { isDefined, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -13,6 +13,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -24,7 +25,6 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -70,14 +70,15 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
-        ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
-        VALUES ($1, $2, 'System', $3, $4, $5)`,
+        ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl", "locale")
+        VALUES ($1, $2, 'System', $3, $4, $5, $6)`,
       [
         user.firstName,
         user.lastName,
         user.id,
         user.email,
         user.defaultAvatarUrl ?? '',
+        user.locale ?? SOURCE_LOCALE,
       ],
     );
     const workspaceMember = await workspaceDataSource?.query(
@@ -181,7 +182,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
       id: userWorkspace.workspaceId,
       displayName: userWorkspace.workspace.displayName,
-      workspaceUrls: this.domainManagerService.getworkspaceUrls(
+      workspaceUrls: this.domainManagerService.getWorkspaceUrls(
         userWorkspace.workspace,
       ),
       logo: userWorkspace.workspace.logo,

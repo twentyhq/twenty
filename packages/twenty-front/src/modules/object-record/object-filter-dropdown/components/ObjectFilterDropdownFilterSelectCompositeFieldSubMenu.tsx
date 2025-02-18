@@ -5,9 +5,7 @@ import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/o
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
-import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
@@ -17,7 +15,6 @@ import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdow
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -33,13 +30,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');
 
   const { getIcon } = useIcons();
-
-  const [
-    objectFilterDropdownFirstLevelFilterDefinition,
-    setObjectFilterDropdownFirstLevelFilterDefinition,
-  ] = useRecoilComponentStateV2(
-    objectFilterDropdownFirstLevelFilterDefinitionComponentState,
-  );
 
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
@@ -63,10 +53,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     setObjectFilterDropdownSubMenuFieldType,
   ] = useRecoilComponentStateV2(
     objectFilterDropdownSubMenuFieldTypeComponentState,
-  );
-
-  const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
-    filterDefinitionUsedInDropdownComponentState,
   );
 
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
@@ -100,14 +86,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     subFieldName?: string | null | undefined,
   ) => {
     if (isDefined(fieldMetadataItem)) {
-      const filterDefinition: RecordFilterDefinition = {
-        fieldMetadataId: fieldMetadataItem.id,
-        type: getFilterTypeFromFieldType(fieldMetadataItem.type),
-        label: fieldMetadataItem.label,
-        iconName: fieldMetadataItem.icon ?? '',
-        compositeFieldName: subFieldName ?? undefined,
-      };
-
       if (
         isDefined(advancedFilterViewFilterId) &&
         isDefined(advancedFilterViewFilterGroupId)
@@ -129,13 +107,13 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
           value,
           operand,
           displayValue,
-          definition: filterDefinition,
+          type: getFilterTypeFromFieldType(fieldMetadataItem.type),
+          label: fieldMetadataItem.label,
           viewFilterGroupId: advancedFilterViewFilterGroupId,
           subFieldName: subFieldName,
         });
       }
 
-      setFilterDefinitionUsedInDropdown(filterDefinition);
       setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
 
       const type = getFilterTypeFromFieldType(fieldMetadataItem.type);
@@ -157,17 +135,12 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
 
   const handleSubMenuBack = () => {
     setFieldMetadataItemIdUsedInDropdown(null);
-    setFilterDefinitionUsedInDropdown(null);
     setObjectFilterDropdownSubMenuFieldType(null);
-    setObjectFilterDropdownFirstLevelFilterDefinition(null);
     setObjectFilterDropdownIsSelectingCompositeField(false);
     setObjectFilterDropdownFilterIsSelected(false);
   };
 
-  if (
-    !isDefined(objectFilterDropdownSubMenuFieldType) ||
-    !isDefined(objectFilterDropdownFirstLevelFilterDefinition)
-  ) {
+  if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
     return null;
   }
 

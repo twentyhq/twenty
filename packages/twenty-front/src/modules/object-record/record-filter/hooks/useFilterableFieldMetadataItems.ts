@@ -1,13 +1,12 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilValue } from 'recoil';
 
-export const useFilterableFieldMetadataItems = () => {
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
-
+export const useFilterableFieldMetadataItems = (
+  objectMetadataItemId: string,
+) => {
   const filterableFieldMetadataItems = useRecoilValue(
     availableFieldMetadataItemsForFilterFamilySelector({
-      objectMetadataItemId: objectMetadataItem.id,
+      objectMetadataItemId,
     }),
   );
 

@@ -1,9 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { PermissionsOnAllObjectRecords, SettingsFeatures } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -18,6 +20,14 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
+registerEnumType(SettingsFeatures, {
+  name: 'SettingsFeatures',
+});
+
+registerEnumType(PermissionsOnAllObjectRecords, {
+  name: 'PermissionsOnAllObjectRecords',
+});
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
 @ObjectType()
@@ -58,7 +68,7 @@ export class UserWorkspace {
   updatedAt: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, type: 'timestamptz' })
+  @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
   @OneToMany(
@@ -66,4 +76,10 @@ export class UserWorkspace {
     (twoFactorMethod) => twoFactorMethod.userWorkspace,
   )
   twoFactorMethods: Relation<TwoFactorMethod[]>;
+
+  @Field(() => [SettingsFeatures], { nullable: true })
+  settingsPermissions?: SettingsFeatures[];
+
+  @Field(() => [PermissionsOnAllObjectRecords], { nullable: true })
+  objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
 }

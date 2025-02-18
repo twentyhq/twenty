@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
@@ -72,7 +73,15 @@ export const SettingsDevelopers = () => {
                 title={t`Create Webhook`}
                 size="small"
                 variant="secondary"
-                to={getSettingsPath(SettingsPath.DevelopersNewWebhook)}
+                to={getSettingsPath(
+                  SettingsPath.DevelopersNewWebhookDetail,
+                  {
+                    webhookId: v4(),
+                  },
+                  {
+                    creationMode: true,
+                  },
+                )}
               />
             </StyledButtonContainer>
           </Section>

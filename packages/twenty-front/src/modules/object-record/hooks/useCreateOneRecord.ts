@@ -4,8 +4,10 @@ import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { checkObjectMetadataItemHasFieldCreatedBy } from '@/object-metadata/utils/checkObjectMetadataItemHasFieldCreatedBy';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
@@ -14,16 +16,18 @@ import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
-  skipPostOptmisticEffect?: boolean;
+  skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
 };
 
@@ -32,7 +36,7 @@ export const useCreateOneRecord = <
 >({
   objectNameSingular,
   recordGqlFields,
-  skipPostOptmisticEffect = false,
+  skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
@@ -42,6 +46,9 @@ export const useCreateOneRecord = <
     objectNameSingular,
   });
 
+  const objectMetadataHasCreatedByField =
+    checkObjectMetadataItemHasFieldCreatedBy(objectMetadataItem);
+
   const computedRecordGqlFields =
     recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
 
@@ -49,6 +56,8 @@ export const useCreateOneRecord = <
     objectNameSingular,
     recordGqlFields: computedRecordGqlFields,
   });
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const createOneRecordInCache = useCreateOneRecordInCache<CreatedObjectRecord>(
     {
@@ -75,11 +84,26 @@ export const useCreateOneRecord = <
       id: idForCreation,
     };
 
+    const baseOptimisticRecordInputCreatedBy:
+      | { createdBy: FieldActorForInputValue }
+      | undefined = objectMetadataHasCreatedByField
+      ? {
+          createdBy: {
+            source: 'MANUAL',
+            context: {},
+          },
+        }
+      : undefined;
     const optimisticRecordInput = computeOptimisticRecordFromInput({
       cache: apolloClient.cache,
+      currentWorkspaceMember: currentWorkspaceMember,
       objectMetadataItem,
       objectMetadataItems,
-      recordInput: { ...recordInput, id: idForCreation },
+      recordInput: {
+        ...baseOptimisticRecordInputCreatedBy,
+        ...recordInput,
+        id: idForCreation,
+      },
     });
     const recordCreatedInCache = createOneRecordInCache({
       ...optimisticRecordInput,
@@ -92,10 +116,11 @@ export const useCreateOneRecord = <
         objectMetadataItem,
         objectMetadataItems,
         record: recordCreatedInCache,
+        recordGqlFields: computedRecordGqlFields,
         computeReferences: false,
       });
 
-      if (optimisticRecordNode !== null) {
+      if (skipPostOptimisticEffect === false && optimisticRecordNode !== null) {
         triggerCreateRecordsOptimisticEffect({
           cache: apolloClient.cache,
           objectMetadataItem,
@@ -117,7 +142,7 @@ export const useCreateOneRecord = <
         },
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
-          if (skipPostOptmisticEffect === false && isDefined(record)) {
+          if (skipPostOptimisticEffect === false && isDefined(record)) {
             triggerCreateRecordsOptimisticEffect({
               cache,
               objectMetadataItem,

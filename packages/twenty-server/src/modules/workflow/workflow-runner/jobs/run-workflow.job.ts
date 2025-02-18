@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -12,7 +12,7 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-run.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
@@ -23,7 +23,6 @@ export type RunWorkflowJobData = {
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class RunWorkflowJob {
-  private readonly logger = new Logger(RunWorkflowJob.name);
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
@@ -38,7 +37,9 @@ export class RunWorkflowJob {
     workflowRunId,
     payload,
   }: RunWorkflowJobData): Promise<void> {
-    await this.workflowRunWorkspaceService.startWorkflowRun(workflowRunId);
+    const context = {
+      trigger: payload,
+    };
 
     try {
       const workflowVersion =
@@ -46,37 +47,47 @@ export class RunWorkflowJob {
           workflowVersionId,
         );
 
+      if (!workflowVersion.trigger || !workflowVersion.steps) {
+        throw new WorkflowRunException(
+          'Workflow version has no trigger or steps',
+          WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+        );
+      }
+
+      await this.workflowRunWorkspaceService.startWorkflowRun({
+        workflowRunId,
+        context,
+        output: {
+          flow: {
+            trigger: workflowVersion.trigger,
+            steps: workflowVersion.steps,
+          },
+        },
+      });
+
       await this.throttleExecution(workflowVersion.workflowId);
 
-      const { steps, status } =
-        await this.workflowExecutorWorkspaceService.execute({
-          currentStepIndex: 0,
-          steps: workflowVersion.steps || [],
-          context: {
-            trigger: payload,
-          },
-          output: {
-            steps: {},
-            status: WorkflowRunStatus.RUNNING,
-          },
-        });
+      const { status } = await this.workflowExecutorWorkspaceService.execute({
+        workflowRunId,
+        currentStepIndex: 0,
+        steps: workflowVersion.steps ?? [],
+        context,
+        workflowExecutorState: {
+          stepsOutput: {},
+          status: WorkflowRunStatus.RUNNING,
+        },
+      });
 
-      await this.workflowRunWorkspaceService.endWorkflowRun(
+      await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         status,
-        {
-          steps,
-        },
-      );
+      });
     } catch (error) {
-      await this.workflowRunWorkspaceService.endWorkflowRun(
+      await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
-        WorkflowRunStatus.FAILED,
-        {
-          steps: {},
-          error: error.message,
-        },
-      );
+        status: WorkflowRunStatus.FAILED,
+        error: error.message,
+      });
     }
   }
 

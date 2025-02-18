@@ -9,6 +9,7 @@ import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { settings } from 'src/engine/constants/settings';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -609,8 +610,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return fieldMetadata[labelKey] ?? '';
     }
 
-    i18n.activate(locale);
-
     const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');
     const translatedMessage = i18n._(messageId);
 
@@ -862,6 +861,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
           WHERE "viewId" = '${view[0].id}'`,
           )) as ViewFieldWorkspaceEntity[];
+          const isVisible =
+            existingViewFields.length < settings.maxVisibleViewFields;
 
           const createdFieldIsAlreadyInView = existingViewFields.some(
             (existingViewField) =>
@@ -884,7 +885,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             ("fieldMetadataId", "position", "isVisible", "size", "viewId")
             VALUES ('${createdFieldMetadata.id}', '${
               lastPosition + 1
-            }', true, 180, '${view[0].id}')`,
+            }', ${isVisible}, 180, '${view[0].id}')`,
             );
           }
         }
@@ -896,5 +897,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     } finally {
       await workspaceQueryRunner.release();
     }
+  }
+
+  async getFieldMetadataItemsByBatch(
+    objectMetadataIds: string[],
+    workspaceId: string,
+  ) {
+    const fieldMetadataItems = await this.fieldMetadataRepository.find({
+      where: { objectMetadataId: In(objectMetadataIds), workspaceId },
+    });
+
+    return objectMetadataIds.map((objectMetadataId) =>
+      fieldMetadataItems.filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.objectMetadataId === objectMetadataId,
+      ),
+    );
   }
 }

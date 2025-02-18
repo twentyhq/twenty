@@ -55,6 +55,13 @@ export type WorkflowDeleteRecordActionSettings = BaseWorkflowActionSettings & {
   };
 };
 
+export type WorkflowFindRecordsActionSettings = BaseWorkflowActionSettings & {
+  input: {
+    objectName: string;
+    limit?: number;
+  };
+};
+
 type BaseWorkflowAction = {
   id: string;
   name: string;
@@ -86,12 +93,18 @@ export type WorkflowDeleteRecordAction = BaseWorkflowAction & {
   settings: WorkflowDeleteRecordActionSettings;
 };
 
+export type WorkflowFindRecordsAction = BaseWorkflowAction & {
+  type: 'FIND_RECORDS';
+  settings: WorkflowFindRecordsActionSettings;
+};
+
 export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowSendEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
-  | WorkflowDeleteRecordAction;
+  | WorkflowDeleteRecordAction
+  | WorkflowFindRecordsAction;
 
 export type WorkflowActionType = WorkflowAction['type'];
 
@@ -122,6 +135,24 @@ export type WorkflowManualTrigger = BaseTrigger & {
   };
 };
 
+export type WorkflowCronTrigger = BaseTrigger & {
+  type: 'CRON';
+  settings: (
+    | {
+        type: 'HOURS';
+        schedule: { hour: number; minute: number };
+      }
+    | {
+        type: 'MINUTES';
+        schedule: { minute: number };
+      }
+    | {
+        type: 'CUSTOM';
+        pattern: string;
+      }
+  ) & { outputSchema: object };
+};
+
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 
 export type WorkflowManualTriggerAvailability =
@@ -130,7 +161,8 @@ export type WorkflowManualTriggerAvailability =
 
 export type WorkflowTrigger =
   | WorkflowDatabaseEventTrigger
-  | WorkflowManualTrigger;
+  | WorkflowManualTrigger
+  | WorkflowCronTrigger;
 
 export type WorkflowTriggerType = WorkflowTrigger['type'];
 
@@ -174,7 +206,7 @@ export type WorkflowRun = {
   __typename: 'WorkflowRun';
   id: string;
   workflowVersionId: string;
-  output: WorkflowRunOutput;
+  output: WorkflowRunOutput | null;
 };
 
 export type Workflow = {

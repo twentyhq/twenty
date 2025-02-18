@@ -60,9 +60,10 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -391,6 +392,7 @@ export const useAuth = () => {
           workspaceInviteHash,
           workspacePersonalInviteToken,
           captchaToken,
+          locale: i18n.locale ?? 'en',
           ...(workspacePublicData?.id
             ? { workspaceId: workspacePublicData.id }
             : {}),
@@ -453,7 +455,7 @@ export const useAuth = () => {
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
       if (isDefined(params.workspaceInviteHash)) {
-        url.searchParams.set('inviteHash', params.workspaceInviteHash);
+        url.searchParams.set('workspaceInviteHash', params.workspaceInviteHash);
       }
       if (isDefined(params.workspacePersonalInviteToken)) {
         url.searchParams.set(

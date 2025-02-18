@@ -188,11 +188,22 @@ jobs:
         uses: ./.github/workflows/actions/restore-cache
         with:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+      - name: Server / Build
+        run: npx nx build twenty-server
+      - name: Build dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-emails
+      - name: Server / Create Test DB
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+          PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/test npx nx run twenty-server:database:init:prod
+          PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/test npx nx run twenty-server:database:migrate:prod
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: 'test:integration:with-db-reset'
+          tasks: 'test:integration --configuration=with-db-reset'
       - name: Server / Upload reset-logs file
         if: always()
         uses: actions/upload-artifact@v4

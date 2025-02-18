@@ -7,7 +7,6 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { CustomException } from 'src/utils/custom-exception';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class GuardRedirectService {
@@ -20,7 +19,12 @@ export class GuardRedirectService {
   dispatchErrorFromGuard(
     context: ExecutionContext,
     error: Error | CustomException,
-    workspace: { id?: string; subdomain: string; hostname?: string },
+    workspace: {
+      id?: string;
+      subdomain: string;
+      customDomain: string | null;
+      isCustomDomainEnabled?: boolean;
+    },
   ) {
     if ('contextType' in context && context.contextType === 'graphql') {
       throw error;
@@ -32,36 +36,25 @@ export class GuardRedirectService {
       .redirect(this.getRedirectErrorUrlAndCaptureExceptions(error, workspace));
   }
 
-  getSubdomainAndHostnameFromWorkspace(
-    workspace?: Pick<Workspace, 'subdomain' | 'hostname'> | null,
-  ) {
-    if (!workspace) {
-      return {
-        subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-      };
-    }
-
-    return workspace;
-  }
-
-  getSubdomainAndHostnameFromContext(context: ExecutionContext): {
-    subdomain: string;
-    hostname?: string;
-  } {
+  getSubdomainAndCustomDomainFromContext(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
 
-    const subdomainAndHostnameFromReferer = request.headers.referer
-      ? this.domainManagerService.getSubdomainAndHostnameFromUrl(
+    const subdomainAndCustomDomainFromReferer = request.headers.referer
+      ? this.domainManagerService.getSubdomainAndCustomDomainFromUrl(
           request.headers.referer,
         )
       : null;
 
-    return {
-      subdomain:
-        subdomainAndHostnameFromReferer?.subdomain ??
-        this.environmentService.get('DEFAULT_SUBDOMAIN'),
-      hostname: subdomainAndHostnameFromReferer?.hostname,
-    };
+    return subdomainAndCustomDomainFromReferer &&
+      subdomainAndCustomDomainFromReferer.subdomain
+      ? {
+          subdomain: subdomainAndCustomDomainFromReferer.subdomain,
+          customDomain: subdomainAndCustomDomainFromReferer.customDomain,
+        }
+      : {
+          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+          customDomain: null,
+        };
   }
 
   private captureException(err: Error | CustomException, workspaceId?: string) {
@@ -76,13 +69,22 @@ export class GuardRedirectService {
 
   getRedirectErrorUrlAndCaptureExceptions(
     err: Error | CustomException,
-    workspace: { id?: string; subdomain: string; hostname?: string },
+    workspace: {
+      id?: string;
+      subdomain: string;
+      customDomain: string | null;
+      isCustomDomainEnabled?: boolean;
+    },
   ) {
     this.captureException(err, workspace.id);
 
     return this.domainManagerService.computeRedirectErrorUrl(
       err instanceof AuthException ? err.message : 'Unknown error',
-      workspace,
+      {
+        subdomain: workspace.subdomain,
+        customDomain: workspace.customDomain,
+        isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
+      },
     );
   }
 }

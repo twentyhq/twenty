@@ -40,25 +40,8 @@ export function formatResult<T>(
     throw new Error('Object metadata is missing');
   }
 
-  const compositeFieldMetadataCollection = getCompositeFieldMetadataCollection(
+  const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
     objectMetadataItemWithFieldMaps,
-  );
-
-  const compositeFieldMetadataMap = new Map(
-    compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
-      const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
-
-      if (!compositeType) return [];
-
-      // Map each composite property to a [key, value] pair
-      return compositeType.properties.map((compositeProperty) => [
-        computeCompositeColumnName(fieldMetadata.name, compositeProperty),
-        {
-          parentField: fieldMetadata.name,
-          ...compositeProperty,
-        },
-      ]);
-    }),
   );
 
   const relationMetadataMap = new Map(
@@ -197,6 +180,31 @@ export function formatResult<T>(
   }
 
   return newData as T;
+}
+
+export function getCompositeFieldMetadataMap(
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+) {
+  const compositeFieldMetadataCollection = getCompositeFieldMetadataCollection(
+    objectMetadataItemWithFieldMaps,
+  );
+
+  return new Map(
+    compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
+      const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
+
+      if (!compositeType) return [];
+
+      // Map each composite property to a [key, value] pair
+      return compositeType.properties.map((compositeProperty) => [
+        computeCompositeColumnName(fieldMetadata.name, compositeProperty),
+        {
+          parentField: fieldMetadata.name,
+          ...compositeProperty,
+        },
+      ]);
+    }),
+  );
 }
 
 function formatFieldMetadataValue(

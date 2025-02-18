@@ -22,11 +22,9 @@ import { onColumnsChangeComponentState } from '@/object-record/record-table/stat
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
 import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
-import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
-import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -53,11 +51,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     recordTableId,
   );
 
-  const tableColumnsState = useRecoilComponentCallbackStateV2(
-    tableColumnsComponentState,
-    recordTableId,
-  );
-
   const setAvailableTableColumns = useRecoilCallback(
     ({ snapshot, set }) =>
       (columns: ColumnDefinition<FieldMetadata>[]) => {
@@ -74,26 +67,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     [availableTableColumnsState],
   );
 
-  const setTableColumns = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (columns: ColumnDefinition<FieldMetadata>[]) => {
-        const tableColumns = getSnapshotValue(snapshot, tableColumnsState);
-
-        if (isDeeplyEqual(tableColumns, columns)) {
-          return;
-        }
-        set(tableColumnsState, columns);
-      },
-    [tableColumnsState],
-  );
-
   const setOnEntityCountChange = useSetRecoilComponentStateV2(
     onEntityCountChangeComponentState,
-    recordTableId,
-  );
-
-  const setTableViewFilterGroups = useSetRecoilComponentStateV2(
-    tableViewFilterGroupsComponentState,
     recordTableId,
   );
 
@@ -255,12 +230,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   return {
     onColumnsChange,
     setAvailableTableColumns,
-    setTableViewFilterGroups,
     setTableFilters,
     setTableSorts,
     setOnEntityCountChange,
     setRecordTableData,
-    setTableColumns,
     leaveTableFocus,
     setRowSelected,
     resetTableRowSelection,

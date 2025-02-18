@@ -1,26 +1,27 @@
-import { isUndefined } from '@sniptt/guards';
-
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
+type MapFieldMetadataToGraphQLQueryArgs = {
+  objectMetadataItems: ObjectMetadataItem[];
+  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
+  relationRecordGqlFields?: RecordGqlFields;
+  computeReferences?: boolean;
+};
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
-  relationrecordFields,
+  relationRecordGqlFields,
   computeReferences = false,
-}: {
-  objectMetadataItems: ObjectMetadataItem[];
-  field: Pick<FieldMetadataItem, 'name' | 'type' | 'relationDefinition'>;
-  relationrecordFields?: Record<string, any>;
-  computeReferences?: boolean;
-}): any => {
+}: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = field.type;
 
   const fieldIsSimpleValue = [
@@ -61,7 +62,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
-  recordGqlFields: relationrecordFields,
+  recordGqlFields: relationRecordGqlFields,
   computeReferences: computeReferences,
   isRootLevel: false,
 })}`;
@@ -87,7 +88,7 @@ ${mapObjectMetadataToGraphQLQuery({
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,
-      recordGqlFields: relationrecordFields,
+      recordGqlFields: relationRecordGqlFields,
       computeReferences,
       isRootLevel: false,
     })}
@@ -161,6 +162,14 @@ ${mapObjectMetadataToGraphQLQuery({
       primaryPhoneCallingCode
       additionalPhones
     }`;
+  }
+
+  if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
+    return `${field.name}
+{
+  blocknote
+  markdown
+}`;
   }
 
   return '';

@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { GET_AUTHORIZATION_URL } from '@/auth/graphql/mutations/getAuthorizationUrl';
+import { GET_AUTHORIZATION_URL_FOR_SSO } from '@/auth/graphql/mutations/getAuthorizationUrlForSSO';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -17,7 +17,7 @@ export const useSSO = () => {
     let authorizationUrlForSSOResult;
     try {
       authorizationUrlForSSOResult = await apolloClient.mutate({
-        mutation: GET_AUTHORIZATION_URL,
+        mutation: GET_AUTHORIZATION_URL_FOR_SSO,
         variables: {
           input: {
             identityProviderId,
@@ -32,7 +32,8 @@ export const useSSO = () => {
     }
 
     redirect(
-      authorizationUrlForSSOResult.data?.getAuthorizationUrl.authorizationURL,
+      authorizationUrlForSSOResult.data?.getAuthorizationUrlForSSO
+        .authorizationURL,
     );
   };
 

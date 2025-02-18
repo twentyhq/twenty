@@ -23,18 +23,25 @@ test('Create workflow', async ({ page }) => {
       return requestBody.operationName === 'CreateOneWorkflow';
     }),
 
-    await createWorkflowButton.click(),
+    createWorkflowButton.click(),
   ]);
 
-  const nameInput = page.getByRole('textbox');
+  const recordName = page.getByTestId('top-bar-title').getByTestId('tooltip');
+  await recordName.click();
+
+  const nameInput = page.getByTestId('top-bar-title').getByRole('textbox');
   await nameInput.fill(NEW_WORKFLOW_NAME);
-  await nameInput.press('Enter');
+
+  const workflowDiagramContainer = page.locator('.react-flow__renderer');
+  await workflowDiagramContainer.click();
 
   const body = await createWorkflowResponse.json();
   const newWorkflowId = body.data.createWorkflow.id;
 
   try {
-    const workflowName = page.getByRole('button', { name: NEW_WORKFLOW_NAME });
+    const workflowName = page
+      .getByTestId('top-bar-title')
+      .getByText(NEW_WORKFLOW_NAME);
 
     await expect(workflowName).toBeVisible();
 

@@ -14,6 +14,7 @@ import {
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -57,6 +58,7 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
   shortcut: 'C',
   labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
 })
+@WorkspaceDuplicateCriteria([['name'], ['domainNamePrimaryLinkUrl']])
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.name,

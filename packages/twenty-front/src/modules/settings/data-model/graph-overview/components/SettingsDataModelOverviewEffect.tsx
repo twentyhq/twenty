@@ -2,9 +2,8 @@ import dagre from '@dagrejs/dagre';
 import { useTheme } from '@emotion/react';
 import { Edge, Node } from '@xyflow/react';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isDefined } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -18,11 +17,9 @@ export const SettingsDataModelOverviewEffect = ({
   setNodes,
 }: SettingsDataModelOverviewEffectProps) => {
   const theme = useTheme();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { activeObjectMetadataItems: items } = useFilteredObjectMetadataItems();
 
   useEffect(() => {
-    const items = objectMetadataItems.filter((x) => !x.isSystem);
-
     const g = new dagre.graphlib.Graph();
     g.setGraph({ rankdir: 'LR' });
     g.setDefaultEdgeLabel(() => ({}));
@@ -98,7 +95,7 @@ export const SettingsDataModelOverviewEffect = ({
 
     setNodes(nodes);
     setEdges(edges);
-  }, [objectMetadataItems, setEdges, setNodes, theme]);
+  }, [items, setEdges, setNodes, theme]);
 
   return <></>;
 };

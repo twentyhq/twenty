@@ -14,12 +14,14 @@ import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   constructor(
     private readonly sSOService: SSOService,
     private readonly guardRedirectService: GuardRedirectService,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super();
   }
@@ -28,7 +30,9 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     identityProviderId: string;
   } {
     if (request.params.identityProviderId) {
-      return request.params.identityProviderId;
+      return {
+        identityProviderId: request.params.identityProviderId,
+      };
     }
 
     if (
@@ -57,6 +61,13 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     try {
       const state = this.getStateByRequest(request);
 
+      if (!state.identityProviderId) {
+        throw new AuthException(
+          'identityProviderId missing',
+          AuthExceptionCode.INVALID_DATA,
+        );
+      }
+
       identityProvider = await this.sSOService.findSSOIdentityProviderById(
         state.identityProviderId,
       );
@@ -67,7 +78,6 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
           AuthExceptionCode.INVALID_DATA,
         );
       }
-
       const issuer = await Issuer.discover(identityProvider.issuer);
 
       new OIDCAuthStrategy(
@@ -80,7 +90,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
           identityProvider?.workspace,
         ),
       );

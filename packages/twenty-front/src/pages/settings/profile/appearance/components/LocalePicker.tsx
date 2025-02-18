@@ -66,32 +66,84 @@ export const LocalePicker = () => {
     value: (typeof APP_LOCALES)[keyof typeof APP_LOCALES];
   }> = [
     {
+      label: t`Afrikaans`,
+      value: APP_LOCALES['af-ZA'],
+    },
+    {
+      label: t`Arabic`,
+      value: APP_LOCALES['ar-SA'],
+    },
+    {
+      label: t`Catalan`,
+      value: APP_LOCALES['ca-ES'],
+    },
+    {
+      label: t`Chinese — Simplified`,
+      value: APP_LOCALES['zh-CN'],
+    },
+    {
+      label: t`Chinese — Traditional`,
+      value: APP_LOCALES['zh-TW'],
+    },
+    {
+      label: t`Czech`,
+      value: APP_LOCALES['cs-CZ'],
+    },
+    {
+      label: t`Danish`,
+      value: APP_LOCALES['da-DK'],
+    },
+    {
+      label: t`Dutch`,
+      value: APP_LOCALES['nl-NL'],
+    },
+    {
       label: t`English`,
       value: APP_LOCALES.en,
     },
     {
-      label: t`French`,
-      value: APP_LOCALES.fr,
+      label: t`Finnish`,
+      value: APP_LOCALES['fi-FI'],
     },
     {
-      label: t`Spanish`,
-      value: APP_LOCALES.es,
+      label: t`French`,
+      value: APP_LOCALES['fr-FR'],
     },
     {
       label: t`German`,
-      value: APP_LOCALES.de,
+      value: APP_LOCALES['de-DE'],
+    },
+    {
+      label: t`Greek`,
+      value: APP_LOCALES['el-GR'],
+    },
+    {
+      label: t`Hebrew`,
+      value: APP_LOCALES['he-IL'],
+    },
+    {
+      label: t`Hungarian`,
+      value: APP_LOCALES['hu-HU'],
     },
     {
       label: t`Italian`,
-      value: APP_LOCALES.it,
-    },
-    {
-      label: t`Korean`,
-      value: APP_LOCALES.ko,
+      value: APP_LOCALES['it-IT'],
     },
     {
       label: t`Japanese`,
-      value: APP_LOCALES.ja,
+      value: APP_LOCALES['ja-JP'],
+    },
+    {
+      label: t`Korean`,
+      value: APP_LOCALES['ko-KR'],
+    },
+    {
+      label: t`Norwegian`,
+      value: APP_LOCALES['no-NO'],
+    },
+    {
+      label: t`Polish`,
+      value: APP_LOCALES['pl-PL'],
     },
     {
       label: t`Portuguese — Portugal`,
@@ -102,18 +154,42 @@ export const LocalePicker = () => {
       value: APP_LOCALES['pt-BR'],
     },
     {
-      label: t`Chinese — Simplified`,
-      value: APP_LOCALES['zh-Hans'],
+      label: t`Romanian`,
+      value: APP_LOCALES['ro-RO'],
     },
     {
-      label: t`Chinese — Traditional`,
-      value: APP_LOCALES['zh-Hant'],
+      label: t`Russian`,
+      value: APP_LOCALES['ru-RU'],
+    },
+    {
+      label: t`Serbian (Cyrillic)`,
+      value: APP_LOCALES['sr-Cyrl'],
+    },
+    {
+      label: t`Spanish`,
+      value: APP_LOCALES['es-ES'],
+    },
+    {
+      label: t`Swedish`,
+      value: APP_LOCALES['sv-SE'],
+    },
+    {
+      label: t`Turkish`,
+      value: APP_LOCALES['tr-TR'],
+    },
+    {
+      label: t`Ukrainian`,
+      value: APP_LOCALES['uk-UA'],
+    },
+    {
+      label: t`Vietnamese`,
+      value: APP_LOCALES['vi-VN'],
     },
   ];
   if (isDebugMode) {
     localeOptions.push({
       label: t`Pseudo-English`,
-      value: 'pseudo-en',
+      value: APP_LOCALES['pseudo-en'],
     });
   }
 

@@ -1,10 +1,9 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
-import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
-import { useUserLookup } from '@/settings/admin-panel/hooks/useUserLookup';
-import { adminPanelErrorState } from '@/settings/admin-panel/states/adminPanelErrorState';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -12,7 +11,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
@@ -23,6 +22,7 @@ import {
   Section,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -33,11 +33,6 @@ const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-`;
-
-const StyledErrorSection = styled.div`
-  color: ${({ theme }) => theme.font.color.danger};
-  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledUserInfo = styled.div`
@@ -60,39 +55,47 @@ const StyledContentContainer = styled.div`
 
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
-  const [userId, setUserId] = useState('');
-
-  const { error: impersonateError } = useImpersonate();
+  const { enqueueSnackBar } = useSnackBar();
 
   const { activeTabId, setActiveTabId } = useTabList(
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
-  const userLookupResult = useRecoilValue(userLookupResultState);
-  const adminPanelError = useRecoilValue(adminPanelErrorState);
+  const [userLookupResult, setUserLookupResult] = useRecoilState(
+    userLookupResultState,
+  );
+  const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 
-  const { handleUserLookup, isLoading } = useUserLookup();
+  const [userLookup] = useUserLookupAdminPanelMutation();
 
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
   const handleSearch = async () => {
     setActiveTabId('');
+    setIsUserLookupLoading(true);
+    setUserLookupResult(null);
 
-    const result = await handleUserLookup(userIdentifier);
+    const response = await userLookup({
+      variables: { userIdentifier },
+      onCompleted: (data) => {
+        setIsUserLookupLoading(false);
+        if (isDefined(data?.userLookupAdminPanel)) {
+          setUserLookupResult(data.userLookupAdminPanel);
+        }
+      },
+      onError: (error) => {
+        setIsUserLookupLoading(false);
+        enqueueSnackBar(error.message, {
+          variant: SnackBarVariant.Error,
+        });
+      },
+    });
 
-    if (isDefined(result?.user?.id) && !adminPanelError) {
-      setUserId(result.user.id.trim());
-    }
+    const result = response.data?.userLookupAdminPanel;
 
-    if (
-      isDefined(result?.workspaces) &&
-      result.workspaces.length > 0 &&
-      !adminPanelError
-    ) {
+    if (isDefined(result?.workspaces) && result.workspaces.length > 0) {
       setActiveTabId(result.workspaces[0].id);
     }
   };
-
-  const shouldShowUserData = userLookupResult && !adminPanelError;
 
   const activeWorkspace = userLookupResult?.workspaces.find(
     (workspace) => workspace.id === activeTabId,
@@ -139,7 +142,7 @@ export const SettingsAdminGeneral = () => {
               onInputEnter={handleSearch}
               placeholder="Enter user ID or email address"
               fullWidth
-              disabled={isLoading}
+              disabled={isUserLookupLoading}
             />
           </StyledLinkContainer>
           <Button
@@ -148,18 +151,12 @@ export const SettingsAdminGeneral = () => {
             accent="blue"
             title="Search"
             onClick={handleSearch}
-            disabled={!userIdentifier.trim() || isLoading}
+            disabled={!userIdentifier.trim() || isUserLookupLoading}
           />
         </StyledContainer>
-
-        {(adminPanelError || impersonateError) && (
-          <StyledErrorSection>
-            {adminPanelError ?? impersonateError}
-          </StyledErrorSection>
-        )}
       </Section>
 
-      {shouldShowUserData && (
+      {isDefined(userLookupResult) && (
         <Section>
           <StyledUserInfo>
             <H1Title title="User Info" fontColor={H1TitleFontColor.Primary} />
@@ -180,10 +177,7 @@ export const SettingsAdminGeneral = () => {
             />
           </StyledTabListContainer>
           <StyledContentContainer>
-            <SettingsAdminWorkspaceContent
-              activeWorkspace={activeWorkspace}
-              userId={userId}
-            />
+            <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
           </StyledContentContainer>
         </Section>
       )}

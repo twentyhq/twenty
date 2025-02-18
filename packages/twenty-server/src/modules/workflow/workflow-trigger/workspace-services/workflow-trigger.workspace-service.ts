@@ -36,6 +36,7 @@ import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -339,7 +340,9 @@ export class WorkflowTriggerWorkspaceService {
         return;
       case WorkflowTriggerType.MANUAL:
         return;
-      case WorkflowTriggerType.CRON:
+      case WorkflowTriggerType.CRON: {
+        const pattern = computeCronPatternFromSchedule(workflowVersion.trigger);
+
         await this.messageQueueService.addCron<WorkflowTriggerJobData>({
           jobName: WorkflowTriggerJob.name,
           jobId: workflowVersion.workflowId,
@@ -350,12 +353,13 @@ export class WorkflowTriggerWorkspaceService {
           },
           options: {
             repeat: {
-              pattern: workflowVersion.trigger.settings.pattern,
+              pattern,
             },
           },
         });
 
         return;
+      }
       default: {
         assertNever(workflowVersion.trigger);
       }

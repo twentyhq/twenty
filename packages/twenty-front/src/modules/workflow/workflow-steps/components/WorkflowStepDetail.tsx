@@ -7,8 +7,10 @@ import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionFormCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormCreateRecord';
 import { WorkflowEditActionFormDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormDeleteRecord';
+import { WorkflowEditActionFormFindRecords } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormFindRecords';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormSendEmail';
 import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormUpdateRecord';
+import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
 import { Suspense, lazy } from 'react';
@@ -71,6 +73,14 @@ export const WorkflowStepDetail = ({
             />
           );
         }
+        case 'CRON': {
+          return (
+            <WorkflowEditTriggerCronForm
+              trigger={stepDefinition.definition}
+              triggerOptions={props}
+            />
+          );
+        }
       }
 
       return assertUnreachable(
@@ -123,6 +133,16 @@ export const WorkflowStepDetail = ({
         case 'DELETE_RECORD': {
           return (
             <WorkflowEditActionFormDeleteRecord
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+
+        case 'FIND_RECORDS': {
+          return (
+            <WorkflowEditActionFormFindRecords
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}

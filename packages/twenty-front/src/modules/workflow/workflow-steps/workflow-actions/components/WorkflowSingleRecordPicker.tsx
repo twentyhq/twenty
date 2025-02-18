@@ -125,7 +125,7 @@ export const WorkflowSingleRecordPicker = ({
   };
 
   return (
-    <FormFieldInputContainer data-testid={testId}>
+    <FormFieldInputContainer testId={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
         <StyledFormSelectContainer hasRightElement={!disabled}>

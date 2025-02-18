@@ -64,12 +64,6 @@ export const useHandleToggleTrashColumnFilter = ({
       displayValue: '',
       type: filterType,
       label: `Deleted`,
-      definition: {
-        label: `Deleted`,
-        iconName: 'IconTrash',
-        fieldMetadataId: trashFieldMetadata.id,
-        type: filterType,
-      },
       value: '',
     };
 

@@ -7,11 +7,13 @@ import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/Comman
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
+import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
@@ -75,6 +77,10 @@ export const CommandMenuList = ({
   const { resetPreviousCommandMenuContext } =
     useResetPreviousCommandMenuContext();
 
+  const setHasUserSelectedCommand = useSetRecoilState(
+    hasUserSelectedCommandState,
+  );
+
   return (
     <>
       <CommandMenuDefaultSelectionEffect
@@ -108,6 +114,9 @@ export const CommandMenuList = ({
                     to,
                   });
                 }
+              }}
+              onSelect={() => {
+                setHasUserSelectedCommand(true);
               }}
             >
               {children}

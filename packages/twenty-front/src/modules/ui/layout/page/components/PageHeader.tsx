@@ -49,7 +49,7 @@ const StyledLeftContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   overflow-x: hidden;
-
+  width: 100%;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(1)};
   }
@@ -60,6 +60,8 @@ const StyledTitleContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+  overflow: hidden;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
@@ -67,6 +69,8 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   flex-direction: row;
+  width: 100%;
+  overflow: hidden;
 `;
 
 const StyledPageActionContainer = styled.div`
@@ -81,10 +85,9 @@ const StyledTopBarButtonContainer = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  flex: 1 0 1;
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
 `;
 
 type PageHeaderProps = {

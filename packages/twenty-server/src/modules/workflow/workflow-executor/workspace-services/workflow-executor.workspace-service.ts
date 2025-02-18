@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
@@ -13,38 +13,41 @@ import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/fa
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
-export type WorkflowExecutorOutput = {
-  steps: WorkflowRunOutput['steps'];
+export type WorkflowExecutorState = {
+  stepsOutput: WorkflowRunOutput['stepsOutput'];
   status: WorkflowRunStatus;
 };
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
-  private readonly logger = new Logger(WorkflowExecutorWorkspaceService.name);
   constructor(
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
   ) {}
 
   async execute({
     currentStepIndex,
     steps,
     context,
-    output,
+    workflowExecutorState,
     attemptCount = 1,
+    workflowRunId,
   }: {
     currentStepIndex: number;
     steps: WorkflowAction[];
-    output: WorkflowExecutorOutput;
+    workflowExecutorState: WorkflowExecutorState;
     context: Record<string, unknown>;
     attemptCount?: number;
-  }): Promise<WorkflowExecutorOutput> {
+    workflowRunId: string;
+  }): Promise<WorkflowExecutorState> {
     if (currentStepIndex >= steps.length) {
-      return { ...output, status: WorkflowRunStatus.COMPLETED };
+      return { ...workflowExecutorState, status: WorkflowRunStatus.COMPLETED };
     }
 
     const step = steps[currentStepIndex];
@@ -67,7 +70,7 @@ export class WorkflowExecutorWorkspaceService {
       };
     }
 
-    const stepOutput = output.steps[step.id];
+    const stepOutput = workflowExecutorState.stepsOutput[step.id];
 
     const error =
       result.error?.errorMessage ??
@@ -79,8 +82,6 @@ export class WorkflowExecutorWorkspaceService {
 
     const updatedStepOutput = {
       id: step.id,
-      name: step.name,
-      type: step.type,
       outputs: [
         ...(stepOutput?.outputs ?? []),
         {
@@ -91,32 +92,54 @@ export class WorkflowExecutorWorkspaceService {
       ],
     };
 
-    const updatedOutput = {
-      ...output,
-      steps: {
-        ...output.steps,
-        [step.id]: updatedStepOutput,
-      },
+    const updatedStepsOutput = {
+      ...workflowExecutorState.stepsOutput,
+      [step.id]: updatedStepOutput,
+    };
+
+    const updatedWorkflowExecutorState = {
+      ...workflowExecutorState,
+      stepsOutput: updatedStepsOutput,
     };
 
     if (result.result) {
+      const updatedContext = {
+        ...context,
+        [step.id]: result.result,
+      };
+
+      await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workflowRunId,
+        output: {
+          stepsOutput: updatedStepsOutput,
+        },
+        context: updatedContext,
+      });
+
       return await this.execute({
+        workflowRunId,
         currentStepIndex: currentStepIndex + 1,
         steps,
-        context: {
-          ...context,
-          [step.id]: result.result,
-        },
-        output: updatedOutput,
+        context: updatedContext,
+        workflowExecutorState: updatedWorkflowExecutorState,
       });
     }
 
     if (step.settings.errorHandlingOptions.continueOnFailure.value) {
+      await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workflowRunId,
+        output: {
+          stepsOutput: updatedStepsOutput,
+        },
+        context,
+      });
+
       return await this.execute({
+        workflowRunId,
         currentStepIndex: currentStepIndex + 1,
         steps,
         context,
-        output: updatedOutput,
+        workflowExecutorState: updatedWorkflowExecutorState,
       });
     }
 
@@ -125,15 +148,27 @@ export class WorkflowExecutorWorkspaceService {
       attemptCount < MAX_RETRIES_ON_FAILURE
     ) {
       return await this.execute({
+        workflowRunId,
         currentStepIndex,
         steps,
         context,
-        output: updatedOutput,
+        workflowExecutorState: updatedWorkflowExecutorState,
         attemptCount: attemptCount + 1,
       });
     }
 
-    return { ...updatedOutput, status: WorkflowRunStatus.FAILED };
+    await this.workflowRunWorkspaceService.saveWorkflowRunState({
+      workflowRunId,
+      output: {
+        stepsOutput: updatedStepsOutput,
+      },
+      context,
+    });
+
+    return {
+      ...updatedWorkflowExecutorState,
+      status: WorkflowRunStatus.FAILED,
+    };
   }
 
   private sendWorkflowNodeRunEvent() {

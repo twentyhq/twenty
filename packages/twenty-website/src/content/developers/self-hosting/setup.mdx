@@ -155,8 +155,7 @@ yarn command:prod cron:calendar:ongoing-stale
     ['FRONT_DOMAIN', 'localhost', 'Domain of the hosted frontend'],
     ['DEFAULT_SUBDOMAIN', 'app', 'The default subdomain name when multiworkspace mode is enabled'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
-    ['FRONT_PROTOCOL', 'http', 'protocol of the frontend server. Could be `http` or `https`'],
-    ['FRONT_PORT', '3001', 'Port of the frontend server.'],
+    ['FRONTEND_URL', '$SERVER_URL', 'Url to the frontend server. Same as SERVER_URL by default'],
     ['PORT', '3000', 'Port of the backend server'],
     ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></ArticleTable>
@@ -235,7 +234,7 @@ yarn command:prod cron:calendar:ongoing-stale
   - EMAIL_SMTP_HOST=smtp.office365.com
   - EMAIL_SMTP_PORT=587
   - EMAIL_SMTP_USER=office365_email_address
-    - EMAIL_SMTP_PASSWORD='office365_password'
+  - EMAIL_SMTP_PASSWORD='office365_password'
 
   </ArticleTab>
 
@@ -271,6 +270,7 @@ yarn command:prod cron:calendar:ongoing-stale
   ['SERVERLESS_TYPE', 'local', "Serverless driver type: 'local' or 'lambda'"],
   ['SERVERLESS_LAMBDA_REGION', '', 'Lambda Region'],
   ['SERVERLESS_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['SERVERLESS_LAMBDA_SUBHOSTING_ROLE', '', 'Role to assume when hosting lambdas in dedicated AWS account'],
   ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
   ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
 ]}></ArticleTable>
@@ -304,7 +304,8 @@ This feature is WIP and is not yet useful for most users.
 <ArticleTable options={[
     ['SERVERLESS_TYPE', 'local', "Functions can either be executed through Lambda or directly by the main node process"],
     ['SERVERLESS_LAMBDA_REGION', 'us-east-1', 'If you use the Lambda driver, region of the Lambda function'],
-    ['SERVERLESS_LAMBDA_ROLE', 'arn:aws:iam::121334:role/lambda-execution-role', "If you use the Lambda drive, name of the IAM role with the right permissions"],
+    ['SERVERLESS_LAMBDA_ROLE', 'arn:aws:iam::121334:role/lambda-execution-role', "If you use the Lambda driver, name of the IAM role with the right permissions"],
+    ['SERVERLESS_LAMBDA_SUBHOSTING_ROLE', 'arn:aws:iam::121334:role/lambda-deployment-role', "If you host lambdas in a dedicated AWS account, name of the IAM role to assume in the dedicated account"],
 ]}></ArticleTable>
 
 
@@ -335,7 +336,8 @@ This feature is WIP and is not yet useful for most users.
 
 <ArticleTable options={[
   ['WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION', '', 'Number of inactive days before sending workspace deleting warning email'],
-  ['WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', '', 'Number of inactive days before deleting workspace'],
+  ['WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION', '', 'Number of inactive days before soft deleting workspace'],
+  ['WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', '', 'Number of inactive days before destroying workspace'],
   ]}></ArticleTable>
 
 ### Captcha

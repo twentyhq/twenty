@@ -29,7 +29,8 @@ describe('searchTimelineActivitiesResolver (e2e)', () => {
                 workflowId
                 workflowVersionId
                 workflowRunId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -39,7 +40,7 @@ describe('searchTimelineActivitiesResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -80,7 +81,8 @@ describe('searchTimelineActivitiesResolver (e2e)', () => {
           expect(searchTimelineActivities).toHaveProperty('workflowId');
           expect(searchTimelineActivities).toHaveProperty('workflowVersionId');
           expect(searchTimelineActivities).toHaveProperty('workflowRunId');
-          expect(searchTimelineActivities).toHaveProperty('rocketId');
+          expect(searchTimelineActivities).toHaveProperty('petId');
+          expect(searchTimelineActivities).toHaveProperty('surveyResultId');
         }
       });
   });

@@ -30,6 +30,7 @@ import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.e
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
+import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
@@ -44,6 +45,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
@@ -87,6 +89,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceInvitationModule,
     EmailVerificationModule,
     GuardRedirectModule,
+    HealthModule,
+    PermissionsModule,
   ],
   controllers: [
     GoogleAuthController,

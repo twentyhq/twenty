@@ -14,6 +14,7 @@ import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
@@ -23,6 +24,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super({
       prompt: 'select_account',
@@ -64,14 +66,14 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
         );
       }
 
-      new GoogleAPIsOauthRequestCodeStrategy(this.environmentService, {});
+      new GoogleAPIsOauthRequestCodeStrategy(this.environmentService);
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
           workspace,
         ),
       );

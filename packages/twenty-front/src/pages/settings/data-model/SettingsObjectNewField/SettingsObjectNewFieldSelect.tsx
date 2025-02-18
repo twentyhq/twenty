@@ -4,6 +4,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
+import { FieldType } from '@/settings/data-model/types/FieldType';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -44,10 +45,11 @@ export const SettingsObjectNewFieldSelect = () => {
       type: FieldMetadataType.TEXT,
     },
   });
-  const excludedFieldTypes: SettingsFieldType[] = (
+  const excludedFieldTypes: FieldType[] = (
     [
       FieldMetadataType.NUMERIC,
       FieldMetadataType.RICH_TEXT,
+      FieldMetadataType.RICH_TEXT_V2,
       FieldMetadataType.ACTOR,
     ] as const
   ).filter(isDefined);
