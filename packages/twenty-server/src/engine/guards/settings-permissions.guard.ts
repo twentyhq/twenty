@@ -47,6 +47,7 @@ export const SettingsPermissionsGuard = (
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           _setting: requiredPermission,
+          workspaceId,
         });
 
       if (hasPermission === true) {
