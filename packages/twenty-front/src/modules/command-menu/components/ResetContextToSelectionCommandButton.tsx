@@ -2,7 +2,7 @@ import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandM
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -17,8 +17,8 @@ export const ResetContextToSelectionCommandButton = () => {
     'command-menu-previous',
   );
 
-  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
+  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
     'command-menu-previous',
   );
 
@@ -26,7 +26,7 @@ export const ResetContextToSelectionCommandButton = () => {
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
-      objectMetadataItem.id === contextStoreCurrentObjectMetadataId,
+      objectMetadataItem.id === contextStoreCurrentObjectMetadataItem?.id,
   );
 
   const { resetPreviousCommandMenuContext } =

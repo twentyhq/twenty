@@ -1,13 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
+import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 import { useSaveRecordFiltersToViewFilters } from '@/views/hooks/useSaveRecordFiltersToViewFilters';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { unsavedToDeleteViewFilterGroupIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterGroupIdsComponentFamilyState';
 import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewSortIdsComponentFamilyState';
 import { unsavedToUpsertViewFilterGroupsComponentFamilyState } from '@/views/states/unsavedToUpsertViewFilterGroupsComponentFamilyState';
@@ -18,10 +18,10 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const useSaveCurrentViewFiltersAndSorts = (
   viewBarComponentId?: string,
 ) => {
-  const { getViewFromCache } = useGetViewFromCache();
+  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
-    currentViewIdComponentState,
+    contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
 
@@ -77,7 +77,7 @@ export const useSaveCurrentViewFiltersAndSorts = (
           unsavedToUpsertViewSortsCallbackState({ viewId }),
         );
 
-        const view = await getViewFromCache(viewId);
+        const view = await getViewFromPrefetchState(viewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -103,7 +103,7 @@ export const useSaveCurrentViewFiltersAndSorts = (
     [
       createViewSortRecords,
       deleteViewSortRecords,
-      getViewFromCache,
+      getViewFromPrefetchState,
       unsavedToDeleteViewSortIdsCallbackState,
       unsavedToUpsertViewSortsCallbackState,
       updateViewSortRecords,
@@ -123,7 +123,7 @@ export const useSaveCurrentViewFiltersAndSorts = (
           unsavedToUpsertViewFilterGroupsCallbackState({ viewId }),
         );
 
-        const view = await getViewFromCache(viewId);
+        const view = await getViewFromPrefetchState(viewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -150,7 +150,7 @@ export const useSaveCurrentViewFiltersAndSorts = (
         await deleteViewFilterGroupRecords(unsavedToDeleteViewFilterGroupIds);
       },
     [
-      getViewFromCache,
+      getViewFromPrefetchState,
       createViewFilterGroupRecords,
       deleteViewFilterGroupRecords,
       unsavedToDeleteViewFilterGroupIdsCallbackState,

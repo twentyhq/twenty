@@ -23,14 +23,12 @@ import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecord
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { View } from '@/views/types/View';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -123,12 +121,10 @@ export const RecordDetailRelationSection = ({
     scopeId: dropdownId,
   });
 
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-
-  const indexView = views.find(
-    (view) =>
-      view.key === 'INDEX' &&
-      view.objectMetadataId === relationObjectMetadataItem.id,
+  const indexViewId = useRecoilValue(
+    prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: relationObjectMetadataItem.id,
+    }),
   );
 
   const filterQueryParams = {
@@ -139,7 +135,7 @@ export const RecordDetailRelationSection = ({
         },
       },
     },
-    view: indexView?.id,
+    view: indexViewId,
   };
 
   const filterLinkHref = getAppPath(
