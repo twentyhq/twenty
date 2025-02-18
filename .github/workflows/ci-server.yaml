@@ -196,7 +196,7 @@ jobs:
           npx nx build twenty-emails
       - name: Server / Create Test DB
         env:
-          PG_DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
+          NODE_ENV: test
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:init:prod
