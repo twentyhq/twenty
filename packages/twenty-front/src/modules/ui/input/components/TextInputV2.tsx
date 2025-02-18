@@ -5,14 +5,13 @@ import styled from '@emotion/styled';
 import {
   ChangeEvent,
   FocusEventHandler,
-  ForwardedRef,
   InputHTMLAttributes,
   forwardRef,
   useId,
   useRef,
   useState,
 } from 'react';
-import { AutogrowWrapper, IconComponent, IconEye, IconEyeOff, RGBA } from 'twenty-ui';
+import { AutogrowWrapper, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -63,10 +62,18 @@ const StyledInput = styled.input<
   line-height: ${({ sizeVariant }) =>
     sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   outline: none;
-  padding: ${({ theme, sizeVariant }) =>
-    sizeVariant === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
-  padding-left: ${({ theme, LeftIcon }) =>
-    LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
+  padding: ${({ theme, sizeVariant, autoGrow }) =>
+    autoGrow
+      ? theme.spacing(1)
+      : sizeVariant === 'sm'
+        ? `${theme.spacing(2)} 0`
+        : theme.spacing(2)};
+  padding-left: ${({ theme, LeftIcon, autoGrow }) =>
+    autoGrow
+      ? theme.spacing(1)
+      : LeftIcon
+        ? `calc(${theme.spacing(3)} + 16px)`
+        : theme.spacing(2)};
   width: ${({ theme, width }) =>
     width ? `calc(${width}px + ${theme.spacing(0.5)})` : '100%'};
   max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
@@ -82,24 +89,24 @@ const StyledInput = styled.input<
   }
 
   &:focus {
-    ${({ theme }) => {
-      return `box-shadow: 0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)};
-      border-color: ${theme.color.blue};`;
+    ${({ theme, error }) => {
+      return `
+      border-color: ${error ? theme.border.color.danger : theme.color.blue};
+      `;
     }};
   }
 `;
 
-const StyledErrorHelper = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledLeftIconContainer = styled.div`
+const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputV2Size }>`
   align-items: center;
   display: flex;
   justify-content: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme, sizeVariant }) =>
+    sizeVariant === 'sm'
+      ? theme.spacing(0.5)
+      : sizeVariant === 'md'
+        ? theme.spacing(1)
+        : theme.spacing(2)};
   position: absolute;
   top: 0;
   bottom: 0;
@@ -120,9 +127,10 @@ const StyledTrailingIconContainer = styled.div<
   margin: auto 0;
 `;
 
-const StyledTrailingIcon = styled.div`
+const StyledTrailingIcon = styled.div<{ isFocused?: boolean }>`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${({ theme, isFocused }) =>
+    isFocused ? theme.font.color.secondary : theme.font.color.light};
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
   justify-content: center;
@@ -130,7 +138,7 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-export type TextInputV2Size = 'sm' | 'md';
+export type TextInputV2Size = 'sm' | 'md' | 'lg';
 
 export type TextInputV2ComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -154,105 +162,77 @@ export type TextInputV2ComponentProps = Omit<
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
 
-const TextInputV2Component = (
-  {
-    className,
-    label,
-    value,
-    onChange,
-    onFocus,
-    onBlur,
-    onKeyDown,
-    fullWidth,
-    width,
-    error,
-    noErrorHelper = false,
-    required,
-    type,
-    autoFocus,
-    placeholder,
-    disabled,
-    tabIndex,
-    RightIcon,
-    LeftIcon,
-    autoComplete,
-    maxLength,
-    sizeVariant = 'md',
-    dataTestId,
-  }: TextInputV2ComponentProps,
-  // eslint-disable-next-line @nx/workspace-component-props-naming
-  ref: ForwardedRef<HTMLInputElement>,
-): JSX.Element => {
-  const theme = useTheme();
+const TextInputV2Component = forwardRef<
+  HTMLInputElement,
+  TextInputV2ComponentProps
+>(
+  (
+    {
+      className,
+      label,
+      value,
+      onChange,
+      onFocus,
+      onBlur,
+      onKeyDown,
+      fullWidth,
+      width,
+      error,
+      noErrorHelper = false,
+      required,
+      type,
+      autoFocus,
+      placeholder,
+      disabled,
+      tabIndex,
+      RightIcon,
+      LeftIcon,
+      autoComplete,
+      maxLength,
+      sizeVariant = 'md',
+      inheritFontStyles = false,
+      dataTestId,
+      autoGrow = false,
+    },
+    ref,
+  ) => {
+    const theme = useTheme();
+    const inputRef = useRef<HTMLInputElement>(null);
+    const combinedRef = useCombinedRefs(ref, inputRef);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const combinedRef = useCombinedRefs(ref, inputRef);
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
 
-  const [passwordVisible, setPasswordVisible] = useState(false);
+    const handleTogglePasswordVisibility = () => {
+      setPasswordVisible(!passwordVisible);
+    };
 
-  const handleTogglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    const handleFocus: FocusEventHandler<HTMLInputElement> = (event) => {
+      setIsFocused(true);
+      onFocus?.(event);
+    };
+
+    const handleBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+      setIsFocused(false);
+      onBlur?.(event);
+    };
 
     const inputId = useId();
 
-  return (
-    <StyledContainer className={className} fullWidth={fullWidth ?? false}>
-      {label && (
-        <InputLabel htmlFor={inputId}>
-          {label + (required ? '*' : '')}
-        </InputLabel>
-      )}
-      <StyledInputContainer>
-        {!!LeftIcon && (
-          <StyledLeftIconContainer>
-            <StyledTrailingIcon>
-              <LeftIcon size={theme.icon.size.md} />
-            </StyledTrailingIcon>
-          </StyledLeftIconContainer>
+    return (
+      <StyledContainer className={className} fullWidth={fullWidth ?? false}>
+        {label && (
+          <InputLabel htmlFor={inputId}>
+            {label + (required ? '*' : '')}
+          </InputLabel>
         )}
-
-        <StyledInput
-          id={inputId}
-          width={width}
-          data-testid={dataTestId}
-          autoComplete={autoComplete || 'off'}
-          ref={combinedRef}
-          tabIndex={tabIndex ?? 0}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          type={passwordVisible ? 'text' : type}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange?.(
-              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-            );
-          }}
-          onKeyDown={onKeyDown}
-          {...{
-            autoFocus,
-            disabled,
-            placeholder,
-            required,
-            value,
-            LeftIcon,
-            maxLength,
-            error,
-            sizeVariant,
-          }}
-        />
-
-        <StyledTrailingIconContainer {...{ error }}>
-          {!error && type === INPUT_TYPE_PASSWORD && (
-            <StyledTrailingIcon
-              onClick={handleTogglePasswordVisibility}
-              data-testid="reveal-password-button"
-            >
-              {passwordVisible ? (
-                <IconEyeOff size={theme.icon.size.md} />
-              ) : (
-                <IconEye size={theme.icon.size.md} />
-              )}
-            </StyledTrailingIcon>
+        <StyledInputContainer>
+          {!!LeftIcon && (
+            <StyledLeftIconContainer sizeVariant={sizeVariant}>
+              <StyledTrailingIcon isFocused={isFocused}>
+                <LeftIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            </StyledLeftIconContainer>
           )}
 
           <StyledInput

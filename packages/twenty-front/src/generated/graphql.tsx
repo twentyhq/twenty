@@ -1,5 +1,8 @@
-import { gql } from '@apollo/client';
+import { Telephony, TelephonyExtension } from '@/settings/service-center/telephony/types/SettingsServiceCenterTelephony';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
+import { Agent } from 'http';
+import { WhatsappIntegration, WhatsappTemplatesResponse } from '~/generated-metadata/graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };

@@ -1,76 +1,60 @@
-import { useRecoilValue } from 'recoil';
+import { renderHook } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { v4 } from 'uuid';
 
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
-import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared';
+import {
+  CurrentWorkspace,
+  currentWorkspaceState,
+} from '@/auth/states/currentWorkspaceState';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import {
+  SubscriptionStatus,
+  WorkspaceActivationStatus,
+} from '~/generated/graphql';
 
-import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
-import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
-import { WorkspaceUrls } from '~/generated/graphql';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-export const WorkspaceProviderEffect = () => {
-  const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
+const currentWorkspace = {
+  id: '1',
+  currentBillingSubscription: { status: SubscriptionStatus.Incomplete },
+  activationStatus: WorkspaceActivationStatus.ACTIVE,
+  allowImpersonation: true,
+} as CurrentWorkspace;
 
-  const lastAuthenticatedWorkspaceDomain = useRecoilValue(
-    lastAuthenticatedWorkspaceDomainState,
+const renderHooks = () => {
+  const { result } = renderHook(
+    () => {
+      const subscriptionStatus = useSubscriptionStatus();
+      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+
+      return {
+        subscriptionStatus,
+        setCurrentWorkspace,
+      };
+    },
+    {
+      wrapper: RecoilRoot,
+    },
   );
-
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
-
-  const { currentLocationHostname } = useReadWorkspaceUrlFromCurrentLocation();
-
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-
-  const getHostnamesFromWorkspaceUrls = (workspaceUrls: WorkspaceUrls) => {
-    return {
-      customUrlHostname: workspaceUrls.customUrl
-        ? new URL(workspaceUrls.customUrl).hostname
-        : undefined,
-      subdomainUrlHostname: new URL(workspaceUrls.subdomainUrl).hostname,
-    };
-  };
-
-  useEffect(() => {
-    const hostnames = getPublicWorkspaceData
-      ? getHostnamesFromWorkspaceUrls(getPublicWorkspaceData?.workspaceUrls)
-      : null;
-    if (
-      isMultiWorkspaceEnabled &&
-      isDefined(getPublicWorkspaceData) &&
-      currentLocationHostname !== hostnames?.customUrlHostname &&
-      currentLocationHostname !== hostnames?.subdomainUrlHostname
-    ) {
-      redirectToWorkspaceDomain(
-        getWorkspaceUrl(getPublicWorkspaceData.workspaceUrls),
-      );
-    }
-  }, [
-    isMultiWorkspaceEnabled,
-    redirectToWorkspaceDomain,
-    getPublicWorkspaceData,
-    currentLocationHostname,
-  ]);
-
-  useEffect(() => {
-    if (
-      isMultiWorkspaceEnabled &&
-      isDefaultDomain &&
-      isDefined(lastAuthenticatedWorkspaceDomain) &&
-      'workspaceUrl' in lastAuthenticatedWorkspaceDomain &&
-      isDefined(lastAuthenticatedWorkspaceDomain?.workspaceUrl)
-    ) {
-      redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.workspaceUrl);
-    }
-  }, [
-    isMultiWorkspaceEnabled,
-    isDefaultDomain,
-    lastAuthenticatedWorkspaceDomain,
-    redirectToWorkspaceDomain,
-  ]);
-
-  return <></>;
+  return { result };
 };
+
+describe('useSubscriptionStatus', () => {
+  Object.values(SubscriptionStatus).forEach((subscriptionStatus) => {
+    it(`should return "${subscriptionStatus}"`, async () => {
+      const { result } = renderHooks();
+      const { setCurrentWorkspace } = result.current;
+
+      act(() => {
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          currentBillingSubscription: {
+            id: v4(),
+            status: subscriptionStatus,
+          },
+        });
+      });
+
+      expect(result.current.subscriptionStatus).toBe(subscriptionStatus);
+    });
+  });
+});

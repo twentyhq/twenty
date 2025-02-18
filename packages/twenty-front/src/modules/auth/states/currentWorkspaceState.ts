@@ -20,9 +20,9 @@ export type CurrentWorkspace = Pick<
   | 'isPasswordAuthEnabled'
   | 'hasValidEnterpriseKey'
   | 'subdomain'
-  | 'hostname'
+  | 'customDomain'
+  | 'workspaceUrls'
   | 'metadataVersion'
-  | 'creatorEmail'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

@@ -6,7 +6,6 @@ import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatching
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
@@ -57,15 +56,6 @@ export const CommandMenu = () => {
 
   const currentObjectMetadataItem = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemComponentState,
-  );
-
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const currentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
-  );
-
-  const currentObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.id === currentObjectMetadataId,
   );
 
   const selectableItemIds = selectableItems.map((item) => item.id);

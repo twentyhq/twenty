@@ -12,6 +12,7 @@ import {
   IconKey,
   IconLock,
   IconMail,
+  IconPhone,
   IconRocket,
   IconServer,
   IconSettings,
@@ -30,6 +31,7 @@ import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPerm
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
+import { IconIdBadge2, IconMessageCircleCog } from '@tabler/icons-react';
 import { useRecoilValue } from 'recoil';
 
 export type SettingsNavigationSection = {
@@ -112,6 +114,31 @@ export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.WorkspaceMembersPage,
           Icon: IconUsers,
           isHidden: !permissionMap[SettingsFeatures.WORKSPACE_USERS],
+        },
+        {
+          label: 'Service Center',
+          path: SettingsPath.ServiceCenter,
+          Icon: IconPhone,
+          subItems: [
+            {
+              label: 'Agents',
+              path: SettingsPath.ServiceCenterAgents,
+              Icon: IconUsers,
+              indentationLevel: 2,
+            },
+            {
+              label: 'Sectors',
+              path: SettingsPath.ServiceCenterSectors,
+              Icon: IconIdBadge2,
+              indentationLevel: 2,
+            },
+            {
+              label: 'Service Level',
+              path: SettingsPath.ServiceCenterServiceLevel,
+              Icon: IconMessageCircleCog,
+              indentationLevel: 2,
+            },
+          ],
         },
         {
           label: t`Billing`,
