@@ -74,6 +74,7 @@ jobs:
       - name: Server / Create DB
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
       - name: Worker / Run
@@ -170,6 +171,7 @@ jobs:
           - 6379:6379
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      NODE_ENV: test
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -200,6 +202,7 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
+          npx nx run twenty-server:command workspace:seed:dev
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
