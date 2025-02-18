@@ -102,7 +102,7 @@ export abstract class GraphqlQueryBaseResolverService<
       }
 
       if (
-        permissionsEnabled === true &&
+        featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
         isObjectRecordUnderObjectRecordsPermissions({
           isCustom: objectMetadataItemWithFieldMaps.isCustom,
           nameSingular: objectMetadataItemWithFieldMaps.nameSingular,
