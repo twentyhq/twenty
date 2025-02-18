@@ -65,6 +65,7 @@ export const CommandMenuContainer = ({
     callback: closeCommandMenu,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
+    excludeClassNames: ['page-header-command-menu-button'],
   });
 
   const isMobile = useIsMobile();
