@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 import { ButtonAccent, ButtonProps, ButtonSize, ButtonVariant } from './Button';
 
-export type AnimatedMorphPathButtonProps = ButtonProps &
+export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {
     animatedSvg: React.ReactNode;
   };
@@ -376,7 +376,7 @@ const StyledIconContainer = styled(motion.div)`
   justify-content: center;
 `;
 
-export const AnimatedMorphPathButton = ({
+export const AnimatedButton = ({
   className,
   Icon,
   animatedSvg,
@@ -399,7 +399,7 @@ export const AnimatedMorphPathButton = ({
   ariaLabel,
   animate,
   transition,
-}: AnimatedMorphPathButtonProps) => {
+}: AnimatedButtonProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
 

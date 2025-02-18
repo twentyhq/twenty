@@ -1,5 +1,5 @@
 import {
-  AnimatedMorphPathButton,
+  AnimatedButton,
   IconButton,
   IconDotsVertical,
   IconX,
@@ -125,7 +125,7 @@ export const PageHeaderOpenCommandMenuButton = () => {
   return (
     <StyledButtonWrapper>
       {isCommandMenuV2Enabled ? (
-        <AnimatedMorphPathButton
+        <AnimatedButton
           animatedSvg={
             <AnimatedIcon isCommandMenuOpened={isCommandMenuOpened} />
           }
