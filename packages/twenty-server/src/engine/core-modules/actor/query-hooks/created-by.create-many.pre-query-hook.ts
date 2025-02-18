@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common/services/logger.service';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -12,16 +11,17 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
 import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
-  ActorMetadata,
-  FieldActorSource,
+  ActorMetadata
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { isDefined } from 'twenty-shared';
 
 type CustomWorkspaceItem = Omit<
   CustomWorkspaceEntity,
@@ -48,8 +48,8 @@ export class CreatedByCreateManyPreQueryHook
     objectName: string,
     payload: CreateManyResolverArgs<CustomWorkspaceItem>,
   ): Promise<CreateManyResolverArgs<CustomWorkspaceItem>> {
+    const { workspace, workspaceMemberId, user, apiKey } = authContext;
     let createdBy: ActorMetadata | null = null;
-
     if (!isDefined(payload.data)) {
       throw new GraphqlQueryRunnerException(
         'Payload data is required',
@@ -72,45 +72,51 @@ export class CreatedByCreateManyPreQueryHook
       return payload;
     }
 
-    // If user is logged in, we use the workspace member
-    if (authContext.workspaceMemberId && authContext.user) {
-      createdBy = buildCreatedByFromWorkspaceMember(
-        authContext.workspaceMemberId,
-        authContext.user,
-      );
+    switch (true) {
       // TODO: remove that code once we have the workspace member id in all tokens
-    } else if (authContext.user) {
-      this.logger.warn("User doesn't have a workspace member id in the token");
-      const workspaceMemberRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-          authContext.workspace.id,
-          'workspaceMember',
-        );
-
-      const workspaceMember = await workspaceMemberRepository.findOne({
-        where: {
-          userId: authContext.user?.id,
-        },
-      });
-
-      if (!workspaceMember) {
-        throw new Error(
-          `Workspace member can't be found for user ${authContext.user.id}`,
-        );
+      case isDefined(workspaceMemberId) && isDefined(user): {
+        createdBy = buildCreatedByFromWorkspaceMember({
+          fullNameMetadata: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+          },
+          workspaceMemberId,
+        });
+        break;
       }
+      case isDefined(user): {
+        this.logger.warn(
+          "User doesn't have a workspace member id in the token",
+        );
+        const workspaceMemberRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+            workspace.id,
+            'workspaceMember',
+          );
 
-      createdBy = {
-        source: FieldActorSource.MANUAL,
-        workspaceMemberId: workspaceMember.id,
-        name: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
-      };
-    }
+        const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+          where: {
+            userId: user.id,
+          },
+        });
 
-    if (authContext.apiKey) {
-      createdBy = {
-        source: FieldActorSource.API,
-        name: authContext.apiKey.name,
-      };
+        createdBy = buildCreatedByFromWorkspaceMember({
+          fullNameMetadata: workspaceMember.name,
+          workspaceMemberId: workspaceMember.id,
+        });
+        break;
+      }
+      // Could apiKey and user both defined ?
+      case isDefined(apiKey): {
+        createdBy = buildCreatedByFromApiKey({
+          apiKey
+        })
+        break;
+      }
+      default: {
+        // TODO handle gracefully
+        // Not managed from now
+      }
     }
 
     for (const datum of payload.data) {

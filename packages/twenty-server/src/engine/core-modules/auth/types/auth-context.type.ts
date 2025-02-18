@@ -4,6 +4,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 export type AuthContext = {
+  // TODO refactor using one or the other pattern between both user and apiKey
   user?: User | null | undefined;
   apiKey?: ApiKeyWorkspaceEntity | null | undefined;
   workspaceMemberId?: string;

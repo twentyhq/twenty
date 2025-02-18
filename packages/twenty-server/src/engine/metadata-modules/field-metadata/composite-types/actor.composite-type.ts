@@ -49,16 +49,16 @@ export const actorCompositeType: CompositeType = {
       name: 'context',
       type: FieldMetadataType.RAW_JSON,
       hidden: false,
-      isRequired: false,
+      isRequired: true,
     },
   ],
 };
 
 export type ActorMetadata = {
   source: FieldActorSource;
-  workspaceMemberId?: string;
+  workspaceMemberId: string | null;
   name: string;
-  context?: {
-    provider?: ConnectedAccountProvider;
+  context: {
+    provider?: ConnectedAccountProvider; // or should it be optional
   };
 };
