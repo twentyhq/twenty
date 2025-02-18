@@ -127,7 +127,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           }
 
           const viewGroupsToCreate =
-            objectMetadataItem?.fields
+            objectMetadataItem.fields
               ?.find((field) => field.id === kanbanFieldMetadataId)
               ?.options?.map(
                 (option, index) =>
@@ -181,7 +181,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       createOneRecord,
       createViewFieldRecords,
       findManyRecords,
-      objectMetadataItem?.fields,
+      objectMetadataItem.fields,
       createViewGroupRecords,
       getViewFilterGroupsCombined,
       getViewFiltersCombined,
