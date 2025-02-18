@@ -1,55 +1,34 @@
-import { useRecoilValue } from 'recoil';
 import { IconDoorEnter } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { billingState } from '@/client-config/states/billingState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import {
   SettingsNavigationItem,
-  settingsNavItems,
-} from '@/settings/constants/settingsNavItems';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+  SettingsNavigationSection,
+  useSettingsNavigationItems,
+} from '@/settings/hooks/useSettingsNavigationItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared';
 
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
   const { t } = useLingui();
 
-  const billing = useRecoilValue(billingState);
-
-  const isFunctionSettingsEnabled = false;
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const currentUser = useRecoilValue(currentUserState);
-  const isAdminEnabled = currentUser?.canImpersonate ?? false;
-  const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
-
-  const featureFlags = useFeatureFlagsMap();
-  const permissionMap = useSettingsPermissionMap();
-
-  const visibilityParams = {
-    isBillingEnabled,
-    isFunctionSettingsEnabled,
-    isAdminEnabled,
-    featureFlags,
-    permissionMap,
-    hasLabFeatureFlags: labPublicFeatureFlags?.length > 0,
-  };
+  const settingsNavigationItems: SettingsNavigationSection[] =
+    useSettingsNavigationItems();
 
   const renderNavigationItem = (
     item: SettingsNavigationItem,
     index: number,
     totalItems: number,
   ) => {
-    if (item.isHidden?.(visibilityParams) === true) {
+    if (isDefined(item.isHidden) && item.isHidden) {
       return null;
     }
 
@@ -84,10 +63,8 @@ export const SettingsNavigationDrawerItems = () => {
 
   return (
     <>
-      {settingsNavItems.map((section) => {
-        const allItemsHidden = section.items.every(
-          (item) => item.isHidden?.(visibilityParams) === true,
-        );
+      {settingsNavigationItems.map((section) => {
+        const allItemsHidden = section.items.every((item) => item.isHidden);
         if (allItemsHidden) {
           return null;
         }
