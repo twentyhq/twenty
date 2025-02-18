@@ -188,6 +188,8 @@ export type WorkflowVersion = {
 
 type StepRunOutput = {
   id: string;
+  name: string;
+  type: string;
   outputs: {
     attemptCount: number;
     result: object | undefined;
@@ -195,14 +197,8 @@ type StepRunOutput = {
   }[];
 };
 
-export type WorkflowRunOutputStepsOutput = Record<string, StepRunOutput>;
-
 export type WorkflowRunOutput = {
-  flow: {
-    trigger: WorkflowTrigger;
-    steps: WorkflowAction[];
-  };
-  stepsOutput: WorkflowRunOutputStepsOutput;
+  steps: Record<string, StepRunOutput>;
   error?: string;
 };
 
