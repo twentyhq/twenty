@@ -75,9 +75,8 @@ export class StandardizationOfActorCompositeContextTypeCommand_043 extends Activ
       relations: ['object'],
     });
 
-    // Filter and update fields with EMAIL or CALENDAR source
     for (const field of actorFields) {
-      if (!field || !field.object) { // what is field.object here 
+      if (!field || !field.object) {
         this.logger.verbose(
           'field.objectMetadata is null',
           workspaceId,
@@ -116,5 +115,4 @@ export class StandardizationOfActorCompositeContextTypeCommand_043 extends Activ
 
     this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspaceId);
   }
-
 }

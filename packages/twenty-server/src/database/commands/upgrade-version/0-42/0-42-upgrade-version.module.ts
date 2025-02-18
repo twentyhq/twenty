@@ -36,7 +36,7 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     MigrateRichTextFieldCommand,
     FixBodyV2ViewFieldPositionCommand,
     LimitAmountOfViewFieldCommand,
-    StandardizationOfActorCompositeContextTypeCommand
+    StandardizationOfActorCompositeContextTypeCommand,
   ],
 })
 export class UpgradeTo0_42CommandModule {}
