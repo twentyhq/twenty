@@ -1243,7 +1243,7 @@ msgstr "新"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts:248
 msgid "New {capitalizedObjectNameSingular}"
-msgstr ""
+msgstr "新{capitalizedObjectNameSingular}"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -2067,3 +2067,4 @@ msgstr "您的工作区"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "您的工作区将被禁用"
+

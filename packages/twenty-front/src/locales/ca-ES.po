@@ -1243,7 +1243,7 @@ msgstr "Nou"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts:248
 msgid "New {capitalizedObjectNameSingular}"
-msgstr ""
+msgstr "Nou {capitalizedObjectNameSingular}"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -2067,3 +2067,4 @@ msgstr "El vostre Espai de Treball"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "El vostre espai de treball serà desactivat"
+

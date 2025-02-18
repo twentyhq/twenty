@@ -1243,7 +1243,7 @@ msgstr "جديد"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts:248
 msgid "New {capitalizedObjectNameSingular}"
-msgstr ""
+msgstr "{capitalizedObjectNameSingular} جديد"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -2067,3 +2067,4 @@ msgstr "مساحة عملك"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "سيتم تعطيل مساحة عملك"
+
