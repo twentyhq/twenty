@@ -66,6 +66,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
   });
 
   cache.modify<StoreObject>({
+    broadcast: false,
     fields: {
       [objectMetadataItem.namePlural]: (
         rootQueryCachedResponse,

@@ -39,7 +39,6 @@ export const useRecordShowPagePagination = (
   const { filter, orderBy } =
     useQueryVariablesFromActiveFieldsOfViewOrDefaultView({
       objectMetadataItem,
-      viewId: viewIdQueryParam,
     });
 
   const { loading: loadingCursor, pageInfo: currentRecordsPageInfo } =

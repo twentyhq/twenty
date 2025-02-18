@@ -22,16 +22,23 @@ export const sortFavorites = (
     objectNameSingular: string,
   ) => ObjectRecordIdentifier,
   hasLinkToShowPage: boolean,
-  views: View[],
+  views: Pick<View, 'id' | 'name' | 'objectMetadataId' | 'icon'>[],
   objectMetadataItems: ObjectMetadataItem[],
 ) => {
   return favorites
     .map((favorite) => {
       if (isDefined(favorite.viewId) && isDefined(favorite.workspaceMemberId)) {
-        const { labelPlural, view } = getObjectMetadataLabelPluralFromViewId(
-          views,
+        const view = views.find((view) => view.id === favorite.viewId);
+
+        if (!isDefined(view)) {
+          return {
+            ...favorite,
+          } as ProcessedFavorite;
+        }
+
+        const { labelPlural } = getObjectMetadataLabelPluralFromViewId(
+          view,
           objectMetadataItems,
-          favorite.viewId,
         );
 
         return {
