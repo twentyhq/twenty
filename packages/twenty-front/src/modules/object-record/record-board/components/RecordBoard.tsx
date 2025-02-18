@@ -147,8 +147,6 @@ export const RecordBoard = () => {
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(recordBoardId);
 
-  const viewSorts = currentViewWithCombinedFiltersAndSorts?.viewSorts || [];
-
   const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
   );
@@ -157,6 +155,9 @@ export const RecordBoard = () => {
     ({ snapshot }) =>
       (result) => {
         if (!result.destination) return;
+
+        const viewSorts =
+          currentViewWithCombinedFiltersAndSorts?.viewSorts || [];
 
         if (viewSorts.length > 0) {
           setIsRemoveSortingModalOpen(true);
@@ -217,6 +218,8 @@ export const RecordBoard = () => {
       recordIndexRecordIdsByGroupFamilyState,
       selectFieldMetadataItem,
       updateOneRecord,
+      setIsRemoveSortingModalOpen,
+      currentViewWithCombinedFiltersAndSorts,
     ],
   );
 
