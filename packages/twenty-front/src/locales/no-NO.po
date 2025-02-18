@@ -462,7 +462,7 @@ msgstr "Kopier lenke"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
-msgstr "Kopier denne nkelen da den ikke vil vre synlig igjen"
+msgstr "Kopier denne n\fkelen da den ikke vil v\fre synlig igjen"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
@@ -487,11 +487,11 @@ msgstr "Tell unike verdier"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
 msgid "Create a workflow and return here to view its versions"
-msgstr "Opprett en arbeidsflyt og kom tilbake her for n vise versjonene"
+msgstr "Opprett en arbeidsflyt og kom tilbake her for \fn vise versjonene"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:57
 msgid "Create API key"
-msgstr "Opprett API-nkkel"
+msgstr "Opprett API-n\fkkel"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
@@ -2063,4 +2063,3 @@ msgstr "Ditt Arbeidsområde"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Ditt arbeidsområde vil bli deaktivert"
-
