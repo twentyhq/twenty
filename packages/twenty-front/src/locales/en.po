@@ -383,6 +383,10 @@ msgstr "Choose your Trial"
 msgid "Close"
 msgstr "Close"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr "Close command menu"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Configure an SSO connection"
@@ -1348,6 +1352,10 @@ msgstr "Objects"
 msgid "Off the beaten path"
 msgstr "Off the beaten path"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr "Open command menu"
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Opened"
@@ -1893,7 +1901,7 @@ msgstr "Turkish"
 msgid "Type"
 msgstr "Type"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Type anything"
 

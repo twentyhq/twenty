@@ -388,6 +388,10 @@ msgstr "Επιλέξτε τη Δοκιμή σας"
 msgid "Close"
 msgstr "Κλείσιμο"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:117
+msgid "Close command menu"
+msgstr ""
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Ρυθμίστε μια σύνδεση SSO"
@@ -1361,6 +1365,10 @@ msgstr "Αντικείμενα"
 msgid "Off the beaten path"
 msgstr "Εκτός της συνηθισμένης πορείας"
 
+#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx:118
+msgid "Open command menu"
+msgstr ""
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
 msgstr "Ανοίχτηκε"
@@ -1906,7 +1914,7 @@ msgstr "Τουρκικά"
 msgid "Type"
 msgstr "Τύπος"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:157
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:167
 msgid "Type anything"
 msgstr "Πληκτρολογήστε οτιδήποτε"
 
