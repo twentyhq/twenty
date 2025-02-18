@@ -3,26 +3,21 @@ import { useRecoilCallback } from 'recoil';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
+import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
+import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { ViewField } from '@/views/types/ViewField';
 import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
+export const useSaveCurrentViewFields = () => {
   const { createViewFieldRecords, updateViewFieldRecords } =
     usePersistViewFieldRecords();
 
-  const { getViewFromCache } = useGetViewFromCache();
+  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
     contextStoreCurrentViewIdComponentState,
-  );
-
-  const isPersistingViewFieldsCallbackState = useRecoilComponentCallbackStateV2(
-    isPersistingViewFieldsComponentState,
-    viewBarComponentId,
   );
 
   const saveViewFields = useRecoilCallback(
@@ -36,9 +31,9 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
           return;
         }
 
-        set(isPersistingViewFieldsCallbackState, true);
+        set(isPersistingViewFieldsState, true);
 
-        const view = await getViewFromCache(currentViewId);
+        const view = await getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -93,13 +88,12 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
           updateViewFieldRecords(viewFieldsToUpdate),
         ]);
 
-        set(isPersistingViewFieldsCallbackState, false);
+        set(isPersistingViewFieldsState, false);
       },
     [
       createViewFieldRecords,
       currentViewIdCallbackState,
-      getViewFromCache,
-      isPersistingViewFieldsCallbackState,
+      getViewFromPrefetchState,
       updateViewFieldRecords,
     ],
   );

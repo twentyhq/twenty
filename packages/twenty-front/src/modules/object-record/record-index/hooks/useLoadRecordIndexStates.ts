@@ -1,5 +1,3 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -23,8 +21,8 @@ import { tableViewFilterGroupsComponentState } from '@/object-record/record-tabl
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { View } from '@/views/types/View';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -114,6 +112,8 @@ export const useLoadRecordIndexStates = () => {
           columnDefinitions,
         });
 
+        console.log('newFieldDefinitions', newFieldDefinitions);
+
         setTableColumns(newFieldDefinitions, recordIndexId);
 
         const existingRecordIndexFieldDefinitions = snapshot
@@ -183,33 +183,7 @@ export const useLoadRecordIndexStates = () => {
 
   const loadRecordIndexStates = useRecoilCallback(
     ({ snapshot, set }) =>
-      async () => {
-        const objectMetadataItem = snapshot
-          .getLoadable(
-            contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
-              instanceId: 'main-context-store',
-            }),
-          )
-          .getValue();
-
-        const contextStoreCurrentViewId = snapshot
-          .getLoadable(
-            contextStoreCurrentViewIdComponentState.atomFamily({
-              instanceId: 'main-context-store',
-            }),
-          )
-          .getValue();
-
-        const views = snapshot.getLoadable(prefetchViewsState).getValue();
-
-        const view = views.find(
-          (view) => view.id === contextStoreCurrentViewId,
-        );
-
-        if (!view || !objectMetadataItem) {
-          return;
-        }
-
+      async (view: View, objectMetadataItem: ObjectMetadataItem) => {
         const recordIndexId = `${objectMetadataItem.namePlural}-${view.id}`;
 
         const filterableFieldMetadataItems = snapshot

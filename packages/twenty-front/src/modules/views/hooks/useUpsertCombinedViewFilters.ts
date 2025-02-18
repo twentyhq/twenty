@@ -4,7 +4,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
+import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentFamilyState';
 import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -29,7 +29,7 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
     viewBarComponentId,
   );
 
-  const { getViewFromCache } = useGetViewFromCache();
+  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
   const upsertCombinedViewFilter = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -53,7 +53,7 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
           return;
         }
 
-        const currentView = await getViewFromCache(currentViewId);
+        const currentView = await getViewFromPrefetchState(currentViewId);
 
         if (!currentView) {
           return;
@@ -120,7 +120,7 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
       },
     [
       currentViewIdCallbackState,
-      getViewFromCache,
+      getViewFromPrefetchState,
       unsavedToDeleteViewFilterIdsCallbackState,
       unsavedToUpsertViewFiltersCallbackState,
     ],

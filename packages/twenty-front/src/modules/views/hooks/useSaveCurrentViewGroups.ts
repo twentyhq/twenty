@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
+import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -13,7 +13,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
   const { createViewGroupRecords, updateViewGroupRecords } =
     usePersistViewGroupRecords();
 
-  const { getViewFromCache } = useGetViewFromCache();
+  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
     contextStoreCurrentViewIdComponentState,
@@ -31,7 +31,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
           return;
         }
 
-        const view = await getViewFromCache(currentViewId);
+        const view = await getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -67,7 +67,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
           { ...viewGroupToSave, id: existingField.id },
         ]);
       },
-    [currentViewIdCallbackState, getViewFromCache, updateViewGroupRecords],
+    [currentViewIdCallbackState, getViewFromPrefetchState, updateViewGroupRecords],
   );
 
   const saveViewGroups = useRecoilCallback(
@@ -81,7 +81,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
           return;
         }
 
-        const view = await getViewFromCache(currentViewId);
+        const view = await getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -135,7 +135,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
     [
       createViewGroupRecords,
       currentViewIdCallbackState,
-      getViewFromCache,
+      getViewFromPrefetchState,
       updateViewGroupRecords,
     ],
   );

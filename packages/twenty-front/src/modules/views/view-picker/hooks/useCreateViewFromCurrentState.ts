@@ -14,6 +14,7 @@ import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 export const useCreateViewFromCurrentState = () => {
+  console.log('useCreateViewFromCurrentState');
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
   const viewPickerInputNameCallbackState = useRecoilComponentCallbackStateV2(

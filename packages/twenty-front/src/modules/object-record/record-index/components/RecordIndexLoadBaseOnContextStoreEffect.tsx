@@ -1,3 +1,4 @@
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
@@ -22,16 +23,34 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     }),
   );
 
+  const objectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
+  );
+
+  console.log('objectMetadataItem', objectMetadataItem);
+  console.log(view);
+
   useEffect(() => {
     if (loadedViewId === contextStoreCurrentViewId) {
       return;
     }
 
+    if (!isDefined(objectMetadataItem)) {
+      return;
+    }
+
     if (isDefined(view)) {
-      loadRecordIndexStates();
+      console.log('view', view);
+      loadRecordIndexStates(view, objectMetadataItem);
       setLoadedViewId(contextStoreCurrentViewId);
     }
-  }, [contextStoreCurrentViewId, loadRecordIndexStates, loadedViewId, view]);
+  }, [
+    contextStoreCurrentViewId,
+    loadRecordIndexStates,
+    loadedViewId,
+    objectMetadataItem,
+    view,
+  ]);
 
   return <></>;
 };

@@ -7,6 +7,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { findAllViewsOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllViewsOperationSignatureFactory';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { View } from '@/views/types/View';
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { isDefined } from 'twenty-shared';
@@ -46,11 +47,13 @@ export const PrefetchRunViewQueryEffect = () => {
     [],
   );
 
+  const isPersistingViewFields = useRecoilValue(isPersistingViewFieldsState);
+
   useEffect(() => {
-    if (isDefined(records)) {
+    if (isDefined(records) && !isPersistingViewFields) {
       setPrefetchViewsState(records as View[]);
     }
-  }, [records, setPrefetchViewsState]);
+  }, [isPersistingViewFields, records, setPrefetchViewsState]);
 
   return <></>;
 };

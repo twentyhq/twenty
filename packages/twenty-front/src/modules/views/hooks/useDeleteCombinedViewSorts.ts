@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
+import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewSortIdsComponentFamilyState';
 import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/unsavedToUpsertViewSortsComponentFamilyState';
 import { isDefined } from 'twenty-shared';
@@ -25,7 +25,7 @@ export const useDeleteCombinedViewSorts = (viewBarComponentId?: string) => {
       viewBarComponentId,
     );
 
-  const { getViewFromCache } = useGetViewFromCache();
+  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
   const deleteCombinedViewSort = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -49,7 +49,7 @@ export const useDeleteCombinedViewSorts = (viewBarComponentId?: string) => {
           unsavedToDeleteViewSortIdsCallbackState({ viewId: currentViewId }),
         );
 
-        const currentView = await getViewFromCache(currentViewId);
+        const currentView = await getViewFromPrefetchState(currentViewId);
 
         if (!currentView) {
           return;
@@ -87,7 +87,7 @@ export const useDeleteCombinedViewSorts = (viewBarComponentId?: string) => {
       },
     [
       currentViewIdCallbackState,
-      getViewFromCache,
+      getViewFromPrefetchState,
       unsavedToDeleteViewSortIdsCallbackState,
       unsavedToUpsertViewSortsCallbackState,
     ],
