@@ -166,9 +166,7 @@ export const useRightDrawerEmailThread = () => {
     messageChannelData.length > 0
       ? messageChannelData[0]?.connectedAccount
       : null;
-  const connectedAccountProvider = connectedAccount
-    ? connectedAccount.provider
-    : null;
+  const connectedAccountProvider = connectedAccount?.provider ?? null;
   return {
     thread,
     messages: messagesWithSender,
