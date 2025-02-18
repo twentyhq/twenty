@@ -17,10 +17,8 @@ export const VerifyEffect = () => {
   const errorMessage = searchParams.get('errorMessage');
 
   const { enqueueSnackBar } = useSnackBar();
-
   const isLogged = useIsLogged();
   const navigate = useNavigateApp();
-
   const { getAuthTokensFromLoginToken } = useAuth();
 
   const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
@@ -28,19 +26,33 @@ export const VerifyEffect = () => {
   );
 
   useEffect(() => {
-    if (isDefined(errorMessage)) {
-      enqueueSnackBar(errorMessage, {
-        dedupeKey: 'get-auth-tokens-from-login-token-failed-dedupe-key',
-        variant: SnackBarVariant.Error,
-      });
-    }
+    const verifyToken = async () => {
+      if (isDefined(errorMessage)) {
+        enqueueSnackBar(errorMessage, {
+          dedupeKey: 'get-auth-tokens-from-login-token-failed-dedupe-key',
+          variant: SnackBarVariant.Error,
+        });
+      }
 
-    if (isDefined(loginToken)) {
-      setIsAppWaitingForFreshObjectMetadata(true);
-      getAuthTokensFromLoginToken(loginToken);
-    } else if (!isLogged) {
-      navigate(AppPath.SignInUp);
-    }
+      if (isDefined(loginToken)) {
+        try {
+          setIsAppWaitingForFreshObjectMetadata(true);
+          await getAuthTokensFromLoginToken(loginToken);
+          navigate(AppPath.Index);
+        } catch (error) {
+          enqueueSnackBar('Authentication failed', {
+            variant: SnackBarVariant.Error,
+          });
+          navigate(AppPath.SignInUp);
+        } finally {
+          setIsAppWaitingForFreshObjectMetadata(false);
+        }
+      } else if (!isLogged) {
+        navigate(AppPath.SignInUp);
+      }
+    };
+
+    verifyToken();
     // Verify only needs to run once at mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
