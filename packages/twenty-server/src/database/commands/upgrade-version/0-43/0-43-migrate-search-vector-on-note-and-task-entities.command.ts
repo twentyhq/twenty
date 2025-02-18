@@ -67,6 +67,7 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorks
         where: {
           workspaceId,
           key: FeatureFlagKey.IsRichTextV2Enabled,
+          value: true,
         },
       });
 
