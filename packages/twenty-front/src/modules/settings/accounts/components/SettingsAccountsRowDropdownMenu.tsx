@@ -90,6 +90,7 @@ export const SettingsAccountsRowDropdownMenu = ({
               text="Remove account"
               onClick={() => {
                 setIsDeleteAccountModalOpen(true);
+                closeDropdown();
               }}
             />
           </DropdownMenuItemsContainer>
