@@ -106,7 +106,7 @@ export class QueryRunnerArgsFactory {
             fieldMetadataMapByNameByName,
           ),
           data: await this.overrideDataByFieldMetadata(
-            (args as UpdateOneResolverArgs).data,
+            (args as UpdateManyResolverArgs).data,
             options,
             fieldMetadataMapByNameByName,
             {
