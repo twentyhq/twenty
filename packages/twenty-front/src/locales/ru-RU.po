@@ -817,11 +817,11 @@ msgstr "Создать конечные точки вебхука для уве�
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Исключите следующих людей и домены из синхронизации моей электронной почты"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "Исключить следующих людей и домены из синхронизации моей электронной почты. Внутренние переписки не будут импортированы"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

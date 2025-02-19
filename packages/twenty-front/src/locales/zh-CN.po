@@ -817,11 +817,11 @@ msgstr "建立 Webhook 端点，用于通知异步事件。"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "从我的电子邮件同步中排除以下人员和域"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "从我的电子邮件同步中排除以下人员和域名。内部对话将不会被导入"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

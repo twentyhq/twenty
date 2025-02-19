@@ -817,11 +817,11 @@ msgstr "非同期イベントの通知用にWebhookエンドポイントを設�
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "以下の人とドメインをメール同期から除外する"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "以下の人物とドメインをメール同期から除外します。内部の会話はインポートされません"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

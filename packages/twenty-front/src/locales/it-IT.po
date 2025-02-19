@@ -817,11 +817,11 @@ msgstr "Stabilisci endpoint Webhook per le notifiche di eventi asincroni."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Escludi le seguenti persone e domini dalla mia sincronizzazione e-mail"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "Escludi le seguenti persone e domini dalla mia sincronizzazione email. Le conversazioni interne non saranno importate"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

@@ -817,11 +817,11 @@ msgstr "حدد نقاط نهاية Webhook للإشعارات بالأحداث �
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "استثناء الأشخاص والنطاقات التالية من مزامنة بريدي الإلكتروني"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "استبعاد الأشخاص والمجالات التالية من مزامنة البريد الإلكتروني الخاص بي. لن يتم استيراد المحادثات الداخلية"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

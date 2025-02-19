@@ -817,11 +817,11 @@ msgstr "הקים נקודות קצה של Webhook להתראות על אירוע
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "אל תכלול את האנשים והתחומים הבאים מסינכרון הדוא\"ל שלי"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "לא לכלול את האנשים והדומיינים הבאים מהסנכרון של הדוא\"ל שלי. שיחות פנימיות לא ייובאו"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

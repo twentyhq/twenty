@@ -817,11 +817,11 @@ msgstr "Asenkron olaylar üzerine bildirimler için Webhook uç noktaları oluş
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "E-posta senkronizasyonumdan şu kişi ve alan adlarını hariç tutun"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "E-posta senkronizasyonumdan aşağıdaki kişileri ve alan adlarını hariç tut. Dahili konuşmalar aktarılmayacak"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

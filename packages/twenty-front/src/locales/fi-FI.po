@@ -817,11 +817,11 @@ msgstr "M\\u00e4\\u00e4rit\\u00e4 Webhooks-p\\u00e4\\u00e4tepisteet asynkroniste
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Sulje seuraavat henkil\\u00f6t ja verkkotunnukset pois s\\u00e4hk\\u00f6posti-synkronointistani"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "Pois sulje seuraavat henkilöt ja verkkotunnukset sähköpostisynkronoinnistani. Sisäisiä keskusteluja ei tuoda"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

@@ -817,11 +817,11 @@ msgstr "Ustal punkty końcowe webhook dla powiadomień o zdarzeniach asynchronic
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Wyklucz następujące osoby i domeny z synchronizacji mojego maila"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "Wyklucz następujące osoby i domeny z synchronizacji mojej poczty. Rozmowy wewnętrzne nie będą importowane"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

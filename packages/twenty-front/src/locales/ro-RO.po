@@ -817,11 +817,11 @@ msgstr "Stabilește puncte finale Webhook pentru notificări privind evenimentel
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Exclude următoarele persoane și domenii din sincronizarea mea de email"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "Exclude următoarele persoane și domenii din sincronizarea mea de email. Conversațiile interne nu vor fi importate"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

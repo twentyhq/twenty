@@ -817,11 +817,11 @@ msgstr "Установите крајње тачке Вебхук за обав�
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Искључи следеће особе и домене из моје синхронизације имејла"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "Искључи следеће особе и домене из моје синхронизације е-поште. Интерни разговори неће бити увезени"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

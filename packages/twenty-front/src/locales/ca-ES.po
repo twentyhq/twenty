@@ -817,11 +817,11 @@ msgstr "Estableix els endpoints de webhook per a les notificacions sobre esdeven
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Exclou les següents persones i dominis de la meva sincronització de correu electrònic"
+#~ msgstr "Exclude the following people and domains from my email sync"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
-msgstr ""
+msgstr "Exclou les persones i dominis següents de la meva sincronització del correu electrònic. Les converses internes no s'importaran"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
