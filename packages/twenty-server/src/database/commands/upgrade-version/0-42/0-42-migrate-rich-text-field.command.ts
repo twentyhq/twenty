@@ -299,6 +299,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         type: FieldMetadataType.RICH_TEXT_V2,
         defaultValue: null,
         standardId,
+        workspaceId,
       };
 
       const existingFieldMetadata =
@@ -306,6 +307,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           name: newRichTextField.name,
           type: newRichTextField.type,
           standardId: newRichTextField.standardId ?? undefined,
+          workspaceId,
         });
       const fieldMetadataAlreadyExists = isDefined(existingFieldMetadata);
 
@@ -323,7 +325,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
       const objectMetadata = await this.objectMetadataRepository.findOne({
         where: { id: richTextField.objectMetadataId },
-        relations: { fields: true },
+        relations: {
+          fields: true,
+        },
       });
 
       if (objectMetadata === null) {
@@ -355,6 +359,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       richTextFieldsWithHasCreatedColumns.some(
         ({ hasCreatedColumns }) => hasCreatedColumns,
       );
+
     await this.dryRunGuardedOperation(async () => {
       if (hasAtLeastOnePendingMigration) {
         await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
