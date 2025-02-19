@@ -14,5 +14,12 @@ export const WORKSPACE_MEMBER_QUERY_FRAGMENT = gql`
     timeZone
     dateFormat
     timeFormat
+    userDocument
+    userPhone {
+      primaryPhoneNumber
+      primaryPhoneCountryCode
+      primaryPhoneCallingCode
+      additionalPhones
+    }
   }
 `;

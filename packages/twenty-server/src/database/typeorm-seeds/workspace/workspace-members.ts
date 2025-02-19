@@ -1,11 +1,11 @@
 import { EntityManager } from 'typeorm';
 
+import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 import {
-  SEED_APPLE_WORKSPACE_ID,
   SEED_ACME_WORKSPACE_ID,
+  SEED_APPLE_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 
 const tableName = 'workspaceMember';
 
@@ -23,6 +23,7 @@ type WorkspaceMembers = Pick<
   nameLastName: string;
   userEmail: string;
   userId: string;
+  userDocument?: string | null;
 };
 
 export const seedWorkspaceMember = async (
@@ -42,6 +43,7 @@ export const seedWorkspaceMember = async (
         colorScheme: 'Light',
         userEmail: 'tim@apple.dev',
         userId: DEV_SEED_USER_IDS.TIM,
+        userDocument: null,
       },
       {
         id: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
@@ -51,6 +53,7 @@ export const seedWorkspaceMember = async (
         colorScheme: 'Light',
         userEmail: 'jony.ive@apple.dev',
         userId: DEV_SEED_USER_IDS.JONY,
+        userDocument: null,
       },
       {
         id: DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL,
@@ -60,6 +63,7 @@ export const seedWorkspaceMember = async (
         colorScheme: 'Light',
         userEmail: 'phil.schiler@apple.dev',
         userId: DEV_SEED_USER_IDS.PHIL,
+        userDocument: null,
       },
     ];
   }
@@ -74,6 +78,7 @@ export const seedWorkspaceMember = async (
         colorScheme: 'Light',
         userEmail: 'tim@apple.dev',
         userId: DEV_SEED_USER_IDS.TIM,
+        userDocument: null,
       },
     ];
   }
@@ -88,6 +93,7 @@ export const seedWorkspaceMember = async (
       'colorScheme',
       'userEmail',
       'userId',
+      'userDocument',
     ])
     .orIgnore()
     .values(workspaceMembers)
