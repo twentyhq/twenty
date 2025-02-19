@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
 import { Command, Option } from 'nest-commander';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
@@ -35,6 +35,14 @@ import {
   TASK_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
+type MigrateRichTextContentArgs = {
+  richTextFieldsWithMigrationStatus: RichTextFieldWithMigrationStatus[];
+  workspaceId: string;
+};
+type RichTextFieldWithMigrationStatus = {
+  richTextField: FieldMetadataEntity;
+  migrationHasRun: boolean;
+};
 type MigrateRichTextFieldCommandOptions = ActiveWorkspacesCommandOptions & {
   force: boolean;
 };
@@ -43,8 +51,8 @@ type ProcessWorkspaceArgs = {
   index: number;
   total: number;
 };
-type ProcessRichTextFieldArgs = {
-  richTextField: FieldMetadataEntity;
+type ProcessRichTextFieldsArgs = {
+  richTextFields: FieldMetadataEntity[];
   workspaceId: string;
 };
 type AsyncMethod<T> = () => Promise<T>;
@@ -79,7 +87,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     required: false,
   })
   parseForceValue(val?: boolean): boolean {
-    return val ?? false;;
+    return val ?? false;
   }
 
   private dryRunGuardedOperation = async <T>(operation: AsyncMethod<T>) => {
@@ -96,7 +104,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       'Running command to migrate RICH_TEXT fields to new composite structure',
     );
     if (options.force) {
-      this.logger.warn("Running in force mode");
+      this.logger.warn('Running in force mode');
     }
     this.options = { ...options };
     if (isCommandLogger(this.logger)) {
@@ -145,11 +153,14 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
       this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
 
-      for (const richTextField of richTextFields) {
-        await this.processRichTextField({ richTextField, workspaceId });
-      }
+      const richTextFieldsWithMigrationStatus =
+        await this.processRichTextFields({
+          richTextFields,
+          workspaceId,
+        });
 
       await this.dryRunGuardedOperation(async () => {
+        // Should be done beforehand ?
         await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
           workspaceId,
         );
@@ -159,7 +170,10 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         );
       });
 
-      await this.migrateRichTextContent(richTextFields, workspaceId);
+      await this.migrateRichTextContent({
+        richTextFieldsWithMigrationStatus,
+        workspaceId,
+      });
 
       await this.enableRichTextV2FeatureFlag(workspaceId);
 
@@ -194,80 +208,124 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     });
   }
 
-  private async processRichTextField({
-    richTextField,
+  private async processRichTextFields({
+    richTextFields,
     workspaceId,
-  }: ProcessRichTextFieldArgs) {
-    let standardId: string | null = null;
+  }: ProcessRichTextFieldsArgs): Promise<RichTextFieldWithMigrationStatus[]> {
+    const richTextFieldsWithMigrationStatus: RichTextFieldWithMigrationStatus[] =
+      [];
+    const addToAcc = (newEl: RichTextFieldWithMigrationStatus) =>
+      richTextFieldsWithMigrationStatus.push(newEl);
 
-    if (richTextField.standardId === TASK_STANDARD_FIELD_IDS.body) {
-      standardId = TASK_STANDARD_FIELD_IDS.bodyV2;
-    } else if (richTextField.standardId === NOTE_STANDARD_FIELD_IDS.body) {
-      standardId = NOTE_STANDARD_FIELD_IDS.bodyV2;
-    }
+    for (const richTextField of richTextFields) {
+      let standardId: string | null = null;
 
-    if (standardId === null && richTextField.isCustom === false) {
-      throw new Error(
-        `RICH_TEXT does not belong to a Task or a Note standard objects: ${richTextField.id}`,
-      );
-    }
+      if (richTextField.standardId === TASK_STANDARD_FIELD_IDS.body) {
+        standardId = TASK_STANDARD_FIELD_IDS.bodyV2;
+      } else if (richTextField.standardId === NOTE_STANDARD_FIELD_IDS.body) {
+        standardId = NOTE_STANDARD_FIELD_IDS.bodyV2;
+      }
 
-    const newRichTextField: Partial<FieldMetadataEntity> = {
-      ...richTextField,
-      name: `${richTextField.name}V2`,
-      id: undefined,
-      type: FieldMetadataType.RICH_TEXT_V2,
-      defaultValue: null,
-      standardId,
-    };
+      if (standardId === null && richTextField.isCustom === false) {
+        throw new Error(
+          `RICH_TEXT does not belong to a Task or a Note standard objects: ${richTextField.id}`,
+        );
+      }
 
-    await this.dryRunGuardedOperation(async () => {
-      await this.fieldMetadataRepository.insert(newRichTextField);
-    });
+      const newRichTextField: Partial<FieldMetadataEntity> = {
+        ...richTextField,
+        name: `${richTextField.name}V2`,
+        id: undefined,
+        type: FieldMetadataType.RICH_TEXT_V2,
+        defaultValue: null,
+      };
 
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: { id: richTextField.objectMetadataId },
-    });
+      const existingFieldMetadata =
+        await this.fieldMetadataRepository.findOneBy({
+          name: newRichTextField.name,
+          type: newRichTextField.type,
+          // standardId: newRichTextField.standardId ?? undefined, //overkill ? or could be counterproductive ?
+        });
+      const fieldMetadataAlreadyExists = !isDefined(existingFieldMetadata);
+      if (fieldMetadataAlreadyExists) {
+        this.logger.warn(
+          `FieldMetadata already exists in fieldMetadataRepository name: ${newRichTextField.name} standardId: ${newRichTextField.standardId} type: ${newRichTextField.type}`,
+        );
+      }
 
-    if (objectMetadata === null) {
-      this.logger.log(
-        `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
-      );
+      await this.dryRunGuardedOperation(async () => {
+        if (!fieldMetadataAlreadyExists) {
+          await this.fieldMetadataRepository.insert(newRichTextField);
+        }
+      });
 
-      return;
-    }
+      const objectMetadata = await this.objectMetadataRepository.findOne({
+        where: { id: richTextField.objectMetadataId },
+      });
 
-    await this.dryRunGuardedOperation(
-      async () =>
-        await this.workspaceMigrationService.createCustomMigration(
-          generateMigrationName(
-            `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
-          ),
-          workspaceId,
-          [
-            {
-              name: computeObjectTargetTable(objectMetadata),
-              action: WorkspaceMigrationTableActionType.ALTER,
-              columns: [
-                {
-                  action: WorkspaceMigrationColumnActionType.CREATE,
-                  columnName: `${richTextField.name}V2Blocknote`,
-                  columnType: 'text',
-                  isNullable: true,
-                  defaultValue: null,
-                } satisfies WorkspaceMigrationColumnCreate,
-                {
-                  action: WorkspaceMigrationColumnActionType.CREATE,
-                  columnName: `${richTextField.name}V2Markdown`,
-                  columnType: 'text',
-                  isNullable: true,
-                  defaultValue: null,
-                } satisfies WorkspaceMigrationColumnCreate,
-              ],
-            } satisfies WorkspaceMigrationTableAction,
-          ],
+      if (objectMetadata === null) {
+        this.logger.warn(
+          `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
+        );
+        addToAcc({
+          migrationHasRun: false,
+          richTextField,
+        });
+        continue;
+      }
+
+      const columnsToCreate: WorkspaceMigrationColumnCreate[] = [
+        {
+          action: WorkspaceMigrationColumnActionType.CREATE,
+          columnName: `${richTextField.name}V2Blocknote`,
+          columnType: 'text',
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          action: WorkspaceMigrationColumnActionType.CREATE,
+          columnName: `${richTextField.name}V2Markdown`,
+          columnType: 'text',
+          isNullable: true,
+          defaultValue: null,
+        },
+      ] as const;
+      const filteredColumnsToCreate = columnsToCreate.filter(({ columnName }) =>
+        objectMetadata.fields.some(
+          // Is ColName always eq to fieldNames TODO see with Charles
+          ({ name: fieldName }) => fieldName === columnName,
         ),
-    );
+      );
+      const shouldRunMigration = filteredColumnsToCreate.length !== 0;
+      if (!shouldRunMigration) {
+        this.logger.warn(
+          `No columns to create for objectMetaData ${objectMetadata.id}`,
+        );
+      }
+      await this.dryRunGuardedOperation(async () => {
+        if (shouldRunMigration) {
+          await this.workspaceMigrationService.createCustomMigration(
+            generateMigrationName(
+              `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
+            ),
+            workspaceId,
+            [
+              {
+                name: computeObjectTargetTable(objectMetadata),
+                action: WorkspaceMigrationTableActionType.ALTER,
+                columns: filteredColumnsToCreate,
+              } satisfies WorkspaceMigrationTableAction,
+            ],
+          );
+        }
+      });
+      addToAcc({
+        migrationHasRun: shouldRunMigration,
+        richTextField,
+      });
+    }
+
+    return richTextFieldsWithMigrationStatus;
   }
 
   private jsonParseOrSilentlyFail(input: string): null | unknown {
@@ -313,13 +371,16 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     );
   }
 
-  private async migrateRichTextContent(
-    richTextFields: FieldMetadataEntity[],
-    workspaceId: string,
-  ) {
+  private async migrateRichTextContent({
+    richTextFieldsWithMigrationStatus,
+    workspaceId,
+  }: MigrateRichTextContentArgs) {
     const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
-    for (const richTextField of richTextFields) {
+    for (const {
+      richTextField,
+      migrationHasRun,
+    } of richTextFieldsWithMigrationStatus) {
       const objectMetadata = await this.objectMetadataRepository.findOne({
         where: { id: richTextField.objectMetadataId },
       });
