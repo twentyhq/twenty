@@ -97,14 +97,6 @@ jobs:
       - name: Fix file permissions
         run: sudo chown -R runner:docker .
 
-      - name: Commit Translations
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@twenty.com'
-          git add .
-          git commit -m "chore: pull translations [skip ci]"
-
       - name: Compile translations
         if: inputs.force_pull || steps.compile_translations.outcome == 'failure'
         run: |
