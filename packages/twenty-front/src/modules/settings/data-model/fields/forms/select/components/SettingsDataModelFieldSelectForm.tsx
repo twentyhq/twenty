@@ -5,7 +5,7 @@ import {
   CardContent,
   CardFooter,
   IconPlus,
-  IconTool,
+  IconPoint,
   LightButton,
   MAIN_COLORS,
 } from 'twenty-ui';
@@ -104,7 +104,7 @@ const StyledIconContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconTool = styled(IconTool)`
+const StyledIconPoint = styled(IconPoint)`
   margin-right: ${({ theme }) => theme.spacing(0.5)};
 `;
 
@@ -160,7 +160,7 @@ export const SettingsDataModelFieldSelectForm = ({
   ) => {
     if (isOptionDefaultValue(optionValue)) return;
 
-    if (fieldMetadataItem.type === FieldMetadataType.Select) {
+    if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', applySimpleQuotesToString(optionValue), {
         shouldDirty: true,
       });
@@ -170,7 +170,7 @@ export const SettingsDataModelFieldSelectForm = ({
     const previousDefaultValue = getValues('defaultValue');
 
     if (
-      fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
+      fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
       (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
     ) {
       setFormValue(
@@ -189,7 +189,7 @@ export const SettingsDataModelFieldSelectForm = ({
   ) => {
     if (!isOptionDefaultValue(optionValue)) return;
 
-    if (fieldMetadataItem.type === FieldMetadataType.Select) {
+    if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', null, { shouldDirty: true });
       return;
     }
@@ -197,7 +197,7 @@ export const SettingsDataModelFieldSelectForm = ({
     const previousDefaultValue = getValues('defaultValue');
 
     if (
-      fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
+      fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
       (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
     ) {
       const nextDefaultValue = previousDefaultValue?.filter(
@@ -253,7 +253,11 @@ export const SettingsDataModelFieldSelectForm = ({
                 <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
                   <StyledApiKeyContainer>
                     <StyledIconContainer>
-                      <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+                      <StyledIconPoint
+                        size={12}
+                        color={MAIN_COLORS.yellow}
+                        fill={MAIN_COLORS.yellow}
+                      />
                     </StyledIconContainer>
                     <StyledApiKey>API values</StyledApiKey>
                   </StyledApiKeyContainer>

@@ -1,7 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -9,7 +10,6 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { FAVORITE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -19,31 +19,29 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.favoriteFolder,
   namePlural: 'favoriteFolders',
-  labelSingular: 'Favorite Folder',
-  labelPlural: 'Favorite Folders',
-  description: 'A Folder of favorites',
+  labelSingular: msg`Favorite Folder`,
+  labelPlural: msg`Favorite Folders`,
+  description: msg`A Folder of favorites`,
   icon: 'IconFolder',
 })
 @WorkspaceIsSystem()
-@WorkspaceGate({
-  featureFlag: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
-})
 export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'Favorite folder position',
+    label: msg`Position`,
+    description: msg`Favorite folder position`,
     icon: 'IconList',
     defaultValue: 0,
   })
+  @WorkspaceIsSystem()
   position: number;
 
   @WorkspaceField({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'Name of the favorite folder',
+    label: msg`Name`,
+    description: msg`Name of the favorite folder`,
     icon: 'IconText',
   })
   name: string;
@@ -51,8 +49,8 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites in this folder',
+    label: msg`Favorites`,
+    description: msg`Favorites in this folder`,
     icon: 'IconHeart',
     inverseSideFieldKey: 'favoriteFolder',
     inverseSideTarget: () => FavoriteWorkspaceEntity,

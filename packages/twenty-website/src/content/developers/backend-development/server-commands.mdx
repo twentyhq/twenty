@@ -33,11 +33,11 @@ npx nx run twenty-server:lint # pass --fix to fix lint errors
 npx nx run twenty-server:test:unit          # run unit tests
 npx nx run twenty-server:test:integration   # run integration tests
 ```
-Note : you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
+Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
 
 ### Resetting the database
 
-If you want to reset the database, you can run the following command:
+If you want to reset and seed the database, you can run the following command:
 
 ```bash
 npx nx run twenty-server:database:reset
@@ -48,7 +48,7 @@ npx nx run twenty-server:database:reset
 #### For objects in Core/Metadata schemas (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm --migration:generate src/database/typeorm/metadata/migrations/nameOfYourMigration -d src/database/typeorm/metadata/metadata.datasource.ts # replace by core data source if necessary
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/metadata/migrations/nameOfYourMigration -d src/database/typeorm/metadata/metadata.datasource.ts # replace by core data source if necessary
 ```
 
 #### For Workspace objects

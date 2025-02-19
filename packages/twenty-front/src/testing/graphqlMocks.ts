@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { graphql, http, HttpResponse } from 'msw';
+import { graphql, GraphQLQuery, http, HttpResponse } from 'msw';
 
 import { TRACK } from '@/analytics/graphql/queries/track';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
@@ -12,6 +12,7 @@ import {
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedFavoritesData } from '~/testing/mock-data/favorite';
+import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNotes } from '~/testing/mock-data/notes';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
@@ -19,8 +20,14 @@ import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
+import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 import { mockedTasks } from '~/testing/mock-data/tasks';
+import {
+  getWorkflowMock,
+  getWorkflowVersionsMock,
+  workflowQueryResult,
+} from '~/testing/mock-data/workflow';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
@@ -41,6 +48,31 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query(
+      getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN) ?? '',
+      () => {
+        return HttpResponse.json({
+          data: {
+            getPublicWorkspaceDataByDomain: {
+              id: 'id',
+              logo: 'logo',
+              displayName: 'displayName',
+              workspaceUrls: {
+                customUrl: undefined,
+                subdomainUrl: 'https://twenty.com',
+              },
+              authProviders: {
+                google: true,
+                microsoft: false,
+                password: true,
+                magicLink: false,
+                sso: [],
+              },
+            },
+          },
+        });
+      },
+    ),
     graphql.mutation(getOperationName(TRACK) ?? '', () => {
       return HttpResponse.json({
         data: {
@@ -497,6 +529,24 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query('FindManyFavoriteFolders', () => {
+      return HttpResponse.json({
+        data: {
+          favoriteFolders: {
+            edges: mockedFavoriteFoldersData.map((favoriteFolder) => ({
+              node: favoriteFolder,
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
     graphql.query('FindManyFavorites', () => {
       return HttpResponse.json({
         data: {
@@ -596,135 +646,32 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query<GraphQLQuery, { objectRecordId: string }>(
+      'FindOnePerson',
+      ({ variables: { objectRecordId } }) => {
+        return HttpResponse.json({
+          data: {
+            person: peopleMock.find((person) => person.id === objectRecordId),
+          },
+        });
+      },
+    ),
     graphql.query('FindManyWorkflows', () => {
       return HttpResponse.json({
-        data: {
-          workflows: {
-            __typename: 'WorkflowConnection',
-            totalCount: 1,
-            pageInfo: {
-              __typename: 'PageInfo',
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor:
-                'eyJpZCI6IjIwMGMxNTA4LWYxMDItNGJiOS1hZjMyLWVkYTU1MjM5YWU2MSJ9',
-              endCursor:
-                'eyJpZCI6IjIwMGMxNTA4LWYxMDItNGJiOS1hZjMyLWVkYTU1MjM5YWU2MSJ9',
-            },
-            edges: [
-              {
-                __typename: 'WorkflowEdge',
-                cursor:
-                  'eyJpZCI6IjIwMGMxNTA4LWYxMDItNGJiOS1hZjMyLWVkYTU1MjM5YWU2MSJ9',
-                node: {
-                  __typename: 'Workflow',
-                  id: '200c1508-f102-4bb9-af32-eda55239ae61',
-                },
-              },
-            ],
-          },
-        },
+        data: workflowQueryResult,
       });
     }),
     graphql.query('FindOneWorkflow', () => {
       return HttpResponse.json({
         data: {
-          workflow: {
-            __typename: 'Workflow',
-            id: '200c1508-f102-4bb9-af32-eda55239ae61',
-            name: '1231 qqerrt',
-            statuses: null,
-            lastPublishedVersionId: '',
-            deletedAt: null,
-            updatedAt: '2024-09-19T10:10:04.505Z',
-            position: 0,
-            createdAt: '2024-09-19T10:10:04.505Z',
-            favorites: {
-              __typename: 'FavoriteConnection',
-              edges: [],
-            },
-            eventListeners: {
-              __typename: 'WorkflowEventListenerConnection',
-              edges: [],
-            },
-            runs: {
-              __typename: 'WorkflowRunConnection',
-              edges: [],
-            },
-            versions: {
-              __typename: 'WorkflowVersionConnection',
-              edges: [
-                {
-                  __typename: 'WorkflowVersionEdge',
-                  node: {
-                    __typename: 'WorkflowVersion',
-                    updatedAt: '2024-09-19T10:13:12.075Z',
-                    steps: null,
-                    createdAt: '2024-09-19T10:10:04.725Z',
-                    status: 'DRAFT',
-                    name: 'v1',
-                    id: 'f618843a-26be-4a54-a60f-f4ce88a594f0',
-                    trigger: {
-                      type: 'DATABASE_EVENT',
-                      settings: {
-                        eventName: 'note.created',
-                      },
-                    },
-                    deletedAt: null,
-                    workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
-                  },
-                },
-              ],
-            },
-          },
+          workflow: getWorkflowMock(),
         },
       });
     }),
     graphql.query('FindManyWorkflowVersions', () => {
       return HttpResponse.json({
         data: {
-          workflowVersions: {
-            __typename: 'WorkflowVersionConnection',
-            totalCount: 1,
-            pageInfo: {
-              __typename: 'PageInfo',
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor:
-                'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
-              endCursor:
-                'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
-            },
-            edges: [
-              {
-                __typename: 'WorkflowVersionEdge',
-                cursor:
-                  'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
-                node: {
-                  __typename: 'WorkflowVersion',
-                  updatedAt: '2024-09-19T10:13:12.075Z',
-                  steps: null,
-                  createdAt: '2024-09-19T10:10:04.725Z',
-                  status: 'DRAFT',
-                  name: 'v1',
-                  id: 'f618843a-26be-4a54-a60f-f4ce88a594f0',
-                  trigger: {
-                    type: 'DATABASE_EVENT',
-                    settings: {
-                      eventName: 'note.created',
-                    },
-                  },
-                  deletedAt: null,
-                  workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
-                  workflow: {
-                    __typename: 'Workflow',
-                    id: '200c1508-f102-4bb9-af32-eda55239ae61',
-                    name: '1231 qqerrt',
-                  },
-                },
-              },
-            ],
-          },
+          workflowVersions: getWorkflowVersionsMock(),
         },
       });
     }),

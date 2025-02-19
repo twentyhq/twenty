@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 
 import { Country } from '@/ui/input/components/internal/types/Country';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -47,7 +46,7 @@ export const PhoneCountryPickerDropdownSelect = ({
   );
 
   return (
-    <DropdownMenu width="auto" disableBlur>
+    <>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.currentTarget.value)}
@@ -56,7 +55,7 @@ export const PhoneCountryPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCountries?.length === 0 ? (
-          <MenuItem text="No result" />
+          <MenuItem text="No results" />
         ) : (
           <>
             {selectedCountry && (
@@ -91,6 +90,6 @@ export const PhoneCountryPickerDropdownSelect = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownMenu>
+    </>
   );
 };

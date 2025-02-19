@@ -1,12 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -14,6 +15,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -36,24 +38,25 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
       }, [setObjectMetadataItems]);
 
       return (
-        <RecordTableComponentInstanceContext.Provider
-          value={{ instanceId, onColumnsChange: () => {} }}
+        <RecordFiltersComponentInstanceContext.Provider
+          value={{ instanceId: 'object-options-dropdown' }}
         >
-          <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-            <ContextStoreComponentInstanceContext.Provider
-              value={{ instanceId }}
-            >
+          <RecordTableComponentInstanceContext.Provider
+            value={{ instanceId, onColumnsChange: () => {} }}
+          >
+            <ViewComponentInstanceContext.Provider value={{ instanceId }}>
               <MemoryRouter
                 initialEntries={['/one', '/two', { pathname: '/three' }]}
                 initialIndex={1}
               >
                 <Story />
               </MemoryRouter>
-            </ContextStoreComponentInstanceContext.Provider>
-          </ViewComponentInstanceContext.Provider>
-        </RecordTableComponentInstanceContext.Provider>
+            </ViewComponentInstanceContext.Provider>
+          </RecordTableComponentInstanceContext.Provider>
+        </RecordFiltersComponentInstanceContext.Provider>
       );
     },
+    ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     ComponentDecorator,
@@ -75,11 +78,10 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
       )!;
 
       return (
-        <RecordIndexRootPropsContext.Provider
+        <RecordIndexContextProvider
           value={{
             indexIdentifierUrl: () => '',
             onIndexRecordsLoaded: () => {},
-            onCreateRecord: () => {},
             objectNamePlural: 'companies',
             objectNameSingular: 'company',
             objectMetadataItem: companyObjectMetadataItem,
@@ -94,13 +96,14 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
               currentContentId: contentId,
               onContentChange: () => {},
               resetContent: () => {},
+              dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
             }}
           >
             <DropdownMenu>
               <Story />
             </DropdownMenu>
           </ObjectOptionsDropdownContext.Provider>
-        </RecordIndexRootPropsContext.Provider>
+        </RecordIndexContextProvider>
       );
     },
   ],

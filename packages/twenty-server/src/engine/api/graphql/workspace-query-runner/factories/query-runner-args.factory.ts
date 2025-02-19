@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { ServerBlockNoteEditor } from '@blocknote/server-util';
+import { FieldMetadataType } from 'twenty-shared';
+
 import {
   ObjectRecord,
   ObjectRecordFilter,
@@ -13,11 +16,15 @@ import {
   FindOneResolverArgs,
   ResolverArgs,
   ResolverArgsType,
+  UpdateManyResolverArgs,
+  UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { hasPositionField } from 'src/engine/metadata-modules/object-metadata/utils/has-position-field.util';
+import {
+  RichTextV2Metadata,
+  richTextV2ValueSchema,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 import { RecordPositionFactory } from './record-position.factory';
@@ -39,9 +46,12 @@ export class QueryRunnerArgsFactory {
     const fieldMetadataMapByNameByName =
       options.objectMetadataItemWithFieldMaps.fieldsByName;
 
-    const shouldBackfillPosition = hasPositionField(
-      options.objectMetadataItemWithFieldMaps,
-    );
+    const shouldBackfillPosition =
+      options.objectMetadataItemWithFieldMaps.fields.some(
+        (field) =>
+          field.type === FieldMetadataType.POSITION &&
+          field.name === 'position',
+      );
 
     switch (resolverArgsType) {
       case ResolverArgsType.CreateOne:
@@ -74,6 +84,37 @@ export class QueryRunnerArgsFactory {
             ) ?? [],
           ),
         } satisfies CreateManyResolverArgs;
+      case ResolverArgsType.UpdateOne:
+        return {
+          ...args,
+          id: (args as UpdateOneResolverArgs).id,
+          data: await this.overrideDataByFieldMetadata(
+            (args as UpdateOneResolverArgs).data,
+            options,
+            fieldMetadataMapByNameByName,
+            {
+              argIndex: 0,
+              shouldBackfillPosition: false,
+            },
+          ),
+        } satisfies UpdateOneResolverArgs;
+      case ResolverArgsType.UpdateMany:
+        return {
+          ...args,
+          filter: await this.overrideFilterByFieldMetadata(
+            (args as UpdateManyResolverArgs).filter,
+            fieldMetadataMapByNameByName,
+          ),
+          data: await this.overrideDataByFieldMetadata(
+            (args as UpdateManyResolverArgs).data,
+            options,
+            fieldMetadataMapByNameByName,
+            {
+              argIndex: 0,
+              shouldBackfillPosition: false,
+            },
+          ),
+        } satisfies UpdateManyResolverArgs;
       case ResolverArgsType.FindOne:
         return {
           ...args,
@@ -127,47 +168,74 @@ export class QueryRunnerArgsFactory {
     options: WorkspaceQueryRunnerOptions,
     fieldMetadataMapByNameByName: Record<string, FieldMetadataInterface>,
     argPositionBackfillInput: ArgPositionBackfillInput,
-  ) {
+  ): Promise<Partial<ObjectRecord>> {
     if (!data) {
-      return;
+      return Promise.resolve({});
     }
 
+    const workspaceId = options.authContext.workspace.id;
     let isFieldPositionPresent = false;
 
-    const createArgPromiseByArgKey = Object.entries(data).map(
-      async ([key, value]) => {
-        const fieldMetadata = fieldMetadataMapByNameByName[key];
+    const createArgByArgKeyPromises: Promise<[string, any]>[] = Object.entries(
+      data,
+    ).map(async ([key, value]): Promise<[string, any]> => {
+      const fieldMetadata = fieldMetadataMapByNameByName[key];
 
-        if (!fieldMetadata) {
-          return [key, await Promise.resolve(value)];
+      if (!fieldMetadata) {
+        return [key, value];
+      }
+
+      switch (fieldMetadata.type) {
+        case FieldMetadataType.POSITION: {
+          isFieldPositionPresent = true;
+
+          const newValue = await this.recordPositionFactory.create({
+            value,
+            workspaceId,
+            objectMetadata: {
+              isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+              nameSingular:
+                options.objectMetadataItemWithFieldMaps.nameSingular,
+            },
+            index: argPositionBackfillInput.argIndex,
+          });
+
+          return [key, newValue];
         }
+        case FieldMetadataType.NUMBER:
+          return [key, value === null ? null : Number(value)];
+        case FieldMetadataType.RICH_TEXT_V2: {
+          const richTextV2Value = richTextV2ValueSchema.parse(value);
 
-        switch (fieldMetadata.type) {
-          case FieldMetadataType.POSITION:
-            isFieldPositionPresent = true;
+          const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
-            return [
-              key,
-              await this.recordPositionFactory.create(
-                value,
-                {
-                  isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-                  nameSingular:
-                    options.objectMetadataItemWithFieldMaps.nameSingular,
-                },
-                options.authContext.workspace.id,
-                argPositionBackfillInput.argIndex,
-              ),
-            ];
-          case FieldMetadataType.NUMBER:
-            return [key, Number(value)];
-          default:
-            return [key, await Promise.resolve(value)];
+          const convertedMarkdown = richTextV2Value.blocknote
+            ? await serverBlockNoteEditor.blocksToMarkdownLossy(
+                JSON.parse(richTextV2Value.blocknote),
+              )
+            : null;
+
+          const convertedBlocknote = richTextV2Value.markdown
+            ? JSON.stringify(
+                await serverBlockNoteEditor.tryParseMarkdownToBlocks(
+                  richTextV2Value.markdown,
+                ),
+              )
+            : null;
+
+          const valueInBothFormats: RichTextV2Metadata = {
+            markdown: richTextV2Value.markdown || convertedMarkdown,
+            blocknote: richTextV2Value.blocknote || convertedBlocknote,
+          };
+
+          return [key, valueInBothFormats];
         }
-      },
-    );
+        default:
+          return [key, value];
+      }
+    });
 
-    const newArgEntries = await Promise.all(createArgPromiseByArgKey);
+    const newArgEntries = await Promise.all(createArgByArgKeyPromises);
 
     if (
       !isFieldPositionPresent &&
@@ -177,16 +245,16 @@ export class QueryRunnerArgsFactory {
         ...newArgEntries,
         [
           'position',
-          await this.recordPositionFactory.create(
-            'first',
-            {
+          await this.recordPositionFactory.create({
+            value: 'first',
+            workspaceId,
+            objectMetadata: {
               isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
               nameSingular:
                 options.objectMetadataItemWithFieldMaps.nameSingular,
             },
-            options.authContext.workspace.id,
-            argPositionBackfillInput.argIndex,
-          ),
+            index: argPositionBackfillInput.argIndex,
+          }),
         ],
       ]);
     }

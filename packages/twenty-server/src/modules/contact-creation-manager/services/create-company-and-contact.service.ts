@@ -5,8 +5,8 @@ import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import { Any, EntityManager, Repository } from 'typeorm';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -23,8 +23,7 @@ import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manage
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { isWorkEmail } from 'src/utils/is-work-email';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -36,8 +35,6 @@ export class CreateCompanyAndContactService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
@@ -80,6 +77,7 @@ export class CreateCompanyAndContactService {
     }
 
     const alreadyCreatedContacts = await personRepository.find({
+      withDeleted: true,
       where: {
         emails: { primaryEmail: Any(uniqueHandles) },
       },
@@ -114,8 +112,24 @@ export class CreateCompanyAndContactService {
         })),
     );
 
+    const workDomainNamesToCreate = domainNamesToCreate.filter(
+      (domainName) =>
+        domainName?.domainName && isWorkDomain(domainName.domainName),
+    );
+
+    const workDomainNamesToCreateFormatted = workDomainNamesToCreate.map(
+      (domainName) => ({
+        ...domainName,
+        createdBySource: source,
+        createdByWorkspaceMember: connectedAccount.accountOwner,
+        createdByContext: {
+          provider: connectedAccount.provider,
+        },
+      }),
+    );
+
     const companiesObject = await this.createCompaniesService.createCompanies(
-      domainNamesToCreate,
+      workDomainNamesToCreateFormatted,
       workspaceId,
       transactionManager,
     );
@@ -130,6 +144,9 @@ export class CreateCompanyAndContactService {
             : undefined,
         createdBySource: source,
         createdByWorkspaceMember: connectedAccount.accountOwner,
+        createdByContext: {
+          provider: connectedAccount.provider,
+        },
       }));
 
     return this.createContactService.createPeople(

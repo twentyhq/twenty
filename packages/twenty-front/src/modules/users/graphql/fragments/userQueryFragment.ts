@@ -1,3 +1,4 @@
+import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
 export const USER_QUERY_FRAGMENT = gql`
@@ -23,16 +24,28 @@ export const USER_QUERY_FRAGMENT = gql`
     workspaceMembers {
       ...WorkspaceMemberQueryFragment
     }
-    defaultWorkspace {
+    currentUserWorkspace {
+      settingsPermissions
+      objectRecordsPermissions
+    }
+    currentWorkspace {
       id
       displayName
       logo
-      domainName
       inviteHash
       allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled
-      hasValidEntrepriseKey
+      isGoogleAuthEnabled
+      isMicrosoftAuthEnabled
+      isPasswordAuthEnabled
+      subdomain
+      hasValidEnterpriseKey
+      customDomain
+      workspaceUrls {
+        subdomainUrl
+        customUrl
+      }
       featureFlags {
         id
         key
@@ -45,6 +58,10 @@ export const USER_QUERY_FRAGMENT = gql`
         status
         interval
       }
+      billingSubscriptions {
+        id
+        status
+      }
       workspaceMembersCount
     }
     workspaces {
@@ -52,9 +69,16 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         logo
         displayName
-        domainName
+        subdomain
+        customDomain
+        workspaceUrls {
+          subdomainUrl
+          customUrl
+        }
       }
     }
     userVars
   }
+
+  ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
 `;

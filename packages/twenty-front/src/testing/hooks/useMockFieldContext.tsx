@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import {
   FieldContext,
   RecordUpdateHook,
@@ -30,10 +29,6 @@ export const useMockFieldContext = ({
     objectNameSingular,
   });
 
-  const basePathToShowPage = getBasePathToShowPage({
-    objectNameSingular,
-  });
-
   const fieldMetadataItem = objectMetadataItem?.fields.find(
     (field) => field.name === fieldMetadataName,
   );
@@ -50,9 +45,6 @@ export const useMockFieldContext = ({
           <FieldContext.Provider
             key={objectRecordId + fieldMetadataItem.id}
             value={{
-              basePathToShowPage: isLabelIdentifier
-                ? basePathToShowPage
-                : undefined,
               recordId: objectRecordId,
               recoilScopeId: objectRecordId + fieldMetadataItem.id,
               isLabelIdentifier,

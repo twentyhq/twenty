@@ -12,7 +12,6 @@ type SettingsOptionCardContentCounterProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
   description?: string;
-  divider?: boolean;
   disabled?: boolean;
   value: number;
   onChange: (value: number) => void;
@@ -24,7 +23,6 @@ export const SettingsOptionCardContentCounter = ({
   Icon,
   title,
   description,
-  divider,
   disabled = false,
   value,
   onChange,
@@ -32,7 +30,7 @@ export const SettingsOptionCardContentCounter = ({
   maxValue,
 }: SettingsOptionCardContentCounterProps) => {
   return (
-    <StyledSettingsOptionCardContent divider={divider} disabled={disabled}>
+    <StyledSettingsOptionCardContent disabled={disabled}>
       {Icon && (
         <StyledSettingsOptionCardIcon>
           <SettingsOptionIconCustomizer Icon={Icon} />

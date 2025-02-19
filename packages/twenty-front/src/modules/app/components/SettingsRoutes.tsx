@@ -1,9 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsFeatures } from 'twenty-shared';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -63,14 +65,6 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const SettingsDevelopersWebhooksNew = lazy(() =>
-  import(
-    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew'
-  ).then((module) => ({
-    default: module.SettingsDevelopersWebhooksNew,
-  })),
-);
-
 const Releases = lazy(() =>
   import('~/pages/settings/Releases').then((module) => ({
     default: module.Releases,
@@ -83,11 +77,11 @@ const SettingsServerlessFunctions = lazy(() =>
   ).then((module) => ({ default: module.SettingsServerlessFunctions })),
 );
 
-const SettingsServerlessFunctionDetailWrapper = lazy(() =>
+const SettingsServerlessFunctionDetail = lazy(() =>
   import(
-    '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper'
+    '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail'
   ).then((module) => ({
-    default: module.SettingsServerlessFunctionDetailWrapper,
+    default: module.SettingsServerlessFunctionDetail,
   })),
 );
 
@@ -105,6 +99,12 @@ const SettingsWorkspace = lazy(() =>
   })),
 );
 
+const SettingsDomain = lazy(() =>
+  import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
+    default: module.SettingsDomain,
+  })),
+);
+
 const SettingsWorkspaceMembers = lazy(() =>
   import('~/pages/settings/SettingsWorkspaceMembers').then((module) => ({
     default: module.SettingsWorkspaceMembers,
@@ -117,11 +117,11 @@ const SettingsProfile = lazy(() =>
   })),
 );
 
-const SettingsAppearance = lazy(() =>
+const SettingsExperience = lazy(() =>
   import(
-    '~/pages/settings/profile/appearance/components/SettingsAppearance'
+    '~/pages/settings/profile/appearance/components/SettingsExperience'
   ).then((module) => ({
-    default: module.SettingsAppearance,
+    default: module.SettingsExperience,
   })),
 );
 
@@ -220,14 +220,6 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
-const SettingsCRMMigration = lazy(() =>
-  import('~/pages/settings/crm-migration/SettingsCRMMigration').then(
-    (module) => ({
-      default: module.SettingsCRMMigration,
-    }),
-  ),
-);
-
 const SettingsSecurity = lazy(() =>
   import('~/pages/settings/security/SettingsSecurity').then((module) => ({
     default: module.SettingsSecurity,
@@ -248,33 +240,53 @@ const SettingsAdmin = lazy(() =>
   })),
 );
 
-const SettingsAdminFeatureFlags = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminFeatureFlags').then(
+const SettingsAdminContent = lazy(() =>
+  import('@/settings/admin-panel/components/SettingsAdminContent').then(
     (module) => ({
-      default: module.SettingsAdminFeatureFlags,
+      default: module.SettingsAdminContent,
     }),
   ),
 );
 
+const SettingsAdminIndicatorHealthStatus = lazy(() =>
+  import(
+    '~/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus'
+  ).then((module) => ({
+    default: module.SettingsAdminIndicatorHealthStatus,
+  })),
+);
+
+const SettingsLab = lazy(() =>
+  import('~/pages/settings/lab/SettingsLab').then((module) => ({
+    default: module.SettingsLab,
+  })),
+);
+
+const SettingsRoles = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoles').then((module) => ({
+    default: module.SettingsRoles,
+  })),
+);
+
+const SettingsRoleEdit = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
+    default: module.SettingsRoleEdit,
+  })),
+);
+
 type SettingsRoutesProps = {
-  isBillingEnabled?: boolean;
-  isCRMMigrationEnabled?: boolean;
-  isServerlessFunctionSettingsEnabled?: boolean;
-  isSSOEnabled?: boolean;
+  isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
-  isBillingEnabled,
-  isCRMMigrationEnabled,
-  isServerlessFunctionSettingsEnabled,
-  isSSOEnabled,
+  isFunctionSettingsEnabled,
   isAdminPageEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
-      <Route path={SettingsPath.Appearance} element={<SettingsAppearance />} />
+      <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
       <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
       <Route path={SettingsPath.NewAccount} element={<SettingsNewAccount />} />
       <Route
@@ -285,55 +297,64 @@ export const SettingsRoutes = ({
         path={SettingsPath.AccountsEmails}
         element={<SettingsAccountsEmails />}
       />
-      {isBillingEnabled && (
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            requiredFeatureFlag={FeatureFlagKey.IsBillingPlansEnabled}
+          />
+        }
+      >
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-      )}
+      </Route>
+      <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+      <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
       />
-      <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
-      <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
       <Route
-        path={SettingsPath.ObjectOverview}
-        element={<SettingsObjectOverview />}
-      />
-      <Route
-        path={SettingsPath.ObjectDetail}
-        element={<SettingsObjectDetailPage />}
-      />
-      <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
-      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
-      {isCRMMigrationEnabled && (
-        <Route
-          path={SettingsPath.CRMMigration}
-          element={<SettingsCRMMigration />}
-        />
-      )}
-      <Route
-        path={AppPath.DevelopersCatchAll}
         element={
-          <Routes>
-            <Route
-              path={SettingsPath.DevelopersNewApiKey}
-              element={<SettingsDevelopersApiKeysNew />}
-            />
-            <Route
-              path={SettingsPath.DevelopersApiKeyDetail}
-              element={<SettingsDevelopersApiKeyDetail />}
-            />
-            <Route
-              path={SettingsPath.DevelopersNewWebhook}
-              element={<SettingsDevelopersWebhooksNew />}
-            />
-            <Route
-              path={SettingsPath.DevelopersNewWebhookDetail}
-              element={<SettingsDevelopersWebhooksDetail />}
-            />
-          </Routes>
+          <SettingsProtectedRouteWrapper
+            settingsPermission={SettingsFeatures.DATA_MODEL}
+          />
         }
+      >
+        <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
+        <Route
+          path={SettingsPath.ObjectOverview}
+          element={<SettingsObjectOverview />}
+        />
+        <Route
+          path={SettingsPath.ObjectDetail}
+          element={<SettingsObjectDetailPage />}
+        />
+        <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={SettingsFeatures.ROLES}
+            requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
+          />
+        }
+      >
+        <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
+        <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
+      </Route>
+      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
+      <Route
+        path={SettingsPath.DevelopersNewApiKey}
+        element={<SettingsDevelopersApiKeysNew />}
       />
-      {isServerlessFunctionSettingsEnabled && (
+      <Route
+        path={SettingsPath.DevelopersApiKeyDetail}
+        element={<SettingsDevelopersApiKeyDetail />}
+      />
+      <Route
+        path={SettingsPath.DevelopersNewWebhookDetail}
+        element={<SettingsDevelopersWebhooksDetail />}
+      />
+      {isFunctionSettingsEnabled && (
         <>
           <Route
             path={SettingsPath.ServerlessFunctions}
@@ -345,7 +366,7 @@ export const SettingsRoutes = ({
           />
           <Route
             path={SettingsPath.ServerlessFunctionDetail}
-            element={<SettingsServerlessFunctionDetailWrapper />}
+            element={<SettingsServerlessFunctionDetail />}
           />
         </>
       )}
@@ -382,24 +403,25 @@ export const SettingsRoutes = ({
         element={<SettingsObjectFieldEdit />}
       />
       <Route path={SettingsPath.Releases} element={<Releases />} />
-      {isSSOEnabled && (
-        <>
-          <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
-          <Route
-            path={SettingsPath.NewSSOIdentityProvider}
-            element={<SettingsSecuritySSOIdentifyProvider />}
-          />
-        </>
-      )}
+      <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
+      <Route
+        path={SettingsPath.NewSSOIdentityProvider}
+        element={<SettingsSecuritySSOIdentifyProvider />}
+      />
       {isAdminPageEnabled && (
         <>
           <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
           <Route
             path={SettingsPath.FeatureFlags}
-            element={<SettingsAdminFeatureFlags />}
+            element={<SettingsAdminContent />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelIndicatorHealthStatus}
+            element={<SettingsAdminIndicatorHealthStatus />}
           />
         </>
       )}
+      <Route path={SettingsPath.Lab} element={<SettingsLab />} />
     </Routes>
   </Suspense>
 );

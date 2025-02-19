@@ -1,12 +1,10 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import styled from '@emotion/styled';
-import { CodeEditor, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { CodeEditor } from 'twenty-ui';
 
 const StyledSourceCodeContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   margin: ${({ theme }) => theme.spacing(4)};
-  overflow: hidden;
 `;
 
 export const WorkflowRunOutputVisualizer = ({

@@ -36,7 +36,7 @@ export class GmailGetHistoryService {
           labelId,
         })
         .catch((error) => {
-          this.gmailHandleErrorService.handleError(error);
+          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
 
           return {
             data: {

@@ -3,6 +3,8 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Pill } from '@ui/components/Pill/Pill';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { useIsMobile } from '@ui/utilities';
+import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -29,7 +31,8 @@ export type ButtonProps = {
   to?: string;
   target?: string;
   dataTestId?: string;
-  shortcut?: string;
+  hotkeys?: string[];
+  ariaLabel?: string;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled('button', {
@@ -66,7 +69,6 @@ const StyledButton = styled('button', {
                   : theme.background.transparent.light
                 : theme.background.transparent.light};
               border-width: 1px 1px 1px 1px !important;
-              opacity: ${disabled ? 0.24 : 1};
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
@@ -109,7 +111,6 @@ const StyledButton = styled('button', {
                   }`
                 : 'none'};
               color: ${!inverted ? theme.grayScale.gray0 : theme.color.blue};
-              opacity: ${disabled ? 0.24 : 1};
               ${disabled
                 ? ''
                 : css`
@@ -144,7 +145,6 @@ const StyledButton = styled('button', {
                   }`
                 : 'none'};
               color: ${!inverted ? theme.background.primary : theme.color.red};
-              opacity: ${disabled ? 0.24 : 1};
               ${disabled
                 ? ''
                 : css`
@@ -191,7 +191,6 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              opacity: ${disabled ? 0.24 : 1};
               color: ${!inverted
                 ? !disabled
                   ? theme.font.color.secondary
@@ -238,7 +237,6 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              opacity: ${disabled ? 0.24 : 1};
               color: ${!inverted
                 ? !disabled
                   ? theme.color.blue
@@ -285,7 +283,6 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              opacity: ${disabled ? 0.24 : 1};
               color: ${!inverted
                 ? theme.font.color.danger
                 : theme.font.color.inverted};
@@ -359,17 +356,43 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
-const StyledShortcutLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledSeparator = styled.div<{
+  buttonSize: ButtonSize;
+  accent: ButtonAccent;
+}>`
+  background: ${({ theme, accent }) => {
+    switch (accent) {
+      case 'blue':
+        return theme.border.color.blue;
+      case 'danger':
+        return theme.border.color.danger;
+      default:
+        return theme.font.color.light;
+    }
+  }};
+  height: ${({ theme, buttonSize }) =>
+    theme.spacing(buttonSize === 'small' ? 2 : 4)};
+  margin: 0;
+  width: 1px;
 `;
 
-const StyledSeparator = styled.div<{ buttonSize: ButtonSize }>`
-  background: ${({ theme }) => theme.border.color.light};
-  height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 3 : 4)};
-  margin: 0 ${({ theme }) => theme.spacing(1)};
-  width: 1px;
+const StyledShortcutLabel = styled.div<{
+  variant: ButtonVariant;
+  accent: ButtonAccent;
+}>`
+  color: ${({ theme, variant, accent }) => {
+    switch (accent) {
+      case 'blue':
+        return theme.border.color.blue;
+      case 'danger':
+        return variant === 'primary'
+          ? theme.border.color.danger
+          : theme.color.red40;
+      default:
+        return theme.font.color.light;
+    }
+  }};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 export const Button = ({
@@ -390,9 +413,12 @@ export const Button = ({
   to,
   target,
   dataTestId,
-  shortcut,
+  hotkeys,
+  ariaLabel,
 }: ButtonProps) => {
   const theme = useTheme();
+
+  const isMobile = useIsMobile();
 
   return (
     <StyledButton
@@ -411,13 +437,16 @@ export const Button = ({
       as={to ? Link : 'button'}
       target={target}
       data-testid={dataTestId}
+      aria-label={ariaLabel}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
-      {shortcut && (
+      {hotkeys && !isMobile && (
         <>
-          <StyledSeparator buttonSize={size} />
-          <StyledShortcutLabel>{shortcut}</StyledShortcutLabel>
+          <StyledSeparator buttonSize={size} accent={accent} />
+          <StyledShortcutLabel variant={variant} accent={accent}>
+            {hotkeys.join(getOsShortcutSeparator())}
+          </StyledShortcutLabel>
         </>
       )}
       {soon && <StyledSoonPill label="Soon" />}

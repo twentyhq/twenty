@@ -6,22 +6,24 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { capitalize } from 'twenty-shared';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { capitalize } from '~/utils/string/capitalize';
 
+export type GetRecordFromCacheArgs = {
+  cache: ApolloCache<object>;
+  recordId: string;
+  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItem: ObjectMetadataItem;
+  recordGqlFields?: RecordGqlFields;
+};
 export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   objectMetadataItem,
   objectMetadataItems,
   cache,
   recordId,
   recordGqlFields,
-}: {
-  cache: ApolloCache<object>;
-  recordId: string;
-  objectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItem: ObjectMetadataItem;
-  recordGqlFields?: RecordGqlFields;
-}) => {
+}: GetRecordFromCacheArgs) => {
   if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
   }
@@ -52,7 +54,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
     returnPartialData: true,
   });
 
-  if (isUndefinedOrNull(record)) {
+  if (isUndefinedOrNull(record) || isEmptyObject(record)) {
     return null;
   }
 

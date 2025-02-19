@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import { FieldMetadataType } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
 
 @Injectable()
 @ValidatorConstraint({ name: 'isFieldMetadataDefaultValue', async: true })
@@ -22,7 +21,8 @@ export class IsFieldMetadataDefaultValue
   implements ValidatorConstraintInterface
 {
   constructor(
-    private readonly fieldMetadataService: FieldMetadataService,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly loggerService: LoggerService,
   ) {}
 
@@ -44,7 +44,11 @@ export class IsFieldMetadataDefaultValue
       let fieldMetadata: FieldMetadataEntity;
 
       try {
-        fieldMetadata = await this.fieldMetadataService.findOneOrFail(id);
+        fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
+          where: {
+            id,
+          },
+        });
       } catch {
         return false;
       }

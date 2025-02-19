@@ -9,13 +9,13 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-one-resolver.service';
-import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
 export class UpdateOneResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'updateOne' as const;
+  public static methodName = RESOLVER_METHOD_NAMES.UPDATE_ONE;
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryUpdateOneResolverService,
@@ -27,23 +27,19 @@ export class UpdateOneResolverFactory
     const internalContext = context;
 
     return async (_source, args, context, info) => {
-      try {
-        const options: WorkspaceQueryRunnerOptions = {
-          authContext: internalContext.authContext,
-          info,
-          objectMetadataMaps: internalContext.objectMetadataMaps,
-          objectMetadataItemWithFieldMaps:
-            internalContext.objectMetadataItemWithFieldMaps,
-        };
+      const options: WorkspaceQueryRunnerOptions = {
+        authContext: internalContext.authContext,
+        info,
+        objectMetadataMaps: internalContext.objectMetadataMaps,
+        objectMetadataItemWithFieldMaps:
+          internalContext.objectMetadataItemWithFieldMaps,
+      };
 
-        return await this.graphqlQueryRunnerService.execute(
-          args,
-          options,
-          UpdateOneResolverFactory.methodName,
-        );
-      } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
-      }
+      return await this.graphqlQueryRunnerService.execute(
+        args,
+        options,
+        UpdateOneResolverFactory.methodName,
+      );
     };
   }
 }

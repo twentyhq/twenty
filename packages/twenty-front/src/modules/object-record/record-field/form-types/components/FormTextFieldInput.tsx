@@ -1,19 +1,24 @@
-import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
-import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
-import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
+import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
+import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
+import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 
 type FormTextFieldInputProps = {
   label?: string;
+  error?: string;
+  hint?: string;
   defaultValue: string | undefined;
   placeholder: string;
   onPersist: (value: string) => void;
+  onBlur?: () => void;
   multiline?: boolean;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
@@ -21,9 +26,12 @@ type FormTextFieldInputProps = {
 
 export const FormTextFieldInput = ({
   label,
+  error,
+  hint,
   defaultValue,
   placeholder,
   onPersist,
+  onBlur,
   multiline,
   readonly,
   VariablePicker,
@@ -58,29 +66,32 @@ export const FormTextFieldInput = ({
   }
 
   return (
-    <StyledFormFieldInputContainer>
+    <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
-      <StyledFormFieldInputRowContainer multiline={multiline}>
-        <StyledFormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+      <FormFieldInputRowContainer multiline={multiline}>
+        <FormFieldInputInputContainer
+          hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline={multiline}
+          onBlur={onBlur}
         >
           <TextVariableEditor
             editor={editor}
             multiline={multiline}
             readonly={readonly}
           />
-        </StyledFormFieldInputInputContainer>
+        </FormFieldInputInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && !readonly ? (
           <VariablePicker
             inputId={inputId}
             multiline={multiline}
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}
-      </StyledFormFieldInputRowContainer>
-    </StyledFormFieldInputContainer>
+      </FormFieldInputRowContainer>
+      {hint && <InputHint>{hint}</InputHint>}
+      <InputErrorHelper>{error}</InputErrorHelper>
+    </FormFieldInputContainer>
   );
 };

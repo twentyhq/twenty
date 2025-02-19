@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { Request } from 'express';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { APP_LOCALES } from 'twenty-shared';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
@@ -15,8 +16,11 @@ export type GoogleRequest = Omit<
     lastName?: string | null;
     email: string;
     picture: string | null;
+    locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
+    workspaceId?: string;
+    billingCheckoutSessionState?: string;
   };
 };
 
@@ -32,17 +36,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  authenticate(req: any, options: any) {
+  authenticate(req: Request, options: any) {
     options = {
       ...options,
       state: JSON.stringify({
-        workspaceInviteHash: req.params.workspaceInviteHash,
-        ...(req.params.workspacePersonalInviteToken
-          ? {
-              workspacePersonalInviteToken:
-                req.params.workspacePersonalInviteToken,
-            }
-          : {}),
+        workspaceInviteHash: req.query.workspaceInviteHash,
+        workspaceId: req.params.workspaceId,
+        billingCheckoutSessionState: req.query.billingCheckoutSessionState,
+        workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
       }),
     };
 
@@ -69,6 +70,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       picture: photos?.[0]?.value,
       workspaceInviteHash: state.workspaceInviteHash,
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
+      workspaceId: state.workspaceId,
+      billingCheckoutSessionState: state.billingCheckoutSessionState,
+      locale: state.locale,
     };
 
     done(null, user);

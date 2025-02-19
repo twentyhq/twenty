@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ComponentProps, MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared';
 import { IconComponent, LightIconButton } from 'twenty-ui';
 
 const StyledHeader = styled.li`
@@ -18,7 +19,6 @@ const StyledHeader = styled.li`
   padding: ${({ theme }) => theme.spacing(1)};
 
   user-select: none;
-  width: inherit;
 
   &:hover {
     background: ${({ theme, onClick }) =>
@@ -42,6 +42,26 @@ const StyledEndIcon = styled.div`
 const StyledChildrenWrapper = styled.span`
   overflow: hidden;
   padding: 0 ${({ theme }) => theme.spacing(1)};
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
+const StyledNonClickableStartIcon = styled.div`
+  align-items: center;
+  background: transparent;
+  border: none;
+
+  display: flex;
+  flex-direction: row;
+
+  font-family: ${({ theme }) => theme.font.family};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: center;
+
+  white-space: nowrap;
+  height: 24px;
+  width: 24px;
 `;
 
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
@@ -77,13 +97,22 @@ export const DropdownMenuHeader = ({
       )}
       {StartIcon && (
         <StyledHeader data-testid={testId} className={className}>
-          <LightIconButton
-            testId="dropdown-menu-header-end-icon"
-            Icon={StartIcon}
-            accent="tertiary"
-            size="small"
-            onClick={onClick}
-          />
+          {isDefined(onClick) ? (
+            <LightIconButton
+              testId="dropdown-menu-header-end-icon"
+              Icon={StartIcon}
+              accent="tertiary"
+              size="small"
+              onClick={onClick}
+            />
+          ) : (
+            <StyledNonClickableStartIcon>
+              <StartIcon
+                size={theme.icon.size.sm}
+                color={theme.font.color.tertiary}
+              />
+            </StyledNonClickableStartIcon>
+          )}
           <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
         </StyledHeader>
       )}

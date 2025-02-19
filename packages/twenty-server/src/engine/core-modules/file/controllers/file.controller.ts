@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Req,
+  Res,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
@@ -8,14 +16,19 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import {
+  FileException,
+  FileExceptionCode,
+} from 'src/engine/core-modules/file/file.exception';
+import {
   checkFilePath,
   checkFilename,
 } from 'src/engine/core-modules/file/file.utils';
+import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
-// TODO: Add cookie authentication
 @Controller('files')
+@UseFilters(FileApiExceptionFilter)
 @UseGuards(FilePathGuard)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
@@ -32,9 +45,10 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     if (!workspaceId) {
-      return res
-        .status(401)
-        .send({ error: 'Unauthorized, missing workspaceId' });
+      throw new FileException(
+        'Unauthorized: missing workspaceId',
+        FileExceptionCode.UNAUTHENTICATED,
+      );
     }
 
     try {
@@ -45,7 +59,10 @@ export class FileController {
       );
 
       fileStream.on('error', () => {
-        res.status(500).send({ error: 'Internal server error' });
+        throw new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        );
       });
 
       fileStream.pipe(res);
@@ -54,10 +71,16 @@ export class FileController {
         error instanceof FileStorageException &&
         error.code === FileStorageExceptionCode.FILE_NOT_FOUND
       ) {
-        return res.status(404).send({ error: 'File not found' });
+        throw new FileException(
+          'File not found',
+          FileExceptionCode.FILE_NOT_FOUND,
+        );
       }
 
-      return res.status(500).send({ error: 'Internal server error' });
+      throw new FileException(
+        `Error retrieving file: ${error.message}`,
+        FileExceptionCode.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

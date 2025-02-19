@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType, isDefined } from 'twenty-shared';
+
 import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
 
 export const formatFieldValue = (
@@ -8,10 +9,10 @@ export const formatFieldValue = (
   fieldType?: FieldMetadataType,
   comparator?: string,
 ): FieldValue => {
-  if (comparator === 'in') {
+  if (isDefined(comparator) && ['in', 'containsAny'].includes(comparator)) {
     if (value[0] !== '[' || value[value.length - 1] !== ']') {
       throw new BadRequestException(
-        `'filter' invalid for 'in' operator. Received '${value}' but array value expected eg: 'field[in]:[value_1,value_2]'`,
+        `'filter' invalid for '${comparator}' operator. Received '${value}' but array value expected eg: 'field[${comparator}]:[value_1,value_2]'`,
       );
     }
     const stringValues = value.substring(1, value.length - 1);

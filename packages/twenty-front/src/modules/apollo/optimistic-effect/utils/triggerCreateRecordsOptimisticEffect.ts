@@ -10,7 +10,10 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
-import { isDefined } from '~/utils/isDefined';
+import { encodeCursor } from '@/apollo/utils/encodeCursor';
+import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { isDefined } from 'twenty-shared';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 /*
@@ -18,30 +21,52 @@ import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
   We need to refactor how the record creation works in the RecordTable so the created record row is temporarily displayed with a local state,
   then we'll be able to uncomment the code below so the cached lists are updated coherently with the variables.
 */
+type TriggerCreateRecordsOptimisticEffectArgs = {
+  cache: ApolloCache<object>;
+  objectMetadataItem: ObjectMetadataItem;
+  recordsToCreate: RecordGqlNode[];
+  objectMetadataItems: ObjectMetadataItem[];
+  shouldMatchRootQueryFilter?: boolean;
+  checkForRecordInCache?: boolean;
+};
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
   recordsToCreate,
   objectMetadataItems,
   shouldMatchRootQueryFilter,
-}: {
-  cache: ApolloCache<unknown>;
-  objectMetadataItem: ObjectMetadataItem;
-  recordsToCreate: RecordGqlNode[];
-  objectMetadataItems: ObjectMetadataItem[];
-  shouldMatchRootQueryFilter?: boolean;
-}) => {
-  recordsToCreate.forEach((record) =>
+  checkForRecordInCache = false,
+}: TriggerCreateRecordsOptimisticEffectArgs) => {
+  const getRecordNodeFromCache = (recordId: string): RecordGqlNode | null => {
+    const cachedRecord = getRecordFromCache({
+      cache,
+      objectMetadataItem,
+      objectMetadataItems,
+      recordId,
+    });
+    return getRecordNodeFromRecord({
+      objectMetadataItem,
+      objectMetadataItems,
+      record: cachedRecord,
+      computeReferences: false,
+    });
+  };
+
+  recordsToCreate.forEach((record) => {
+    const currentSourceRecord = checkForRecordInCache
+      ? getRecordNodeFromCache(record.id)
+      : null;
     triggerUpdateRelationsOptimisticEffect({
       cache,
       sourceObjectMetadataItem: objectMetadataItem,
-      currentSourceRecord: null,
+      currentSourceRecord,
       updatedSourceRecord: record,
       objectMetadataItems,
-    }),
-  );
+    });
+  });
 
   cache.modify<StoreObject>({
+    broadcast: false,
     fields: {
       [objectMetadataItem.namePlural]: (
         rootQueryCachedResponse,
@@ -75,9 +100,20 @@ export const triggerCreateRecordsOptimisticEffect = ({
           rootQueryCachedObjectRecordConnection,
         );
 
+        const rootQueryCachedPageInfo = readField<{
+          startCursor?: string;
+          endCursor?: string;
+          hasNextPage?: boolean;
+          hasPreviousPage?: boolean;
+        }>('pageInfo', rootQueryCachedObjectRecordConnection);
+
         const nextRootQueryCachedRecordEdges = rootQueryCachedRecordEdges
           ? [...rootQueryCachedRecordEdges]
           : [];
+
+        const nextQueryCachedPageInfo = isDefined(rootQueryCachedPageInfo)
+          ? { ...rootQueryCachedPageInfo }
+          : {};
 
         const hasAddedRecords = recordsToCreate
           .map((recordToCreate) => {
@@ -116,11 +152,55 @@ export const triggerCreateRecordsOptimisticEffect = ({
               );
 
               if (recordToCreateReference && !recordAlreadyInCache) {
-                nextRootQueryCachedRecordEdges.unshift({
+                const cursor = encodeCursor(recordToCreate);
+
+                const edge = {
                   __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                   node: recordToCreateReference,
-                  cursor: '',
-                });
+                  cursor,
+                };
+
+                if (
+                  !isDefined(recordToCreate.position) ||
+                  recordToCreate.position === 'first'
+                ) {
+                  nextRootQueryCachedRecordEdges.unshift(edge);
+                  nextQueryCachedPageInfo.startCursor = cursor;
+                } else if (recordToCreate.position === 'last') {
+                  nextRootQueryCachedRecordEdges.push(edge);
+                  nextQueryCachedPageInfo.endCursor = cursor;
+                } else if (typeof recordToCreate.position === 'number') {
+                  let index = Math.round(
+                    nextRootQueryCachedRecordEdges.length *
+                      recordToCreate.position,
+                  );
+
+                  if (recordToCreate.position < 0) {
+                    index = Math.max(
+                      0,
+                      nextRootQueryCachedRecordEdges.length +
+                        Math.round(recordToCreate.position),
+                    );
+                  } else if (recordToCreate.position > 1) {
+                    index = nextRootQueryCachedRecordEdges.length;
+                  }
+
+                  index = Math.max(
+                    0,
+                    Math.min(index, nextRootQueryCachedRecordEdges.length),
+                  );
+
+                  nextRootQueryCachedRecordEdges.splice(index, 0, edge);
+
+                  if (index === 0) {
+                    nextQueryCachedPageInfo.startCursor = cursor;
+                  } else if (
+                    index ===
+                    nextRootQueryCachedRecordEdges.length - 1
+                  ) {
+                    nextQueryCachedPageInfo.endCursor = cursor;
+                  }
+                }
 
                 return true;
               }
@@ -140,6 +220,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
           totalCount: isDefined(rootQueryCachedRecordTotalCount)
             ? rootQueryCachedRecordTotalCount + 1
             : undefined,
+          pageInfo: nextQueryCachedPageInfo,
         };
       },
     },

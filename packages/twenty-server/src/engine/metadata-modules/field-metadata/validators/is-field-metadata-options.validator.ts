@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { ValidationArguments, ValidatorConstraint } from 'class-validator';
+import { FieldMetadataType } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { validateOptionsForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-options-for-type.util';
 
 @Injectable()
@@ -16,7 +15,10 @@ import { validateOptionsForType } from 'src/engine/metadata-modules/field-metada
 export class IsFieldMetadataOptions {
   private validationErrors: string[] = [];
 
-  constructor(private readonly fieldMetadataService: FieldMetadataService) {}
+  constructor(
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+  ) {}
 
   async validate(
     value: FieldMetadataOptions,
@@ -36,7 +38,9 @@ export class IsFieldMetadataOptions {
       let fieldMetadata: FieldMetadataEntity;
 
       try {
-        fieldMetadata = await this.fieldMetadataService.findOneOrFail(id);
+        fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
+          where: { id },
+        });
       } catch {
         return false;
       }

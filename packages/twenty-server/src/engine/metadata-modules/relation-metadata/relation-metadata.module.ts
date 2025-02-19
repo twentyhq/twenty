@@ -5,12 +5,17 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { SettingsFeatures } from 'twenty-shared';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RelationMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/relation-metadata/interceptors/relation-metadata-graphql-api-exception.interceptor';
 import { RelationMetadataResolver } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.resolver';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -39,6 +44,8 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
         WorkspaceMigrationModule,
         WorkspaceCacheStorageModule,
         WorkspaceMetadataVersionModule,
+        FeatureFlagModule,
+        PermissionsModule,
       ],
       services: [RelationMetadataService],
       resolvers: [
@@ -48,11 +55,15 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           ServiceClass: RelationMetadataService,
           CreateDTOClass: CreateRelationInput,
           pagingStrategy: PagingStrategies.CURSOR,
-          create: { many: { disabled: true } },
+          create: {
+            many: { disabled: true },
+            guards: [SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL)],
+          },
           update: { disabled: true },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
           interceptors: [RelationMetadataGraphqlApiExceptionInterceptor],
+          filters: [PermissionsGraphqlApiExceptionFilter],
         },
       ],
     }),

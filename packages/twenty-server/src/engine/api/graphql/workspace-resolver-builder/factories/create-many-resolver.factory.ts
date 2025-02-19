@@ -9,13 +9,13 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
-import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
 export class CreateManyResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'createMany' as const;
+  public static methodName = RESOLVER_METHOD_NAMES.CREATE_MANY;
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryCreateManyResolverService,
@@ -27,23 +27,19 @@ export class CreateManyResolverFactory
     const internalContext = context;
 
     return async (_source, args, _context, info) => {
-      try {
-        const options: WorkspaceQueryRunnerOptions = {
-          authContext: internalContext.authContext,
-          info,
-          objectMetadataMaps: internalContext.objectMetadataMaps,
-          objectMetadataItemWithFieldMaps:
-            internalContext.objectMetadataItemWithFieldMaps,
-        };
+      const options: WorkspaceQueryRunnerOptions = {
+        authContext: internalContext.authContext,
+        info,
+        objectMetadataMaps: internalContext.objectMetadataMaps,
+        objectMetadataItemWithFieldMaps:
+          internalContext.objectMetadataItemWithFieldMaps,
+      };
 
-        return await this.graphqlQueryRunnerService.execute(
-          args,
-          options,
-          CreateManyResolverFactory.methodName,
-        );
-      } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error, context);
-      }
+      return await this.graphqlQueryRunnerService.execute(
+        args,
+        options,
+        CreateManyResolverFactory.methodName,
+      );
     };
   }
 }

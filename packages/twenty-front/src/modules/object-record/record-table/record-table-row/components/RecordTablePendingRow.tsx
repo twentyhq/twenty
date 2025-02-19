@@ -13,7 +13,8 @@ export const RecordTablePendingRow = () => {
     <RecordTableRow
       key={pendingRecordId}
       recordId={pendingRecordId}
-      rowIndex={-1}
+      rowIndexForDrag={-1}
+      rowIndexForFocus={-1}
       isPendingRow
     />
   );

@@ -18,7 +18,8 @@ describe('taskTargetsResolver (e2e)', () => {
                 personId
                 companyId
                 opportunityId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -28,7 +29,7 @@ describe('taskTargetsResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -54,7 +55,8 @@ describe('taskTargetsResolver (e2e)', () => {
           expect(taskTargets).toHaveProperty('personId');
           expect(taskTargets).toHaveProperty('companyId');
           expect(taskTargets).toHaveProperty('opportunityId');
-          expect(taskTargets).toHaveProperty('rocketId');
+          expect(taskTargets).toHaveProperty('petId');
+          expect(taskTargets).toHaveProperty('surveyResultId');
         }
       });
   });

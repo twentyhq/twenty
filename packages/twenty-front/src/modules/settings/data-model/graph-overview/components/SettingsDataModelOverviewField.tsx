@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position } from '@xyflow/react';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
@@ -45,7 +45,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
       <Handle
         type={
           field.relationDefinition?.direction ===
-          RelationDefinitionType.OneToMany
+          RelationDefinitionType.ONE_TO_MANY
             ? 'source'
             : 'target'
         }
@@ -53,7 +53,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
         id={`${field.id}-right`}
         className={
           field.relationDefinition?.direction ===
-          RelationDefinitionType.OneToMany
+          RelationDefinitionType.ONE_TO_MANY
             ? 'right-handle source-handle'
             : 'right-handle target-handle'
         }
@@ -61,7 +61,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
       <Handle
         type={
           field.relationDefinition?.direction ===
-          RelationDefinitionType.OneToMany
+          RelationDefinitionType.ONE_TO_MANY
             ? 'source'
             : 'target'
         }
@@ -69,7 +69,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
         id={`${field.id}-left`}
         className={
           field.relationDefinition?.direction ===
-          RelationDefinitionType.OneToMany
+          RelationDefinitionType.ONE_TO_MANY
             ? 'left-handle source-handle'
             : 'left-handle target-handle'
         }

@@ -21,7 +21,6 @@ const SettingsOptionCardContentCounterWrapper = (
         Icon={args.Icon}
         title={args.title}
         description={args.description}
-        divider={args.divider}
         disabled={args.disabled}
         minValue={args.minValue}
         maxValue={args.maxValue}

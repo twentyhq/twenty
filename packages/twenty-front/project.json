@@ -8,7 +8,15 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/build"
-      }
+      },
+      "dependsOn": ["^build"]
+    },
+    "build:sourcemaps": {
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/build"
+      },
+      "dependsOn": ["^build"]
     },
     "serve": {
       "executor": "nx:run-commands",
@@ -69,7 +77,7 @@
     "test": {},
     "storybook:build": {
       "options": {
-        "env": { "NODE_OPTIONS": "--max_old_space_size=6500" }
+        "env": { "NODE_OPTIONS": "--max_old_space_size=8000" }
       },
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
@@ -144,6 +152,20 @@
     "chromatic": {
       "configurations": {
         "ci": {}
+      }
+    },
+    "lingui:extract": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui extract --overwrite"
+      }
+    },
+    "lingui:compile": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui compile --typescript"
       }
     }
   }

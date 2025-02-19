@@ -31,7 +31,7 @@ export enum OIDCResponseType {
 }
 
 registerEnumType(IdentityProviderType, {
-  name: 'IdpType',
+  name: 'IdentityProviderType',
 });
 
 export enum SSOIdentityProviderStatus {
@@ -45,7 +45,7 @@ registerEnumType(SSOIdentityProviderStatus, {
 });
 
 @Entity({ name: 'workspaceSSOIdentityProvider', schema: 'core' })
-@ObjectType('WorkspaceSSOIdentityProvider')
+@ObjectType()
 export class WorkspaceSSOIdentityProvider {
   // COMMON
   @IDField(() => UUIDScalarType)

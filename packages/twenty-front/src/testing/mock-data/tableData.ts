@@ -1,4 +1,5 @@
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { msg } from '@lingui/core/macro';
 
 export type MockedTableType = {
   labelPlural: string;
@@ -12,13 +13,13 @@ export const mockedTableMetadata: TableMetadata<MockedTableType> = {
       fieldName: 'labelPlural',
       fieldType: 'string',
       align: 'left',
-      fieldLabel: 'Name',
+      fieldLabel: msg`Name`,
     },
     {
       fieldName: 'fieldsCount',
       fieldType: 'number',
       align: 'right',
-      fieldLabel: 'Fields Count',
+      fieldLabel: msg`Fields Count`,
     },
   ],
 };

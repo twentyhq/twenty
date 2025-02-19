@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { MouseEvent, useMemo, useRef, useState } from 'react';
-import { IconComponent, MenuItem } from 'twenty-ui';
+import { IconComponent, MenuItem, MenuItemSelect } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -9,7 +9,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectOption<Value extends string | number | boolean | null> = {
@@ -26,11 +26,12 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SelectProps<Value extends string | number | boolean | null> = {
+export type SelectValue = string | number | boolean | null;
+
+export type SelectProps<Value extends SelectValue> = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
-  disableBlur?: boolean;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
   dropdownWidthAuto?: boolean;
@@ -42,6 +43,7 @@ export type SelectProps<Value extends string | number | boolean | null> = {
   options: SelectOption<Value>[];
   value?: Value;
   withSearchInput?: boolean;
+  needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
 };
 
@@ -57,11 +59,10 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Select = <Value extends string | number | boolean | null>({
+export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
   selectSizeVariant,
-  disableBlur = false,
   dropdownId,
   dropdownWidth = 176,
   dropdownWidthAuto = false,
@@ -73,6 +74,7 @@ export const Select = <Value extends string | number | boolean | null>({
   options,
   value,
   withSearchInput,
+  needIconCheck,
   callToActionButton,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
@@ -133,7 +135,6 @@ export const Select = <Value extends string | number | boolean | null>({
               selectSizeVariant={selectSizeVariant}
             />
           }
-          disableBlur={disableBlur}
           dropdownComponents={
             <>
               {!!withSearchInput && (
@@ -149,10 +150,12 @@ export const Select = <Value extends string | number | boolean | null>({
               {!!filteredOptions.length && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredOptions.map((option) => (
-                    <MenuItem
+                    <MenuItemSelect
                       key={`${option.value}-${option.label}`}
                       LeftIcon={option.Icon}
                       text={option.label}
+                      selected={selectedOption.value === option.value}
+                      needIconCheck={needIconCheck}
                       onClick={() => {
                         onChange?.(option.value);
                         onBlur?.();
@@ -166,7 +169,7 @@ export const Select = <Value extends string | number | boolean | null>({
                 <DropdownMenuSeparator />
               )}
               {!!callToActionButton && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
                   <MenuItem
                     onClick={callToActionButton.onClick}
                     LeftIcon={callToActionButton.Icon}

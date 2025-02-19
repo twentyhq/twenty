@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Key } from 'ts-key-enum';
 import { Button, IconSend } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -10,7 +9,8 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
-import { isDefined } from '~/utils/isDefined';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared';
 import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledContainer = styled.div`
@@ -68,6 +68,8 @@ type FormInput = {
 };
 
 export const WorkspaceInviteTeam = () => {
+  const { t } = useLingui();
+
   const { enqueueSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
@@ -105,12 +107,6 @@ export const WorkspaceInviteTeam = () => {
     }
   });
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === Key.Enter) {
-      submit();
-    }
-  };
-
   const { isSubmitSuccessful, errors } = formState;
 
   useEffect(() => {
@@ -133,7 +129,6 @@ export const WorkspaceInviteTeam = () => {
                   value={value}
                   onChange={onChange}
                   error={error?.message}
-                  onKeyDown={handleKeyDown}
                   fullWidth
                 />
               );
@@ -144,7 +139,7 @@ export const WorkspaceInviteTeam = () => {
           Icon={IconSend}
           variant="primary"
           accent="blue"
-          title="Invite"
+          title={t`Invite`}
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}
         />

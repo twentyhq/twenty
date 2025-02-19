@@ -1,33 +1,33 @@
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const useSetRecordGroup = (viewId?: string) => {
-  const { objectMetadataItem } = useContext(RecordIndexRootPropsContext);
-
-  const recordIndexRecordGroupIdsState = useRecoilComponentCallbackStateV2(
-    recordGroupIdsComponentState,
-    viewId,
-  );
-
-  const recordGroupFieldMetadataState = useRecoilComponentCallbackStateV2(
-    recordGroupFieldMetadataComponentState,
-    viewId,
-  );
-
+export const useSetRecordGroup = () => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
-      (recordGroups: RecordGroupDefinition[]) => {
-        const currentRecordGroupId = getSnapshotValue(
+      (recordGroups: RecordGroupDefinition[], recordIndexId: string) => {
+        const objectMetadataItem = snapshot
+          .getLoadable(
+            contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+              instanceId: 'main-context-store',
+            }),
+          )
+          .getValue();
+
+        if (!objectMetadataItem) {
+          return;
+        }
+
+        const currentRecordGroupIds = getSnapshotValue(
           snapshot,
-          recordIndexRecordGroupIdsState,
+          recordGroupIdsComponentState.atomFamily({
+            instanceId: recordIndexId,
+          }),
         );
         const fieldMetadataId = recordGroups?.[0]?.fieldMetadataId;
         const fieldMetadata = fieldMetadataId
@@ -37,12 +37,19 @@ export const useSetRecordGroup = (viewId?: string) => {
           : undefined;
         const currentFieldMetadata = getSnapshotValue(
           snapshot,
-          recordGroupFieldMetadataState,
+          recordGroupFieldMetadataComponentState.atomFamily({
+            instanceId: recordIndexId,
+          }),
         );
 
         // Set the field metadata linked to the record groups
         if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
-          set(recordGroupFieldMetadataState, fieldMetadata);
+          set(
+            recordGroupFieldMetadataComponentState.atomFamily({
+              instanceId: recordIndexId,
+            }),
+            fieldMetadata,
+          );
         }
 
         // Set the record groups by id
@@ -62,7 +69,7 @@ export const useSetRecordGroup = (viewId?: string) => {
         const recordGroupIds = recordGroups.map(({ id }) => id);
 
         // Get ids that has been removed between the current and new record groups
-        const removedRecordGroupIds = currentRecordGroupId.filter(
+        const removedRecordGroupIds = currentRecordGroupIds.filter(
           (id) => !recordGroupIds.includes(id),
         );
 
@@ -71,17 +78,18 @@ export const useSetRecordGroup = (viewId?: string) => {
           set(recordGroupDefinitionFamilyState(id), undefined);
         });
 
-        if (isDeeplyEqual(currentRecordGroupId, recordGroupIds)) {
+        if (isDeeplyEqual(currentRecordGroupIds, recordGroupIds)) {
           return;
         }
 
         // Set the record group ids
-        set(recordIndexRecordGroupIdsState, recordGroupIds);
+        set(
+          recordGroupIdsComponentState.atomFamily({
+            instanceId: recordIndexId,
+          }),
+          recordGroupIds,
+        );
       },
-    [
-      objectMetadataItem.fields,
-      recordGroupFieldMetadataState,
-      recordIndexRecordGroupIdsState,
-    ],
+    [],
   );
 };

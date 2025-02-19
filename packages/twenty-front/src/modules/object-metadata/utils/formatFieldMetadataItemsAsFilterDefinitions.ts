@@ -1,107 +1,61 @@
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
-export const formatFieldMetadataItemsAsFilterDefinitions = ({
-  fields,
-  isJsonFilterEnabled,
-}: {
-  fields: Array<ObjectMetadataItem['fields'][0]>;
-  isJsonFilterEnabled: boolean;
-}): FilterDefinition[] => {
-  return fields.reduce((acc, field) => {
-    if (
-      field.type === FieldMetadataType.Relation &&
-      field.relationDefinition?.direction !==
-        RelationDefinitionType.ManyToOne &&
-      field.relationDefinition?.direction !== RelationDefinitionType.OneToOne
-    ) {
-      return acc;
-    }
-
-    if (
-      ![
-        FieldMetadataType.Boolean,
-        FieldMetadataType.DateTime,
-        FieldMetadataType.Date,
-        FieldMetadataType.Text,
-        FieldMetadataType.Emails,
-        FieldMetadataType.Number,
-        FieldMetadataType.Links,
-        FieldMetadataType.FullName,
-        FieldMetadataType.Address,
-        FieldMetadataType.Relation,
-        FieldMetadataType.Select,
-        FieldMetadataType.MultiSelect,
-        FieldMetadataType.Currency,
-        FieldMetadataType.Rating,
-        FieldMetadataType.Actor,
-        FieldMetadataType.Phones,
-        FieldMetadataType.Array,
-        ...(isJsonFilterEnabled ? [FieldMetadataType.RawJson] : []),
-      ].includes(field.type)
-    ) {
-      return acc;
-    }
-
-    return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
-  }, [] as FilterDefinition[]);
-};
-
-export const formatFieldMetadataItemAsFilterDefinition = ({
+export const getRelationObjectMetadataNameSingular = ({
   field,
 }: {
   field: ObjectMetadataItem['fields'][0];
-}): FilterDefinition => ({
-  fieldMetadataId: field.id,
-  label: field.label,
-  iconName: field.icon ?? 'Icon123',
-  relationObjectMetadataNamePlural:
-    field.relationDefinition?.targetObjectMetadata.namePlural,
-  relationObjectMetadataNameSingular:
-    field.relationDefinition?.targetObjectMetadata.nameSingular,
-  type: getFilterTypeFromFieldType(field.type),
-});
+}): string | undefined => {
+  return field.relationDefinition?.targetObjectMetadata.nameSingular;
+};
 
-export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
+export const getRelationObjectMetadataNamePlural = ({
+  field,
+}: {
+  field: ObjectMetadataItem['fields'][0];
+}): string | undefined => {
+  return field.relationDefinition?.targetObjectMetadata.namePlural;
+};
+
+export const getFilterTypeFromFieldType = (
+  fieldType: FieldMetadataType,
+): FilterableFieldType => {
   switch (fieldType) {
-    case FieldMetadataType.DateTime:
+    case FieldMetadataType.DATE_TIME:
       return 'DATE_TIME';
-    case FieldMetadataType.Date:
+    case FieldMetadataType.DATE:
       return 'DATE';
-    case FieldMetadataType.Links:
+    case FieldMetadataType.LINKS:
       return 'LINKS';
-    case FieldMetadataType.FullName:
+    case FieldMetadataType.FULL_NAME:
       return 'FULL_NAME';
-    case FieldMetadataType.Number:
+    case FieldMetadataType.NUMBER:
       return 'NUMBER';
-    case FieldMetadataType.Currency:
+    case FieldMetadataType.CURRENCY:
       return 'CURRENCY';
-    case FieldMetadataType.Emails:
+    case FieldMetadataType.EMAILS:
       return 'EMAILS';
-    case FieldMetadataType.Phones:
+    case FieldMetadataType.PHONES:
       return 'PHONES';
-    case FieldMetadataType.Relation:
+    case FieldMetadataType.RELATION:
       return 'RELATION';
-    case FieldMetadataType.Select:
+    case FieldMetadataType.SELECT:
       return 'SELECT';
-    case FieldMetadataType.MultiSelect:
+    case FieldMetadataType.MULTI_SELECT:
       return 'MULTI_SELECT';
-    case FieldMetadataType.Address:
+    case FieldMetadataType.ADDRESS:
       return 'ADDRESS';
-    case FieldMetadataType.Rating:
+    case FieldMetadataType.RATING:
       return 'RATING';
-    case FieldMetadataType.Actor:
+    case FieldMetadataType.ACTOR:
       return 'ACTOR';
-    case FieldMetadataType.Array:
+    case FieldMetadataType.ARRAY:
       return 'ARRAY';
-    case FieldMetadataType.RawJson:
+    case FieldMetadataType.RAW_JSON:
       return 'RAW_JSON';
-    case FieldMetadataType.Boolean:
+    case FieldMetadataType.BOOLEAN:
       return 'BOOLEAN';
     default:
       return 'TEXT';

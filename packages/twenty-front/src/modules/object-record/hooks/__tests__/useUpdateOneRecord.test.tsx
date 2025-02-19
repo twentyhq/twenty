@@ -5,11 +5,13 @@ import {
   responseData,
   variables,
 } from '@/object-record/hooks/__mocks__/useUpdateOneRecord';
+import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { expect } from '@storybook/test';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const person = { id: '36abbb63-34ed-4a16-89f5-f549ac55d0f9' };
-const update = {
+const updateInput = {
   name: {
     firstName: 'John',
     lastName: 'Doe',
@@ -18,7 +20,7 @@ const update = {
 const updatePerson = {
   ...person,
   ...responseData,
-  ...update,
+  ...updateInput,
 };
 
 const mocks = [
@@ -35,6 +37,12 @@ const mocks = [
   },
 ];
 
+jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
+const mockRefetchAggregateQueries = jest.fn();
+(useRefetchAggregateQueries as jest.Mock).mockReturnValue({
+  refetchAggregateQueries: mockRefetchAggregateQueries,
+});
+
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
@@ -42,6 +50,9 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 const idToUpdate = '36abbb63-34ed-4a16-89f5-f549ac55d0f9';
 
 describe('useUpdateOneRecord', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   it('works as expected', async () => {
     const { result } = renderHook(
       () => useUpdateOneRecord({ objectNameSingular: 'person' }),
@@ -53,13 +64,14 @@ describe('useUpdateOneRecord', () => {
     await act(async () => {
       const res = await result.current.updateOneRecord({
         idToUpdate,
-        updateOneRecordInput: updatePerson,
+        updateOneRecordInput: updateInput,
       });
       expect(res).toBeDefined();
       expect(res).toHaveProperty('id', person.id);
-      expect(res).toHaveProperty('name', update.name);
+      expect(res).toHaveProperty('name', updateInput.name);
     });
 
     expect(mocks[0].result).toHaveBeenCalled();
+    expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });
 });

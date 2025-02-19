@@ -66,8 +66,15 @@ describe('RefreshTokenService', () => {
   describe('verifyRefreshToken', () => {
     it('should verify a refresh token successfully', async () => {
       const mockToken = 'valid-refresh-token';
-      const mockJwtPayload = { jti: 'token-id', sub: 'user-id' };
-      const mockAppToken = { id: 'token-id', revokedAt: null };
+      const mockJwtPayload = {
+        jti: 'token-id',
+        sub: 'user-id',
+      };
+      const mockAppToken = {
+        id: 'token-id',
+        workspaceId: 'workspace-id',
+        revokedAt: null,
+      };
       const mockUser: Partial<User> = {
         id: 'some-id',
         firstName: 'John',
@@ -136,7 +143,7 @@ describe('RefreshTokenService', () => {
       });
       expect(appTokenRepository.save).toHaveBeenCalled();
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: userId },
+        { sub: userId, workspaceId },
         expect.objectContaining({
           secret: 'mock-secret',
           expiresIn: mockExpiresIn,

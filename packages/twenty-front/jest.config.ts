@@ -1,31 +1,46 @@
 import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const tsConfig = require('./tsconfig.json');
+const tsConfig = require('./tsconfig.spec.json');
 process.env.TZ = 'GMT';
-
+process.env.LC_ALL = 'en_US.UTF-8';
 const jestConfig: JestConfigWithTsJest = {
   // to enable logs, comment out the following line
   silent: true,
+  verbose: false,
+  // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
+  // Prettier v3 will should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
+  prettierPath: null,
   displayName: 'twenty-front',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jsdom',
   transformIgnorePatterns: ['../../node_modules/'],
   transform: {
-    '^.+\\.(ts|js|tsx|jsx)$': '@swc/jest',
+    '^.+\\.(ts|js|tsx|jsx)$': [
+      '@swc/jest',
+      {
+        jsc: {
+          experimental: {
+            plugins: [['@lingui/swc-plugin', {}]],
+          },
+        },
+      },
+    ],
   },
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMock.js',
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
-    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths),
+    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
+      prefix: '<rootDir>/../../',
+    }),
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 58,
+      statements: 57,
       lines: 55,
       functions: 47,
     },

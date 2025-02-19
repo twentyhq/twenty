@@ -1,7 +1,12 @@
 module.exports = {
   plugins: ['@stylistic'],
   extends: ['../../.eslintrc.cjs'],
-  ignorePatterns: ['src/engine/workspace-manager/demo-objects-prefill-data/**'],
+  ignorePatterns: [
+    'src/engine/workspace-manager/demo-objects-prefill-data/**',
+    'src/engine/seeder/data-seeds/**',
+    'src/engine/seeder/metadata-seeds/**',
+    'src/engine/core-modules/serverless/drivers/constants/base-typescript-project/src/index.ts',
+  ],
   overrides: [
     {
       files: ['*.ts'],

@@ -1,11 +1,11 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import {
-  ActorMetadata,
-  FieldActorSource,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
@@ -31,19 +31,19 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const TITLE_FIELD_NAME = 'title';
-const BODY_FIELD_NAME = 'body';
+const BODY_V2_FIELD_NAME = 'bodyV2';
 
 export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
+  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
 ];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.note,
   namePlural: 'notes',
-  labelSingular: 'Note',
-  labelPlural: 'Notes',
-  description: 'A note',
+  labelSingular: msg`Note`,
+  labelPlural: msg`Notes`,
+  description: msg`A note`,
   icon: STANDARD_OBJECT_ICONS.note,
   shortcut: 'N',
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
@@ -52,50 +52,56 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Note record position',
+    label: msg`Position`,
+    description: msg`Note record position`,
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
-    label: 'Title',
-    description: 'Note title',
+    label: msg`Title`,
+    description: msg`Note title`,
     icon: 'IconNotes',
   })
-  [TITLE_FIELD_NAME]: string;
+  title: string;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.RICH_TEXT,
-    label: 'Body',
-    description: 'Note body',
+    label: msg`Body (deprecated)`,
+    description: msg`Note body`,
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
-  [BODY_FIELD_NAME]: string | null;
+  body: string | null;
+
+  @WorkspaceField({
+    standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
+    type: FieldMetadataType.RICH_TEXT_V2,
+    label: msg`Body`,
+    description: msg`Note body`,
+    icon: 'IconFilePencil',
+  })
+  @WorkspaceIsNullable()
+  bodyV2: RichTextV2Metadata | null;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
-    defaultValue: {
-      source: `'${FieldActorSource.MANUAL}'`,
-      name: "''",
-    },
+    description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
-    label: 'Relations',
-    description: 'Note targets',
+    label: msg`Relations`,
+    description: msg`Note targets`,
     icon: 'IconArrowUpRight',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
@@ -106,8 +112,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
-    description: 'Note attachments',
+    label: msg`Attachments`,
+    description: msg`Note attachments`,
     icon: 'IconFileImport',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentWorkspaceEntity,
@@ -119,8 +125,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Timeline Activities',
-    description: 'Timeline Activities linked to the note.',
+    label: msg`Timeline Activities`,
+    description: msg`Timeline Activities linked to the note.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -131,8 +137,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites linked to the note',
+    label: msg`Favorites`,
+    description: msg`Favorites linked to the note`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -154,5 +160,5 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }

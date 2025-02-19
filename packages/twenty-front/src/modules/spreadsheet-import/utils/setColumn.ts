@@ -6,6 +6,7 @@ import {
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field } from '@/spreadsheet-import/types';
 
+import { z } from 'zod';
 import { uniqueEntries } from './uniqueEntries';
 
 export const setColumn = <T extends string>(
@@ -19,6 +20,7 @@ export const setColumn = <T extends string>(
       data || [],
       oldColumn.index,
     ) as MatchedOptions<T>[];
+
     const matchedOptions = uniqueData.map((record) => {
       const value = fieldOptions.find(
         (fieldOption) =>
@@ -35,6 +37,48 @@ export const setColumn = <T extends string>(
     return {
       ...oldColumn,
       type: allMatched
+        ? ColumnType.matchedSelectOptions
+        : ColumnType.matchedSelect,
+      value: field.key,
+      matchedOptions,
+    };
+  }
+
+  if (field?.fieldType.type === 'multiSelect') {
+    const fieldOptions = field.fieldType.options;
+
+    const entries = [
+      ...new Set(
+        data
+          ?.flatMap((row) => {
+            try {
+              const value = row[oldColumn.index];
+              const options = JSON.parse(z.string().parse(value));
+              return z.array(z.string()).parse(options);
+            } catch {
+              return [];
+            }
+          })
+          .filter((entry) => typeof entry === 'string'),
+      ),
+    ];
+
+    const matchedOptions = entries.map((entry) => {
+      const value = fieldOptions.find(
+        (fieldOption) =>
+          fieldOption.value === entry || fieldOption.label === entry,
+      )?.value;
+      return value
+        ? ({ entry, value } as MatchedOptions<T>)
+        : ({ entry } as MatchedOptions<T>);
+    });
+    const areAllMatched =
+      matchedOptions.filter((option) => option.value).length ===
+      entries?.length;
+
+    return {
+      ...oldColumn,
+      type: areAllMatched
         ? ColumnType.matchedSelectOptions
         : ColumnType.matchedSelect,
       value: field.key,

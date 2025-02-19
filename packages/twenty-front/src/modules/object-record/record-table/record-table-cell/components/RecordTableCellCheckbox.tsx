@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { Checkbox } from 'twenty-ui';
+
+export const TABLE_CELL_CHECKBOX_MIN_WIDTH = '24px';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -12,11 +14,11 @@ const StyledContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
-  min-width: 24px;
+  min-width: ${TABLE_CELL_CHECKBOX_MIN_WIDTH};
 `;
 
 export const RecordTableCellCheckbox = () => {
-  const { isSelected } = useContext(RecordTableRowContext);
+  const { isSelected } = useRecordTableRowContextOrThrow();
 
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 

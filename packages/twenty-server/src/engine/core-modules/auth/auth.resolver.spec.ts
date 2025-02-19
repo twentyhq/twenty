@@ -3,18 +3,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 import { AuthResolver } from './auth.resolver';
 
 import { ApiKeyService } from './services/api-key.service';
 import { AuthService } from './services/auth.service';
-import { OAuthService } from './services/oauth.service';
+// import { OAuthService } from './services/oauth.service';
 import { ResetPasswordService } from './services/reset-password.service';
-import { SwitchWorkspaceService } from './services/switch-workspace.service';
+import { EmailVerificationTokenService } from './token/services/email-verification-token.service';
 import { LoginTokenService } from './token/services/login-token.service';
 import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
@@ -44,6 +49,14 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
+          provide: DomainManagerService,
+          useValue: {
+            buildWorkspaceURL: jest
+              .fn()
+              .mockResolvedValue(new URL('http://localhost:3001')),
+          },
+        },
+        {
           provide: UserWorkspaceService,
           useValue: {},
         },
@@ -64,17 +77,33 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: SwitchWorkspaceService,
-          useValue: {},
-        },
-        {
           provide: TransientTokenService,
           useValue: {},
         },
         {
-          provide: OAuthService,
+          provide: EmailVerificationService,
           useValue: {},
         },
+        {
+          provide: EmailVerificationTokenService,
+          useValue: {},
+        },
+        {
+          provide: PermissionsService,
+          useValue: {},
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: {},
+        },
+        {
+          provide: SSOService,
+          useValue: {},
+        },
+        // {
+        //   provide: OAuthService,
+        //   useValue: {},
+        // },
       ],
     })
       .overrideGuard(CaptchaGuard)

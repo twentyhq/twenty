@@ -7,19 +7,16 @@ import { SettingsSSOSAMLForm } from '@/settings/security/components/SettingsSSOS
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconComponent, IconKey, Section } from 'twenty-ui';
-import { IdpType } from '~/generated/graphql';
+import { IdentityProviderType } from '~/generated/graphql';
 
 const StyledInputsContainer = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(2, 4)};
   grid-template-columns: 1fr 1fr;
-  grid-template-areas:
-    'input-1 input-1'
-    'input-2 input-3'
-    'input-4 input-5';
+  grid-template-areas: 'input-1 input-1';
 
   & :first-of-type {
     grid-area: input-1;
@@ -27,11 +24,11 @@ const StyledInputsContainer = styled.div`
 `;
 
 export const SettingsSSOIdentitiesProvidersForm = () => {
-  const { control, getValues } =
+  const { control, watch } =
     useFormContext<SettingSecurityNewSSOIdentityFormValues>();
 
-  const IdpMap: Record<
-    IdpType,
+  const IdentitiesProvidersMap: Record<
+    IdentityProviderType,
     {
       form: ReactElement;
       option: {
@@ -62,16 +59,22 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
     },
   };
 
-  const getFormByType = (type: Uppercase<IdpType> | undefined) => {
-    switch (type) {
-      case IdpType.Oidc:
-        return IdpMap.OIDC.form;
-      case IdpType.Saml:
-        return IdpMap.SAML.form;
+  const selectedType = watch('type');
+
+  const formByType = useMemo(() => {
+    switch (selectedType) {
+      case IdentityProviderType.OIDC:
+        return IdentitiesProvidersMap.OIDC.form;
+      case IdentityProviderType.SAML:
+        return IdentitiesProvidersMap.SAML.form;
       default:
         return null;
     }
-  };
+  }, [
+    IdentitiesProvidersMap.OIDC.form,
+    IdentitiesProvidersMap.SAML.form,
+    selectedType,
+  ]);
 
   return (
     <SettingsPageContainer>
@@ -106,7 +109,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             render={({ field: { onChange, value } }) => (
               <SettingsRadioCardContainer
                 value={value}
-                options={Object.values(IdpMap).map(
+                options={Object.values(IdentitiesProvidersMap).map(
                   (identityProviderType) => identityProviderType.option,
                 )}
                 onChange={onChange}
@@ -115,7 +118,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
           />
         </StyledInputsContainer>
       </Section>
-      {getFormByType(getValues().type)}
+      {formByType}
     </SettingsPageContainer>
   );
 };

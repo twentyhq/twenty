@@ -1,8 +1,8 @@
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
@@ -19,7 +19,7 @@ export const RecordTableCellWrapper = ({
   columnIndex: number;
   children: React.ReactNode;
 }) => {
-  const { rowIndex } = useContext(RecordTableRowContext);
+  const { rowIndex } = useRecordTableRowContextOrThrow();
 
   const currentTableCellPosition: TableCellPosition = useMemo(
     () => ({

@@ -31,7 +31,7 @@ describe('resolveInput', () => {
   });
 
   it('should handle non-existent variables', () => {
-    expect(resolveInput('{{user.email}}', context)).toBe('');
+    expect(resolveInput('{{user.email}}', context)).toBe(undefined);
   });
 
   it('should resolve variables in an array', () => {
@@ -67,7 +67,7 @@ describe('resolveInput', () => {
     const expected = {
       user: {
         displayName: 'John Doe',
-        preferences: ['dark', 'true'],
+        preferences: ['dark', true],
       },
       staticData: [1, 2, 3],
     };
@@ -75,7 +75,39 @@ describe('resolveInput', () => {
     expect(resolveInput(input, context)).toEqual(expected);
   });
 
-  it('should throw an error for invalid expressions', () => {
-    expect(() => resolveInput('{{invalidFunction()}}', context)).toThrow();
+  it('does not wrap string variables with double quotes', () => {
+    expect(
+      resolveInput('{ {{test}}: 2 }', {
+        test: 'prop',
+      }),
+    ).toBe('{ prop: 2 }');
+  });
+
+  it('does not modify static JSON', () => {
+    expect(resolveInput('{ "a": 2 }', {})).toBe('{ "a": 2 }');
+  });
+
+  it('supports variable as JSON object property name', () => {
+    expect(
+      resolveInput('{ "{{test}}": 2 }', {
+        test: 'prop',
+      }),
+    ).toBe('{ "prop": 2 }');
+  });
+
+  it('supports variable as JSON number value', () => {
+    expect(
+      resolveInput('{ "a": {{test}} }', {
+        test: 2,
+      }),
+    ).toBe('{ "a": 2 }');
+  });
+
+  it('supports variable as JSON string value', () => {
+    expect(
+      resolveInput('{ "a": "{{test}}" }', {
+        test: 'str',
+      }),
+    ).toBe('{ "a": "str" }');
   });
 });

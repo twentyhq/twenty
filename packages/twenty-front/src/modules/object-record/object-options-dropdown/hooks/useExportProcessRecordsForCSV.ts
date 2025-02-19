@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 
@@ -11,28 +11,36 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
   });
 
   const processRecordsForCSVExport = (records: ObjectRecord[]) => {
-    return records.map((record) => {
-      const currencyFields = objectMetadataItem.fields.filter(
-        (field) => field.type === FieldMetadataType.Currency,
-      );
+    return records.map((record) =>
+      objectMetadataItem.fields.reduce(
+        (processedRecord, field) => {
+          if (!isDefined(record[field.name])) {
+            return processedRecord;
+          }
 
-      const processedRecord = {
-        ...record,
-      };
-
-      for (const currencyField of currencyFields) {
-        if (isDefined(record[currencyField.name])) {
-          processedRecord[currencyField.name] = {
-            amountMicros: convertCurrencyMicrosToCurrencyAmount(
-              record[currencyField.name].amountMicros,
-            ),
-            currencyCode: record[currencyField.name].currencyCode,
-          } satisfies FieldCurrencyValue;
-        }
-      }
-
-      return processedRecord;
-    });
+          switch (field.type) {
+            case FieldMetadataType.CURRENCY:
+              return {
+                ...processedRecord,
+                [field.name]: {
+                  amountMicros: convertCurrencyMicrosToCurrencyAmount(
+                    record[field.name].amountMicros,
+                  ),
+                  currencyCode: record[field.name].currencyCode,
+                } satisfies FieldCurrencyValue,
+              };
+            case FieldMetadataType.RAW_JSON:
+              return {
+                ...processedRecord,
+                [field.name]: JSON.stringify(record[field.name]),
+              };
+            default:
+              return processedRecord;
+          }
+        },
+        { ...record },
+      ),
+    );
   };
 
   return { processRecordsForCSVExport };

@@ -1,4 +1,6 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -16,9 +18,9 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewGroup,
   namePlural: 'viewGroups',
-  labelSingular: 'View Group',
-  labelPlural: 'View Groups',
-  description: '(System) View Groups',
+  labelSingular: msg`View Group`,
+  labelPlural: msg`View Groups`,
+  description: msg`(System) View Groups`,
   icon: STANDARD_OBJECT_ICONS.viewGroup,
 })
 @WorkspaceIsNotAuditLogged()
@@ -27,8 +29,8 @@ export class ViewGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
-    description: 'View Group target field',
+    label: msg`Field Metadata Id`,
+    description: msg`View Group target field`,
     icon: 'IconTag',
   })
   fieldMetadataId: string;
@@ -36,8 +38,8 @@ export class ViewGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.isVisible,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Visible',
-    description: 'View Group visibility',
+    label: msg`Visible`,
+    description: msg`View Group visibility`,
     icon: 'IconEye',
     defaultValue: true,
   })
@@ -46,26 +48,27 @@ export class ViewGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.fieldValue,
     type: FieldMetadataType.TEXT,
-    label: 'Field Value',
-    description: 'Group by this field value',
+    label: msg`Field Value`,
+    description: msg`Group by this field value`,
   })
   fieldValue: string;
 
   @WorkspaceField({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'View Field position',
+    label: msg`Position`,
+    description: msg`View Field position`,
     icon: 'IconList',
     defaultValue: 0,
   })
+  @WorkspaceIsSystem()
   position: number;
 
   @WorkspaceRelation({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'View Group related view',
+    label: msg`View`,
+    description: msg`View Group related view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewGroups',

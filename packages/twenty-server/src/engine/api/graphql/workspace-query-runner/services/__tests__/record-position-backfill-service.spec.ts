@@ -1,15 +1,18 @@
-import { TestingModule, Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { FieldMetadataType } from 'twenty-shared';
 
 import { RecordPositionQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
 import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
 import { RecordPositionBackfillService } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 describe('RecordPositionBackfillService', () => {
   let recordPositionQueryFactory;
   let recordPositionFactory;
-  let objectMetadataService;
+  let objectMetadataRepository;
   let workspaceDataSourceService;
 
   let service: RecordPositionBackfillService;
@@ -27,8 +30,8 @@ describe('RecordPositionBackfillService', () => {
       ]),
     };
 
-    objectMetadataService = {
-      findManyWithinWorkspace: jest.fn().mockReturnValue([]),
+    objectMetadataRepository = {
+      find: jest.fn().mockReturnValue([]),
     };
 
     workspaceDataSourceService = {
@@ -51,8 +54,8 @@ describe('RecordPositionBackfillService', () => {
           useValue: workspaceDataSourceService,
         },
         {
-          provide: ObjectMetadataService,
-          useValue: objectMetadataService,
+          provide: getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          useValue: objectMetadataRepository,
         },
       ],
     }).compile();
@@ -76,23 +79,23 @@ describe('RecordPositionBackfillService', () => {
   });
 
   it('when objectMetadata without position, should do nothing', async () => {
-    objectMetadataService.findManyWithinWorkspace.mockReturnValue([
-      {
-        id: '1',
-        nameSingular: 'name',
-        fields: [],
-      },
-    ]);
+    objectMetadataRepository.find.mockReturnValue([]);
     await service.backfill('workspaceId', false);
     expect(workspaceDataSourceService.executeRawQuery).not.toHaveBeenCalled();
   });
 
   it('when objectMetadata but all record with position, should create and run query once', async () => {
-    objectMetadataService.findManyWithinWorkspace.mockReturnValue([
+    objectMetadataRepository.find.mockReturnValue([
       {
         id: '1',
         nameSingular: 'company',
-        fields: [],
+        fields: [
+          {
+            type: FieldMetadataType.POSITION,
+            isCustom: true,
+            nameSingular: 'position',
+          },
+        ],
       },
     ]);
     await service.backfill('workspaceId', false);
@@ -100,11 +103,17 @@ describe('RecordPositionBackfillService', () => {
   });
 
   it('when record without position, should create and run query twice', async () => {
-    objectMetadataService.findManyWithinWorkspace.mockReturnValue([
+    objectMetadataRepository.find.mockReturnValue([
       {
         id: '1',
         nameSingular: 'company',
-        fields: [],
+        fields: [
+          {
+            type: FieldMetadataType.POSITION,
+            isCustom: true,
+            nameSingular: 'position',
+          },
+        ],
       },
     ]);
     workspaceDataSourceService.executeRawQuery.mockResolvedValueOnce([
@@ -119,11 +128,17 @@ describe('RecordPositionBackfillService', () => {
   });
 
   it('when dryRun is true, should not update position', async () => {
-    objectMetadataService.findManyWithinWorkspace.mockReturnValue([
+    objectMetadataRepository.find.mockReturnValue([
       {
         id: '1',
         nameSingular: 'company',
-        fields: [],
+        fields: [
+          {
+            type: FieldMetadataType.POSITION,
+            isCustom: true,
+            nameSingular: 'position',
+          },
+        ],
       },
     ]);
     workspaceDataSourceService.executeRawQuery.mockResolvedValueOnce([

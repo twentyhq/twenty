@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class GraphqlQueryRunnerException extends CustomException {
-  code: GraphqlQueryRunnerExceptionCode;
   constructor(message: string, code: GraphqlQueryRunnerExceptionCode) {
     super(message, code);
   }
@@ -20,4 +19,7 @@ export enum GraphqlQueryRunnerExceptionCode {
   INVALID_ARGS_FIRST = 'INVALID_ARGS_FIRST',
   INVALID_ARGS_LAST = 'INVALID_ARGS_LAST',
   METADATA_CACHE_VERSION_NOT_FOUND = 'METADATA_CACHE_VERSION_NOT_FOUND',
+  METADATA_CACHE_FEATURE_FLAG_RECOMPUTATION_REQUIRED = 'METADATA_CACHE_FEATURE_FLAG_RECOMPUTATION_REQUIRED',
+  RELATION_SETTINGS_NOT_FOUND = 'RELATION_SETTINGS_NOT_FOUND',
+  RELATION_TARGET_OBJECT_METADATA_NOT_FOUND = 'RELATION_TARGET_OBJECT_METADATA_NOT_FOUND',
 }

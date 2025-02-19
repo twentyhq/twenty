@@ -25,7 +25,7 @@ export enum KeyValuePairType {
 }
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
-@ObjectType('KeyValuePair')
+@ObjectType()
 @Unique('IndexOnKeyUserIdWorkspaceIdUnique', ['key', 'userId', 'workspaceId'])
 @Index('IndexOnKeyWorkspaceIdAndNullUserIdUnique', ['key', 'workspaceId'], {
   unique: true,
@@ -67,8 +67,8 @@ export class KeyValuePair {
   value: JSON;
 
   @Field(() => String)
-  @Column({ nullable: false, type: 'text' })
-  textValueDeprecated: string;
+  @Column({ nullable: true, type: 'text' })
+  textValueDeprecated: string | null;
 
   @Field(() => KeyValuePairType)
   @Column({

@@ -1,23 +1,24 @@
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconSettings, MenuItem, UndecoratedLink, useIcons } from 'twenty-ui';
 
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const RecordTableHeaderPlusButtonContent = () => {
-  const { objectMetadataItem } = useContext(RecordTableContext);
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
+
   const { closeDropdown } = useDropdown();
 
   const hiddenTableColumns = useRecoilComponentValueV2(
@@ -42,23 +43,23 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   return (
     <>
-      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-        <DropdownMenuItemsContainer>
-          {hiddenTableColumns.map((column) => (
-            <MenuItem
-              key={column.fieldMetadataId}
-              onClick={() => handleAddColumn(column)}
-              LeftIcon={getIcon(column.iconName)}
-              text={column.label}
-            />
-          ))}
-        </DropdownMenuItemsContainer>
-      </ScrollWrapper>
-      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
+        {hiddenTableColumns.map((column) => (
+          <MenuItem
+            key={column.fieldMetadataId}
+            onClick={() => handleAddColumn(column)}
+            LeftIcon={getIcon(column.iconName)}
+            text={column.label}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer scrollable={false}>
         <UndecoratedLink
           fullWidth
-          to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}
+          to={getSettingsPath(SettingsPath.Objects, {
+            objectNamePlural: objectMetadataItem.namePlural,
+          })}
           onClick={() => {
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}

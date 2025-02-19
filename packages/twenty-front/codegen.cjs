@@ -1,5 +1,7 @@
 module.exports = {
-  schema: (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') + '/graphql',
+  schema:
+    (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') +
+    '/graphql',
   documents: [
     '!./src/modules/databases/**',
     '!./src/modules/object-metadata/**',
@@ -8,6 +10,7 @@ module.exports = {
     './src/modules/**/*.tsx',
     './src/modules/**/*.ts',
     '!./src/**/*.test.tsx',
+    '!./src/**/*.stories.tsx',
     '!./src/**/__mocks__/*.ts',
     '!./src/modules/users/graphql/queries/getCurrentUserAndViews.ts',
   ],
@@ -27,6 +30,7 @@ module.exports = {
         scalars: {
           DateTime: 'string',
         },
+        namingConvention: { enumValues: 'keep' },
       },
     },
   },

@@ -45,7 +45,7 @@ export class RecordPositionQueryFactory {
     objectMetadata: { isCustom: boolean; nameSingular: string },
     dataSourceSchema: string,
   ): [RecordPositionQuery, RecordPositionQueryParams] {
-    const name = computeTableName(
+    const tableName = computeTableName(
       objectMetadata.nameSingular,
       objectMetadata.isCustom,
     );
@@ -54,17 +54,17 @@ export class RecordPositionQueryFactory {
       case RecordPositionQueryType.FIND_BY_POSITION:
         return this.buildFindByPositionQuery(
           recordPositionQueryArgs satisfies FindByPositionQueryArgs,
-          name,
+          tableName,
           dataSourceSchema,
         );
       case RecordPositionQueryType.FIND_MIN_POSITION:
-        return this.buildFindMinPositionQuery(name, dataSourceSchema);
+        return this.buildFindMinPositionQuery(tableName, dataSourceSchema);
       case RecordPositionQueryType.FIND_MAX_POSITION:
-        return this.buildFindMaxPositionQuery(name, dataSourceSchema);
+        return this.buildFindMaxPositionQuery(tableName, dataSourceSchema);
       case RecordPositionQueryType.UPDATE_POSITION:
         return this.buildUpdatePositionQuery(
           recordPositionQueryArgs satisfies UpdatePositionQueryArgs,
-          name,
+          tableName,
           dataSourceSchema,
         );
       default:

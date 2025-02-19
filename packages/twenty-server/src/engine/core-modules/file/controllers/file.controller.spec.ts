@@ -1,8 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { CanActivate } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
 import { FileController } from './file.controller';
 
@@ -22,6 +23,8 @@ describe('FileController', () => {
     })
       .overrideGuard(FilePathGuard)
       .useValue(mock_FilePathGuard)
+      .overrideFilter(FileApiExceptionFilter)
+      .useValue({})
       .compile();
 
     controller = module.get<FileController>(FileController);

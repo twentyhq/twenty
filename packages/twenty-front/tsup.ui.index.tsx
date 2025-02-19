@@ -3,7 +3,6 @@ import { ThemeType } from 'twenty-ui';
 export { ThemeProvider } from '@emotion/react';
 export * from 'twenty-ui';
 export * from './src/modules/ui/input/components/AutosizeTextInput';
-export * from './src/modules/ui/input/components/EntityTitleDoubleTextInput';
 export * from './src/modules/ui/input/components/IconPicker';
 export * from './src/modules/ui/input/components/ImageInput';
 export * from './src/modules/ui/input/components/Select';

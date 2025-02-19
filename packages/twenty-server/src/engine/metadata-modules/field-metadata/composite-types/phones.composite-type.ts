@@ -1,6 +1,6 @@
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { FieldMetadataType } from 'twenty-shared';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 export const phonesCompositeType: CompositeType = {
   type: FieldMetadataType.PHONES,
@@ -19,6 +19,12 @@ export const phonesCompositeType: CompositeType = {
       isRequired: false,
     },
     {
+      name: 'primaryPhoneCallingCode',
+      type: FieldMetadataType.TEXT,
+      hidden: false,
+      isRequired: false,
+    },
+    {
       name: 'additionalPhones',
       type: FieldMetadataType.RAW_JSON,
       hidden: false,
@@ -30,5 +36,6 @@ export const phonesCompositeType: CompositeType = {
 export type PhonesMetadata = {
   primaryPhoneNumber: string;
   primaryPhoneCountryCode: string;
+  primaryPhoneCallingCode: string;
   additionalPhones: object | null;
 };

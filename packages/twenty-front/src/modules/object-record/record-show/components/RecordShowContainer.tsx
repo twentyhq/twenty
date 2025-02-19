@@ -1,10 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 
-import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 
-import { RecordShowContainerContextStoreObjectMetadataIdEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreObjectMetadataIdEffect';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
@@ -44,14 +42,9 @@ export const RecordShowContainer = ({
 
   return (
     <>
-      <RecordShowContainerContextStoreObjectMetadataIdEffect
-        recordId={objectRecordId}
-        objectNameSingular={objectNameSingular}
-      />
       <RecordShowContainerContextStoreTargetedRecordsEffect
         recordId={objectRecordId}
       />
-      {!isInRightDrawer && <MainContextStoreComponentInstanceIdSetterEffect />}
       {recordFromStore && recordFromStore.deletedAt && (
         <InformationBannerDeletedRecord
           recordId={objectRecordId}

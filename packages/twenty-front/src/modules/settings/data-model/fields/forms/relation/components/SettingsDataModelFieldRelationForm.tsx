@@ -20,10 +20,20 @@ import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({
-    field: fieldMetadataItemSchema().pick({
-      icon: true,
-      label: true,
-    }),
+    field: fieldMetadataItemSchema()
+      .pick({
+        icon: true,
+        label: true,
+      })
+      // NOT SURE IF THIS IS CORRECT
+      .merge(
+        fieldMetadataItemSchema()
+          .pick({
+            name: true,
+            isLabelSyncedWithName: true,
+          })
+          .partial(),
+      ),
     objectMetadataId: z.string().uuid(),
     type: z.enum(
       Object.keys(RELATION_TYPES) as [
@@ -70,8 +80,8 @@ const StyledInputsContainer = styled.div`
 const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES)
   .filter(
     ([value]) =>
-      RelationDefinitionType.OneToOne !== value &&
-      RelationDefinitionType.ManyToMany !== value,
+      RelationDefinitionType.ONE_TO_ONE !== value &&
+      RelationDefinitionType.MANY_TO_MANY !== value,
   )
   .map(([value, { label, Icon }]) => ({
     label,
@@ -105,6 +115,11 @@ export const SettingsDataModelFieldRelationForm = ({
       'relation.objectMetadataId',
       initialRelationObjectMetadataItem?.id,
     ),
+  );
+
+  const selectedRelationType = watchFormValue(
+    'relation.type',
+    initialRelationType,
   );
 
   const isMobile = useIsMobile();
@@ -152,7 +167,10 @@ export const SettingsDataModelFieldRelationForm = ({
         />
       </StyledSelectsContainer>
       <StyledInputsLabel>
-        Field on {selectedObjectMetadataItem?.labelPlural}
+        Field on{' '}
+        {selectedRelationType === RelationDefinitionType.MANY_TO_ONE
+          ? selectedObjectMetadataItem?.labelSingular
+          : selectedObjectMetadataItem?.labelPlural}
       </StyledInputsLabel>
       <StyledInputsContainer>
         <Controller

@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
+import { capitalize } from 'twenty-shared';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
@@ -35,9 +37,7 @@ import {
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class OpenApiService {
@@ -59,7 +59,7 @@ export class OpenApiService {
 
     try {
       const { workspace } =
-        await this.accessTokenService.validateToken(request);
+        await this.accessTokenService.validateTokenByRequest(request);
 
       objectMetadataItems =
         await this.objectMetadataService.findManyWithinWorkspace(workspace.id);

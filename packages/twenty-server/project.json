@@ -6,10 +6,12 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "cache": true,
       "options": {
         "cwd": "packages/twenty-server",
         "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
@@ -38,6 +40,7 @@
         "updateBuildableProjectDepsInPackageJson": true
       }
     },
+    "typecheck": {},
     "start": {
       "executor": "nx:run-commands",
       "dependsOn": ["typecheck", "build"],
@@ -85,21 +88,13 @@
       "options": {
         "cwd": "packages/twenty-server",
         "command": "node dist/src/queue-worker/queue-worker.js"
-      },
-      "configurations": {
-        "ci": {
-          "env": {
-            "MESSAGE_QUEUE_TYPE": "sync",
-            "CACHE_STORAGE_TYPE": "memory"
-          }
-        }
       }
     },
     "typeorm": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "ts-node ../../node_modules/typeorm/cli.js"
+        "command": "ts-node --transpile-only -P tsconfig.json ../../node_modules/typeorm/cli.js"
       }
     },
     "ts-node": {
@@ -117,9 +112,17 @@
         "command": "ts-node"
       }
     },
+    "ts-node-no-deps-transpile-only": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "ts-node --transpile-only"
+      }
+    },
     "lint": {
       "options": {
-        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"]
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
+        "maxWarnings": 0
       },
       "configurations": {
         "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
@@ -149,8 +152,7 @@
         "commands": [
           "nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
-        ],
-        "parallel": false
+        ]
       }
     },
     "database:migrate:revert": {
@@ -161,8 +163,7 @@
         "commands": [
           "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
-        ],
-        "parallel": false
+        ]
       }
     },
     "generate:integration-test": {
@@ -178,16 +179,43 @@
     "database:reset": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
+      "configurations": {
+        "no-seed": {
+          "cwd": "packages/twenty-server",
+          "commands": [
+            "nx ts-node-no-deps-transpile-only -- ./scripts/truncate-db.ts",
+            "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
+            "nx database:migrate",
+            "nx command-no-deps -- cache:flush"
+          ],
+          "parallel": false
+        },
+        "seed": {
+          "cwd": "packages/twenty-server",
+          "commands": [
+            "nx ts-node-no-deps-transpile-only -- ./scripts/truncate-db.ts",
+            "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
+            "nx database:migrate",
+            "nx command-no-deps -- cache:flush",
+            "nx command-no-deps -- workspace:seed:dev"
+          ],
+          "parallel": false
+        }
+      },
+      "defaultConfiguration": "seed"
+    },
+    "lingui:extract": {
+      "executor": "nx:run-commands",
       "options": {
-        "cwd": "packages/twenty-server",
-        "commands": [
-          "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
-          "nx ts-node-no-deps -- ./scripts/setup-db.ts",
-          "nx database:migrate",
-          "nx command-no-deps -- cache:flush",
-          "nx command-no-deps -- workspace:seed:dev"
-        ],
-        "parallel": false
+        "cwd": "{projectRoot}",
+        "command": "lingui extract --overwrite"
+      }
+    },
+    "lingui:compile": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui compile --typescript"
       }
     }
   }

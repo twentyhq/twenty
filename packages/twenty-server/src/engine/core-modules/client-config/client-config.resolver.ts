@@ -1,33 +1,59 @@
 import { Query, Resolver } from '@nestjs/graphql';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 
 import { ClientConfig } from './client-config.entity';
 
 @Resolver()
 export class ClientConfigResolver {
-  constructor(private environmentService: EnvironmentService) {}
+  constructor(
+    private environmentService: EnvironmentService,
+    private domainManagerService: DomainManagerService,
+  ) {}
 
   @Query(() => ClientConfig)
   async clientConfig(): Promise<ClientConfig> {
     const clientConfig: ClientConfig = {
+      billing: {
+        isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),
+        billingUrl: this.environmentService.get('BILLING_PLAN_REQUIRED_LINK'),
+        trialPeriods: [
+          {
+            duration: this.environmentService.get(
+              'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS',
+            ),
+            isCreditCardRequired: true,
+          },
+          {
+            duration: this.environmentService.get(
+              'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
+            ),
+            isCreditCardRequired: false,
+          },
+        ],
+      },
       authProviders: {
         google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
         magicLink: false,
         password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
         microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
-        sso: this.environmentService.get('AUTH_SSO_ENABLED'),
-      },
-      billing: {
-        isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),
-        billingUrl: this.environmentService.get('BILLING_PLAN_REQUIRED_LINK'),
-        billingFreeTrialDurationInDays: this.environmentService.get(
-          'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
-        ),
+        sso: [],
       },
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),
-      signUpDisabled: this.environmentService.get('IS_SIGN_UP_DISABLED'),
-      debugMode: this.environmentService.get('DEBUG_MODE'),
+      isMultiWorkspaceEnabled: this.environmentService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      isEmailVerificationRequired: this.environmentService.get(
+        'IS_EMAIL_VERIFICATION_REQUIRED',
+      ),
+      defaultSubdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      frontDomain: this.domainManagerService.getFrontUrl().hostname,
+      debugMode:
+        this.environmentService.get('NODE_ENV') === NodeEnvironment.development,
       support: {
         supportDriver: this.environmentService.get('SUPPORT_DRIVER'),
         supportFrontChatId: this.environmentService.get(
@@ -49,7 +75,27 @@ export class ClientConfigResolver {
           'MUTATION_MAXIMUM_AFFECTED_RECORDS',
         ),
       },
+      isAttachmentPreviewEnabled: this.environmentService.get(
+        'IS_ATTACHMENT_PREVIEW_ENABLED',
+      ),
       analyticsEnabled: this.environmentService.get('ANALYTICS_ENABLED'),
+      canManageFeatureFlags:
+        this.environmentService.get('NODE_ENV') ===
+          NodeEnvironment.development ||
+        this.environmentService.get('IS_BILLING_ENABLED'),
+      publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
+      isMicrosoftMessagingEnabled: this.environmentService.get(
+        'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
+      ),
+      isMicrosoftCalendarEnabled: this.environmentService.get(
+        'CALENDAR_PROVIDER_MICROSOFT_ENABLED',
+      ),
+      isGoogleMessagingEnabled: this.environmentService.get(
+        'MESSAGING_PROVIDER_GMAIL_ENABLED',
+      ),
+      isGoogleCalendarEnabled: this.environmentService.get(
+        'CALENDAR_PROVIDER_GOOGLE_ENABLED',
+      ),
     };
 
     return Promise.resolve(clientConfig);

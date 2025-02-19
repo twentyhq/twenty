@@ -4,16 +4,20 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
+import { FieldType } from '@/settings/data-model/types/FieldType';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { isDefined } from 'twenty-ui';
+import { useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
@@ -29,23 +33,24 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 >;
 
 export const SettingsObjectNewFieldSelect = () => {
-  const navigate = useNavigate();
-  const { objectSlug = '' } = useParams();
-  const { findActiveObjectMetadataItemBySlug } =
+  const navigate = useNavigateApp();
+  const { objectNamePlural = '' } = useParams();
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
   const activeObjectMetadataItem =
-    findActiveObjectMetadataItemBySlug(objectSlug);
+    findActiveObjectMetadataItemByNamePlural(objectNamePlural);
   const formMethods = useForm({
     resolver: zodResolver(settingsDataModelFieldTypeFormSchema),
     defaultValues: {
-      type: FieldMetadataType.Text,
+      type: FieldMetadataType.TEXT,
     },
   });
-  const excludedFieldTypes: SettingsFieldType[] = (
+  const excludedFieldTypes: FieldType[] = (
     [
-      FieldMetadataType.Numeric,
-      FieldMetadataType.RichText,
-      FieldMetadataType.Actor,
+      FieldMetadataType.NUMERIC,
+      FieldMetadataType.RICH_TEXT,
+      FieldMetadataType.RICH_TEXT_V2,
+      FieldMetadataType.ACTOR,
     ] as const
   ).filter(isDefined);
 
@@ -69,14 +74,16 @@ export const SettingsObjectNewFieldSelect = () => {
             { children: 'Objects', href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectSlug}`,
+              href: getSettingsPath(SettingsPath.ObjectDetail, {
+                objectNamePlural,
+              }),
             },
             { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
           ]}
         >
           <SettingsPageContainer>
             <SettingsObjectNewFieldSelector
-              objectSlug={objectSlug}
+              objectNamePlural={objectNamePlural}
               excludedFieldTypes={excludedFieldTypes}
             />
           </SettingsPageContainer>

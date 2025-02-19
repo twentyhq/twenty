@@ -1,17 +1,18 @@
 /* @license Enterprise */
 
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
-import { IdpType } from '~/generated/graphql';
+import { v4 } from 'uuid';
+import { IdentityProviderType } from '~/generated/graphql';
 
 export const sSOIdentityProviderDefaultValues: Record<
-  IdpType,
+  IdentityProviderType,
   () => SettingSecurityNewSSOIdentityFormValues
 > = {
   SAML: () => ({
     type: 'SAML',
     ssoURL: '',
     name: '',
-    id: crypto.randomUUID(),
+    id: v4(),
     certificate: '',
     issuer: '',
   }),

@@ -1,11 +1,16 @@
 import { Logger } from '@nestjs/common/services/logger.service';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -44,6 +49,13 @@ export class CreatedByCreateManyPreQueryHook
     payload: CreateManyResolverArgs<CustomWorkspaceItem>,
   ): Promise<CreateManyResolverArgs<CustomWorkspaceItem>> {
     let createdBy: ActorMetadata | null = null;
+
+    if (!isDefined(payload.data)) {
+      throw new GraphqlQueryRunnerException(
+        'Payload data is required',
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
 
     // TODO: Once all objects have it, we can remove this check
     const createdByFieldMetadata = await this.fieldMetadataRepository.findOne({

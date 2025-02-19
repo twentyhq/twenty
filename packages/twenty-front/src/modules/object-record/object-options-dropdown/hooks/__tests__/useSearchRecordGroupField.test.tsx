@@ -1,5 +1,5 @@
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
@@ -11,13 +11,13 @@ describe('useSearchRecordGroupField', () => {
     renderHook(() => useSearchRecordGroupField(), {
       wrapper: ({ children }) => (
         <RecoilRoot>
-          <RecordIndexRootPropsContext.Provider value={contextValue}>
+          <RecordIndexContextProvider value={contextValue}>
             <ViewComponentInstanceContext.Provider
               value={{ instanceId: 'myViewInstanceId' }}
             >
               {children}
             </ViewComponentInstanceContext.Provider>
-          </RecordIndexRootPropsContext.Provider>
+          </RecordIndexContextProvider>
         </RecoilRoot>
       ),
     });
@@ -26,9 +26,9 @@ describe('useSearchRecordGroupField', () => {
     const mockContextValue = {
       objectMetadataItem: {
         fields: [
-          { type: FieldMetadataType.Select, label: 'First' },
-          { type: FieldMetadataType.Select, label: 'Second' },
-          { type: FieldMetadataType.Text, label: 'Third' },
+          { type: FieldMetadataType.SELECT, label: 'First' },
+          { type: FieldMetadataType.SELECT, label: 'Second' },
+          { type: FieldMetadataType.TEXT, label: 'Third' },
         ],
       },
     };
@@ -40,7 +40,7 @@ describe('useSearchRecordGroupField', () => {
     });
 
     expect(result.current.filteredRecordGroupFieldMetadataItems).toEqual([
-      { type: FieldMetadataType.Select, label: 'First' },
+      { type: FieldMetadataType.SELECT, label: 'First' },
     ]);
   });
 
@@ -48,9 +48,9 @@ describe('useSearchRecordGroupField', () => {
     const mockContextValue = {
       objectMetadataItem: {
         fields: [
-          { type: FieldMetadataType.Select, label: 'First' },
-          { type: FieldMetadataType.Select, label: 'Second' },
-          { type: FieldMetadataType.Text, label: 'Third' },
+          { type: FieldMetadataType.SELECT, label: 'First' },
+          { type: FieldMetadataType.SELECT, label: 'Second' },
+          { type: FieldMetadataType.TEXT, label: 'Third' },
         ],
       },
     };
@@ -58,8 +58,8 @@ describe('useSearchRecordGroupField', () => {
     const { result } = renderWithContext(mockContextValue);
 
     expect(result.current.filteredRecordGroupFieldMetadataItems).toEqual([
-      { type: FieldMetadataType.Select, label: 'First' },
-      { type: FieldMetadataType.Select, label: 'Second' },
+      { type: FieldMetadataType.SELECT, label: 'First' },
+      { type: FieldMetadataType.SELECT, label: 'Second' },
     ]);
   });
 });

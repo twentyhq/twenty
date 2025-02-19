@@ -1,4 +1,5 @@
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { Select, SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
@@ -16,28 +17,37 @@ const StyledContainer = styled.div`
   width: 480px;
 `;
 
-type SelectValue = string | number | boolean | null;
+interface SettingsOptionCardContentSelectProps
+  extends React.ComponentProps<typeof SettingsOptionCardContentSelect> {}
 
+interface SettingsOptionCardContentSelectWrapperProps
+  extends SettingsOptionCardContentSelectProps {
+  onChange: any;
+  options: any;
+  value: any;
+  dropdownId: string;
+}
 const SettingsOptionCardContentSelectWrapper = <Value extends SelectValue>(
-  args: React.ComponentProps<typeof SettingsOptionCardContentSelect<Value>>,
+  args: SettingsOptionCardContentSelectWrapperProps,
 ) => {
-  const [value, setValue] = useState<Value>(args.value);
+  const [value] = useState<Value>(args.value);
 
   return (
     <StyledContainer>
       <SettingsOptionCardContentSelect
-        value={value}
-        onChange={(newValue) => setValue(newValue as Value)}
         Icon={args.Icon}
         title={args.title}
         description={args.description}
-        divider={args.divider}
-        disabled={args.disabled}
-        options={args.options}
-        selectClassName={args.selectClassName}
-        dropdownId={args.dropdownId}
-        fullWidth={args.fullWidth}
-      />
+      >
+        <Select<Value>
+          value={value}
+          onChange={args.onChange}
+          dropdownId={args.dropdownId}
+          options={args.options}
+          selectSizeVariant="small"
+          dropdownWidth={120}
+        />
+      </SettingsOptionCardContentSelect>
     </StyledContainer>
   );
 };
@@ -137,6 +147,5 @@ export const FullWidth: Story = {
       },
     ],
     dropdownId: 'full-width-select',
-    fullWidth: true,
   },
 };

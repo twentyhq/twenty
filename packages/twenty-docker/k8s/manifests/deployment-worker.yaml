@@ -28,18 +28,12 @@ spec:
           env:
             - name: SERVER_URL
               value: "https://crm.example.com:443"
-            - name: FRONT_BASE_URL
-              value: "https://crm.example.com:443"
             - name: PG_DATABASE_URL
-              value: "postgres://postgres:postgres@twenty-db.twentycrm.svc.cluster.local/default"
-            - name: ENABLE_DB_MIGRATIONS
+              value: "postgres://postgres:postgres@twentycrm-db.twentycrm.svc.cluster.local/default"
+            - name: DISABLE_DB_MIGRATIONS
               value: "false" # it already runs on the server
             - name: STORAGE_TYPE
               value: "local"
-            - name: "MESSAGE_QUEUE_TYPE"
-              value: "bull-mq"
-            - name: "CACHE_STORAGE_TYPE"
-              value: "redis"
             - name: "REDIS_URL"
               value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
             - name: APP_SECRET

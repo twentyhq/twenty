@@ -38,12 +38,11 @@ export const PageFavoriteFoldersDropdown = ({
                 onSubmit={closeDropdown}
                 record={record}
                 objectNameSingular={objectNameSingular}
+                dropdownId={dropdownId}
               />
             </>
           }
-          dropdownHotkeyScope={{
-            scope: dropdownId,
-          }}
+          dropdownHotkeyScope={{ scope: dropdownId }}
         />
       </DropdownScope>
     </FavoriteFolderPickerComponentInstanceContext>

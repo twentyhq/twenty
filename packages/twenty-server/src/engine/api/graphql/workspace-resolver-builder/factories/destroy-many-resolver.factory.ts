@@ -9,13 +9,13 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { GraphqlQueryDestroyManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-many-resolver.service';
-import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
 export class DestroyManyResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'destroyMany' as const;
+  public static methodName = RESOLVER_METHOD_NAMES.DESTROY_MANY;
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryDestroyManyResolverService,
@@ -27,23 +27,19 @@ export class DestroyManyResolverFactory
     const internalContext = context;
 
     return async (_source, args, context, info) => {
-      try {
-        const options: WorkspaceQueryRunnerOptions = {
-          authContext: internalContext.authContext,
-          info,
-          objectMetadataMaps: internalContext.objectMetadataMaps,
-          objectMetadataItemWithFieldMaps:
-            internalContext.objectMetadataItemWithFieldMaps,
-        };
+      const options: WorkspaceQueryRunnerOptions = {
+        authContext: internalContext.authContext,
+        info,
+        objectMetadataMaps: internalContext.objectMetadataMaps,
+        objectMetadataItemWithFieldMaps:
+          internalContext.objectMetadataItemWithFieldMaps,
+      };
 
-        return await this.graphqlQueryRunnerService.execute(
-          args,
-          options,
-          DestroyManyResolverFactory.methodName,
-        );
-      } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
-      }
+      return await this.graphqlQueryRunnerService.execute(
+        args,
+        options,
+        DestroyManyResolverFactory.methodName,
+      );
     };
   }
 }

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import {
   Controller,
   Headers,
@@ -6,26 +8,36 @@ import {
   RawBodyRequest,
   Req,
   Res,
+  UseFilters,
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import Stripe from 'stripe';
 
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
+import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-entitlement.service';
+import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
+import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
+import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
 @Controller('billing')
+@UseFilters(BillingRestApiExceptionFilter)
 export class BillingController {
   protected readonly logger = new Logger(BillingController.name);
 
   constructor(
-    private readonly stripeService: StripeService,
-    private readonly billingWehbookService: BillingWebhookService,
+    private readonly stripeWebhookService: StripeWebhookService,
+    private readonly billingWebhookSubscriptionService: BillingWebhookSubscriptionService,
+    private readonly billingWebhookEntitlementService: BillingWebhookEntitlementService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingWebhookProductService: BillingWebhookProductService,
+    private readonly billingWebhookPriceService: BillingWebhookPriceService,
   ) {}
 
   @Post('/webhooks')
@@ -39,49 +51,63 @@ export class BillingController {
 
       return;
     }
-    const event = this.stripeService.constructEventFromPayload(
+    const event = this.stripeWebhookService.constructEventFromPayload(
       signature,
       req.rawBody,
     );
 
-    if (event.type === WebhookEvent.SETUP_INTENT_SUCCEEDED) {
-      await this.billingSubscriptionService.handleUnpaidInvoices(event.data);
-    }
+    try {
+      const result = await this.handleStripeEvent(event);
 
-    if (
-      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED ||
-      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED ||
-      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
-    ) {
-      const workspaceId = event.data.object.metadata?.workspaceId;
-
-      if (!workspaceId) {
+      res.status(200).send(result).end();
+    } catch (error) {
+      if (error instanceof BillingException) {
         res.status(404).end();
-
-        return;
       }
-
-      await this.billingWehbookService.processStripeEvent(
-        workspaceId,
-        event.data,
-      );
     }
-    if (
-      event.type === WebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED
-    ) {
-      try {
-        await this.billingWehbookService.processCustomerActiveEntitlement(
+  }
+
+  private async handleStripeEvent(event: Stripe.Event) {
+    switch (event.type) {
+      case BillingWebhookEvent.SETUP_INTENT_SUCCEEDED:
+        return await this.billingSubscriptionService.handleUnpaidInvoices(
           event.data,
         );
-      } catch (error) {
-        if (
-          error instanceof BillingException &&
-          error.code === BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND
-        ) {
-          res.status(404).end();
+      case BillingWebhookEvent.PRICE_UPDATED:
+      case BillingWebhookEvent.PRICE_CREATED:
+        return await this.billingWebhookPriceService.processStripeEvent(
+          event.data,
+        );
+
+      case BillingWebhookEvent.PRODUCT_UPDATED:
+      case BillingWebhookEvent.PRODUCT_CREATED:
+        return await this.billingWebhookProductService.processStripeEvent(
+          event.data,
+        );
+      case BillingWebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED:
+        return await this.billingWebhookEntitlementService.processStripeEvent(
+          event.data,
+        );
+
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED:
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED: {
+        const workspaceId = event.data.object.metadata?.workspaceId;
+
+        if (!workspaceId) {
+          throw new BillingException(
+            'Workspace ID is required for subscription events',
+            BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+          );
         }
+
+        return await this.billingWebhookSubscriptionService.processStripeEvent(
+          workspaceId,
+          event.data,
+        );
       }
+      default:
+        return {};
     }
-    res.status(200).end();
   }
 }

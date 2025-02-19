@@ -1,12 +1,5 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import {
-  expect,
-  fireEvent,
-  fn,
-  userEvent,
-  waitFor,
-  within,
-} from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -20,12 +13,13 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockDefaultWorkspace,
+  mockCurrentWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { getCanvasElementForDropdownTesting } from 'twenty-ui';
 import {
   RelationToOneFieldInput,
   RelationToOneFieldInputProps,
@@ -38,7 +32,7 @@ const RelationWorkspaceSetterEffect = () => {
   );
 
   useEffect(() => {
-    setCurrentWorkspace(mockDefaultWorkspace);
+    setCurrentWorkspace(mockCurrentWorkspace);
     setCurrentWorkspaceMember(mockedWorkspaceMemberData);
   }, [setCurrentWorkspace, setCurrentWorkspaceMember]);
 
@@ -67,7 +61,7 @@ const RelationToOneFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'relation',
           label: 'Relation',
-          type: FieldMetadataType.Relation,
+          type: FieldMetadataType.RELATION,
           iconName: 'IconLink',
           metadata: {
             fieldName: 'Relation',
@@ -136,8 +130,8 @@ export const Default: Story = {
 
 export const Submit: Story = {
   decorators: [ComponentWithRecoilScopeDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
@@ -145,8 +139,9 @@ export const Submit: Story = {
       timeout: 3000,
     });
 
+    await userEvent.click(item);
+
     await waitFor(() => {
-      userEvent.click(item);
       expect(submitJestFn).toHaveBeenCalledTimes(1);
     });
   },
@@ -154,16 +149,16 @@ export const Submit: Story = {
 
 export const Cancel: Story = {
   decorators: [ComponentWithRecoilScopeDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     expect(cancelJestFn).toHaveBeenCalledTimes(0);
     await canvas.findByText('John Wick', undefined, { timeout: 3000 });
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
-    fireEvent.click(emptyDiv);
 
     await waitFor(() => {
+      userEvent.click(emptyDiv);
       expect(cancelJestFn).toHaveBeenCalledTimes(1);
     });
   },

@@ -4,6 +4,7 @@ import { ReadonlyDeep } from 'type-fest';
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { FieldMetadataType } from 'twenty-shared';
 
 export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   // Is modal visible.
@@ -79,6 +80,11 @@ export type Select = {
   options: SelectOption[];
 };
 
+export type MultiSelect = {
+  type: 'multiSelect';
+  options: SelectOption[];
+};
+
 export type SelectOption = {
   // Icon
   icon?: IconComponent | null;
@@ -89,14 +95,18 @@ export type SelectOption = {
   // Disabled option when already select
   disabled?: boolean;
   // Option color
-  color?: ThemeColor;
+  color?: ThemeColor | 'transparent';
 };
 
 export type Input = {
   type: 'input';
 };
 
-export type SpreadsheetImportFieldType = Checkbox | Select | Input;
+export type SpreadsheetImportFieldType =
+  | Checkbox
+  | Select
+  | MultiSelect
+  | Input;
 
 export type Field<T extends string> = {
   // Icon
@@ -113,6 +123,8 @@ export type Field<T extends string> = {
   fieldValidationDefinitions?: FieldValidationDefinition[];
   // Field entry component, default: Input
   fieldType: SpreadsheetImportFieldType;
+  // Field metadata type
+  fieldMetadataType: FieldMetadataType;
   // UI-facing values shown to user as field examples pre-upload phase
   example?: string;
 };

@@ -14,6 +14,8 @@ export const findAllViewsOperationSignatureFactory: RecordGqlOperationSignatureF
       position: true,
       type: true,
       kanbanFieldMetadataId: true,
+      kanbanAggregateOperation: true,
+      kanbanAggregateOperationFieldMetadataId: true,
       name: true,
       icon: true,
       key: true,

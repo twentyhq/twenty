@@ -6,7 +6,7 @@ const StyledRadioCardContent = styled(CardContent)`
   display: flex;
   align-items: center;
   padding: ${({ theme }) => theme.spacing(2)};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   flex-grow: 1;
   gap: ${({ theme }) => theme.spacing(2)};

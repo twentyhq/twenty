@@ -44,18 +44,8 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           }
 
           env {
-            name  = "FRONT_BASE_URL"
-            value = var.twentycrm_app_hostname
-          }
-
-          env {
             name  = "PG_DATABASE_URL"
             value = "postgres://twenty:${var.twentycrm_pgdb_admin_password}@${kubernetes_service.twentycrm_db.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local/default"
-          }
-
-          env {
-            name  = "CACHE_STORAGE_TYPE"
-            value = "redis"
           }
 
           env {
@@ -64,17 +54,13 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           }
 
           env {
-            name  = "ENABLE_DB_MIGRATIONS"
-            value = "false" #it already runs on the server
+            name  = "DISABLE_DB_MIGRATIONS"
+            value = "true" #it already runs on the server
           }
 
           env {
             name  = "STORAGE_TYPE"
             value = "local"
-          }
-          env {
-            name  = "MESSAGE_QUEUE_TYPE"
-            value = "bull-mq"
           }
 
           env {

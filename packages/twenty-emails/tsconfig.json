@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowJs": false,
@@ -6,10 +7,10 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "types": ["vite/client"],
-    "baseUrl": "."
+    "baseUrl": ".",
   },
   "files": [],
-  "include": [],
+  "include": ["vite.config.ts"],
   "references": [
     {
       "path": "./tsconfig.lib.json"

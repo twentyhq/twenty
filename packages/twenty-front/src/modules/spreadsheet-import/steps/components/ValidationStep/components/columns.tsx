@@ -7,7 +7,7 @@ import { AppTooltip, Checkbox, CheckboxVariant, Toggle } from 'twenty-ui';
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { Fields, ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { ImportedStructuredRowMetadata } from '../types';
 

@@ -1,6 +1,9 @@
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { FieldMetadataType } from '~/generated/graphql';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -14,6 +17,10 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
 
+const mockFilterValueDependencies: RecordFilterValueDependencies = {
+  currentWorkspaceMemberId: '32219445-f587-4c40-b2b1-6d3205ed96da',
+};
+
 jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
 
 describe('computeViewRecordGqlOperationFilter', () => {
@@ -23,21 +30,18 @@ describe('computeViewRecordGqlOperationFilter', () => {
         (field) => field.name === 'name',
       );
 
-    const nameFilter: Filter = {
+    const nameFilter: RecordFilter = {
       id: 'company-name-filter',
       value: companiesMock[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId?.id,
       displayValue: companiesMock[0].name,
-      operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'TEXT',
-        fieldMetadataId: companyMockNameFieldMetadataId?.id,
-        label: 'Name',
-        iconName: 'text',
-      },
+      operand: RecordFilterOperand.Contains,
+      type: 'TEXT',
+      label: 'Name',
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [nameFilter],
       companyMockObjectMetadataItem.fields,
       [],
@@ -61,35 +65,28 @@ describe('computeViewRecordGqlOperationFilter', () => {
         (field) => field.name === 'employees',
       );
 
-    const nameFilter: Filter = {
+    const nameFilter: RecordFilter = {
       id: 'company-name-filter',
       value: companiesMock[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId?.id,
       displayValue: companiesMock[0].name,
       operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'TEXT',
-        fieldMetadataId: companyMockNameFieldMetadataId?.id,
-        label: 'Name',
-        iconName: 'text',
-      },
+      type: FieldMetadataType.TEXT,
+      label: 'Name',
     };
 
-    const employeesFilter: Filter = {
+    const employeesFilter: RecordFilter = {
       id: 'company-employees-filter',
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
       operand: ViewFilterOperand.GreaterThan,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      type: FieldMetadataType.NUMBER,
+      label: 'Employees',
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [nameFilter, employeesFilter],
       companyMockObjectMetadataItem.fields,
       [],
@@ -119,63 +116,48 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'address',
       );
 
-    const addressFilterContains: Filter = {
+    const addressFilterContains: RecordFilter = {
       id: 'company-address-filter-contains',
       value: '123 Main St',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '123 Main St',
       operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'ADDRESS',
-        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
-        label: 'Address',
-        iconName: 'address',
-      },
+      type: FieldMetadataType.ADDRESS,
+      label: 'Address',
     };
 
-    const addressFilterDoesNotContain: Filter = {
+    const addressFilterDoesNotContain: RecordFilter = {
       id: 'company-address-filter-does-not-contain',
       value: '123 Main St',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '123 Main St',
       operand: ViewFilterOperand.DoesNotContain,
-      definition: {
-        type: 'ADDRESS',
-        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
-        label: 'Address',
-        iconName: 'address',
-      },
+      type: FieldMetadataType.ADDRESS,
+      label: 'Address',
     };
 
-    const addressFilterIsEmpty: Filter = {
+    const addressFilterIsEmpty: RecordFilter = {
       id: 'company-address-filter-is-empty',
       value: '',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'ADDRESS',
-        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
-        label: 'Address',
-        iconName: 'address',
-      },
+      type: FieldMetadataType.ADDRESS,
+      label: 'Address',
     };
 
-    const addressFilterIsNotEmpty: Filter = {
+    const addressFilterIsNotEmpty: RecordFilter = {
       id: 'company-address-filter-is-not-empty',
       value: '',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'ADDRESS',
-        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
-        label: 'Address',
-        iconName: 'address',
-      },
+      label: 'Address',
+      type: FieldMetadataType.ADDRESS,
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         addressFilterContains,
         addressFilterDoesNotContain,
@@ -501,63 +483,48 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'phones',
       );
 
-    const phonesFilterContains: Filter = {
+    const phonesFilterContains: RecordFilter = {
       id: 'person-phones-filter-contains',
       value: '1234567890',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '1234567890',
       operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'PHONES',
-        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
-        label: 'Phones',
-        iconName: 'phone',
-      },
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
     };
 
-    const phonesFilterDoesNotContain: Filter = {
+    const phonesFilterDoesNotContain: RecordFilter = {
       id: 'person-phones-filter-does-not-contain',
       value: '1234567890',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '1234567890',
       operand: ViewFilterOperand.DoesNotContain,
-      definition: {
-        type: 'PHONES',
-        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
-        label: 'Phones',
-        iconName: 'phone',
-      },
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
     };
 
-    const phonesFilterIsEmpty: Filter = {
+    const phonesFilterIsEmpty: RecordFilter = {
       id: 'person-phones-filter-is-empty',
       value: '',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'PHONES',
-        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
-        label: 'Phones',
-        iconName: 'phone',
-      },
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
     };
 
-    const phonesFilterIsNotEmpty: Filter = {
+    const phonesFilterIsNotEmpty: RecordFilter = {
       id: 'person-phones-filter-is-not-empty',
       value: '',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'PHONES',
-        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
-        label: 'Phones',
-        iconName: 'phone',
-      },
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         phonesFilterContains,
         phonesFilterDoesNotContain,
@@ -579,13 +546,6 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
-            {
-              phones: {
-                primaryPhoneCountryCode: {
-                  ilike: '%1234567890%',
-                },
-              },
-            },
           ],
         },
         {
@@ -599,15 +559,6 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
-            {
-              not: {
-                phones: {
-                  primaryPhoneCountryCode: {
-                    ilike: '%1234567890%',
-                  },
-                },
-              },
-            },
           ],
         },
         {
@@ -624,24 +575,6 @@ describe('should work as expected for the different field types', () => {
                 {
                   phones: {
                     primaryPhoneNumber: {
-                      ilike: '',
-                    },
-                  },
-                },
-              ],
-            },
-            {
-              or: [
-                {
-                  phones: {
-                    primaryPhoneCountryCode: {
-                      is: 'NULL',
-                    },
-                  },
-                },
-                {
-                  phones: {
-                    primaryPhoneCountryCode: {
                       ilike: '',
                     },
                   },
@@ -671,24 +604,6 @@ describe('should work as expected for the different field types', () => {
                   },
                 ],
               },
-              {
-                or: [
-                  {
-                    phones: {
-                      primaryPhoneCountryCode: {
-                        is: 'NULL',
-                      },
-                    },
-                  },
-                  {
-                    phones: {
-                      primaryPhoneCountryCode: {
-                        ilike: '',
-                      },
-                    },
-                  },
-                ],
-              },
             ],
           },
         },
@@ -702,63 +617,48 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'emails',
       );
 
-    const emailsFilterContains: Filter = {
+    const emailsFilterContains: RecordFilter = {
       id: 'person-emails-filter-contains',
       value: 'test@test.com',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: 'test@test.com',
       operand: ViewFilterOperand.Contains,
-      definition: {
-        type: 'EMAILS',
-        fieldMetadataId: personMockEmailFieldMetadataId?.id,
-        iconName: 'email',
-        label: 'Emails',
-      },
+      label: 'Emails',
+      type: FieldMetadataType.EMAILS,
     };
 
-    const emailsFilterDoesNotContain: Filter = {
+    const emailsFilterDoesNotContain: RecordFilter = {
       id: 'person-emails-filter-does-not-contain',
       value: 'test@test.com',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: 'test@test.com',
       operand: ViewFilterOperand.DoesNotContain,
-      definition: {
-        type: 'EMAILS',
-        fieldMetadataId: personMockEmailFieldMetadataId?.id,
-        label: 'Emails',
-        iconName: 'email',
-      },
+      label: 'Emails',
+      type: FieldMetadataType.EMAILS,
     };
 
-    const emailsFilterIsEmpty: Filter = {
+    const emailsFilterIsEmpty: RecordFilter = {
       id: 'person-emails-filter-is-empty',
       value: '',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'EMAILS',
-        label: 'Emails',
-        iconName: 'email',
-        fieldMetadataId: personMockEmailFieldMetadataId?.id,
-      },
+      label: 'Emails',
+      type: FieldMetadataType.EMAILS,
     };
 
-    const emailsFilterIsNotEmpty: Filter = {
+    const emailsFilterIsNotEmpty: RecordFilter = {
       id: 'person-emails-filter-is-not-empty',
       value: '',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'EMAILS',
-        label: 'Emails',
-        iconName: 'email',
-        fieldMetadataId: personMockEmailFieldMetadataId?.id,
-      },
+      label: 'Emails',
+      type: FieldMetadataType.EMAILS,
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         emailsFilterContains,
         emailsFilterDoesNotContain,
@@ -843,77 +743,58 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'createdAt',
       );
 
-    const dateFilterIsAfter: Filter = {
+    const dateFilterIsAfter: RecordFilter = {
       id: 'company-date-filter-is-after',
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
       operand: ViewFilterOperand.IsAfter,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
-    const dateFilterIsBefore: Filter = {
+    const dateFilterIsBefore: RecordFilter = {
       id: 'company-date-filter-is-before',
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
       operand: ViewFilterOperand.IsBefore,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
-    const dateFilterIs: Filter = {
+    const dateFilterIs: RecordFilter = {
       id: 'company-date-filter-is',
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
       operand: ViewFilterOperand.Is,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
-    const dateFilterIsEmpty: Filter = {
+    const dateFilterIsEmpty: RecordFilter = {
       id: 'company-date-filter-is-empty',
       value: '',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
-    const dateFilterIsNotEmpty: Filter = {
+    const dateFilterIsNotEmpty: RecordFilter = {
       id: 'company-date-filter-is-not-empty',
       value: '',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'DATE_TIME',
-        fieldMetadataId: companyMockDateFieldMetadataId?.id,
-        label: 'Created At',
-        iconName: 'date',
-      },
+      label: 'Created At',
+      type: FieldMetadataType.DATE_TIME,
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         dateFilterIsAfter,
         dateFilterIsBefore,
@@ -973,63 +854,48 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'employees',
       );
 
-    const employeesFilterIsGreaterThan: Filter = {
+    const employeesFilterIsGreaterThan: RecordFilter = {
       id: 'company-employees-filter-is-greater-than',
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
       operand: ViewFilterOperand.GreaterThan,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      label: 'Employees',
+      type: FieldMetadataType.NUMBER,
     };
 
-    const employeesFilterIsLessThan: Filter = {
+    const employeesFilterIsLessThan: RecordFilter = {
       id: 'company-employees-filter-is-less-than',
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
       operand: ViewFilterOperand.LessThan,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      label: 'Employees',
+      type: FieldMetadataType.NUMBER,
     };
 
-    const employeesFilterIsEmpty: Filter = {
+    const employeesFilterIsEmpty: RecordFilter = {
       id: 'company-employees-filter-is-empty',
       value: '',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsEmpty,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      label: 'Employees',
+      type: FieldMetadataType.NUMBER,
     };
 
-    const employeesFilterIsNotEmpty: Filter = {
+    const employeesFilterIsNotEmpty: RecordFilter = {
       id: 'company-employees-filter-is-not-empty',
       value: '',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '',
       operand: ViewFilterOperand.IsNotEmpty,
-      definition: {
-        type: 'NUMBER',
-        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
-        label: 'Employees',
-        iconName: 'number',
-      },
+      label: 'Employees',
+      type: FieldMetadataType.NUMBER,
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         employeesFilterIsGreaterThan,
         employeesFilterIsLessThan,

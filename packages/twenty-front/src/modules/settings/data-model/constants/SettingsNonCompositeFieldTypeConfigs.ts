@@ -6,7 +6,6 @@ import {
   IllustrationIconJson,
   IllustrationIconNumbers,
   IllustrationIconOneToMany,
-  IllustrationIconSetting,
   IllustrationIconStar,
   IllustrationIconTag,
   IllustrationIconTags,
@@ -25,7 +24,6 @@ import {
   FieldNumberValue,
   FieldRatingValue,
   FieldRelationValue,
-  FieldRichTextValue,
   FieldSelectValue,
   FieldTextValue,
   FieldUUidValue,
@@ -52,86 +50,80 @@ type SettingsNonCompositeFieldTypeConfigArray = Record<
 // TODO: can we derive this from backend definitions ?
 export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFieldTypeConfigArray =
   {
-    [FieldMetadataType.Uuid]: {
+    [FieldMetadataType.UUID]: {
       label: 'Unique ID',
       Icon: IllustrationIconUid,
       exampleValue: '00000000-0000-0000-0000-000000000000',
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldUUidValue>,
-    [FieldMetadataType.Text]: {
+    [FieldMetadataType.TEXT]: {
       label: 'Text',
       Icon: IllustrationIconText,
       exampleValue:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldTextValue>,
-    [FieldMetadataType.Numeric]: {
+    [FieldMetadataType.NUMERIC]: {
       label: 'Numeric',
       Icon: IllustrationIconNumbers,
       exampleValue: 2000,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
-    [FieldMetadataType.Number]: {
+    [FieldMetadataType.NUMBER]: {
       label: 'Number',
       Icon: IllustrationIconNumbers,
       exampleValue: 2000,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
-    [FieldMetadataType.Boolean]: {
+    [FieldMetadataType.BOOLEAN]: {
       label: 'True/False',
       Icon: IllustrationIconToggle,
       exampleValue: true,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldBooleanValue>,
-    [FieldMetadataType.DateTime]: {
+    [FieldMetadataType.DATE_TIME]: {
       label: 'Date and Time',
       Icon: IllustrationIconCalendarTime,
       exampleValue: DEFAULT_DATE_VALUE.toISOString(),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldDateTimeValue>,
-    [FieldMetadataType.Date]: {
+    [FieldMetadataType.DATE]: {
       label: 'Date',
       Icon: IllustrationIconCalendarEvent,
       exampleValue: DEFAULT_DATE_VALUE.toISOString(),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldDateValue>,
-    [FieldMetadataType.Select]: {
+    [FieldMetadataType.SELECT]: {
       label: 'Select',
       Icon: IllustrationIconTag,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldSelectValue>,
-    [FieldMetadataType.MultiSelect]: {
+    [FieldMetadataType.MULTI_SELECT]: {
       label: 'Multi-select',
       Icon: IllustrationIconTags,
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldMultiSelectValue>,
-    [FieldMetadataType.Relation]: {
+    [FieldMetadataType.RELATION]: {
       label: 'Relation',
       Icon: IllustrationIconOneToMany,
       category: 'Relation',
     } as const satisfies SettingsFieldTypeConfig<FieldRelationValue<any>>,
-    [FieldMetadataType.Rating]: {
+    [FieldMetadataType.RATING]: {
       label: 'Rating',
       Icon: IllustrationIconStar,
       exampleValue: 'RATING_3',
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldRatingValue>,
-    [FieldMetadataType.RawJson]: {
+    [FieldMetadataType.RAW_JSON]: {
       label: 'JSON',
       Icon: IllustrationIconJson,
       exampleValue: { key: 'value' },
-      category: 'Basic',
+      category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
-    [FieldMetadataType.RichText]: {
-      label: 'Rich Text',
-      Icon: IllustrationIconSetting,
-      exampleValue: { key: 'value' },
-      category: 'Basic',
-    } as const satisfies SettingsFieldTypeConfig<FieldRichTextValue>,
-    [FieldMetadataType.Array]: {
+    [FieldMetadataType.ARRAY]: {
       label: 'Array',
       Icon: IllustrationIconArray,
-      category: 'Basic',
+      category: 'Advanced',
       exampleValue: ['value1', 'value2'],
     } as const satisfies SettingsFieldTypeConfig<FieldArrayValue>,
   };

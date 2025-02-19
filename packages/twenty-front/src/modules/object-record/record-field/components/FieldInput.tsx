@@ -17,7 +17,6 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/types/g
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
-import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -31,7 +30,6 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
-import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -48,7 +46,10 @@ type FieldInputProps = {
   recordFieldInputdId: string;
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: (
+    persist: () => void,
+    event: MouseEvent | TouchEvent,
+  ) => void;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
@@ -78,7 +79,10 @@ export const FieldInput = ({
       ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
         <RelationFromManyFieldInput onSubmit={onSubmit} />
       ) : isFieldPhones(fieldDefinition) ? (
-        <PhonesFieldInput onCancel={onCancel} />
+        <PhonesFieldInput
+          onCancel={onCancel}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+        />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
           onEnter={onEnter}
@@ -88,7 +92,10 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldEmails(fieldDefinition) ? (
-        <EmailsFieldInput onCancel={onCancel} />
+        <EmailsFieldInput
+          onCancel={onCancel}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+        />
       ) : isFieldFullName(fieldDefinition) ? (
         <FullNameFieldInput
           onEnter={onEnter}
@@ -122,7 +129,10 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldLinks(fieldDefinition) ? (
-        <LinksFieldInput onCancel={onCancel} />
+        <LinksFieldInput
+          onCancel={onCancel}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+        />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldInput
           onEnter={onEnter}
@@ -155,10 +165,11 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldRichText(fieldDefinition) ? (
-        <RichTextFieldInput />
       ) : isFieldArray(fieldDefinition) ? (
-        <ArrayFieldInput onCancel={onCancel} />
+        <ArrayFieldInput
+          onCancel={onCancel}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+        />
       ) : (
         <></>
       )}

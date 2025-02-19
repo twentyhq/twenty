@@ -1,17 +1,22 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { RoundedLink, THEME_COMMON } from 'twenty-ui';
 
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
+import { DEFAULT_PHONE_CALLING_CODE } from '@/object-record/record-field/meta-types/input/components/PhonesFieldInput';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;
   isFocused?: boolean;
+  onPhoneNumberClick?: (
+    phoneNumber: string,
+    event: React.MouseEvent<HTMLElement>,
+  ) => void;
 };
 
 const themeSpacing = THEME_COMMON.spacingMultiplicator;
@@ -29,32 +34,39 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
+export const PhonesDisplay = ({
+  value,
+  isFocused,
+  onPhoneNumberClick,
+}: PhonesDisplayProps) => {
   const phones = useMemo(
     () =>
       [
         value?.primaryPhoneNumber
           ? {
               number: value.primaryPhoneNumber,
-              countryCode: value.primaryPhoneCountryCode,
+              callingCode:
+                value.primaryPhoneCallingCode ||
+                value.primaryPhoneCountryCode ||
+                `+${DEFAULT_PHONE_CALLING_CODE}`,
             }
           : null,
         ...parseAdditionalPhones(value?.additionalPhones),
       ]
         .filter(isDefined)
-        .map(({ number, countryCode }) => {
+        .map(({ number, callingCode }) => {
           return {
             number,
-            countryCode,
+            callingCode,
           };
         }),
     [
       value?.primaryPhoneNumber,
+      value?.primaryPhoneCallingCode,
       value?.primaryPhoneCountryCode,
       value?.additionalPhones,
     ],
   );
-
   const parsePhoneNumberOrReturnInvalidValue = (number: string) => {
     try {
       return { parsedPhone: parsePhoneNumber(number) };
@@ -63,11 +75,18 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
     }
   };
 
+  const handleClick = (
+    number: string,
+    event: React.MouseEvent<HTMLElement>,
+  ) => {
+    onPhoneNumberClick?.(number, event);
+  };
+
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
-      {phones.map(({ number, countryCode }, index) => {
+      {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
-          parsePhoneNumberOrReturnInvalidValue(countryCode + number);
+          parsePhoneNumberOrReturnInvalidValue(callingCode + number);
         const URI = parsedPhone?.getURI();
         return (
           <RoundedLink
@@ -76,15 +95,16 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
+            onClick={(event) => handleClick(callingCode + number, event)}
           />
         );
       })}
     </ExpandableList>
   ) : (
     <StyledContainer>
-      {phones.map(({ number, countryCode }, index) => {
+      {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
-          parsePhoneNumberOrReturnInvalidValue(countryCode + number);
+          parsePhoneNumberOrReturnInvalidValue(callingCode + number);
         const URI = parsedPhone?.getURI();
         return (
           <RoundedLink
@@ -93,6 +113,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
+            onClick={(event) => handleClick(callingCode + number, event)}
           />
         );
       })}

@@ -20,6 +20,7 @@ export class RefreshAccessTokenService {
     workspaceId: string,
   ): Promise<string> {
     const refreshToken = connectedAccount.refreshToken;
+    let accessToken: string;
 
     if (!refreshToken) {
       throw new RefreshAccessTokenException(
@@ -28,33 +29,39 @@ export class RefreshAccessTokenService {
       );
     }
 
-    let accessToken: string;
+    switch (connectedAccount.provider) {
+      case 'microsoft':
+        return '';
+      case 'google': {
+        try {
+          accessToken = await this.refreshAccessToken(
+            connectedAccount,
+            refreshToken,
+          );
+        } catch (error) {
+          throw new RefreshAccessTokenException(
+            `Error refreshing access token for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
+            RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
+          );
+        }
 
-    try {
-      accessToken = await this.refreshAccessToken(
-        connectedAccount,
-        refreshToken,
-      );
-    } catch (error) {
-      throw new RefreshAccessTokenException(
-        `Error refreshing access token for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
-        RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
-      );
+        const connectedAccountRepository =
+          await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+            'connectedAccount',
+          );
+
+        await connectedAccountRepository.update(
+          { id: connectedAccount.id },
+          {
+            accessToken,
+          },
+        );
+
+        return accessToken;
+      }
+      default:
+        throw new Error('Provider not supported for access token refresh');
     }
-
-    const connectedAccountRepository =
-      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
-        'connectedAccount',
-      );
-
-    await connectedAccountRepository.update(
-      { id: connectedAccount.id },
-      {
-        accessToken,
-      },
-    );
-
-    return accessToken;
   }
 
   async refreshAccessToken(

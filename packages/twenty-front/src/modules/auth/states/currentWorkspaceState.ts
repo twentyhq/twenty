@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from '@ui/utilities/state/utils/createState';
 
 import { Workspace } from '~/generated/graphql';
 
@@ -11,10 +11,17 @@ export type CurrentWorkspace = Pick<
   | 'allowImpersonation'
   | 'featureFlags'
   | 'activationStatus'
+  | 'billingSubscriptions'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
-  | 'hasValidEntrepriseKey'
+  | 'isGoogleAuthEnabled'
+  | 'isMicrosoftAuthEnabled'
+  | 'isPasswordAuthEnabled'
+  | 'hasValidEnterpriseKey'
+  | 'subdomain'
+  | 'customDomain'
+  | 'workspaceUrls'
   | 'metadataVersion'
 >;
 

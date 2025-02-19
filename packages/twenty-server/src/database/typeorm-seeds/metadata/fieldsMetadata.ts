@@ -1,5 +1,6 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const getDevSeedCompanyCustomFields = (
   objectMetadataId: string,
@@ -106,13 +107,12 @@ export const getDevSeedPeopleCustomFields = (
       isActive: true,
       isNullable: false,
       isUnique: false,
-      defaultValue: [
-        {
-          primaryPhoneNumber: '',
-          primaryPhoneCountryCode: '',
-          additionalPhones: {},
-        },
-      ],
+      defaultValue: {
+        primaryPhoneNumber: "''",
+        primaryPhoneCountryCode: "'FR'",
+        primaryPhoneCallingCode: "'+33'",
+        additionalPhones: null,
+      },
       objectMetadataId,
     },
     {

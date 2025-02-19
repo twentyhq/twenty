@@ -12,8 +12,8 @@ import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -24,6 +24,7 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateOneResolverArgs>,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
@@ -58,10 +59,8 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataItemWithFieldMaps,
     );
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
-
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      await processNestedRelationsHelper.processNestedRelations({
+      await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: upsertedRecords,
@@ -69,11 +68,16 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
         limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
+        isNewRelationEnabled:
+          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: upsertedRecords[0],
@@ -82,8 +86,6 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
       totalCount: 1,
     });
   }
-
-  async;
 
   async validate(
     args: CreateOneResolverArgs<Partial<ObjectRecord>>,

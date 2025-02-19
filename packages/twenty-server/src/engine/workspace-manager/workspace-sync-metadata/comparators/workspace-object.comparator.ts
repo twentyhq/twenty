@@ -63,9 +63,18 @@ export class WorkspaceObjectComparator {
     for (const difference of objectMetadataDifference) {
       // We only handle CHANGE here as REMOVE and CREATE are handled earlier.
       if (difference.type === 'CHANGE') {
+        // If the old value and the new value are both null, skip
+        // Database is storing null, and we can get undefined here
+        if (
+          difference.oldValue === null &&
+          (difference.value === null || difference.value === undefined)
+        ) {
+          continue;
+        }
+
         const property = difference.path[0];
 
-        objectPropertiesToUpdate[property] = difference.value;
+        objectPropertiesToUpdate[property] = standardObjectMetadata[property];
       }
     }
 

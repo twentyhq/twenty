@@ -11,9 +11,9 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewSort } from '@/views/types/ViewSort';
+import { isDefined } from 'twenty-shared';
 
 export const usePersistViewSortRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -56,7 +56,7 @@ export const usePersistViewSortRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['createViewSort'];
-              if (!record) return;
+              if (!isDefined(record)) return;
 
               triggerCreateRecordsOptimisticEffect({
                 cache,
@@ -92,10 +92,13 @@ export const usePersistViewSortRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['updateViewSort'];
-              if (!record) return;
-              const cachedRecord = getRecordFromCache<ObjectRecord>(record.id);
+              if (!isDefined(record)) return;
 
-              if (!cachedRecord) return;
+              const cachedRecord = getRecordFromCache<ViewSort>(
+                record.id,
+                cache,
+              );
+              if (!isDefined(cachedRecord)) return;
 
               triggerUpdateRecordOptimisticEffect({
                 cache,
@@ -130,12 +133,13 @@ export const usePersistViewSortRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['destroyViewSort'];
+              if (!isDefined(record)) return;
 
-              if (!record) return;
-
-              const cachedRecord = getRecordFromCache(record.id, cache);
-
-              if (!cachedRecord) return;
+              const cachedRecord = getRecordFromCache<ViewSort>(
+                record.id,
+                cache,
+              );
+              if (!isDefined(cachedRecord)) return;
 
               triggerDestroyRecordsOptimisticEffect({
                 cache,

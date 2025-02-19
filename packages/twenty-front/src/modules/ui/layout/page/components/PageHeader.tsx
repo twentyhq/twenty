@@ -17,6 +17,8 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -32,9 +34,9 @@ const StyledTopBarContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 100%;
     box-sizing: border-box;
     padding: ${({ theme }) => theme.spacing(3)};
   }
@@ -46,8 +48,8 @@ const StyledLeftContainer = styled.div`
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
+  overflow-x: hidden;
   width: 100%;
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(1)};
   }
@@ -59,25 +61,33 @@ const StyledTitleContainer = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+  overflow: hidden;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
-  flex: 1 0 auto;
   gap: ${({ theme }) => theme.spacing(1)};
   flex-direction: row;
   width: 100%;
+  overflow: hidden;
 `;
 
 const StyledPageActionContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  flex: 1 0 1;
 `;
 
 const StyledTopBarButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
 `;
 
 type PageHeaderProps = {
@@ -98,8 +108,6 @@ export const PageHeader = ({
   hasClosePageButton,
   onClosePage,
   hasPaginationButtons,
-  hasPreviousRecord,
-  hasNextRecord,
   navigateToPreviousRecord,
   navigateToNextRecord,
   Icon,
@@ -109,6 +117,10 @@ export const PageHeader = ({
   const theme = useTheme();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
+  );
+
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
@@ -129,25 +141,25 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
-          {hasPaginationButtons && (
+          {!isCommandMenuV2Enabled && hasPaginationButtons && (
             <>
               <IconButton
                 Icon={IconChevronUp}
                 size="small"
                 variant="secondary"
-                disabled={!hasPreviousRecord}
                 onClick={() => navigateToPreviousRecord?.()}
               />
               <IconButton
                 Icon={IconChevronDown}
                 size="small"
                 variant="secondary"
-                disabled={!hasNextRecord}
                 onClick={() => navigateToNextRecord?.()}
               />
             </>
           )}
-          {Icon && <Icon size={theme.icon.size.md} />}
+          <StyledIconContainer>
+            {Icon && <Icon size={theme.icon.size.md} />}
+          </StyledIconContainer>
           {title && (
             <StyledTitleContainer data-testid="top-bar-title">
               {typeof title === 'string' ? (
@@ -159,7 +171,10 @@ export const PageHeader = ({
           )}
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
-      <StyledPageActionContainer>{children}</StyledPageActionContainer>
+
+      <StyledPageActionContainer className="page-action-container">
+        {children}
+      </StyledPageActionContainer>
     </StyledTopBarContainer>
   );
 };

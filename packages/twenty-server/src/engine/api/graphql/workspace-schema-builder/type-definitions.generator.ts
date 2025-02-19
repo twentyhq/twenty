@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import chalk from 'chalk';
+
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
@@ -7,6 +9,9 @@ import { CompositeEnumTypeDefinitionFactory } from 'src/engine/api/graphql/works
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
 import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
+import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/extend-object-type-definition-v2.factory';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
@@ -39,22 +44,26 @@ export class TypeDefinitionsGenerator {
     private readonly edgeTypeDefinitionFactory: EdgeTypeDefinitionFactory,
     private readonly connectionTypeDefinitionFactory: ConnectionTypeDefinitionFactory,
     private readonly extendObjectTypeDefinitionFactory: ExtendObjectTypeDefinitionFactory,
+    private readonly extendObjectTypeDefinitionV2Factory: ExtendObjectTypeDefinitionV2Factory,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  generate(
+  async generate(
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     // Generate composite type objects first because they can be used in dynamic objects
-    this.generateCompositeTypeDefs(options);
+    await this.generateCompositeTypeDefs(options);
     // Generate metadata objects
-    this.generateMetadataTypeDefs(objectMetadataCollection, options);
+    await this.generateMetadataTypeDefs(objectMetadataCollection, options);
   }
 
   /**
    * GENERATE COMPOSITE TYPE OBJECTS
    */
-  private generateCompositeTypeDefs(options: WorkspaceBuildSchemaOptions) {
+  private async generateCompositeTypeDefs(
+    options: WorkspaceBuildSchemaOptions,
+  ) {
     const compositeTypeCollection = [...compositeTypeDefinitions.values()];
 
     this.logger.log(
@@ -143,7 +152,7 @@ export class TypeDefinitionsGenerator {
    * GENERATE METADATA OBJECTS
    */
 
-  private generateMetadataTypeDefs(
+  private async generateMetadataTypeDefs(
     dynamicObjectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
@@ -158,7 +167,7 @@ export class TypeDefinitionsGenerator {
     this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
     this.generatePaginationTypeDefs(dynamicObjectMetadataCollection, options);
     this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
-    this.generateExtendedObjectTypeDefs(
+    await this.generateExtendedObjectTypeDefs(
       dynamicObjectMetadataCollection,
       options,
     );
@@ -256,18 +265,48 @@ export class TypeDefinitionsGenerator {
     this.typeDefinitionsStorage.addEnumTypes(enumTypeDefs);
   }
 
-  private generateExtendedObjectTypeDefs(
+  private async generateExtendedObjectTypeDefs(
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     // Generate extended object type defs only for objects that contain composite fields
     const objectMetadataCollectionWithCompositeFields =
       objectMetadataCollection.filter(objectContainsRelationField);
-    const objectTypeDefs = objectMetadataCollectionWithCompositeFields.map(
-      (objectMetadata) =>
-        this.extendObjectTypeDefinitionFactory.create(objectMetadata, options),
+    const workspaceId =
+      objectMetadataCollectionWithCompositeFields[0]?.workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID not found');
+    }
+
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
     );
 
-    this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
+    if (!isNewRelationEnabled) {
+      const objectTypeDefs = objectMetadataCollectionWithCompositeFields.map(
+        (objectMetadata) =>
+          this.extendObjectTypeDefinitionFactory.create(
+            objectMetadata,
+            options,
+          ),
+      );
+
+      this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
+    } else {
+      this.logger.log(
+        chalk.green('Extend object type definition with new relation fields'),
+      );
+      const objectTypeDefsV2 = objectMetadataCollectionWithCompositeFields.map(
+        (objectMetadata) =>
+          this.extendObjectTypeDefinitionV2Factory.create(
+            objectMetadata,
+            options,
+          ),
+      );
+
+      this.typeDefinitionsStorage.addObjectTypes(objectTypeDefsV2);
+    }
   }
 }

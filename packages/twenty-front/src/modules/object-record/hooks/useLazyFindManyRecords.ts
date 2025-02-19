@@ -67,7 +67,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       onError: handleFindManyRecordsError,
     });
 
-  const { fetchMoreRecords, totalCount, records } =
+  const { fetchMoreRecords, totalCount, records, hasNextPage } =
     useFetchMoreRecordsWithPagination<T>({
       objectNameSingular,
       filter,
@@ -108,8 +108,9 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     loading,
     error,
     fetchMore,
-    fetchMoreRecordsWithPagination: fetchMoreRecords,
+    fetchMoreRecords,
     queryStateIdentifier: queryIdentifier,
     findManyRecords: findManyRecordsLazy,
+    hasNextPage,
   };
 };

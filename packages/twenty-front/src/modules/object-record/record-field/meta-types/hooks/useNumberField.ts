@@ -20,7 +20,7 @@ import { isFieldNumber } from '../../types/guards/isFieldNumber';
 export const useNumberField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.Number, isFieldNumber, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.NUMBER, isFieldNumber, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -35,8 +35,8 @@ export const useNumberField = () => {
 
   const persistNumberField = (newValue: string) => {
     if (fieldDefinition?.metadata?.settings?.type === 'percentage') {
-      newValue = newValue.replaceAll('%', '');
-      if (!canBeCastAsNumberOrNull(newValue)) {
+      const newValueEscaped = newValue.replaceAll('%', '');
+      if (!canBeCastAsNumberOrNull(newValueEscaped)) {
         return;
       }
       const castedValue = castAsNumberOrNull(newValue);

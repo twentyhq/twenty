@@ -4,12 +4,12 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
-  ManyToOne,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -27,8 +27,11 @@ registerEnumType(OnboardingStatus, {
 });
 
 @Entity({ name: 'user', schema: 'core' })
-@ObjectType('User')
-@Unique('UQ_USER_EMAIL', ['email', 'deletedAt'])
+@ObjectType()
+@Index('UQ_USER_EMAIL', ['email'], {
+  unique: true,
+  where: '"deletedAt" IS NULL',
+})
 export class User {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -52,7 +55,7 @@ export class User {
 
   @Field()
   @Column({ default: false })
-  emailVerified: boolean;
+  isEmailVerified: boolean;
 
   @Field({ nullable: true })
   @Column({ default: false })
@@ -75,18 +78,12 @@ export class User {
   updatedAt: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, type: 'timestamptz' })
+  @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
-  @Field(() => Workspace, { nullable: false })
-  @ManyToOne(() => Workspace, (workspace) => workspace.users, {
-    onDelete: 'RESTRICT',
-  })
-  defaultWorkspace: Relation<Workspace>;
-
-  @Field()
-  @Column()
-  defaultWorkspaceId: string;
+  @Field(() => String, { nullable: false })
+  @Column({ nullable: false, default: 'en' })
+  locale: string;
 
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
@@ -107,4 +104,10 @@ export class User {
 
   @Field(() => OnboardingStatus, { nullable: true })
   onboardingStatus: OnboardingStatus;
+
+  @Field(() => Workspace, { nullable: true })
+  currentWorkspace: Relation<Workspace>;
+
+  @Field(() => UserWorkspace, { nullable: true })
+  currentUserWorkspace?: Relation<UserWorkspace>;
 }

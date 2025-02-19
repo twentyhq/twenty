@@ -23,8 +23,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import { isDefined } from '~/utils/isDefined';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize, isDefined } from 'twenty-shared';
 
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
@@ -142,7 +141,7 @@ export const useFetchMoreRecordsWithPagination = <
                 const pageInfo =
                   fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
 
-                if (isDefined(data?.[objectMetadataItem.namePlural])) {
+                if (isDefined(pageInfo)) {
                   set(
                     cursorFamilyState(queryIdentifier),
                     pageInfo.endCursor ?? '',
@@ -201,7 +200,6 @@ export const useFetchMoreRecordsWithPagination = <
       fetchMore,
       filter,
       orderBy,
-      data,
       onCompleted,
       handleFindManyRecordsError,
       queryIdentifier,

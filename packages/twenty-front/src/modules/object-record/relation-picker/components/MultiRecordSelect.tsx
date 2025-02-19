@@ -24,7 +24,8 @@ import { Placement } from '@floating-ui/react';
 import { useCallback, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconPlus, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconPlus } from 'twenty-ui';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const StyledSelectableItem = styled(SelectableItem)`
@@ -96,6 +97,7 @@ export const MultiRecordSelect = ({
     [setSearchFilter],
   );
 
+  // TODO: refactor this in a separate component
   const results = (
     <DropdownMenuItemsContainer hasMaxHeight>
       <SelectableList
@@ -139,11 +141,11 @@ export const MultiRecordSelect = ({
           onSubmit?.();
         }}
       />
-      <DropdownMenu ref={containerRef} data-select-disable>
+      <DropdownMenu ref={containerRef} data-select-disable width={200}>
         {dropdownPlacement?.includes('end') && (
           <>
             {isDefined(onCreate) && (
-              <DropdownMenuItemsContainer>
+              <DropdownMenuItemsContainer scrollable={false}>
                 {createNewButton}
               </DropdownMenuItemsContainer>
             )}
@@ -179,7 +181,11 @@ export const MultiRecordSelect = ({
             {objectRecordsIdsMultiSelect?.length > 0 && (
               <DropdownMenuSeparator />
             )}
-            {isDefined(onCreate) && <div>{createNewButton}</div>}
+            {isDefined(onCreate) && (
+              <DropdownMenuItemsContainer scrollable={false}>
+                {createNewButton}
+              </DropdownMenuItemsContainer>
+            )}
           </>
         )}
       </DropdownMenu>

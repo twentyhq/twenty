@@ -38,6 +38,7 @@ export const IconButtonGroup = ({
 
       return (
         <IconButton
+          key={index}
           accent={accent}
           Icon={Icon}
           onClick={onClick}

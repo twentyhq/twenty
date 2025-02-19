@@ -18,6 +18,7 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
@@ -101,6 +102,7 @@ export const MatchColumnSelect = ({
     callback: () => {
       setIsOpen(false);
     },
+    listenerId: 'match-column-select',
   });
 
   useUpdateEffect(() => {
@@ -120,48 +122,50 @@ export const MatchColumnSelect = ({
       {isOpen &&
         createPortal(
           <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
-            <DropdownMenu
-              data-select-disable
-              ref={dropdownContainerRef}
-              // width={refs.domReference.current?.clientWidth}
-            >
-              <DropdownMenuSearchInput
-                value={searchFilter}
-                onChange={handleFilterChange}
-                autoFocus
-              />
-              <DropdownMenuSeparator />
-              <DropdownMenuItemsContainer hasMaxHeight>
-                {options?.map((option) => (
-                  <React.Fragment key={option.label}>
-                    <MenuItemSelect
-                      selected={value?.label === option.label}
-                      onClick={() => handleChange(option)}
-                      disabled={
-                        option.disabled && value?.value !== option.value
-                      }
-                      LeftIcon={option?.icon}
-                      text={option.label}
-                    />
-                    {option.disabled &&
-                      value?.value !== option.value &&
-                      createPortal(
-                        <AppTooltip
-                          key={option.value}
-                          anchorSelect={`#${option.value}`}
-                          content="You are already importing this column."
-                          place="right"
-                          offset={-20}
-                        />,
-                        document.body,
-                      )}
-                  </React.Fragment>
-                ))}
-                {options?.length === 0 && (
-                  <MenuItem key="No result" text="No result" />
-                )}
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
+            <OverlayContainer>
+              <DropdownMenu
+                data-select-disable
+                ref={dropdownContainerRef}
+                // width={refs.domReference.current?.clientWidth}
+              >
+                <DropdownMenuSearchInput
+                  value={searchFilter}
+                  onChange={handleFilterChange}
+                  autoFocus
+                />
+                <DropdownMenuSeparator />
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  {options?.map((option) => (
+                    <React.Fragment key={option.label}>
+                      <MenuItemSelect
+                        selected={value?.label === option.label}
+                        onClick={() => handleChange(option)}
+                        disabled={
+                          option.disabled && value?.value !== option.value
+                        }
+                        LeftIcon={option?.icon}
+                        text={option.label}
+                      />
+                      {option.disabled &&
+                        value?.value !== option.value &&
+                        createPortal(
+                          <AppTooltip
+                            key={option.value}
+                            anchorSelect={`#${option.value}`}
+                            content="You are already importing this column."
+                            place="right"
+                            offset={-20}
+                          />,
+                          document.body,
+                        )}
+                    </React.Fragment>
+                  ))}
+                  {options?.length === 0 && (
+                    <MenuItem key="No results" text="No results" />
+                  )}
+                </DropdownMenuItemsContainer>
+              </DropdownMenu>
+            </OverlayContainer>
           </StyledFloatingDropdown>,
           document.body,
         )}

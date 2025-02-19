@@ -8,8 +8,10 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
+import { isDefined } from 'twenty-shared';
 import {
   AppTooltip,
   Card,
@@ -19,7 +21,6 @@ import {
 } from 'twenty-ui';
 import { z } from 'zod';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-import { isDefined } from '~/utils/isDefined';
 
 export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
   .pick({
@@ -95,6 +96,8 @@ export const SettingsDataModelObjectAboutForm = ({
   objectMetadataItem,
   onBlur,
 }: SettingsDataModelObjectAboutFormProps) => {
+  const { t } = useLingui();
+
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const theme = useTheme();
@@ -111,8 +114,8 @@ export const SettingsDataModelObjectAboutForm = ({
   watch('description');
   watch('icon');
   const apiNameTooltipText = isLabelSyncedWithName
-    ? 'Deactivate "Synchronize Objects Labels and API Names" to set a custom API name'
-    : 'Input must be in camel case and cannot start with a number';
+    ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
+    : t`Input must be in camel case and cannot start with a number`;
 
   const fillLabelPlural = (labelSingular: string) => {
     const newLabelPluralValue = isDefined(labelSingular)
@@ -192,8 +195,8 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelPlural}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              label={'Plural'}
-              placeholder={'Listings'}
+              label={t`Plural`}
+              placeholder={t`Listings`}
               value={value}
               onChange={(value) => {
                 onChange(value);
@@ -214,45 +217,46 @@ export const SettingsDataModelObjectAboutForm = ({
         defaultValue={objectMetadataItem?.description ?? null}
         render={({ field: { onChange, value } }) => (
           <TextArea
-            placeholder="Write a description"
+            placeholder={t`Write a description`}
             minRows={4}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             disabled={disableEdition}
+            onBlur={onBlur}
           />
         )}
       />
       <StyledAdvancedSettingsOuterContainer>
-        <AdvancedSettingsWrapper>
-          <StyledAdvancedSettingsContainer>
-            <StyledAdvancedSettingsSectionInputWrapper>
-              {[
-                {
-                  label: 'API Name (Singular)',
-                  fieldName: 'nameSingular' as const,
-                  placeholder: 'listing',
-                  defaultValue: objectMetadataItem?.nameSingular,
-                  disableEdition: disableEdition || isLabelSyncedWithName,
-                  tooltip: apiNameTooltipText,
-                },
-                {
-                  label: 'API Name (Plural)',
-                  fieldName: 'namePlural' as const,
-                  placeholder: 'listings',
-                  defaultValue: objectMetadataItem?.namePlural,
-                  disableEdition: disableEdition || isLabelSyncedWithName,
-                  tooltip: apiNameTooltipText,
-                },
-              ].map(
-                ({
-                  defaultValue,
-                  fieldName,
-                  label,
-                  placeholder,
-                  disableEdition,
-                  tooltip,
-                }) => (
-                  <StyledInputContainer key={`object-${fieldName}-text-input`}>
+        <StyledAdvancedSettingsContainer>
+          <StyledAdvancedSettingsSectionInputWrapper>
+            {[
+              {
+                label: t`API Name (Singular)`,
+                fieldName: 'nameSingular' as const,
+                placeholder: `listing`,
+                defaultValue: objectMetadataItem?.nameSingular,
+                disableEdition: disableEdition || isLabelSyncedWithName,
+                tooltip: apiNameTooltipText,
+              },
+              {
+                label: t`API Name (Plural)`,
+                fieldName: 'namePlural' as const,
+                placeholder: `listings`,
+                defaultValue: objectMetadataItem?.namePlural,
+                disableEdition: disableEdition || isLabelSyncedWithName,
+                tooltip: apiNameTooltipText,
+              },
+            ].map(
+              ({
+                defaultValue,
+                fieldName,
+                label,
+                placeholder,
+                disableEdition,
+                tooltip,
+              }) => (
+                <AdvancedSettingsWrapper key={`object-${fieldName}-text-input`}>
+                  <StyledInputContainer>
                     <Controller
                       name={fieldName}
                       control={control}
@@ -294,8 +298,10 @@ export const SettingsDataModelObjectAboutForm = ({
                       )}
                     />
                   </StyledInputContainer>
-                ),
-              )}
+                </AdvancedSettingsWrapper>
+              ),
+            )}
+            <AdvancedSettingsWrapper>
               <Controller
                 name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
                 control={control}
@@ -304,8 +310,8 @@ export const SettingsDataModelObjectAboutForm = ({
                   <Card rounded>
                     <SettingsOptionCardContentToggle
                       Icon={IconRefresh}
-                      title="Synchronize Objects Labels and API Names"
-                      description="Should changing an object's label also change the API?"
+                      title={t`Synchronize Objects Labels and API Names`}
+                      description={t`Should changing an object's label also change the API?`}
                       checked={value ?? true}
                       disabled={
                         isDefined(objectMetadataItem) &&
@@ -324,9 +330,9 @@ export const SettingsDataModelObjectAboutForm = ({
                   </Card>
                 )}
               />
-            </StyledAdvancedSettingsSectionInputWrapper>
-          </StyledAdvancedSettingsContainer>
-        </AdvancedSettingsWrapper>
+            </AdvancedSettingsWrapper>
+          </StyledAdvancedSettingsSectionInputWrapper>
+        </StyledAdvancedSettingsContainer>
       </StyledAdvancedSettingsOuterContainer>
     </>
   );

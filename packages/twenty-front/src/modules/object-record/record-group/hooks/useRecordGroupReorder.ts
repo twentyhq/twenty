@@ -2,28 +2,31 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
+import { ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 
 type UseRecordGroupHandlersParams = {
   viewBarId: string;
+  viewType: ViewType;
 };
 
 export const useRecordGroupReorder = ({
   viewBarId,
+  viewType,
 }: UseRecordGroupHandlersParams) => {
-  const setRecordGroup = useSetRecordGroup(viewBarId);
+  const setRecordGroup = useSetRecordGroup();
 
-  const visibleRecordGroupIdsSelector = useRecoilComponentCallbackStateV2(
-    visibleRecordGroupIdsComponentSelector,
+  const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackStateV2(
+    visibleRecordGroupIdsComponentFamilySelector,
   );
 
   const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);
@@ -37,7 +40,7 @@ export const useRecordGroupReorder = ({
 
         const visibleRecordGroupIds = getSnapshotValue(
           snapshot,
-          visibleRecordGroupIdsSelector,
+          visibleRecordGroupIdsFamilySelector(viewType),
         );
 
         const reorderedVisibleRecordGroupIds = moveArrayItem(
@@ -75,12 +78,18 @@ export const useRecordGroupReorder = ({
           ];
         }, []);
 
-        setRecordGroup(updatedRecordGroups);
+        setRecordGroup(updatedRecordGroups, viewBarId);
         saveViewGroups(
           mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
         );
       },
-    [saveViewGroups, setRecordGroup, visibleRecordGroupIdsSelector],
+    [
+      saveViewGroups,
+      setRecordGroup,
+      viewBarId,
+      viewType,
+      visibleRecordGroupIdsFamilySelector,
+    ],
   );
 
   return {

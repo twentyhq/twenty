@@ -2,8 +2,11 @@ import { HttpException } from '@nestjs/common';
 
 import { GraphQLError } from 'graphql';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   AuthenticationError,
   BaseGraphQLError,
@@ -15,7 +18,6 @@ import {
   TimeoutError,
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 const graphQLPredefinedExceptions = {
   400: ValidationError,
@@ -42,8 +44,9 @@ export const handleExceptionAndConvertToGraphQLError = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
+  workspace?: ExceptionHandlerWorkspace,
 ): BaseGraphQLError => {
-  handleException(exception, exceptionHandlerService, user);
+  handleException(exception, exceptionHandlerService, user, workspace);
 
   return convertExceptionToGraphQLError(exception);
 };
@@ -70,16 +73,17 @@ export const shouldFilterException = (exception: Error): boolean => {
   return false;
 };
 
-const handleException = (
+export const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
+  workspace?: ExceptionHandlerWorkspace,
 ): void => {
   if (shouldFilterException(exception)) {
     return;
   }
 
-  exceptionHandlerService.captureExceptions([exception], { user });
+  exceptionHandlerService.captureExceptions([exception], { user, workspace });
 };
 
 export const convertExceptionToGraphQLError = (
@@ -111,7 +115,7 @@ const convertHttpExceptionToGraphql = (exception: HttpException) => {
   }
 
   // Only show the stack trace in development mode
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === NodeEnvironment.development) {
     error.stack = exception.stack;
     error.extensions['response'] = exception.getResponse();
   }

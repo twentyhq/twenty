@@ -2,7 +2,13 @@ import { defineConfig, devices } from '@playwright/test';
 import { config } from 'dotenv';
 import path from 'path';
 
-config();
+const envResult = config({
+  path: path.resolve(__dirname, '.env'),
+});
+
+if (envResult.error) {
+  throw new Error('Failed to load .env file');
+}
 
 /* === Run your local dev server before starting the tests === */
 
@@ -10,51 +16,38 @@ config();
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: '.',
+  testDir: './tests',
   outputDir: 'run_results/', // directory for screenshots and videos
   snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}', // just in case, do not delete it
-  fullyParallel: true, // false only for specific tests, overwritten in specific projects or global setups of projects
+  fullyParallel: false, // parallelization of tests will be done later in the future
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined, // undefined = amount of projects * amount of tests
+  workers: 1, // 1 worker = 1 test at the time, tests can't be parallelized
   timeout: 30 * 1000, // timeout can be changed
   use: {
-    baseURL: process.env.CI
-      ? process.env.CI_DEFAULT_BASE_URL
-      : (process.env.FRONTEND_BASE_URL ?? 'http://localhost:3001'),
+    baseURL: process.env.FRONTEND_BASE_URL || 'http://localhost:3001',
     trace: 'retain-on-failure', // trace takes EVERYTHING from page source, records every single step, should be used only when normal debugging won't work
     screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
     headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
     testIdAttribute: 'data-testid', // taken from Twenty source
-    viewport: { width: 1920, height: 1080 }, // most laptops use this resolution
-    launchOptions: {
-      slowMo: 500, // time in milliseconds between each step, better to use it than explicitly define timeout in tests
-    },
   },
   expect: {
     timeout: 5000,
   },
-  reporter: [['html', { open: 'never' }]],
+  reporter: process.env.CI ? 'github' : 'list',
   projects: [
     {
-      name: 'Login setup',
-      testMatch: /login\.setup\.ts/, // finds all tests matching this regex, in this case only 1 test should be found
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
     },
     {
-      name: 'chromium',
+      name: 'chrome',
       use: {
         ...devices['Desktop Chrome'],
+        permissions: ['clipboard-read', 'clipboard-write'],
         storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
       },
-      dependencies: ['Login setup'], // forces to run login setup before running tests from this project - CASE SENSITIVE
-    },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        storageState: path.resolve(__dirname, '.auth', 'user.json'),
-      },
-      dependencies: ['Login setup'],
+      dependencies: ['setup'],
     },
 
     //{

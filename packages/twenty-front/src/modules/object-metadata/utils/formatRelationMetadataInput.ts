@@ -10,10 +10,10 @@ import { formatFieldMetadataItemInput } from './formatFieldMetadataItemInput';
 
 export type FormatRelationMetadataInputParams = {
   relationType: RelationType;
-  field: Pick<Field, 'label' | 'icon' | 'description'>;
+  field: Pick<Field, 'label' | 'icon' | 'description' | 'name'>;
   objectMetadataId: string;
   connect: {
-    field: Pick<Field, 'label' | 'icon'>;
+    field: Pick<Field, 'label' | 'icon' | 'name'>;
     objectMetadataId: string;
   };
 };
@@ -25,7 +25,7 @@ export const formatRelationMetadataInput = (
   // => Transform into ONE_TO_MANY and invert "from" and "to" data.
   const isManyToOne = input.relationType === 'MANY_TO_ONE';
   const relationType = isManyToOne
-    ? RelationDefinitionType.OneToMany
+    ? RelationDefinitionType.ONE_TO_MANY
     : (input.relationType as RelationDefinitionType);
   const { field: fromField, objectMetadataId: fromObjectMetadataId } =
     isManyToOne ? input.connect : input;

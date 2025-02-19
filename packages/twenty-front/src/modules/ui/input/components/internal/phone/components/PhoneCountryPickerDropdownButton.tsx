@@ -5,8 +5,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared';
 import { IconChevronDown, IconWorld } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 
@@ -33,10 +33,10 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   padding-right: ${({ theme }) => theme.spacing(1)};
   user-select: none;
 
-  border-right: 1px solid ${({ theme }) => theme.border.color.light};
+  border-right: 1px solid ${({ theme }) => theme.border.color.medium};
 
   &:hover {
-    filter: brightness(0.95);
+    background-color: ${({ theme }) => theme.background.transparent.light};
   }
 `;
 

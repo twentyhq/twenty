@@ -4,9 +4,9 @@ import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { Chip, ChipSize, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import { isDefined } from '@ui/utilities/isDefined';
 import { Nullable } from '@ui/utilities/types/Nullable';
 import { MouseEvent, useContext } from 'react';
+import { isDefined } from 'twenty-shared';
 
 // Import Link from react-router-dom instead of UndecoratedLink
 import { Link } from 'react-router-dom';
@@ -24,6 +24,7 @@ export type AvatarChipProps = {
   placeholderColorSeed?: string;
   onClick?: (event: MouseEvent) => void;
   to?: string;
+  maxWidth?: number;
 };
 
 export enum AvatarChipVariant {
@@ -60,6 +61,7 @@ export const AvatarChip = ({
   onClick,
   to,
   size = ChipSize.Small,
+  maxWidth,
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -82,13 +84,13 @@ export const AvatarChip = ({
             >
               <LeftIcon
                 color="white"
-                size={theme.icon.size.md}
+                size={theme.icon.size.sm}
                 stroke={theme.icon.stroke.sm}
               />
             </StyledInvertedIconContainer>
           ) : (
             <LeftIcon
-              size={theme.icon.size.md}
+              size={theme.icon.size.sm}
               stroke={theme.icon.stroke.sm}
               color={LeftIconColor || 'currentColor'}
             />
@@ -106,14 +108,15 @@ export const AvatarChip = ({
       clickable={isDefined(onClick) || isDefined(to)}
       onClick={to ? undefined : onClick}
       className={className}
+      maxWidth={maxWidth}
     />
   );
 
-  return to ? (
+  if (!isDefined(to)) return chip;
+
+  return (
     <StyledLink to={to} onClick={onClick}>
       {chip}
     </StyledLink>
-  ) : (
-    chip
   );
 };

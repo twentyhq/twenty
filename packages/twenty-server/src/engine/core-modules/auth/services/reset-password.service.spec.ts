@@ -9,6 +9,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -43,6 +44,14 @@ describe('ResetPasswordService', () => {
           provide: EmailService,
           useValue: {
             send: jest.fn().mockResolvedValue({ success: true }),
+          },
+        },
+        {
+          provide: DomainManagerService,
+          useValue: {
+            getBaseUrl: jest
+              .fn()
+              .mockResolvedValue(new URL('http://localhost:3001')),
           },
         },
         {
@@ -140,6 +149,7 @@ describe('ResetPasswordService', () => {
       const result = await service.sendEmailPasswordResetLink(
         mockToken,
         'test@example.com',
+        'en',
       );
 
       expect(result.success).toBe(true);
@@ -153,6 +163,7 @@ describe('ResetPasswordService', () => {
         service.sendEmailPasswordResetLink(
           {} as any,
           'nonexistent@example.com',
+          'en',
         ),
       ).rejects.toThrow(AuthException);
     });

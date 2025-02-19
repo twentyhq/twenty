@@ -1,37 +1,17 @@
 /* @license Enterprise */
 
-import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
-import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilState } from 'recoil';
-import { useNavigate } from 'react-router-dom';
+import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useRecoilValue } from 'recoil';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
-  const { enqueueSnackBar } = useSnackBar();
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
 
-  const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useRecoilState(
-    SSOIdentitiesProvidersState,
-  );
-
-  const { loading } = useListSsoIdentityProvidersByWorkspaceIdQuery({
-    onCompleted: (data) => {
-      setSSOIdentitiesProviders(
-        data?.listSSOIdentityProvidersByWorkspaceId ?? [],
-      );
-    },
-    onError: (error: Error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
-      });
-    },
-  });
+  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
 
   return (
     <SettingsListCard
@@ -39,7 +19,6 @@ export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
       getItemLabel={(SSOIdentityProvider) =>
         `${SSOIdentityProvider.name} - ${SSOIdentityProvider.type}`
       }
-      isLoading={loading}
       RowIconFn={(SSOIdentityProvider) =>
         guessSSOIdentityProviderIconByUrl(SSOIdentityProvider.issuer)
       }
@@ -48,9 +27,7 @@ export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
       )}
       hasFooter
       footerButtonLabel="Add SSO Identity Provider"
-      onFooterButtonClick={() =>
-        navigate(getSettingsPagePath(SettingsPath.NewSSOIdentityProvider))
-      }
+      onFooterButtonClick={() => navigate(SettingsPath.NewSSOIdentityProvider)}
     />
   );
 };

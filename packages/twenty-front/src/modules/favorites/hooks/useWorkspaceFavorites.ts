@@ -1,11 +1,10 @@
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { View } from '@/views/types/View';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -13,7 +12,7 @@ import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useWorkspaceFavorites = () => {
   const { workspaceFavorites } = usePrefetchedFavoritesData();
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+  const prefetchViews = useRecoilValue(prefetchViewsState);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
@@ -26,7 +25,7 @@ export const useWorkspaceFavorites = () => {
     () =>
       favoriteObjectMetadataItem.fields.filter(
         (fieldMetadataItem) =>
-          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.name !== 'workspaceMember' &&
           fieldMetadataItem.name !== 'favoriteFolder',
       ),
@@ -40,17 +39,41 @@ export const useWorkspaceFavorites = () => {
         favoriteRelationFieldMetadataItems,
         getObjectRecordIdentifierByNameSingular,
         false,
-        views,
+        prefetchViews,
         objectMetadataItems,
       ),
     [
       workspaceFavorites,
       favoriteRelationFieldMetadataItems,
       getObjectRecordIdentifierByNameSingular,
-      views,
+      prefetchViews,
       objectMetadataItems,
     ],
   );
 
-  return { sortedWorkspaceFavorites };
+  const workspaceFavoriteIds = new Set(
+    sortedWorkspaceFavorites.map((favorite) => favorite.recordId),
+  );
+
+  const favoriteViewObjectMetadataIds = new Set(
+    prefetchViews.reduce<string[]>((acc, view) => {
+      if (workspaceFavoriteIds.has(view.id)) {
+        acc.push(view.objectMetadataId);
+      }
+      return acc;
+    }, []),
+  );
+
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
+  const activeObjectMetadataItemsInWorkspaceFavorites =
+    activeObjectMetadataItems.filter((item) =>
+      favoriteViewObjectMetadataIds.has(item.id),
+    );
+
+  return {
+    workspaceFavorites: sortedWorkspaceFavorites,
+    workspaceFavoritesObjectMetadataItems:
+      activeObjectMetadataItemsInWorkspaceFavorites,
+  };
 };

@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -81,14 +80,6 @@ describe('TransientTokenService', () => {
           expiresIn: mockExpiresIn,
         }),
       );
-    });
-
-    it('should throw an error if SHORT_TERM_TOKEN_EXPIRES_IN is not set', async () => {
-      jest.spyOn(environmentService, 'get').mockReturnValue(undefined);
-
-      await expect(
-        service.generateTransientToken('member-id', 'user-id', 'workspace-id'),
-      ).rejects.toThrow(AuthException);
     });
   });
 

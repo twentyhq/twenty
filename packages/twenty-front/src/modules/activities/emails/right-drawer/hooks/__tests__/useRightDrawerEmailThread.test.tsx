@@ -66,6 +66,7 @@ const mocks = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         emails {
@@ -88,6 +89,7 @@ const mocks = [
                         phones {
                           primaryPhoneNumber
                           primaryPhoneCountryCode
+                          primaryPhoneCallingCode
                           additionalPhones
                         }
                         position
@@ -95,6 +97,7 @@ const mocks = [
                         whatsapp {
                           primaryPhoneNumber
                           primaryPhoneCountryCode
+                          primaryPhoneCallingCode
                           additionalPhones
                         }
                         workPreference
@@ -224,6 +227,7 @@ const mocks = [
                     source
                     workspaceMemberId
                     name
+                    context
                   }
                   deletedAt
                   emails {
@@ -246,6 +250,7 @@ const mocks = [
                   phones {
                     primaryPhoneNumber
                     primaryPhoneCountryCode
+                    primaryPhoneCallingCode
                     additionalPhones
                   }
                   position
@@ -253,6 +258,7 @@ const mocks = [
                   whatsapp {
                     primaryPhoneNumber
                     primaryPhoneCountryCode
+                    primaryPhoneCallingCode
                     additionalPhones
                   }
                   workPreference

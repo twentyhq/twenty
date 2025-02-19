@@ -3,15 +3,14 @@ import { SettingsServerlessFunctionTabEnvironmentVariablesSection } from '@/sett
 import { useDeleteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useDeleteOneServerlessFunction';
 import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { Button, H2Title, Section } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
@@ -24,14 +23,14 @@ export const SettingsServerlessFunctionSettingsTab = ({
   onChange: (key: string) => (value: string) => void;
   onCodeChange: (filePath: string, value: string) => void;
 }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const [isDeleteFunctionModalOpen, setIsDeleteFunctionModalOpen] =
     useState(false);
   const { deleteOneServerlessFunction } = useDeleteOneServerlessFunction();
 
   const deleteFunction = async () => {
     await deleteOneServerlessFunction({ id: serverlessFunctionId });
-    navigate('/settings/functions');
+    navigate(SettingsPath.ServerlessFunctions);
   };
 
   useHotkeyScopeOnMount(
@@ -49,7 +48,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+      navigate(SettingsPath.ServerlessFunctions);
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
   );

@@ -79,6 +79,14 @@ export class WorkflowVersionValidationWorkspaceService {
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
       );
     }
+
+    if (payload.data.steps) {
+      throw new WorkflowQueryValidationException(
+        'Updating workflowVersion steps directly is forbidden. ' +
+          'Use createWorkflowVersionStep, updateWorkflowVersionStep or deleteWorkflowVersionStep endpoint instead.',
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+      );
+    }
   }
 
   async validateWorkflowVersionForDeleteOne(payload: DeleteOneResolverArgs) {

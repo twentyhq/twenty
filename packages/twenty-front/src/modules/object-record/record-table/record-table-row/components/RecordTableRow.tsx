@@ -7,19 +7,22 @@ import { RecordTableRowWrapper } from '@/object-record/record-table/record-table
 
 type RecordTableRowProps = {
   recordId: string;
-  rowIndex: number;
+  rowIndexForFocus: number;
+  rowIndexForDrag: number;
   isPendingRow?: boolean;
 };
 
 export const RecordTableRow = ({
   recordId,
-  rowIndex,
+  rowIndexForFocus,
+  rowIndexForDrag,
   isPendingRow,
 }: RecordTableRowProps) => {
   return (
     <RecordTableRowWrapper
       recordId={recordId}
-      rowIndex={rowIndex}
+      rowIndexForFocus={rowIndexForFocus}
+      rowIndexForDrag={rowIndexForDrag}
       isPendingRow={isPendingRow}
     >
       <RecordTableCellGrip />

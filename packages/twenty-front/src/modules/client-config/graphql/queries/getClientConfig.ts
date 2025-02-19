@@ -3,21 +3,34 @@ import { gql } from '@apollo/client';
 export const GET_CLIENT_CONFIG = gql`
   query GetClientConfig {
     clientConfig {
+      billing {
+        isBillingEnabled
+        billingUrl
+        trialPeriods {
+          duration
+          isCreditCardRequired
+        }
+      }
       authProviders {
         google
         password
         microsoft
-        sso
-      }
-      billing {
-        isBillingEnabled
-        billingUrl
-        billingFreeTrialDurationInDays
+        sso {
+          id
+          name
+          type
+          status
+          issuer
+        }
       }
       signInPrefilled
-      signUpDisabled
+      isMultiWorkspaceEnabled
+      isEmailVerificationRequired
+      defaultSubdomain
+      frontDomain
       debugMode
       analyticsEnabled
+      isAttachmentPreviewEnabled
       support {
         supportDriver
         supportFrontChatId
@@ -35,6 +48,19 @@ export const GET_CLIENT_CONFIG = gql`
         mutationMaximumAffectedRecords
       }
       chromeExtensionId
+      canManageFeatureFlags
+      publicFeatureFlags {
+        key
+        metadata {
+          label
+          description
+          imagePath
+        }
+      }
+      isMicrosoftMessagingEnabled
+      isMicrosoftCalendarEnabled
+      isGoogleMessagingEnabled
+      isGoogleCalendarEnabled
     }
   }
 `;

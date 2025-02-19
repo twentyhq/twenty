@@ -6,15 +6,13 @@ import {
 } from '@/object-record/relation-picker/components/SingleRecordSelectMenuItemsWithSearch';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export type SingleRecordSelectProps = {
-  disableBackgroundBlur?: boolean;
   width?: number;
 } & SingleRecordSelectMenuItemsWithSearchProps;
 
 export const SingleRecordSelect = ({
-  disableBackgroundBlur = false,
   EmptyIcon,
   emptyLabel,
   excludedRecordIds,
@@ -22,7 +20,6 @@ export const SingleRecordSelect = ({
   onCreate,
   onRecordSelected,
   objectNameSingular,
-  recordPickerInstanceId,
   selectedRecordIds,
   width = 200,
 }: SingleRecordSelectProps) => {
@@ -41,15 +38,11 @@ export const SingleRecordSelect = ({
         onCancel();
       }
     },
+    listenerId: 'single-record-select',
   });
 
   return (
-    <DropdownMenu
-      disableBlur={disableBackgroundBlur}
-      ref={containerRef}
-      width={width}
-      data-select-disable
-    >
+    <DropdownMenu ref={containerRef} width={width} data-select-disable>
       <SingleRecordSelectMenuItemsWithSearch
         {...{
           EmptyIcon,
@@ -59,7 +52,6 @@ export const SingleRecordSelect = ({
           onCreate,
           onRecordSelected,
           objectNameSingular,
-          recordPickerInstanceId,
           selectedRecordIds,
         }}
       />

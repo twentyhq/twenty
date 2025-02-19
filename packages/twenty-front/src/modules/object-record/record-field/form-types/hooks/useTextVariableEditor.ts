@@ -1,12 +1,13 @@
-import { initializeEditorContent } from '@/workflow/search-variables/utils/initializeEditorContent';
-import { VariableTag } from '@/workflow/search-variables/utils/variableTag';
+import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/getInitialEditorContent';
+import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
+import History from '@tiptap/extension-history';
 import Paragraph from '@tiptap/extension-paragraph';
 import { default as Placeholder } from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 import { Editor, useEditor } from '@tiptap/react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 type UseTextVariableEditorProps = {
   placeholder: string | undefined;
@@ -39,13 +40,12 @@ export const useTextVariableEditor = ({
             }),
           ]
         : []),
+      History,
     ],
+    content: isDefined(defaultValue)
+      ? getInitialEditorContent(defaultValue)
+      : undefined,
     editable: !readonly,
-    onCreate: ({ editor }) => {
-      if (isDefined(defaultValue)) {
-        initializeEditorContent(editor, defaultValue);
-      }
-    },
     onUpdate: ({ editor }) => {
       onUpdate(editor);
     },
@@ -54,15 +54,16 @@ export const useTextVariableEditor = ({
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
 
-          const { state } = view;
-          const { tr } = state;
-
           // Insert hard break using the view's state and dispatch
-          const transaction = tr.replaceSelectionWith(
-            state.schema.nodes.hardBreak.create(),
-          );
+          if (multiline === true) {
+            const { state } = view;
+            const { tr } = state;
+            const transaction = tr.replaceSelectionWith(
+              state.schema.nodes.hardBreak.create(),
+            );
 
-          view.dispatch(transaction);
+            view.dispatch(transaction);
+          }
 
           return true;
         }

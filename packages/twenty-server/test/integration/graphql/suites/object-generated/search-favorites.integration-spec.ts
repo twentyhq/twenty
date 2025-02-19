@@ -25,7 +25,8 @@ describe('searchFavoritesResolver (e2e)', () => {
                 taskId
                 noteId
                 viewId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -35,7 +36,7 @@ describe('searchFavoritesResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -68,7 +69,8 @@ describe('searchFavoritesResolver (e2e)', () => {
           expect(searchFavorites).toHaveProperty('taskId');
           expect(searchFavorites).toHaveProperty('noteId');
           expect(searchFavorites).toHaveProperty('viewId');
-          expect(searchFavorites).toHaveProperty('rocketId');
+          expect(searchFavorites).toHaveProperty('petId');
+          expect(searchFavorites).toHaveProperty('surveyResultId');
         }
       });
   });

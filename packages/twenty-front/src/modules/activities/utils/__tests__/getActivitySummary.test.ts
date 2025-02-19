@@ -75,7 +75,7 @@ describe('getActivitySummary', () => {
         props: {
           backgroundColor: 'default',
           textAlignment: 'left',
-          url: 'https://favicon.twenty.com/qonto.com',
+          url: 'https://twenty-icons.com/qonto.com',
           caption: '',
           width: 230,
         },

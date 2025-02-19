@@ -1,29 +1,22 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
-import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-type UseHandleRecordGroupFieldParams = {
-  viewBarComponentId: string;
-};
-
-export const useHandleRecordGroupField = ({
-  viewBarComponentId,
-}: UseHandleRecordGroupFieldParams) => {
+export const useHandleRecordGroupField = () => {
   const { createViewGroupRecords, deleteViewGroupRecords } =
     usePersistViewGroupRecords();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
-    currentViewIdComponentState,
-    viewBarComponentId,
+    contextStoreCurrentViewIdComponentState,
   );
 
-  const { getViewFromCache } = useGetViewFromCache();
+  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
   const handleRecordGroupFieldChange = useRecoilCallback(
     ({ snapshot }) =>
@@ -36,7 +29,7 @@ export const useHandleRecordGroupField = ({
           return;
         }
 
-        const view = await getViewFromCache(currentViewId);
+        const view = await getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -61,6 +54,8 @@ export const useHandleRecordGroupField = ({
             (option) =>
               !existingGroupKeys.has(`${fieldMetadataItem.id}:${option.value}`),
           )
+          // Alphabetically sort the options by default
+          .sort((a, b) => a.value.localeCompare(b.value))
           .map(
             (option, index) =>
               ({
@@ -73,11 +68,38 @@ export const useHandleRecordGroupField = ({
               }) satisfies ViewGroup,
           );
 
+        if (
+          !existingGroupKeys.has(`${fieldMetadataItem.id}:`) &&
+          fieldMetadataItem.isNullable === true
+        ) {
+          viewGroupsToCreate.push({
+            __typename: 'ViewGroup',
+            id: v4(),
+            fieldValue: '',
+            isVisible: true,
+            position: fieldMetadataItem.options.length,
+            fieldMetadataId: fieldMetadataItem.id,
+          } satisfies ViewGroup);
+        }
+
+        const viewGroupsToDelete = view.viewGroups.filter(
+          (group) => group.fieldMetadataId !== fieldMetadataItem.id,
+        );
+
         if (viewGroupsToCreate.length > 0) {
-          await createViewGroupRecords(viewGroupsToCreate, view);
+          await createViewGroupRecords({ viewGroupsToCreate, viewId: view.id });
+        }
+
+        if (viewGroupsToDelete.length > 0) {
+          await deleteViewGroupRecords(viewGroupsToDelete);
         }
       },
-    [createViewGroupRecords, currentViewIdCallbackState, getViewFromCache],
+    [
+      createViewGroupRecords,
+      deleteViewGroupRecords,
+      currentViewIdCallbackState,
+      getViewFromPrefetchState,
+    ],
   );
 
   const resetRecordGroupField = useRecoilCallback(
@@ -91,7 +113,7 @@ export const useHandleRecordGroupField = ({
           return;
         }
 
-        const view = await getViewFromCache(currentViewId);
+        const view = await getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -103,7 +125,11 @@ export const useHandleRecordGroupField = ({
 
         await deleteViewGroupRecords(view.viewGroups);
       },
-    [deleteViewGroupRecords, currentViewIdCallbackState, getViewFromCache],
+    [
+      deleteViewGroupRecords,
+      currentViewIdCallbackState,
+      getViewFromPrefetchState,
+    ],
   );
 
   return { handleRecordGroupFieldChange, resetRecordGroupField };

@@ -65,7 +65,6 @@ const meta: Meta = {
         <FieldContext.Provider
           value={{
             recordId: relationFromManyFieldDisplayMock.recordId,
-            basePathToShowPage: '/object-record/',
             isLabelIdentifier: false,
             fieldDefinition: {
               ...relationFromManyFieldDisplayMock.fieldDefinition,

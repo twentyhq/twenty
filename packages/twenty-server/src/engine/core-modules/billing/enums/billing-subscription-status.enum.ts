@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 export enum SubscriptionStatus {
   Active = 'active',
   Canceled = 'canceled',

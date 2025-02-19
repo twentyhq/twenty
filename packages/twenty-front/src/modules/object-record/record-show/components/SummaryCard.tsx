@@ -7,11 +7,13 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { RightDrawerTitleRecordInlineCell } from '@/object-record/record-right-drawer/components/RightDrawerTitleRecordInlineCell';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
+import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from 'twenty-shared';
+import { FeatureFlagKey, FieldMetadataType } from '~/generated/graphql';
 
 type SummaryCardProps = {
   objectNameSingular: string;
@@ -53,6 +55,10 @@ export const SummaryCard = ({
     isRecordDeleted: recordFromStore?.isDeleted,
   });
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   if (isNewRightDrawerItemLoading || !isDefined(recordFromStore)) {
     return <ShowPageSummaryCardSkeletonLoader />;
   }
@@ -77,7 +83,7 @@ export const SummaryCard = ({
             fieldDefinition: {
               type:
                 labelIdentifierFieldMetadataItem?.type ||
-                FieldMetadataType.Text,
+                FieldMetadataType.TEXT,
               iconName: '',
               fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
               label: labelIdentifierFieldMetadataItem?.label || '',
@@ -90,9 +96,12 @@ export const SummaryCard = ({
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: !isMobile,
+            isDisplayModeFixHeight: true,
           }}
         >
-          {isInRightDrawer ? (
+          {isCommandMenuV2Enabled ? (
+            <RecordTitleCell sizeVariant="md" />
+          ) : isInRightDrawer ? (
             <RightDrawerTitleRecordInlineCell />
           ) : (
             <RecordInlineCell readonly={isReadOnly} />

@@ -2,15 +2,19 @@ import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/us
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { useCallback, useMemo } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type EmailsFieldInputProps = {
   onCancel?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
-export const EmailsFieldInput = ({ onCancel }: EmailsFieldInputProps) => {
+export const EmailsFieldInput = ({
+  onCancel,
+  onClickOutside,
+}: EmailsFieldInputProps) => {
   const { persistEmailsField, hotkeyScope, fieldValue } = useEmailsField();
 
   const emails = useMemo<string[]>(
@@ -45,8 +49,9 @@ export const EmailsFieldInput = ({ onCancel }: EmailsFieldInputProps) => {
       items={emails}
       onPersist={handlePersistEmails}
       onCancel={onCancel}
+      onClickOutside={onClickOutside}
       placeholder="Email"
-      fieldMetadataType={FieldMetadataType.Emails}
+      fieldMetadataType={FieldMetadataType.EMAILS}
       validateInput={validateInput}
       renderItem={({
         value: email,

@@ -75,8 +75,6 @@ export const SubMatchingSelect = <T extends string>({
   const options = getFieldOptions(fields, column.value) as SelectOption[];
   const value = options.find((opt) => opt.value === option.value);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectWrapperRef, setSelectWrapperRef] =
-    useState<HTMLDivElement | null>(null);
 
   const theme = useTheme();
 
@@ -106,17 +104,14 @@ export const SubMatchingSelect = <T extends string>({
         cursor="pointer"
         onClick={() => setIsOpen(!isOpen)}
         id="control"
-        ref={setSelectWrapperRef}
       >
         <Tag
           text={value?.label ?? placeholder}
           color={value?.color as TagColor}
         />
         <StyledIconChevronDown size={theme.icon.size.md} />
-
         {isOpen && (
           <SelectInput
-            parentRef={selectWrapperRef}
             defaultOption={value}
             options={options}
             onOptionSelected={handleSelect}

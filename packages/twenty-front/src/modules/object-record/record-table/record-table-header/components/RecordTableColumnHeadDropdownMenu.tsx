@@ -15,8 +15,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useLingui } from '@lingui/react/macro';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 
@@ -27,6 +27,8 @@ export type RecordTableColumnHeadDropdownMenuProps = {
 export const RecordTableColumnHeadDropdownMenu = ({
   column,
 }: RecordTableColumnHeadDropdownMenuProps) => {
+  const { t } = useLingui();
+
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
   );
@@ -92,45 +94,43 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const canHide = column.isLabelIdentifier !== true;
 
   return (
-    <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-      <DropdownMenuItemsContainer>
-        {isFilterable && (
-          <MenuItem
-            LeftIcon={IconFilter}
-            onClick={handleFilterClick}
-            text="Filter"
-          />
-        )}
-        {isSortable && (
-          <MenuItem
-            LeftIcon={IconSortDescending}
-            onClick={handleSortClick}
-            text="Sort"
-          />
-        )}
-        {showSeparator && <DropdownMenuSeparator />}
-        {canMoveLeft && (
-          <MenuItem
-            LeftIcon={IconArrowLeft}
-            onClick={handleColumnMoveLeft}
-            text="Move left"
-          />
-        )}
-        {canMoveRight && (
-          <MenuItem
-            LeftIcon={IconArrowRight}
-            onClick={handleColumnMoveRight}
-            text="Move right"
-          />
-        )}
-        {canHide && (
-          <MenuItem
-            LeftIcon={IconEyeOff}
-            onClick={handleColumnVisibility}
-            text="Hide"
-          />
-        )}
-      </DropdownMenuItemsContainer>
-    </ScrollWrapper>
+    <DropdownMenuItemsContainer>
+      {isFilterable && (
+        <MenuItem
+          LeftIcon={IconFilter}
+          onClick={handleFilterClick}
+          text={t`Filter`}
+        />
+      )}
+      {isSortable && (
+        <MenuItem
+          LeftIcon={IconSortDescending}
+          onClick={handleSortClick}
+          text={t`Sort`}
+        />
+      )}
+      {showSeparator && <DropdownMenuSeparator />}
+      {canMoveLeft && (
+        <MenuItem
+          LeftIcon={IconArrowLeft}
+          onClick={handleColumnMoveLeft}
+          text={t`Move left`}
+        />
+      )}
+      {canMoveRight && (
+        <MenuItem
+          LeftIcon={IconArrowRight}
+          onClick={handleColumnMoveRight}
+          text={t`Move right`}
+        />
+      )}
+      {canHide && (
+        <MenuItem
+          LeftIcon={IconEyeOff}
+          onClick={handleColumnVisibility}
+          text={t`Hide`}
+        />
+      )}
+    </DropdownMenuItemsContainer>
   );
 };

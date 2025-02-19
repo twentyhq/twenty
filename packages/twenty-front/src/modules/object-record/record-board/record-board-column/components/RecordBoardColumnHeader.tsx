@@ -4,7 +4,9 @@ import { useContext, useState } from 'react';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
+import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useAggregateRecordsForRecordBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateRecordsForRecordBoardColumn';
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
@@ -19,27 +21,14 @@ const StyledHeader = styled.div`
   flex-direction: row;
   justify-content: left;
   width: 100%;
-`;
-
-const StyledAmount = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-left: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledNumChildren = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  height: 24px;
-  justify-content: center;
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  width: 22px;
+  height: 100%;
 `;
 
 const StyledHeaderActions = styled.div`
   display: flex;
   margin-left: auto;
 `;
+
 const StyledHeaderContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
   display: flex;
@@ -50,6 +39,7 @@ const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
 `;
 
 const StyledRightContainer = styled.div`
@@ -69,10 +59,12 @@ const StyledColumn = styled.div`
   position: relative;
 `;
 
+const StyledTag = styled(Tag)`
+  flex-shrink: 0;
+`;
+
 export const RecordBoardColumnHeader = () => {
-  const { columnDefinition, recordCount } = useContext(
-    RecordBoardColumnContext,
-  );
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
   const [isHeaderHovered, setIsHeaderHovered] = useState(false);
 
@@ -98,10 +90,11 @@ export const RecordBoardColumnHeader = () => {
     setIsBoardColumnMenuOpen(false);
   };
 
-  const boardColumnTotal = 0;
+  const { aggregateValue, aggregateLabel } =
+    useAggregateRecordsForRecordBoardColumn();
 
   const { handleNewButtonClick } = useColumnNewCardActions(
-    columnDefinition?.id ?? '',
+    columnDefinition.id ?? '',
   );
 
   const { isOpportunitiesCompanyFieldDisabled } =
@@ -119,7 +112,7 @@ export const RecordBoardColumnHeader = () => {
       >
         <StyledHeaderContainer>
           <StyledLeftContainer>
-            <Tag
+            <StyledTag
               onClick={handleBoardColumnMenuOpen}
               variant={
                 columnDefinition.type === RecordGroupDefinitionType.Value
@@ -138,10 +131,12 @@ export const RecordBoardColumnHeader = () => {
                   : 'medium'
               }
             />
-            {!!boardColumnTotal && (
-              <StyledAmount>${boardColumnTotal}</StyledAmount>
-            )}
-            <StyledNumChildren>{recordCount}</StyledNumChildren>
+            <RecordBoardColumnHeaderAggregateDropdown
+              aggregateValue={aggregateValue}
+              dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+              objectMetadataItem={objectMetadataItem}
+              aggregateLabel={aggregateLabel}
+            />
           </StyledLeftContainer>
           <StyledRightContainer>
             {isHeaderHovered && (

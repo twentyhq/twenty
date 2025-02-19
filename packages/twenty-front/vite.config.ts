@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { lingui } from '@lingui/vite-plugin';
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
@@ -19,7 +20,9 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
-    VITE_ENABLE_SSL,
+    VITE_HOST,
+    SSL_CERT_PATH,
+    SSL_KEY_PATH,
     REACT_APP_PORT,
   } = env;
 
@@ -64,27 +67,24 @@ export default defineConfig(({ command, mode }) => {
     };
   }
 
-  if (VITE_ENABLE_SSL && (!env.SSL_KEY_PATH || !env.SSL_CERT_PATH)) {
-    throw new Error(
-      'to use https SSL_KEY_PATH and SSL_CERT_PATH must be both defined',
-    );
-  }
-
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-front',
 
     server: {
       port: port,
-      protocol: VITE_ENABLE_SSL ? 'https' : 'http',
-      ...(VITE_ENABLE_SSL
+      ...(VITE_HOST ? { host: VITE_HOST } : {}),
+      ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
+            protocol: 'https',
             https: {
               key: fs.readFileSync(env.SSL_KEY_PATH),
               cert: fs.readFileSync(env.SSL_CERT_PATH),
             },
           }
-        : {}),
+        : {
+            protocol: 'http',
+          }),
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()),
@@ -94,11 +94,17 @@ export default defineConfig(({ command, mode }) => {
     },
 
     plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({
+        jsxImportSource: '@emotion/react',
+        plugins: [['@lingui/swc-plugin', {}]],
+      }),
       tsconfigPaths({
         projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
       }),
       svgr(),
+      lingui({
+        configPath: path.resolve(__dirname, './lingui.config.ts'),
+      }),
       checker(checkers),
       // TODO: fix this, we have to restrict the include to only the components that are using linaria
       // Otherwise the build will fail because wyw tries to include emotion styled components
@@ -144,6 +150,9 @@ export default defineConfig(({ command, mode }) => {
     envPrefix: 'REACT_APP_',
 
     define: {
+      _env_: {
+        REACT_APP_SERVER_BASE_URL,
+      },
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
       },

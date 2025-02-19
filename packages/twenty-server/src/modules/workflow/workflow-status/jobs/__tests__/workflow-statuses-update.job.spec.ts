@@ -8,6 +8,7 @@ import {
   WorkflowVersionBatchEvent,
   WorkflowVersionEventType,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 describe('WorkflowStatusesUpdate', () => {
   let job: WorkflowStatusesUpdateJob;
@@ -21,6 +22,10 @@ describe('WorkflowStatusesUpdate', () => {
     getRepository: jest.fn().mockResolvedValue(mockWorkflowRepository),
   };
 
+  const mockServerlessFunctionService = {
+    publishOneServerlessFunction: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -28,6 +33,10 @@ describe('WorkflowStatusesUpdate', () => {
         {
           provide: TwentyORMManager,
           useValue: mockTwentyORMManager,
+        },
+        {
+          provide: ServerlessFunctionService,
+          useValue: mockServerlessFunctionService,
         },
       ],
     }).compile();
@@ -94,6 +103,7 @@ describe('WorkflowStatusesUpdate', () => {
           statusUpdates: [
             {
               workflowId: '1',
+              workflowVersionId: '1',
               previousStatus: WorkflowVersionStatus.ACTIVE,
               newStatus: WorkflowVersionStatus.ACTIVE,
             },
@@ -108,7 +118,7 @@ describe('WorkflowStatusesUpdate', () => {
 
         await job.handle(event);
 
-        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
+        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(2);
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
       });
 
@@ -119,6 +129,7 @@ describe('WorkflowStatusesUpdate', () => {
           statusUpdates: [
             {
               workflowId: '1',
+              workflowVersionId: '1',
               previousStatus: WorkflowVersionStatus.ACTIVE,
               newStatus: WorkflowVersionStatus.DRAFT,
             },
@@ -133,7 +144,7 @@ describe('WorkflowStatusesUpdate', () => {
 
         await job.handle(event);
 
-        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
+        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(2);
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
       });
 
@@ -144,6 +155,7 @@ describe('WorkflowStatusesUpdate', () => {
           statusUpdates: [
             {
               workflowId: '1',
+              workflowVersionId: '1',
               previousStatus: WorkflowVersionStatus.DEACTIVATED,
               newStatus: WorkflowVersionStatus.ACTIVE,
             },
@@ -158,7 +170,7 @@ describe('WorkflowStatusesUpdate', () => {
 
         await job.handle(event);
 
-        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
+        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(2);
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
           { statuses: [WorkflowStatus.ACTIVE] },
@@ -172,6 +184,7 @@ describe('WorkflowStatusesUpdate', () => {
           statusUpdates: [
             {
               workflowId: '1',
+              workflowVersionId: '1',
               previousStatus: WorkflowVersionStatus.ACTIVE,
               newStatus: WorkflowVersionStatus.DEACTIVATED,
             },
@@ -186,7 +199,7 @@ describe('WorkflowStatusesUpdate', () => {
 
         await job.handle(event);
 
-        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
+        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(2);
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
           { statuses: [WorkflowStatus.DEACTIVATED] },
@@ -200,6 +213,7 @@ describe('WorkflowStatusesUpdate', () => {
           statusUpdates: [
             {
               workflowId: '1',
+              workflowVersionId: '1',
               previousStatus: WorkflowVersionStatus.DRAFT,
               newStatus: WorkflowVersionStatus.ACTIVE,
             },
@@ -214,7 +228,7 @@ describe('WorkflowStatusesUpdate', () => {
 
         await job.handle(event);
 
-        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
+        expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(2);
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
           { statuses: [WorkflowStatus.ACTIVE] },

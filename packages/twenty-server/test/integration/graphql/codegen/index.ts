@@ -58,6 +58,7 @@ const generateTestContent = (
     .map((f) => f.name);
 
   if (fieldNames.length === 0) {
+    // eslint-disable-next-line no-console
     console.log(`Skipping ${queryName}: No usable fields found.`);
 
     return null;
@@ -90,7 +91,7 @@ describe('${queryName}Resolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', \`Bearer \${ACCESS_TOKEN}\`)
+      .set('Authorization', \`Bearer \${ADMIN_ACCESS_TOKEN}\`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -148,6 +149,7 @@ const generateTests = async (force = false) => {
   let totalCount = 0;
 
   if (!queryType?.fields) {
+    // eslint-disable-next-line no-console
     console.log('No query fields found.');
 
     return;
@@ -200,8 +202,10 @@ const generateTests = async (force = false) => {
     }
   }
 
+  // eslint-disable-next-line no-console
   console.log(`Number of tests created: ${createdCount}/${totalCount}`);
   if (force) {
+    // eslint-disable-next-line no-console
     console.log(`Number of tests updated: ${updatedCount}/${totalCount}`);
   }
 };

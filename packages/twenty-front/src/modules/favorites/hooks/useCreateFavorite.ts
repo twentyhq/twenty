@@ -26,7 +26,6 @@ export const useCreateFavorite = () => {
     );
 
     createOneFavorite({
-      [targetObjectNameSingular]: targetRecord,
       [`${targetObjectNameSingular}Id`]: targetRecord.id,
       position: maxPosition + 1,
       workspaceMemberId: currentWorkspaceMemberId,

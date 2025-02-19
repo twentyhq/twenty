@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 
 import {
   FieldMetadataComplexOption,
@@ -8,6 +8,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
@@ -27,7 +28,8 @@ export class FieldMetadataRelatedRecordsService {
   public async updateRelatedViewGroups(
     oldFieldMetadata: FieldMetadataEntity,
     newFieldMetadata: FieldMetadataEntity,
-  ) {
+    transactionManager?: EntityManager,
+  ): Promise<void> {
     if (
       !isSelectFieldMetadataType(newFieldMetadata.type) ||
       !isSelectFieldMetadataType(oldFieldMetadata.type)
@@ -49,10 +51,11 @@ export class FieldMetadataRelatedRecordsService {
       );
 
     for (const view of views) {
-      const maxPosition = view.viewGroups.reduce(
-        (max, viewGroup) => Math.max(max, viewGroup.position),
-        0,
-      );
+      if (view.viewGroups.length === 0) {
+        continue;
+      }
+
+      const maxPosition = this.getMaxPosition(view.viewGroups);
 
       const viewGroupsToCreate = created.map((option, index) =>
         viewGroupRepository.create({
@@ -64,40 +67,78 @@ export class FieldMetadataRelatedRecordsService {
         }),
       );
 
-      await viewGroupRepository.insert(viewGroupsToCreate);
+      await viewGroupRepository.insert(viewGroupsToCreate, transactionManager);
 
       for (const { old: oldOption, new: newOption } of updated) {
-        const viewGroup = view.viewGroups.find(
-          (viewGroup) => viewGroup.fieldValue === oldOption.value,
+        const existingViewGroup = view.viewGroups.find(
+          (group) => group.fieldValue === oldOption.value,
         );
 
-        if (!viewGroup) {
-          throw new Error(`View group not found for option ${oldOption.value}`);
+        if (!existingViewGroup) {
+          throw new Error(
+            `View group not found for option "${oldOption.value}" during update.`,
+          );
         }
 
         await viewGroupRepository.update(
-          {
-            id: viewGroup.id,
-          },
-          {
-            fieldValue: newOption.value,
-          },
+          { id: existingViewGroup.id },
+          { fieldValue: newOption.value },
+          transactionManager,
         );
       }
 
       const valuesToDelete = deleted.map((option) => option.value);
 
-      await viewGroupRepository.delete({
-        fieldMetadataId: newFieldMetadata.id,
-        fieldValue: In(valuesToDelete),
+      await viewGroupRepository.delete(
+        {
+          fieldMetadataId: newFieldMetadata.id,
+          fieldValue: In(valuesToDelete),
+        },
+        transactionManager,
+      );
+
+      await this.syncNoValueViewGroup(
+        newFieldMetadata,
+        view,
+        viewGroupRepository,
+        transactionManager,
+      );
+    }
+  }
+
+  async syncNoValueViewGroup(
+    fieldMetadata: FieldMetadataEntity,
+    view: ViewWorkspaceEntity,
+    viewGroupRepository: WorkspaceRepository<ViewGroupWorkspaceEntity>,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const noValueGroup = view.viewGroups.find(
+      (group) => group.fieldValue === '',
+    );
+
+    if (fieldMetadata.isNullable && !noValueGroup) {
+      const maxPosition = this.getMaxPosition(view.viewGroups);
+      const newGroup = viewGroupRepository.create({
+        fieldMetadataId: fieldMetadata.id,
+        fieldValue: '',
+        position: maxPosition + 1,
+        isVisible: true,
+        viewId: view.id,
       });
+
+      await viewGroupRepository.insert(newGroup, transactionManager);
+    } else if (!fieldMetadata.isNullable && noValueGroup) {
+      await viewGroupRepository.delete(
+        { id: noValueGroup.id },
+        transactionManager,
+      );
     }
   }
 
   private getOptionsDifferences(
     oldOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
     newOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
-  ) {
+  ): Differences<FieldMetadataDefaultOption | FieldMetadataComplexOption> {
     const differences: Differences<
       FieldMetadataDefaultOption | FieldMetadataComplexOption
     > = {
@@ -106,12 +147,8 @@ export class FieldMetadataRelatedRecordsService {
       deleted: [],
     };
 
-    const oldOptionsMap = new Map(
-      oldOptions.map((option) => [option.id, option]),
-    );
-    const newOptionsMap = new Map(
-      newOptions.map((option) => [option.id, option]),
-    );
+    const oldOptionsMap = new Map(oldOptions.map((opt) => [opt.id, opt]));
+    const newOptionsMap = new Map(newOptions.map((opt) => [opt.id, opt]));
 
     for (const newOption of newOptions) {
       const oldOption = oldOptionsMap.get(newOption.id);
@@ -141,11 +178,17 @@ export class FieldMetadataRelatedRecordsService {
         'view',
       );
 
-    return await viewRepository.find({
+    return viewRepository.find({
       where: {
-        kanbanFieldMetadataId: fieldMetadata.id,
+        viewGroups: {
+          fieldMetadataId: fieldMetadata.id,
+        },
       },
       relations: ['viewGroups'],
     });
+  }
+
+  private getMaxPosition(viewGroups: ViewGroupWorkspaceEntity[]): number {
+    return viewGroups.reduce((max, group) => Math.max(max, group.position), 0);
   }
 }

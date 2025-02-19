@@ -7,6 +7,7 @@ import {
   MessageChannelVisibility,
   useGenerateTransientTokenMutation,
 } from '~/generated/graphql';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 const getProviderUrl = (provider: string) => {
   switch (provider) {
@@ -21,6 +22,7 @@ const getProviderUrl = (provider: string) => {
 
 export const useTriggerApisOAuth = () => {
   const [generateTransientToken] = useGenerateTransientTokenMutation();
+  const { redirect } = useRedirect();
 
   const triggerApisOAuth = useCallback(
     async (
@@ -60,9 +62,9 @@ export const useTriggerApisOAuth = () => {
 
       params += loginHint ? `&loginHint=${loginHint}` : '';
 
-      window.location.href = `${authServerUrl}/auth/${getProviderUrl(provider)}?${params}`;
+      redirect(`${authServerUrl}/auth/${getProviderUrl(provider)}?${params}`);
     },
-    [generateTransientToken],
+    [generateTransientToken, redirect],
   );
 
   return { triggerApisOAuth };

@@ -2,17 +2,21 @@
 
 import { Link } from 'react-router-dom';
 
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCardWrapper';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconKey } from 'twenty-ui';
+import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledLink = styled(Link, {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',
@@ -22,18 +26,39 @@ const StyledLink = styled(Link, {
 `;
 
 export const SettingsSSOIdentitiesProvidersListCard = () => {
+  const { enqueueSnackBar } = useSnackBar();
+
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const { t } = useLingui();
 
-  return !SSOIdentitiesProviders.length ? (
+  const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useRecoilState(
+    SSOIdentitiesProvidersState,
+  );
+
+  const { loading } = useListSsoIdentityProvidersByWorkspaceIdQuery({
+    fetchPolicy: 'network-only',
+    skip: currentWorkspace?.hasValidEnterpriseKey === false,
+    onCompleted: (data) => {
+      setSSOIdentitiesProviders(
+        data?.listSSOIdentityProvidersByWorkspaceId ?? [],
+      );
+    },
+    onError: (error: Error) => {
+      enqueueSnackBar(error.message, {
+        variant: SnackBarVariant.Error,
+      });
+    },
+  });
+
+  return loading || !SSOIdentitiesProviders.length ? (
     <StyledLink
-      to={getSettingsPagePath(SettingsPath.NewSSOIdentityProvider)}
-      isDisabled={currentWorkspace?.hasValidEntrepriseKey !== true}
+      to={getSettingsPath(SettingsPath.NewSSOIdentityProvider)}
+      isDisabled={currentWorkspace?.hasValidEnterpriseKey !== true}
     >
       <SettingsCard
-        title="Add SSO Identity Provider"
-        disabled={currentWorkspace?.hasValidEntrepriseKey !== true}
+        title={t`Add SSO Identity Provider`}
+        disabled={currentWorkspace?.hasValidEnterpriseKey !== true}
         Icon={<IconKey />}
       />
     </StyledLink>

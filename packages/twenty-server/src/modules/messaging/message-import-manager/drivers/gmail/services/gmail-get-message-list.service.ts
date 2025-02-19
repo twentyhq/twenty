@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { gmail_v1 as gmailV1 } from 'googleapis';
+import { isDefined } from 'twenty-shared';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
@@ -31,7 +32,7 @@ export class GmailGetMessageListService {
   public async getFullMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'refreshToken' | 'id' | 'handle'
     >,
   ): Promise<GetFullMessageListResponse> {
     const gmailClient =
@@ -53,7 +54,7 @@ export class GmailGetMessageListService {
           ),
         })
         .catch((error) => {
-          this.gmailHandleErrorService.handleError(error);
+          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
 
           return {
             data: {
@@ -79,13 +80,23 @@ export class GmailGetMessageListService {
       messageExternalIds.push(...messages.map((message) => message.id));
     }
 
+    if (!isDefined(firstMessageExternalId)) {
+      throw new MessageImportDriverException(
+        `No firstMessageExternalId found for connected account ${connectedAccount.id}`,
+        MessageImportDriverExceptionCode.UNKNOWN,
+      );
+    }
+
     const firstMessageContent = await gmailClient.users.messages
       .get({
         userId: 'me',
         id: firstMessageExternalId,
       })
       .catch((error) => {
-        this.gmailHandleErrorService.handleError(error);
+        this.gmailHandleErrorService.handleGmailMessagesImportError(
+          error,
+          firstMessageExternalId as string,
+        );
       });
 
     const nextSyncCursor = firstMessageContent?.data?.historyId;
@@ -135,6 +146,7 @@ export class GmailGetMessageListService {
     return {
       messageExternalIds: messagesAddedFiltered,
       messageExternalIdsToDelete: messagesDeleted,
+      previousSyncCursor: syncCursor,
       nextSyncCursor,
     };
   }

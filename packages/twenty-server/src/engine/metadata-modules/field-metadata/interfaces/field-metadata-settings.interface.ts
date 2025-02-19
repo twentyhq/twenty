@@ -1,4 +1,7 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared';
+
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 export enum NumberDataType {
   FLOAT = 'float',
@@ -6,26 +9,33 @@ export enum NumberDataType {
   BIGINT = 'bigint',
 }
 
-type FieldMetadataDefaultSettings = {
+export type FieldMetadataDefaultSettings = {
   isForeignKey?: boolean;
 };
 
-type FieldMetadataNumberSettings = {
+export type FieldNumberVariant = 'number' | 'percentage';
+
+export type FieldMetadataNumberSettings = {
   dataType: NumberDataType;
   decimals?: number;
-  type?: string;
+  type?: FieldNumberVariant;
 };
 
-type FieldMetadataTextSettings = {
+export type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
 };
 
-type FieldMetadataDateSettings = {
+export type FieldMetadataDateSettings = {
   displayAsRelativeDate?: boolean;
 };
 
-type FieldMetadataDateTimeSettings = {
+export type FieldMetadataDateTimeSettings = {
   displayAsRelativeDate?: boolean;
+};
+
+export type FieldMetadataRelationSettings = {
+  relationType: RelationType;
+  onDelete?: RelationOnDeleteAction;
 };
 
 type FieldMetadataSettingsMapping = {
@@ -33,6 +43,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.DATE]: FieldMetadataDateSettings;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
+  [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
 };
 
 type SettingsByFieldMetadata<T extends FieldMetadataType | 'default'> =

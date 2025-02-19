@@ -2,11 +2,12 @@ import { useTheme } from '@emotion/react';
 import { ReactNode } from 'react';
 
 import {
+  StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { IconCheck, OverflowingTextWithTooltip } from '@ui/display';
+import { OverflowingTextWithTooltip } from '@ui/display';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
@@ -14,7 +15,7 @@ type MenuItemSelectAvatarProps = {
   selected: boolean;
   text: string;
   className?: string;
-  onClick?: () => void;
+  onClick?: (event?: React.MouseEvent) => void;
   disabled?: boolean;
   hovered?: boolean;
   testId?: string;
@@ -40,14 +41,17 @@ export const MenuItemSelectAvatar = ({
       disabled={disabled}
       hovered={hovered}
       data-testid={testId}
+      role="option"
+      aria-selected={selected}
+      aria-disabled={disabled}
     >
       <StyledMenuItemLeftContent>
         {avatar}
-        <StyledMenuItemLabel hasLeftIcon={!!avatar}>
+        <StyledMenuItemLabel>
           <OverflowingTextWithTooltip text={text} />
         </StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && <IconCheck size={theme.icon.size.md} />}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

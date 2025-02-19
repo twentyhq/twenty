@@ -1,14 +1,15 @@
 import { useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useGetAvailableFieldsForKanban = () => {
   const viewObjectMetadataId = useRecoilComponentValueV2(
@@ -26,22 +27,26 @@ export const useGetAvailableFieldsForKanban = () => {
 
   const availableFieldsForKanban =
     objectMetadataItem?.fields.filter(
-      (field) => field.type === FieldMetadataType.Select,
+      (field) => field.type === FieldMetadataType.SELECT,
     ) ?? [];
 
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
 
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
 
     if (isDefined(objectMetadataItem?.namePlural)) {
       navigate(
-        `/settings/objects/${getObjectSlug(
-          objectMetadataItem,
-        )}/new-field/configure?fieldType=${FieldMetadataType.Select}`,
+        SettingsPath.ObjectNewFieldConfigure,
+        {
+          objectNamePlural: objectMetadataItem.namePlural,
+        },
+        {
+          fieldType: FieldMetadataType.SELECT,
+        },
       );
     } else {
-      navigate(`/settings/objects`);
+      navigate(SettingsPath.Objects);
     }
   }, [
     setNavigationMemorizedUrl,

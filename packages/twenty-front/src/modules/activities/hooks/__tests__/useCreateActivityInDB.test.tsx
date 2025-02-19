@@ -47,7 +47,8 @@ const mocks: MockedResponse[] = [
                   noteId
                   opportunityId
                   personId
-                  rocketId
+                  petId
+                  surveyResultId
                   taskId
                   type
                   updatedAt

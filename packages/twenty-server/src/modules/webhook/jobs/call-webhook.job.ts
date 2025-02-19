@@ -1,6 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Logger } from '@nestjs/common';
 
+import crypto from 'crypto';
+
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -15,6 +17,7 @@ export type CallWebhookJobData = {
   eventDate: Date;
   record: any;
   updatedFields?: string[];
+  secret?: string;
 };
 
 @Processor(MessageQueue.webhookQueue)
@@ -25,6 +28,17 @@ export class CallWebhookJob {
     private readonly analyticsService: AnalyticsService,
   ) {}
 
+  private generateSignature(
+    payload: CallWebhookJobData,
+    secret: string,
+    timestamp: string,
+  ): string {
+    return crypto
+      .createHmac('sha256', secret)
+      .update(`${timestamp}:${JSON.stringify(payload)}`)
+      .digest('hex');
+  }
+
   @Process(CallWebhookJob.name)
   async handle(data: CallWebhookJobData): Promise<void> {
     const commonPayload = {
@@ -34,10 +48,30 @@ export class CallWebhookJob {
     };
 
     try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const { secret, ...payloadWithoutSecret } = data;
+
+      if (secret) {
+        headers['X-Twenty-Webhook-Timestamp'] = Date.now().toString();
+        headers['X-Twenty-Webhook-Signature'] = this.generateSignature(
+          payloadWithoutSecret,
+          secret,
+          headers['X-Twenty-Webhook-Timestamp'],
+        );
+        headers['X-Twenty-Webhook-Nonce'] = crypto
+          .randomBytes(16)
+          .toString('hex');
+      }
+
       const response = await this.httpService.axiosRef.post(
         data.targetUrl,
-        data,
+        payloadWithoutSecret,
+        { headers },
       );
+
       const success = response.status >= 200 && response.status < 300;
       const eventInput = {
         action: 'webhook.response',

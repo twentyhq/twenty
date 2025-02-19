@@ -1,7 +1,7 @@
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useCurrentViewViewFilterGroup = ({
   viewFilterGroupId,

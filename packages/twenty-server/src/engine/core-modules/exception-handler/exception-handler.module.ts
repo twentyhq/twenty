@@ -9,12 +9,13 @@ import {
   OPTIONS_TYPE,
 } from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 
 @Global()
 @Module({
-  providers: [ExceptionHandlerService],
-  exports: [ExceptionHandlerService],
+  providers: [ExceptionHandlerService, HttpExceptionHandlerService],
+  exports: [ExceptionHandlerService, HttpExceptionHandlerService],
 })
 export class ExceptionHandlerModule extends ConfigurableModuleClass {
   static forRoot(options: typeof OPTIONS_TYPE): DynamicModule {

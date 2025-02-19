@@ -2,14 +2,15 @@ import { Nullable } from 'twenty-ui';
 
 import { useDateField } from '@/object-record/record-field/meta-types/hooks/useDateField';
 import { DateInput } from '@/ui/field/input/components/DateInput';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 
 type FieldInputEvent = (persist: () => void) => void;
 
 type DateFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onClear?: FieldInputEvent;
@@ -23,7 +24,7 @@ export const DateFieldInput = ({
   onClear,
   onSubmit,
 }: DateFieldInputProps) => {
-  const { fieldValue, setDraftValue } = useDateField();
+  const { fieldValue, setDraftValue, hotkeyScope } = useDateField();
 
   const persistField = usePersistField();
 
@@ -31,9 +32,13 @@ export const DateFieldInput = ({
     if (!isDefined(newDate)) {
       persistField(null);
     } else {
-      const newDateISO = newDate?.toISOString();
+      const newDateWithoutTime = `${newDate?.getFullYear()}-${(
+        newDate?.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, '0')}-${newDate?.getDate().toString().padStart(2, '0')}`;
 
-      persistField(newDateISO);
+      persistField(newDateWithoutTime);
     }
   };
 
@@ -50,10 +55,10 @@ export const DateFieldInput = ({
   };
 
   const handleClickOutside = (
-    _event: MouseEvent | TouchEvent,
+    event: MouseEvent | TouchEvent,
     newDate: Nullable<Date>,
   ) => {
-    onClickOutside?.(() => persistDate(newDate));
+    onClickOutside?.(() => persistDate(newDate), event);
   };
 
   const handleChange = (newDate: Nullable<Date>) => {
@@ -76,6 +81,7 @@ export const DateFieldInput = ({
       onChange={handleChange}
       onClear={handleClear}
       onSubmit={handleSubmit}
+      hotkeyScope={hotkeyScope}
     />
   );
 };

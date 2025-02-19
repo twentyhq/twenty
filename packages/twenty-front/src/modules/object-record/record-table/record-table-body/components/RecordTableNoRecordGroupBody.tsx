@@ -1,4 +1,5 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableNoRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableNoRecordGroupBodyContextProvider';
 import { RecordTableNoRecordGroupRows } from '@/object-record/record-table/components/RecordTableNoRecordGroupRows';
 import { RecordTableBodyDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContextProvider';
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
@@ -21,11 +22,13 @@ export const RecordTableNoRecordGroupBody = () => {
   }
 
   return (
-    <RecordTableBodyDragDropContextProvider>
-      <RecordTableBodyDroppable>
-        <RecordTablePendingRow />
-        <RecordTableNoRecordGroupRows />
-      </RecordTableBodyDroppable>
-    </RecordTableBodyDragDropContextProvider>
+    <RecordTableNoRecordGroupBodyContextProvider>
+      <RecordTableBodyDragDropContextProvider>
+        <RecordTableBodyDroppable>
+          <RecordTablePendingRow />
+          <RecordTableNoRecordGroupRows />
+        </RecordTableBodyDroppable>
+      </RecordTableBodyDragDropContextProvider>
+    </RecordTableNoRecordGroupBodyContextProvider>
   );
 };

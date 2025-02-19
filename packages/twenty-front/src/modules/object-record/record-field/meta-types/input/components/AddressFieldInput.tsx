@@ -4,10 +4,13 @@ import { AddressInput } from '@/ui/field/input/components/AddressInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 
-import { FieldInputEvent } from './DateTimeFieldInput';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from './DateTimeFieldInput';
 
 export type AddressFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
@@ -60,7 +63,7 @@ export const AddressFieldInput = ({
     event: MouseEvent | TouchEvent,
     newAddress: FieldAddressDraftValue,
   ) => {
-    onClickOutside?.(() => persistField(convertToAddress(newAddress)));
+    onClickOutside?.(() => persistField(convertToAddress(newAddress)), event);
   };
 
   const handleChange = (newAddress: FieldAddressDraftValue) => {

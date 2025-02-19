@@ -10,7 +10,7 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   objectMetadataItem,
@@ -24,6 +24,10 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   const apolloClient = useApolloClient();
 
   return (record: ObjectRecord) => {
+    const recordGqlFields = generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+      record,
+    });
     const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
@@ -33,9 +37,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
             objectMetadataItems,
             objectMetadataItem,
             computeReferences: true,
-            recordGqlFields: generateDepthOneRecordGqlFields({
-              objectMetadataItem,
-            }),
+            recordGqlFields,
           })}
         `;
 

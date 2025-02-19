@@ -2,15 +2,22 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -33,12 +40,17 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         UserWorkspace,
         AppToken,
         KeyValuePair,
-        FeatureFlagEntity,
+        FeatureFlag,
         BillingSubscription,
         BillingSubscriptionItem,
+        BillingMeter,
+        BillingCustomer,
+        BillingProduct,
+        BillingPrice,
         BillingEntitlement,
         PostgresCredentials,
         WorkspaceSSOIdentityProvider,
+        TwoFactorMethod,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
@@ -96,9 +108,10 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     const workspaceDataSource = new DataSource({
       url: dataSource.url ?? this.environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging: this.environmentService.get('DEBUG_MODE')
-        ? ['query', 'error']
-        : ['error'],
+      logging:
+        this.environmentService.get('NODE_ENV') === NodeEnvironment.development
+          ? ['query', 'error']
+          : ['error'],
       schema,
       ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {

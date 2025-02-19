@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent, IconX } from 'twenty-ui';
 
-const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
+const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
   background-color: ${({ theme, variant }) => {
     switch (variant) {
@@ -33,35 +33,44 @@ const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
         return theme.color.blue;
     }
   }};
+  height: 26px;
+  box-sizing: border-box;
   cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(0.5) + ' ' + theme.spacing(2)};
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(0.5)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  column-gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   white-space: nowrap;
 
-  max-height: ${({ theme }) => theme.spacing(4.5)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`
   align-items: center;
   display: flex;
-  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledDelete = styled.div<{ variant: SortOrFitlerChipVariant }>`
+const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
+  box-sizing: border-box;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
   align-items: center;
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing(0.5)};
-  display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  margin-top: 1px;
   user-select: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  color: inherit;
+
   &:hover {
     background-color: ${({ theme, variant }) => {
       switch (variant) {
@@ -80,12 +89,12 @@ const StyledLabelKey = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-type SortOrFitlerChipVariant = 'default' | 'danger';
+export type SortOrFilterChipVariant = 'default' | 'danger';
 
 type SortOrFilterChipProps = {
   labelKey?: string;
   labelValue: string;
-  variant?: SortOrFitlerChipVariant;
+  variant?: SortOrFilterChipVariant;
   Icon?: IconComponent;
   onRemove: () => void;
   onClick?: () => void;

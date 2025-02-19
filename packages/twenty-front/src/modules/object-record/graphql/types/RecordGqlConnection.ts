@@ -14,4 +14,5 @@ export type RecordGqlConnection = {
     totalCount?: number;
   };
   totalCount?: number;
+  [aggregateFieldName: string]: any;
 };

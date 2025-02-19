@@ -1,9 +1,21 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
-  constructor() {
+  constructor(
+    private readonly guardRedirectService: GuardRedirectService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
+    private readonly domainManagerService: DomainManagerService,
+  ) {
     super({
       prompt: 'select_account',
     });
@@ -11,21 +23,30 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const workspaceInviteHash = request.query.inviteHash;
-    const workspacePersonalInviteToken = request.query.inviteToken;
+    let workspace: Workspace | null = null;
 
-    if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
-      request.params.workspaceInviteHash = workspaceInviteHash;
+    try {
+      if (
+        request.query.workspaceId &&
+        typeof request.query.workspaceId === 'string'
+      ) {
+        request.params.workspaceId = request.query.workspaceId;
+        workspace = await this.workspaceRepository.findOneBy({
+          id: request.query.workspaceId,
+        });
+      }
+
+      return (await super.canActivate(context)) as boolean;
+    } catch (err) {
+      this.guardRedirectService.dispatchErrorFromGuard(
+        context,
+        err,
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+          workspace,
+        ),
+      );
+
+      return false;
     }
-
-    if (
-      workspacePersonalInviteToken &&
-      typeof workspacePersonalInviteToken === 'string'
-    ) {
-      request.params.workspacePersonalInviteToken =
-        workspacePersonalInviteToken;
-    }
-
-    return (await super.canActivate(context)) as boolean;
   }
 }

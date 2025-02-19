@@ -2,13 +2,14 @@ import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 export const generateFakeObjectRecordEvent = (
   objectMetadataEntity: ObjectMetadataEntity,
   action: DatabaseEventAction,
-): OutputSchema => {
+): BaseOutputSchema => {
   const recordId = v4();
   const userId = v4();
   const workspaceMemberId = v4();
@@ -16,32 +17,40 @@ export const generateFakeObjectRecordEvent = (
   const after = generateFakeObjectRecord(objectMetadataEntity);
   const formattedObjectMetadataEntity = Object.entries(
     objectMetadataEntity,
-  ).reduce((acc: OutputSchema, [key, value]) => {
-    acc[key] = { isLeaf: true, value };
+  ).reduce((acc: BaseOutputSchema, [key, value]) => {
+    acc[key] = { isLeaf: true, value, label: camelToTitleCase(key) };
 
     return acc;
   }, {});
 
-  const baseResult: OutputSchema = {
-    recordId: { isLeaf: true, type: 'string', value: recordId },
-    userId: { isLeaf: true, type: 'string', value: userId },
+  const baseResult: BaseOutputSchema = {
+    recordId: {
+      isLeaf: true,
+      type: 'string',
+      value: recordId,
+      label: 'Record ID',
+    },
+    userId: { isLeaf: true, type: 'string', value: userId, label: 'User ID' },
     workspaceMemberId: {
       isLeaf: true,
       type: 'string',
       value: workspaceMemberId,
+      label: 'Workspace Member ID',
     },
     objectMetadata: {
       isLeaf: false,
       value: formattedObjectMetadataEntity,
+      label: 'Object Metadata',
     },
   };
 
   if (action === DatabaseEventAction.CREATED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.after': {
         isLeaf: false,
-        value: { after: { isLeaf: false, value: after } },
+        value: after,
+        label: 'Record Fields',
       },
     };
   }
@@ -54,9 +63,10 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before },
-          after: { isLeaf: false, value: after },
+          before: { isLeaf: false, value: before, label: 'Before Update' },
+          after: { isLeaf: false, value: after, label: 'After Update' },
         },
+        label: 'Record Fields',
       },
     };
   }
@@ -64,11 +74,10 @@ export const generateFakeObjectRecordEvent = (
   if (action === DatabaseEventAction.DELETED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.before': {
         isLeaf: false,
-        value: {
-          before: { isLeaf: false, value: before },
-        },
+        value: before,
+        label: 'Record Fields',
       },
     };
   }
@@ -76,11 +85,10 @@ export const generateFakeObjectRecordEvent = (
   if (action === DatabaseEventAction.DESTROYED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.before': {
         isLeaf: false,
-        value: {
-          before: { isLeaf: false, value: before },
-        },
+        value: before,
+        label: 'Record Fields',
       },
     };
   }

@@ -1,21 +1,21 @@
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { z } from 'zod';
 
 export const getInitialFilterValue = (
   newType: FilterableFieldType,
-  newOperand: ViewFilterOperand,
+  newOperand: RecordFilterOperand,
   oldValue?: string,
   oldDisplayValue?: string,
-): Pick<Filter, 'value' | 'displayValue'> | Record<string, never> => {
+): Pick<RecordFilter, 'value' | 'displayValue'> | Record<string, never> => {
   switch (newType) {
     case 'DATE':
     case 'DATE_TIME': {
       const activeDatePickerOperands = [
-        ViewFilterOperand.IsBefore,
-        ViewFilterOperand.Is,
-        ViewFilterOperand.IsAfter,
+        RecordFilterOperand.IsBefore,
+        RecordFilterOperand.Is,
+        RecordFilterOperand.IsAfter,
       ];
 
       if (activeDatePickerOperands.includes(newOperand)) {
@@ -29,7 +29,7 @@ export const getInitialFilterValue = (
         return { value, displayValue };
       }
 
-      if (newOperand === ViewFilterOperand.IsRelative) {
+      if (newOperand === RecordFilterOperand.IsRelative) {
         return { value: '', displayValue: '' };
       }
       break;

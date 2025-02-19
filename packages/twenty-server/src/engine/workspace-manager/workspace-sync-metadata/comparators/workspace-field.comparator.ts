@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import diff from 'microdiff';
+import { FieldMetadataType } from 'twenty-shared';
 
 import {
   ComparatorAction,
@@ -23,10 +24,23 @@ const commonFieldPropertiesToIgnore = [
   'gate',
   'asExpression',
   'generatedType',
-  'defaultValue',
+  'isLabelSyncedWithName',
 ];
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;
+
+const shouldNotOverrideDefaultValue = (
+  fieldMetadata: FieldMetadataEntity | ComputedPartialFieldMetadata,
+) => {
+  return [
+    FieldMetadataType.BOOLEAN,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.MULTI_SELECT,
+    FieldMetadataType.CURRENCY,
+    FieldMetadataType.PHONES,
+    FieldMetadataType.ADDRESS,
+  ].includes(fieldMetadata.type);
+};
 
 const shouldSkipFieldCreation = (
   standardFieldMetadata: ComputedPartialFieldMetadata | undefined,
@@ -55,7 +69,17 @@ export class WorkspaceFieldComparator {
     const originalFieldMetadataMap = transformMetadataForComparison(
       filteredOriginalFieldCollection,
       {
-        shouldIgnoreProperty: (property) => {
+        shouldIgnoreProperty: (
+          property,
+          fieldMetadata: FieldMetadataEntity,
+        ) => {
+          if (
+            property === 'defaultValue' &&
+            shouldNotOverrideDefaultValue(fieldMetadata)
+          ) {
+            return true;
+          }
+
           if (commonFieldPropertiesToIgnore.includes(property)) {
             return true;
           }
@@ -72,7 +96,17 @@ export class WorkspaceFieldComparator {
     const standardFieldMetadataMap = transformMetadataForComparison(
       standardFieldMetadataCollection,
       {
-        shouldIgnoreProperty: (property) => {
+        shouldIgnoreProperty: (
+          property,
+          fieldMetadata: ComputedPartialFieldMetadata,
+        ) => {
+          if (
+            property === 'defaultValue' &&
+            shouldNotOverrideDefaultValue(fieldMetadata)
+          ) {
+            return true;
+          }
+
           if (commonFieldPropertiesToIgnore.includes(property)) {
             return true;
           }
@@ -157,7 +191,7 @@ export class WorkspaceFieldComparator {
           if (
             (fieldPropertiesToStringify as readonly string[]).includes(property)
           ) {
-            fieldPropertiesToUpdateMap[id][property] = JSON.parse(
+            fieldPropertiesToUpdateMap[id][property] = this.parseJSONOrString(
               difference.value,
             );
           } else {
@@ -196,5 +230,17 @@ export class WorkspaceFieldComparator {
     }
 
     return result;
+  }
+
+  private parseJSONOrString(value: string | null): string | object | null {
+    if (value === null) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
   }
 }

@@ -4,7 +4,6 @@ import { RecordGroupDefinition } from '@/object-record/record-group/types/Record
 
 type RecordBoardColumnContextProps = {
   columnDefinition: RecordGroupDefinition;
-  recordCount: number;
   columnId: string;
   recordIds: string[];
 };

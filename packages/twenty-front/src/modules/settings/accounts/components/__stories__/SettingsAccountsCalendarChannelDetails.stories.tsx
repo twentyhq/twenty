@@ -20,7 +20,7 @@ const meta: Meta<typeof SettingsAccountsCalendarChannelDetails> = {
       id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',
       isContactAutoCreationEnabled: true,
       isSyncEnabled: true,
-      visibility: CalendarChannelVisibility.ShareEverything,
+      visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     },
   },
   argTypes: {

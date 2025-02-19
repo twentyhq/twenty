@@ -1,8 +1,5 @@
-import { useApolloClient, useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
+import { useMutation } from '@apollo/client';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import {
   CreateObjectInput,
   CreateOneObjectMetadataItemMutation,
@@ -10,17 +7,14 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { CREATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
-import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useCreateOneObjectMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
-  const apolloClient = useApolloClient();
-
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
+  const { refreshObjectMetadataItems } =
+    useRefreshObjectMetadataItems('network-only');
 
   const [mutate] = useMutation<
     CreateOneObjectMetadataItemMutation,
@@ -34,22 +28,14 @@ export const useCreateOneObjectMetadataItem = () => {
       variables: {
         input: { object: input },
       },
-      awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
+
+    await refreshObjectMetadataItems();
 
     return createdObjectMetadata;
   };
 
-  const findManyRecordsCache = async () => {
-    await apolloClient.query({
-      query: findManyRecordsQuery,
-      fetchPolicy: 'network-only',
-    });
-  };
-
   return {
     createOneObjectMetadataItem,
-    findManyRecordsCache,
   };
 };

@@ -22,12 +22,12 @@ export class CalendarOngoingStaleCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
-      CalendarOngoingStaleCronJob.name,
-      undefined,
-      {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: CalendarOngoingStaleCronJob.name,
+      data: undefined,
+      options: {
         repeat: { pattern: CALENDAR_ONGOING_STALE_CRON_PATTERN },
       },
-    );
+    });
   }
 }

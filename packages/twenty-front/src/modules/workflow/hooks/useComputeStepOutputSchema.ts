@@ -1,6 +1,5 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { COMPUTE_STEP_OUTPUT_SCHEMA } from '@/workflow/graphql/mutations/computeStepOutputSchema';
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 import {
   ComputeStepOutputSchemaInput,
   ComputeStepOutputSchemaMutation,
@@ -8,12 +7,12 @@ import {
 } from '~/generated/graphql';
 
 export const useComputeStepOutputSchema = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
   const [mutate] = useMutation<
     ComputeStepOutputSchemaMutation,
     ComputeStepOutputSchemaMutationVariables
   >(COMPUTE_STEP_OUTPUT_SCHEMA, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const computeStepOutputSchema = async (

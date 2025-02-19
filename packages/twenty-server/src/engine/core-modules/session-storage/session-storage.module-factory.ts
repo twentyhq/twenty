@@ -1,23 +1,34 @@
-import { Logger } from '@nestjs/common';
+import { createHash } from 'crypto';
 
-import { createClient } from 'redis';
 import RedisStore from 'connect-redis';
 import session from 'express-session';
+import { createClient } from 'redis';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 export const getSessionStorageOptions = (
   environmentService: EnvironmentService,
 ): session.SessionOptions => {
-  const cacheStorageType = environmentService.get('CACHE_STORAGE_TYPE');
+  const cacheStorageType = CacheStorageType.Redis;
 
   const SERVER_URL = environmentService.get('SERVER_URL');
 
-  const sessionStorage = {
-    secret: environmentService.get('SESSION_STORE_SECRET'),
+  const appSecret = environmentService.get('APP_SECRET');
+
+  if (!appSecret) {
+    throw new Error('APP_SECRET is not set');
+  }
+
+  const sessionSecret = createHash('sha256')
+    .update(`${appSecret}SESSION_STORE_SECRET`)
+    .digest('hex');
+
+  const sessionStorage: session.SessionOptions = {
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       secure: !!(SERVER_URL && SERVER_URL.startsWith('https')),
       maxAge: 1000 * 60 * 30, // 30 minutes
@@ -25,13 +36,13 @@ export const getSessionStorageOptions = (
   };
 
   switch (cacheStorageType) {
-    case CacheStorageType.Memory: {
+    /* case CacheStorageType.Memory: {
       Logger.warn(
         'Memory session storage is not recommended for production. Prefer Redis.',
       );
 
       return sessionStorage;
-    }
+    }*/
     case CacheStorageType.Redis: {
       const connectionString = environmentService.get('REDIS_URL');
 

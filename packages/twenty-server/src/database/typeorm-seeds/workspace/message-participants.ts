@@ -1,8 +1,8 @@
 import { EntityManager } from 'typeorm';
 
-import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
-import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
 import { DEV_SEED_MESSAGE_IDS } from 'src/database/typeorm-seeds/workspace/messages';
+import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/seedPeople';
+import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 
 const tableName = 'messageParticipant';
 

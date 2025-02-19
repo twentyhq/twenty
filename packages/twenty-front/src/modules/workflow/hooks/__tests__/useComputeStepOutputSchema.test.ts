@@ -6,10 +6,7 @@ import { useComputeStepOutputSchema } from '../useComputeStepOutputSchema';
 jest.mock('@apollo/client', () => ({
   ...jest.requireActual('@apollo/client'),
   useMutation: jest.fn(),
-}));
-
-jest.mock('@/object-metadata/hooks/useApolloMetadataClient', () => ({
-  useApolloMetadataClient: () => ({}),
+  useApolloClient: () => ({}),
 }));
 
 describe('useComputeStepOutputSchema', () => {

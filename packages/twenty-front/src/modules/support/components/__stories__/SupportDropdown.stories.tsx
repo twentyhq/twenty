@@ -9,7 +9,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockDefaultWorkspace,
+  mockCurrentWorkspace,
   mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
@@ -29,7 +29,7 @@ const meta: Meta<typeof SupportDropdown> = {
         currentWorkspaceMemberState,
       );
 
-      setCurrentWorkspace(mockDefaultWorkspace);
+      setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setCurrentUser(mockedUserData);
       setSupportChat({ supportDriver: 'front', supportFrontChatId: '1234' });
@@ -52,6 +52,9 @@ export const Default: Story = {
 
     expect(await canvas.findByText('Support')).toBeInTheDocument();
     await userEvent.click(canvas.getByText('Support'));
+
+    // Add delay to account for the timeout in useSupportChat
+    await new Promise((resolve) => setTimeout(resolve, 600));
 
     expect(await canvas.findByText('Documentation')).toBeInTheDocument();
     expect(await canvas.findByText('Talk to us')).toBeInTheDocument();

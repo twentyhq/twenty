@@ -2,6 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { Select } from '@/ui/input/components/Select';
 import { IconTextWrap } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -44,35 +45,39 @@ export const SettingsDataModelFieldTextForm = ({
           <>
             <SettingsOptionCardContentSelect
               Icon={IconTextWrap}
-              dropdownId="text-wrap"
               title="Wrap on record pages"
               description="Display text on multiple lines"
-              value={displayedMaxRows}
-              onChange={(value) => onChange({ displayedMaxRows: value })}
-              disabled={disabled}
-              options={[
-                {
-                  label: 'Deactivated',
-                  value: 0,
-                },
-                {
-                  label: 'First 2 lines',
-                  value: 2,
-                },
-                {
-                  label: 'First 5 lines',
-                  value: 5,
-                },
-                {
-                  label: 'First 10 lines',
-                  value: 10,
-                },
-                {
-                  label: 'All lines',
-                  value: 99,
-                },
-              ]}
-            />
+            >
+              <Select<number>
+                dropdownId="text-wrap"
+                value={displayedMaxRows}
+                onChange={(value) => onChange({ displayedMaxRows: value })}
+                disabled={disabled}
+                options={[
+                  {
+                    label: 'Deactivated',
+                    value: 0,
+                  },
+                  {
+                    label: 'First 2 lines',
+                    value: 2,
+                  },
+                  {
+                    label: 'First 5 lines',
+                    value: 5,
+                  },
+                  {
+                    label: 'First 10 lines',
+                    value: 10,
+                  },
+                  {
+                    label: 'All lines',
+                    value: 99,
+                  },
+                ]}
+                selectSizeVariant="small"
+              />
+            </SettingsOptionCardContentSelect>
           </>
         );
       }}

@@ -7,11 +7,13 @@ import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-de
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
-import { UpgradeTo0_32CommandModule } from 'src/database/commands/upgrade-version/0-32/0-32-upgrade-version.module';
-import { UpgradeTo0_33CommandModule } from 'src/database/commands/upgrade-version/0-33/0-33-upgrade-version.module';
+import { UpgradeTo0_40CommandModule } from 'src/database/commands/upgrade-version/0-40/0-40-upgrade-version.module';
+import { UpgradeTo0_41CommandModule } from 'src/database/commands/upgrade-version/0-41/0-41-upgrade-version.module';
+import { UpgradeTo0_42CommandModule } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.module';
+import { UpgradeTo0_43CommandModule } from 'src/database/commands/upgrade-version/0-43/0-43-upgrade-version.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -21,6 +23,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { SeederModule } from 'src/engine/seeder/seeder.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -28,11 +31,12 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 
 @Module({
   imports: [
+    SeederModule,
     WorkspaceManagerModule,
     DataSourceModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
-      [Workspace, BillingSubscription, FeatureFlagEntity],
+      [Workspace, BillingSubscription, FeatureFlag],
       'core',
     ),
     TypeOrmModule.forFeature(
@@ -47,8 +51,10 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     DataSeedDemoWorkspaceModule,
     WorkspaceCacheStorageModule,
     WorkspaceMetadataVersionModule,
-    UpgradeTo0_32CommandModule,
-    UpgradeTo0_33CommandModule,
+    UpgradeTo0_40CommandModule,
+    UpgradeTo0_41CommandModule,
+    UpgradeTo0_42CommandModule,
+    UpgradeTo0_43CommandModule,
     FeatureFlagModule,
   ],
   providers: [

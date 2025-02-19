@@ -25,7 +25,7 @@ export const initialFavorites = [
     person: { id: '1', name: 'John Doe' },
     company: { id: '2', name: 'ABC Corp' },
     workspaceMemberId: '1',
-    favoriteFolderId: undefined,
+    favoriteFolderId: '1',
   },
   {
     __typename: 'Favorite',
@@ -40,7 +40,7 @@ export const initialFavorites = [
     person: { id: '3', name: 'Jane Doe' },
     company: { id: '4', name: 'Company Test' },
     workspaceMemberId: '1',
-    favoriteFolderId: undefined,
+    favoriteFolderId: '1',
 
   },
   {
@@ -54,7 +54,7 @@ export const initialFavorites = [
     link: 'example.com',
     recordId: '1',
     workspaceMemberId: '1',
-    favoriteFolderId: undefined,
+    favoriteFolderId: '1',
   },
 ];
 
@@ -69,7 +69,7 @@ export const sortedFavorites = [
     link: '/object/person/1',
     objectNameSingular: 'person',
     workspaceMemberId: '1',
-    favoriteFolderId: undefined,
+    favoriteFolderId: '1',
     __typename: 'Favorite',
   },
   {
@@ -82,7 +82,7 @@ export const sortedFavorites = [
     link: '/object/person/3',
     objectNameSingular: 'person',
     workspaceMemberId: '1',
-    favoriteFolderId: undefined,
+    favoriteFolderId: '1',
     __typename: 'Favorite',
   },
   {
@@ -94,11 +94,380 @@ export const sortedFavorites = [
     link: 'example.com',
     recordId: '1',
     avatarType: 'squared',
-    favoriteFolderId: undefined,
+    favoriteFolderId: '1',
     workspaceMemberId: '1',
     __typename: 'Favorite',
   },
 ];
+
+const UPDATE_ONE_FAVORITE_MUTATION =  gql`
+mutation UpdateOneFavorite(
+  $idToUpdate: ID!
+  $input: FavoriteUpdateInput!
+) {
+  updateFavorite(id: $idToUpdate, data: $input) {
+    __typename
+    company {
+      __typename
+      accountOwnerId
+      address {
+        addressStreet1
+        addressStreet2
+        addressCity
+        addressState
+        addressCountry
+        addressPostcode
+        addressLat
+        addressLng
+      }
+      annualRecurringRevenue {
+        amountMicros
+        currencyCode
+      }
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      domainName {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      employees
+      id
+      idealCustomerProfile
+      introVideo {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      linkedinLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      name
+      position
+      tagline
+      updatedAt
+      visaSponsorship
+      workPolicy
+      xLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+    }
+    companyId
+    createdAt
+    deletedAt
+    favoriteFolder {
+      __typename
+      createdAt
+      deletedAt
+      id
+      name
+      position
+      updatedAt
+    }
+    favoriteFolderId
+    id
+    note {
+      __typename
+      body
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      id
+      position
+      title
+      updatedAt
+    }
+    noteId
+    opportunity {
+      __typename
+      amount {
+        amountMicros
+        currencyCode
+      }
+      closeDate
+      companyId
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      id
+      name
+      pointOfContactId
+      position
+      stage
+      updatedAt
+    }
+    opportunityId
+    person {
+      __typename
+      avatarUrl
+      city
+      companyId
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      emails {
+        primaryEmail
+        additionalEmails
+      }
+      id
+      intro
+      jobTitle
+      linkedinLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      name {
+        firstName
+        lastName
+      }
+      performanceRating
+      phones {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+      position
+      updatedAt
+      whatsapp {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+      workPreference
+      xLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+    }
+    personId
+    pet {
+      __typename
+      age
+      averageCostOfKibblePerMonth {
+        amountMicros
+        currencyCode
+      }
+      bio
+      birthday
+      comments
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      extraData
+      id
+      interestingFacts
+      isGoodWithKids
+      location {
+        addressStreet1
+        addressStreet2
+        addressCity
+        addressState
+        addressCountry
+        addressPostcode
+        addressLat
+        addressLng
+      }
+      makesOwnerThinkOf {
+        firstName
+        lastName
+      }
+      name
+      pictures {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      position
+      soundSwag
+      species
+      traits
+      updatedAt
+      vetEmail {
+        primaryEmail
+        additionalEmails
+      }
+      vetPhone {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+    }
+    petId
+    position
+    surveyResult {
+      __typename
+      averageEstimatedNumberOfAtomsInTheUniverse
+      comments
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      id
+      name
+      participants
+      percentageOfCompletion
+      position
+      score
+      shortNotes
+      updatedAt
+    }
+    surveyResultId
+    task {
+      __typename
+      assigneeId
+      body
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      dueAt
+      id
+      position
+      status
+      title
+      updatedAt
+    }
+    taskId
+    updatedAt
+    view {
+      __typename
+      createdAt
+      deletedAt
+      icon
+      id
+      isCompact
+      kanbanAggregateOperation
+      kanbanAggregateOperationFieldMetadataId
+      kanbanFieldMetadataId
+      key
+      name
+      objectMetadataId
+      position
+      type
+      updatedAt
+    }
+    viewId
+    workflow {
+      __typename
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      id
+      lastPublishedVersionId
+      name
+      position
+      statuses
+      updatedAt
+    }
+    workflowId
+    workflowRun {
+      __typename
+      context
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      endedAt
+      id
+      name
+      output
+      position
+      startedAt
+      status
+      updatedAt
+      workflowId
+      workflowVersionId
+    }
+    workflowRunId
+    workflowVersion {
+      __typename
+      createdAt
+      deletedAt
+      id
+      name
+      position
+      status
+      steps
+      trigger
+      updatedAt
+      workflowId
+    }
+    workflowVersionId
+    workspaceMember {
+      __typename
+      avatarUrl
+      colorScheme
+      createdAt
+      dateFormat
+      deletedAt
+      id
+      locale
+      name {
+        firstName
+        lastName
+      }
+      timeFormat
+      timeZone
+      updatedAt
+      userEmail
+      userId
+    }
+    workspaceMemberId
+  }
+}
+`;
 
 export const mocks = [
   {
@@ -129,6 +498,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               domainName {
@@ -183,6 +553,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               id
@@ -204,6 +575,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               id
@@ -224,6 +596,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               emails {
@@ -246,6 +619,7 @@ export const mocks = [
               phones {
                 primaryPhoneNumber
                 primaryPhoneCountryCode
+                primaryPhoneCallingCode
                 additionalPhones
               }
               position
@@ -253,6 +627,7 @@ export const mocks = [
               whatsapp {
                 primaryPhoneNumber
                 primaryPhoneCountryCode
+                primaryPhoneCallingCode
                 additionalPhones
               }
               workPreference
@@ -263,22 +638,88 @@ export const mocks = [
               }
             }
             personId
-            position
-            rocket {
+            pet {
               __typename
+              age
+              averageCostOfKibblePerMonth {
+                amountMicros
+                currencyCode
+              }
+              bio
+              birthday
+              comments
               createdAt
               createdBy {
                 source
                 workspaceMemberId
                 name
+                context
+              }
+              deletedAt
+              extraData
+              id
+              interestingFacts
+              isGoodWithKids
+              location {
+                addressStreet1
+                addressStreet2
+                addressCity
+                addressState
+                addressCountry
+                addressPostcode
+                addressLat
+                addressLng
+              }
+              makesOwnerThinkOf {
+                firstName
+                lastName
+              }
+              name
+              pictures {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              position
+              soundSwag
+              species
+              traits
+              updatedAt
+              vetEmail {
+                primaryEmail
+                additionalEmails
+              }
+              vetPhone {
+                primaryPhoneNumber
+                primaryPhoneCountryCode
+                primaryPhoneCallingCode
+                additionalPhones
+              }
+            }
+            petId
+            position
+            surveyResult {
+              __typename
+              averageEstimatedNumberOfAtomsInTheUniverse
+              comments
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+                context
               }
               deletedAt
               id
               name
+              participants
+              percentageOfCompletion
               position
+              score
+              shortNotes
               updatedAt
             }
-            rocketId
+            surveyResultId
             task {
               __typename
               assigneeId
@@ -288,6 +729,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               dueAt
@@ -306,6 +748,8 @@ export const mocks = [
               icon
               id
               isCompact
+              kanbanAggregateOperation
+              kanbanAggregateOperationFieldMetadataId
               kanbanFieldMetadataId
               key
               name
@@ -318,6 +762,12 @@ export const mocks = [
             workflow {
               __typename
               createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+                context
+              }
               deletedAt
               id
               lastPublishedVersionId
@@ -329,11 +779,13 @@ export const mocks = [
             workflowId
             workflowRun {
               __typename
+              context
               createdAt
               createdBy {
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               endedAt
@@ -388,7 +840,7 @@ export const mocks = [
       variables: {
         input: {
           personId: favoriteTargetObjectId,
-          position: 3,
+          position: 1,
           workspaceMemberId: '1',
           favoriteFolderId: undefined,
           id: mockId,
@@ -430,295 +882,34 @@ export const mocks = [
   },
   {
     request: {
-      query: gql`
-        mutation UpdateOneFavorite(
-          $idToUpdate: ID!
-          $input: FavoriteUpdateInput!
-        ) {
-          updateFavorite(id: $idToUpdate, data: $input) {
-            __typename
-            company {
-              __typename
-              accountOwnerId
-              address {
-                addressStreet1
-                addressStreet2
-                addressCity
-                addressState
-                addressCountry
-                addressPostcode
-                addressLat
-                addressLng
-              }
-              annualRecurringRevenue {
-                amountMicros
-                currencyCode
-              }
-              createdAt
-              createdBy {
-                source
-                workspaceMemberId
-                name
-              }
-              deletedAt
-              domainName {
-                primaryLinkUrl
-                primaryLinkLabel
-                secondaryLinks
-              }
-              employees
-              id
-              idealCustomerProfile
-              introVideo {
-                primaryLinkUrl
-                primaryLinkLabel
-                secondaryLinks
-              }
-              linkedinLink {
-                primaryLinkUrl
-                primaryLinkLabel
-                secondaryLinks
-              }
-              name
-              position
-              tagline
-              updatedAt
-              visaSponsorship
-              workPolicy
-              xLink {
-                primaryLinkUrl
-                primaryLinkLabel
-                secondaryLinks
-              }
-            }
-            companyId
-            createdAt
-            deletedAt
-            favoriteFolder {
-              __typename
-              createdAt
-              deletedAt
-              id
-              name
-              position
-              updatedAt
-            }
-            favoriteFolderId
-            id
-            note {
-              __typename
-              body
-              createdAt
-              createdBy {
-                source
-                workspaceMemberId
-                name
-              }
-              deletedAt
-              id
-              position
-              title
-              updatedAt
-            }
-            noteId
-            opportunity {
-              __typename
-              amount {
-                amountMicros
-                currencyCode
-              }
-              closeDate
-              companyId
-              createdAt
-              createdBy {
-                source
-                workspaceMemberId
-                name
-              }
-              deletedAt
-              id
-              name
-              pointOfContactId
-              position
-              stage
-              updatedAt
-            }
-            opportunityId
-            person {
-              __typename
-              avatarUrl
-              city
-              companyId
-              createdAt
-              createdBy {
-                source
-                workspaceMemberId
-                name
-              }
-              deletedAt
-              emails {
-                primaryEmail
-                additionalEmails
-              }
-              id
-              intro
-              jobTitle
-              linkedinLink {
-                primaryLinkUrl
-                primaryLinkLabel
-                secondaryLinks
-              }
-              name {
-                firstName
-                lastName
-              }
-              performanceRating
-              phones {
-                primaryPhoneNumber
-                primaryPhoneCountryCode
-                additionalPhones
-              }
-              position
-              updatedAt
-              whatsapp {
-                primaryPhoneNumber
-                primaryPhoneCountryCode
-                additionalPhones
-              }
-              workPreference
-              xLink {
-                primaryLinkUrl
-                primaryLinkLabel
-                secondaryLinks
-              }
-            }
-            personId
-            position
-            rocket {
-              __typename
-              createdAt
-              createdBy {
-                source
-                workspaceMemberId
-                name
-              }
-              deletedAt
-              id
-              name
-              position
-              updatedAt
-            }
-            rocketId
-            task {
-              __typename
-              assigneeId
-              body
-              createdAt
-              createdBy {
-                source
-                workspaceMemberId
-                name
-              }
-              deletedAt
-              dueAt
-              id
-              position
-              status
-              title
-              updatedAt
-            }
-            taskId
-            updatedAt
-            view {
-              __typename
-              createdAt
-              deletedAt
-              icon
-              id
-              isCompact
-              kanbanFieldMetadataId
-              key
-              name
-              objectMetadataId
-              position
-              type
-              updatedAt
-            }
-            viewId
-            workflow {
-              __typename
-              createdAt
-              deletedAt
-              id
-              lastPublishedVersionId
-              name
-              position
-              statuses
-              updatedAt
-            }
-            workflowId
-            workflowRun {
-              __typename
-              createdAt
-              createdBy {
-                source
-                workspaceMemberId
-                name
-              }
-              deletedAt
-              endedAt
-              id
-              name
-              output
-              position
-              startedAt
-              status
-              updatedAt
-              workflowId
-              workflowVersionId
-            }
-            workflowRunId
-            workflowVersion {
-              __typename
-              createdAt
-              deletedAt
-              id
-              name
-              position
-              status
-              steps
-              trigger
-              updatedAt
-              workflowId
-            }
-            workflowVersionId
-            workspaceMember {
-              __typename
-              avatarUrl
-              colorScheme
-              createdAt
-              dateFormat
-              deletedAt
-              id
-              locale
-              name {
-                firstName
-                lastName
-              }
-              timeFormat
-              timeZone
-              updatedAt
-              userEmail
-              userId
-            }
-            workspaceMemberId
-          }
-        }
-      `,
+      query: UPDATE_ONE_FAVORITE_MUTATION,
       variables: {
         idToUpdate: '1',
         input: {
-          position: 2,
+          position: 3,
+        },
+      },
+    },
+    result: jest.fn(() => ({
+      data: {
+        updateFavorite: {
+          __typename: 'Favorite',
+          id: favoriteId,  
+          position: 3,
+        },
+      },
+    })),
+  },
+
+  // Mock for folder move
+  {
+    request: {
+      query: UPDATE_ONE_FAVORITE_MUTATION,
+      variables: {
+        idToUpdate: '1',
+        input: {
+          position: 1,
+          favoriteFolderId: '2',
         },
       },
     },
@@ -727,7 +918,32 @@ export const mocks = [
         updateFavorite: {
           __typename: 'Favorite',
           id: favoriteId,
-          position: 2,
+          position: 1,
+          favoriteFolderId: '2',
+        },
+      },
+    })),
+  },
+
+  // Mock for orphan favorites
+  {
+    request: {
+      query: UPDATE_ONE_FAVORITE_MUTATION,
+      variables: {
+        idToUpdate: '1',
+        input: {
+          position: 1,
+          favoriteFolderId: null,
+        },
+      },
+    },
+    result: jest.fn(() => ({
+      data: {
+        updateFavorite: {
+          __typename: 'Favorite',
+          id: favoriteId,
+          position: 1,
+          favoriteFolderId: null,
         },
       },
     })),

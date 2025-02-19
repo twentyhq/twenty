@@ -33,24 +33,18 @@ spec:
           image: twentycrm/twenty:latest
           imagePullPolicy: Always
           env:
-            - name: PORT
+            - name: NODE_PORT
               value: 3000
             - name: SERVER_URL
               value: "https://crm.example.com:443"
-            - name: FRONT_BASE_URL
-              value: "https://crm.example.com:443"
             - name: "PG_DATABASE_URL"
-              value: "postgres://postgres:postgres@twenty-db.twentycrm.svc.cluster.local/default"
+              value: "postgres://postgres:postgres@twentycrm-db.twentycrm.svc.cluster.local/default"
             - name: "REDIS_URL"
               value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
-            - name: ENABLE_DB_MIGRATIONS
-              value: "true"
             - name: SIGN_IN_PREFILLED
-              value: "true"
+              value: "false"
             - name: STORAGE_TYPE
               value: "local"
-            - name: "MESSAGE_QUEUE_TYPE"
-              value: "bull-mq"
             - name: "ACCESS_TOKEN_EXPIRES_IN"
               value: "7d"
             - name: "LOGIN_TOKEN_EXPIRES_IN"

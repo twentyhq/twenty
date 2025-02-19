@@ -1,12 +1,18 @@
 import { Scope } from '@nestjs/common';
 
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-run.workspace-service';
+import {
+  WorkflowRunException,
+  WorkflowRunExceptionCode,
+} from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
@@ -21,6 +27,8 @@ export class RunWorkflowJob {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly throttlerService: ThrottlerService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   @Process(RunWorkflowJob.name)
@@ -29,32 +37,72 @@ export class RunWorkflowJob {
     workflowRunId,
     payload,
   }: RunWorkflowJobData): Promise<void> {
-    await this.workflowRunWorkspaceService.startWorkflowRun(workflowRunId);
+    const context = {
+      trigger: payload,
+    };
 
-    const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
-        workflowVersionId,
-      );
+    try {
+      const workflowVersion =
+        await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
+          workflowVersionId,
+        );
 
-    const { steps, status } =
-      await this.workflowExecutorWorkspaceService.execute({
-        currentStepIndex: 0,
-        steps: workflowVersion.steps || [],
-        context: {
-          trigger: payload,
-        },
+      if (!workflowVersion.trigger || !workflowVersion.steps) {
+        throw new WorkflowRunException(
+          'Workflow version has no trigger or steps',
+          WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+        );
+      }
+
+      await this.workflowRunWorkspaceService.startWorkflowRun({
+        workflowRunId,
+        context,
         output: {
-          steps: {},
+          flow: {
+            trigger: workflowVersion.trigger,
+            steps: workflowVersion.steps,
+          },
+        },
+      });
+
+      await this.throttleExecution(workflowVersion.workflowId);
+
+      const { status } = await this.workflowExecutorWorkspaceService.execute({
+        workflowRunId,
+        currentStepIndex: 0,
+        steps: workflowVersion.steps ?? [],
+        context,
+        workflowExecutorState: {
+          stepsOutput: {},
           status: WorkflowRunStatus.RUNNING,
         },
       });
 
-    await this.workflowRunWorkspaceService.endWorkflowRun(
-      workflowRunId,
-      status,
-      {
-        steps,
-      },
-    );
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        status,
+      });
+    } catch (error) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        status: WorkflowRunStatus.FAILED,
+        error: error.message,
+      });
+    }
+  }
+
+  private async throttleExecution(workflowId: string) {
+    try {
+      await this.throttlerService.throttle(
+        `${workflowId}-workflow-execution`,
+        this.environmentService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
+        this.environmentService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
+      );
+    } catch (error) {
+      throw new WorkflowRunException(
+        'Workflow execution rate limit exceeded',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_LIMIT_REACHED,
+      );
+    }
   }
 }

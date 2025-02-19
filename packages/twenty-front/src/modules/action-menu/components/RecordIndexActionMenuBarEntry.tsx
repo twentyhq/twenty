@@ -1,7 +1,7 @@
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { i18n } from '@lingui/core';
 
 type RecordIndexActionMenuBarEntryProps = {
   entry: ActionMenuEntry;
@@ -13,11 +13,9 @@ const StyledButton = styled.div`
   cursor: pointer;
   display: flex;
   justify-content: center;
-
   padding: ${({ theme }) => theme.spacing(2)};
   transition: background ${({ theme }) => theme.animation.duration.fast} ease;
   user-select: none;
-
   &:hover {
     background: ${({ theme }) => theme.background.tertiary};
   }
@@ -32,10 +30,11 @@ export const RecordIndexActionMenuBarEntry = ({
   entry,
 }: RecordIndexActionMenuBarEntryProps) => {
   const theme = useTheme();
+
   return (
     <StyledButton onClick={() => entry.onClick?.()}>
       {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
-      <StyledButtonLabel>{entry.label}</StyledButtonLabel>
+      <StyledButtonLabel>{i18n._(entry.label)}</StyledButtonLabel>
     </StyledButton>
   );
 };

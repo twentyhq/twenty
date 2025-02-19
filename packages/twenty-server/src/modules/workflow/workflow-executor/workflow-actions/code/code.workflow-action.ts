@@ -36,6 +36,7 @@ export class CodeWorkflowAction implements WorkflowAction {
           workflowActionInput.serverlessFunctionId,
           workspaceId,
           workflowActionInput.serverlessFunctionInput,
+          workflowActionInput.serverlessFunctionVersion,
         );
 
       if (result.error) {

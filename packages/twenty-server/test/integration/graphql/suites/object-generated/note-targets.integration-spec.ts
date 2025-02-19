@@ -18,7 +18,8 @@ describe('noteTargetsResolver (e2e)', () => {
                 personId
                 companyId
                 opportunityId
-                rocketId
+                petId
+                surveyResultId
               }
             }
           }
@@ -28,7 +29,7 @@ describe('noteTargetsResolver (e2e)', () => {
 
     return client
       .post('/graphql')
-      .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
+      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -54,7 +55,8 @@ describe('noteTargetsResolver (e2e)', () => {
           expect(noteTargets).toHaveProperty('personId');
           expect(noteTargets).toHaveProperty('companyId');
           expect(noteTargets).toHaveProperty('opportunityId');
-          expect(noteTargets).toHaveProperty('rocketId');
+          expect(noteTargets).toHaveProperty('petId');
+          expect(noteTargets).toHaveProperty('surveyResultId');
         }
       });
   });

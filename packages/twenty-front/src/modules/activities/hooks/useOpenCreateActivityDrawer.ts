@@ -13,10 +13,14 @@ import { Note } from '@/activities/types/Note';
 import { NoteTarget } from '@/activities/types/NoteTarget';
 import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { IconList } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 export const useOpenCreateActivityDrawer = ({
@@ -31,7 +35,7 @@ export const useOpenCreateActivityDrawer = ({
   const setHotkeyScope = useSetHotkeyScope();
 
   const { createOneRecord: createOneActivity } = useCreateOneRecord<
-    Task | Note
+    (Task | Note) & { position: 'first' | 'last' }
   >({
     objectNameSingular: activityObjectNameSingular,
   });
@@ -60,6 +64,12 @@ export const useOpenCreateActivityDrawer = ({
     isUpsertingActivityInDBState,
   );
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
+  const { openRecordInCommandMenu } = useCommandMenu();
+
   const openCreateActivityDrawer = async ({
     targetableObjects,
     customAssignee,
@@ -68,46 +78,63 @@ export const useOpenCreateActivityDrawer = ({
     customAssignee?: WorkspaceMember;
   }) => {
     setIsNewViewableRecordLoading(true);
-    openRightDrawer(RightDrawerPages.ViewRecord);
+    if (!isCommandMenuV2Enabled) {
+      openRightDrawer(RightDrawerPages.ViewRecord, {
+        title: activityObjectNameSingular,
+        Icon: IconList,
+      });
+    }
     setViewableRecordId(null);
     setViewableRecordNameSingular(activityObjectNameSingular);
 
     const activity = await createOneActivity({
-      assigneeId: customAssignee?.id,
+      ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+        ? {
+            assigneeId: customAssignee?.id,
+          }
+        : {}),
+      position: 'last',
     });
 
     if (targetableObjects.length > 0) {
       const targetableObjectRelationIdName = `${targetableObjects[0].targetObjectNameSingular}Id`;
 
       await createOneActivityTarget({
-        taskId:
-          activityObjectNameSingular === CoreObjectNameSingular.Task
-            ? activity.id
-            : undefined,
-        noteId:
-          activityObjectNameSingular === CoreObjectNameSingular.Note
-            ? activity.id
-            : undefined,
+        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? {
+              taskId: activity.id,
+            }
+          : {
+              noteId: activity.id,
+            }),
         [targetableObjectRelationIdName]: targetableObjects[0].id,
       });
 
       setActivityTargetableEntityArray(targetableObjects);
     } else {
       await createOneActivityTarget({
-        taskId:
-          activityObjectNameSingular === CoreObjectNameSingular.Task
-            ? activity.id
-            : undefined,
-        noteId:
-          activityObjectNameSingular === CoreObjectNameSingular.Note
-            ? activity.id
-            : undefined,
+        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? {
+              taskId: activity.id,
+            }
+          : {
+              noteId: activity.id,
+            }),
       });
 
       setActivityTargetableEntityArray([]);
     }
 
-    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    if (isCommandMenuV2Enabled) {
+      openRecordInCommandMenu({
+        recordId: activity.id,
+        objectNameSingular: activityObjectNameSingular,
+        isNewRecord: true,
+      });
+    } else {
+      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    }
+
     setViewableRecordId(activity.id);
 
     setIsUpsertingActivityInDB(false);

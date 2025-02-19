@@ -1,16 +1,20 @@
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type LinksFieldInputProps = {
   onCancel?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
-export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
+export const LinksFieldInput = ({
+  onCancel,
+  onClickOutside,
+}: LinksFieldInputProps) => {
   const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
 
   const links = useMemo<{ url: string; label: string }[]>(
@@ -49,8 +53,9 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
       items={links}
       onPersist={handlePersistLinks}
       onCancel={onCancel}
+      onClickOutside={onClickOutside}
       placeholder="URL"
-      fieldMetadataType={FieldMetadataType.Links}
+      fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({
         isValid: absoluteUrlSchema.safeParse(input).success,
         errorMessage: '',

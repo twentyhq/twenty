@@ -32,16 +32,17 @@ export const CurrencyPickerDropdownSelect = ({
   );
 
   return (
-    <DropdownMenu width="240px" disableBlur>
+    <DropdownMenu>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.target.value)}
         autoFocus
+        role="combobox"
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCurrencies.length === 0 ? (
-          <MenuItem text="No result" />
+          <MenuItem text="No results" />
         ) : (
           <>
             {selectedCurrency && (

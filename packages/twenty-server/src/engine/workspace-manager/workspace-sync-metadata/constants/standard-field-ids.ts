@@ -244,6 +244,7 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   excludeNonProfessionalEmails: '20202020-1df5-445d-b4f3-2413ad178431',
   excludeGroupEmails: '20202020-45a0-4be4-9164-5820a6a109fb',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
+  messageFolders: '20202020-cc39-4432-9fe8-ec8ab8bbed94',
   isSyncEnabled: '20202020-d9a6-48e9-990b-b97fdf22e8dd',
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
   syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
@@ -251,6 +252,12 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncStage: '20202020-7979-4b08-89fe-99cb5e698767',
   syncStageStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
   throttleFailureCount: '20202020-0291-42be-9ad0-d578a51684ab',
+};
+
+export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
+  name: '20202020-7cf8-40bc-a681-b80b771449b7',
+  messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
+  syncCursor: '20202020-98cd-49ed-8dfc-cb5796400e64',
 };
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
@@ -288,6 +295,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   position: '20202020-368d-4dc2-943f-ed8a49c7fdfb',
   title: '20202020-faeb-4c76-8ba6-ccbb0b4a965f',
   body: '20202020-e63d-4e70-95be-a78cd9abe7ef',
+  bodyV2: '20202020-a7bb-4d94-be51-8f25181502c8',
   createdBy: '20202020-0d79-4e21-ab77-5a394eff97be',
   noteTargets: '20202020-1f25-43fe-8b00-af212fdde823',
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
@@ -355,6 +363,7 @@ export const TASK_STANDARD_FIELD_IDS = {
   position: '20202020-7d47-4690-8a98-98b9a0c05dd8',
   title: '20202020-b386-4cb7-aa5a-08d4a4d92680',
   body: '20202020-ce13-43f4-8821-69388fe1fd26',
+  bodyV2: '20202020-4aa0-4ae8-898d-7df0afd47ab1',
   dueAt: '20202020-fd99-40da-951b-4cb9a352fce3',
   status: '20202020-70bc-48f9-89c5-6aa730b151e0',
   createdBy: '20202020-1a04-48ab-a567-576965ae5387',
@@ -380,6 +389,7 @@ export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   size: '20202020-6fab-4bd0-ae72-20f3ee39d581',
   position: '20202020-19e5-4e4c-8c15-3a96d1fd0650',
   view: '20202020-e8da-4521-afab-d6d231f9fa18',
+  aggregateOperation: '20202020-2cd7-4f94-ae83-4a14f5731a04',
 };
 
 export const VIEW_GROUP_STANDARD_FIELD_IDS = {
@@ -420,6 +430,9 @@ export const VIEW_STANDARD_FIELD_IDS = {
   key: '20202020-298e-49fa-9f4a-7b416b110443',
   icon: '20202020-1f08-4fd9-929b-cbc07f317166',
   kanbanFieldMetadataId: '20202020-d09b-4f65-ac42-06a2f20ba0e8',
+  kanbanAggregateOperation: '20202020-8da2-45de-a731-61bed84b17a8',
+  kanbanAggregateOperationFieldMetadataId:
+    '20202020-b1b3-4bf3-85e4-dc7d58aa9b02',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
@@ -435,6 +448,7 @@ export const WEBHOOK_STANDARD_FIELD_IDS = {
   operation: '20202020-15b7-458e-bf30-74770a54410c',
   operations: '20202020-15b7-458e-bf30-74770a54411c',
   description: '20202020-15b7-458e-bf30-74770a54410d',
+  secret: '20202020-97ce-410f-bff9-e9ccb038fb67',
 };
 
 export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
@@ -465,6 +479,7 @@ export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   position: '20202020-7802-4c40-ae89-1f506fe3365c',
   createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
   output: '20202020-7be4-4db2-8ac6-3ff0d740843d',
+  context: '20202020-189c-478a-b867-d72feaf5926a',
   favorites: '20202020-4baf-4604-b899-2f7fcfbbf90d',
   timelineActivities: '20202020-af4d-4eb0-babc-eb960a45b356',
 };

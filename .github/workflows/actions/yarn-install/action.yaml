@@ -1,23 +1,43 @@
 name: Yarn Install
+inputs:
+  node-version:
+    required: false
+    default: '18'
 
 runs:
   using: "composite"
   steps:
-    - name: Setup Node.js and get yarn cache
-      uses: actions/setup-node@v3
-      with:
-        node-version: "18"
-        cache: yarn
-    - name: Cache node modules
-      id: node-modules-cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          node_modules
-          packages/*/node_modules
-        key: root-node_modules-${{ hashFiles('yarn.lock') }}
-        restore-keys: root-node_modules-
-    - name: Install Dependencies
+    - name: Cache primary key builder
+      id: globals
       shell: bash
-      run: yarn --immutable --check-cache
-      if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      run: |
+        echo "ACTION_SHELL=bash" >> "${GITHUB_OUTPUT}"
+        echo "CACHE_KEY_PREFIX=node_modules-cache-node-${{ inputs.node-version }}-${{ hashFiles('yarn.lock') }}"  >> "${GITHUB_OUTPUT}"
+        echo 'PATH_TO_CACHE<<EOF' >> $GITHUB_OUTPUT
+        echo "node_modules" >> $GITHUB_OUTPUT
+        echo "packages/*/node_modules" >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
+    - name: Setup Node.js and get yarn cache
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: Restore node_modules
+      id: cache-node-modules
+      uses: actions/cache/restore@v4
+      with:
+        key: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-${{github.sha}}
+        restore-keys: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-
+        path: ${{ steps.globals.outputs.PATH_TO_CACHE }}
+    - name: Install Dependencies
+      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key == '' }}
+      shell: ${{ steps.globals.outputs.ACTION_SHELL }}
+      run: |
+        yarn config set enableHardenedMode true
+        yarn --immutable --check-cache
+    - name: Save cache
+      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key == '' }}
+      uses: actions/cache/save@v4
+      with:
+        key: ${{ steps.cache-node-modules.outputs.cache-primary-key }}
+        path: ${{ steps.globals.outputs.PATH_TO_CACHE }}
+      

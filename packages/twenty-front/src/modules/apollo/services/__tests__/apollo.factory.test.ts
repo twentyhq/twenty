@@ -21,12 +21,22 @@ jest.mock('@/auth/services/AuthService', () => {
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 
+const mockWorkspaceMember = {
+  id: 'workspace-member-id',
+  locale: 'en',
+  name: {
+    firstName: 'John',
+    lastName: 'Doe',
+  },
+};
+
 const createMockOptions = (): Options<any> => ({
   uri: 'http://localhost:3000',
   initialTokenPair: {
     accessToken: { token: 'mockAccessToken', expiresAt: '' },
     refreshToken: { token: 'mockRefreshToken', expiresAt: '' },
   },
+  currentWorkspaceMember: mockWorkspaceMember,
   cache: new InMemoryCache(),
   isDebugMode: true,
   onError: mockOnError,
@@ -50,11 +60,19 @@ const makeRequest = async () => {
   });
 };
 
-describe('xApolloFactory', () => {
+describe('ApolloFactory', () => {
   it('should create an instance of ApolloFactory', () => {
     const options = createMockOptions();
     const apolloFactory = new ApolloFactory(options);
     expect(apolloFactory).toBeInstanceOf(ApolloFactory);
+  });
+
+  it('should initialize with the correct workspace member', () => {
+    const options = createMockOptions();
+    const apolloFactory = new ApolloFactory(options);
+    expect(apolloFactory['currentWorkspaceMember']).toEqual(
+      mockWorkspaceMember,
+    );
   });
 
   it('should call onError when encountering "Unauthorized" error', async () => {
@@ -138,4 +156,21 @@ describe('xApolloFactory', () => {
       expect(mockOnNetworkError).toHaveBeenCalledWith(mockError);
     }
   }, 10000);
+
+  it('should update workspace member when calling updateWorkspaceMember', () => {
+    const options = createMockOptions();
+    const apolloFactory = new ApolloFactory(options);
+
+    const newWorkspaceMember = {
+      id: 'new-workspace-member-id',
+      locale: 'fr',
+      name: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+    };
+
+    apolloFactory.updateWorkspaceMember(newWorkspaceMember);
+    expect(apolloFactory['currentWorkspaceMember']).toEqual(newWorkspaceMember);
+  });
 });
