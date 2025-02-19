@@ -3,6 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { PermissionsOnAllObjectRecords, SettingsFeatures } from 'twenty-shared';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
@@ -86,7 +92,49 @@ export class PermissionsService {
     return false;
   }
 
+  public async userHasObjectRecordsPermission({
+    userWorkspaceId,
+    workspaceId,
+    requiredPermission,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+    requiredPermission: PermissionsOnAllObjectRecords;
+  }): Promise<boolean> {
+    const [roleOfUserWorkspace] = await this.userRoleService
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId,
+      })
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
+
+    const roleColumn =
+      this.getRoleColumnForRequiredPermission(requiredPermission);
+
+    return roleOfUserWorkspace?.[roleColumn] === true;
+  }
+
   public async isPermissionsEnabled(): Promise<boolean> {
     return this.environmentService.get('PERMISSIONS_ENABLED') === true;
+  }
+
+  private getRoleColumnForRequiredPermission(
+    requiredPermission: PermissionsOnAllObjectRecords,
+  ): keyof RoleEntity {
+    switch (requiredPermission) {
+      case PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS:
+        return 'canReadAllObjectRecords';
+      case PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS:
+        return 'canUpdateAllObjectRecords';
+      case PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS:
+        return 'canSoftDeleteAllObjectRecords';
+      case PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS:
+        return 'canDestroyAllObjectRecords';
+      default:
+        throw new PermissionsException(
+          PermissionsExceptionMessage.UNKNOWN_REQUIRED_PERMISSION,
+          PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION,
+        );
+    }
   }
 }

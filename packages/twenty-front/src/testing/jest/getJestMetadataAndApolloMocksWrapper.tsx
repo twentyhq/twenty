@@ -2,10 +2,12 @@ import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { InMemoryCache } from '@apollo/client';
+import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 export const getJestMetadataAndApolloMocksWrapper = ({
@@ -30,7 +32,11 @@ export const getJestMetadataAndApolloMocksWrapper = ({
               value={{ instanceId: 'instanceId' }}
             >
               <JestObjectMetadataItemSetter>
-                {children}
+                <ContextStoreComponentInstanceContext.Provider
+                  value={{ instanceId: 'instanceId' }}
+                >
+                  <JestContextStoreSetter>{children}</JestContextStoreSetter>
+                </ContextStoreComponentInstanceContext.Provider>
               </JestObjectMetadataItemSetter>
             </ViewComponentInstanceContext.Provider>
           </RecordFiltersComponentInstanceContext.Provider>
