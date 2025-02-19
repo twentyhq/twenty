@@ -39,6 +39,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -63,6 +64,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly permissionsService: PermissionsService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly sSOService: SSOService,
   ) {
     super(workspaceRepository);
   }
@@ -445,5 +447,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         );
       }
     }
+  }
+
+  async listSSOIdentityProvidersByWorkspaceId(workspaceId: string) {
+    return await this.sSOService.listSSOIdentityProvidersByWorkspaceId(
+      workspaceId,
+    );
   }
 }

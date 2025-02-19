@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { SettingsFeatures } from 'twenty-shared';
 
@@ -10,7 +10,6 @@ import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.inpu
 import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.output';
 import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
 import { EditSsoOutput } from 'src/engine/core-modules/sso/dtos/edit-sso.output';
-import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
 import {
   SetupOIDCSsoInput,
   SetupSAMLSsoInput,
@@ -40,14 +39,6 @@ export class SSOResolver {
       setupSsoInput,
       workspaceId,
     );
-  }
-
-  @UseGuards(EnterpriseFeaturesEnabledGuard)
-  @Query(() => [FindAvailableSSOIDPOutput])
-  async listSSOIdentityProvidersByWorkspaceId(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
-    return this.sSOService.listSSOIdentityProvidersByWorkspaceId(workspaceId);
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)

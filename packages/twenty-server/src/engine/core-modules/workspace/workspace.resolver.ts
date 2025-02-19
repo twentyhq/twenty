@@ -49,6 +49,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
+import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
 
 import { Workspace } from './workspace.entity';
 
@@ -151,6 +153,16 @@ export class WorkspaceResolver {
     });
 
     return `${paths[0]}?token=${workspaceLogoToken}`;
+  }
+
+  @UseGuards(EnterpriseFeaturesEnabledGuard)
+  @Query(() => [FindAvailableSSOIDPOutput])
+  async listSSOIdentityProvidersByWorkspaceId(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.workspaceService.listSSOIdentityProvidersByWorkspaceId(
+      workspaceId,
+    );
   }
 
   @ResolveField(() => [FeatureFlag], { nullable: true })

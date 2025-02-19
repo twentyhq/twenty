@@ -23,6 +23,8 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
+import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -47,12 +49,14 @@ import { WorkspaceService } from './services/workspace.service';
         ),
         UserWorkspaceModule,
         WorkspaceManagerModule,
+        GuardRedirectModule,
         FeatureFlagModule,
         DataSourceModule,
         OnboardingModule,
         TypeORMModule,
         PermissionsModule,
         WorkspaceCacheStorageModule,
+        WorkspaceSSOModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,
