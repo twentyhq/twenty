@@ -16,6 +16,7 @@ export type ServerlessExecuteResult = {
 
 export interface ServerlessDriver {
   delete(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
+  build(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
   execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,
