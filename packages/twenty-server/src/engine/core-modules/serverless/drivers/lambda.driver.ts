@@ -269,9 +269,9 @@ export class LambdaDriver implements ServerlessDriver {
     payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult> {
-    const startTime = Date.now();
-
     await this.build(serverlessFunction);
+
+    const startTime = Date.now();
 
     const computedVersion =
       version === 'latest' ? serverlessFunction.latestVersion : version;
