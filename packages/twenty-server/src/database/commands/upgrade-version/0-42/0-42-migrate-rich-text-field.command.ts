@@ -6,11 +6,9 @@ import { Command, Option } from 'nest-commander';
 import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
-import {
-  ActiveWorkspacesCommandOptions,
-  ActiveWorkspacesCommandRunner,
-} from 'src/database/commands/active-workspaces.command';
+import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { isCommandLogger } from 'src/database/commands/logger';
+import { Upgrade042CommandOptions } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.command';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -44,9 +42,6 @@ type RichTextFieldWithMigrationStatusAndObjectMetadata = {
   hasCreatedColumns: boolean;
   objectMetadata: ObjectMetadataEntity | null;
 };
-type MigrateRichTextFieldCommandOptions = ActiveWorkspacesCommandOptions & {
-  force: boolean;
-};
 type ProcessWorkspaceArgs = {
   workspaceId: string;
   index: number;
@@ -62,7 +57,7 @@ type AsyncMethod<T> = () => Promise<T>;
   description: 'Migrate RICH_TEXT fields to new composite structure',
 })
 export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
-  private options: MigrateRichTextFieldCommandOptions;
+  private options: Upgrade042CommandOptions;
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -98,7 +93,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
   };
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    options: MigrateRichTextFieldCommandOptions,
+    options: Upgrade042CommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
