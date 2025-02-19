@@ -9,7 +9,6 @@ import {
   IconSquareRoundedCheck,
   IconSquareRoundedX,
   IconLoader,
-  IconSettings,
   AnimatedCircleLoading,
 } from 'twenty-ui';
 import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
@@ -41,11 +40,9 @@ const StyledOutput = styled.div<{ accent?: OutputAccent }>`
 export const ServerlessFunctionExecutionResult = ({
   serverlessFunctionTestData,
   isTesting = false,
-  isBuilding = false,
 }: {
   serverlessFunctionTestData: ServerlessFunctionTestData;
   isTesting?: boolean;
-  isBuilding?: boolean;
 }) => {
   const theme = useTheme();
 
@@ -70,23 +67,17 @@ export const ServerlessFunctionExecutionResult = ({
 
   const IdleLeftNode = 'Output';
 
-  const PendingLeftNode = (isTesting || isBuilding) && (
+  const PendingLeftNode = isTesting && (
     <StyledOutput>
       <AnimatedCircleLoading>
-        {isTesting ? (
-          <IconLoader size={theme.icon.size.md} />
-        ) : (
-          <IconSettings size={theme.icon.size.md} />
-        )}
+        <IconLoader size={theme.icon.size.md} />
       </AnimatedCircleLoading>
-      <StyledInfoContainer>
-        {isTesting ? 'Running function' : 'Building function'}
-      </StyledInfoContainer>
+      <StyledInfoContainer>Running function</StyledInfoContainer>
     </StyledOutput>
   );
 
   const computeLeftNode = () => {
-    if (isTesting || isBuilding) {
+    if (isTesting) {
       return PendingLeftNode;
     }
     if (
@@ -115,7 +106,7 @@ export const ServerlessFunctionExecutionResult = ({
         language={serverlessFunctionTestData.language}
         height={serverlessFunctionTestData.height}
         options={{ readOnly: true, domReadOnly: true }}
-        isLoading={isTesting || isBuilding}
+        isLoading={isTesting}
         withHeader
       />
     </StyledContainer>

@@ -54,7 +54,7 @@ export class LocalDriver implements ServerlessDriver {
 
   async delete() {}
 
-  async build(serverlessFunction: ServerlessFunctionEntity, version: string) {
+  async build(serverlessFunction: ServerlessFunctionEntity) {
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
   }
 
@@ -64,6 +64,9 @@ export class LocalDriver implements ServerlessDriver {
     version: string,
   ): Promise<ServerlessExecuteResult> {
     const startTime = Date.now();
+
+    await this.build(serverlessFunction);
+
     const computedVersion =
       version === 'latest' ? serverlessFunction.latestVersion : version;
 

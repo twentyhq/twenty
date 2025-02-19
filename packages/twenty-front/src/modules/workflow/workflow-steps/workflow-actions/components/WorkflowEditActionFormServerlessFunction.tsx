@@ -123,11 +123,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
-  const { testServerlessFunction, isTesting, isBuilding } =
-    useTestServerlessFunction({
-      serverlessFunctionId,
-      callback: updateOutputSchemaFromTestResult,
-    });
+  const { testServerlessFunction, isTesting } = useTestServerlessFunction({
+    serverlessFunctionId,
+    callback: updateOutputSchemaFromTestResult,
+  });
 
   const handleSave = useDebouncedCallback(async () => {
     setShouldBuildServerlessFunction(true);
@@ -348,7 +347,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 <InputLabel>Result</InputLabel>
                 <ServerlessFunctionExecutionResult
                   serverlessFunctionTestData={serverlessFunctionTestData}
-                  isBuilding={isBuilding}
                   isTesting={isTesting}
                 />
               </StyledCodeEditorContainer>
@@ -361,7 +359,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
               <CmdEnterActionButton
                 title="Test"
                 onClick={handleRunFunction}
-                disabled={isTesting || isBuilding || actionOptions.readonly}
+                disabled={isTesting || actionOptions.readonly}
               />,
             ]}
           />

@@ -137,16 +137,6 @@ export class ServerlessFunctionService {
       workspaceId,
     });
 
-    if (
-      version === 'draft' &&
-      functionToExecute.syncStatus !== ServerlessFunctionSyncStatus.READY
-    ) {
-      await this.buildDraftServerlessFunction(
-        functionToExecute.id,
-        workspaceId,
-      );
-    }
-
     const resultServerlessFunction = await this.serverlessService.execute(
       functionToExecute,
       payload,
@@ -279,7 +269,6 @@ export class ServerlessFunctionService {
       {
         name: serverlessFunctionInput.name,
         description: serverlessFunctionInput.description,
-        syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
         timeoutSeconds: serverlessFunctionInput.timeoutSeconds,
       },
     );
@@ -395,10 +384,6 @@ export class ServerlessFunctionService {
         }),
       },
     });
-
-    await this.serverlessFunctionRepository.update(serverlessFunction.id, {
-      syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
-    });
   }
 
   private async throttleExecution(workspaceId: string) {
@@ -414,33 +399,5 @@ export class ServerlessFunctionService {
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED,
       );
     }
-  }
-
-  async buildDraftServerlessFunction(id: string, workspaceId: string) {
-    const functionToBuild = await this.findOneOrFail({
-      id,
-      workspaceId,
-    });
-
-    if (functionToBuild.syncStatus === ServerlessFunctionSyncStatus.READY) {
-      return functionToBuild;
-    }
-
-    if (functionToBuild.syncStatus === ServerlessFunctionSyncStatus.BUILDING) {
-      throw new ServerlessFunctionException(
-        'This function is currently building. Please try later',
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING,
-      );
-    }
-
-    await this.serverlessFunctionRepository.update(functionToBuild.id, {
-      syncStatus: ServerlessFunctionSyncStatus.BUILDING,
-    });
-    await this.serverlessService.build(functionToBuild, 'draft');
-    await this.serverlessFunctionRepository.update(functionToBuild.id, {
-      syncStatus: ServerlessFunctionSyncStatus.READY,
-    });
-
-    return functionToBuild;
   }
 }
