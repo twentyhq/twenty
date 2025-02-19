@@ -14,7 +14,9 @@ import {
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledStatusContainer = styled.div``;
+const StyledH2Title = styled(H2Title)`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
 
 export const SettingsAdminIndicatorHealthStatus = () => {
   const { t } = useLingui();
@@ -59,22 +61,23 @@ export const SettingsAdminIndicatorHealthStatus = () => {
           }}
         >
           <Section>
-            <H2Title title={`${indicatorName}`} description="Health status" />
-            <StyledStatusContainer>
-              {indicatorName !==
-                AdminPanelIndicatorHealthStatusInputEnum.ACCOUNT_SYNC && (
-                <>
-                  {data?.getIndicatorHealthStatus.status ===
-                    AdminPanelHealthServiceStatus.OPERATIONAL && (
-                    <Status color="green" text="Operational" weight="medium" />
-                  )}
-                  {data?.getIndicatorHealthStatus.status ===
-                    AdminPanelHealthServiceStatus.OUTAGE && (
-                    <Status color="red" text="Outage" weight="medium" />
-                  )}
-                </>
-              )}
-            </StyledStatusContainer>
+            <StyledH2Title
+              title={`${indicatorName}`}
+              description="Health status"
+            />
+            {indicatorName !==
+              AdminPanelIndicatorHealthStatusInputEnum.ACCOUNT_SYNC && (
+              <>
+                {data?.getIndicatorHealthStatus.status ===
+                  AdminPanelHealthServiceStatus.OPERATIONAL && (
+                  <Status color="green" text="Operational" weight="medium" />
+                )}
+                {data?.getIndicatorHealthStatus.status ===
+                  AdminPanelHealthServiceStatus.OUTAGE && (
+                  <Status color="red" text="Outage" weight="medium" />
+                )}
+              </>
+            )}
           </Section>
 
           <SettingsAdminIndicatorHealthStatusContent />
