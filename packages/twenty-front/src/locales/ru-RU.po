@@ -816,8 +816,12 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Создать конечные точки вебхука для уведомлений о асинхронных событиях."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-msgid "Exclude the following people and domains from my email sync"
-msgstr "Исключите следующих людей и домены из синхронизации моей электронной почты"
+#~ msgid "Exclude the following people and domains from my email sync"
+#~ msgstr "Exclude the following people and domains from my email sync"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
+msgstr "Исключить следующих людей и домены из синхронизации моей электронной почты. Внутренние переписки не будут импортированы"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
@@ -2085,4 +2089,3 @@ msgstr "Ваше рабочее пространство"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Ваше рабочее пространство будет отключено"
-

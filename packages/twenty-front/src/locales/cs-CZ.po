@@ -816,8 +816,12 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Vytvořte koncové body Webhook pro oznámení o asynchronních událostech."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-msgid "Exclude the following people and domains from my email sync"
-msgstr "Vyloučit následující osoby a domény ze synchronizace mého e-mailu"
+#~ msgid "Exclude the following people and domains from my email sync"
+#~ msgstr "Exclude the following people and domains from my email sync"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
+msgstr "Vyloučit následující lidi a domény z mé synchronizace emailů. Interní konverzace nebudou importovány"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

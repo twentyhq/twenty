@@ -49,7 +49,6 @@ export const SettingsAccountsRowDropdownMenu = ({
     <>
       <Dropdown
         dropdownId={dropdownId}
-        className={className}
         dropdownPlacement="right-start"
         dropdownHotkeyScope={{ scope: dropdownId }}
         clickableComponent={
