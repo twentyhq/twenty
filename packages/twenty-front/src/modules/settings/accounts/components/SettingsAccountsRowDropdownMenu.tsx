@@ -16,6 +16,8 @@ import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAut
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useState } from 'react';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -28,6 +30,9 @@ export const SettingsAccountsRowDropdownMenu = ({
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
 
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
+    useState(false);
+
   const navigate = useNavigate();
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -36,55 +41,71 @@ export const SettingsAccountsRowDropdownMenu = ({
   });
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
+  const deleteAccount = async () => {
+    await destroyOneRecord(account.id);
+    setIsDeleteAccountModalOpen(false);
+  };
+
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      className={className}
-      dropdownPlacement="right-start"
-      dropdownHotkeyScope={{ scope: dropdownId }}
-      clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
-      }
-      dropdownMenuWidth={160}
-      dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            LeftIcon={IconMail}
-            text="Emails settings"
-            onClick={() => {
-              navigate(`/settings/accounts/emails`);
-              closeDropdown();
-            }}
-          />
-          <MenuItem
-            LeftIcon={IconCalendarEvent}
-            text="Calendar settings"
-            onClick={() => {
-              navigate(`/settings/accounts/calendars`);
-              closeDropdown();
-            }}
-          />
-          {account.authFailedAt && (
+    <>
+      <Dropdown
+        dropdownId={dropdownId}
+        className={className}
+        dropdownPlacement="right-start"
+        dropdownHotkeyScope={{ scope: dropdownId }}
+        clickableComponent={
+          <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        }
+        dropdownMenuWidth={160}
+        dropdownComponents={
+          <DropdownMenuItemsContainer>
             <MenuItem
-              LeftIcon={IconRefresh}
-              text="Reconnect"
+              LeftIcon={IconMail}
+              text="Emails settings"
               onClick={() => {
-                triggerApisOAuth(account.provider);
+                navigate(`/settings/accounts/emails`);
                 closeDropdown();
               }}
             />
-          )}
-          <MenuItem
-            accent="danger"
-            LeftIcon={IconTrash}
-            text="Remove account"
-            onClick={() => {
-              destroyOneRecord(account.id);
-              closeDropdown();
-            }}
-          />
-        </DropdownMenuItemsContainer>
-      }
-    />
+            <MenuItem
+              LeftIcon={IconCalendarEvent}
+              text="Calendar settings"
+              onClick={() => {
+                navigate(`/settings/accounts/calendars`);
+                closeDropdown();
+              }}
+            />
+            {account.authFailedAt && (
+              <MenuItem
+                LeftIcon={IconRefresh}
+                text="Reconnect"
+                onClick={() => {
+                  triggerApisOAuth(account.provider);
+                  closeDropdown();
+                }}
+              />
+            )}
+            <MenuItem
+              accent="danger"
+              LeftIcon={IconTrash}
+              text="Remove account"
+              onClick={() => {
+                setIsDeleteAccountModalOpen(true);
+              }}
+            />
+          </DropdownMenuItemsContainer>
+        }
+      />
+      <ConfirmationModal
+        isOpen={isDeleteAccountModalOpen}
+        setIsOpen={setIsDeleteAccountModalOpen}
+        title="Data deletion"
+        subtitle={
+          <>All emails and events linked to this account will be deleted</>
+        }
+        onConfirmClick={deleteAccount}
+        deleteButtonText="Delete account"
+      />
+    </>
   );
 };
