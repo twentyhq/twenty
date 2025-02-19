@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
-    HealthIndicatorResult,
-    HealthIndicatorService,
+  HealthIndicatorResult,
+  HealthIndicatorService,
 } from '@nestjs/terminus';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';

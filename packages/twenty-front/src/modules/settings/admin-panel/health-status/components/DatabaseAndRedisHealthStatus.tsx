@@ -1,9 +1,7 @@
+import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { Section } from 'twenty-ui';
-import {
-  AdminPanelIndicatorHealthStatusInputEnum,
-  useGetIndicatorHealthStatusQuery,
-} from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.pre`
   background-color: ${({ theme }) => theme.background.quaternary};
@@ -12,20 +10,11 @@ const StyledDetailsContainer = styled.pre`
   white-space: pre-wrap;
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
-export const DatabaseAndRedisHealthStatus = ({
-  indicatorName,
-}: {
-  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
-}) => {
-  const { data } = useGetIndicatorHealthStatusQuery({
-    variables: {
-      indicatorName: indicatorName as AdminPanelIndicatorHealthStatusInputEnum,
-    },
-    fetchPolicy: 'network-only',
-  });
+export const DatabaseAndRedisHealthStatus = () => {
+  const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
-  const formattedDetails = data?.getIndicatorHealthStatus.details
-    ? JSON.stringify(JSON.parse(data.getIndicatorHealthStatus.details), null, 2)
+  const formattedDetails = indicatorHealth.details
+    ? JSON.stringify(JSON.parse(indicatorHealth.details), null, 2)
     : null;
 
   return (

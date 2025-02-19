@@ -1,13 +1,10 @@
 import { SettingsAdminQueueExpandableContainer } from '@/settings/admin-panel/health-status/components/SettingsAdminQueueExpandableContainer';
 import { SettingsAdminQueueHealthButtons } from '@/settings/admin-panel/health-status/components/SettingsAdminQueueHealthButtons';
+import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { H2Title, Section } from 'twenty-ui';
-import {
-  AdminPanelHealthServiceStatus,
-  AdminPanelIndicatorHealthStatusInputEnum,
-  useGetIndicatorHealthStatusQuery,
-} from '~/generated/graphql';
+import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
 const StyledTitleContainer = styled.div`
   display: flex;
@@ -21,16 +18,13 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const WorkerHealthStatus = () => {
-  const { data, loading } = useGetIndicatorHealthStatusQuery({
-    variables: {
-      indicatorName: AdminPanelIndicatorHealthStatusInputEnum.WORKER,
-    },
-    fetchPolicy: 'network-only',
-  });
+  const { indicatorHealth, loading } = useContext(
+    SettingsAdminIndicatorHealthContext,
+  );
+
   const isWorkerDown =
-    !data?.getIndicatorHealthStatus.status ||
-    data?.getIndicatorHealthStatus.status ===
-      AdminPanelHealthServiceStatus.OUTAGE;
+    !indicatorHealth.status ||
+    indicatorHealth.status === AdminPanelHealthServiceStatus.OUTAGE;
 
   const [selectedQueue, setSelectedQueue] = useState<string | null>(null);
 
@@ -53,12 +47,12 @@ export const WorkerHealthStatus = () => {
       ) : (
         <>
           <SettingsAdminQueueHealthButtons
-            queues={data?.getIndicatorHealthStatus.queues ?? []}
+            queues={indicatorHealth.queues ?? []}
             selectedQueue={selectedQueue}
             toggleQueueVisibility={toggleQueueVisibility}
           />
           <SettingsAdminQueueExpandableContainer
-            queues={data?.getIndicatorHealthStatus.queues ?? []}
+            queues={indicatorHealth.queues ?? []}
             selectedQueue={selectedQueue}
           />
         </>

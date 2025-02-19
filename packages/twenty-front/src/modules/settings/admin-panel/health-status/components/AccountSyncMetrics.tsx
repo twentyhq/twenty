@@ -1,19 +1,27 @@
-import { SettingsAdminAccountSyncMetricContent } from '@/settings/admin-panel/health-status/components/SettingsAdminAccountSyncMetricContent';
-import {
-  AdminPanelIndicatorHealthStatusInputEnum,
-  useGetIndicatorHealthStatusQuery,
-} from '~/generated/graphql';
+import { SettingsAdminHealthAccountSyncCountersTables } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable';
+import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
+import { useContext } from 'react';
 
 export const AccountSyncMetrics = () => {
-  const { data } = useGetIndicatorHealthStatusQuery({
-    variables: {
-      indicatorName: AdminPanelIndicatorHealthStatusInputEnum.ACCOUNT_SYNC,
-    },
-    fetchPolicy: 'network-only',
-  });
+  const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
+  const details = indicatorHealth.details;
+  if (!details) {
+    return null;
+  }
+
+  const parsedDetails = JSON.parse(details);
+  const { messageSync, calendarSync } = parsedDetails;
+
   return (
-    <SettingsAdminAccountSyncMetricContent
-      details={data?.getIndicatorHealthStatus.details}
-    />
+    <>
+      <SettingsAdminHealthAccountSyncCountersTables
+        details={messageSync?.details}
+        title="Message Sync Status"
+      />
+      <SettingsAdminHealthAccountSyncCountersTables
+        details={calendarSync?.details}
+        title="Calendar Sync Status"
+      />
+    </>
   );
 };
