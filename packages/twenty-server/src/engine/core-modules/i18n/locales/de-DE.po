@@ -18,2239 +18,2239 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "(System) View Fields"
 msgstr "(System) Ansichts-Felder"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "(System) View Filter Groups"
 msgstr "(System) Ansichts-Filtergruppen"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "(System) View Filters"
 msgstr "(System) Ansichts-Filter"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "(System) View Groups"
 msgstr "(System) Ansichts-Gruppen"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "(System) View Sorts"
 msgstr "(System) Ansichts-Sortierungen"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:33
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "(System) Views"
 msgstr "(System) Ansichten"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:56
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
 msgstr "Ein Unternehmen"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:30
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "A connected account"
 msgstr "Ein verbundenes Konto"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "A favorite that can be accessed from the left menu"
 msgstr "Ein Favorit, der über das linke Menü aufgerufen werden kann"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:24
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "A Folder of favorites"
 msgstr "Ein Ordner mit Favoriten"
 
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "Eine Gruppe zusammenhängender Nachrichten (z. B. E-Mail-Thread, Chat-Thread)"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "Eine Nachricht, die über einen Nachrichtenkanal (E-Mail, Chat usw.) gesendet oder empfangen wird"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:46
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "A note"
 msgstr "Eine Notiz"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "A note target"
 msgstr "Ein Notiz-Ziel"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:60
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "A person"
 msgstr "Eine Person"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:49
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "A task"
 msgstr "Eine Aufgabe"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "A task target"
 msgstr "Ein Aufgaben-Ziel"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:20
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "A webhook"
 msgstr "Ein Webhook"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "A workflow"
 msgstr "Ein Workflow"
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "A workflow event listener"
 msgstr "Ein Workflow-Ereignis-Listener"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:58
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "A workflow run"
 msgstr "Ein Workflow-Lauf"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "A workflow version"
 msgstr "Eine Workflow-Version"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "A workspace member"
 msgstr "Ein Arbeitsbereichsmitglied"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:58
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Access Token"
 msgstr "Zugangs-Token"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
-#: src/modules/company/standard-objects/company.workspace-entity.ts:178
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Account Owner"
 msgstr "Kontoinhaber"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:169
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Account owner for companies"
 msgstr "Kontoinhaber für Unternehmen"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:168
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Account Owner For Companies"
 msgstr "Kontoinhaber für Unternehmen"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:125
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Adresse"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:266
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address (deprecated) "
 msgstr "Adresse (veraltet) "
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:126
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address of the company"
 msgstr "Adresse des Unternehmens"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:267
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Adresse des Unternehmens - veraltet zugunsten des neuen Adressfeldes"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:189
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Aggregate operation"
 msgstr "Aggregatoperation"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:35
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Aggregiertes / gefiltertes Ereignis, das auf der Zeitleiste angezeigt werden soll"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:69
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "Betrag"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:19
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "An API key"
 msgstr "Ein API-Schlüssel"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:32
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "An attachment"
 msgstr "Ein Anhang"
 
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:24
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "An audit log of actions performed in the system"
 msgstr "Ein Audit-Log der im System durchgeführten Aktionen"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:20
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "An event related to user behavior"
 msgstr "Ein Ereignis im Zusammenhang mit dem Benutzerverhalten"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:50
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "An opportunity"
 msgstr "Eine Gelegenheit"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:116
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Jährlich wiederkehrende Einnahmen: Der tatsächliche oder geschätzte Jahresumsatz des Unternehmens"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "API Key"
 msgstr "API-Schlüssel"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:18
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "API Keys"
 msgstr "API-Schlüssel"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey expiration date"
 msgstr "Ablaufdatum des API-Schlüssels"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey name"
 msgstr "Name des API-Schlüssels"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey revocation date"
 msgstr "Widerrufsdatum des API-Schlüssels"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:115
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ARR"
 msgstr "ARR"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Assigned tasks"
 msgstr "Zugewiesene Aufgaben"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:166
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Assignee"
 msgstr "Zuständiger"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Zugehörige Benutzer-ID"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:30
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment"
 msgstr "Anhang"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:70
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment author"
 msgstr "Autor des Anhangs"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:129
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "Anhang Unternehmen"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:52
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
 msgstr "Vollständiger Pfad des Anhangs"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:43
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment name"
 msgstr "Name des Anhangs"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:99
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment note"
 msgstr "Anhang Notiz"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:144
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment opportunity"
 msgstr "Anhang Gelegenheit"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:114
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment person"
 msgstr "Anhang Person"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:84
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment task"
 msgstr "Anhang Aufgabe"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:61
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment type"
 msgstr "Anhang Typ"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:154
-#: src/modules/person/standard-objects/person.workspace-entity.ts:244
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
-#: src/modules/note/standard-objects/note.workspace-entity.ts:115
-#: src/modules/company/standard-objects/company.workspace-entity.ts:241
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
-#: src/engine/twenty-orm/custom.workspace-entity.ts:118
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Attachments created by the workspace member"
 msgstr "Vom Arbeitsbereichsmitglied erstellte Anhänge"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:242
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Attachments linked to the company"
 msgstr "Mit dem Unternehmen verbundene Anhänge"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:245
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "Mit dem Kontakt verknüpfte Anhänge."
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:200
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
 msgstr "Mit der Gelegenheit verbundene Anhänge"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:123
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments tied to the {label}"
 msgstr "Anhänge, die mit dem {label} verbunden sind"
 
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Audit Log"
 msgstr "Audit-Log"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:255
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:23
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Audit Logs"
 msgstr "Audit-Logs"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:256
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Audit Logs linked to the workspace member"
 msgstr "Mit dem Arbeitsbereichsmitglied verknüpfte Audit-Logs"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Auth failed at"
 msgstr "Authentifizierung fehlgeschlagen bei"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Author"
 msgstr "Autor"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:180
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "Verfasste Anhänge"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Automatisch Personendatensätze erstellen beim Empfangen oder Senden von E-Mails"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Automatically create records for people you participated with in an event."
 msgstr "Automatisch Datensätze für Personen erstellen, mit denen Sie an einer Veranstaltung teilgenommen haben."
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:152
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Avatar"
 msgstr "Avatar"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:117
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "Avatar-URL"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:18
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Behavioral Event"
 msgstr "Verhaltensereignis"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:19
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Behavioral Events"
 msgstr "Verhaltensereignisse"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:216
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:22
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:24
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklist"
 msgstr "Blockliste"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:217
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Blocklisted handles"
 msgstr "Blockierte Handles"
 
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:23
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklists"
 msgstr "Blocklisten"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:88
-#: src/modules/note/standard-objects/note.workspace-entity.ts:85
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
 msgstr "Inhalt"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:78
-#: src/modules/note/standard-objects/note.workspace-entity.ts:75
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body (deprecated)"
 msgstr "Körper (veraltet)"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Cached record name"
 msgstr "Zwischengespeicherter Datensatzname"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:74
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Calendar Channel"
 msgstr "Kalenderkanal"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:23
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Calendar Channel Event Association"
 msgstr "Kalenderkanal-Ereigniszuordnung"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:155
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:156
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:322
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:323
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:24
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:25
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Calendar Channel Event Associations"
 msgstr "Kalenderkanal-Ereigniszuordnungen"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:139
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:140
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:75
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:76
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Calendar Channels"
 msgstr "Kalenderkanäle"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:27
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar event"
 msgstr "Kalenderereignis"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:32
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Calendar event participant"
 msgstr "Kalenderereignis-Teilnehmer"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:33
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:34
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Calendar event participants"
 msgstr "Kalenderereignis-Teilnehmer"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
-#: src/modules/person/standard-objects/person.workspace-entity.ts:268
-#: src/modules/person/standard-objects/person.workspace-entity.ts:269
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Calendar Event Participants"
 msgstr "Kalenderereignis-Teilnehmer"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:28
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:29
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar events"
 msgstr "Kalenderereignisse"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:55
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:56
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Channel ID"
 msgstr "Kanal-ID"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:136
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Channel Type"
 msgstr "Kanaltyp"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:143
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "City"
 msgstr "Stadt"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:79
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "Abschlussdatum"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:97
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Color Scheme"
 msgstr "Farbschema"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:108
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Compact View"
 msgstr "Kompaktansicht"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:55
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Companies"
 msgstr "Unternehmen"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
-#: src/modules/person/standard-objects/person.workspace-entity.ts:183
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:148
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:65
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:88
-#: src/modules/company/standard-objects/company.workspace-entity.ts:54
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Company"
 msgstr "Unternehmen"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:146
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
 msgstr "Unternehmensdatensatzposition"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:135
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:136
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
 msgstr "Konferenzlösung"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:359
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:360
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:28
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:307
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:308
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Connected Account"
 msgstr "Verbundenes Konto"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:192
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:193
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Connected accounts"
 msgstr "Verbundene Konten"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:29
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
 msgstr "Verbundene Konten"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:170
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:221
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Contact auto creation policy"
 msgstr "Richtlinie zur automatischen Kontakterstellung"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:153
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s avatar"
 msgstr "Avatar des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:144
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s city"
 msgstr "Stadt des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:184
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s company"
 msgstr "Unternehmen des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:86
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Emails"
 msgstr "E-Mails des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:116
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s job title"
 msgstr "Berufsbezeichnung des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:96
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Linkedin account"
 msgstr "LinkedIn-Konto des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:76
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s name"
 msgstr "Name des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:125
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone number"
 msgstr "Telefonnummer des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:135
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone numbers"
 msgstr "Telefonnummern des Kontakts"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:106
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s X/Twitter account"
 msgstr "X/Twitter-Konto des Kontakts"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:150
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:151
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Context"
 msgstr "Kontext"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
-#: src/modules/task/standard-objects/task.workspace-entity.ts:134
-#: src/modules/person/standard-objects/person.workspace-entity.ts:173
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
-#: src/modules/note/standard-objects/note.workspace-entity.ts:95
-#: src/modules/company/standard-objects/company.workspace-entity.ts:156
-#: src/engine/twenty-orm/custom.workspace-entity.ts:61
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Erstellt von"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:44
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:45
-#: src/engine/twenty-orm/base.workspace-entity.ts:26
-#: src/engine/twenty-orm/base.workspace-entity.ts:27
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/engine/twenty-orm/base.workspace-entity.ts
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Creation date"
 msgstr "Erstellungsdatum"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Creation DateTime"
 msgstr "Erstellungsdatum und -zeit"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:278
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
 msgstr "Datumsformat"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:53
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Date when the record was deleted"
 msgstr "Datum der Datensatzlöschung"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:52
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Deleted at"
 msgstr "Gelöscht am"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:109
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Describes if the view is in compact mode"
 msgstr "Gibt an, ob die Ansicht im Kompaktmodus ist"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:109
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Description"
 msgstr "Beschreibung"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:48
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:66
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "Richtung"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:62
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:63
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:54
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:55
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Display Name"
 msgstr "Anzeigename"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:59
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Anzeigewert"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:75
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
 msgstr "Domainname"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:98
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Due Date"
 msgstr "Fälligkeitsdatum"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:85
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Emails"
 msgstr "E-Mails"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:85
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Employees"
 msgstr "Mitarbeiter"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:78
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:79
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "End Date"
 msgstr "Enddatum"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "Veranstaltungsunternehmen"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event context"
 msgstr "Veranstaltungskontext"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "Veranstaltungsdetails"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event external ID"
 msgstr "Externe Ereignis-ID"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event ID"
 msgstr "Ereignis-ID"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Event Listeners"
 msgstr "Ereignis-Listener"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:48
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "Veranstaltungsname"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name/type"
 msgstr "Veranstaltungsname/-typ"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event note"
 msgstr "Veranstaltungshinweis"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event opportunity"
 msgstr "Veranstaltungsgelegenheit"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Event Participants"
 msgstr "Teilnehmer"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event person"
 msgstr "Veranstaltungsperson"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event task"
 msgstr "Veranstaltungsaufgabe"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow"
 msgstr "Veranstaltungs-Workflow"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow run"
 msgstr "Veranstaltungs-Workflow-Lauf"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow version"
 msgstr "Veranstaltungs-Workflow-Version"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "Veranstaltungs-Arbeitsbereichsmitglied"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
-#: src/modules/person/standard-objects/person.workspace-entity.ts:282
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events"
 msgstr "Ereignisse"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:283
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
 msgstr "Mit der Person verknüpfte Ereignisse"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Events linked to the workspace member"
 msgstr "Mit dem Arbeitsbereichsmitglied verknüpfte Ereignisse"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Exclude group emails"
 msgstr "Gruppen-E-Mails ausschließen"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Exclude non professional emails"
 msgstr "Nicht berufliche E-Mails ausschließen"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:131
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Executed by"
 msgstr "Ausgeführt von"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "Expiration date"
 msgstr "Ablaufdatum"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
 msgstr "Favorit"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite company"
 msgstr "Bevorzugtes Unternehmen"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite Folder"
 msgstr "Favoritenordner"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite folder position"
 msgstr "Position des Favoritenordners"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite Folders"
 msgstr "Favoritenordner"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite note"
 msgstr "Favoriten-Notiz"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite opportunity"
 msgstr "Bevorzugte Gelegenheit"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite person"
 msgstr "Bevorzugte Person"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite position"
 msgstr "Bevorzugte Position"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite task"
 msgstr "Bevorzugte Aufgabe"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite view"
 msgstr "Bevorzugte Ansicht"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow"
 msgstr "Bevorzugter Workflow"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow run"
 msgstr "Bevorzugter Workflow-Lauf"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow version"
 msgstr "Bevorzugte Workflow-Version"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workspace member"
 msgstr "Bevorzugtes Arbeitsbereichsmitglied"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:200
-#: src/modules/view/standard-objects/view.workspace-entity.ts:177
-#: src/modules/task/standard-objects/task.workspace-entity.ts:195
-#: src/modules/person/standard-objects/person.workspace-entity.ts:232
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:140
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
-#: src/modules/company/standard-objects/company.workspace-entity.ts:228
-#: src/engine/twenty-orm/custom.workspace-entity.ts:101
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
 msgstr "Favoriten"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorites in this folder"
 msgstr "Favoriten in diesem Ordner"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:229
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Favorites linked to the company"
 msgstr "Mit dem Unternehmen verknüpfte Favoriten"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:233
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "Mit dem Kontakt verknüpfte Favoriten"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:141
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Favorites linked to the note"
 msgstr "Mit der Notiz verknüpfte Favoriten"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:165
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Favorites linked to the opportunity"
 msgstr "Mit der Gelegenheit verknüpfte Favoriten"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:196
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Favorites linked to the task"
 msgstr "Mit der Aufgabe verknüpfte Favoriten"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:178
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Favorites linked to the view"
 msgstr "Mit der Ansicht verknüpfte Favoriten"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Favorites linked to the workflow"
 msgstr "Mit dem Workflow verknüpfte Favoriten"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:201
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Favorites linked to the workflow run"
 msgstr "Mit dem Workflow-Lauf verknüpfte Favoriten"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Favorites linked to the workflow version"
 msgstr "Mit der Workflow-Version verknüpfte Favoriten"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Favorites linked to the workspace member"
 msgstr "Mit dem Arbeitsbereichsmitglied verknüpfte Favoriten"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:106
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites tied to the {label}"
 msgstr "Mit dem {label} verknüpfte Favoriten"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:34
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:45
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Field Metadata Id"
 msgstr "Feld-Metadaten-ID"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:262
-#: src/modules/view/standard-objects/view.workspace-entity.ts:263
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Field metadata used for aggregate operation"
 msgstr "Für Aggregatoperationen verwendete Feld-Metadaten"
 
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:6
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "Für die Volltextsuche verwendetes Feld"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:51
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Field Value"
 msgstr "Feldwert"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder for Message Channel"
 msgstr "Ordner für Nachrichtenkanal"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder name"
 msgstr "Ordnername"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:51
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Full path"
 msgstr "Vollständiger Pfad"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:52
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Group by this field value"
 msgstr "Nach diesem Feldwert gruppieren"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "handle"
 msgstr "Handle"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:53
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:54
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:126
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:127
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:45
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:46
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:86
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:87
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:34
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:35
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Handle"
 msgstr "Handle"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:95
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:96
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Handle Aliases"
 msgstr "Handle-Aliase"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:40
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Header message Id"
 msgstr "Header-Nachrichten-ID"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:126
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:127
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "iCal UID"
 msgstr "iCal UID"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:79
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Icon"
 msgstr "Symbol"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:135
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ICP"
 msgstr "ICP"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:14
-#: src/engine/twenty-orm/base.workspace-entity.ts:15
+#: src/engine/twenty-orm/base.workspace-entity.ts
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Id"
 msgstr "ID"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:136
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideal Customer Profile: Gibt an, ob das Unternehmen der geeignetste und wertvollste Kunde für Sie ist"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:78
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "If the event is related to a particular object"
 msgstr "Wenn das Ereignis mit einem bestimmten Objekt verknüpft ist"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:48
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:49
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Is canceled"
 msgstr "Ist abgesagt"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:160
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:161
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Contact Auto Creation Enabled"
 msgstr "Ist die automatische Kontakterstellung aktiviert"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Is Full Day"
 msgstr "Ganztägig"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Is Organizer"
 msgstr "Ist Organisator"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:258
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:259
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "Ist Synchronisierung aktiviert"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:115
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
 msgstr "Berufsbezeichnung"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:68
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:53
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
 msgstr "JSON-Objekt zur Bereitstellung von Kontext (Benutzer, Gerät, Arbeitsbereich usw.)"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:141
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Json object to provide output of the workflow run"
 msgstr "JSON-Objekt zur Bereitstellung der Ausgabe des Workflow-Laufs"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide steps"
 msgstr "JSON-Objekt zur Bereitstellung von Schritten"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide trigger"
 msgstr "JSON-Objekt zur Bereitstellung des Triggers"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:64
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:58
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:43
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "JSON-Wert für Ereignisdetails"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:87
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "kanbanfieldMetadataId"
 msgstr "kanbanfieldMetadataId"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:68
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Key"
 msgstr "Schlüssel"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:107
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Language"
 msgstr "Sprache"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Last published Version Id"
 msgstr "Zuletzt veröffentlichte Versions-ID"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Last sync cursor"
 msgstr "Letzter Synchronisierungs-Cursor"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:239
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:240
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:277
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:278
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Last sync date"
 msgstr "Datum der letzten Synchronisierung"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:76
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:77
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Last sync history ID"
 msgstr "ID der letzten Synchronisierungshistorie"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:40
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Last time the record was changed"
 msgstr "Letzte Änderung des Datensatzes"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:39
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Last update"
 msgstr "Letzte Aktualisierung"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:93
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:94
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Object Metadata Id"
 msgstr "Verknüpfte Objekt-Metadaten-ID"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:198
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Linked Opportunities"
 msgstr "Verknüpfte Gelegenheiten"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:74
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Record cached name"
 msgstr "Verknüpfter Datensatz-Cache-Name"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:83
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:84
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Record id"
 msgstr "Verknüpfte Datensatz-ID"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:95
-#: src/modules/company/standard-objects/company.workspace-entity.ts:95
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Linkedin"
 msgstr "Linkedin"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:199
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "Liste der Gelegenheiten, für die diese Person der Ansprechpartner ist"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:117
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:118
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Location"
 msgstr "Standort"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Logical Operator"
 msgstr "Logischer Operator"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:61
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Logical operator for the filter group"
 msgstr "Logischer Operator für die Filtergruppe"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Meet Link"
 msgstr "Meet-Link"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:72
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message"
 msgstr "Nachricht"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:41
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:42
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:84
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel"
 msgstr "Nachrichtenkanal"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:105
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:374
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel Association"
 msgstr "Nachrichtenkanal-Assoziation"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:91
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:92
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Id"
 msgstr "Nachrichtenkanal-ID"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:29
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Association"
 msgstr "Nachrichtenkanal-Nachrichtenassoziation"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:30
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Associations"
 msgstr "Nachrichtenkanal-Nachrichtenassoziationen"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:85
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:86
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:128
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:129
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Message Channels"
 msgstr "Nachrichtenkanäle"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:67
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Direction"
 msgstr "Nachrichtenrichtung"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:45
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message External Id"
 msgstr "Nachrichten-Externe-ID"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:21
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Folder"
 msgstr "Nachrichtenordner"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:22
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:388
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:389
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Folders"
 msgstr "Nachrichtenordner"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:106
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:107
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Id"
 msgstr "Nachrichten-ID"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:41
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message id from the message header"
 msgstr "Nachrichten-ID aus dem Nachrichten-Header"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:46
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message id from the messaging provider"
 msgstr "Nachrichten-ID des Nachrichtenanbieters"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:25
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message Participant"
 msgstr "Nachrichtenteilnehmer"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
-#: src/modules/person/standard-objects/person.workspace-entity.ts:255
-#: src/modules/person/standard-objects/person.workspace-entity.ts:256
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:93
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:94
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:27
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message Participants"
 msgstr "Nachrichtenteilnehmer"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:31
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Synced with a Message Channel"
 msgstr "Mit einem Nachrichtenkanal synchronisierte Nachricht"
 
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:23
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Thread"
 msgstr "Nachrichten-Thread"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:77
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:78
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message Thread Id"
 msgstr "Nachrichten-Thread-ID"
 
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:24
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Threads"
 msgstr "Nachrichten-Threads"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:29
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:34
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Messages"
 msgstr "Nachrichten"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Messages from the channel."
 msgstr "Nachrichten aus dem Kanal."
 
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Messages from the thread."
 msgstr "Nachrichten aus dem Thread."
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider access token"
 msgstr "Zugangstoken des Messaging-Anbieters"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
 msgstr "Aktualisierungstoken des Messaging-Anbieters"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:75
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:66
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
-#: src/modules/view/standard-objects/view.workspace-entity.ts:43
-#: src/modules/person/standard-objects/person.workspace-entity.ts:75
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:60
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:32
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:43
-#: src/modules/company/standard-objects/company.workspace-entity.ts:66
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:42
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:29
-#: src/engine/twenty-orm/custom.workspace-entity.ts:40
-#: src/engine/twenty-orm/custom.workspace-entity.ts:41
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Name"
 msgstr "Name"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
 msgstr "Name des Favoritenordners"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:67
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "Name des Workflow-Laufs"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:44
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Note"
 msgstr "Notiz"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:116
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note attachments"
 msgstr "Notiz-Anhänge"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:76
-#: src/modules/note/standard-objects/note.workspace-entity.ts:86
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
 msgstr "Notiztext"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:56
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note record position"
 msgstr "Notiz-Datensatzposition"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "Note Target"
 msgstr "Notiz-Ziel"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:104
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note targets"
 msgstr "Notiz-Ziele"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:26
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "Note Targets"
 msgstr "Notiz-Ziele"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:67
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note title"
 msgstr "Notiz-Titel"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:221
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
-#: src/modules/note/standard-objects/note.workspace-entity.ts:45
-#: src/modules/company/standard-objects/company.workspace-entity.ts:205
-#: src/engine/twenty-orm/custom.workspace-entity.ts:69
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Notes"
 msgstr "Notizen"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:74
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Notes tied to the {label}"
 msgstr "Mit dem {label} verbundene Notizen"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:206
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Notes tied to the company"
 msgstr "Mit dem Unternehmen verbundene Notizen"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:222
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Notes tied to the contact"
 msgstr "Mit dem Kontakt verbundene Notizen"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Notes tied to the opportunity"
 msgstr "Mit der Opportunity verbundene Notizen"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget company"
 msgstr "Notiz-Zielunternehmen"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget note"
 msgstr "Notiz-Zielnotiz"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget opportunity"
 msgstr "Notiz-Zielgelegenheit"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget person"
 msgstr "Notiz-Zielperson"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:86
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
 msgstr "Anzahl der Mitarbeiter im Unternehmen"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Object id"
 msgstr "Objekt-ID"
 
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object metadata id"
 msgstr "Objekt-Metadaten-ID"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:51
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "Objekt-Metadaten-ID"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:63
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object name"
 msgstr "Objektname"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operand"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Operation"
 msgstr "Operation"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Operations"
 msgstr "Operationen"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
-#: src/modules/company/standard-objects/company.workspace-entity.ts:216
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
 msgstr "Opportunities"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:217
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities linked to the company."
 msgstr "Mit dem Unternehmen verbundene Opportunities."
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:48
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:80
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:118
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:143
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Opportunity"
 msgstr "Opportunity"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:70
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity amount"
 msgstr "Opportunity-Betrag"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:80
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity close date"
 msgstr "Abschlussdatum der Opportunity"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:149
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity company"
 msgstr "Opportunity-Unternehmen"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity point of contact"
 msgstr "Ansprechpartner der Opportunity"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity probability"
 msgstr "Opportunity-Wahrscheinlichkeit"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity record position"
 msgstr "Opportunity-Datensatzposition"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity stage"
 msgstr "Opportunity-Phase"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:190
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:97
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Optional aggregate operation"
 msgstr "Optionale Aggregatoperation"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
 msgstr "Optionales Geheimnis zur Berechnung der HMAC-Signatur für Webhook-Nutzdaten. Dieses Geheimnis wird zwischen Twenty und dem Webhook-Konsumenten geteilt, um Webhook-Anfragen zu authentifizieren."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:140
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Output"
 msgstr "Ausgabe"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:52
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group"
 msgstr "Übergeordnete Ansichtsfiltergruppe"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:51
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group Id"
 msgstr "Übergeordnete Ansichtsfiltergruppen-ID"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:59
-#: src/modules/company/standard-objects/company.workspace-entity.ts:166
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
 msgstr "Personen"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:167
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People linked to the company."
 msgstr "Mit dem Unternehmen verbundene Personen."
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
-#: src/modules/person/standard-objects/person.workspace-entity.ts:58
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:50
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:85
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:86
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:73
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:123
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:124
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:113
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Person"
 msgstr "Person"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:163
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
 msgstr "Personen-Datensatzposition"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:124
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phone"
 msgstr "Telefon"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:134
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phones"
 msgstr "Telefone"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
 msgstr "Ansprechpartner"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:160
-#: src/modules/view/standard-objects/view.workspace-entity.ts:98
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
-#: src/modules/task/standard-objects/task.workspace-entity.ts:58
-#: src/modules/person/standard-objects/person.workspace-entity.ts:162
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
-#: src/modules/note/standard-objects/note.workspace-entity.ts:55
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
-#: src/modules/company/standard-objects/company.workspace-entity.ts:145
-#: src/engine/twenty-orm/custom.workspace-entity.ts:49
-#: src/engine/twenty-orm/custom.workspace-entity.ts:50
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
 msgstr "Position"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:90
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Position in the parent view filter group"
 msgstr "Position in der übergeordneten Filtergruppe"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Position in the view filter group"
 msgstr "Position in der Filtergruppe"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Position in view filter group"
 msgstr "Position in der Filtergruppe"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred color scheme"
 msgstr "Bevorzugtes Farbschema"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred language"
 msgstr "Bevorzugte Sprache"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
 msgstr "Wahrscheinlichkeit"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:49
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "Provider"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Empfangen am"
 
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Record id"
 msgstr "Datensatz-ID"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:45
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:46
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Recurring Event ID"
 msgstr "Wiederkehrende Ereignis-ID"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Refresh Token"
 msgstr "Aktualisierungstoken"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Related user email address"
 msgstr "Zugehörige Benutzer-E-Mail-Adresse"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:142
-#: src/modules/note/standard-objects/note.workspace-entity.ts:103
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Relations"
 msgstr "Beziehungen"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:73
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:74
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Response Status"
 msgstr "Antwortstatus"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:47
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "Revocation date"
 msgstr "Widerrufsdatum"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:37
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:38
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Role"
 msgstr "Rolle"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:121
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:142
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "Läufe"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Scopes"
 msgstr "Geltungsbereiche"
 
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Suchvektor"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:69
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Secret"
 msgstr "Geheimnis"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:64
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
 msgstr "Größe"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "Phase"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Start Date"
 msgstr "Startdatum"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:108
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Status"
 msgstr "Status"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:87
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Statuses"
 msgstr "Status"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:49
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:50
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Betreff"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:51
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:52
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:268
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor"
 msgstr "Sync-Cursor"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
 msgstr "Sync-Cursor. Wird für die Synchronisierung von Ereignissen mit dem Kalenderanbieter verwendet"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:137
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:138
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync stage"
 msgstr "Synchronisationsphase"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:339
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:340
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync stage started at"
 msgstr "Synchronisationsphase gestartet am"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:95
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:96
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync status"
 msgstr "Synchronisationsstatus"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:30
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Target Url"
 msgstr "Ziel-URL"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
-#: src/modules/task/standard-objects/task.workspace-entity.ts:47
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Task"
 msgstr "Aufgabe"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:167
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task assignee"
 msgstr "Aufgabenzuweisung"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:155
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task attachments"
 msgstr "Aufgabenanhänge"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:79
-#: src/modules/task/standard-objects/task.workspace-entity.ts:89
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task body"
 msgstr "Aufgabentext"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:99
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task due date"
 msgstr "Fälligkeitsdatum der Aufgabe"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:59
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task record position"
 msgstr "Aufgabenpositionsdatensatz"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:109
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task status"
 msgstr "Aufgabenstatus"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:25
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "Task Target"
 msgstr "Aufgabenziel"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:143
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task targets"
 msgstr "Aufgabenziele"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "Task Targets"
 msgstr "Aufgabenziele"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:70
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task title"
 msgstr "Aufgabentitel"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:48
-#: src/modules/person/standard-objects/person.workspace-entity.ts:210
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
-#: src/modules/company/standard-objects/company.workspace-entity.ts:194
-#: src/engine/twenty-orm/custom.workspace-entity.ts:85
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Tasks"
 msgstr "Aufgaben"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:146
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Tasks assigned to the workspace member"
 msgstr "Dem Arbeitsbereichsmitglied zugewiesene Aufgaben"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:90
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Tasks tied to the {label}"
 msgstr "Mit dem {label} verbundene Aufgaben"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:195
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Tasks tied to the company"
 msgstr "Mit dem Unternehmen verbundene Aufgaben"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:211
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Tasks tied to the contact"
 msgstr "Mit dem Kontakt verbundene Aufgaben"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Tasks tied to the opportunity"
 msgstr "Mit der Gelegenheit verbundene Aufgaben"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:66
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget company"
 msgstr "Aufgabenziel Unternehmen"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget opportunity"
 msgstr "Aufgabenziel Gelegenheit"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget person"
 msgstr "Aufgabenziel Person"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:36
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget task"
 msgstr "Aufgabenziel Aufgabe"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Text"
 msgstr "Text"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account handle (email, username, phone number, etc.)"
 msgstr "Der Kontohandle (E-Mail, Benutzername, Telefonnummer usw.)"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "Der Kontoanbieter"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:96
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Linkedin account"
 msgstr "Das LinkedIn-Konto des Unternehmens"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:67
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company name"
 msgstr "Der Firmenname"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:106
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Twitter/X account"
 msgstr "Das Twitter/X-Konto des Unternehmens"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:76
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "Die URL der Unternehmenswebsite. Wir verwenden diese URL, um das Unternehmenssymbol abzurufen"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
-#: src/modules/task/standard-objects/task.workspace-entity.ts:136
-#: src/modules/person/standard-objects/person.workspace-entity.ts:175
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
-#: src/modules/note/standard-objects/note.workspace-entity.ts:97
-#: src/modules/company/standard-objects/company.workspace-entity.ts:158
-#: src/engine/twenty-orm/custom.workspace-entity.ts:63
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "Der Ersteller des Datensatzes"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The current statuses of the workflow versions"
 msgstr "Die aktuellen Status der Workflow-Versionen"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "The date the message was received"
 msgstr "Das Datum, an dem die Nachricht empfangen wurde"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:133
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
 msgstr "Der Ausführende des Workflows"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "The folder this favorite belongs to"
 msgstr "Der Ordner, zu dem dieser Favorit gehört"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:61
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "Der Name der Gelegenheit"
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:35
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "The workflow event listener name"
 msgstr "Der Name des Workflow-Ereignis-Listeners"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow last published version id"
 msgstr "Die zuletzt veröffentlichte Versions-ID des Workflows"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow name"
 msgstr "Der Name des Workflows"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:76
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version name"
 msgstr "Der Name der Workflow-Version"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:105
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version status"
 msgstr "Der Status der Workflow-Version"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:56
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Thread External Id"
 msgstr "Thread Externe ID"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Thread id from the messaging provider"
 msgstr "Thread-ID des Nachrichtenanbieters"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Throttle Failure Count"
 msgstr "Anzahl der Drosselungsfehler"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time format"
 msgstr "Zeitformat"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:268
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time zone"
 msgstr "Zeitzone"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:212
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
-#: src/modules/task/standard-objects/task.workspace-entity.ts:183
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
-#: src/modules/note/standard-objects/note.workspace-entity.ts:128
-#: src/modules/company/standard-objects/company.workspace-entity.ts:253
-#: src/engine/twenty-orm/custom.workspace-entity.ts:134
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
 msgstr "Zeitachsen-Aktivitäten"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:254
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "Mit dem Unternehmen verknüpfte Zeitachsen-Aktivitäten"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:129
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Timeline Activities linked to the note."
 msgstr "Mit der Notiz verknüpfte Zeitachsen-Aktivitäten."
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Timeline Activities linked to the opportunity."
 msgstr "Mit der Gelegenheit verknüpfte Zeitachsen-Aktivitäten."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:213
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Timeline activities linked to the run"
 msgstr "Mit dem Lauf verknüpfte Zeitachsen-Aktivitäten"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:184
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Timeline Activities linked to the task."
 msgstr "Mit der Aufgabe verknüpfte Zeitachsen-Aktivitäten."
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Timeline activities linked to the version"
 msgstr "Mit der Version verknüpfte Zeitachsen-Aktivitäten"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:156
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Timeline activities linked to the workflow"
 msgstr "Mit dem Workflow verknüpfte Zeitachsen-Aktivitäten"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:139
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities tied to the {label}"
 msgstr "Mit dem {label} verknüpfte Zeitachsen-Aktivitäten"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Timeline Activity"
 msgstr "Zeitachsen-Aktivität"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:69
-#: src/modules/note/standard-objects/note.workspace-entity.ts:66
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Titel"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:59
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:135
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "Typ"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:98
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:99
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Update DateTime"
 msgstr "Datum/Uhrzeit aktualisieren"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:126
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Email"
 msgstr "Benutzer-E-Mail"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:135
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "Benutzer-ID"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:270
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
 msgstr "Benutzerzeitzone"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:279
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
 msgstr "Bevorzugtes Datumsformat des Benutzers"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:315
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Bevorzugtes Zeitformat des Benutzers"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Value"
 msgstr "Wert"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version status"
 msgstr "Versionsstatus"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:94
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version steps"
 msgstr "Versionsschritte"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:84
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version trigger"
 msgstr "Version-Auslöser"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:110
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Versions"
 msgstr "Versionen"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:31
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:57
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:70
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:67
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:38
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:39
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:85
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:208
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "View"
 msgstr "Ansicht"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Ansichtsfeld"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field position"
 msgstr "Ansichtsfeldposition"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field related view"
 msgstr "Ansichtsfeld verknüpfte Ansicht"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field size"
 msgstr "Ansichtsfeldgröße"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field target field"
 msgstr "Ansichtsfeld Zielfeld"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field visibility"
 msgstr "Ansichtsfeld Sichtbarkeit"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:117
-#: src/modules/view/standard-objects/view.workspace-entity.ts:118
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Fields"
 msgstr "Ansichtsfelder"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter"
 msgstr "Ansichtsfilter"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter Display Value"
 msgstr "Ansichtsfilter Anzeigewert"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "View Filter Group"
 msgstr "Ansichtsfiltergruppe"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter Group Id"
 msgstr "Ansichtsfiltergruppen-ID"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:153
-#: src/modules/view/standard-objects/view.workspace-entity.ts:154
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "View Filter Groups"
 msgstr "Ansichtsfiltergruppen"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter operand"
 msgstr "Ansichtsfilter Operand"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter related view"
 msgstr "Ansichtsfilter verknüpfte Ansicht"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter target field"
 msgstr "Ansichtsfilter Zielfeld"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter value"
 msgstr "Ansichtsfilterwert"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:141
-#: src/modules/view/standard-objects/view.workspace-entity.ts:142
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filters"
 msgstr "Ansichtsfilter"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group"
 msgstr "Ansichtsgruppe"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group related view"
 msgstr "Ansichtsgruppe verknüpfte Ansicht"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group target field"
 msgstr "Ansichtsgruppe Zielfeld"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group visibility"
 msgstr "Ansichtsgruppe Sichtbarkeit"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:129
-#: src/modules/view/standard-objects/view.workspace-entity.ts:130
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Groups"
 msgstr "Ansichtsgruppen"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:80
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View icon"
 msgstr "Ansichtssymbol"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:88
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View Kanban column field"
 msgstr "Ansicht Kanban-Spaltenfeld"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:69
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View key"
 msgstr "Ansichtsschlüssel"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:44
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View name"
 msgstr "Ansichtsname"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:99
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View position"
 msgstr "Ansichtsposition"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort"
 msgstr "Ansicht Sortierung"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "Ansicht Sortierrichtung"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort related view"
 msgstr "Ansicht Sortierung verknüpfte Ansicht"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort target field"
 msgstr "Ansicht Sortierung Zielfeld"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:165
-#: src/modules/view/standard-objects/view.workspace-entity.ts:166
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sorts"
 msgstr "Ansicht Sortierungen"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:52
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View target object"
 msgstr "Ansicht Zielobjekt"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
 msgstr "Ansichtstyp"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:32
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Views"
 msgstr "Ansichten"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:186
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:187
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Visibility"
 msgstr "Sichtbarkeit"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook"
 msgstr "Webhook"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook operation"
 msgstr "Webhook-Operation"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook operations"
 msgstr "Webhook-Operationen"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook target url"
 msgstr "Webhook-Ziel-URL"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhooks"
 msgstr "Webhooks"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Workflow"
 msgstr "Workflow"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow event listeners linked to the workflow."
 msgstr "Workflow-Ereignis-Listener, die mit dem Workflow verknüpft sind."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow linked to the run."
 msgstr "Mit dem Lauf verknüpfter Workflow."
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
 msgstr "Workflow-Datensatzposition"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:56
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Workflow Run"
 msgstr "Workflow-Lauf"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:85
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:86
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run ended at"
 msgstr "Workflow-Lauf beendet um"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:161
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run position"
 msgstr "Workflow-Laufposition"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:75
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:76
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run started at"
 msgstr "Workflow-Lauf gestartet um"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:95
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:96
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run status"
 msgstr "Status des Workflow-Laufs"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:57
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow Runs"
 msgstr "Workflow-Läufe"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow runs linked to the version."
 msgstr "Mit der Version verknüpfte Workflow-Läufe."
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow runs linked to the workflow."
 msgstr "Mit dem Workflow verknüpfte Workflow-Läufe."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version"
 msgstr "Workflow-Version"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow Version"
 msgstr "Workflow-Version"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version linked to the run."
 msgstr "Mit dem Lauf verknüpfte Workflow-Version."
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow version position"
 msgstr "Position der Workflow-Version"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow Versions"
 msgstr "Workflow-Versionen"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow versions linked to the workflow."
 msgstr "Mit dem Workflow verknüpfte Workflow-Versionen."
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener"
 msgstr "WorkflowEventListener"
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener workflow"
 msgstr "WorkflowEventListener Workflow"
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListeners"
 msgstr "WorkflowEventListeners"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflows"
 msgstr "Workflows"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "WorkflowVersion"
 msgstr "WorkflowVersion"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "WorkflowVersion workflow"
 msgstr "WorkflowVersion Workflow"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Workspace member"
 msgstr "Arbeitsbereichsmitglied"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:90
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:100
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:58
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:138
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:139
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Workspace Member"
 msgstr "Arbeitsbereichsmitglied"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:118
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member avatar"
 msgstr "Avatar des Arbeitsbereichsmitglieds"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member name"
 msgstr "Name des Arbeitsbereichsmitglieds"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Arbeitsbereichsmitglieder"
 
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "WorkspaceMember"
 msgstr "Arbeitsbereichsmitglied"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:105
-#: src/modules/company/standard-objects/company.workspace-entity.ts:105
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:179
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Ihr Teammitglied, das für die Verwaltung des Unternehmenskontos verantwortlich ist"
 

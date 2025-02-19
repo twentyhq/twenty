@@ -18,2239 +18,2239 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "(System) View Fields"
 msgstr "(Järjestelmä) Näytä Kentät"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "(System) View Filter Groups"
 msgstr "(Järjestelmä) Näytä Suodinryhmät"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "(System) View Filters"
 msgstr "(Järjestelmä) Näytä Suodattimet"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "(System) View Groups"
 msgstr "(Järjestelmä) Näytä Ryhmät"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "(System) View Sorts"
 msgstr "(Järjestelmä) Näytä Lajittelut"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:33
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "(System) Views"
 msgstr "(Järjestelmä) Näkymät"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:56
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
 msgstr "Yritys"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:30
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "A connected account"
 msgstr "Liitetty tili"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "A favorite that can be accessed from the left menu"
 msgstr "Suosikki, joka voidaan avata vasemmasta valikosta"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:24
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "A Folder of favorites"
 msgstr "Suosikkikansio"
 
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "Aiheeseen liittyvien viestien ryhmä (esim. sähköpostiketju, keskusteluketju)"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "Viestintäkanavan kautta lähetetty tai vastaanotettu viesti (sähköposti, chat jne.)"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:46
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "A note"
 msgstr "Muistiinpano"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "A note target"
 msgstr "Muistiinpanon kohde"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:60
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "A person"
 msgstr "Henkilö"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:49
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "A task"
 msgstr "Tehtävä"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "A task target"
 msgstr "Tehtävän kohde"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:20
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "A webhook"
 msgstr "Webhook"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "A workflow"
 msgstr "Työnkulku"
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "A workflow event listener"
 msgstr "Työnkulun tapahtumankuuntelija"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:58
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "A workflow run"
 msgstr "Työnkulun suoritus"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "A workflow version"
 msgstr "Työnkulkujen versio"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "A workspace member"
 msgstr "Toimialueen jäsen"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:58
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Access Token"
 msgstr "Pääsynhallintatokeni"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
-#: src/modules/company/standard-objects/company.workspace-entity.ts:178
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Account Owner"
 msgstr "Tilin omistaja"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:169
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Account owner for companies"
 msgstr "Yrityksen tilin omistaja"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:168
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Account Owner For Companies"
 msgstr "Yrityksen Tilin Omistaja"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:125
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Osoite"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:266
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address (deprecated) "
 msgstr "Osoite (vanhentunut) "
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:126
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address of the company"
 msgstr "Yrityksen osoite"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:267
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Yrityksen osoite - korvattu uudella osoitekentällä"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:189
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Aggregate operation"
 msgstr "Kokoomatoiminto"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:35
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Ajajanäkymässä näytettävä yhdistetty/suodatettu tapahtuma"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:69
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "Määrä"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:19
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "An API key"
 msgstr "API-avain"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:32
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "An attachment"
 msgstr "Liite"
 
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:24
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "An audit log of actions performed in the system"
 msgstr "Järjestelmässä suoritettujen toimintojen auditointiloki"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:20
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "An event related to user behavior"
 msgstr "Käyttäjän käyttäytymiseen liittyvä tapahtuma"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:50
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "An opportunity"
 msgstr "Mahdollisuus"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:116
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Toistuva vuosittainen liikevaihto: Yrityksen todellinen tai arvioitu vuosittainen liikevaihto"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "API Key"
 msgstr "API-avain"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:18
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "API Keys"
 msgstr "API-avaimet"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey expiration date"
 msgstr "API-avaimen vanhentumispäivämäärä"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey name"
 msgstr "API-avaimen nimi"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey revocation date"
 msgstr "API-avaimen mitätöimispäivämäärä"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:115
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ARR"
 msgstr "ARR"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Assigned tasks"
 msgstr "Määrätyt tehtävät"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:166
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Assignee"
 msgstr "Tehtävään määrätty"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Liitetyn käyttäjän tunnus"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:30
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment"
 msgstr "Liite"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:70
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment author"
 msgstr "Liitteen luoja"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:129
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "Liitteen yritys"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:52
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
 msgstr "Liitteen täydellinen polku"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:43
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment name"
 msgstr "Liitteen nimi"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:99
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment note"
 msgstr "Liitteen muistiinpano"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:144
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment opportunity"
 msgstr "Liitteen mahdollisuus"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:114
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment person"
 msgstr "Liitteen henkilö"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:84
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment task"
 msgstr "Liitteen tehtävä"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:61
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment type"
 msgstr "Liitteen tyyppi"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:154
-#: src/modules/person/standard-objects/person.workspace-entity.ts:244
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
-#: src/modules/note/standard-objects/note.workspace-entity.ts:115
-#: src/modules/company/standard-objects/company.workspace-entity.ts:241
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
-#: src/engine/twenty-orm/custom.workspace-entity.ts:118
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
 msgstr "Liitteet"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Attachments created by the workspace member"
 msgstr "Työtilan jäsenen luomat liitteet"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:242
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Attachments linked to the company"
 msgstr "Yritykseen liitetyt liitteet"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:245
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "Yhteystietoihin liitetyt liitteet."
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:200
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
 msgstr "Mahdollisuuteen liitetyt liitteet"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:123
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments tied to the {label}"
 msgstr "{label}-kohteeseen liitetyt liitteet"
 
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Audit Log"
 msgstr "Tarkastusloki"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:255
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:23
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Audit Logs"
 msgstr "Tarkastuslokit"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:256
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Audit Logs linked to the workspace member"
 msgstr "Työtilan jäsenen tarkastuslokit"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Auth failed at"
 msgstr "Authentikointi epäonnistui kello"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Author"
 msgstr "Tekijä"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:180
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "Tekijän luomat liitteet"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Luo automaattisesti henkilötietueita viestejä vastaanottaessa tai lähettäessä"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Automatically create records for people you participated with in an event."
 msgstr "Luo automaattisesti tietueita tapahtumissa osallistuneista henkilöistä."
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:152
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Avatar"
 msgstr "Hahmo"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:117
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "Hahmon URL-osoite"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:18
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Behavioral Event"
 msgstr "Käyttäytymistapahtuma"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:19
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Behavioral Events"
 msgstr "Käyttäytymistapahtumat"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:216
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:22
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:24
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklist"
 msgstr "Estolista"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:217
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Blocklisted handles"
 msgstr "Estolistatut kahvat"
 
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:23
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklists"
 msgstr "Estolistat"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:88
-#: src/modules/note/standard-objects/note.workspace-entity.ts:85
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
 msgstr "Sisältö"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:78
-#: src/modules/note/standard-objects/note.workspace-entity.ts:75
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body (deprecated)"
 msgstr "Ruumis (vanhentunut)"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Cached record name"
 msgstr "Välimuistitallennetun nimen"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:74
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Calendar Channel"
 msgstr "Kalenterikanava"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:23
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Calendar Channel Event Association"
 msgstr "Kalenterikanavan tapahtumayhdistys"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:155
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:156
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:322
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:323
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:24
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:25
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Calendar Channel Event Associations"
 msgstr "Kalenterikanavan tapahtumayhdistykset"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:139
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:140
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:75
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:76
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Calendar Channels"
 msgstr "Kalenterikanavat"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:27
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar event"
 msgstr "Kalenteritapahtuma"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:32
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Calendar event participant"
 msgstr "Kalenteritapahtuman osallistuja"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:33
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:34
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Calendar event participants"
 msgstr "Kalenteritapahtuman osallistujat"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
-#: src/modules/person/standard-objects/person.workspace-entity.ts:268
-#: src/modules/person/standard-objects/person.workspace-entity.ts:269
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Calendar Event Participants"
 msgstr "Kalenteritapahtuman osallistujat"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:28
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:29
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar events"
 msgstr "Kalenteritapahtumat"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:55
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:56
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Channel ID"
 msgstr "Kanavan tunniste"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:136
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Channel Type"
 msgstr "Kanavatyyppi"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:143
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "City"
 msgstr "Kaupunki"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:79
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "Päättymispäivämäärä"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:97
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Color Scheme"
 msgstr "Värimaailma"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:108
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Compact View"
 msgstr "Tiivis näkymä"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:55
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Companies"
 msgstr "Yritykset"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
-#: src/modules/person/standard-objects/person.workspace-entity.ts:183
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:148
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:65
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:88
-#: src/modules/company/standard-objects/company.workspace-entity.ts:54
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Company"
 msgstr "Yritys"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:146
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
 msgstr "Yritysmuistion sijainti"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:135
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:136
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
 msgstr "Videoneuvotteluratkaisu"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:359
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:360
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:28
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:307
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:308
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Connected Account"
 msgstr "Liitetty tili"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:192
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:193
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Connected accounts"
 msgstr "Liitetyt tilit"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:29
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
 msgstr "Liitetyt tilit"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:170
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:221
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Contact auto creation policy"
 msgstr "Ota yhteyttä automaattisen luonnin käytäntöön"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:153
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s avatar"
 msgstr "Kontaktin avatar"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:144
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s city"
 msgstr "Kontaktin kaupunki"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:184
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s company"
 msgstr "Kontaktin yritys"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:86
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Emails"
 msgstr "Kontaktin sähköpostit"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:116
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s job title"
 msgstr "Kontaktin työnimike"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:96
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Linkedin account"
 msgstr "Kontaktin LinkedIn-tili"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:76
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s name"
 msgstr "Kontaktin nimi"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:125
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone number"
 msgstr "Kontaktin puhelinnumero"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:135
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone numbers"
 msgstr "Kontaktin puhelinnumerot"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:106
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s X/Twitter account"
 msgstr "Kontaktin X/Twitter-tili"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:150
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:151
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Context"
 msgstr "Konteksti"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
-#: src/modules/task/standard-objects/task.workspace-entity.ts:134
-#: src/modules/person/standard-objects/person.workspace-entity.ts:173
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
-#: src/modules/note/standard-objects/note.workspace-entity.ts:95
-#: src/modules/company/standard-objects/company.workspace-entity.ts:156
-#: src/engine/twenty-orm/custom.workspace-entity.ts:61
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Luoja"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:44
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:45
-#: src/engine/twenty-orm/base.workspace-entity.ts:26
-#: src/engine/twenty-orm/base.workspace-entity.ts:27
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/engine/twenty-orm/base.workspace-entity.ts
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Creation date"
 msgstr "Luontipäivämäärä"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Creation DateTime"
 msgstr "Luontihetken aika"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:278
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
 msgstr "Päiväysmuoto"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:53
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Date when the record was deleted"
 msgstr "Merkinnän poistopäivämäärä"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:52
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Deleted at"
 msgstr "Poistettu"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:109
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Describes if the view is in compact mode"
 msgstr "Kuvaa onko näkymä tiiviissä tilassa"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:109
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Description"
 msgstr "Kuvaus"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:48
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:66
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "Suunta"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:62
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:63
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:54
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:55
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Display Name"
 msgstr "Näyttönimi"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:59
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Näyttöarvo"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:75
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
 msgstr "Verkkotunnus"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:98
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Due Date"
 msgstr "Eräpäivä"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:85
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Emails"
 msgstr "Sähköpostit"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:85
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Employees"
 msgstr "Työntekijät"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:78
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:79
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "End Date"
 msgstr "Päättymispäivä"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "Tapahtuman yritys"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event context"
 msgstr "Tapahtuman yhteys"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "Tapahtuman tiedot"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event external ID"
 msgstr "Tapahtuman ulkoinen ID"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event ID"
 msgstr "Tapahtuman ID"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Event Listeners"
 msgstr "Tapahtumakuuntelijat"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:48
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name"
 msgstr "Tapahtuman nimi"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name/type"
 msgstr "Tapahtuman nimi\\/tyyppi"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event note"
 msgstr "Tapahtuman muistio"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event opportunity"
 msgstr "Tapahtuman mahdollisuus"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Event Participants"
 msgstr "Tapahtuman osallistujat"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event person"
 msgstr "Tapahtuman henkilö"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event task"
 msgstr "Tapahtumatehtävä"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow"
 msgstr "Tapahtuman työnkulku"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow run"
 msgstr "Tapahtuman työnkulun suoritus"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow version"
 msgstr "Tapahtuman työnkulun versio"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "Tapahtuman työtilan jäsen"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
-#: src/modules/person/standard-objects/person.workspace-entity.ts:282
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events"
 msgstr "Tapahtumat"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:283
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
 msgstr "Henkilöön liittyvät tapahtumat"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Events linked to the workspace member"
 msgstr "Työtilan jäseniin liittyvät tapahtumat"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Exclude group emails"
 msgstr "Jätä ryhmäsähköpostit pois"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Exclude non professional emails"
 msgstr "Jätä ei-ammattimaiset sähköpostit pois"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:131
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Executed by"
 msgstr "Suorittanut"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "Expiration date"
 msgstr "Vanhentumispäivä"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
 msgstr "Suosikki"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite company"
 msgstr "Suosikkiyritys"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite Folder"
 msgstr "Suosikkikansio"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite folder position"
 msgstr "Suosikkikansion sijainti"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite Folders"
 msgstr "Suosikkikansiot"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite note"
 msgstr "Suosikkimuistiinpano"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite opportunity"
 msgstr "Suosikkitilaisuus"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite person"
 msgstr "Suosikkihenkilö"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite position"
 msgstr "Suosikkipositio"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite task"
 msgstr "Suosikkitaski"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite view"
 msgstr "Suosikkinäkymä"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow"
 msgstr "Suosikkiprosessi"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow run"
 msgstr "Suosikkityönkulku"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow version"
 msgstr "Suosikkiprosessin versio"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workspace member"
 msgstr "Suosikityötilan jäsen"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:200
-#: src/modules/view/standard-objects/view.workspace-entity.ts:177
-#: src/modules/task/standard-objects/task.workspace-entity.ts:195
-#: src/modules/person/standard-objects/person.workspace-entity.ts:232
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:140
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
-#: src/modules/company/standard-objects/company.workspace-entity.ts:228
-#: src/engine/twenty-orm/custom.workspace-entity.ts:101
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
 msgstr "Suosikit"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorites in this folder"
 msgstr "Tässä kansiossa olevat suosikit"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:229
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Favorites linked to the company"
 msgstr "Yritykseen linkitetyt suosikit"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:233
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "Kontaktiin linkitetyt suosikit"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:141
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Favorites linked to the note"
 msgstr "Muistiinpanoon linkitetyt suosikit"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:165
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Favorites linked to the opportunity"
 msgstr "Tilaisuuteen linkitetyt suosikit"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:196
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Favorites linked to the task"
 msgstr "Tehtävään linkitetyt suosikit"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:178
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Favorites linked to the view"
 msgstr "Näkymään linkitetyt suosikit"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Favorites linked to the workflow"
 msgstr "Prosessiin linkitetyt suosikit"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:201
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Favorites linked to the workflow run"
 msgstr "Työnkulkutapahtumaan linkitetyt suosikit"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Favorites linked to the workflow version"
 msgstr "Prosessin versioon linkitetyt suosikit"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Favorites linked to the workspace member"
 msgstr "Työtilan jäseniin linkitetyt suosikit"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:106
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites tied to the {label}"
 msgstr "{label} kytketyt suosikit"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:34
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:45
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Field Metadata Id"
 msgstr "Kenttämetatiedon Id"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:262
-#: src/modules/view/standard-objects/view.workspace-entity.ts:263
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Field metadata used for aggregate operation"
 msgstr "Käytetty metatietokenttä yhteenvetotoimintoon"
 
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:6
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "Täydet tekstihaun kentät"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:51
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Field Value"
 msgstr "Kentän Arvo"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder for Message Channel"
 msgstr "Viestikanavan kansio"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder name"
 msgstr "Kansion nimi"
 
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:51
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Full path"
 msgstr "Täysi polku"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:52
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Group by this field value"
 msgstr "Ryhmittele tämän kentän arvon perusteella"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "handle"
 msgstr "kahva"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:53
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:54
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:126
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:127
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:45
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:46
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:86
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:87
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:34
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:35
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Handle"
 msgstr "Kahva"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:95
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:96
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Handle Aliases"
 msgstr "Kahva-aliakset"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:40
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Header message Id"
 msgstr "Viiten viestin Id"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:126
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:127
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "iCal UID"
 msgstr "iCal-tunniste"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:79
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Icon"
 msgstr "Kuvake"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:135
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ICP"
 msgstr "IPK"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:14
-#: src/engine/twenty-orm/base.workspace-entity.ts:15
+#: src/engine/twenty-orm/base.workspace-entity.ts
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Id"
 msgstr "Tunnus"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:136
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideaalinen asiakasprofiili: Osoittaa, onko yritys sinulle sopivin ja arvokkain asiakas"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:78
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "If the event is related to a particular object"
 msgstr "Jos tapahtuma liittyy tiettyyn objektiin"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:48
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:49
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Is canceled"
 msgstr "On peruttu"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:160
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:161
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Contact Auto Creation Enabled"
 msgstr "Onko yhteystietojen automaattiluonti käytössä"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Is Full Day"
 msgstr "Onko koko päivän kestävä"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Is Organizer"
 msgstr "Onko järjestäjä"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:258
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:259
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "Onko synkronointi käytössä"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:115
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
 msgstr "Työnimike"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:68
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:53
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
 msgstr "Json-objekti tarjoamaan kontekstin (käyttäjä, laite, työtila jne.)"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:141
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Json object to provide output of the workflow run"
 msgstr "Json-objekti tarjoamaan työprosessin suorituksen tuloksen"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide steps"
 msgstr "Json-objekti vaiheiden tarjoamiseen"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide trigger"
 msgstr "Json-objekti tarjoamaan laukaisijan"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:64
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:58
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:43
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "Json-arvo tapahtuman yksityiskohtia varten"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:87
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "kanbanfieldMetadataId"
 msgstr "kanbanfieldMetadataId"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:68
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Key"
 msgstr "Avain"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:107
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Language"
 msgstr "Kieli"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Last published Version Id"
 msgstr "Viimeksi julkaistun version Id"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Last sync cursor"
 msgstr "Viimeisin synkronoinnin kursori"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:239
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:240
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:277
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:278
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Last sync date"
 msgstr "Viimeisin synkronointipäivämäärä"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:76
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:77
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Last sync history ID"
 msgstr "Viimeisin synkronointihistorian ID"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:40
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Last time the record was changed"
 msgstr "Viimeisin kerran kun tietuetta muutettiin"
 
-#: src/engine/twenty-orm/base.workspace-entity.ts:39
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Last update"
 msgstr "Viimeisin päivitys"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:93
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:94
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Object Metadata Id"
 msgstr "Linkitetyn objektin metadata Id"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:198
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Linked Opportunities"
 msgstr "Linkitetyt mahdollisuudet"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:74
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Record cached name"
 msgstr "Linkitetyn tietueen välimuistissa oleva nimi"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:83
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:84
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Record id"
 msgstr "Linkitetyn tietueen id"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:95
-#: src/modules/company/standard-objects/company.workspace-entity.ts:95
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Linkedin"
 msgstr "LinkedIn"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:199
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "Luettelo mahdollisuuksista, joissa henkilö on yhteyshenkilönä"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:117
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:118
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Location"
 msgstr "Sijainti"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Logical Operator"
 msgstr "Looginen operaattori"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:61
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Logical operator for the filter group"
 msgstr "Suodinryhmän looginen operaattori"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Meet Link"
 msgstr "Meet-linkki"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:72
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message"
 msgstr "Viesti"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:41
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:42
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:84
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel"
 msgstr "Viestikanava"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:105
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:374
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel Association"
 msgstr "Viestikanavan yhdistys"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:91
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:92
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Id"
 msgstr "Viestikanavan tunnus"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:29
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Association"
 msgstr "Viestikanavan viestin yhdistys"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:30
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Associations"
 msgstr "Viestikanavan viestien yhdistykset"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:85
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:86
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:128
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:129
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Message Channels"
 msgstr "Viestikanavat"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:67
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Direction"
 msgstr "Viestin suunta"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:45
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message External Id"
 msgstr "Viestin ulkoinen tunnus"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:21
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Folder"
 msgstr "Viestikansio"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:22
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:388
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:389
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Folders"
 msgstr "Viestikansiot"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:106
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:107
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Id"
 msgstr "Viestin tunnus"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:41
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message id from the message header"
 msgstr "Viestin tunnus viestin otsikosta"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:46
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message id from the messaging provider"
 msgstr "Viestinpalvelun tarjoajan viestin tunnus"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:25
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message Participant"
 msgstr "Viestiosallistuja"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
-#: src/modules/person/standard-objects/person.workspace-entity.ts:255
-#: src/modules/person/standard-objects/person.workspace-entity.ts:256
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:93
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:94
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:27
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message Participants"
 msgstr "Viestiosallistujat"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:31
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Synced with a Message Channel"
 msgstr "Viesti synkronoitu viestikanavan kanssa"
 
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:23
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Thread"
 msgstr "Viestiketju"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:77
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:78
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message Thread Id"
 msgstr "Viestiketjun tunnus"
 
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:24
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Threads"
 msgstr "Viestiketjut"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:29
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:34
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Messages"
 msgstr "Viestit"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Messages from the channel."
 msgstr "Viestit kanavalta."
 
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Messages from the thread."
 msgstr "Viestit ketjusta."
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider access token"
 msgstr "Viestipalvelun tarjoajan käyttöoikeustoken"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
 msgstr "Viestipalvelun tarjoajan uudistustoken"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:75
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:66
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
-#: src/modules/view/standard-objects/view.workspace-entity.ts:43
-#: src/modules/person/standard-objects/person.workspace-entity.ts:75
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:60
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:32
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:43
-#: src/modules/company/standard-objects/company.workspace-entity.ts:66
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:42
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:29
-#: src/engine/twenty-orm/custom.workspace-entity.ts:40
-#: src/engine/twenty-orm/custom.workspace-entity.ts:41
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Name"
 msgstr "Nimi"
 
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
 msgstr "Suosikkikansion nimi"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:67
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "Työnkulun suorituksen nimi"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
-#: src/modules/note/standard-objects/note.workspace-entity.ts:44
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Note"
 msgstr "Muistiinpano"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:116
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note attachments"
 msgstr "Muistiinpanojen liitteet"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:76
-#: src/modules/note/standard-objects/note.workspace-entity.ts:86
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
 msgstr "Muistiinpanon sisältö"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:56
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note record position"
 msgstr "Muistiinpanon tietueen sijainti"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "Note Target"
 msgstr "Muistiinpanon kohde"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:104
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note targets"
 msgstr "Muistiinpanon kohteet"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:26
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "Note Targets"
 msgstr "Muistiinpanon kohteet"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:67
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note title"
 msgstr "Muistiinpanon otsikko"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:221
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
-#: src/modules/note/standard-objects/note.workspace-entity.ts:45
-#: src/modules/company/standard-objects/company.workspace-entity.ts:205
-#: src/engine/twenty-orm/custom.workspace-entity.ts:69
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Notes"
 msgstr "Muistiinpanot"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:74
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Notes tied to the {label}"
 msgstr "Muistiinpanot liittyen {label}"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:206
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Notes tied to the company"
 msgstr "Yritykseen liittyvät muistiinpanot"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:222
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Notes tied to the contact"
 msgstr "Yhteyshenkilöön liittyvät muistiinpanot"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Notes tied to the opportunity"
 msgstr "Mahdollisuuteen liittyvät muistiinpanot"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget company"
 msgstr "Kohdeyritys"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget note"
 msgstr "Kohdemuistiinpano"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget opportunity"
 msgstr "Kohdemahdollisuus"
 
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget person"
 msgstr "Kohdehenkilö"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:86
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
 msgstr "Yrityksen työntekijöiden lukumäärä"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Object id"
 msgstr "Kohde-id"
 
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object metadata id"
 msgstr "Kohdemetadatatunniste"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:51
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "Kohdemetadatatunniste"
 
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:63
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object name"
 msgstr "Kohteen nimi"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operaattori"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Operation"
 msgstr "Toimenpide"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Operations"
 msgstr "Toimenpiteet"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
-#: src/modules/company/standard-objects/company.workspace-entity.ts:216
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
 msgstr "Mahdollisuudet"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:217
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities linked to the company."
 msgstr "Yritykseen liittyvät mahdollisuudet."
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:48
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:80
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:118
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:143
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Opportunity"
 msgstr "Mahdollisuus"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:70
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity amount"
 msgstr "Mahdollisuuden summa"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:80
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity close date"
 msgstr "Mahdollisuuden päättymispäivä"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:149
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity company"
 msgstr "Mahdollisuuden yritys"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity point of contact"
 msgstr "Mahdollisuuden vastuuhenkilö"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity probability"
 msgstr "Mahdollisuuden todennäköisyys"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity record position"
 msgstr "Mahdollisuuden tietueen sijainti"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity stage"
 msgstr "Mahdollisuuden vaihe"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:190
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:97
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Optional aggregate operation"
 msgstr "Vaihtoehtoinen aggregaatio-operaatio"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
 msgstr "Vaihtoehtoinen salaisuus, jota käytetään HMAC-allekirjoituksen laskemiseen webhook-payloadille. Tämä salaisuus jaetaan Twenty ja webhookin kuluttajan välillä webhook-pyyntöjen todentamiseen."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:140
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Output"
 msgstr "Tulos"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:52
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group"
 msgstr "Yläsuodattimien ryhmä"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:51
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group Id"
 msgstr "Yläsuodattimien ryhmän tunniste"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:59
-#: src/modules/company/standard-objects/company.workspace-entity.ts:166
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
 msgstr "Henkilöt"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:167
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People linked to the company."
 msgstr "Yritykseen liittyvät henkilöt."
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
-#: src/modules/person/standard-objects/person.workspace-entity.ts:58
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts:50
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:85
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:86
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:73
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:123
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:124
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:113
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Person"
 msgstr "Henkilö"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:163
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
 msgstr "Henkilötietueen asema"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:124
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phone"
 msgstr "Puhelin"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:134
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phones"
 msgstr "Puhelimet"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
 msgstr "Yhteyshenkilö"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:160
-#: src/modules/view/standard-objects/view.workspace-entity.ts:98
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
-#: src/modules/task/standard-objects/task.workspace-entity.ts:58
-#: src/modules/person/standard-objects/person.workspace-entity.ts:162
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
-#: src/modules/note/standard-objects/note.workspace-entity.ts:55
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
-#: src/modules/company/standard-objects/company.workspace-entity.ts:145
-#: src/engine/twenty-orm/custom.workspace-entity.ts:49
-#: src/engine/twenty-orm/custom.workspace-entity.ts:50
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
 msgstr "Asema"
 
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:90
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Position in the parent view filter group"
 msgstr "Asema ylemmän näkymäsuodinryhmän sisällä"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Position in the view filter group"
 msgstr "Asema näkymäsuodinryhmässä"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Position in view filter group"
 msgstr "Asema näkymäsuodinryhmässä"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred color scheme"
 msgstr "Suosikkiväriteema"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred language"
 msgstr "Suosikki kieli"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
 msgstr "Todennäköisyys"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:49
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "tarjoaja"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Vastaanotettu"
 
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Record id"
 msgstr "Tietueen id"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:45
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:46
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Recurring Event ID"
 msgstr "Toistuvan tapahtuman ID"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Refresh Token"
 msgstr "Virkistystoken"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Related user email address"
 msgstr "Liittyvän käyttäjän sähköpostiosoite"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:142
-#: src/modules/note/standard-objects/note.workspace-entity.ts:103
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Relations"
 msgstr "Suhteet"
 
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:73
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:74
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Response Status"
 msgstr "Vastauksen tila"
 
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:47
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "Revocation date"
 msgstr "Kumotun päivämäärä"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:37
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:38
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Role"
 msgstr "Rooli"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:121
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:142
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "Käynnistä"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Scopes"
 msgstr "Toiminta-alat"
 
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Hakuvektori"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:69
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Secret"
 msgstr "Salaisuus"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:64
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
 msgstr "Koko"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "Vaihe"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Start Date"
 msgstr "Aloituspäivä"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:108
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Status"
 msgstr "Tila"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:87
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Statuses"
 msgstr "Tilat"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:49
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:50
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Aihe"
 
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:51
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:52
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:268
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor"
 msgstr "Synkronointikursori"
 
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
 msgstr "Synkronointikursori. Käytetään tapahtumien synkronointiin kalenterintarjoajalta"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:137
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:138
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync stage"
 msgstr "Synkronointivaihe"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:339
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:340
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync stage started at"
 msgstr "Synkronointivaihe alkoi"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:95
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:96
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync status"
 msgstr "Synkronoinnin tila"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:30
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Target Url"
 msgstr "Kohde-URL"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
-#: src/modules/task/standard-objects/task.workspace-entity.ts:47
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Task"
 msgstr "Tehtävä"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:167
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task assignee"
 msgstr "Tehtävän vastuullinen"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:155
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task attachments"
 msgstr "Tehtävän liitteet"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:79
-#: src/modules/task/standard-objects/task.workspace-entity.ts:89
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task body"
 msgstr "Tehtävän sisältö"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:99
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task due date"
 msgstr "Tehtävän määräaika"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:59
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task record position"
 msgstr "Tehtävän tietueen sijainti"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:109
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task status"
 msgstr "Tehtävän tila"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:25
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "Task Target"
 msgstr "Tehtävään kohdistuva kohde"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:143
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task targets"
 msgstr "Tehtäviin kohdistuvat kohteet"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "Task Targets"
 msgstr "Tehtäväkohteet"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:70
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task title"
 msgstr "Tehtävän otsikko"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:48
-#: src/modules/person/standard-objects/person.workspace-entity.ts:210
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
-#: src/modules/company/standard-objects/company.workspace-entity.ts:194
-#: src/engine/twenty-orm/custom.workspace-entity.ts:85
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Tasks"
 msgstr "Tehtävät"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:146
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Tasks assigned to the workspace member"
 msgstr "Työtilan jäsenelle määritetyt tehtävät"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:90
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Tasks tied to the {label}"
 msgstr "Tehtävät liittyvät {label}-kohteeseen"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:195
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Tasks tied to the company"
 msgstr "Yritykseen liittyvät tehtävät"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:211
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Tasks tied to the contact"
 msgstr "Yhteyshenkilöön liittyvät tehtävät"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Tasks tied to the opportunity"
 msgstr "Mahdollisuuteen liittyvät tehtävät"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:66
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget company"
 msgstr "Tehtävään kohdistuva yritys"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget opportunity"
 msgstr "Tehtävään kohdistuva mahdollisuus"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget person"
 msgstr "Tehtävään kohdistuva henkilö"
 
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:36
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget task"
 msgstr "Tehtävään kohdistuva tehtävä"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Text"
 msgstr "Teksti"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account handle (email, username, phone number, etc.)"
 msgstr "Käyttäjätunnus (sähköposti, käyttäjätunnus, puhelinnumero jne.)"
 
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "Tilin tarjoaja"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:96
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Linkedin account"
 msgstr "Yrityksen Linkedin-tili"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:67
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company name"
 msgstr "Yrityksen nimi"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:106
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Twitter/X account"
 msgstr "Yrityksen Twitter/X -tili"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:76
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "Yrityksen verkkosivuston URL. Käytämme tätä URL:ää yrityksen kuvakkeen hakuun"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
-#: src/modules/task/standard-objects/task.workspace-entity.ts:136
-#: src/modules/person/standard-objects/person.workspace-entity.ts:175
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
-#: src/modules/note/standard-objects/note.workspace-entity.ts:97
-#: src/modules/company/standard-objects/company.workspace-entity.ts:158
-#: src/engine/twenty-orm/custom.workspace-entity.ts:63
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "Tietueen luoja"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The current statuses of the workflow versions"
 msgstr "Työnkulkujen versioiden nykyiset tilat"
 
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "The date the message was received"
 msgstr "Viestin vastaanottopäivä"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:133
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
 msgstr "Työnkulun suorittaja"
 
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "The folder this favorite belongs to"
 msgstr "Kansio, johon tämä suosikki kuuluu"
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:61
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "Mahdollisuuden nimi"
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:35
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "The workflow event listener name"
 msgstr "Työnkulun tapahtumakuuntelijan nimi"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow last published version id"
 msgstr "Työnkulun viimeksi julkaistun version tunnus"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow name"
 msgstr "Työnkulun nimi"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:76
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version name"
 msgstr "Työnkulun version nimi"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:105
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version status"
 msgstr "Työnkulun version tila"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:56
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Thread External Id"
 msgstr "Viestiketjun ulkoinen tunnus"
 
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Thread id from the messaging provider"
 msgstr "Viestipalvelun ketjun tunnus"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Throttle Failure Count"
 msgstr "Rajoitusvirheiden määrä"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time format"
 msgstr "Aikamuoto"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:268
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time zone"
 msgstr "Aikavyöhyke"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:212
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
-#: src/modules/task/standard-objects/task.workspace-entity.ts:183
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
-#: src/modules/note/standard-objects/note.workspace-entity.ts:128
-#: src/modules/company/standard-objects/company.workspace-entity.ts:253
-#: src/engine/twenty-orm/custom.workspace-entity.ts:134
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
 msgstr "Aikajanatapahtumat"
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:254
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "Yritykseen liitetyt aikajanatapahtumat"
 
-#: src/modules/note/standard-objects/note.workspace-entity.ts:129
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Timeline Activities linked to the note."
 msgstr "Huomioon liitetyt aikajanatapahtumat."
 
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Timeline Activities linked to the opportunity."
 msgstr "Mahdollisuuteen liitetyt aikajanatapahtumat."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:213
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Timeline activities linked to the run"
 msgstr "Suoritukseen liitetyt aikajanatapahtumat"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:184
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Timeline Activities linked to the task."
 msgstr "Tehtävään liitetyt aikajanatapahtumat."
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Timeline activities linked to the version"
 msgstr "Versioon liitetyt aikajanatapahtumat"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:156
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Timeline activities linked to the workflow"
 msgstr "Työnkulkuun liitetyt aikajanatapahtumat"
 
-#: src/engine/twenty-orm/custom.workspace-entity.ts:139
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities tied to the {label}"
 msgstr "{label} -tunnisteeseen sidotut aikajanatapahtumat"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Timeline Activity"
 msgstr "Aikajanatapahtuma"
 
-#: src/modules/task/standard-objects/task.workspace-entity.ts:69
-#: src/modules/note/standard-objects/note.workspace-entity.ts:66
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Otsikko"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:59
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:135
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "Tyyppi"
 
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:98
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:99
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Update DateTime"
 msgstr "Päivityksen päivämäärä ja aika"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:126
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Email"
 msgstr "Käyttäjän sähköposti"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:135
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "Käyttäjän tunnus"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:270
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
 msgstr "Käyttäjän aikavyöhyke"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:279
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
 msgstr "Käyttäjän suosima päivämäärämuoto"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:315
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Käyttäjän suosima aikamuoto"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Value"
 msgstr "Arvo"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version status"
 msgstr "Version tila"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:94
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version steps"
 msgstr "Version vaiheet"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:84
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version trigger"
 msgstr "Version laukaisin"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:110
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Versions"
 msgstr "Versiot"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:31
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:57
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:70
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:67
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:38
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:39
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:85
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:208
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "View"
 msgstr "Näkymä"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Näkymän kenttä"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field position"
 msgstr "Näkymän kentän sijainti"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field related view"
 msgstr "Katso kenttään liittyvä näkymä"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field size"
 msgstr "Kentän koko"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field target field"
 msgstr "Kohdekenttä"
 
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field visibility"
 msgstr "Kentän näkyvyys"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:117
-#: src/modules/view/standard-objects/view.workspace-entity.ts:118
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Fields"
 msgstr "Näkymäkentät"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter"
 msgstr "Näkymän suodatin"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter Display Value"
 msgstr "Suotimen näyttöarvo"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "View Filter Group"
 msgstr "Suodinryhmä"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter Group Id"
 msgstr "Suodinryhmän tunnus"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:153
-#: src/modules/view/standard-objects/view.workspace-entity.ts:154
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "View Filter Groups"
 msgstr "Suodinryhmät"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter operand"
 msgstr "Suotimen operandi"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter related view"
 msgstr "Suotimeen liittyvä näkymä"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter target field"
 msgstr "Suotimen kohdekenttä"
 
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter value"
 msgstr "Suotimen arvo"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:141
-#: src/modules/view/standard-objects/view.workspace-entity.ts:142
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filters"
 msgstr "Näkymän suotimet"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group"
 msgstr "Näkymäryhmä"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group related view"
 msgstr "Ryhmään liittyvä näkymä"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group target field"
 msgstr "Ryhmän kohdekenttä"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group visibility"
 msgstr "Ryhmän näkyvyys"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:129
-#: src/modules/view/standard-objects/view.workspace-entity.ts:130
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Groups"
 msgstr "Näkymäryhmät"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:80
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View icon"
 msgstr "Näkymän ikoni"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:88
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View Kanban column field"
 msgstr "Kanban-näkymän sarakkeen kenttä"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:69
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View key"
 msgstr "Näkymän avain"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:44
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View name"
 msgstr "Näkymän nimi"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:99
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View position"
 msgstr "Näkymän sijoitus"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort"
 msgstr "Näkymän lajittelu"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "Lajittelun suunta"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort related view"
 msgstr "Lajitteluun liittyvä näkymä"
 
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort target field"
 msgstr "Lajittelun kohdekenttä"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:165
-#: src/modules/view/standard-objects/view.workspace-entity.ts:166
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sorts"
 msgstr "Näkymän lajittelut"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:52
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View target object"
 msgstr "Kohteen näkymä"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
 msgstr "Näkymän tyyppi"
 
-#: src/modules/view/standard-objects/view.workspace-entity.ts:32
+#: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Views"
 msgstr "Näkymät"
 
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:186
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:187
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Visibility"
 msgstr "Näkyvyys"
 
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Visible"
 msgstr "Näkyy"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook"
 msgstr "Web-koukku"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook operation"
 msgstr "Webhook toiminto"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook operations"
 msgstr "Webhook toiminnot"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook target url"
 msgstr "Web-koukun kohde-URL"
 
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhooks"
 msgstr "Web-koukut"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Workflow"
 msgstr "Työnkulku"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow event listeners linked to the workflow."
 msgstr "Työnkulun tapahtumakuuntelijat liitetty työnkulkuun."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow linked to the run."
 msgstr "Työnkulku liitetty suoritukseen."
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
 msgstr "Työnkulun tietueen sijainti"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:56
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Workflow Run"
 msgstr "Työnkulun suoritus"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:85
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:86
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run ended at"
 msgstr "Työnkulun suoritus päättynyt"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:161
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run position"
 msgstr "Työnkulun suorituksen sijainti"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:75
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:76
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run started at"
 msgstr "Työnkulun suoritus alkanut"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:95
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:96
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run status"
 msgstr "Työnkulun suorituksen tila"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:57
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow Runs"
 msgstr "Työnkulkujen suoritukset"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow runs linked to the version."
 msgstr "Versioon liitetyt työnkulkujen suoritukset."
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow runs linked to the workflow."
 msgstr "Työnkulkuun liitetyt työnkulkujen suoritukset."
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version"
 msgstr "Työnkulun versio"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow Version"
 msgstr "Työnkulun versio"
 
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version linked to the run."
 msgstr "Työnkulun versio liitetty suoritukseen."
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow version position"
 msgstr "Työnkulun version sijainti"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow Versions"
 msgstr "Työnkulun versiot"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow versions linked to the workflow."
 msgstr "Työnkulkuun liitetyt versiot."
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener"
 msgstr "TyönkulunTapahtumakuuntelija"
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener workflow"
 msgstr "TyönkulunTapahtumakuuntelijan työnkulku"
 
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListeners"
 msgstr "TyönkulunTapahtumakuuntelijat"
 
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflows"
 msgstr "Työnkulut"
 
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "WorkflowVersion"
 msgstr "TyönkulunVersio"
 
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "WorkflowVersion workflow"
 msgstr "TyönkulunVersion työnkulku"
 
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Workspace member"
 msgstr "Työtilan jäsen"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:90
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:100
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:58
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:138
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:139
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Workspace Member"
 msgstr "Työtilan jäsen"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:118
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member avatar"
 msgstr "Työtilan jäsenen avatar"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member name"
 msgstr "Työtilan jäsenen nimi"
 
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Työtilan jäsenet"
 
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "WorkspaceMember"
 msgstr "TyötilanJäsen"
 
-#: src/modules/person/standard-objects/person.workspace-entity.ts:105
-#: src/modules/company/standard-objects/company.workspace-entity.ts:105
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr ""
 
-#: src/modules/company/standard-objects/company.workspace-entity.ts:179
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Tiimin jäsen vastuussa yritystilin hallinnasta"
 
