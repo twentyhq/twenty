@@ -105,18 +105,14 @@ export class QueryRunnerArgsFactory {
             (args as UpdateManyResolverArgs).filter,
             fieldMetadataMapByNameByName,
           ),
-          data: await Promise.all(
-            (args as UpdateManyResolverArgs).data?.map((arg, index) =>
-              this.overrideDataByFieldMetadata(
-                arg,
-                options,
-                fieldMetadataMapByNameByName,
-                {
-                  argIndex: index,
-                  shouldBackfillPosition: false,
-                },
-              ),
-            ) ?? [],
+          data: await this.overrideDataByFieldMetadata(
+            (args as UpdateManyResolverArgs).data,
+            options,
+            fieldMetadataMapByNameByName,
+            {
+              argIndex: 0,
+              shouldBackfillPosition: false,
+            },
           ),
         } satisfies UpdateManyResolverArgs;
       case ResolverArgsType.FindOne:
