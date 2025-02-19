@@ -113,13 +113,6 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    if (workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING) {
-      throw new WorkflowRunException(
-        'Workflow cannot be ended as it is not running',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
-    }
-
     return workflowRunRepository.update(workflowRunToUpdate.id, {
       status,
       endedAt: new Date().toISOString(),
