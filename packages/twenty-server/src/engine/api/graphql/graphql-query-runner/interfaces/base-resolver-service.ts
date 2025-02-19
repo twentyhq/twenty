@@ -1,7 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import { capitalize, SettingsFeatures } from 'twenty-shared';
+import {
+  capitalize,
+  isObjectRecordUnderObjectRecordsPermissions,
+  PermissionsOnAllObjectRecords,
+  SettingsFeatures,
+} from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -23,6 +28,7 @@ import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-quer
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import {
   AuthException,
   AuthExceptionCode,
@@ -92,7 +98,20 @@ export abstract class GraphqlQueryBaseResolverService<
         featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
         objectMetadataItemWithFieldMaps.isSystem === true
       ) {
-        await this.validateSystemObjectPermissions(options);
+        await this.validateSystemObjectPermissionsOrThrow(options);
+      }
+
+      if (
+        featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
+        isObjectRecordUnderObjectRecordsPermissions({
+          isCustom: objectMetadataItemWithFieldMaps.isCustom,
+          nameSingular: objectMetadataItemWithFieldMaps.nameSingular,
+        })
+      ) {
+        await this.validateCustomObjectPermissionsOrThrow({
+          operationName,
+          options,
+        });
       }
 
       const hookedArgs =
@@ -170,7 +189,7 @@ export abstract class GraphqlQueryBaseResolverService<
     }
   }
 
-  private async validateSystemObjectPermissions(
+  private async validateSystemObjectPermissionsOrThrow(
     options: WorkspaceQueryRunnerOptions,
   ) {
     const { authContext, objectMetadataItemWithFieldMaps } = options;
@@ -207,6 +226,70 @@ export abstract class GraphqlQueryBaseResolverService<
           );
         }
       }
+    }
+  }
+
+  private async validateCustomObjectPermissionsOrThrow({
+    operationName,
+    options,
+  }: {
+    operationName: WorkspaceResolverBuilderMethodNames;
+    options: WorkspaceQueryRunnerOptions;
+  }) {
+    if (!options.authContext.apiKey) {
+      if (!options.authContext.userWorkspaceId) {
+        throw new AuthException(
+          'Missing userWorkspaceId in authContext',
+          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      const requiredPermission =
+        this.getRequiredPermissionForMethod(operationName);
+
+      const userHasPermission =
+        await this.permissionsService.userHasObjectRecordsPermission({
+          userWorkspaceId: options.authContext.userWorkspaceId,
+          requiredPermission,
+          workspaceId: options.authContext.workspace.id,
+        });
+
+      if (!userHasPermission) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+    }
+  }
+
+  private getRequiredPermissionForMethod(
+    operationName: WorkspaceResolverBuilderMethodNames,
+  ) {
+    switch (operationName) {
+      case RESOLVER_METHOD_NAMES.FIND_MANY:
+      case RESOLVER_METHOD_NAMES.FIND_ONE:
+      case RESOLVER_METHOD_NAMES.FIND_DUPLICATES:
+      case RESOLVER_METHOD_NAMES.SEARCH:
+        return PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS;
+      case RESOLVER_METHOD_NAMES.CREATE_MANY:
+      case RESOLVER_METHOD_NAMES.CREATE_ONE:
+      case RESOLVER_METHOD_NAMES.UPDATE_MANY:
+      case RESOLVER_METHOD_NAMES.UPDATE_ONE:
+        return PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS;
+      case RESOLVER_METHOD_NAMES.DELETE_MANY:
+      case RESOLVER_METHOD_NAMES.DELETE_ONE:
+      case RESOLVER_METHOD_NAMES.RESTORE_MANY:
+      case RESOLVER_METHOD_NAMES.RESTORE_ONE:
+        return PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS;
+      case RESOLVER_METHOD_NAMES.DESTROY_MANY:
+      case RESOLVER_METHOD_NAMES.DESTROY_ONE:
+        return PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS;
+      default:
+        throw new PermissionsException(
+          PermissionsExceptionMessage.UNKNOWN_OPERATION_NAME,
+          PermissionsExceptionCode.UNKNOWN_OPERATION_NAME,
+        );
     }
   }
 
