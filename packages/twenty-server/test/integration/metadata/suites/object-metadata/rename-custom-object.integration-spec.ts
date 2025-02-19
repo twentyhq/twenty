@@ -1,5 +1,5 @@
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-factory.util';
+import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
 import { deleteOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-factory.util';
 import { objectsMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/objects-metadata-factory.util';
 import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-factory.util';
@@ -10,7 +10,7 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { FieldMetadataType } from 'twenty-shared';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-const LISTING_NAME_SINGULAR = 'listing';
+const LISTING_NAME_SINGULAR = 'listingRename';
 
 describe('Custom object renaming', () => {
   let listingObjectId = '';
@@ -82,33 +82,15 @@ describe('Custom object renaming', () => {
 
     fillStandardObjectRelationsMapObjectMetadataId(standardObjects);
 
-    const LISTING_OBJECT = {
-      namePlural: 'listings',
-      nameSingular: LISTING_NAME_SINGULAR,
-      labelPlural: 'Listings',
-      labelSingular: 'Listing',
-      description: 'Listing object',
-      icon: 'IconListNumbers',
-      isLabelSyncedWithName: false,
-    };
-
-    // Act
-    const graphqlOperation = createOneObjectMetadataFactory({
-      input: { object: LISTING_OBJECT },
-      gqlFields: `
-          id
-          nameSingular
-      `,
-    });
-
-    const response = await makeMetadataAPIRequest(graphqlOperation);
+    const { objectMetadataId: createdObjectId } =
+      await createListingCustomObject({
+        nameSingular: LISTING_NAME_SINGULAR,
+        labelSingular: 'Listing Rename',
+        description: 'Test listing object',
+      });
 
     // Assert
-    expect(response.body.data.createOneObject.nameSingular).toBe(
-      LISTING_NAME_SINGULAR,
-    );
-
-    listingObjectId = response.body.data.createOneObject.id;
+    listingObjectId = createdObjectId;
 
     const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
 

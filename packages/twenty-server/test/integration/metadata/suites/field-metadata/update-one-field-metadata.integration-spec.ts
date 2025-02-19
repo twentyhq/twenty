@@ -1,8 +1,8 @@
 import { createCustomTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-custom-text-field-metadata.util';
-import { deleteFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-factory.util';
 import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 describe('updateOne', () => {
@@ -12,7 +12,11 @@ describe('updateOne', () => {
 
     beforeEach(async () => {
       const { objectMetadataId: createdObjectId } =
-        await createListingCustomObject();
+        await createListingCustomObject({
+          nameSingular: 'listingUpdateOne',
+          labelSingular: 'Listing Update One',
+          description: 'Test listing object',
+        });
 
       listingObjectId = createdObjectId;
 
@@ -22,16 +26,18 @@ describe('updateOne', () => {
       testFieldId = createdFieldMetadaId;
     });
     afterEach(async () => {
-      const deactivateFieldOperation = updateOneFieldMetadataFactory({
-        input: { id: testFieldId, update: { isActive: false } },
-        gqlFields: `
-              id
-              isActive
-          `,
+      // Deactivate object before deletion
+      const deactivateObjectOperation = updateOneObjectMetadataItemFactory({
+        gqlFields: 'id isActive',
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
       });
 
-      await makeMetadataAPIRequest(deactivateFieldOperation);
-      await deleteFieldMetadata(testFieldId);
+      await makeMetadataAPIRequest(deactivateObjectOperation);
       await deleteOneObjectMetadataItem(listingObjectId);
     });
 

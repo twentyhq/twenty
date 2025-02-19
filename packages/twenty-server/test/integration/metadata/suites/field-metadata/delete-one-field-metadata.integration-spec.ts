@@ -7,6 +7,7 @@ import { deleteOneFieldMetadataItemFactory } from 'test/integration/metadata/sui
 import { updateOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-factory.util';
 import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 describe('deleteOne', () => {
@@ -17,7 +18,11 @@ describe('deleteOne', () => {
 
     beforeEach(async () => {
       const { objectMetadataId: createdObjectId } =
-        await createListingCustomObject();
+        await createListingCustomObject({
+          nameSingular: 'listingDeleteOne',
+          labelSingular: 'Listing Delete One',
+          description: 'Test listing object',
+        });
 
       listingObjectId = createdObjectId;
       const { fieldMetadataId: createdFieldMetadaId } =
@@ -58,6 +63,19 @@ describe('deleteOne', () => {
       });
 
       await makeGraphqlAPIRequest(deleteViewOperation);
+
+      // Deactivate object before deletion
+      const deactivateObjectOperation = updateOneObjectMetadataItemFactory({
+        gqlFields: 'id isActive',
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
+
+      await makeMetadataAPIRequest(deactivateObjectOperation);
       await deleteOneObjectMetadataItem(listingObjectId);
     });
     it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {

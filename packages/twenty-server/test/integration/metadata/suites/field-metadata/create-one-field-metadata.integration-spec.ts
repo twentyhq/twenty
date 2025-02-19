@@ -1,6 +1,7 @@
 import { createOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-factory.util';
 import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared';
 
@@ -10,14 +11,28 @@ describe('createOne', () => {
 
     beforeEach(async () => {
       const { objectMetadataId: createdObjectId } =
-        await createListingCustomObject();
+        await createListingCustomObject({
+          nameSingular: 'listingCreateOne',
+          labelSingular: 'Listing Create One',
+          description: 'Test listing object',
+        });
 
       listingObjectId = createdObjectId;
     });
     afterEach(async () => {
-      jest.useRealTimers();
+      // Deactivate object before deletion
+      const deactivateObjectOperation = updateOneObjectMetadataItemFactory({
+        gqlFields: 'id isActive',
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
+
+      await makeMetadataAPIRequest(deactivateObjectOperation);
       await deleteOneObjectMetadataItem(listingObjectId);
-      jest.useFakeTimers();
     });
     it('should create a field when name and label are synced correctly', async () => {
       // Arrange
