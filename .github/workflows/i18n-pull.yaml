@@ -92,6 +92,11 @@ jobs:
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
       
+      # As the files are extracted from a Docker container, they belong to root:root
+      # We need to fix this before the next steps
+      - name: Fix file permissions
+        run: sudo chown -R runner:docker .
+
       - name: Commit Translations
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
