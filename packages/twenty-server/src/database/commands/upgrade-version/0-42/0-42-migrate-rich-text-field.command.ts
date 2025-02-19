@@ -161,9 +161,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
       await this.enableRichTextV2FeatureFlag(workspaceId);
 
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        workspaceId,
-      );
+      if (!this.options.dryRun) {
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
+      }
 
       await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
         workspaceId,
