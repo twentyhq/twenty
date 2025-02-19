@@ -155,7 +155,7 @@ export class WorkspaceResolver {
     return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
-  @UseGuards(EnterpriseFeaturesEnabledGuard)
+  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Query(() => [FindAvailableSSOIDPOutput])
   async listSSOIdentityProvidersByWorkspaceId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
