@@ -3,10 +3,10 @@ import { v4 } from 'uuid';
 
 
 export const handler = async (event) => {
+  const mainPath = `/tmp/${v4()}.mjs`;
+
   try {
     const { code, params } = event;
-
-    const mainPath = `/tmp/${v4()}.mjs`;
 
     await fs.writeFile(mainPath, code, 'utf8');
 
