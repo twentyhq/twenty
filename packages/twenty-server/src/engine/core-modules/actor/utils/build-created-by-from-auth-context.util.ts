@@ -57,7 +57,9 @@ export const buildCreatedByFromAuthContext = async ({
       });
     }
     default: {
-      throw new Error(`Could not build createdBy from authContext`);
+      throw new Error(
+        'Unable to build createdBy metadata - no valid actor information found in auth context',
+      );
     }
   }
 };

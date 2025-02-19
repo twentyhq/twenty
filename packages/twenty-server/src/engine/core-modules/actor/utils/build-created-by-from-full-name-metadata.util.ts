@@ -4,14 +4,14 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 
-type BuildCreatedByFromWorkspaceMember = {
+type BuildCreatedByFromFullNameMetadataArgs = {
   workspaceMemberId: string;
   fullNameMetadata: FullNameMetadata;
 };
 export const buildCreatedByFromFullNameMetadata = ({
   fullNameMetadata,
   workspaceMemberId,
-}: BuildCreatedByFromWorkspaceMember): ActorMetadata => ({
+}: BuildCreatedByFromFullNameMetadataArgs): ActorMetadata => ({
   workspaceMemberId,
   source: FieldActorSource.MANUAL,
   name: `${fullNameMetadata.firstName} ${fullNameMetadata.lastName}`,
