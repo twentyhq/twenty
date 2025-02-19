@@ -204,8 +204,11 @@ export const ViewBarDetails = ({
           {mapViewSortsToSorts(
             currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [],
             availableSortDefinitions,
-          ).map((sort) => (
-            <EditableSortChip key={sort.fieldMetadataId} viewSort={sort} />
+          ).map((recordSort) => (
+            <EditableSortChip
+              key={recordSort.fieldMetadataId}
+              recordSort={recordSort}
+            />
           ))}
           {isNonEmptyArray(recordFilters) &&
             isNonEmptyArray(
