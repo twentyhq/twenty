@@ -161,7 +161,7 @@ export class WorkspaceTrustedDomainService {
 
     workspaceTrustedDomainValidator.assertIsDefinedOrThrow(trustedDomain);
 
-    await this.workspaceTrustedDomainRepository.delete(trustedDomain);
+    await this.workspaceTrustedDomainRepository.delete(trustedDomain.id);
   }
 
   async getAllTrustedDomainsByWorkspace(workspace: Workspace) {
