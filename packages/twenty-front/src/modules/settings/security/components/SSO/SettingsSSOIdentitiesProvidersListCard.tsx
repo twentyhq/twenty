@@ -15,7 +15,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconKey } from 'twenty-ui';
-import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
+import { useGetSsoIdentityProvidersQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledLink = styled(Link, {
@@ -36,13 +36,11 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
     SSOIdentitiesProvidersState,
   );
 
-  const { loading } = useListSsoIdentityProvidersByWorkspaceIdQuery({
+  const { loading } = useGetSsoIdentityProvidersQuery({
     fetchPolicy: 'network-only',
     skip: currentWorkspace?.hasValidEnterpriseKey === false,
     onCompleted: (data) => {
-      setSSOIdentitiesProviders(
-        data?.listSSOIdentityProvidersByWorkspaceId ?? [],
-      );
+      setSSOIdentitiesProviders(data?.getSSOIdentityProviders ?? []);
     },
     onError: (error: Error) => {
       enqueueSnackBar(error.message, {

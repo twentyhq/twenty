@@ -4,6 +4,7 @@ import { MutableSnapshot, RecoilRoot } from 'recoil';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { InMemoryCache } from '@apollo/client';
@@ -28,17 +29,21 @@ export const getJestMetadataAndApolloMocksWrapper = ({
           <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId: 'instanceId' }}
           >
-            <ViewComponentInstanceContext.Provider
+            <RecordSortsComponentInstanceContext.Provider
               value={{ instanceId: 'instanceId' }}
             >
-              <JestObjectMetadataItemSetter>
-                <ContextStoreComponentInstanceContext.Provider
-                  value={{ instanceId: 'instanceId' }}
-                >
-                  <JestContextStoreSetter>{children}</JestContextStoreSetter>
-                </ContextStoreComponentInstanceContext.Provider>
-              </JestObjectMetadataItemSetter>
-            </ViewComponentInstanceContext.Provider>
+              <ViewComponentInstanceContext.Provider
+                value={{ instanceId: 'instanceId' }}
+              >
+                <JestObjectMetadataItemSetter>
+                  <ContextStoreComponentInstanceContext.Provider
+                    value={{ instanceId: 'instanceId' }}
+                  >
+                    <JestContextStoreSetter>{children}</JestContextStoreSetter>
+                  </ContextStoreComponentInstanceContext.Provider>
+                </JestObjectMetadataItemSetter>
+              </ViewComponentInstanceContext.Provider>
+            </RecordSortsComponentInstanceContext.Provider>
           </RecordFiltersComponentInstanceContext.Provider>
         </MockedProvider>
       </SnackBarProviderScope>

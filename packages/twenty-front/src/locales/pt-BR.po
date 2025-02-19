@@ -153,8 +153,7 @@ msgstr "Adicionado {beautifiedCreatedAt}"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
-msgstr "Filtro avan\n"
-"cado"
+msgstr "Filtro avançado"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Afrikaans"
@@ -817,8 +816,12 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Estabeleça endpoints de Webhook para notificações de eventos assíncronos."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-msgid "Exclude the following people and domains from my email sync"
-msgstr "Excluir as seguintes pessoas e domínios da minha sincronização de e-mail"
+#~ msgid "Exclude the following people and domains from my email sync"
+#~ msgstr "Exclude the following people and domains from my email sync"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
+msgstr "Excluir as seguintes pessoas e domínios da sincronização do meu e-mail. Conversas internas não serão importadas"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
@@ -1794,8 +1797,7 @@ msgstr "Sincronizar r\n"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "System settings"
-msgstr "Configura\n"
-"es do sistema"
+msgstr "Configurações de Sistema"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
@@ -2090,4 +2092,3 @@ msgstr "Seu Workspace"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Seu workspace será desativado"
-

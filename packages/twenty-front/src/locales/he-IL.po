@@ -816,8 +816,12 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "הקים נקודות קצה של Webhook להתראות על אירועים אסינכרוניים."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-msgid "Exclude the following people and domains from my email sync"
-msgstr "אל תכלול את האנשים והתחומים הבאים מסינכרון הדוא\"ל שלי"
+#~ msgid "Exclude the following people and domains from my email sync"
+#~ msgstr "Exclude the following people and domains from my email sync"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
+msgstr "לא לכלול את האנשים והדומיינים הבאים מהסנכרון של הדוא\"ל שלי. שיחות פנימיות לא ייובאו"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
@@ -2085,4 +2089,3 @@ msgstr "המרחב האישי שלך"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "המרחב האישי שלך יהפוך ללא פעיל"
-

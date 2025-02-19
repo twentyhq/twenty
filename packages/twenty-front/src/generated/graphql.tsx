@@ -1293,6 +1293,7 @@ export type Query = {
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
+  getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -1301,7 +1302,6 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
-  listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -2427,10 +2427,10 @@ export type ValidateWorkspaceTrustedDomainMutationVariables = Exact<{
 
 export type ValidateWorkspaceTrustedDomainMutation = { __typename?: 'Mutation', validateWorkspaceTrustedDomain: boolean };
 
-export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
 export type GetAllWorkspaceTrustedDomainsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4558,9 +4558,9 @@ export function useValidateWorkspaceTrustedDomainMutation(baseOptions?: Apollo.M
 export type ValidateWorkspaceTrustedDomainMutationHookResult = ReturnType<typeof useValidateWorkspaceTrustedDomainMutation>;
 export type ValidateWorkspaceTrustedDomainMutationResult = Apollo.MutationResult<ValidateWorkspaceTrustedDomainMutation>;
 export type ValidateWorkspaceTrustedDomainMutationOptions = Apollo.BaseMutationOptions<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>;
-export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
-    query ListSSOIdentityProvidersByWorkspaceId {
-  listSSOIdentityProvidersByWorkspaceId {
+export const GetSsoIdentityProvidersDocument = gql`
+    query GetSSOIdentityProviders {
+  getSSOIdentityProviders {
     type
     id
     name
@@ -4571,31 +4571,31 @@ export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     `;
 
 /**
- * __useListSsoIdentityProvidersByWorkspaceIdQuery__
+ * __useGetSsoIdentityProvidersQuery__
  *
- * To run a query within a React component, call `useListSsoIdentityProvidersByWorkspaceIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useListSsoIdentityProvidersByWorkspaceIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetSsoIdentityProvidersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSsoIdentityProvidersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useListSsoIdentityProvidersByWorkspaceIdQuery({
+ * const { data, loading, error } = useGetSsoIdentityProvidersQuery({
  *   variables: {
  *   },
  * });
  */
-export function useListSsoIdentityProvidersByWorkspaceIdQuery(baseOptions?: Apollo.QueryHookOptions<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>) {
+export function useGetSsoIdentityProvidersQuery(baseOptions?: Apollo.QueryHookOptions<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
+        return Apollo.useQuery<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>(GetSsoIdentityProvidersDocument, options);
       }
-export function useListSsoIdentityProvidersByWorkspaceIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>) {
+export function useGetSsoIdentityProvidersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
+          return Apollo.useLazyQuery<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>(GetSsoIdentityProvidersDocument, options);
         }
-export type ListSsoIdentityProvidersByWorkspaceIdQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdQuery>;
-export type ListSsoIdentityProvidersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdLazyQuery>;
-export type ListSsoIdentityProvidersByWorkspaceIdQueryResult = Apollo.QueryResult<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>;
+export type GetSsoIdentityProvidersQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersQuery>;
+export type GetSsoIdentityProvidersLazyQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersLazyQuery>;
+export type GetSsoIdentityProvidersQueryResult = Apollo.QueryResult<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>;
 export const GetAllWorkspaceTrustedDomainsDocument = gql`
     query GetAllWorkspaceTrustedDomains {
   getAllWorkspaceTrustedDomains {
