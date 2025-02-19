@@ -369,6 +369,7 @@ export type CreateServerlessFunctionInput = {
 
 export type CreateTrustedDomainInput = {
   domain: Scalars['String']['input'];
+  email: Scalars['String']['input'];
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -861,7 +862,6 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
-  sendTrustedDomainVerificationEmail: Scalars['Boolean']['output'];
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   syncRemoteTable: RemoteTable;
@@ -1104,11 +1104,6 @@ export type MutationRunWorkflowVersionArgs = {
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']['input']>;
-};
-
-
-export type MutationSendTrustedDomainVerificationEmailArgs = {
-  input: SendTrustedDomainVerificationEmailInput;
 };
 
 
@@ -1716,11 +1711,6 @@ export type SendInvitationsOutput = {
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
-};
-
-export type SendTrustedDomainVerificationEmailInput = {
-  email: Scalars['String']['input'];
-  trustedDomainId: Scalars['String']['input'];
 };
 
 export type Sentry = {

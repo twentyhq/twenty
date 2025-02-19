@@ -306,6 +306,7 @@ export type CreateServerlessFunctionInput = {
 
 export type CreateTrustedDomainInput = {
   domain: Scalars['String'];
+  email: Scalars['String'];
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -782,7 +783,6 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
-  sendTrustedDomainVerificationEmail: Scalars['Boolean'];
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
@@ -991,11 +991,6 @@ export type MutationRunWorkflowVersionArgs = {
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
-};
-
-
-export type MutationSendTrustedDomainVerificationEmailArgs = {
-  input: SendTrustedDomainVerificationEmailInput;
 };
 
 
@@ -1512,11 +1507,6 @@ export type SendInvitationsOutput = {
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
-};
-
-export type SendTrustedDomainVerificationEmailInput = {
-  email: Scalars['String'];
-  trustedDomainId: Scalars['String'];
 };
 
 export type Sentry = {
@@ -2353,13 +2343,6 @@ export type EditSsoIdentityProviderMutationVariables = Exact<{
 
 
 export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
-
-export type SendTrustedDomainVerificationEmailMutationVariables = Exact<{
-  input: SendTrustedDomainVerificationEmailInput;
-}>;
-
-
-export type SendTrustedDomainVerificationEmailMutation = { __typename?: 'Mutation', sendTrustedDomainVerificationEmail: boolean };
 
 export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4351,37 +4334,6 @@ export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.Mutation
 export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
-export const SendTrustedDomainVerificationEmailDocument = gql`
-    mutation SendTrustedDomainVerificationEmail($input: SendTrustedDomainVerificationEmailInput!) {
-  sendTrustedDomainVerificationEmail(input: $input)
-}
-    `;
-export type SendTrustedDomainVerificationEmailMutationFn = Apollo.MutationFunction<SendTrustedDomainVerificationEmailMutation, SendTrustedDomainVerificationEmailMutationVariables>;
-
-/**
- * __useSendTrustedDomainVerificationEmailMutation__
- *
- * To run a mutation, you first call `useSendTrustedDomainVerificationEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendTrustedDomainVerificationEmailMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendTrustedDomainVerificationEmailMutation, { data, loading, error }] = useSendTrustedDomainVerificationEmailMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSendTrustedDomainVerificationEmailMutation(baseOptions?: Apollo.MutationHookOptions<SendTrustedDomainVerificationEmailMutation, SendTrustedDomainVerificationEmailMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendTrustedDomainVerificationEmailMutation, SendTrustedDomainVerificationEmailMutationVariables>(SendTrustedDomainVerificationEmailDocument, options);
-      }
-export type SendTrustedDomainVerificationEmailMutationHookResult = ReturnType<typeof useSendTrustedDomainVerificationEmailMutation>;
-export type SendTrustedDomainVerificationEmailMutationResult = Apollo.MutationResult<SendTrustedDomainVerificationEmailMutation>;
-export type SendTrustedDomainVerificationEmailMutationOptions = Apollo.BaseMutationOptions<SendTrustedDomainVerificationEmailMutation, SendTrustedDomainVerificationEmailMutationVariables>;
 export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     query ListSSOIdentityProvidersByWorkspaceId {
   listSSOIdentityProvidersByWorkspaceId {

@@ -8,32 +8,21 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { domainSchema } from '@/settings/security/validation-schemas/domainSchema';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { z } from 'zod';
 import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import {
-  useCreateWorkspaceTrustDomainMutation,
-  useSendTrustedDomainVerificationEmailMutation,
-  WorkspaceTrustedDomain,
-} from '~/generated/graphql';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCreateWorkspaceTrustDomainMutation } from '~/generated/graphql';
 
 export const SettingsSecurityTrustedDomain = () => {
   const navigate = useNavigateSettings();
 
+  const { t } = useLingui();
+
   const { enqueueSnackBar } = useSnackBar();
-  const workspaceTrustedDomainIdFromParams = useParams().trustedDomainId;
 
   const [createWorkspaceTrustDomain] = useCreateWorkspaceTrustDomainMutation();
-
-  const [sendTrustedDomainVerificationEmail] =
-    useSendTrustedDomainVerificationEmailMutation();
-
-  const [currentWorkspaceTrustDomain, setCurrentWorkspaceTrustDomain] =
-    useState<WorkspaceTrustedDomain | undefined>();
 
   const formConfig = useForm<{ domain: string; email: string }>({
     mode: 'onChange',
@@ -41,7 +30,7 @@ export const SettingsSecurityTrustedDomain = () => {
       z
         .object({
           domain: domainSchema,
-          email: z.string(),
+          email: z.string().min(1),
         })
         .strict(),
     ),
@@ -51,69 +40,32 @@ export const SettingsSecurityTrustedDomain = () => {
     },
   });
 
-  const createWorkspaceTrustDomainHandler = (domain: string) => {
-    createWorkspaceTrustDomain({
-      variables: {
-        input: {
-          domain,
-        },
-      },
-      onCompleted: (workspaceTrustDomain) => {
-        if (workspaceTrustDomain.createWorkspaceTrustedDomain.isValidated) {
-          return navigate(SettingsPath.Security);
-        }
-
-        setCurrentWorkspaceTrustDomain(
-          workspaceTrustDomain.createWorkspaceTrustedDomain,
-        );
-      },
-      onError: (error) => {
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
-        });
-      },
-    });
-  };
-  const sendWorkspaceTrustedDomainVerificationEmailHandler = (
-    workspaceTrustDomain: WorkspaceTrustedDomain,
-  ) => {
-    sendTrustedDomainVerificationEmail({
-      variables: {
-        input: {
-          email:
-            formConfig.getValues('email') + '@' + workspaceTrustDomain.domain,
-          trustedDomainId: workspaceTrustDomain.id,
-        },
-      },
-      onCompleted: () => {
-        enqueueSnackBar('Email sent successfully', {
-          variant: SnackBarVariant.Success,
-        });
-      },
-      onError: (error) => {
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
-        });
-      },
-    });
-  };
+  const domain = formConfig.watch('domain');
 
   const handleSave = async () => {
     try {
-      if (!currentWorkspaceTrustDomain) {
-        return createWorkspaceTrustDomainHandler(
-          formConfig.getValues('domain'),
-        );
-      }
-
-      if (
-        currentWorkspaceTrustDomain &&
-        !currentWorkspaceTrustDomain.isValidated
-      ) {
-        return sendWorkspaceTrustedDomainVerificationEmailHandler(
-          currentWorkspaceTrustDomain,
-        );
-      }
+      createWorkspaceTrustDomain({
+        variables: {
+          input: {
+            domain: formConfig.getValues('domain'),
+            email:
+              formConfig.getValues('email') +
+              '@' +
+              formConfig.getValues('domain'),
+          },
+        },
+        onCompleted: () => {
+          enqueueSnackBar(t`Domain added successfully.`, {
+            variant: SnackBarVariant.Success,
+          });
+          navigate(SettingsPath.Security);
+        },
+        onError: (error) => {
+          enqueueSnackBar((error as Error).message, {
+            variant: SnackBarVariant.Error,
+          });
+        },
+      });
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -155,7 +107,6 @@ export const SettingsSecurityTrustedDomain = () => {
                 label="Domain"
                 value={value}
                 onChange={(domain: string) => {
-                  setCurrentWorkspaceTrustDomain(undefined);
                   onChange(domain);
                 }}
                 fullWidth
@@ -182,6 +133,7 @@ export const SettingsSecurityTrustedDomain = () => {
               />
             )}
           />
+          {domain}
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
