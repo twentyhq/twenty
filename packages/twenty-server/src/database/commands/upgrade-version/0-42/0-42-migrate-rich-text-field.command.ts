@@ -220,6 +220,14 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     );
   }
 
+  private jsonParseOrSilentlyFail(input: string): null | unknown {
+    try {
+      return JSON.parse(input);
+    } catch (e) {
+      return null;
+    }
+  }
+
   private async getMardownFieldValue({
     blocknoteFieldValue,
     serverBlockNoteEditor,
@@ -236,8 +244,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       return null;
     }
 
-    const jsonParsedblocknoteFieldValue = JSON.parse(blocknoteFieldValue);
-
+    const jsonParsedblocknoteFieldValue = this.jsonParseOrSilentlyFail(blocknoteFieldValue);
+    if (jsonParsedblocknoteFieldValue === null) {
+      return null
+    }
+    
     if (!Array.isArray(jsonParsedblocknoteFieldValue)) {
       return null;
     }
