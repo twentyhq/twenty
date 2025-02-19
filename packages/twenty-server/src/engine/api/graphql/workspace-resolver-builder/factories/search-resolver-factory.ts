@@ -9,12 +9,13 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { GraphqlQuerySearchResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-search-resolver.service';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
 export class SearchResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'search' as const;
+  public static methodName = RESOLVER_METHOD_NAMES.SEARCH;
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQuerySearchResolverService,

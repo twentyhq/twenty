@@ -8,6 +8,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
+import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
 import { WorkflowRunVisualizer } from '@/workflow/components/WorkflowRunVisualizer';
 import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizerEffect';
@@ -94,5 +95,8 @@ export const CardComponents: Record<CardType, CardComponentType> = {
 
   [CardType.WorkflowRunCard]: ({ targetableObject }) => (
     <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+  ),
+  [CardType.WorkflowRunOutputCard]: ({ targetableObject }) => (
+    <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
   ),
 };

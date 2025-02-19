@@ -3,7 +3,7 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 jest.mock('@/views/hooks/useSaveCurrentViewFields', () => ({

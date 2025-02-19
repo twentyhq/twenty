@@ -13,6 +13,7 @@ import {
   IconCalendarEvent,
   IconMail,
   IconNotes,
+  IconPrinter,
   IconSettings,
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -179,11 +180,11 @@ export const useRecordShowContainerTabs = (
     },
     [CoreObjectNameSingular.WorkflowRun]: {
       tabs: {
-        workflowRunFlow: {
-          title: 'Flow',
+        workflowRunOutput: {
+          title: 'Output',
           position: 0,
-          Icon: IconSettings,
-          cards: [{ type: CardType.WorkflowRunCard }],
+          Icon: IconPrinter,
+          cards: [{ type: CardType.WorkflowRunOutputCard }],
           hide: {
             ifMobile: false,
             ifDesktop: false,
@@ -193,6 +194,20 @@ export const useRecordShowContainerTabs = (
             ifRelationsMissing: [],
           },
         },
+        // workflowRunFlow: {
+        //   title: 'Flow',
+        //   position: 0,
+        //   Icon: IconSettings,
+        //   cards: [{ type: CardType.WorkflowRunCard }],
+        //   hide: {
+        //     ifMobile: false,
+        //     ifDesktop: false,
+        //     ifInRightDrawer: false,
+        //     ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+        //     ifRequiredObjectsInactive: [],
+        //     ifRelationsMissing: [],
+        //   },
+        // },
         timeline: null,
       },
     },
