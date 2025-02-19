@@ -30,13 +30,6 @@ export class LocalDriver implements ServerlessDriver {
     this.fileStorageService = options.fileStorageService;
   }
 
-  private getInMemoryServerlessFunctionFolderPath = (
-    serverlessFunction: ServerlessFunctionEntity,
-    version: string,
-  ) => {
-    return join(SERVERLESS_TMPDIR_FOLDER, serverlessFunction.id, version);
-  };
-
   private getInMemoryLayerFolderPath = (version: number) => {
     return join(SERVERLESS_TMPDIR_FOLDER, COMMON_LAYER_NAME, `${version}`);
   };
@@ -54,7 +47,7 @@ export class LocalDriver implements ServerlessDriver {
 
   async delete() {}
 
-  async build(serverlessFunction: ServerlessFunctionEntity) {
+  private async build(serverlessFunction: ServerlessFunctionEntity) {
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
   }
 

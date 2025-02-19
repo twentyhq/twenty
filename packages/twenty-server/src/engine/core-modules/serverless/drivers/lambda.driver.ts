@@ -216,7 +216,7 @@ export class LambdaDriver implements ServerlessDriver {
     }
   }
 
-  async build(serverlessFunction: ServerlessFunctionEntity) {
+  private async build(serverlessFunction: ServerlessFunctionEntity) {
     const functionExists = await this.checkFunctionExists(
       serverlessFunction.id,
     );
