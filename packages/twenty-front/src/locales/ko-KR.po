@@ -817,8 +817,12 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "비동기 이벤트 알림을 위한 Webhook 엔드포인트 설정."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-msgid "Exclude the following people and domains from my email sync"
-msgstr "다음 사람 및 도메인을 이메일 동기화에서 제외"
+#~ msgid "Exclude the following people and domains from my email sync"
+#~ msgstr "Exclude the following people and domains from my email sync"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
+msgstr "다음 사람들과 도메인을 이메일 동기화에서 제외합니다. 내부 대화는 가져오지 않습니다"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"

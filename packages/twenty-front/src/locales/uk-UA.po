@@ -853,8 +853,12 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Встановіть ендпоінти вебхука для отримання сповіщень про асинхронні події."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-msgid "Exclude the following people and domains from my email sync"
-msgstr "Виключити наступних людей та домени з синхронізації моєї електронної пошти"
+#~ msgid "Exclude the following people and domains from my email sync"
+#~ msgstr "Exclude the following people and domains from my email sync"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
+msgstr "Виключити наступних осіб та домени з моєї синхронізації електронної пошти. Внутрішні розмови не будуть імпортовані"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
