@@ -23,16 +23,20 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
 
     switch (exception.code) {
       case BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND:
+      case BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND:
+      case BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND:
+      case BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND:
+      case BillingExceptionCode.BILLING_PLAN_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
           404,
         );
-      case BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND:
+      case BillingExceptionCode.BILLING_METER_EVENT_FAILED:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
-          404,
+          400,
         );
       default:
         return this.httpExceptionHandlerService.handleError(

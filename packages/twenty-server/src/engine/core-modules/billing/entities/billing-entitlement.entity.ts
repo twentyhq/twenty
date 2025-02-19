@@ -54,6 +54,8 @@ export class BillingEntitlement {
     (billingCustomer) => billingCustomer.billingEntitlements,
     {
       onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      orphanedRowAction: 'delete',
     },
   )
   @JoinColumn({
