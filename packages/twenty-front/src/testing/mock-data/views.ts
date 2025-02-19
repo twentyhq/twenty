@@ -25,7 +25,7 @@ export const mockedViewsData: View[] = [
     icon: 'IconSkyline',
     key: ViewKey.Index,
     kanbanFieldMetadataId: '',
-    kanbanAggregateOperation: AGGREGATE_OPERATIONS.Count,
+    kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,
