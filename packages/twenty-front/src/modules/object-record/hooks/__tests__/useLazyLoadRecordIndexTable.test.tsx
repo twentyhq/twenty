@@ -8,9 +8,8 @@ import { RecordTableComponentInstance } from '@/object-record/record-table/compo
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getJestMetadataAndApolloMocksAndContextStoreWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { getPeopleMock } from '~/testing/mock-data/people';
-
 const recordTableId = 'people';
 const objectNameSingular = 'person';
 const onColumnsChange = jest.fn();
@@ -429,7 +428,7 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const HookMockWrapper = getJestMetadataAndApolloMocksWrapper({
+const HookMockWrapper = getJestMetadataAndApolloMocksAndContextStoreWrapper({
   apolloMocks: mocks,
 });
 
