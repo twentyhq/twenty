@@ -56,4 +56,23 @@ export class RoleService {
       workspaceId,
     });
   }
+
+  // Only used for dev seeding and testing
+  public async createGuestRole({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<RoleEntity> {
+    return this.roleRepository.save({
+      label: 'Guest',
+      description: 'Guest role',
+      canUpdateAllSettings: false,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+      isEditable: false,
+      workspaceId,
+    });
+  }
 }
