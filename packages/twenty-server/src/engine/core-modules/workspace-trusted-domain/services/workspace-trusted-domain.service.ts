@@ -68,7 +68,7 @@ export class WorkspaceTrustedDomainService {
     if (!to.endsWith(workspaceTrustedDomain.domain)) {
       throw new WorkspaceTrustedDomainException(
         'Trusted domain does not match validator email',
-        WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_DOES_NOT_MATCH_VALIDATOR_EMAIL,
+        WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,
       );
     }
 
@@ -138,6 +138,13 @@ export class WorkspaceTrustedDomainService {
       workspaceTrustedDomain,
     );
 
+    if (workspaceTrustedDomain.isValidated) {
+      throw new WorkspaceTrustedDomainException(
+        'Trusted domain has already been validated',
+        WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_ALREADY_VALIDATED,
+      );
+    }
+
     const isHashValid =
       this.generateUniqueHash(workspaceTrustedDomain) === validationToken;
 
@@ -147,6 +154,8 @@ export class WorkspaceTrustedDomainService {
         WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_VALIDATION_TOKEN_INVALID,
       );
     }
+    workspaceTrustedDomain.isValidated = true;
+    this.workspaceTrustedDomainRepository.save(workspaceTrustedDomain);
   }
 
   async createTrustedDomain(
