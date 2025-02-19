@@ -55,7 +55,6 @@ export class BillingEntitlement {
     {
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
-      orphanedRowAction: 'delete',
     },
   )
   @JoinColumn({

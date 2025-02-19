@@ -6,14 +6,14 @@ import {
   useExportFetchRecords,
 } from '../useExportFetchRecords';
 
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { ViewType } from '@/views/types/ViewType';
 import { expect } from '@storybook/test';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 
 const mockPerson = {
   __typename: 'Person',
@@ -155,7 +155,9 @@ describe('useRecordData', () => {
 
     it('should call the callback function with kanban field included as column if view type is kanban', async () => {
       const callback = jest.fn();
+
       mockFetchAllRecords.mockReturnValue([mockPerson]);
+
       const { result } = renderHook(
         () => {
           const [recordGroupFieldMetadata, setRecordGroupFieldMetadata] =
@@ -234,7 +236,7 @@ describe('useRecordData', () => {
                   displayAsRelativeDate: true,
                 },
               },
-              position: expect.any(Number),
+              position: 10,
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',

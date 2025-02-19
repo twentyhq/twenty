@@ -30,6 +30,10 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import {
+  NOTE_STANDARD_FIELD_IDS,
+  TASK_STANDARD_FIELD_IDS,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 @Command({
   name: 'upgrade-0.42:migrate-rich-text-field',
@@ -149,12 +153,27 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     richTextField: FieldMetadataEntity,
     workspaceId: string,
   ) {
+    let standardId: string | null = null;
+
+    if (richTextField.standardId === TASK_STANDARD_FIELD_IDS.body) {
+      standardId = TASK_STANDARD_FIELD_IDS.bodyV2;
+    } else if (richTextField.standardId === NOTE_STANDARD_FIELD_IDS.body) {
+      standardId = NOTE_STANDARD_FIELD_IDS.bodyV2;
+    }
+
+    if (standardId === null && richTextField.isCustom === false) {
+      throw new Error(
+        `RICH_TEXT does not belong to a Task or a Note standard objects: ${richTextField.id}`,
+      );
+    }
+
     const newRichTextField: Partial<FieldMetadataEntity> = {
       ...richTextField,
       name: `${richTextField.name}V2`,
       id: undefined,
       type: FieldMetadataType.RICH_TEXT_V2,
       defaultValue: null,
+      standardId,
     };
 
     await this.fieldMetadataRepository.insert(newRichTextField);

@@ -7,7 +7,6 @@ export enum FileExceptionCode {
 }
 
 export class FileException extends CustomException {
-  code: FileExceptionCode;
   constructor(message: string, code: FileExceptionCode) {
     super(message, code);
   }

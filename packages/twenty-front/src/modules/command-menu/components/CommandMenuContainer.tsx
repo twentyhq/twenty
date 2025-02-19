@@ -9,6 +9,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -19,9 +20,9 @@ import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/wo
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -64,6 +65,7 @@ export const CommandMenuContainer = ({
     callback: closeCommandMenu,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
+    excludeClassNames: ['page-header-command-menu-button'],
   });
 
   const isMobile = useIsMobile();
@@ -77,6 +79,8 @@ export const CommandMenuContainer = ({
   const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
   );
+
+  const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
 
   return (
     <RecordFiltersComponentInstanceContext.Provider
@@ -94,9 +98,13 @@ export const CommandMenuContainer = ({
               onActionExecutedCallback: ({ key }) => {
                 if (
                   key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
+                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
                   key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
                 ) {
                   toggleCommandMenu();
+                }
+                if (key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK) {
+                  setCommandMenuSearch('');
                 }
               },
             }}
@@ -107,20 +115,22 @@ export const CommandMenuContainer = ({
               <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
             )}
             <ActionMenuConfirmationModals />
-            {isCommandMenuOpened && (
-              <StyledCommandMenu
-                data-testid="command-menu"
-                ref={commandMenuRef}
-                className="command-menu"
-                animate={targetVariantForAnimation}
-                initial="closed"
-                exit="closed"
-                variants={COMMAND_MENU_ANIMATION_VARIANTS}
-                transition={{ duration: theme.animation.duration.normal }}
-              >
-                {children}
-              </StyledCommandMenu>
-            )}
+            <AnimatePresence mode="wait">
+              {isCommandMenuOpened && (
+                <StyledCommandMenu
+                  data-testid="command-menu"
+                  ref={commandMenuRef}
+                  className="command-menu"
+                  animate={targetVariantForAnimation}
+                  initial="closed"
+                  exit="closed"
+                  variants={COMMAND_MENU_ANIMATION_VARIANTS}
+                  transition={{ duration: theme.animation.duration.normal }}
+                >
+                  {children}
+                </StyledCommandMenu>
+              )}
+            </AnimatePresence>
           </ActionMenuContext.Provider>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>

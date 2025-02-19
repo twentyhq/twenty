@@ -3,7 +3,6 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import omit from 'lodash.omit';
 import { SettingsFeatures } from 'twenty-shared';
 
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
@@ -12,8 +11,6 @@ import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.out
 import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
 import { EditSsoOutput } from 'src/engine/core-modules/sso/dtos/edit-sso.output';
 import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
-import { GetAuthorizationUrlInput } from 'src/engine/core-modules/sso/dtos/get-authorization-url.input';
-import { GetAuthorizationUrlOutput } from 'src/engine/core-modules/sso/dtos/get-authorization-url.output';
 import {
   SetupOIDCSsoInput,
   SetupSAMLSsoInput,
@@ -51,14 +48,6 @@ export class SSOResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.sSOService.listSSOIdentityProvidersByWorkspaceId(workspaceId);
-  }
-
-  @Mutation(() => GetAuthorizationUrlOutput)
-  async getAuthorizationUrl(@Args('input') params: GetAuthorizationUrlInput) {
-    return await this.sSOService.getAuthorizationUrl(
-      params.identityProviderId,
-      omit(params, ['identityProviderId']),
-    );
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)

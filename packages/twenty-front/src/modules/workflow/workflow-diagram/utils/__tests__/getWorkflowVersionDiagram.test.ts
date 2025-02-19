@@ -164,8 +164,8 @@ describe('getWorkflowVersionDiagram', () => {
       },
       "id": "step-1",
       "position": {
-        "x": 150,
-        "y": 100,
+        "x": 0,
+        "y": 150,
       },
     },
   ],

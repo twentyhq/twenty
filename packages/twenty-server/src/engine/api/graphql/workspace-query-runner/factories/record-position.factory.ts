@@ -9,6 +9,12 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
+export type RecordPositionFactoryCreateArgs = {
+  value: number | 'first' | 'last';
+  objectMetadata: { isCustom: boolean; nameSingular: string };
+  workspaceId: string;
+  index?: number;
+};
 @Injectable()
 export class RecordPositionFactory {
   constructor(
@@ -16,12 +22,12 @@ export class RecordPositionFactory {
     private readonly recordPositionQueryFactory: RecordPositionQueryFactory,
   ) {}
 
-  async create(
-    value: number | 'first' | 'last',
-    objectMetadata: { isCustom: boolean; nameSingular: string },
-    workspaceId: string,
+  async create({
+    objectMetadata,
+    value,
+    workspaceId,
     index = 0,
-  ): Promise<number> {
+  }: RecordPositionFactoryCreateArgs): Promise<number> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

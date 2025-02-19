@@ -56,16 +56,17 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       onSubmit: async (data) => {
         const createInputs = data.validStructuredRows.map((record) => {
           const fieldMapping: Record<string, any> =
-            buildRecordFromImportedStructuredRow(
-              record,
-              availableFieldMetadataItems,
-            );
+            buildRecordFromImportedStructuredRow({
+              importedStructuredRow: record,
+              fields: availableFieldMetadataItems,
+            });
 
           return fieldMapping;
         });
 
         try {
-          await createManyRecords(createInputs, true);
+          const upsert = true;
+          await createManyRecords(createInputs, upsert);
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
             variant: SnackBarVariant.Error,

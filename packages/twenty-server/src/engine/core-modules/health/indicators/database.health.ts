@@ -1,0 +1,103 @@
+import { Injectable } from '@nestjs/common';
+import {
+  HealthIndicatorResult,
+  HealthIndicatorService,
+} from '@nestjs/terminus';
+import { InjectDataSource } from '@nestjs/typeorm';
+
+import { DataSource } from 'typeorm';
+
+import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
+import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
+
+@Injectable()
+export class DatabaseHealthIndicator {
+  constructor(
+    @InjectDataSource('core')
+    private readonly dataSource: DataSource,
+    private readonly healthIndicatorService: HealthIndicatorService,
+  ) {}
+
+  async isHealthy(): Promise<HealthIndicatorResult> {
+    const indicator = this.healthIndicatorService.check('database');
+
+    try {
+      const [
+        [versionResult],
+        [activeConnections],
+        [maxConnections],
+        [uptime],
+        [databaseSize],
+        tableStats,
+        [cacheHitRatio],
+        [deadlocks],
+        [slowQueries],
+      ] = await withHealthCheckTimeout(
+        Promise.all([
+          this.dataSource.query('SELECT version()'),
+          this.dataSource.query(
+            'SELECT count(*) as count FROM pg_stat_activity',
+          ),
+          this.dataSource.query('SHOW max_connections'),
+          this.dataSource.query(
+            'SELECT extract(epoch from current_timestamp - pg_postmaster_start_time()) as uptime',
+          ),
+          this.dataSource.query(
+            'SELECT pg_size_pretty(pg_database_size(current_database())) as size',
+          ),
+          this.dataSource.query(`
+            SELECT schemaname, relname, n_live_tup, n_dead_tup, last_vacuum, last_autovacuum 
+            FROM pg_stat_user_tables 
+            ORDER BY n_live_tup DESC 
+            LIMIT 10
+          `),
+          this.dataSource.query(`
+            SELECT 
+              sum(heap_blks_hit) * 100.0 / (sum(heap_blks_hit) + sum(heap_blks_read)) as ratio 
+            FROM pg_statio_user_tables
+          `),
+          this.dataSource.query(
+            'SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()',
+          ),
+          this.dataSource.query(`
+            SELECT count(*) as count 
+            FROM pg_stat_activity 
+            WHERE state = 'active' 
+            AND query_start < now() - interval '1 minute'
+          `),
+        ]),
+        HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT,
+      );
+
+      return indicator.up({
+        details: {
+          version: versionResult.version,
+          connections: {
+            active: parseInt(activeConnections.count),
+            max: parseInt(maxConnections.max_connections),
+            utilizationPercent: Math.round(
+              (parseInt(activeConnections.count) /
+                parseInt(maxConnections.max_connections)) *
+                100,
+            ),
+          },
+          uptime: Math.round(uptime.uptime / 3600) + ' hours',
+          databaseSize: databaseSize.size,
+          performance: {
+            cacheHitRatio: Math.round(parseFloat(cacheHitRatio.ratio)) + '%',
+            deadlocks: parseInt(deadlocks.deadlocks),
+            slowQueries: parseInt(slowQueries.count),
+          },
+          top10Tables: tableStats,
+        },
+      });
+    } catch (error) {
+      const errorMessage =
+        error.message === HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT
+          ? HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT
+          : HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED;
+
+      return indicator.down(errorMessage);
+    }
+  }
+}

@@ -9,6 +9,7 @@ import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade
 import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 @Command({
   name: 'upgrade-0.42',
@@ -21,6 +22,7 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
     private readonly migrateRichTextFieldCommand: MigrateRichTextFieldCommand,
     private readonly fixBodyV2ViewFieldPositionCommand: FixBodyV2ViewFieldPositionCommand,
     private readonly limitAmountOfViewFieldCommand: LimitAmountOfViewFieldCommand,
+    private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
     super(workspaceRepository);
   }
@@ -47,6 +49,15 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
     await this.limitAmountOfViewFieldCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
+      workspaceIds,
+    );
+
+    await this.syncWorkspaceMetadataCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      {
+        ...options,
+        force: true,
+      },
       workspaceIds,
     );
   }
