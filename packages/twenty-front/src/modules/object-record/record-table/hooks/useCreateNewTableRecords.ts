@@ -70,8 +70,6 @@ export const useCreateNewTableRecord = ({
         const recordId = v4();
 
         if (isCommandMenuV2Enabled) {
-          // TODO: Generalize this behaviour, there will be a view setting to specify
-          // if the new record should be displayed in the side panel or on the record page
           if (
             shouldRedirectToShowPageOnCreation(objectMetadataItem.nameSingular)
           ) {
@@ -112,6 +110,11 @@ export const useCreateNewTableRecord = ({
             });
           }
 
+          openRecordTitleCell({
+            recordId,
+            fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
+          });
+
           return;
         }
 
@@ -139,6 +142,7 @@ export const useCreateNewTableRecord = ({
       objectMetadataItem.labelIdentifierFieldMetadataId,
       objectMetadataItem.nameSingular,
       openRecordInCommandMenu,
+      openRecordTitleCell,
       setActiveDropdownFocusIdAndMemorizePrevious,
       setHotkeyScope,
       setPendingRecordId,
