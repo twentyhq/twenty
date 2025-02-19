@@ -21,7 +21,11 @@ const StyledRolePermissionsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const RolePermissions = ({ role }: { role: Role }) => {
+type RolePermissionsProps = {
+  role: Pick<Role, 'id' | 'canUpdateAllSettings'>;
+};
+
+export const RolePermissions = ({ role }: RolePermissionsProps) => {
   const objectPermissionsConfig: RolePermissionsObjectPermission[] = [
     {
       key: 'seeRecords',
