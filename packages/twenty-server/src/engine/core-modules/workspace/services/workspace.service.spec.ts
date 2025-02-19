@@ -19,6 +19,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -43,6 +44,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: WorkspaceManagerService,
+          useValue: {},
+        },
+        {
+          provide: SSOService,
           useValue: {},
         },
         {
