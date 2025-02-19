@@ -9,6 +9,7 @@ import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewType } from '@/views/types/ViewType';
@@ -40,14 +41,18 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
       return (
         <RecordFiltersComponentInstanceContext.Provider value={{ instanceId }}>
           <RecordSortsComponentInstanceContext.Provider value={{ instanceId }}>
-            <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-              <MemoryRouter
-                initialEntries={['/one', '/two', { pathname: '/three' }]}
-                initialIndex={1}
-              >
-                <Story />
-              </MemoryRouter>
-            </ViewComponentInstanceContext.Provider>
+            <RecordTableComponentInstanceContext.Provider
+              value={{ instanceId, onColumnsChange: () => {} }}
+            >
+              <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                <MemoryRouter
+                  initialEntries={['/one', '/two', { pathname: '/three' }]}
+                  initialIndex={1}
+                >
+                  <Story />
+                </MemoryRouter>
+              </ViewComponentInstanceContext.Provider>
+            </RecordTableComponentInstanceContext.Provider>
           </RecordSortsComponentInstanceContext.Provider>
         </RecordFiltersComponentInstanceContext.Provider>
       );
