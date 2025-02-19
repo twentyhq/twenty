@@ -76,6 +76,7 @@ export class WorkspaceTrustedDomainService {
       workspace,
       pathname: `settings/security`,
       searchParams: {
+        wtdId: workspaceTrustedDomain.id,
         validationToken: this.generateUniqueHash(workspaceTrustedDomain),
       },
     });
@@ -121,11 +122,31 @@ export class WorkspaceTrustedDomainService {
       .digest('hex');
   }
 
-  compareHash(
-    hash: string,
-    workspaceTrustedDomain: WorkspaceTrustedDomainEntity,
-  ) {
-    return this.generateUniqueHash(workspaceTrustedDomain) === hash;
+  async validateTrustedDomain({
+    validationToken,
+    workspaceTrustedDomainId,
+  }: {
+    validationToken: string;
+    workspaceTrustedDomainId: string;
+  }) {
+    const workspaceTrustedDomain =
+      await this.workspaceTrustedDomainRepository.findOneBy({
+        id: workspaceTrustedDomainId,
+      });
+
+    workspaceTrustedDomainValidator.assertIsDefinedOrThrow(
+      workspaceTrustedDomain,
+    );
+
+    const isHashValid =
+      this.generateUniqueHash(workspaceTrustedDomain) === validationToken;
+
+    if (!isHashValid) {
+      throw new WorkspaceTrustedDomainException(
+        'Invalid trusted domain validation token',
+        WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
   }
 
   async createTrustedDomain(

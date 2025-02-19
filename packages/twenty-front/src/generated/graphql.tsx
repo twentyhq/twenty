@@ -331,6 +331,11 @@ export type CreateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type CreateTrustedDomainInput = {
+  domain: Scalars['String'];
+  email: Scalars['String'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** New step type */
   stepType: Scalars['String'];
@@ -382,6 +387,10 @@ export type DeleteSsoInput = {
 export type DeleteSsoOutput = {
   __typename?: 'DeleteSsoOutput';
   identityProviderId: Scalars['String'];
+};
+
+export type DeleteTrustedDomainInput = {
+  id: Scalars['String'];
 };
 
 export type DeleteWorkflowVersionStepInput = {
@@ -772,6 +781,7 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
+  createWorkspaceTrustedDomain: WorkspaceTrustedDomain;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
@@ -781,6 +791,7 @@ export type Mutation = {
   deleteUser: User;
   deleteWorkflowVersionStep: WorkflowAction;
   deleteWorkspaceInvitation: Scalars['String'];
+  deleteWorkspaceTrustedDomain: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -817,6 +828,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   userLookupAdminPanel: UserLookup;
+  validateWorkspaceTrustedDomain: Scalars['Boolean'];
 };
 
 
@@ -885,6 +897,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 };
 
 
+export type MutationCreateWorkspaceTrustedDomainArgs = {
+  input: CreateTrustedDomainInput;
+};
+
+
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
 };
@@ -917,6 +934,11 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationDeleteWorkspaceTrustedDomainArgs = {
+  input: DeleteTrustedDomainInput;
 };
 
 
@@ -1092,6 +1114,11 @@ export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String'];
 };
 
+
+export type MutationValidateWorkspaceTrustedDomainArgs = {
+  input: ValidateTrustedDomainInput;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime'];
@@ -1257,6 +1284,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAllWorkspaceTrustedDomains: Array<WorkspaceTrustedDomain>;
   getAvailablePackages: Scalars['JSON'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -1896,6 +1924,11 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String'];
 };
 
+export type ValidateTrustedDomainInput = {
+  validationToken: Scalars['String'];
+  workspaceTrustedDomainId: Scalars['String'];
+};
+
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float'];
@@ -2027,6 +2060,14 @@ export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']>;
   id: Scalars['String'];
+};
+
+export type WorkspaceTrustedDomain = {
+  __typename?: 'WorkspaceTrustedDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
+  isValidated: Scalars['Boolean'];
 };
 
 export type WorkspaceUrlsAndId = {
