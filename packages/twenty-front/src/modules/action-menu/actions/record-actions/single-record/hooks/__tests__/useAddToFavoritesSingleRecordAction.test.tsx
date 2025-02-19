@@ -4,7 +4,7 @@ import { act } from 'react';
 import {
   GetJestMetadataAndApolloMocksAndActionMenuWrapperProps,
   getJestMetadataAndApolloMocksAndActionMenuWrapper,
-} from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+} from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { useAddToFavoritesSingleRecordAction } from '../useAddToFavoritesSingleRecordAction';
