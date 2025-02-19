@@ -22,6 +22,15 @@ describe('updateOne', () => {
       testFieldId = createdFieldMetadaId;
     });
     afterEach(async () => {
+      const deactivateFieldOperation = updateOneFieldMetadataFactory({
+        input: { id: testFieldId, update: { isActive: false } },
+        gqlFields: `
+              id
+              isActive
+          `,
+      });
+
+      await makeMetadataAPIRequest(deactivateFieldOperation);
       await deleteFieldMetadata(testFieldId);
       await deleteOneObjectMetadataItem(listingObjectId);
     });
