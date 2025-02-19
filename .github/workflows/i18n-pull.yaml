@@ -76,8 +76,6 @@ jobs:
           download_translations: true
           export_only_approved: false
           localization_branch_name: i18n
-          commit_message: 'i18n - pull translations'
-          pull_request_title: 'i18n - translations'
           base_url: 'https://twenty.api.crowdin.com'
           auto_approve_imported: false
           import_eq_suggestions: false
@@ -86,16 +84,20 @@ jobs:
           skip_untranslated_strings: false
           skip_untranslated_files: false
           push_translations: true
-          create_pull_request: true
+          create_pull_request: false
           skip_ref_checkout: true
           dryrun_action: false
-          github_base_url: 'github.com'
-          github_user_name: 'Crowdin Bot'
-          github_user_email: 'support+bot@crowdin.com'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+      
+      - name: Commit Translations
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          git add .
+          git commit -m "chore: pull translations [skip ci]"
 
       - name: Compile translations
         if: inputs.force_pull || steps.compile_translations.outcome == 'failure'
@@ -111,7 +113,7 @@ jobs:
           git config --global user.email 'github-actions@twenty.com'
           git add .
           if ! git diff --staged --quiet --exit-code; then
-            git commit -m "chore: compile translations [skip ci]"
+            git commit -m "chore: compile translations"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
           else
             echo "changes_detected=false" >> $GITHUB_OUTPUT
