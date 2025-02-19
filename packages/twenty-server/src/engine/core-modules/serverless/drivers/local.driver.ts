@@ -2,8 +2,6 @@ import { fork } from 'child_process';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
-import dotenv from 'dotenv';
-
 import {
   ServerlessDriver,
   ServerlessExecuteError,
@@ -17,9 +15,8 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { compileTypescript } from 'src/engine/core-modules/serverless/drivers/utils/compile-typescript';
 import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
-import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
+import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
 
 const LISTENER_FILE_NAME = 'listener.js';
 
@@ -64,52 +61,7 @@ export class LocalDriver implements ServerlessDriver {
     const inMemoryServerlessFunctionFolderPath =
       this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
 
-    const folderPath = getServerlessFolder({
-      serverlessFunction,
-      version,
-    });
-
-    await this.fileStorageService.download({
-      from: { folderPath },
-      to: { folderPath: inMemoryServerlessFunctionFolderPath },
-    });
-
-    compileTypescript(inMemoryServerlessFunctionFolderPath);
-
-    const envFileContent = await fs.readFile(
-      join(inMemoryServerlessFunctionFolderPath, ENV_FILE_NAME),
-    );
-
-    const envVariables = dotenv.parse(envFileContent);
-
-    const listener = `
-    const index_1 = require("./src/index");
-    
-    process.env = ${JSON.stringify(envVariables)}
-    
-    process.on('message', async (message) => {
-      const { params } = message;
-      try {
-        const result = await index_1.main(params);
-        process.send(result);
-      } catch (error) {
-        process.send({
-          errorType: error.name,
-          errorMessage: error.message,
-          stackTrace: error.stack.split('\\n').filter((line) => line.trim() !== ''),
-        });
-      }
-    });
-    `;
-
-    await fs.writeFile(
-      join(
-        inMemoryServerlessFunctionFolderPath,
-        OUTDIR_FOLDER,
-        LISTENER_FILE_NAME,
-      ),
-      listener,
-    );
+    await copyExecutor(inMemoryServerlessFunctionFolderPath);
 
     try {
       await fs.symlink(
@@ -117,11 +69,7 @@ export class LocalDriver implements ServerlessDriver {
           this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
           'node_modules',
         ),
-        join(
-          inMemoryServerlessFunctionFolderPath,
-          OUTDIR_FOLDER,
-          'node_modules',
-        ),
+        join(inMemoryServerlessFunctionFolderPath, 'node_modules'),
         'dir',
       );
     } catch (err) {

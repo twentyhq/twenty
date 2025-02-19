@@ -28,7 +28,6 @@ import {
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
-import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
 import {
@@ -217,16 +216,7 @@ export class LambdaDriver implements ServerlessDriver {
     }
   }
 
-  private getInMemoryServerlessFunctionFolderPath = (
-    serverlessFunction: ServerlessFunctionEntity,
-    version: string,
-  ) => {
-    return join(SERVERLESS_TMPDIR_FOLDER, serverlessFunction.id, version);
-  };
-
-  async createLambdaExecutorIfNotExists(
-    serverlessFunction: ServerlessFunctionEntity,
-  ) {
+  async build(serverlessFunction: ServerlessFunctionEntity) {
     const functionExists = await this.checkFunctionExists(
       serverlessFunction.id,
     );
@@ -266,10 +256,8 @@ export class LambdaDriver implements ServerlessDriver {
     await (await this.getLambdaClient()).send(command);
 
     await lambdaBuildDirectoryManager.clean();
-  }
 
-  async build(serverlessFunction: ServerlessFunctionEntity) {
-    await this.createLambdaExecutorIfNotExists(serverlessFunction);
+    await this.waitFunctionUpdates(serverlessFunction.id);
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {
