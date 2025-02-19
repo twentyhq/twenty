@@ -1,20 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
-import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 
-@Controller('healthz')
-export class HealthController {
-  constructor(
-    private health: HealthCheckService,
-    private healthCacheService: HealthCacheService,
-  ) {}
-
-  @Get()
-  @HealthCheck()
-  check() {
-    return this.health.check([]);
-  }
+@Controller('metricsz')
+export class MetricsController {
+  constructor(private readonly healthCacheService: HealthCacheService) {}
 
   @Get('/message-channel-sync-job-by-status-counter')
   getMessageChannelSyncJobByStatusCounter() {

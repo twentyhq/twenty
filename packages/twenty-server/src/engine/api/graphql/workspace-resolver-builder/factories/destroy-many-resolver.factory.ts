@@ -9,12 +9,13 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { GraphqlQueryDestroyManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-many-resolver.service';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
 export class DestroyManyResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'destroyMany' as const;
+  public static methodName = RESOLVER_METHOD_NAMES.DESTROY_MANY;
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryDestroyManyResolverService,

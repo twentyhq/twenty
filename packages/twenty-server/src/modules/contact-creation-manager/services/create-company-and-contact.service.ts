@@ -117,8 +117,19 @@ export class CreateCompanyAndContactService {
         domainName?.domainName && isWorkDomain(domainName.domainName),
     );
 
+    const workDomainNamesToCreateFormatted = workDomainNamesToCreate.map(
+      (domainName) => ({
+        ...domainName,
+        createdBySource: source,
+        createdByWorkspaceMember: connectedAccount.accountOwner,
+        createdByContext: {
+          provider: connectedAccount.provider,
+        },
+      }),
+    );
+
     const companiesObject = await this.createCompaniesService.createCompanies(
-      workDomainNamesToCreate,
+      workDomainNamesToCreateFormatted,
       workspaceId,
       transactionManager,
     );
