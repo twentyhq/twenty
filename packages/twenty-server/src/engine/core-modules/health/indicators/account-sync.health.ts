@@ -30,6 +30,7 @@ export class AccountSyncHealthIndicator {
       );
 
       const failedJobs = counters.FAILED_UNKNOWN || 0;
+      //    +    (counters.FAILED_INSUFFICIENT_PERMISSIONS || 0)
 
       const failureRate =
         totalJobs > 0
@@ -75,6 +76,7 @@ export class AccountSyncHealthIndicator {
       );
 
       const failedJobs = counters.FAILED_UNKNOWN || 0;
+      //    +    (counters.FAILED_INSUFFICIENT_PERMISSIONS || 0)
 
       const failureRate =
         totalJobs > 0
