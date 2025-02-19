@@ -313,7 +313,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
       if (fieldMetadataAlreadyExists) {
         this.logger.warn(
-          `FieldMetadata already exists in fieldMetadataRepository name: ${newRichTextField.name} standardId: ${newRichTextField.standardId} type: ${newRichTextField.type}`,
+          `FieldMetadata already exists in fieldMetadataRepository name: ${newRichTextField.name} standardId: ${newRichTextField.standardId} type: ${newRichTextField.type} workspaceId: ${workspaceId}`,
         );
       }
 
