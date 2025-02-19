@@ -287,6 +287,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     }
 
     if (!Array.isArray(jsonParsedblocknoteFieldValue)) {
+      this.logger.warn(
+        `blocknoteFieldValue is defined and is not an array got ${blocknoteFieldValue}`,
+      );
       return null;
     }
 
