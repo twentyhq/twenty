@@ -30,6 +30,10 @@ export class RoleService {
       label: ADMIN_ROLE_LABEL,
       description: 'Admin role',
       canUpdateAllSettings: true,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
       isEditable: false,
       workspaceId,
     });
@@ -44,6 +48,29 @@ export class RoleService {
       label: MEMBER_ROLE_LABEL,
       description: 'Member role',
       canUpdateAllSettings: false,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
+      isEditable: false,
+      workspaceId,
+    });
+  }
+
+  // Only used for dev seeding and testing
+  public async createGuestRole({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<RoleEntity> {
+    return this.roleRepository.save({
+      label: 'Guest',
+      description: 'Guest role',
+      canUpdateAllSettings: false,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
       isEditable: false,
       workspaceId,
     });

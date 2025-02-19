@@ -116,6 +116,7 @@ export const useCreateOneRecord = <
         objectMetadataItem,
         objectMetadataItems,
         record: recordCreatedInCache,
+        recordGqlFields: computedRecordGqlFields,
         computeReferences: false,
       });
 

@@ -3,9 +3,6 @@ import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer
 
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 
-import { ContextStoreCurrentViewTypeEffect } from '@/context-store/components/ContextStoreCurrentViewTypeEffect';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { RecordShowContainerContextStoreObjectMetadataIdEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreObjectMetadataIdEffect';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
@@ -45,15 +42,8 @@ export const RecordShowContainer = ({
 
   return (
     <>
-      <RecordShowContainerContextStoreObjectMetadataIdEffect
-        recordId={objectRecordId}
-        objectNameSingular={objectNameSingular}
-      />
       <RecordShowContainerContextStoreTargetedRecordsEffect
         recordId={objectRecordId}
-      />
-      <ContextStoreCurrentViewTypeEffect
-        viewType={ContextStoreViewType.ShowPage}
       />
       {recordFromStore && recordFromStore.deletedAt && (
         <InformationBannerDeletedRecord

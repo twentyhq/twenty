@@ -9,12 +9,13 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { GraphqlQueryFindDuplicatesResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-duplicates-resolver.service';
+import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
 export class FindDuplicatesResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'findDuplicates' as const;
+  public static methodName = RESOLVER_METHOD_NAMES.FIND_DUPLICATES;
 
   constructor(
     private readonly graphqlQueryRunnerService: GraphqlQueryFindDuplicatesResolverService,

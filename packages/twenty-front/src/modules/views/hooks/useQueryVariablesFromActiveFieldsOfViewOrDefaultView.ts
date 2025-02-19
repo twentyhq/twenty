@@ -6,14 +6,11 @@ import { getQueryVariablesFromView } from '@/views/utils/getQueryVariablesFromVi
 
 export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
   objectMetadataItem,
-  viewId,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  viewId: string | null | undefined;
 }) => {
   const { view } = useViewOrDefaultViewFromPrefetchedViews({
     objectMetadataItemId: objectMetadataItem.id,
-    viewId,
   });
 
   const { activeFieldMetadataItems } = useActiveFieldMetadataItems({

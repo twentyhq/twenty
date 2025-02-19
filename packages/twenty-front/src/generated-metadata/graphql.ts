@@ -32,6 +32,33 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AdminPanelHealthServiceData = {
+  __typename?: 'AdminPanelHealthServiceData';
+  details?: Maybe<Scalars['String']['output']>;
+  queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
+  status: AdminPanelHealthServiceStatus;
+};
+
+export enum AdminPanelHealthServiceStatus {
+  OPERATIONAL = 'OPERATIONAL',
+  OUTAGE = 'OUTAGE'
+}
+
+export enum AdminPanelIndicatorHealthStatusInputEnum {
+  DATABASE = 'DATABASE',
+  MESSAGE_SYNC = 'MESSAGE_SYNC',
+  REDIS = 'REDIS',
+  WORKER = 'WORKER'
+}
+
+export type AdminPanelWorkerQueueHealth = {
+  __typename?: 'AdminPanelWorkerQueueHealth';
+  metrics: WorkerQueueMetrics;
+  name: Scalars['String']['output'];
+  status: AdminPanelHealthServiceStatus;
+  workers: Scalars['Float']['output'];
+};
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -256,6 +283,7 @@ export type ClientConfig = {
   debugMode: Scalars['Boolean']['output'];
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
+  isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
@@ -808,6 +836,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
   buildDraftServerlessFunction: ServerlessFunction;
+  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -1304,6 +1333,13 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['ConnectionCursor']['output']>;
 };
 
+export enum PermissionsOnAllObjectRecords {
+  DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
+  READ_ALL_OBJECT_RECORDS = 'READ_ALL_OBJECT_RECORDS',
+  SOFT_DELETE_ALL_OBJECT_RECORDS = 'SOFT_DELETE_ALL_OBJECT_RECORDS',
+  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
+}
+
 export type PostgresCredentials = {
   __typename?: 'PostgresCredentials';
   id: Scalars['UUID']['output'];
@@ -1342,7 +1378,6 @@ export type PublishServerlessFunctionInput = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: BillingSessionOutput;
-  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -1360,18 +1395,20 @@ export type Query = {
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON']['output'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
+  getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
+  getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
+  getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
-  listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -1439,6 +1476,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetIndicatorHealthStatusArgs = {
+  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
 };
 
 
@@ -1632,6 +1674,10 @@ export type ResendEmailVerificationTokenOutput = {
 
 export type Role = {
   __typename?: 'Role';
+  canDestroyAllObjectRecords: Scalars['Boolean']['output'];
+  canReadAllObjectRecords: Scalars['Boolean']['output'];
+  canSoftDeleteAllObjectRecords: Scalars['Boolean']['output'];
+  canUpdateAllObjectRecords: Scalars['Boolean']['output'];
   canUpdateAllSettings: Scalars['Boolean']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -1795,6 +1841,14 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String']['output'];
   supportFrontChatId?: Maybe<Scalars['String']['output']>;
+};
+
+export type SystemHealth = {
+  __typename?: 'SystemHealth';
+  database: AdminPanelHealthServiceData;
+  messageSync: AdminPanelHealthServiceData;
+  redis: AdminPanelHealthServiceData;
+  worker: AdminPanelHealthServiceData;
 };
 
 export type TimelineCalendarEvent = {
@@ -2049,6 +2103,7 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
+  objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingsFeatures>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
@@ -2061,6 +2116,16 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String']['output'];
   id: Scalars['String']['output'];
+};
+
+export type WorkerQueueMetrics = {
+  __typename?: 'WorkerQueueMetrics';
+  active: Scalars['Float']['output'];
+  completed: Scalars['Float']['output'];
+  delayed: Scalars['Float']['output'];
+  failed: Scalars['Float']['output'];
+  prioritized: Scalars['Float']['output'];
+  waiting: Scalars['Float']['output'];
 };
 
 export type WorkflowAction = {

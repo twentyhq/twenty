@@ -15,6 +15,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
+  GithubVersionLink,
   H1Title,
   H1TitleFontColor,
   H2Title,
@@ -24,15 +25,13 @@ import {
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
-const StyledLinkContainer = styled.div`
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
+import packageJson from '../../../../../package.json';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledUserInfo = styled.div`
@@ -121,6 +120,11 @@ export const SettingsAdminGeneral = () => {
   return (
     <>
       <Section>
+        <H2Title title="About" description="Version of the application" />
+        <GithubVersionLink version={packageJson.version} />
+      </Section>
+
+      <Section>
         <H2Title
           title={
             canManageFeatureFlags
@@ -135,16 +139,14 @@ export const SettingsAdminGeneral = () => {
         />
 
         <StyledContainer>
-          <StyledLinkContainer>
-            <TextInput
-              value={userIdentifier}
-              onChange={setUserIdentifier}
-              onInputEnter={handleSearch}
-              placeholder="Enter user ID or email address"
-              fullWidth
-              disabled={isUserLookupLoading}
-            />
-          </StyledLinkContainer>
+          <TextInput
+            value={userIdentifier}
+            onChange={setUserIdentifier}
+            onInputEnter={handleSearch}
+            placeholder="Enter user ID or email address"
+            fullWidth
+            disabled={isUserLookupLoading}
+          />
           <Button
             Icon={IconSearch}
             variant="primary"
@@ -176,6 +178,7 @@ export const SettingsAdminGeneral = () => {
               behaveAsLinks={false}
             />
           </StyledTabListContainer>
+
           <StyledContentContainer>
             <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
           </StyledContentContainer>

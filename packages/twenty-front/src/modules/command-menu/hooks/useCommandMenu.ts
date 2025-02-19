@@ -1,9 +1,11 @@
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { IconDotsVertical, IconSearch, useIcons } from 'twenty-ui';
 
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
@@ -24,9 +26,9 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared';
-import { IconDotsVertical, IconList, IconSearch } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
@@ -35,6 +37,7 @@ export const useCommandMenu = () => {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
+  const { getIcon } = useIcons();
 
   const mainContextStoreComponentInstanceId = useRecoilValue(
     mainContextStoreComponentInstanceIdState,
@@ -211,18 +214,44 @@ export const useCommandMenu = () => {
   }, []);
 
   const openRecordInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (recordId: string, objectNameSingular: string) => {
+    ({ set, snapshot }) => {
+      return ({
+        recordId,
+        objectNameSingular,
+        isNewRecord = false,
+      }: {
+        recordId: string;
+        objectNameSingular: string;
+        isNewRecord?: boolean;
+      }) => {
         set(viewableRecordNameSingularState, objectNameSingular);
         set(viewableRecordIdState, recordId);
+
+        const objectMetadataItem = snapshot
+          .getLoadable(
+            objectMetadataItemFamilySelector({
+              objectName: objectNameSingular,
+              objectNameType: 'singular',
+            }),
+          )
+          .getValue();
+
+        const Icon = objectMetadataItem?.icon
+          ? getIcon(objectMetadataItem.icon)
+          : getIcon('IconList');
+
+        const capitalizedObjectNameSingular = capitalize(objectNameSingular);
+
         navigateCommandMenu({
           page: CommandMenuPages.ViewRecord,
-          pageTitle: objectNameSingular,
-          pageIcon: IconList,
+          pageTitle: isNewRecord
+            ? t`New ${capitalizedObjectNameSingular}`
+            : capitalizedObjectNameSingular,
+          pageIcon: Icon,
         });
       };
     },
-    [navigateCommandMenu],
+    [getIcon, navigateCommandMenu],
   );
 
   const openRecordsSearchPage = () => {

@@ -1,10 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
+import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
@@ -13,10 +15,16 @@ import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
+import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-data.dto';
+import { AdminPanelIndicatorHealthStatusInputEnum } from './dtos/admin-panel-indicator-health-status.input';
+
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AdminPanelResolver {
-  constructor(private adminService: AdminPanelService) {}
+  constructor(
+    private adminService: AdminPanelService,
+    private adminPanelHealthService: AdminPanelHealthService,
+  ) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
   @Mutation(() => ImpersonateOutput)
@@ -52,5 +60,21 @@ export class AdminPanelResolver {
   @Query(() => EnvironmentVariablesOutput)
   async getEnvironmentVariablesGrouped(): Promise<EnvironmentVariablesOutput> {
     return this.adminService.getEnvironmentVariablesGrouped();
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @Query(() => SystemHealth)
+  async getSystemHealthStatus(): Promise<SystemHealth> {
+    return this.adminPanelHealthService.getSystemHealthStatus();
+  }
+
+  @Query(() => AdminPanelHealthServiceData)
+  async getIndicatorHealthStatus(
+    @Args('indicatorName', {
+      type: () => AdminPanelIndicatorHealthStatusInputEnum,
+    })
+    indicatorName: AdminPanelIndicatorHealthStatusInputEnum,
+  ): Promise<AdminPanelHealthServiceData> {
+    return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorName);
   }
 }

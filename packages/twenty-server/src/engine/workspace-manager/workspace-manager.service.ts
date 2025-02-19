@@ -4,6 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
+import {
+  SEED_ACME_WORKSPACE_ID,
+  SEED_APPLE_WORKSPACE_ID,
+} from 'src/database/typeorm-seeds/core/workspaces';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -42,6 +48,7 @@ export class WorkspaceManagerService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   /**
@@ -257,24 +264,53 @@ export class WorkspaceManagerService {
   }
 
   private async initPermissionsDev(workspaceId: string) {
+    await this.featureFlagService.enableFeatureFlags(
+      [FeatureFlagKey.IsPermissionsEnabled],
+      workspaceId,
+    );
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
 
-    await this.userRoleService.assignRoleToUserWorkspace({
-      workspaceId,
-      userWorkspaceId: DEV_SEED_USER_WORKSPACE_IDS.TIM,
-      roleId: adminRole.id,
-    });
+    let adminUserWorkspaceId: string | undefined;
+    let memberUserWorkspaceId: string | undefined;
+
+    if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+      adminUserWorkspaceId = DEV_SEED_USER_WORKSPACE_IDS.TIM;
+      memberUserWorkspaceId = DEV_SEED_USER_WORKSPACE_IDS.JONY;
+
+      // Create guest role only in this workspace
+      const guestRole = await this.roleService.createGuestRole({
+        workspaceId,
+      });
+
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId,
+        userWorkspaceId: DEV_SEED_USER_WORKSPACE_IDS.PHIL,
+        roleId: guestRole.id,
+      });
+    } else if (workspaceId === SEED_ACME_WORKSPACE_ID) {
+      adminUserWorkspaceId = DEV_SEED_USER_WORKSPACE_IDS.TIM_ACME;
+    }
+
+    if (adminUserWorkspaceId) {
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId,
+        userWorkspaceId: adminUserWorkspaceId,
+        roleId: adminRole.id,
+      });
+    }
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
     });
 
-    await this.userRoleService.assignRoleToUserWorkspace({
-      workspaceId,
-      userWorkspaceId: DEV_SEED_USER_WORKSPACE_IDS.JONY,
-      roleId: memberRole.id,
-    });
+    if (memberUserWorkspaceId) {
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId,
+        userWorkspaceId: memberUserWorkspaceId,
+        roleId: memberRole.id,
+      });
+    }
   }
 }
