@@ -240,7 +240,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     ] as const;
     const filteredColumnsToCreate = columnsToCreate.filter(({ columnName }) =>
       objectMetadata.fields.some(
-        // Is ColName always eq to fieldNames TODO see with Charles
         ({ name: fieldName }) => fieldName === columnName,
       ),
     );
@@ -300,7 +299,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         await this.fieldMetadataRepository.findOneBy({
           name: newRichTextField.name,
           type: newRichTextField.type,
-          // standardId: newRichTextField.standardId ?? undefined, //overkill ? or could be counterproductive ?
+          standardId: newRichTextField.standardId ?? undefined,
         });
       const fieldMetadataAlreadyExists = !isDefined(existingFieldMetadata);
 
@@ -321,7 +320,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       });
 
       if (objectMetadata === null) {
-        // Should throw as does below in migrate method ?
         this.logger.warn(
           `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
         );
@@ -346,10 +344,15 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       });
     }
 
+    const hasPendingMigrations = richTextFieldsWithMigrationStatus.some(
+      ({ hasCreatedColumns }) => hasCreatedColumns,
+    );
     await this.dryRunGuardedOperation(async () => {
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        workspaceId,
-      );
+      if (hasPendingMigrations) {
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+          workspaceId,
+        );
+      }
     });
 
     return richTextFieldsWithMigrationStatus;
