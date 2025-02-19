@@ -1,24 +1,23 @@
-import { fork } from 'child_process';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
+import ts, { transpileModule } from 'typescript';
+import { v4 } from 'uuid';
+
 import {
   ServerlessDriver,
-  ServerlessExecuteError,
   ServerlessExecuteResult,
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
-import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
-import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
-
-const LISTENER_FILE_NAME = 'listener.js';
+import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
+import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
+import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -57,26 +56,6 @@ export class LocalDriver implements ServerlessDriver {
 
   async build(serverlessFunction: ServerlessFunctionEntity, version: string) {
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
-
-    const inMemoryServerlessFunctionFolderPath =
-      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
-
-    await copyExecutor(inMemoryServerlessFunctionFolderPath);
-
-    try {
-      await fs.symlink(
-        join(
-          this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
-          'node_modules',
-        ),
-        join(inMemoryServerlessFunctionFolderPath, 'node_modules'),
-        'dir',
-      );
-    } catch (err) {
-      if (err.code !== 'EEXIST') {
-        throw err;
-      }
-    }
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {
@@ -112,96 +91,63 @@ export class LocalDriver implements ServerlessDriver {
     const computedVersion =
       version === 'latest' ? serverlessFunction.latestVersion : version;
 
-    const listenerFile = join(
-      this.getInMemoryServerlessFunctionFolderPath(
-        serverlessFunction,
-        computedVersion,
-      ),
-      OUTDIR_FOLDER,
-      LISTENER_FILE_NAME,
+    const folderPath = getServerlessFolder({
+      serverlessFunction,
+      version: computedVersion,
+    });
+
+    const tsCodeStream = await this.fileStorageService.read({
+      folderPath: join(folderPath, 'src'),
+      filename: INDEX_FILE_NAME,
+    });
+
+    const tsCode = await readFileContent(tsCodeStream);
+
+    const compiledCode = transpileModule(tsCode, {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES2017,
+      },
+    }).outputText;
+
+    const compiledCodeFolderPath = join(
+      SERVERLESS_TMPDIR_FOLDER,
+      `compiled-code-${v4()}`,
     );
 
+    const compiledCodeFilePath = join(compiledCodeFolderPath, 'main.js');
+
+    await fs.mkdir(compiledCodeFolderPath, { recursive: true });
+
+    await fs.writeFile(compiledCodeFilePath, compiledCode, 'utf8');
+
     try {
-      return await new Promise((resolve, reject) => {
-        const child = fork(listenerFile, { silent: true });
+      await fs.symlink(
+        join(
+          this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
+          'node_modules',
+        ),
+        join(compiledCodeFolderPath, 'node_modules'),
+        'dir',
+      );
+    } catch (err) {
+      if (err.code !== 'EEXIST') {
+        throw err;
+      }
+    }
 
-        const timeoutMs = serverlessFunction.timeoutSeconds * 1_000;
+    try {
+      const mainFile = await import(compiledCodeFilePath);
 
-        const timeoutHandler = setTimeout(() => {
-          child.kill();
-          const duration = Date.now() - startTime;
+      const result = await mainFile.main(payload);
 
-          reject(new Error(`Task timed out after ${duration / 1_000} seconds`));
-        }, timeoutMs);
+      const duration = Date.now() - startTime;
 
-        child.on('message', (message: object | ServerlessExecuteError) => {
-          clearTimeout(timeoutHandler);
-          const duration = Date.now() - startTime;
-
-          if ('errorType' in message) {
-            resolve({
-              data: null,
-              duration,
-              error: message,
-              status: ServerlessFunctionExecutionStatus.ERROR,
-            });
-          } else {
-            resolve({
-              data: message,
-              duration,
-              status: ServerlessFunctionExecutionStatus.SUCCESS,
-            });
-          }
-          child.kill();
-        });
-
-        child.stderr?.on('data', (data) => {
-          clearTimeout(timeoutHandler);
-          const stackTrace = data
-            .toString()
-            .split('\n')
-            .filter((line: string) => line.trim() !== '');
-          const errorTrace = stackTrace.filter((line: string) =>
-            line.includes('Error: '),
-          )?.[0];
-
-          let errorType = 'Unknown';
-          let errorMessage = '';
-
-          if (errorTrace) {
-            errorType = errorTrace.split(':')[0];
-            errorMessage = errorTrace.split(': ')[1];
-          }
-          const duration = Date.now() - startTime;
-
-          resolve({
-            data: null,
-            duration,
-            status: ServerlessFunctionExecutionStatus.ERROR,
-            error: {
-              errorType,
-              errorMessage,
-              stackTrace: stackTrace,
-            },
-          });
-          child.kill();
-        });
-
-        child.on('error', (error) => {
-          clearTimeout(timeoutHandler);
-          reject(error);
-          child.kill();
-        });
-
-        child.on('exit', (code) => {
-          clearTimeout(timeoutHandler);
-          if (code && code !== 0) {
-            reject(new Error(`Child process exited with code ${code}`));
-          }
-        });
-
-        child.send({ params: payload });
-      });
+      return {
+        data: result,
+        duration,
+        status: ServerlessFunctionExecutionStatus.SUCCESS,
+      };
     } catch (error) {
       return {
         data: null,
@@ -213,6 +159,8 @@ export class LocalDriver implements ServerlessDriver {
         },
         status: ServerlessFunctionExecutionStatus.ERROR,
       };
+    } finally {
+      await fs.rm(compiledCodeFolderPath, { recursive: true, force: true });
     }
   }
 }

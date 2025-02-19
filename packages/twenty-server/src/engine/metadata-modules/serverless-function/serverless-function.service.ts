@@ -152,6 +152,7 @@ export class ServerlessFunctionService {
       payload,
       version,
     );
+
     const eventInput = {
       action: 'serverlessFunction.executed',
       payload: {
