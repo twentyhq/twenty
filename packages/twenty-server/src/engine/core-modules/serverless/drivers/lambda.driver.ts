@@ -260,8 +260,6 @@ export class LambdaDriver implements ServerlessDriver {
     await (await this.getLambdaClient()).send(command);
 
     await lambdaBuildDirectoryManager.clean();
-
-    await this.waitFunctionUpdates(serverlessFunction);
   }
 
   async execute(
@@ -270,6 +268,7 @@ export class LambdaDriver implements ServerlessDriver {
     version: string,
   ): Promise<ServerlessExecuteResult> {
     await this.build(serverlessFunction);
+    await this.waitFunctionUpdates(serverlessFunction);
 
     const startTime = Date.now();
 
