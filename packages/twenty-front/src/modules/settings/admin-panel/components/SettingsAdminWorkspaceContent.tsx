@@ -1,6 +1,7 @@
 import { Button, H2Title, IconUser, Toggle } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
@@ -35,19 +36,18 @@ export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
 }: SettingsAdminWorkspaceContentProps) => {
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
-  const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);
   const { enqueueSnackBar } = useSnackBar();
   const [currentUser] = useRecoilState(currentUserState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
+  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
+  const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);
   const { executeImpersonationAuth } = useImpersonationAuth();
   const { executeImpersonationRedirect } = useImpersonationRedirect();
-  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
   const [impersonate] = useImpersonateMutation();
 
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const [userLookupResult, setUserLookupResult] = useRecoilState(
-    userLookupResultState,
-  );
+  const userLookupResult = useRecoilValue(userLookupResultState);
 
   const handleImpersonate = async (workspaceId: string) => {
     if (!userLookupResult?.user.id) {
@@ -63,8 +63,7 @@ export const SettingsAdminWorkspaceContent = ({
       variables: { userId: userLookupResult.user.id, workspaceId },
       onCompleted: async (data) => {
         const { loginToken, workspace } = data.impersonate;
-        const isCurrentWorkspace = workspace.id === activeWorkspace?.id;
-        setUserLookupResult(null);
+        const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
         if (isCurrentWorkspace) {
           await executeImpersonationAuth(loginToken.token);
           return;
