@@ -281,7 +281,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
       for (const row of rows) {
         const blocknoteFieldValue = row[richTextField.name];
-        const markdownFieldValue = this.getMardownFieldValue({
+        const markdownFieldValue = await this.getMardownFieldValue({
           blocknoteFieldValue,
           serverBlockNoteEditor,
         });
