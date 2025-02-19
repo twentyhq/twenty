@@ -8,11 +8,7 @@ import {
   IconTrashX,
   Section,
 } from 'twenty-ui';
-import {
-  Role,
-  SettingsFeatures,
-  WorkspaceMember,
-} from '~/generated-metadata/graphql';
+import { Role, SettingsFeatures } from '~/generated-metadata/graphql';
 import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/components/RolePermissionsObjectsTableHeader';
 import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/components/RolePermissionsSettingsTableHeader';
 import { RolePermissionsSettingsTableRow } from '~/pages/settings/roles/components/RolePermissionsSettingsTableRow';
