@@ -52,7 +52,11 @@ export class MatchParticipantService<
 
     const participantIds = participants.map((participant) => participant.id);
     const uniqueParticipantsHandles = [
-      ...new Set(participants.map((participant) => participant.handle)),
+      ...new Set(
+	      participants
+	      .map((participant) => participant.handle)
+	      .filter((handle) => handle)
+      ),
     ];
 
     const personRepository =
