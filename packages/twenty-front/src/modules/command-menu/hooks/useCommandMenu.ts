@@ -111,7 +111,10 @@ export const useCommandMenu = () => {
         page,
         pageTitle,
         pageIcon,
-      }: CommandMenuNavigationStackItem) => {
+        resetNavigationStack = false,
+      }: CommandMenuNavigationStackItem & {
+        resetNavigationStack?: boolean;
+      }) => {
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
           title: pageTitle,
@@ -122,10 +125,14 @@ export const useCommandMenu = () => {
           .getLoadable(commandMenuNavigationStackState)
           .getValue();
 
-        set(commandMenuNavigationStackState, [
-          ...currentNavigationStack,
-          { page, pageTitle, pageIcon },
-        ]);
+        if (resetNavigationStack) {
+          set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
+        } else {
+          set(commandMenuNavigationStackState, [
+            ...currentNavigationStack,
+            { page, pageTitle, pageIcon },
+          ]);
+        }
         openCommandMenu();
       };
     },
@@ -250,6 +257,7 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
+          resetNavigationStack: true,
         });
       };
     },
