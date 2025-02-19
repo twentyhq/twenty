@@ -104,6 +104,9 @@ jobs:
           npx nx run twenty-emails:lingui:compile 
           npx nx run twenty-front:lingui:compile
 
+      - name: Debug git status
+        run: git status
+
       - name: Check and commit compiled files
         id: check_changes
         run: |

@@ -12,6 +12,7 @@ import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@
 import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-index/components/RecordIndexLoadBaseOnContextStoreEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -72,22 +73,26 @@ export const RecordIndexContainerGater = () => {
           <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
           >
-            <ActionMenuComponentInstanceContext.Provider
-              value={{
-                instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-              }}
+            <RecordSortsComponentInstanceContext.Provider
+              value={{ instanceId: recordIndexId }}
             >
-              <PageTitle
-                title={`${capitalize(objectMetadataItem.namePlural)}`}
-              />
-              <RecordIndexPageHeader />
-              <PageBody>
-                <StyledIndexContainer>
-                  <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                  <RecordIndexContainer />
-                </StyledIndexContainer>
-              </PageBody>
-            </ActionMenuComponentInstanceContext.Provider>
+              <ActionMenuComponentInstanceContext.Provider
+                value={{
+                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                }}
+              >
+                <PageTitle
+                  title={`${capitalize(objectMetadataItem.namePlural)}`}
+                />
+                <RecordIndexPageHeader />
+                <PageBody>
+                  <StyledIndexContainer>
+                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                    <RecordIndexContainer />
+                  </StyledIndexContainer>
+                </PageBody>
+              </ActionMenuComponentInstanceContext.Provider>
+            </RecordSortsComponentInstanceContext.Provider>
           </RecordFiltersComponentInstanceContext.Provider>
           <RecordIndexLoadBaseOnContextStoreEffect />
         </ViewComponentInstanceContext.Provider>
