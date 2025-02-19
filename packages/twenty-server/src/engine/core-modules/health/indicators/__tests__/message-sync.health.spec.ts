@@ -4,11 +4,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
-import { MessageSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/message-sync.health';
+import { AccountSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/account-sync.health';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 describe('MessageSyncHealthIndicator', () => {
-  let service: MessageSyncHealthIndicator;
+  let service: AccountSyncHealthIndicator;
   let healthCacheService: jest.Mocked<HealthCacheService>;
   let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
 
@@ -30,7 +30,7 @@ describe('MessageSyncHealthIndicator', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MessageSyncHealthIndicator,
+        AccountSyncHealthIndicator,
         {
           provide: HealthCacheService,
           useValue: healthCacheService,
@@ -42,8 +42,8 @@ describe('MessageSyncHealthIndicator', () => {
       ],
     }).compile();
 
-    service = module.get<MessageSyncHealthIndicator>(
-      MessageSyncHealthIndicator,
+    service = module.get<AccountSyncHealthIndicator>(
+      AccountSyncHealthIndicator,
     );
     jest.useFakeTimers();
   });
