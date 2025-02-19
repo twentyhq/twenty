@@ -50,6 +50,7 @@ import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 10 * 60 * 60; // 10h
+const LAMBDA_EXECUTOR_DESCRIPTION = 'User script executor';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -88,10 +89,6 @@ export class LambdaDriver implements ServerlessDriver {
     return this.lambdaClient;
   }
 
-  private getFunctionName(serverlessFunction: ServerlessFunctionEntity) {
-    return `${serverlessFunction.id}-executor`;
-  }
-
   private async getAssumeRoleCredentials() {
     const stsClient = new STSClient({ region: this.options.region });
 
@@ -128,7 +125,7 @@ export class LambdaDriver implements ServerlessDriver {
     maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
   ) {
     const waitParams = {
-      FunctionName: this.getFunctionName(serverlessFunction),
+      FunctionName: serverlessFunction.id,
     };
 
     await waitUntilFunctionUpdatedV2(
@@ -191,31 +188,28 @@ export class LambdaDriver implements ServerlessDriver {
     return result.LayerVersionArn;
   }
 
-  private async checkFunctionExists(
+  private async getLambdaExecutor(
     serverlessFunction: ServerlessFunctionEntity,
-  ): Promise<boolean> {
+  ) {
     try {
       const getFunctionCommand: GetFunctionCommand = new GetFunctionCommand({
-        FunctionName: this.getFunctionName(serverlessFunction),
+        FunctionName: serverlessFunction.id,
       });
 
-      await (await this.getLambdaClient()).send(getFunctionCommand);
-
-      return true;
+      return await (await this.getLambdaClient()).send(getFunctionCommand);
     } catch (error) {
-      if (error instanceof ResourceNotFoundException) {
-        return false;
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
       }
-      throw error;
     }
   }
 
   async delete(serverlessFunction: ServerlessFunctionEntity) {
-    const functionExists = await this.checkFunctionExists(serverlessFunction);
+    const lambdaExecutor = await this.getLambdaExecutor(serverlessFunction);
 
-    if (functionExists) {
+    if (isDefined(lambdaExecutor)) {
       const deleteFunctionCommand = new DeleteFunctionCommand({
-        FunctionName: this.getFunctionName(serverlessFunction),
+        FunctionName: serverlessFunction.id,
       });
 
       await (await this.getLambdaClient()).send(deleteFunctionCommand);
@@ -223,10 +217,16 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
-    const functionExists = await this.checkFunctionExists(serverlessFunction);
+    const lambdaExecutor = await this.getLambdaExecutor(serverlessFunction);
 
-    if (functionExists) {
-      return;
+    if (isDefined(lambdaExecutor)) {
+      if (
+        lambdaExecutor.Configuration?.Description ===
+        LAMBDA_EXECUTOR_DESCRIPTION
+      ) {
+        return;
+      }
+      await this.delete(serverlessFunction);
     }
 
     const layerArn = await this.createLayerIfNotExists(
@@ -246,12 +246,12 @@ export class LambdaDriver implements ServerlessDriver {
       Code: {
         ZipFile: await fs.readFile(lambdaZipPath),
       },
-      FunctionName: this.getFunctionName(serverlessFunction),
+      FunctionName: serverlessFunction.id,
       Layers: [layerArn],
       Handler: 'index.handler',
       Role: this.options.lambdaRole,
       Runtime: serverlessFunction.runtime,
-      Description: 'User script executor',
+      Description: LAMBDA_EXECUTOR_DESCRIPTION,
       Timeout: serverlessFunction.timeoutSeconds,
     };
 
@@ -300,7 +300,7 @@ export class LambdaDriver implements ServerlessDriver {
     };
 
     const params: InvokeCommandInput = {
-      FunctionName: this.getFunctionName(serverlessFunction),
+      FunctionName: serverlessFunction.id,
       Payload: JSON.stringify(executorPayload),
     };
 
