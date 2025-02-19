@@ -74,31 +74,33 @@ export const useCommandMenu = () => {
   );
 
   const closeCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
+        set(isCommandMenuOpenedState, false);
+      },
+    [],
+  );
 
-        if (isCommandMenuOpened) {
-          resetContextStoreStates('command-menu');
-          resetContextStoreStates('command-menu-previous');
+  const onCommandMenuCloseAnimationComplete = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        resetContextStoreStates('command-menu');
+        resetContextStoreStates('command-menu-previous');
 
-          set(viewableRecordIdState, null);
-          set(commandMenuPageState, CommandMenuPages.Root);
-          set(commandMenuPageInfoState, {
-            title: undefined,
-            Icon: undefined,
-          });
-          set(isCommandMenuOpenedState, false);
-          set(commandMenuSearchState, '');
-          set(commandMenuNavigationStackState, []);
-          resetSelectedItem();
-          set(hasUserSelectedCommandState, false);
-          goBackToPreviousHotkeyScope();
+        set(viewableRecordIdState, null);
+        set(commandMenuPageState, CommandMenuPages.Root);
+        set(commandMenuPageInfoState, {
+          title: undefined,
+          Icon: undefined,
+        });
+        set(isCommandMenuOpenedState, false);
+        set(commandMenuSearchState, '');
+        set(commandMenuNavigationStackState, []);
+        resetSelectedItem();
+        set(hasUserSelectedCommandState, false);
+        goBackToPreviousHotkeyScope();
 
-          emitRightDrawerCloseEvent();
-        }
+        emitRightDrawerCloseEvent();
       },
     [goBackToPreviousHotkeyScope, resetContextStoreStates, resetSelectedItem],
   );
@@ -315,6 +317,7 @@ export const useCommandMenu = () => {
   return {
     openRootCommandMenu,
     closeCommandMenu,
+    onCommandMenuCloseAnimationComplete,
     navigateCommandMenu,
     navigateCommandMenuHistory,
     goBackFromCommandMenu,

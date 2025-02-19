@@ -47,7 +47,11 @@ export const CommandMenuContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+  const {
+    toggleCommandMenu,
+    closeCommandMenu,
+    onCommandMenuCloseAnimationComplete,
+  } = useCommandMenu();
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
@@ -115,7 +119,10 @@ export const CommandMenuContainer = ({
               <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
             )}
             <ActionMenuConfirmationModals />
-            <AnimatePresence mode="wait">
+            <AnimatePresence
+              mode="wait"
+              onExitComplete={onCommandMenuCloseAnimationComplete}
+            >
               {isCommandMenuOpened && (
                 <StyledCommandMenu
                   data-testid="command-menu"
