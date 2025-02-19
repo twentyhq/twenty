@@ -34,11 +34,11 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 type MigrateRichTextContentArgs = {
-  richTextFieldsWithMigrationStatus: RichTextFieldWithMigrationStatusAndObjectMetadata[];
+  richTextFieldsWithHasCreatedColumns: RichTextFieldWithHasCreatedColumnsAndObjectMetadata[];
   workspaceId: string;
 };
 
-type RichTextFieldWithMigrationStatusAndObjectMetadata = {
+type RichTextFieldWithHasCreatedColumnsAndObjectMetadata = {
   richTextField: FieldMetadataEntity;
   hasCreatedColumns: boolean;
   objectMetadata: ObjectMetadataEntity | null;
@@ -153,14 +153,14 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
       this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
 
-      const richTextFieldsWithMigrationStatus =
+      const richTextFieldsWithHasCreatedColumns =
         await this.createIfMissingNewRichTextFieldsColumn({
           richTextFields,
           workspaceId,
         });
 
       await this.migrateToNewRichTextFieldsColumn({
-        richTextFieldsWithMigrationStatus,
+        richTextFieldsWithHasCreatedColumns,
         workspaceId,
       });
 
@@ -275,13 +275,13 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     richTextFields,
     workspaceId,
   }: ProcessRichTextFieldsArgs): Promise<
-    RichTextFieldWithMigrationStatusAndObjectMetadata[]
+    RichTextFieldWithHasCreatedColumnsAndObjectMetadata[]
   > {
-    const richTextFieldsWithMigrationStatus: RichTextFieldWithMigrationStatusAndObjectMetadata[] =
+    const richTextFieldsWithHasCreatedColumns: RichTextFieldWithHasCreatedColumnsAndObjectMetadata[] =
       [];
     const addToAcc = (
-      elementToPush: RichTextFieldWithMigrationStatusAndObjectMetadata,
-    ) => richTextFieldsWithMigrationStatus.push(elementToPush);
+      elementToPush: RichTextFieldWithHasCreatedColumnsAndObjectMetadata,
+    ) => richTextFieldsWithHasCreatedColumns.push(elementToPush);
 
     for (const richTextField of richTextFields) {
       const standardId = this.buildRichTextFieldStandardId(richTextField);
@@ -344,18 +344,19 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       });
     }
 
-    const hasPendingMigrations = richTextFieldsWithMigrationStatus.some(
-      ({ hasCreatedColumns }) => hasCreatedColumns,
-    );
+    const hasAtLeastOnePendingMigration =
+      richTextFieldsWithHasCreatedColumns.some(
+        ({ hasCreatedColumns }) => hasCreatedColumns,
+      );
     await this.dryRunGuardedOperation(async () => {
-      if (hasPendingMigrations) {
+      if (hasAtLeastOnePendingMigration) {
         await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
           workspaceId,
         );
       }
     });
 
-    return richTextFieldsWithMigrationStatus;
+    return richTextFieldsWithHasCreatedColumns;
   }
 
   private jsonParseOrSilentlyFail(input: string): null | unknown {
@@ -403,7 +404,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
   }
 
   private async migrateToNewRichTextFieldsColumn({
-    richTextFieldsWithMigrationStatus,
+    richTextFieldsWithHasCreatedColumns,
     workspaceId,
   }: MigrateRichTextContentArgs) {
     const serverBlockNoteEditor = ServerBlockNoteEditor.create();
@@ -412,7 +413,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       richTextField,
       hasCreatedColumns,
       objectMetadata,
-    } of richTextFieldsWithMigrationStatus) {
+    } of richTextFieldsWithHasCreatedColumns) {
       if (objectMetadata === null) {
         this.logger.log(
           `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
