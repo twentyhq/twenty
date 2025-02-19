@@ -14,26 +14,22 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,
   context: WorkspaceQueryRunnerOptions,
 ) => {
-  if (error instanceof QueryFailedError) {
-    if (
-      error.message.includes('duplicate key value violates unique constraint')
-    ) {
-      return handleDuplicateKeyError(error, context);
+  switch (true) {
+    case error instanceof QueryFailedError: {
+      if (
+        error.message.includes('duplicate key value violates unique constraint')
+      ) {
+        return handleDuplicateKeyError(error, context);
+      }
+      throw error;
     }
-    throw error;
+    case error instanceof PermissionsException:
+      return permissionGraphqlApiExceptionHandler(error);
+    case error instanceof WorkspaceQueryRunnerException:
+      return workspaceExceptionHandler(error);
+    case error instanceof GraphqlQueryRunnerException:
+      return graphqlQueryRunnerExceptionHandler(error);
+    default:
+      throw error;
   }
-
-  if (error instanceof PermissionsException) {
-    return permissionGraphqlApiExceptionHandler(error);
-  }
-
-  if (error instanceof WorkspaceQueryRunnerException) {
-    return workspaceExceptionHandler(error);
-  }
-
-  if (error instanceof GraphqlQueryRunnerException) {
-    return graphqlQueryRunnerExceptionHandler(error);
-  }
-
-  throw error;
 };

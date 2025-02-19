@@ -8,10 +8,9 @@ export const isObjectRecordUnderObjectRecordsPermissions = ({
   nameSingular: string;
 }) => {
   return (
-    (!isCustom &&
-      STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS.includes(
-        nameSingular,
-      )) ||
-    isCustom
+    isCustom ||
+    STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS.includes(
+      nameSingular,
+    )
   );
 };
