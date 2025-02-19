@@ -37,20 +37,24 @@ type MigrateRichTextContentArgs = {
   richTextFieldsWithMigrationStatus: RichTextFieldWithMigrationStatusAndObjectMetadata[];
   workspaceId: string;
 };
+
 type RichTextFieldWithMigrationStatusAndObjectMetadata = {
   richTextField: FieldMetadataEntity;
   hasCreatedColumns: boolean;
   objectMetadata: ObjectMetadataEntity | null;
 };
+
 type ProcessWorkspaceArgs = {
   workspaceId: string;
   index: number;
   total: number;
 };
+
 type ProcessRichTextFieldsArgs = {
   richTextFields: FieldMetadataEntity[];
   workspaceId: string;
 };
+
 type AsyncMethod<T> = () => Promise<T>;
 @Command({
   name: 'upgrade-0.42:migrate-rich-text-field',
@@ -208,6 +212,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       }
     }
   }
+
   private async createMarkdownBlockNoteV2Columns({
     richTextField,
     workspaceId,
@@ -240,6 +245,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       ),
     );
     const shouldRunMigration = filteredColumnsToCreate.length !== 0;
+
     if (!shouldRunMigration) {
       this.logger.warn(
         `No columns to create for objectMetaData ${objectMetadata.id}`,
@@ -265,6 +271,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
     return shouldRunMigration;
   }
+
   private async createIfMissingNewRichTextFieldsColumn({
     richTextFields,
     workspaceId,
@@ -296,6 +303,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           // standardId: newRichTextField.standardId ?? undefined, //overkill ? or could be counterproductive ?
         });
       const fieldMetadataAlreadyExists = !isDefined(existingFieldMetadata);
+
       if (fieldMetadataAlreadyExists) {
         this.logger.warn(
           `FieldMetadata already exists in fieldMetadataRepository name: ${newRichTextField.name} standardId: ${newRichTextField.standardId} type: ${newRichTextField.type}`,
@@ -382,6 +390,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       this.logger.warn(
         `blocknoteFieldValue is defined and is not an array got ${blocknoteFieldValue}`,
       );
+
       return null;
     }
 
@@ -431,6 +440,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
         const shouldForceUpdate = !hasCreatedColumns && this.options.force;
         const shouldUpdateFieldValue = hasCreatedColumns || shouldForceUpdate;
+
         if (shouldForceUpdate) {
           this.logger.warn(
             `Will force udpate RICH_TEXT_V2 fieldValue for ${richTextField.id} of objectMetada ${objectMetadata.id} even it has already been migrated in the past`,
