@@ -2,7 +2,10 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import styled from '@emotion/styled';
 import { H2Title } from 'twenty-ui';
+
+const StyledContainer = styled.div``;
 
 export const SettingsAdminHealthAccountSyncCountersTables = ({
   details,
@@ -16,11 +19,10 @@ export const SettingsAdminHealthAccountSyncCountersTables = ({
   }
 
   return (
-    <>
+    <StyledContainer>
       <H2Title
         title={title}
         description={`How your ${title.toLowerCase()} is doing`}
-        className="mb-4"
       />
       <Table>
         <TableRow>
@@ -48,6 +50,6 @@ export const SettingsAdminHealthAccountSyncCountersTables = ({
           <TableCell align="right">{details.failureRate}%</TableCell>
         </TableRow>
       </Table>
-    </>
+    </StyledContainer>
   );
 };

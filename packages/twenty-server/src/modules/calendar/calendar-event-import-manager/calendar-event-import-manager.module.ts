@@ -48,7 +48,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     MicrosoftCalendarDriverModule,
     BillingModule,
     RefreshAccessTokenManagerModule,
-    CalendarEventParticipantManagerModule,
     ConnectedAccountModule,
     CalendarCommonModule,
     HealthModule,

@@ -10,18 +10,27 @@ export const AccountSyncMetrics = () => {
   }
 
   const parsedDetails = JSON.parse(details);
-  const { messageSync, calendarSync } = parsedDetails;
+
+  const syncMetrics = [
+    {
+      details: parsedDetails.messageSync?.details,
+      title: 'Message Sync Status',
+    },
+    {
+      details: parsedDetails.calendarSync?.details,
+      title: 'Calendar Sync Status',
+    },
+  ];
 
   return (
     <>
-      <SettingsAdminHealthAccountSyncCountersTables
-        details={messageSync?.details}
-        title="Message Sync Status"
-      />
-      <SettingsAdminHealthAccountSyncCountersTables
-        details={calendarSync?.details}
-        title="Calendar Sync Status"
-      />
+      {syncMetrics.map((metric) => (
+        <SettingsAdminHealthAccountSyncCountersTables
+          key={metric.title}
+          details={metric.details}
+          title={metric.title}
+        />
+      ))}
     </>
   );
 };
