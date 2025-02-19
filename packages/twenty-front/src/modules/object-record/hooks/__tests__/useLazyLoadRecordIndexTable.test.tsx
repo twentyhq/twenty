@@ -10,7 +10,6 @@ import { MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getPeopleMock } from '~/testing/mock-data/people';
-
 const recordTableId = 'people';
 const objectNameSingular = 'person';
 const onColumnsChange = jest.fn();
