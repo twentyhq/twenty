@@ -321,7 +321,7 @@ describe('WorkspaceTrustedDomainService', () => {
       ).rejects.toThrowError(
         new WorkspaceTrustedDomainException(
           'Trusted domain does not match validator email',
-          WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_DOES_NOT_MATCH_VALIDATOR_EMAIL,
+          WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,
         ),
       );
     });
@@ -381,38 +381,39 @@ describe('WorkspaceTrustedDomainService', () => {
   });
 
   describe('validateTrustedDomain', () => {
-    it('should validate the trusted domain when the validation token is correct', async () => {
-      const trustedDomainId = 'trusted-domain-id';
+    it('should validate the trusted domain successfully with a correct token', async () => {
+      const trustedDomainId = 'domain-id';
       const validationToken = 'valid-token';
-
-      const trustedDomain = {
+      const mockTrustedDomain = {
         id: trustedDomainId,
         domain: 'example.com',
+        isValidated: false,
       } as WorkspaceTrustedDomain;
 
       jest
         .spyOn(workspaceTrustedDomainRepository, 'findOneBy')
-        .mockResolvedValue(trustedDomain);
-
+        .mockResolvedValue(mockTrustedDomain);
       jest
         .spyOn(service as any, 'generateUniqueHash')
         .mockReturnValue(validationToken);
+      const saveSpy = jest.spyOn(workspaceTrustedDomainRepository, 'save');
 
-      await expect(
-        service.validateTrustedDomain({
-          validationToken,
-          workspaceTrustedDomainId: trustedDomainId,
-        }),
-      ).resolves.not.toThrow();
+      await service.validateTrustedDomain({
+        validationToken,
+        workspaceTrustedDomainId: trustedDomainId,
+      });
 
       expect(workspaceTrustedDomainRepository.findOneBy).toHaveBeenCalledWith({
         id: trustedDomainId,
       });
+      expect(saveSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ isValidated: true }),
+      );
     });
 
-    it('should throw an exception if the trusted domain does not exist', async () => {
-      const trustedDomainId = 'trusted-domain-id';
-      const validationToken = 'invalid-token';
+    it('should throw an error if the trusted domain does not exist', async () => {
+      const trustedDomainId = 'invalid-domain-id';
+      const validationToken = 'valid-token';
 
       jest
         .spyOn(workspaceTrustedDomainRepository, 'findOneBy')
@@ -429,25 +430,20 @@ describe('WorkspaceTrustedDomainService', () => {
           WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_NOT_FOUND,
         ),
       );
-
-      expect(workspaceTrustedDomainRepository.findOneBy).toHaveBeenCalledWith({
-        id: trustedDomainId,
-      });
     });
 
-    it('should throw an exception if the validation token is invalid', async () => {
-      const trustedDomainId = 'trusted-domain-id';
+    it('should throw an error if the validation token is invalid', async () => {
+      const trustedDomainId = 'domain-id';
       const validationToken = 'invalid-token';
-
-      const trustedDomain = {
+      const mockTrustedDomain = {
         id: trustedDomainId,
         domain: 'example.com',
+        isValidated: false,
       } as WorkspaceTrustedDomain;
 
       jest
         .spyOn(workspaceTrustedDomainRepository, 'findOneBy')
-        .mockResolvedValue(trustedDomain);
-
+        .mockResolvedValue(mockTrustedDomain);
       jest
         .spyOn(service as any, 'generateUniqueHash')
         .mockReturnValue('valid-token');
@@ -463,10 +459,32 @@ describe('WorkspaceTrustedDomainService', () => {
           WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_VALIDATION_TOKEN_INVALID,
         ),
       );
+    });
 
-      expect(workspaceTrustedDomainRepository.findOneBy).toHaveBeenCalledWith({
+    it('should throw an error if the trusted domain is already validated', async () => {
+      const trustedDomainId = 'domain-id';
+      const validationToken = 'valid-token';
+      const mockTrustedDomain = {
         id: trustedDomainId,
-      });
+        domain: 'example.com',
+        isValidated: true,
+      } as WorkspaceTrustedDomain;
+
+      jest
+        .spyOn(workspaceTrustedDomainRepository, 'findOneBy')
+        .mockResolvedValue(mockTrustedDomain);
+
+      await expect(
+        service.validateTrustedDomain({
+          validationToken,
+          workspaceTrustedDomainId: trustedDomainId,
+        }),
+      ).rejects.toThrowError(
+        new WorkspaceTrustedDomainException(
+          'Trusted domain has already been validated',
+          WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_ALREADY_VALIDATED,
+        ),
+      );
     });
   });
 });
