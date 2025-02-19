@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphl-api-request-with-guest-role.util';
+import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
@@ -77,9 +77,6 @@ describe('updateManyObjectRecordsPermissions', () => {
   });
 
   it('should update multiple object records when user has permission (admin role)', async () => {
-    const personId1 = randomUUID();
-    const personId2 = randomUUID();
-
     const graphqlOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
