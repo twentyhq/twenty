@@ -220,6 +220,31 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     );
   }
 
+  private async getMardownFieldValue({
+    blocknoteFieldValue,
+    serverBlockNoteEditor,
+  }: {
+    blocknoteFieldValue: string | null;
+    serverBlockNoteEditor: ServerBlockNoteEditor;
+  }): Promise<string | null> {
+    const blocknoteFieldValueIsDefined =
+      blocknoteFieldValue !== null &&
+      blocknoteFieldValue !== undefined &&
+      blocknoteFieldValue !== '{}';
+    if (!blocknoteFieldValueIsDefined) {
+      return null;
+    }
+
+    const jsonParsedblocknoteFieldValue = JSON.parse(blocknoteFieldValue);
+    if (!Array.isArray(jsonParsedblocknoteFieldValue)) {
+      return null;
+    }
+
+    return await serverBlockNoteEditor.blocksToMarkdownLossy(
+      jsonParsedblocknoteFieldValue,
+    );
+  }
+
   private async migrateRichTextContent(
     richTextFields: FieldMetadataEntity[],
     workspaceId: string,
@@ -254,12 +279,10 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
       for (const row of rows) {
         const blocknoteFieldValue = row[richTextField.name];
-        const markdownFieldValue = blocknoteFieldValue
-          ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-              JSON.parse(blocknoteFieldValue),
-            )
-          : null;
-
+        const markdownFieldValue = this.getMardownFieldValue({
+          blocknoteFieldValue,
+          serverBlockNoteEditor,
+        });
         await workspaceDataSource.query(
           `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
           [blocknoteFieldValue, markdownFieldValue, row.id],
