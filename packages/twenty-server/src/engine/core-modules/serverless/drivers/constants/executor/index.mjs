@@ -10,6 +10,8 @@ export const handler = async (event) => {
 
     await fs.writeFile(mainPath, code, 'utf8');
 
+    process.env = {}
+
     const mainFile = await import(mainPath);
 
     return  await mainFile.main(params);
