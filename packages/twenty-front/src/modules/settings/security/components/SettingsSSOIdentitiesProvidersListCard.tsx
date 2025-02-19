@@ -40,9 +40,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
     fetchPolicy: 'network-only',
     skip: currentWorkspace?.hasValidEnterpriseKey === false,
     onCompleted: (data) => {
-      setSSOIdentitiesProviders(
-        data?.listSSOIdentityProvidersByWorkspaceId ?? [],
-      );
+      setSSOIdentitiesProviders(data?.getSSOIdentityProviders ?? []);
     },
     onError: (error: Error) => {
       enqueueSnackBar(error.message, {
