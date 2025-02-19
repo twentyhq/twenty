@@ -4,8 +4,10 @@ import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ChangePassword } from '@/settings/profile/components/ChangePassword';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
+import { DocumentField } from '@/settings/profile/components/DocumentField';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
+import { PhoneField } from '@/settings/profile/components/PhoneField';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -43,6 +45,14 @@ export const SettingsProfile = () => {
             description={t`The email associated to your account`}
           />
           <EmailField />
+        </Section>
+        <Section>
+          <H2Title title="Document" description="" />
+          <DocumentField />
+        </Section>
+        <Section>
+          <H2Title title="Phone" description="" />
+          <PhoneField />
         </Section>
         <Section>
           <ChangePassword />

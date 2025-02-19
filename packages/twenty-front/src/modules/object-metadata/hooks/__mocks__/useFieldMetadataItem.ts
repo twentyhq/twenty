@@ -207,6 +207,14 @@ export const queries = {
       timeZone
       dateFormat
       timeFormat
+      userEmail
+      userDocument
+      userPhone {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
     }
   `,
 };

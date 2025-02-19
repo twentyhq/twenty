@@ -1,3 +1,4 @@
+import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -24,6 +25,8 @@ export type WorkspaceMember = {
   dateFormat?: WorkspaceMemberDateFormatEnum | null;
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;
   agentId: string;
+  userDocument?: string | null;
+  userPhone?: FieldPhonesValue | null;
 };
 
 export type WorkspaceInvitation = {

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { H2Title, MainButton } from 'twenty-ui';
@@ -12,8 +12,11 @@ import { Title } from '@/auth/components/Title';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { PERSON_TYPE_OPTIONS } from '@/settings/constants/PersonTypeOptions';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -24,6 +27,11 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import { OnboardingStatus } from '~/generated/graphql';
+import { formatCnpj } from '~/utils/formatCnpj';
+import { formatCpf } from '~/utils/formatCpf';
+import isCnpj from '~/utils/isCnpj';
+import { validateCnpj } from '~/utils/validateCnpj';
+import { validateCpf } from '~/utils/validateCpf';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -50,6 +58,19 @@ const validationSchema = z
   .object({
     firstName: z.string().min(1, { message: 'First name can not be empty' }),
     lastName: z.string().min(1, { message: 'Last name can not be empty' }),
+    personType: z.enum(['CPF', 'CNPJ']).default('CPF'),
+    document: z
+      .string()
+      .min(1, { message: 'Document can not be empty' })
+      .refine((value) => validateCpf(value) || validateCnpj(value), {
+        message: 'Invalid Document',
+      }),
+    phone: z.object({
+      primaryPhoneCountryCode: z.string().min(1),
+      primaryPhoneCallingCode: z.string().min(1),
+      primaryPhoneNumber: z.string().min(1),
+      additionalPhones: z.null().default(null),
+    }),
   })
   .required();
 
@@ -74,13 +95,24 @@ export const CreateProfile = () => {
     formState: { isValid, isSubmitting },
     getValues,
   } = useForm<Form>({
-    mode: 'onChange',
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
     defaultValues: {
       firstName: currentWorkspaceMember?.name?.firstName ?? '',
       lastName: currentWorkspaceMember?.name?.lastName ?? '',
+      personType: isCnpj(currentWorkspaceMember?.userDocument) ? 'CNPJ' : 'CPF',
+      document: isCnpj(currentWorkspaceMember?.userDocument)
+        ? formatCnpj(currentWorkspaceMember?.userDocument || '')
+        : formatCpf(currentWorkspaceMember?.userDocument || ''),
+      phone: {
+        ...currentWorkspaceMember?.userPhone,
+        additionalPhones: null,
+      },
     },
     resolver: zodResolver(validationSchema),
   });
+
+  const personType = useWatch({ control, name: 'personType' });
 
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -100,6 +132,8 @@ export const CreateProfile = () => {
               lastName: data.lastName,
             },
             colorScheme: 'System',
+            userDocument: data.document.replace(/\D/g, ''),
+            userPhone: data.phone,
           },
         });
 
@@ -112,6 +146,8 @@ export const CreateProfile = () => {
                 lastName: data.lastName,
               },
               colorScheme: 'System',
+              userDocument: data.document.replace(/\D/g, ''),
+              userPhone: data.phone,
             };
           }
           return current;
@@ -210,6 +246,67 @@ export const CreateProfile = () => {
                   placeholder="Cook"
                   error={error?.message}
                   fullWidth
+                />
+              )}
+            />
+          </StyledComboInputContainer>
+        </StyledSectionContainer>
+        <StyledSectionContainer>
+          <StyledComboInputContainer>
+            <Controller
+              name="personType"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <FormSelectFieldInput
+                  label="Person type"
+                  defaultValue={value}
+                  onPersist={onChange}
+                  options={PERSON_TYPE_OPTIONS}
+                />
+              )}
+            />
+            <Controller
+              name="document"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInputV2
+                  label="Document"
+                  value={value}
+                  onFocus={() => setIsEditingMode(true)}
+                  onBlur={() => {
+                    onBlur();
+                    setIsEditingMode(false);
+                  }}
+                  onChange={(text) => {
+                    personType === 'CNPJ'
+                      ? onChange(formatCnpj(text))
+                      : onChange(formatCpf(text));
+                  }}
+                  placeholder={
+                    personType === 'CNPJ'
+                      ? '99.999.999/9999-99'
+                      : '999.999.999-99'
+                  }
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+          </StyledComboInputContainer>
+        </StyledSectionContainer>
+        <StyledSectionContainer>
+          <StyledComboInputContainer>
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <FormPhoneFieldInput
+                  label="Phone"
+                  defaultValue={value}
+                  onPersist={onChange}
                 />
               )}
             />
