@@ -49,7 +49,7 @@ export const actorCompositeType: CompositeType = {
       name: 'context',
       type: FieldMetadataType.RAW_JSON,
       hidden: false,
-      isRequired: true,
+      isRequired: false,
     },
   ],
 };
