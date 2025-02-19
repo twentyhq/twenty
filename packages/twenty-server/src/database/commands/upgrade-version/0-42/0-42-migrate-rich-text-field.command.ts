@@ -243,21 +243,26 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         defaultValue: null,
       },
     ] as const;
-    const filteredColumnsToCreate = columnsToCreate.filter(
-      ({ columnName }) =>
-        !objectMetadata.fields.some(
-          ({ name: fieldName }) => fieldName === columnName,
-        ),
+    const bodyV2AlreadyExists = objectMetadata.fields.some(
+      (field) => field.name === 'bodyV2',
     );
-    const shouldRunMigration = filteredColumnsToCreate.length > 0;
+    const shouldForceColumnCreation =
+      !bodyV2AlreadyExists && this.options.force;
+    const shouldCreateColumn =
+      !bodyV2AlreadyExists || shouldForceColumnCreation;
 
-    if (!shouldRunMigration) {
+    if (!shouldCreateColumn) {
       this.logger.warn(
-        `No columns to create for objectMetaData ${objectMetadata.id}`,
+        `No columns ${richTextField.name}V2Markdown and ${richTextField.name}V2Blocknote to create for workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
+      );
+    }
+    if (shouldForceColumnCreation) {
+      this.logger.warn(
+        `Force creating ${richTextField.name}V2Markdown and ${richTextField.name}V2Blocknote for workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
       );
     }
     await this.dryRunGuardedOperation(async () => {
-      if (shouldRunMigration) {
+      if (shouldCreateColumn) {
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(
             `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
@@ -267,14 +272,14 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
             {
               name: computeObjectTargetTable(objectMetadata),
               action: WorkspaceMigrationTableActionType.ALTER,
-              columns: filteredColumnsToCreate,
+              columns: columnsToCreate,
             } satisfies WorkspaceMigrationTableAction,
           ],
         );
       }
     });
 
-    return shouldRunMigration;
+    return shouldCreateColumn;
   }
 
   private async createIfMissingNewRichTextFieldsColumn({

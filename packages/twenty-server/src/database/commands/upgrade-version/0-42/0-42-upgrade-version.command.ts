@@ -12,7 +12,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 type Upgrade042CommandCustomOptions = {
-  force?: boolean;
+  force: boolean;
 };
 export type Upgrade042CommandOptions = BaseCommandOptions &
   Upgrade042CommandCustomOptions;
