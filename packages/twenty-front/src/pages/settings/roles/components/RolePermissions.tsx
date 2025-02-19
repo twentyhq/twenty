@@ -22,7 +22,15 @@ const StyledRolePermissionsContainer = styled.div`
 `;
 
 type RolePermissionsProps = {
-  role: Pick<Role, 'id' | 'canUpdateAllSettings'>;
+  role: Pick<
+    Role,
+    | 'id'
+    | 'canUpdateAllSettings'
+    | 'canReadAllObjectRecords'
+    | 'canUpdateAllObjectRecords'
+    | 'canSoftDeleteAllObjectRecords'
+    | 'canDestroyAllObjectRecords'
+  >;
 };
 
 export const RolePermissions = ({ role }: RolePermissionsProps) => {
@@ -31,25 +39,25 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
       key: 'seeRecords',
       label: 'See Records on All Objects',
       icon: <IconEye size={14} />,
-      value: true,
+      value: role.canReadAllObjectRecords,
     },
     {
       key: 'editRecords',
       label: 'Edit Records on All Objects',
       icon: <IconPencil size={14} />,
-      value: true,
+      value: role.canUpdateAllObjectRecords,
     },
     {
       key: 'deleteRecords',
       label: 'Delete Records on All Objects',
       icon: <IconTrash size={14} />,
-      value: true,
+      value: role.canSoftDeleteAllObjectRecords,
     },
     {
       key: 'destroyRecords',
       label: 'Destroy Records on All Objects',
       icon: <IconTrashX size={14} />,
-      value: true,
+      value: role.canDestroyAllObjectRecords,
     },
   ];
 
