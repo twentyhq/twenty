@@ -84,13 +84,13 @@ export const AvatarChip = ({
             >
               <LeftIcon
                 color="white"
-                size={theme.icon.size.md}
+                size={theme.icon.size.sm}
                 stroke={theme.icon.stroke.sm}
               />
             </StyledInvertedIconContainer>
           ) : (
             <LeftIcon
-              size={theme.icon.size.md}
+              size={theme.icon.size.sm}
               stroke={theme.icon.stroke.sm}
               color={LeftIconColor || 'currentColor'}
             />

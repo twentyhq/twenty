@@ -8421,26 +8421,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/terminus@npm:^9.2.2":
-  version: 9.2.2
-  resolution: "@nestjs/terminus@npm:9.2.2"
+"@nestjs/terminus@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "@nestjs/terminus@npm:11.0.0"
   dependencies:
     boxen: "npm:5.1.2"
-    check-disk-space: "npm:3.3.1"
+    check-disk-space: "npm:3.4.0"
   peerDependencies:
     "@grpc/grpc-js": "*"
     "@grpc/proto-loader": "*"
     "@mikro-orm/core": "*"
     "@mikro-orm/nestjs": "*"
-    "@nestjs/axios": "*"
-    "@nestjs/common": 9.x
-    "@nestjs/core": 9.x
-    "@nestjs/microservices": "*"
-    "@nestjs/mongoose": "*"
-    "@nestjs/sequelize": "*"
-    "@nestjs/typeorm": "*"
+    "@nestjs/axios": ^2.0.0 || ^3.0.0 || ^4.0.0
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+    "@nestjs/microservices": ^10.0.0 || ^11.0.0
+    "@nestjs/mongoose": ^11.0.0
+    "@nestjs/sequelize": ^10.0.0 || ^11.0.0
+    "@nestjs/typeorm": ^10.0.0 || ^11.0.0
+    "@prisma/client": "*"
     mongoose: "*"
-    reflect-metadata: 0.1.x
+    reflect-metadata: 0.1.x || 0.2.x
     rxjs: 7.x
     sequelize: "*"
     typeorm: "*"
@@ -8463,13 +8464,15 @@ __metadata:
       optional: true
     "@nestjs/typeorm":
       optional: true
+    "@prisma/client":
+      optional: true
     mongoose:
       optional: true
     sequelize:
       optional: true
     typeorm:
       optional: true
-  checksum: 10c0/3de4a3ce831c5a31ee2ce7327ffdb8180a1d4c270c18ff405484cd4bb60d225c001705add3df76b86221c3c7e1cc386ae60133b4cb4ac7f5e8dac62d2fd7cddb
+  checksum: 10c0/6c2d019b7a0f91bc68e654b44e45d93998d3a30919aaee8792e337d33183452817cd462706101f39157813d2aabb5d2ac81bc392c2ba943bfeaeb65920da15db
   languageName: node
   linkType: hard
 
@@ -23510,10 +23513,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"check-disk-space@npm:3.3.1":
-  version: 3.3.1
-  resolution: "check-disk-space@npm:3.3.1"
-  checksum: 10c0/c5717bf4a2ae7b03bc6aff7a5c87149cbede3802f078ff56c8524d64329e788e2abcc270943ebc132819c40d110a0338c2670e962ce4f13d572da7a6c06af87c
+"check-disk-space@npm:3.4.0":
+  version: 3.4.0
+  resolution: "check-disk-space@npm:3.4.0"
+  checksum: 10c0/cc39c91e1337e974fb5069c2fbd9eb92aceca6e35f3da6863a4eada58f15c1bf6970055bffed1e41c15cde1fd0ad2580bb99bef8275791ed56d69947f8657aa5
   languageName: node
   linkType: hard
 
@@ -47133,7 +47136,7 @@ __metadata:
     "@nestjs/platform-express": "npm:^9.0.0"
     "@nestjs/schematics": "npm:^9.0.0"
     "@nestjs/serve-static": "npm:^4.0.1"
-    "@nestjs/terminus": "npm:^9.2.2"
+    "@nestjs/terminus": "npm:^11.0.0"
     "@nestjs/testing": "npm:^9.0.0"
     "@nestjs/typeorm": "npm:^10.0.0"
     "@next/eslint-plugin-next": "npm:^14.1.4"
