@@ -81,8 +81,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const [shouldBuildServerlessFunction, setShouldBuildServerlessFunction] =
-    useState(false);
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const serverlessFunctionVersion =
     action.settings.input.serverlessFunctionVersion;
@@ -129,7 +127,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
   });
 
   const handleSave = useDebouncedCallback(async () => {
-    setShouldBuildServerlessFunction(true);
     await updateOneServerlessFunction({
       name: formValues.name,
       description: formValues.description,
@@ -237,8 +234,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
     }
 
     if (!isTesting) {
-      await testServerlessFunction(shouldBuildServerlessFunction);
-      setShouldBuildServerlessFunction(false);
+      await testServerlessFunction();
     }
   };
 
