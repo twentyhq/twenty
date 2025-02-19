@@ -36,7 +36,7 @@ export class RemoteTableRelationsService {
     workspaceId: string,
     remoteObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
     objectPrimaryKeyColumnType?: string,
   ) {
@@ -150,7 +150,7 @@ export class RemoteTableRelationsService {
     createdObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
   ) {
     const attachmentObjectMetadata =
@@ -190,7 +190,7 @@ export class RemoteTableRelationsService {
     createdObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
   ) {
     const timelineActivityObjectMetadata =
@@ -230,7 +230,7 @@ export class RemoteTableRelationsService {
     createdObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
   ) {
     const favoriteObjectMetadata =
