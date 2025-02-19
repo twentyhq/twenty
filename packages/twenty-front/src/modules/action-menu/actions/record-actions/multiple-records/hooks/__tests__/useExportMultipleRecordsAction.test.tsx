@@ -1,7 +1,7 @@
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { useExportMultipleRecordsAction } from '../useExportMultipleRecordsAction';
