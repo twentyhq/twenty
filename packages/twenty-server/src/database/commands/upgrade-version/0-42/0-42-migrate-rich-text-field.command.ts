@@ -246,19 +246,16 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     const bodyV2AlreadyExists = objectMetadata.fields.some(
       (field) => field.name === 'bodyV2',
     );
-    const shouldForceColumnCreation =
-      !bodyV2AlreadyExists && this.options.force;
-    const shouldCreateColumn =
-      !bodyV2AlreadyExists || shouldForceColumnCreation;
+    const shouldCreateColumn = !bodyV2AlreadyExists || this.options.force;
 
     if (!shouldCreateColumn) {
       this.logger.warn(
         `No columns ${richTextField.name}V2Markdown and ${richTextField.name}V2Blocknote to create for workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
       );
     }
-    if (shouldForceColumnCreation) {
+    if (this.options.force && bodyV2AlreadyExists) {
       this.logger.warn(
-        `Force creating ${richTextField.name}V2Markdown and ${richTextField.name}V2Blocknote for workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
+        `Force recreating ${richTextField.name}V2Markdown and ${richTextField.name}V2Blocknote for workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
       );
     }
     await this.dryRunGuardedOperation(async () => {
