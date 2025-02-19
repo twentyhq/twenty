@@ -518,8 +518,11 @@ export class AuthService {
   ) {
     if (params.workspaceInviteHash) {
       return (
-        (await this.workspaceRepository.findOneBy({
-          inviteHash: params.workspaceInviteHash,
+        (await this.workspaceRepository.findOne({
+          where: {
+            inviteHash: params.workspaceInviteHash,
+          },
+          relations: ['trustDomains'],
         })) ?? undefined
       );
     }
@@ -567,6 +570,20 @@ export class AuthService {
     const isInvitedToWorkspace = hasPersonalInvitation || hasPublicInviteLink;
     const isTargetAnExistingWorkspace = !!workspace;
     const isAnExistingUser = userData.type === 'existingUser';
+
+    const email =
+      userData.type === 'newUser'
+        ? userData.newUserPayload.email
+        : userData.existingUser.email;
+
+    if (
+      workspace?.trustDomains.some(
+        (trustDomain) =>
+          trustDomain.isValidated && trustDomain.domain === email.split('@')[1],
+      )
+    ) {
+      return;
+    }
 
     if (
       hasPublicInviteLink &&

@@ -55,14 +55,17 @@ export class SocialSsoService {
             },
           },
         },
-        relations: ['workspaceUsers', 'workspaceUsers.user'],
+        relations: ['workspaceUsers', 'workspaceUsers.user', 'trustDomains'],
       });
 
       return workspace ?? undefined;
     }
 
-    return await this.workspaceRepository.findOneBy({
-      id: workspaceId,
+    return await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceId,
+      },
+      relations: ['trustDomains'],
     });
   }
 }

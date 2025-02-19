@@ -24,11 +24,13 @@ export const SettingsSecurityTrustedDomainValidationEffect = () => {
         },
         onCompleted: () => {
           enqueueSnackBar('Trusted domain validated', {
+            dedupeKey: 'trusted-domain-validation-dedupe-key',
             variant: SnackBarVariant.Success,
           });
         },
         onError: () => {
           enqueueSnackBar('Error validating trusted domain', {
+            dedupeKey: 'trusted-domain-validation-error-dedupe-key',
             variant: SnackBarVariant.Error,
           });
         },
