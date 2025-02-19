@@ -10,6 +10,7 @@ import { CreateTrustedDomainInput } from 'src/engine/core-modules/workspace-trus
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { DeleteTrustedDomainInput } from 'src/engine/core-modules/workspace-trusted-domain/dtos/delete-trusted-domain.input';
+import { ValidateTrustedDomainInput } from 'src/engine/core-modules/workspace-trusted-domain/dtos/validate-trusted-domain.input';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
@@ -41,6 +42,19 @@ export class WorkspaceTrustedDomainResolver {
       currentWorkspace,
       id,
     );
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async validateWorkspaceTrustedDomain(
+    @Args('input')
+    { validationToken, workspaceTrustedDomainId }: ValidateTrustedDomainInput,
+  ): Promise<boolean> {
+    await this.workspaceTrustedDomainService.validateTrustedDomain({
+      validationToken,
+      workspaceTrustedDomainId,
+    });
 
     return true;
   }

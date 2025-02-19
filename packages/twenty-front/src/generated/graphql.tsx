@@ -828,6 +828,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   userLookupAdminPanel: UserLookup;
+  validateWorkspaceTrustedDomain: Scalars['Boolean'];
 };
 
 
@@ -1111,6 +1112,11 @@ export type MutationUploadWorkspaceLogoArgs = {
 
 export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String'];
+};
+
+
+export type MutationValidateWorkspaceTrustedDomainArgs = {
+  input: ValidateTrustedDomainInput;
 };
 
 export type Object = {
@@ -1916,6 +1922,11 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
   id: Scalars['String'];
+};
+
+export type ValidateTrustedDomainInput = {
+  validationToken: Scalars['String'];
+  workspaceTrustedDomainId: Scalars['String'];
 };
 
 export type WorkerQueueMetrics = {

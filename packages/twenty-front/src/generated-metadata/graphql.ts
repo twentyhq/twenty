@@ -32,6 +32,33 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AdminPanelHealthServiceData = {
+  __typename?: 'AdminPanelHealthServiceData';
+  details?: Maybe<Scalars['String']['output']>;
+  queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
+  status: AdminPanelHealthServiceStatus;
+};
+
+export enum AdminPanelHealthServiceStatus {
+  OPERATIONAL = 'OPERATIONAL',
+  OUTAGE = 'OUTAGE'
+}
+
+export enum AdminPanelIndicatorHealthStatusInputEnum {
+  DATABASE = 'DATABASE',
+  MESSAGE_SYNC = 'MESSAGE_SYNC',
+  REDIS = 'REDIS',
+  WORKER = 'WORKER'
+}
+
+export type AdminPanelWorkerQueueHealth = {
+  __typename?: 'AdminPanelWorkerQueueHealth';
+  metrics: WorkerQueueMetrics;
+  name: Scalars['String']['output'];
+  status: AdminPanelHealthServiceStatus;
+  workers: Scalars['Float']['output'];
+};
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -884,6 +911,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
+  validateWorkspaceTrustedDomain: Scalars['Boolean']['output'];
 };
 
 
@@ -1219,6 +1247,11 @@ export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String']['input'];
 };
 
+
+export type MutationValidateWorkspaceTrustedDomainArgs = {
+  input: ValidateTrustedDomainInput;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime']['output'];
@@ -1390,11 +1423,13 @@ export type Query = {
   getAllWorkspaceTrustedDomains: Array<WorkspaceTrustedDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
+  getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
+  getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
@@ -1469,6 +1504,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetIndicatorHealthStatusArgs = {
+  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
 };
 
 
@@ -1831,6 +1871,14 @@ export type Support = {
   supportFrontChatId?: Maybe<Scalars['String']['output']>;
 };
 
+export type SystemHealth = {
+  __typename?: 'SystemHealth';
+  database: AdminPanelHealthServiceData;
+  messageSync: AdminPanelHealthServiceData;
+  redis: AdminPanelHealthServiceData;
+  worker: AdminPanelHealthServiceData;
+};
+
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   conferenceLink: LinksMetadata;
@@ -2096,6 +2144,21 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String']['output'];
   id: Scalars['String']['output'];
+};
+
+export type ValidateTrustedDomainInput = {
+  validationToken: Scalars['String']['input'];
+  workspaceTrustedDomainId: Scalars['String']['input'];
+};
+
+export type WorkerQueueMetrics = {
+  __typename?: 'WorkerQueueMetrics';
+  active: Scalars['Float']['output'];
+  completed: Scalars['Float']['output'];
+  delayed: Scalars['Float']['output'];
+  failed: Scalars['Float']['output'];
+  prioritized: Scalars['Float']['output'];
+  waiting: Scalars['Float']['output'];
 };
 
 export type WorkflowAction = {
