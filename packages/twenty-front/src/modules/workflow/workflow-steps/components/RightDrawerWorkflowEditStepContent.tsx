@@ -26,7 +26,8 @@ export const RightDrawerWorkflowEditStepContent = ({
   return (
     <WorkflowStepDetail
       stepId={workflowSelectedNode}
-      workflowVersion={workflow.currentVersion}
+      trigger={workflow.currentVersion.trigger}
+      steps={workflow.currentVersion.steps}
       onActionUpdate={updateStep}
       onTriggerUpdate={updateTrigger}
     />

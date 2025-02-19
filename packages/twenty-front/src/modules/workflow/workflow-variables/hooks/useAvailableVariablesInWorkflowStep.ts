@@ -1,4 +1,5 @@
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { flowState } from '@/workflow/states/flowState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -24,27 +25,36 @@ export const useAvailableVariablesInWorkflowStep = ({
   const workflowId = useRecoilValue(workflowIdState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
+  const flow = useRecoilValue(flowState);
 
-  if (!isDefined(workflowSelectedNode) || !isDefined(workflow)) {
+  if (
+    !isDefined(workflowSelectedNode) ||
+    !isDefined(workflow) ||
+    !isDefined(flow)
+  ) {
     return [];
   }
 
+  const trigger = flow.trigger;
+  const steps = flow.steps;
+
   const stepDefinition = getStepDefinitionOrThrow({
     stepId: workflowSelectedNode,
-    workflowVersion: workflow.currentVersion,
+    trigger,
+    steps,
   });
 
   if (
     !isDefined(stepDefinition) ||
     stepDefinition.type === 'trigger' ||
-    !isDefined(workflow.currentVersion.steps)
+    !isDefined(steps)
   ) {
     return [];
   }
 
   const previousSteps = [];
 
-  for (const step of workflow.currentVersion.steps) {
+  for (const step of steps) {
     if (step.id === workflowSelectedNode) {
       break;
     }
@@ -54,34 +64,32 @@ export const useAvailableVariablesInWorkflowStep = ({
   const result = [];
 
   const filteredTriggerOutputSchema = filterOutputSchema(
-    workflow.currentVersion.trigger?.settings?.outputSchema as
-      | OutputSchema
-      | undefined,
+    trigger?.settings?.outputSchema as OutputSchema | undefined,
     objectNameSingularToSelect,
   );
 
   if (
-    isDefined(workflow.currentVersion.trigger) &&
+    isDefined(trigger) &&
     isDefined(filteredTriggerOutputSchema) &&
     !isEmptyObject(filteredTriggerOutputSchema)
   ) {
     const triggerIconKey =
-      workflow.currentVersion.trigger.type === 'DATABASE_EVENT'
+      trigger.type === 'DATABASE_EVENT'
         ? getTriggerIcon({
-            type: workflow.currentVersion.trigger.type,
+            type: trigger.type,
             eventName: splitWorkflowTriggerEventName(
-              workflow.currentVersion.trigger.settings?.eventName,
+              trigger.settings?.eventName,
             ).event,
           })
         : getTriggerIcon({
-            type: workflow.currentVersion.trigger.type,
+            type: trigger.type,
           });
 
     result.push({
       id: 'trigger',
-      name: isDefined(workflow.currentVersion.trigger.name)
-        ? workflow.currentVersion.trigger.name
-        : getTriggerStepName(workflow.currentVersion.trigger),
+      name: isDefined(trigger.name)
+        ? trigger.name
+        : getTriggerStepName(trigger),
       icon: triggerIconKey,
       outputSchema: filteredTriggerOutputSchema,
     });
