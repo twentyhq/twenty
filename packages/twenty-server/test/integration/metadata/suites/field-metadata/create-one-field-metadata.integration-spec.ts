@@ -15,7 +15,9 @@ describe('createOne', () => {
       listingObjectId = createdObjectId;
     });
     afterEach(async () => {
+      jest.useRealTimers();
       await deleteOneObjectMetadataItem(listingObjectId);
+      jest.useFakeTimers();
     });
     it('should create a field when name and label are synced correctly', async () => {
       // Arrange
