@@ -5,18 +5,20 @@ import {
   MenuItemSelect,
 } from 'twenty-ui';
 
+import { useObjectOptions } from '@/object-record/object-options-dropdown/hooks/useObjectOptions';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
   const { onContentChange } = useOptionsDropdown();
-  const [recordIndexOpenRecordIn, setRecordIndexOpenRecordIn] = useRecoilState(
-    recordIndexOpenRecordInState,
-  );
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+  const { setAndPersistOpenRecordIn } = useObjectOptions();
 
   return (
     <>
@@ -32,7 +34,10 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
           text="Side Panel"
           selected={recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL}
           onClick={() =>
-            setRecordIndexOpenRecordIn(ViewOpenRecordInType.SIDE_PANEL)
+            setAndPersistOpenRecordIn(
+              ViewOpenRecordInType.SIDE_PANEL,
+              currentViewWithCombinedFiltersAndSorts,
+            )
           }
         />
         <MenuItemSelect
@@ -42,7 +47,10 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
             recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
           }
           onClick={() =>
-            setRecordIndexOpenRecordIn(ViewOpenRecordInType.RECORD_PAGE)
+            setAndPersistOpenRecordIn(
+              ViewOpenRecordInType.RECORD_PAGE,
+              currentViewWithCombinedFiltersAndSorts,
+            )
           }
         />
       </DropdownMenuItemsContainer>
