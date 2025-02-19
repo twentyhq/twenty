@@ -19,18 +19,21 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const DatabaseAndRedisHealthStatus = () => {
-  const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
+  const { indicatorHealth, loading } = useContext(
+    SettingsAdminIndicatorHealthContext,
+  );
 
   const formattedDetails = indicatorHealth.details
     ? JSON.stringify(JSON.parse(indicatorHealth.details), null, 2)
     : null;
 
   const isDatabaseOrRedisDown =
+    !indicatorHealth.status ||
     indicatorHealth.status === AdminPanelHealthServiceStatus.OUTAGE;
 
   return (
     <Section>
-      {isDatabaseOrRedisDown ? (
+      {isDatabaseOrRedisDown && !loading ? (
         <StyledErrorMessage>
           {indicatorHealth.indicatorName} information is not available because
           the service is down

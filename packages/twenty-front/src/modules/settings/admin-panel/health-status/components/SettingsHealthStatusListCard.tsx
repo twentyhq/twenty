@@ -38,7 +38,9 @@ export const SettingsHealthStatusListCard = ({
                 {service.id === 'ACCOUNT_SYNC' ? (
                   <IconChevronRight size={theme.icon.size.sm} />
                 ) : (
-                  <SettingsAdminHealthStatusRightContainer service={service} />
+                  <SettingsAdminHealthStatusRightContainer
+                    status={service.status}
+                  />
                 )}
               </>
             )}

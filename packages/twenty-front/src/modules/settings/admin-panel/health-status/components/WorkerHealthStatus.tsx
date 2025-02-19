@@ -18,7 +18,9 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const WorkerHealthStatus = () => {
-  const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
+  const { indicatorHealth, loading } = useContext(
+    SettingsAdminIndicatorHealthContext,
+  );
 
   const isWorkerDown =
     !indicatorHealth.status ||
@@ -38,7 +40,7 @@ export const WorkerHealthStatus = () => {
           description="Background job processing status and metrics"
         />
       </StyledTitleContainer>
-      {isWorkerDown ? (
+      {isWorkerDown && !loading ? (
         <StyledErrorMessage>
           Queue information is not available because the worker is down
         </StyledErrorMessage>

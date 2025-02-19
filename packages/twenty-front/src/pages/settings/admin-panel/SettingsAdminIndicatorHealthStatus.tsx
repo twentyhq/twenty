@@ -1,3 +1,4 @@
+import { SettingsAdminHealthStatusRightContainer } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer';
 import { SettingsAdminIndicatorHealthStatusContent } from '@/settings/admin-panel/health-status/components/SettingsAdminIndicatorHealthStatusContent';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -6,7 +7,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
-import { H2Title, Section, Status } from 'twenty-ui';
+import { H2Title, Section } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
   AdminPanelIndicatorHealthStatusInputEnum,
@@ -66,18 +67,12 @@ export const SettingsAdminIndicatorHealthStatus = () => {
               description="Health status"
             />
             {indicatorName !==
-              AdminPanelIndicatorHealthStatusInputEnum.ACCOUNT_SYNC && (
-              <>
-                {data?.getIndicatorHealthStatus.status ===
-                  AdminPanelHealthServiceStatus.OPERATIONAL && (
-                  <Status color="green" text="Operational" weight="medium" />
-                )}
-                {data?.getIndicatorHealthStatus.status ===
-                  AdminPanelHealthServiceStatus.OUTAGE && (
-                  <Status color="red" text="Outage" weight="medium" />
-                )}
-              </>
-            )}
+              AdminPanelIndicatorHealthStatusInputEnum.ACCOUNT_SYNC &&
+              data?.getIndicatorHealthStatus?.status && (
+                <SettingsAdminHealthStatusRightContainer
+                  status={data?.getIndicatorHealthStatus.status}
+                />
+              )}
           </Section>
 
           <SettingsAdminIndicatorHealthStatusContent />
