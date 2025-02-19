@@ -201,9 +201,23 @@ export class ServerlessFunctionService {
       }
     }
 
-    const newVersion = await this.serverlessService.publish(
-      existingServerlessFunction,
-    );
+    const newVersion = existingServerlessFunction.latestVersion
+      ? `${parseInt(existingServerlessFunction.latestVersion, 10) + 1}`
+      : '1';
+
+    const draftFolderPath = getServerlessFolder({
+      serverlessFunction: existingServerlessFunction,
+      version: 'draft',
+    });
+    const newFolderPath = getServerlessFolder({
+      serverlessFunction: existingServerlessFunction,
+      version: newVersion,
+    });
+
+    await this.fileStorageService.copy({
+      from: { folderPath: draftFolderPath },
+      to: { folderPath: newFolderPath },
+    });
 
     const newPublishedVersions = [
       ...existingServerlessFunction.publishedVersions,

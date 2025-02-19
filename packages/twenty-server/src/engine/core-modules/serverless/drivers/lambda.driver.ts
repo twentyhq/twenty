@@ -260,28 +260,6 @@ export class LambdaDriver implements ServerlessDriver {
     await this.waitFunctionUpdates(serverlessFunction.id);
   }
 
-  async publish(serverlessFunction: ServerlessFunctionEntity) {
-    const newVersion = serverlessFunction.latestVersion
-      ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
-      : '1';
-
-    const draftFolderPath = getServerlessFolder({
-      serverlessFunction: serverlessFunction,
-      version: 'draft',
-    });
-    const newFolderPath = getServerlessFolder({
-      serverlessFunction: serverlessFunction,
-      version: newVersion,
-    });
-
-    await this.fileStorageService.copy({
-      from: { folderPath: draftFolderPath },
-      to: { folderPath: newFolderPath },
-    });
-
-    return newVersion;
-  }
-
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,

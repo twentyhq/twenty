@@ -23,10 +23,6 @@ export class ServerlessService implements ServerlessDriver {
     return this.driver.build(serverlessFunction, version);
   }
 
-  async publish(serverlessFunction: ServerlessFunctionEntity): Promise<string> {
-    return this.driver.publish(serverlessFunction);
-  }
-
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,

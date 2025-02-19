@@ -58,30 +58,6 @@ export class LocalDriver implements ServerlessDriver {
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
   }
 
-  async publish(serverlessFunction: ServerlessFunctionEntity) {
-    const newVersion = serverlessFunction.latestVersion
-      ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
-      : '1';
-
-    const draftFolderPath = getServerlessFolder({
-      serverlessFunction: serverlessFunction,
-      version: 'draft',
-    });
-    const newFolderPath = getServerlessFolder({
-      serverlessFunction: serverlessFunction,
-      version: newVersion,
-    });
-
-    await this.fileStorageService.copy({
-      from: { folderPath: draftFolderPath },
-      to: { folderPath: newFolderPath },
-    });
-
-    await this.build(serverlessFunction, newVersion);
-
-    return newVersion;
-  }
-
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,
