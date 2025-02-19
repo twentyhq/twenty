@@ -8,7 +8,11 @@ import {
   IconTrashX,
   Section,
 } from 'twenty-ui';
-import { Role, SettingsFeatures } from '~/generated-metadata/graphql';
+import {
+  Role,
+  SettingsFeatures,
+  WorkspaceMember,
+} from '~/generated-metadata/graphql';
 import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/components/RolePermissionsObjectsTableHeader';
 import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/components/RolePermissionsSettingsTableHeader';
 import { RolePermissionsSettingsTableRow } from '~/pages/settings/roles/components/RolePermissionsSettingsTableRow';
@@ -21,7 +25,13 @@ const StyledRolePermissionsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const RolePermissions = ({ role }: { role: Role }) => {
+type RolePermissionsProps = {
+  role: Pick<Role, 'id' | 'label' | 'canUpdateAllSettings'> & {
+    workspaceMembers: Array<WorkspaceMember>;
+  };
+};
+
+export const RolePermissions = ({ role }: RolePermissionsProps) => {
   const objectPermissionsConfig: RolePermissionsObjectPermission[] = [
     {
       key: 'seeRecords',
