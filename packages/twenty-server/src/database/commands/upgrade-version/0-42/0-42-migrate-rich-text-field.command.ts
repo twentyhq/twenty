@@ -231,11 +231,13 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       blocknoteFieldValue !== null &&
       blocknoteFieldValue !== undefined &&
       blocknoteFieldValue !== '{}';
+
     if (!blocknoteFieldValueIsDefined) {
       return null;
     }
 
     const jsonParsedblocknoteFieldValue = JSON.parse(blocknoteFieldValue);
+
     if (!Array.isArray(jsonParsedblocknoteFieldValue)) {
       return null;
     }
@@ -283,6 +285,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           blocknoteFieldValue,
           serverBlockNoteEditor,
         });
+
         await workspaceDataSource.query(
           `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
           [blocknoteFieldValue, markdownFieldValue, row.id],
