@@ -2085,4 +2085,3 @@ msgstr "Az Ön munkaterülete"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "A munkaterületét le lesz tiltva"
-
