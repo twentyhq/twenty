@@ -210,9 +210,6 @@ const testCases: {
   { loc: AppPath.RecordIndexPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'existing-object', objectNamePluralFromMetadata: 'existing-object' },
   { loc: AppPath.RecordIndexPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: AppPath.NotFound, objectNamePluralFromParams: 'non-existing-object', objectNamePluralFromMetadata: 'existing-object' },
 
-
-
-
   { loc: AppPath.RecordShowPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.RecordShowPage, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
   { loc: AppPath.RecordShowPage, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
@@ -291,7 +288,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
           (Object.keys(OnboardingStatus).length +
             ['isWorkspaceSuspended:true', 'isWorkspaceSuspended:false']
               .length) +
-          ['isWorkspaceSuspended:true', 'isWorkspaceSuspended:false'].length,
+          ['nonExistingObjectInParam', 'existingObjectInParam:false'].length,
       );
     });
   });
