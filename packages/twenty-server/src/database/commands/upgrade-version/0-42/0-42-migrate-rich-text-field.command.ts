@@ -219,10 +219,12 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     richTextField,
     workspaceId,
     objectMetadata,
+    fieldMetadataAlreadyExisting,
   }: {
     objectMetadata: ObjectMetadataEntity;
     richTextField: FieldMetadataEntity;
     workspaceId: string;
+    fieldMetadataAlreadyExisting: boolean;
   }) {
     const columnsToCreate: WorkspaceMigrationColumnCreate[] = [
       {
@@ -241,16 +243,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       },
     ] as const;
 
-    const shouldCreateColumn = !objectMetadata.fields.some(
-      (field) => field.name === `${richTextField.name}V2`,
-    );
-    if (!shouldCreateColumn) {
-      this.logger.warn(
-        `${richTextField.name}V2 field already exists in workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
-      );
-    }
-
-    if (!this.options.dryRun && shouldCreateColumn) {
+    if (!this.options.dryRun && !fieldMetadataAlreadyExisting) {
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(
           `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
@@ -265,8 +258,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         ],
       );
     }
-
-    return shouldCreateColumn;
   }
 
   private async createIfMissingNewRichTextFieldsColumn({
@@ -298,13 +289,14 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           standardId: newRichTextField.standardId ?? undefined,
           workspaceId,
         });
-      if (isDefined(existingFieldMetadata)) {
+      const fieldMetadataAlreadyExisting = isDefined(existingFieldMetadata);
+      if (fieldMetadataAlreadyExisting) {
         this.logger.warn(
           `FieldMetadata already exists in fieldMetadataRepository name: ${newRichTextField.name} standardId: ${newRichTextField.standardId} type: ${newRichTextField.type} workspaceId: ${workspaceId}`,
         );
       }
 
-      if (!this.options.dryRun && !isDefined(existingFieldMetadata)) {
+      if (!this.options.dryRun && !fieldMetadataAlreadyExisting) {
         await this.fieldMetadataRepository.insert(newRichTextField);
       }
 
@@ -327,14 +319,15 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         continue;
       }
 
-      const hasCreatedColumns = await this.createMarkdownBlockNoteV2Columns({
+      await this.createMarkdownBlockNoteV2Columns({
         objectMetadata,
         richTextField,
         workspaceId,
+        fieldMetadataAlreadyExisting,
       });
 
       richTextFieldsWithHasCreatedColumns.push({
-        hasCreatedColumns,
+        hasCreatedColumns: fieldMetadataAlreadyExisting,
         richTextField,
         objectMetadata,
       });
