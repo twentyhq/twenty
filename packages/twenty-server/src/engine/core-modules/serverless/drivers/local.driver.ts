@@ -51,6 +51,27 @@ export class LocalDriver implements ServerlessDriver {
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
   }
 
+  private async executeWithTimeout<T>(
+    fn: () => Promise<T>,
+    timeoutMs: number,
+  ): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error(`Task timed out after ${timeoutMs / 1_000} seconds`));
+      }, timeoutMs);
+
+      fn()
+        .then((result) => {
+          clearTimeout(timer);
+          resolve(result);
+        })
+        .catch((err) => {
+          clearTimeout(timer);
+          reject(err);
+        });
+    });
+  }
+
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,
@@ -111,7 +132,10 @@ export class LocalDriver implements ServerlessDriver {
     try {
       const mainFile = await import(compiledCodeFilePath);
 
-      const result = await mainFile.main(payload);
+      const result = await this.executeWithTimeout<object | null>(
+        () => mainFile.main(payload),
+        serverlessFunction.timeoutSeconds * 1_000,
+      );
 
       const duration = Date.now() - startTime;
 
