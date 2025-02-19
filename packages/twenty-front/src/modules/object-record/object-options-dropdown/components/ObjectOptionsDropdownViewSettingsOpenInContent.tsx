@@ -13,14 +13,17 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilState } from 'recoil';
 
 export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
-  const { resetContent } = useOptionsDropdown();
+  const { onContentChange } = useOptionsDropdown();
   const [recordIndexOpenRecordIn, setRecordIndexOpenRecordIn] = useRecoilState(
     recordIndexOpenRecordInState,
   );
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
+      <DropdownMenuHeader
+        StartIcon={IconChevronLeft}
+        onClick={() => onContentChange('viewSettings')}
+      >
         Open in
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
