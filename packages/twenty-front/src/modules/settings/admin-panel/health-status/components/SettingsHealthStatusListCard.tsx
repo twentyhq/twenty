@@ -25,6 +25,7 @@ export const SettingsHealthStatusListCard = ({
     <>
       {services.map((service) => (
         <StyledLink
+          key={service.id}
           to={getSettingsPath(SettingsPath.AdminPanelIndicatorHealthStatus, {
             indicatorName: service.id,
           })}
