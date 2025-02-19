@@ -94,6 +94,7 @@ jobs:
       
       - name: Commit Translations
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
           git add .
