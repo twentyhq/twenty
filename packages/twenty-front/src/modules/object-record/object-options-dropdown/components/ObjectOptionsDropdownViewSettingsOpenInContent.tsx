@@ -10,11 +10,11 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useState } from 'react';
 
-export type OpenInType = 'sidebar' | 'record-page';
+export type OpenInType = 'side-panel' | 'record-page';
 
 export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
   const { resetContent } = useOptionsDropdown();
-  const [openIn, setOpenIn] = useState<OpenInType>('sidebar');
+  const [openIn, setOpenIn] = useState<OpenInType>('side-panel');
 
   return (
     <>
@@ -24,9 +24,9 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
       <DropdownMenuItemsContainer>
         <MenuItemSelect
           LeftIcon={IconLayoutSidebarRight}
-          text="Sidebar"
-          selected={openIn === 'sidebar'}
-          onClick={() => setOpenIn('sidebar')}
+          text="Side Panel"
+          selected={openIn === 'side-panel'}
+          onClick={() => setOpenIn('side-panel')}
         />
         <MenuItemSelect
           LeftIcon={IconLayoutNavbar}

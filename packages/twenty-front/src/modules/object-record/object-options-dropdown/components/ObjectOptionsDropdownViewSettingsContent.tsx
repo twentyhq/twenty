@@ -15,7 +15,7 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useState } from 'react';
 
-export type OpenInType = 'sidebar' | 'record-page';
+export type OpenInType = 'side-panel' | 'record-page';
 
 export const ObjectOptionsDropdownViewSettingsContent = () => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
@@ -35,7 +35,7 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
       viewBarId: recordIndexId,
     });
 
-  const [openIn, setOpenIn] = useState<OpenInType>('sidebar');
+  const [openIn] = useState<OpenInType>('side-panel');
 
   return (
     <>
@@ -46,10 +46,12 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
         <MenuItem
           onClick={() => onContentChange('viewSettingsOpenIn')}
           LeftIcon={
-            openIn === 'sidebar' ? IconLayoutSidebarRight : IconLayoutNavbar
+            openIn === 'side-panel' ? IconLayoutSidebarRight : IconLayoutNavbar
           }
           text="Open in"
-          contextualText={openIn === 'sidebar' ? 'Sidebar' : 'Record Page'}
+          contextualText={
+            openIn === 'side-panel' ? 'Side Panel' : 'Record Page'
+          }
           hasSubMenu
         />
         {viewType === ViewType.Kanban && (
