@@ -1,6 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
@@ -13,6 +14,7 @@ import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/drop
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -62,62 +64,87 @@ export const useCreateNewTableRecord = ({
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
-  const createNewTableRecord = async () => {
-    const recordId = v4();
+  const createNewTableRecord = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const recordId = v4();
 
-    if (isCommandMenuV2Enabled) {
-      // TODO: Generalize this behaviour, there will be a view setting to specify
-      // if the new record should be displayed in the side panel or on the record page
-      if (shouldRedirectToShowPageOnCreation(objectMetadataItem.nameSingular)) {
-        await createOneRecord({
-          id: recordId,
-          name: 'Untitled',
-        });
+        if (isCommandMenuV2Enabled) {
+          // TODO: Generalize this behaviour, there will be a view setting to specify
+          // if the new record should be displayed in the side panel or on the record page
+          if (
+            shouldRedirectToShowPageOnCreation(objectMetadataItem.nameSingular)
+          ) {
+            await createOneRecord({
+              id: recordId,
+              name: 'Untitled',
+            });
 
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular: objectMetadataItem.nameSingular,
-          objectRecordId: recordId,
-        });
+            navigate(AppPath.RecordShowPage, {
+              objectNameSingular: objectMetadataItem.nameSingular,
+              objectRecordId: recordId,
+            });
 
-        // TODO: we should open the record title cell here but because
-        // we are redirecting to the record show page, the hotkey scope will
-        // be overridden by the hotkey scope on mount. We need to deprecate
-        // the useHotkeyScopeOnMount hook.
+            // TODO: we should open the record title cell here but because
+            // we are redirecting to the record show page, the hotkey scope will
+            // be overridden by the hotkey scope on mount. We need to deprecate
+            // the useHotkeyScopeOnMount hook.
 
-        return;
-      }
+            return;
+          }
 
-      await createOneRecord({ id: recordId });
+          const recordIndexOpenRecordIn = snapshot
+            .getLoadable(recordIndexOpenRecordInState)
+            .getValue();
 
-      openRecordInCommandMenu({
-        recordId,
-        objectNameSingular: objectMetadataItem.nameSingular,
-        isNewRecord: true,
-      });
+          await createOneRecord({ id: recordId });
 
-      openRecordTitleCell({
-        recordId,
-        fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
-      });
+          if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+            openRecordInCommandMenu({
+              recordId,
+              objectNameSingular: objectMetadataItem.nameSingular,
+              isNewRecord: true,
+            });
+          } else {
+            navigate(AppPath.RecordShowPage, {
+              objectNameSingular: objectMetadataItem.nameSingular,
+              objectRecordId: recordId,
+            });
+          }
 
-      return;
-    }
+          return;
+        }
 
-    setPendingRecordId(recordId);
-    setSelectedTableCellEditMode(-1, 0);
-    setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
+        setPendingRecordId(recordId);
+        setSelectedTableCellEditMode(-1, 0);
+        setHotkeyScope(
+          DEFAULT_CELL_SCOPE.scope,
+          DEFAULT_CELL_SCOPE.customScopes,
+        );
 
-    if (isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)) {
-      setActiveDropdownFocusIdAndMemorizePrevious(
-        getDropdownFocusIdForRecordField(
-          recordId,
-          objectMetadataItem.labelIdentifierFieldMetadataId,
-          'table-cell',
-        ),
-      );
-    }
-  };
-
+        if (isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)) {
+          setActiveDropdownFocusIdAndMemorizePrevious(
+            getDropdownFocusIdForRecordField(
+              recordId,
+              objectMetadataItem.labelIdentifierFieldMetadataId,
+              'table-cell',
+            ),
+          );
+        }
+      },
+    [
+      createOneRecord,
+      isCommandMenuV2Enabled,
+      navigate,
+      objectMetadataItem.labelIdentifierFieldMetadataId,
+      objectMetadataItem.nameSingular,
+      openRecordInCommandMenu,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      setHotkeyScope,
+      setPendingRecordId,
+      setSelectedTableCellEditMode,
+    ],
+  );
   const createNewTableRecordInGroup = useRecoilCallback(
     ({ set }) =>
       (recordGroupId: string) => {
