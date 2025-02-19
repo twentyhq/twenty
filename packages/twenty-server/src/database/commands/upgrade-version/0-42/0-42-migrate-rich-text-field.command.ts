@@ -238,12 +238,13 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         defaultValue: null,
       },
     ] as const;
-    const filteredColumnsToCreate = columnsToCreate.filter(({ columnName }) =>
-      objectMetadata.fields.some(
-        ({ name: fieldName }) => fieldName === columnName,
-      ),
+    const filteredColumnsToCreate = columnsToCreate.filter(
+      ({ columnName }) =>
+        !objectMetadata.fields.some(
+          ({ name: fieldName }) => fieldName === columnName,
+        ),
     );
-    const shouldRunMigration = filteredColumnsToCreate.length !== 0;
+    const shouldRunMigration = filteredColumnsToCreate.length > 0;
 
     if (!shouldRunMigration) {
       this.logger.warn(
@@ -301,7 +302,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           type: newRichTextField.type,
           standardId: newRichTextField.standardId ?? undefined,
         });
-      const fieldMetadataAlreadyExists = !isDefined(existingFieldMetadata);
+      const fieldMetadataAlreadyExists = isDefined(existingFieldMetadata);
 
       if (fieldMetadataAlreadyExists) {
         this.logger.warn(
@@ -317,6 +318,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
       const objectMetadata = await this.objectMetadataRepository.findOne({
         where: { id: richTextField.objectMetadataId },
+        relations: { fields: true },
       });
 
       if (objectMetadata === null) {
