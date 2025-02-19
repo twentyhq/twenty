@@ -665,15 +665,11 @@ msgstr "\n"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Delete workflow"
-msgstr "\n"
-"              \n"
-"              Видалити workflow"
+msgstr "Видалити workflow"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Delete workflows"
-msgstr "\n"
-"              \n"
-"              Видалити workflows"
+msgstr "Видалити workflows "
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -780,9 +776,7 @@ msgstr "Редагувати спосіб оплати, переглядати �
 
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Edit your subdomain name or set a custom domain."
-msgstr "\n"
-"              \n"
-"              Редагуйте назву вашого субдомену або встановіть спеціальний домен."
+msgstr "Редагуйте назву вашого субдомену або встановіть спеціальний домен."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -796,44 +790,33 @@ msgstr "\n"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
-msgstr "\n"
-"              \n"
-"              Інтеграція електронної пошти"
+msgstr "Інтеграція електронної пошти"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Email or domain is already in blocklist"
-msgstr "\n"
-"              \n"
-"              Електронна пошта або домен вже знаходяться в списку заблокованих"
+msgstr "Електронна пошта або домен вже знаходяться в списку заблокованих"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Emails"
-msgstr "\n"
-"              \n"
-"              Електронні листи"
+msgstr "Електронні листи"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
-msgstr "\n"
-"              \n"
-"              співробітники"
+msgstr "співробітники"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Employees"
 msgstr "\n"
-"              \n"
-"              Співробітники"
+"Співробітники"
 
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
-msgstr "\n"
-"              \n"
-"              Порожньо"
+msgstr "Порожньо"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
@@ -843,21 +826,15 @@ msgstr "\n"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "English"
-msgstr "\n"
-"              \n"
-"              Англійська"
+msgstr "Англійська"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
-msgstr "\n"
-"              \n"
-"              Насолоджуйтеся {withCreditCardTrialPeriodDuration}-денним безкоштовним пробним періодом"
+msgstr "Насолоджуйтеся {withCreditCardTrialPeriodDuration}-денним безкоштовним пробним періодом"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
-msgstr "\n"
-"              \n"
-"              Підприємство"
+msgstr "Підприємство"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key: {err}"
@@ -873,15 +850,11 @@ msgstr "Помилка під час переходу на підписку {to}
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
-msgstr "\n"
-"              \n"
-"              Встановіть ендпоінти вебхука для отримання сповіщень про асинхронні події."
+msgstr "Встановіть ендпоінти вебхука для отримання сповіщень про асинхронні події."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync"
-msgstr "\n"
-"              \n"
-"              Виключити наступних людей та домени з синхронізації моєї електронної пошти"
+msgstr "Виключити наступних людей та домени з синхронізації моєї електронної пошти"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
@@ -2149,4 +2122,3 @@ msgstr "Ваш робочий простір"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Ваш робочий простір буде вимкнено"
-
