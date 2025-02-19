@@ -570,6 +570,7 @@ export enum FeatureFlagKey {
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
+  IsTrustedDomainsEnabled = 'IsTrustedDomainsEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
