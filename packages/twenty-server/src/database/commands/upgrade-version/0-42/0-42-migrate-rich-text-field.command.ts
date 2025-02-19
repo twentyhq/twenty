@@ -90,11 +90,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     return val ?? false;
   }
 
-  private dryRunGuardedOperation = async <T>(operation: AsyncMethod<T>) => {
-    if (!this.options.dryRun) {
-      return await operation();
-    }
-  };
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
     options: Upgrade042CommandOptions,
@@ -184,7 +179,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
   private async enableRichTextV2FeatureFlag(
     workspaceId: string,
   ): Promise<void> {
-    await this.dryRunGuardedOperation(async () => {
+    if (!this.options.dryRun) {
       await this.featureFlagRepository.upsert(
         {
           workspaceId,
@@ -196,7 +191,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           skipUpdateIfNoValuesChanged: true,
         },
       );
-    });
+    }
   }
 
   private buildRichTextFieldStandardId(richTextField: FieldMetadataEntity) {
@@ -253,23 +248,21 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       );
     }
 
-    await this.dryRunGuardedOperation(async () => {
-      if (shouldCreateColumn) {
-        await this.workspaceMigrationService.createCustomMigration(
-          generateMigrationName(
-            `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
-          ),
-          workspaceId,
-          [
-            {
-              name: computeObjectTargetTable(objectMetadata),
-              action: WorkspaceMigrationTableActionType.ALTER,
-              columns: columnsToCreate,
-            } satisfies WorkspaceMigrationTableAction,
-          ],
-        );
-      }
-    });
+    if (!this.options.dryRun && shouldCreateColumn) {
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(
+          `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
+        ),
+        workspaceId,
+        [
+          {
+            name: computeObjectTargetTable(objectMetadata),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: columnsToCreate,
+          } satisfies WorkspaceMigrationTableAction,
+        ],
+      );
+    }
 
     return shouldCreateColumn;
   }
@@ -309,11 +302,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         );
       }
 
-      await this.dryRunGuardedOperation(async () => {
-        if (!isDefined(existingFieldMetadata)) {
-          await this.fieldMetadataRepository.insert(newRichTextField);
-        }
-      });
+      if (!this.options.dryRun && !isDefined(existingFieldMetadata)) {
+        await this.fieldMetadataRepository.insert(newRichTextField);
+      }
 
       const objectMetadata = await this.objectMetadataRepository.findOne({
         where: { id: richTextField.objectMetadataId },
@@ -352,13 +343,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         ({ hasCreatedColumns }) => hasCreatedColumns,
       );
 
-    await this.dryRunGuardedOperation(async () => {
-      if (hasAtLeastOnePendingMigration) {
-        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-          workspaceId,
-        );
-      }
-    });
+    if (!this.options.dryRun && hasAtLeastOnePendingMigration) {
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
+    }
 
     return richTextFieldsWithHasCreatedColumns;
   }
@@ -454,14 +443,12 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
             `Will force udpate RICH_TEXT_V2 fieldValue for ${richTextField.id} of objectMetadata ${objectMetadata.id} even it has already been migrated in the past`,
           );
         }
-        await this.dryRunGuardedOperation(async () => {
-          if (shouldUpdateFieldValue) {
-            await workspaceDataSource.query(
-              `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
-              [blocknoteFieldValue, markdownFieldValue, row.id],
-            );
-          }
-        });
+        if (!this.options.dryRun && shouldUpdateFieldValue) {
+          await workspaceDataSource.query(
+            `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
+            [blocknoteFieldValue, markdownFieldValue, row.id],
+          );
+        }
       }
     }
   }
