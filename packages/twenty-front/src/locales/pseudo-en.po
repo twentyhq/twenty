@@ -811,7 +811,11 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-msgid "Exclude the following people and domains from my email sync"
+#~ msgid "Exclude the following people and domains from my email sync"
+#~ msgstr ""
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
