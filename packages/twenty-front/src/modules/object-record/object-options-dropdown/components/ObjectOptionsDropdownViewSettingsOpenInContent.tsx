@@ -6,15 +6,17 @@ import {
 } from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useState } from 'react';
-
-export type OpenInType = 'side-panel' | 'record-page';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { useRecoilState } from 'recoil';
 
 export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
   const { resetContent } = useOptionsDropdown();
-  const [openIn, setOpenIn] = useState<OpenInType>('side-panel');
+  const [recordIndexOpenRecordIn, setRecordIndexOpenRecordIn] = useRecoilState(
+    recordIndexOpenRecordInState,
+  );
 
   return (
     <>
@@ -25,14 +27,20 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
         <MenuItemSelect
           LeftIcon={IconLayoutSidebarRight}
           text="Side Panel"
-          selected={openIn === 'side-panel'}
-          onClick={() => setOpenIn('side-panel')}
+          selected={recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL}
+          onClick={() =>
+            setRecordIndexOpenRecordIn(ViewOpenRecordInType.SIDE_PANEL)
+          }
         />
         <MenuItemSelect
           LeftIcon={IconLayoutNavbar}
           text="Record Page"
-          selected={openIn === 'record-page'}
-          onClick={() => setOpenIn('record-page')}
+          selected={
+            recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
+          }
+          onClick={() =>
+            setRecordIndexOpenRecordIn(ViewOpenRecordInType.RECORD_PAGE)
+          }
         />
       </DropdownMenuItemsContainer>
     </>

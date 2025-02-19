@@ -9,13 +9,13 @@ import {
 
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
-import { useState } from 'react';
-
-export type OpenInType = 'side-panel' | 'record-page';
+import { useRecoilValue } from 'recoil';
 
 export const ObjectOptionsDropdownViewSettingsContent = () => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
@@ -35,7 +35,7 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
       viewBarId: recordIndexId,
     });
 
-  const [openIn] = useState<OpenInType>('side-panel');
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   return (
     <>
@@ -46,11 +46,15 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
         <MenuItem
           onClick={() => onContentChange('viewSettingsOpenIn')}
           LeftIcon={
-            openIn === 'side-panel' ? IconLayoutSidebarRight : IconLayoutNavbar
+            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+              ? IconLayoutSidebarRight
+              : IconLayoutNavbar
           }
           text="Open in"
           contextualText={
-            openIn === 'side-panel' ? 'Side Panel' : 'Record Page'
+            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+              ? 'Side Panel'
+              : 'Record Page'
           }
           hasSubMenu
         />
