@@ -231,7 +231,7 @@ export class WorkflowVisualizerPage {
 
   async closeSidePanel() {
     const closeButton = this.#page.getByTestId(
-      'page-header-close-command-menu-button',
+      'page-header-command-menu-button',
     );
 
     await closeButton.click();
