@@ -8,6 +8,7 @@ import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dro
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -65,17 +66,21 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
-            <ObjectFilterDropdownComponentInstanceContext.Provider
+            <RecordSortsComponentInstanceContext.Provider
               value={{ instanceId }}
             >
-              <RecordTableComponentInstanceContext.Provider
-                value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+              <ObjectFilterDropdownComponentInstanceContext.Provider
+                value={{ instanceId }}
               >
-                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                  <Story />
-                </ViewComponentInstanceContext.Provider>
-              </RecordTableComponentInstanceContext.Provider>
-            </ObjectFilterDropdownComponentInstanceContext.Provider>
+                <RecordTableComponentInstanceContext.Provider
+                  value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+                >
+                  <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                    <Story />
+                  </ViewComponentInstanceContext.Provider>
+                </RecordTableComponentInstanceContext.Provider>
+              </ObjectFilterDropdownComponentInstanceContext.Provider>
+            </RecordSortsComponentInstanceContext.Provider>
           </RecordFiltersComponentInstanceContext.Provider>
         </RecordIndexContextProvider>
       );

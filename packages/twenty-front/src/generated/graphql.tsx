@@ -1495,6 +1495,7 @@ export type Query = {
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
+  getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -1506,7 +1507,6 @@ export type Query = {
   inboxesByWorkspace: Array<Inbox>;
   index: Index;
   indexMetadatas: IndexConnection;
-  listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -2752,7 +2752,7 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean } };
 
-export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean };
+export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean };
 
 export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
   workspaceMemberId: Scalars['String'];
@@ -2760,12 +2760,12 @@ export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
+export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
 
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> }> };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -2795,10 +2795,10 @@ export type EditSsoIdentityProviderMutationVariables = Exact<{
 
 export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
-export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
 export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingsFeatures> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> };
 
@@ -3047,6 +3047,10 @@ export const RoleFragmentFragmentDoc = gql`
   description
   canUpdateAllSettings
   isEditable
+  canReadAllObjectRecords
+  canUpdateAllObjectRecords
+  canSoftDeleteAllObjectRecords
+  canDestroyAllObjectRecords
 }
     `;
 export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
@@ -5011,9 +5015,9 @@ export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.Mutation
 export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
-export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
-    query ListSSOIdentityProvidersByWorkspaceId {
-  listSSOIdentityProvidersByWorkspaceId {
+export const GetSsoIdentityProvidersDocument = gql`
+    query GetSSOIdentityProviders {
+  getSSOIdentityProviders {
     type
     id
     name
@@ -5024,790 +5028,31 @@ export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     `;
 
 /**
- * __useListSsoIdentityProvidersByWorkspaceIdQuery__
+ * __useGetSsoIdentityProvidersQuery__
  *
- * To run a query within a React component, call `useListSsoIdentityProvidersByWorkspaceIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useListSsoIdentityProvidersByWorkspaceIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetSsoIdentityProvidersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSsoIdentityProvidersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useListSsoIdentityProvidersByWorkspaceIdQuery({
+ * const { data, loading, error } = useGetSsoIdentityProvidersQuery({
  *   variables: {
  *   },
  * });
  */
-export function useListSsoIdentityProvidersByWorkspaceIdQuery(baseOptions?: Apollo.QueryHookOptions<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>) {
+export function useGetSsoIdentityProvidersQuery(baseOptions?: Apollo.QueryHookOptions<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
+        return Apollo.useQuery<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>(GetSsoIdentityProvidersDocument, options);
       }
-export function useListSsoIdentityProvidersByWorkspaceIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>) {
+export function useGetSsoIdentityProvidersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
+          return Apollo.useLazyQuery<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>(GetSsoIdentityProvidersDocument, options);
         }
-export type ListSsoIdentityProvidersByWorkspaceIdQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdQuery>;
-export type ListSsoIdentityProvidersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdLazyQuery>;
-export type ListSsoIdentityProvidersByWorkspaceIdQueryResult = Apollo.QueryResult<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>;
-export const CreateAgentDocument = gql`
-    mutation CreateAgent($createInput: CreateAgentInput!) {
-  createAgent(createInput: $createInput) {
-    id
-  }
-}
-    `;
-export type CreateAgentMutationFn = Apollo.MutationFunction<CreateAgentMutation, CreateAgentMutationVariables>;
-
-/**
- * __useCreateAgentMutation__
- *
- * To run a mutation, you first call `useCreateAgentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateAgentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createAgentMutation, { data, loading, error }] = useCreateAgentMutation({
- *   variables: {
- *      createInput: // value for 'createInput'
- *   },
- * });
- */
-export function useCreateAgentMutation(baseOptions?: Apollo.MutationHookOptions<CreateAgentMutation, CreateAgentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateAgentMutation, CreateAgentMutationVariables>(CreateAgentDocument, options);
-      }
-export type CreateAgentMutationHookResult = ReturnType<typeof useCreateAgentMutation>;
-export type CreateAgentMutationResult = Apollo.MutationResult<CreateAgentMutation>;
-export type CreateAgentMutationOptions = Apollo.BaseMutationOptions<CreateAgentMutation, CreateAgentMutationVariables>;
-export const ToggleAgentStatusDocument = gql`
-    mutation ToggleAgentStatus($agentId: String!) {
-  toggleAgentStatus(agentId: $agentId)
-}
-    `;
-export type ToggleAgentStatusMutationFn = Apollo.MutationFunction<ToggleAgentStatusMutation, ToggleAgentStatusMutationVariables>;
-
-/**
- * __useToggleAgentStatusMutation__
- *
- * To run a mutation, you first call `useToggleAgentStatusMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useToggleAgentStatusMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [toggleAgentStatusMutation, { data, loading, error }] = useToggleAgentStatusMutation({
- *   variables: {
- *      agentId: // value for 'agentId'
- *   },
- * });
- */
-export function useToggleAgentStatusMutation(baseOptions?: Apollo.MutationHookOptions<ToggleAgentStatusMutation, ToggleAgentStatusMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ToggleAgentStatusMutation, ToggleAgentStatusMutationVariables>(ToggleAgentStatusDocument, options);
-      }
-export type ToggleAgentStatusMutationHookResult = ReturnType<typeof useToggleAgentStatusMutation>;
-export type ToggleAgentStatusMutationResult = Apollo.MutationResult<ToggleAgentStatusMutation>;
-export type ToggleAgentStatusMutationOptions = Apollo.BaseMutationOptions<ToggleAgentStatusMutation, ToggleAgentStatusMutationVariables>;
-export const UpdateAgentDocument = gql`
-    mutation UpdateAgent($updateInput: UpdateAgentInput!) {
-  updateAgent(updateInput: $updateInput) {
-    id
-    isAdmin
-    isActive
-    workspace {
-      id
-      displayName
-    }
-  }
-}
-    `;
-export type UpdateAgentMutationFn = Apollo.MutationFunction<UpdateAgentMutation, UpdateAgentMutationVariables>;
-
-/**
- * __useUpdateAgentMutation__
- *
- * To run a mutation, you first call `useUpdateAgentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateAgentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateAgentMutation, { data, loading, error }] = useUpdateAgentMutation({
- *   variables: {
- *      updateInput: // value for 'updateInput'
- *   },
- * });
- */
-export function useUpdateAgentMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAgentMutation, UpdateAgentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateAgentMutation, UpdateAgentMutationVariables>(UpdateAgentDocument, options);
-      }
-export type UpdateAgentMutationHookResult = ReturnType<typeof useUpdateAgentMutation>;
-export type UpdateAgentMutationResult = Apollo.MutationResult<UpdateAgentMutation>;
-export type UpdateAgentMutationOptions = Apollo.BaseMutationOptions<UpdateAgentMutation, UpdateAgentMutationVariables>;
-export const AgentsByWorkspaceDocument = gql`
-    query AgentsByWorkspace($workspaceId: String!) {
-  agentsByWorkspace(workspaceId: $workspaceId) {
-    id
-    isAdmin
-    isActive
-    memberId
-    workspace {
-      id
-      displayName
-    }
-    sectors {
-      id
-      name
-    }
-    inboxes {
-      id
-      integrationType
-      whatsappIntegration {
-        id
-        label
-        phoneId
-        disabled
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useAgentsByWorkspaceQuery__
- *
- * To run a query within a React component, call `useAgentsByWorkspaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useAgentsByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAgentsByWorkspaceQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useAgentsByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<AgentsByWorkspaceQuery, AgentsByWorkspaceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AgentsByWorkspaceQuery, AgentsByWorkspaceQueryVariables>(AgentsByWorkspaceDocument, options);
-      }
-export function useAgentsByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AgentsByWorkspaceQuery, AgentsByWorkspaceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AgentsByWorkspaceQuery, AgentsByWorkspaceQueryVariables>(AgentsByWorkspaceDocument, options);
-        }
-export type AgentsByWorkspaceQueryHookResult = ReturnType<typeof useAgentsByWorkspaceQuery>;
-export type AgentsByWorkspaceLazyQueryHookResult = ReturnType<typeof useAgentsByWorkspaceLazyQuery>;
-export type AgentsByWorkspaceQueryResult = Apollo.QueryResult<AgentsByWorkspaceQuery, AgentsByWorkspaceQueryVariables>;
-export const InboxesByWorkspaceDocument = gql`
-    query InboxesByWorkspace($workspaceId: String!) {
-  inboxesByWorkspace(workspaceId: $workspaceId) {
-    id
-    integrationType
-    workspace {
-      id
-      displayName
-    }
-    whatsappIntegration {
-      id
-      label
-      phoneId
-      disabled
-    }
-  }
-}
-    `;
-
-/**
- * __useInboxesByWorkspaceQuery__
- *
- * To run a query within a React component, call `useInboxesByWorkspaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useInboxesByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useInboxesByWorkspaceQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useInboxesByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>(InboxesByWorkspaceDocument, options);
-      }
-export function useInboxesByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>(InboxesByWorkspaceDocument, options);
-        }
-export type InboxesByWorkspaceQueryHookResult = ReturnType<typeof useInboxesByWorkspaceQuery>;
-export type InboxesByWorkspaceLazyQueryHookResult = ReturnType<typeof useInboxesByWorkspaceLazyQuery>;
-export type InboxesByWorkspaceQueryResult = Apollo.QueryResult<InboxesByWorkspaceQuery, InboxesByWorkspaceQueryVariables>;
-export const CreateSectorDocument = gql`
-    mutation CreateSector($createInput: CreateSectorInput!) {
-  createSector(createInput: $createInput) {
-    id
-  }
-}
-    `;
-export type CreateSectorMutationFn = Apollo.MutationFunction<CreateSectorMutation, CreateSectorMutationVariables>;
-
-/**
- * __useCreateSectorMutation__
- *
- * To run a mutation, you first call `useCreateSectorMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateSectorMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createSectorMutation, { data, loading, error }] = useCreateSectorMutation({
- *   variables: {
- *      createInput: // value for 'createInput'
- *   },
- * });
- */
-export function useCreateSectorMutation(baseOptions?: Apollo.MutationHookOptions<CreateSectorMutation, CreateSectorMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateSectorMutation, CreateSectorMutationVariables>(CreateSectorDocument, options);
-      }
-export type CreateSectorMutationHookResult = ReturnType<typeof useCreateSectorMutation>;
-export type CreateSectorMutationResult = Apollo.MutationResult<CreateSectorMutation>;
-export type CreateSectorMutationOptions = Apollo.BaseMutationOptions<CreateSectorMutation, CreateSectorMutationVariables>;
-export const DeleteSectorDocument = gql`
-    mutation DeleteSector($sectorId: String!) {
-  deleteSector(sectorId: $sectorId)
-}
-    `;
-export type DeleteSectorMutationFn = Apollo.MutationFunction<DeleteSectorMutation, DeleteSectorMutationVariables>;
-
-/**
- * __useDeleteSectorMutation__
- *
- * To run a mutation, you first call `useDeleteSectorMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteSectorMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteSectorMutation, { data, loading, error }] = useDeleteSectorMutation({
- *   variables: {
- *      sectorId: // value for 'sectorId'
- *   },
- * });
- */
-export function useDeleteSectorMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSectorMutation, DeleteSectorMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteSectorMutation, DeleteSectorMutationVariables>(DeleteSectorDocument, options);
-      }
-export type DeleteSectorMutationHookResult = ReturnType<typeof useDeleteSectorMutation>;
-export type DeleteSectorMutationResult = Apollo.MutationResult<DeleteSectorMutation>;
-export type DeleteSectorMutationOptions = Apollo.BaseMutationOptions<DeleteSectorMutation, DeleteSectorMutationVariables>;
-export const UpdateSectorDocument = gql`
-    mutation UpdateSector($updateInput: UpdateSectorInput!) {
-  updateSector(updateInput: $updateInput) {
-    id
-    name
-    topics
-    icon
-    workspace {
-      id
-      displayName
-    }
-  }
-}
-    `;
-export type UpdateSectorMutationFn = Apollo.MutationFunction<UpdateSectorMutation, UpdateSectorMutationVariables>;
-
-/**
- * __useUpdateSectorMutation__
- *
- * To run a mutation, you first call `useUpdateSectorMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateSectorMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateSectorMutation, { data, loading, error }] = useUpdateSectorMutation({
- *   variables: {
- *      updateInput: // value for 'updateInput'
- *   },
- * });
- */
-export function useUpdateSectorMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSectorMutation, UpdateSectorMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateSectorMutation, UpdateSectorMutationVariables>(UpdateSectorDocument, options);
-      }
-export type UpdateSectorMutationHookResult = ReturnType<typeof useUpdateSectorMutation>;
-export type UpdateSectorMutationResult = Apollo.MutationResult<UpdateSectorMutation>;
-export type UpdateSectorMutationOptions = Apollo.BaseMutationOptions<UpdateSectorMutation, UpdateSectorMutationVariables>;
-export const SectorsByWorkspaceDocument = gql`
-    query SectorsByWorkspace($workspaceId: String!) {
-  sectorsByWorkspace(workspaceId: $workspaceId) {
-    id
-    name
-    icon
-    topics
-    workspace {
-      id
-      displayName
-    }
-    createdAt
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useSectorsByWorkspaceQuery__
- *
- * To run a query within a React component, call `useSectorsByWorkspaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useSectorsByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSectorsByWorkspaceQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useSectorsByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>(SectorsByWorkspaceDocument, options);
-      }
-export function useSectorsByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>(SectorsByWorkspaceDocument, options);
-        }
-export type SectorsByWorkspaceQueryHookResult = ReturnType<typeof useSectorsByWorkspaceQuery>;
-export type SectorsByWorkspaceLazyQueryHookResult = ReturnType<typeof useSectorsByWorkspaceLazyQuery>;
-export type SectorsByWorkspaceQueryResult = Apollo.QueryResult<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>;
-export const UpdateWhatsappIntegrationServiceLevelDocument = gql`
-    mutation UpdateWhatsappIntegrationServiceLevel($integrationId: String!, $sla: Int!) {
-  updateWhatsappIntegrationServiceLevel(integrationId: $integrationId, sla: $sla) {
-    label
-    sla
-  }
-}
-    `;
-export type UpdateWhatsappIntegrationServiceLevelMutationFn = Apollo.MutationFunction<UpdateWhatsappIntegrationServiceLevelMutation, UpdateWhatsappIntegrationServiceLevelMutationVariables>;
-
-/**
- * __useUpdateWhatsappIntegrationServiceLevelMutation__
- *
- * To run a mutation, you first call `useUpdateWhatsappIntegrationServiceLevelMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateWhatsappIntegrationServiceLevelMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateWhatsappIntegrationServiceLevelMutation, { data, loading, error }] = useUpdateWhatsappIntegrationServiceLevelMutation({
- *   variables: {
- *      integrationId: // value for 'integrationId'
- *      sla: // value for 'sla'
- *   },
- * });
- */
-export function useUpdateWhatsappIntegrationServiceLevelMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWhatsappIntegrationServiceLevelMutation, UpdateWhatsappIntegrationServiceLevelMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateWhatsappIntegrationServiceLevelMutation, UpdateWhatsappIntegrationServiceLevelMutationVariables>(UpdateWhatsappIntegrationServiceLevelDocument, options);
-      }
-export type UpdateWhatsappIntegrationServiceLevelMutationHookResult = ReturnType<typeof useUpdateWhatsappIntegrationServiceLevelMutation>;
-export type UpdateWhatsappIntegrationServiceLevelMutationResult = Apollo.MutationResult<UpdateWhatsappIntegrationServiceLevelMutation>;
-export type UpdateWhatsappIntegrationServiceLevelMutationOptions = Apollo.BaseMutationOptions<UpdateWhatsappIntegrationServiceLevelMutation, UpdateWhatsappIntegrationServiceLevelMutationVariables>;
-export const CreateTelephonyDocument = gql`
-    mutation CreateTelephony($createTelephonyInput: CreateTelephonyInput!) {
-  createTelephony(createTelephonyInput: $createTelephonyInput) {
-    id
-  }
-}
-    `;
-export type CreateTelephonyMutationFn = Apollo.MutationFunction<CreateTelephonyMutation, CreateTelephonyMutationVariables>;
-
-/**
- * __useCreateTelephonyMutation__
- *
- * To run a mutation, you first call `useCreateTelephonyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateTelephonyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createTelephonyMutation, { data, loading, error }] = useCreateTelephonyMutation({
- *   variables: {
- *      createTelephonyInput: // value for 'createTelephonyInput'
- *   },
- * });
- */
-export function useCreateTelephonyMutation(baseOptions?: Apollo.MutationHookOptions<CreateTelephonyMutation, CreateTelephonyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateTelephonyMutation, CreateTelephonyMutationVariables>(CreateTelephonyDocument, options);
-      }
-export type CreateTelephonyMutationHookResult = ReturnType<typeof useCreateTelephonyMutation>;
-export type CreateTelephonyMutationResult = Apollo.MutationResult<CreateTelephonyMutation>;
-export type CreateTelephonyMutationOptions = Apollo.BaseMutationOptions<CreateTelephonyMutation, CreateTelephonyMutationVariables>;
-export const UpdateTelephonyDocument = gql`
-    mutation UpdateTelephony($id: ID!, $updateTelephonyInput: UpdateTelephonyInput!) {
-  updateTelephony(id: $id, updateTelephonyInput: $updateTelephonyInput) {
-    id
-    memberId
-    numberExtension
-  }
-}
-    `;
-export type UpdateTelephonyMutationFn = Apollo.MutationFunction<UpdateTelephonyMutation, UpdateTelephonyMutationVariables>;
-
-/**
- * __useUpdateTelephonyMutation__
- *
- * To run a mutation, you first call `useUpdateTelephonyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateTelephonyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateTelephonyMutation, { data, loading, error }] = useUpdateTelephonyMutation({
- *   variables: {
- *      id: // value for 'id'
- *      updateTelephonyInput: // value for 'updateTelephonyInput'
- *   },
- * });
- */
-export function useUpdateTelephonyMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTelephonyMutation, UpdateTelephonyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateTelephonyMutation, UpdateTelephonyMutationVariables>(UpdateTelephonyDocument, options);
-      }
-export type UpdateTelephonyMutationHookResult = ReturnType<typeof useUpdateTelephonyMutation>;
-export type UpdateTelephonyMutationResult = Apollo.MutationResult<UpdateTelephonyMutation>;
-export type UpdateTelephonyMutationOptions = Apollo.BaseMutationOptions<UpdateTelephonyMutation, UpdateTelephonyMutationVariables>;
-export const GetTelephonyCallFlowsDocument = gql`
-    query getTelephonyCallFlows {
-  getTelephonyCallFlows {
-    fluxo_chamada_id
-    fluxo_chamada_nome
-  }
-}
-    `;
-
-/**
- * __useGetTelephonyCallFlowsQuery__
- *
- * To run a query within a React component, call `useGetTelephonyCallFlowsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTelephonyCallFlowsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTelephonyCallFlowsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetTelephonyCallFlowsQuery(baseOptions?: Apollo.QueryHookOptions<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>(GetTelephonyCallFlowsDocument, options);
-      }
-export function useGetTelephonyCallFlowsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>(GetTelephonyCallFlowsDocument, options);
-        }
-export type GetTelephonyCallFlowsQueryHookResult = ReturnType<typeof useGetTelephonyCallFlowsQuery>;
-export type GetTelephonyCallFlowsLazyQueryHookResult = ReturnType<typeof useGetTelephonyCallFlowsLazyQuery>;
-export type GetTelephonyCallFlowsQueryResult = Apollo.QueryResult<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>;
-export const GetTelephonyPlansDocument = gql`
-    query getTelephonyPlans {
-  getTelephonyPlans {
-    plano_discagem_id
-    nome
-    cliente_id
-  }
-}
-    `;
-
-/**
- * __useGetTelephonyPlansQuery__
- *
- * To run a query within a React component, call `useGetTelephonyPlansQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTelephonyPlansQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTelephonyPlansQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetTelephonyPlansQuery(baseOptions?: Apollo.QueryHookOptions<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>(GetTelephonyPlansDocument, options);
-      }
-export function useGetTelephonyPlansLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>(GetTelephonyPlansDocument, options);
-        }
-export type GetTelephonyPlansQueryHookResult = ReturnType<typeof useGetTelephonyPlansQuery>;
-export type GetTelephonyPlansLazyQueryHookResult = ReturnType<typeof useGetTelephonyPlansLazyQuery>;
-export type GetTelephonyPlansQueryResult = Apollo.QueryResult<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>;
-export const GetTelephonyDidsDocument = gql`
-    query getTelephonyDids {
-  getTelephonyDids {
-    did_id
-    numero
-  }
-}
-    `;
-
-/**
- * __useGetTelephonyDidsQuery__
- *
- * To run a query within a React component, call `useGetTelephonyDidsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTelephonyDidsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTelephonyDidsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetTelephonyDidsQuery(baseOptions?: Apollo.QueryHookOptions<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>(GetTelephonyDidsDocument, options);
-      }
-export function useGetTelephonyDidsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>(GetTelephonyDidsDocument, options);
-        }
-export type GetTelephonyDidsQueryHookResult = ReturnType<typeof useGetTelephonyDidsQuery>;
-export type GetTelephonyDidsLazyQueryHookResult = ReturnType<typeof useGetTelephonyDidsLazyQuery>;
-export type GetTelephonyDidsQueryResult = Apollo.QueryResult<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>;
-export const GetAllExtensionsDocument = gql`
-    query getAllExtensions {
-  getAllExtensions {
-    codigo_incorporacao
-    cliente_id
-    codigo_area
-    nome
-    numero
-    plano_discagem_id
-    ramal_id
-    caller_id_externo
-    usuario_autenticacao
-    numero
-  }
-}
-    `;
-
-/**
- * __useGetAllExtensionsQuery__
- *
- * To run a query within a React component, call `useGetAllExtensionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllExtensionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllExtensionsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllExtensionsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllExtensionsQuery, GetAllExtensionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllExtensionsQuery, GetAllExtensionsQueryVariables>(GetAllExtensionsDocument, options);
-      }
-export function useGetAllExtensionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllExtensionsQuery, GetAllExtensionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllExtensionsQuery, GetAllExtensionsQueryVariables>(GetAllExtensionsDocument, options);
-        }
-export type GetAllExtensionsQueryHookResult = ReturnType<typeof useGetAllExtensionsQuery>;
-export type GetAllExtensionsLazyQueryHookResult = ReturnType<typeof useGetAllExtensionsLazyQuery>;
-export type GetAllExtensionsQueryResult = Apollo.QueryResult<GetAllExtensionsQuery, GetAllExtensionsQueryVariables>;
-export const GetAllTelephonysDocument = gql`
-    query GetAllTelephonys($workspaceId: ID!) {
-  findAllTelephony(workspaceId: $workspaceId) {
-    id
-    memberId
-    numberExtension
-    workspace {
-      id
-    }
-    createdAt
-    updatedAt
-    SIPPassword
-    areaCode
-    blockExtension
-    callerExternalID
-    destinyMailboxAllCallsOrOffline
-    destinyMailboxBusy
-    dialingPlan
-    emailForMailbox
-    enableMailbox
-    extensionAllCallsOrOffline
-    extensionBusy
-    extensionGroup
-    extensionName
-    externalNumberAllCallsOrOffline
-    externalNumberBusy
-    fowardAllCalls
-    fowardBusyNotAvailable
-    fowardOfflineWithoutService
-    listenToCalls
-    pullCalls
-    recordCalls
-    type
-    advancedFowarding1
-    advancedFowarding2
-    advancedFowarding3
-    advancedFowarding4
-    advancedFowarding5
-    advancedFowarding1Value
-    advancedFowarding2Value
-    advancedFowarding3Value
-    advancedFowarding4Value
-    advancedFowarding5Value
-  }
-}
-    `;
-
-/**
- * __useGetAllTelephonysQuery__
- *
- * To run a query within a React component, call `useGetAllTelephonysQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllTelephonysQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllTelephonysQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useGetAllTelephonysQuery(baseOptions: Apollo.QueryHookOptions<GetAllTelephonysQuery, GetAllTelephonysQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllTelephonysQuery, GetAllTelephonysQueryVariables>(GetAllTelephonysDocument, options);
-      }
-export function useGetAllTelephonysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllTelephonysQuery, GetAllTelephonysQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllTelephonysQuery, GetAllTelephonysQueryVariables>(GetAllTelephonysDocument, options);
-        }
-export type GetAllTelephonysQueryHookResult = ReturnType<typeof useGetAllTelephonysQuery>;
-export type GetAllTelephonysLazyQueryHookResult = ReturnType<typeof useGetAllTelephonysLazyQuery>;
-export type GetAllTelephonysQueryResult = Apollo.QueryResult<GetAllTelephonysQuery, GetAllTelephonysQueryVariables>;
-export const GetTelephonyUrAsDocument = gql`
-    query getTelephonyURAs {
-  getTelephonyURAs {
-    campanha_id
-    nome
-  }
-}
-    `;
-
-/**
- * __useGetTelephonyUrAsQuery__
- *
- * To run a query within a React component, call `useGetTelephonyUrAsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTelephonyUrAsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTelephonyUrAsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetTelephonyUrAsQuery(baseOptions?: Apollo.QueryHookOptions<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>(GetTelephonyUrAsDocument, options);
-      }
-export function useGetTelephonyUrAsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>(GetTelephonyUrAsDocument, options);
-        }
-export type GetTelephonyUrAsQueryHookResult = ReturnType<typeof useGetTelephonyUrAsQuery>;
-export type GetTelephonyUrAsLazyQueryHookResult = ReturnType<typeof useGetTelephonyUrAsLazyQuery>;
-export type GetTelephonyUrAsQueryResult = Apollo.QueryResult<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>;
-export const GetUserSoftfoneDocument = gql`
-    query getUserSoftfone($extNum: String!) {
-  getUserSoftfone(extNum: $extNum) {
-    codigo_incorporacao
-    cliente_id
-    codigo_area
-    nome
-    numero
-    plano_discagem_id
-    ramal_id
-    caller_id_externo
-    usuario_autenticacao
-    numero
-  }
-}
-    `;
-
-/**
- * __useGetUserSoftfoneQuery__
- *
- * To run a query within a React component, call `useGetUserSoftfoneQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserSoftfoneQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserSoftfoneQuery({
- *   variables: {
- *      extNum: // value for 'extNum'
- *   },
- * });
- */
-export function useGetUserSoftfoneQuery(baseOptions: Apollo.QueryHookOptions<GetUserSoftfoneQuery, GetUserSoftfoneQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserSoftfoneQuery, GetUserSoftfoneQueryVariables>(GetUserSoftfoneDocument, options);
-      }
-export function useGetUserSoftfoneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserSoftfoneQuery, GetUserSoftfoneQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserSoftfoneQuery, GetUserSoftfoneQueryVariables>(GetUserSoftfoneDocument, options);
-        }
-export type GetUserSoftfoneQueryHookResult = ReturnType<typeof useGetUserSoftfoneQuery>;
-export type GetUserSoftfoneLazyQueryHookResult = ReturnType<typeof useGetUserSoftfoneLazyQuery>;
-export type GetUserSoftfoneQueryResult = Apollo.QueryResult<GetUserSoftfoneQuery, GetUserSoftfoneQueryVariables>;
+export type GetSsoIdentityProvidersQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersQuery>;
+export type GetSsoIdentityProvidersLazyQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersLazyQuery>;
+export type GetSsoIdentityProvidersQueryResult = Apollo.QueryResult<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUser {

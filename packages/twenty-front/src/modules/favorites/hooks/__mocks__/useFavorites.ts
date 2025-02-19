@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 import { AvatarType } from 'twenty-ui';
 
+import { Favorite } from '@/favorites/types/Favorite';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';
@@ -11,7 +12,7 @@ export const favoriteTargetObjectRecord = {
   __typename: 'Person',
 };
 
-export const initialFavorites = [
+export const initialFavorites: Favorite[] = [
   {
     __typename: 'Favorite',
     id: '1',

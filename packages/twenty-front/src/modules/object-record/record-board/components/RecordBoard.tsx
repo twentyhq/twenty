@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
@@ -21,6 +21,7 @@ import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/re
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -31,6 +32,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
@@ -142,10 +144,25 @@ export const RecordBoard = () => {
     ActionBarHotkeyScope.ActionBar,
   );
 
+  const { currentViewWithCombinedFiltersAndSorts } =
+    useGetCurrentView(recordBoardId);
+
+  const setIsRemoveSortingModalOpen = useSetRecoilState(
+    isRemoveSortingModalOpenState,
+  );
+
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
       (result) => {
         if (!result.destination) return;
+
+        const viewSorts =
+          currentViewWithCombinedFiltersAndSorts?.viewSorts || [];
+
+        if (viewSorts.length > 0) {
+          setIsRemoveSortingModalOpen(true);
+          return;
+        }
 
         const draggedRecordId = result.draggableId;
         const sourceRecordGroupId = result.source.droppableId;
@@ -201,6 +218,8 @@ export const RecordBoard = () => {
       recordIndexRecordIdsByGroupFamilyState,
       selectFieldMetadataItem,
       updateOneRecord,
+      setIsRemoveSortingModalOpen,
+      currentViewWithCombinedFiltersAndSorts,
     ],
   );
 
