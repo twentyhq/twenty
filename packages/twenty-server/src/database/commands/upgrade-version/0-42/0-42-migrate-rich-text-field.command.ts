@@ -244,11 +244,13 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       return null;
     }
 
-    const jsonParsedblocknoteFieldValue = this.jsonParseOrSilentlyFail(blocknoteFieldValue);
+    const jsonParsedblocknoteFieldValue =
+      this.jsonParseOrSilentlyFail(blocknoteFieldValue);
+
     if (jsonParsedblocknoteFieldValue === null) {
-      return null
+      return null;
     }
-    
+
     if (!Array.isArray(jsonParsedblocknoteFieldValue)) {
       return null;
     }
