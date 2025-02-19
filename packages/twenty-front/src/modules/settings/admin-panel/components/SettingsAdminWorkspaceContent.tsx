@@ -129,9 +129,7 @@ export const SettingsAdminWorkspaceContent = ({
           variant="primary"
           accent="blue"
           title={'Impersonate'}
-          onClick={() =>
-            userLookupResult?.user.id && handleImpersonate(activeWorkspace.id)
-          }
+          onClick={() => handleImpersonate(activeWorkspace.id)}
           disabled={
             isImpersonateLoading || activeWorkspace.allowImpersonation === false
           }
