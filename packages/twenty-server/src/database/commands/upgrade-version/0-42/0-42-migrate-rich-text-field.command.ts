@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
-import { Command } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
@@ -35,6 +35,9 @@ import {
   TASK_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
+type MigrateRichTextFieldCommandOptions = ActiveWorkspacesCommandOptions & {
+  force: boolean;
+};
 type ProcessWorkspaceArgs = {
   workspaceId: string;
   index: number;
@@ -50,7 +53,7 @@ type AsyncMethod<T> = () => Promise<T>;
   description: 'Migrate RICH_TEXT fields to new composite structure',
 })
 export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
-  private options: ActiveWorkspacesCommandOptions;
+  private options: MigrateRichTextFieldCommandOptions;
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -69,6 +72,16 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     super(workspaceRepository);
   }
 
+  @Option({
+    flags: '-f, --force [boolean]',
+    description:
+      'Force RICH_TEXT_FIELD value update even if column migration has already be run',
+    required: false,
+  })
+  parseForceValue(val?: boolean): boolean {
+    return val ?? false;;
+  }
+
   private dryRunGuardedOperation = async <T>(operation: AsyncMethod<T>) => {
     if (!this.options.dryRun) {
       return await operation();
@@ -76,14 +89,16 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
   };
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: MigrateRichTextFieldCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
-    this.options = { ...options };
     this.logger.log(
       'Running command to migrate RICH_TEXT fields to new composite structure',
     );
-
+    if (options.force) {
+      this.logger.warn("Running in force mode");
+    }
+    this.options = { ...options };
     if (isCommandLogger(this.logger)) {
       this.logger.setVerbose(options.verbose ?? false);
     }
