@@ -35,11 +35,22 @@ import {
   TASK_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
+type ProcessWorkspaceArgs = {
+  workspaceId: string;
+  index: number;
+  total: number;
+};
+type ProcessRichTextFieldArgs = {
+  richTextField: FieldMetadataEntity;
+  workspaceId: string;
+};
+type AsyncMethod<T> = () => Promise<T>;
 @Command({
   name: 'upgrade-0.42:migrate-rich-text-field',
   description: 'Migrate RICH_TEXT fields to new composite structure',
 })
 export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
+  private options: ActiveWorkspacesCommandOptions;
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -58,11 +69,17 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     super(workspaceRepository);
   }
 
+  private dryRunGuardedOperation = async <T>(operation: AsyncMethod<T>) => {
+    if (!this.options.dryRun) {
+      return await operation();
+    }
+  };
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
     options: ActiveWorkspacesCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
+    this.options = { ...options };
     this.logger.log(
       'Running command to migrate RICH_TEXT fields to new composite structure',
     );
@@ -73,7 +90,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
     try {
       for (const [index, workspaceId] of workspaceIds.entries()) {
-        await this.processWorkspace(workspaceId, index, workspaceIds.length);
+        await this.processWorkspace({
+          workspaceId,
+          index,
+          total: workspaceIds.length,
+        });
       }
 
       this.logger.log(chalk.green('Command completed!'));
@@ -82,11 +103,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     }
   }
 
-  private async processWorkspace(
-    workspaceId: string,
-    index: number,
-    total: number,
-  ): Promise<void> {
+  private async processWorkspace({
+    index,
+    total,
+    workspaceId,
+  }: ProcessWorkspaceArgs): Promise<void> {
     try {
       this.logger.log(
         `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
@@ -110,21 +131,28 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
 
       for (const richTextField of richTextFields) {
-        await this.processRichTextField(richTextField, workspaceId);
+        await this.processRichTextField({ richTextField, workspaceId });
       }
 
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        workspaceId,
-      );
+      await this.dryRunGuardedOperation(async () => {
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+          workspaceId,
+        );
 
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        workspaceId,
-      );
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
+      });
 
       await this.migrateRichTextContent(richTextFields, workspaceId);
 
       await this.enableRichTextV2FeatureFlag(workspaceId);
 
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
+
+      this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspaceId);
       this.logger.log(
         chalk.green(`Command completed for workspace ${workspaceId}`),
       );
@@ -136,23 +164,25 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
   private async enableRichTextV2FeatureFlag(
     workspaceId: string,
   ): Promise<void> {
-    await this.featureFlagRepository.upsert(
-      {
-        workspaceId,
-        key: FeatureFlagKey.IsRichTextV2Enabled,
-        value: true,
-      },
-      {
-        conflictPaths: ['workspaceId', 'key'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+    await this.dryRunGuardedOperation(async () => {
+      await this.featureFlagRepository.upsert(
+        {
+          workspaceId,
+          key: FeatureFlagKey.IsRichTextV2Enabled,
+          value: true,
+        },
+        {
+          conflictPaths: ['workspaceId', 'key'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
+    });
   }
 
-  private async processRichTextField(
-    richTextField: FieldMetadataEntity,
-    workspaceId: string,
-  ) {
+  private async processRichTextField({
+    richTextField,
+    workspaceId,
+  }: ProcessRichTextFieldArgs) {
     let standardId: string | null = null;
 
     if (richTextField.standardId === TASK_STANDARD_FIELD_IDS.body) {
@@ -176,7 +206,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       standardId,
     };
 
-    await this.fieldMetadataRepository.insert(newRichTextField);
+    await this.dryRunGuardedOperation(async () => {
+      await this.fieldMetadataRepository.insert(newRichTextField);
+    });
 
     const objectMetadata = await this.objectMetadataRepository.findOne({
       where: { id: richTextField.objectMetadataId },
@@ -190,33 +222,36 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       return;
     }
 
-    await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(
-        `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
-      ),
-      workspaceId,
-      [
-        {
-          name: computeObjectTargetTable(objectMetadata),
-          action: WorkspaceMigrationTableActionType.ALTER,
-          columns: [
+    await this.dryRunGuardedOperation(
+      async () =>
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(
+            `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
+          ),
+          workspaceId,
+          [
             {
-              action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${richTextField.name}V2Blocknote`,
-              columnType: 'text',
-              isNullable: true,
-              defaultValue: null,
-            } satisfies WorkspaceMigrationColumnCreate,
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${richTextField.name}V2Markdown`,
-              columnType: 'text',
-              isNullable: true,
-              defaultValue: null,
-            } satisfies WorkspaceMigrationColumnCreate,
+              name: computeObjectTargetTable(objectMetadata),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: [
+                {
+                  action: WorkspaceMigrationColumnActionType.CREATE,
+                  columnName: `${richTextField.name}V2Blocknote`,
+                  columnType: 'text',
+                  isNullable: true,
+                  defaultValue: null,
+                } satisfies WorkspaceMigrationColumnCreate,
+                {
+                  action: WorkspaceMigrationColumnActionType.CREATE,
+                  columnName: `${richTextField.name}V2Markdown`,
+                  columnType: 'text',
+                  isNullable: true,
+                  defaultValue: null,
+                } satisfies WorkspaceMigrationColumnCreate,
+              ],
+            } satisfies WorkspaceMigrationTableAction,
           ],
-        } satisfies WorkspaceMigrationTableAction,
-      ],
+        ),
     );
   }
 
@@ -299,10 +334,12 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           serverBlockNoteEditor,
         });
 
-        await workspaceDataSource.query(
-          `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
-          [blocknoteFieldValue, markdownFieldValue, row.id],
-        );
+        await this.dryRunGuardedOperation(async () => {
+          await workspaceDataSource.query(
+            `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
+            [blocknoteFieldValue, markdownFieldValue, row.id],
+          );
+        });
       }
     }
   }
