@@ -1,18 +1,19 @@
 import { promises as fs } from 'fs';
 import { v4 } from 'uuid';
 
-const MAIN_PATH = '/tmp/main.mjs';
 
 export const handler = async (event) => {
-  const { code, params } = event;
+  try {
+    const { code, params } = event;
 
-  await fs.writeFile(MAIN_PATH, code, 'utf8');
+    const mainPath = `/tmp/${v4()}.mjs`;
 
-  const mainFile = await import(MAIN_PATH + `?t=${v4()}`);
+    await fs.writeFile(mainPath, code, 'utf8');
 
-  const result = await mainFile.main(params);
+    const mainFile = await import(mainPath);
 
-  await fs.rm('tmp', { recursive: true, force: true });
-
-  return result
+    return  await mainFile.main(params);
+  } finally {
+    await fs.rm(mainPath, { force: true });
+  }
 };
