@@ -106,7 +106,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     if (options.force) {
       this.logger.warn('Running in force mode');
     }
-    this.options = { ...options };
+    this.options = options;
     if (isCommandLogger(this.logger)) {
       this.logger.setVerbose(options.verbose ?? false);
     }
@@ -207,13 +207,13 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       case richTextField.standardId === NOTE_STANDARD_FIELD_IDS.body: {
         return NOTE_STANDARD_FIELD_IDS.bodyV2;
       }
-      case !richTextField.isCustom: {
+      case richTextField.isCustom: {
+        return null;
+      }
+      default: {
         throw new Error(
           `RICH_TEXT does not belong to a Task or a Note standard objects: ${richTextField.id}`,
         );
-      }
-      default: {
-        return null;
       }
     }
   }
