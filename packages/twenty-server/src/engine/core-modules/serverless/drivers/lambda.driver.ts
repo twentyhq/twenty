@@ -88,6 +88,10 @@ export class LambdaDriver implements ServerlessDriver {
     return this.lambdaClient;
   }
 
+  private getFunctionName(serverlessFunction: ServerlessFunctionEntity) {
+    return `${serverlessFunction.id}-executor`;
+  }
+
   private async getAssumeRoleCredentials() {
     const stsClient = new STSClient({ region: this.options.region });
 
@@ -120,10 +124,12 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   private async waitFunctionUpdates(
-    serverlessFunctionId: string,
+    serverlessFunction: ServerlessFunctionEntity,
     maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
   ) {
-    const waitParams = { FunctionName: serverlessFunctionId };
+    const waitParams = {
+      FunctionName: this.getFunctionName(serverlessFunction),
+    };
 
     await waitUntilFunctionUpdatedV2(
       { client: await this.getLambdaClient(), maxWaitTime },
@@ -185,10 +191,12 @@ export class LambdaDriver implements ServerlessDriver {
     return result.LayerVersionArn;
   }
 
-  private async checkFunctionExists(functionName: string): Promise<boolean> {
+  private async checkFunctionExists(
+    serverlessFunction: ServerlessFunctionEntity,
+  ): Promise<boolean> {
     try {
-      const getFunctionCommand = new GetFunctionCommand({
-        FunctionName: functionName,
+      const getFunctionCommand: GetFunctionCommand = new GetFunctionCommand({
+        FunctionName: this.getFunctionName(serverlessFunction),
       });
 
       await (await this.getLambdaClient()).send(getFunctionCommand);
@@ -203,13 +211,11 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   async delete(serverlessFunction: ServerlessFunctionEntity) {
-    const functionExists = await this.checkFunctionExists(
-      serverlessFunction.id,
-    );
+    const functionExists = await this.checkFunctionExists(serverlessFunction);
 
     if (functionExists) {
       const deleteFunctionCommand = new DeleteFunctionCommand({
-        FunctionName: serverlessFunction.id,
+        FunctionName: this.getFunctionName(serverlessFunction),
       });
 
       await (await this.getLambdaClient()).send(deleteFunctionCommand);
@@ -217,9 +223,7 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   private async build(serverlessFunction: ServerlessFunctionEntity) {
-    const functionExists = await this.checkFunctionExists(
-      serverlessFunction.id,
-    );
+    const functionExists = await this.checkFunctionExists(serverlessFunction);
 
     if (functionExists) {
       return;
@@ -242,7 +246,7 @@ export class LambdaDriver implements ServerlessDriver {
       Code: {
         ZipFile: await fs.readFile(lambdaZipPath),
       },
-      FunctionName: serverlessFunction.id,
+      FunctionName: this.getFunctionName(serverlessFunction),
       Layers: [layerArn],
       Handler: 'index.handler',
       Role: this.options.lambdaRole,
@@ -257,7 +261,7 @@ export class LambdaDriver implements ServerlessDriver {
 
     await lambdaBuildDirectoryManager.clean();
 
-    await this.waitFunctionUpdates(serverlessFunction.id);
+    await this.waitFunctionUpdates(serverlessFunction);
   }
 
   async execute(
@@ -297,7 +301,7 @@ export class LambdaDriver implements ServerlessDriver {
     };
 
     const params: InvokeCommandInput = {
-      FunctionName: serverlessFunction.id,
+      FunctionName: this.getFunctionName(serverlessFunction),
       Payload: JSON.stringify(executorPayload),
     };
 
