@@ -14,8 +14,6 @@ describe('SSOService', () => {
   let service: SSOService;
   let repository: Repository<WorkspaceSSOIdentityProvider>;
   let billingService: BillingService;
-  let environmentService: EnvironmentService;
-  let exceptionHandlerService: ExceptionHandlerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -51,10 +49,6 @@ describe('SSOService', () => {
       getRepositoryToken(WorkspaceSSOIdentityProvider, 'core'),
     );
     billingService = module.get<BillingService>(BillingService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
-    exceptionHandlerService = module.get<ExceptionHandlerService>(
-      ExceptionHandlerService,
-    );
   });
 
   it('should be defined', () => {
