@@ -10,7 +10,6 @@ export const SettingsAdminIndicatorHealthStatusContent = () => {
   const indicatorName = indicatorHealth.indicatorName;
   switch (indicatorName) {
     case AdminPanelIndicatorHealthStatusInputEnum.DATABASE:
-      return <DatabaseAndRedisHealthStatus />;
     case AdminPanelIndicatorHealthStatusInputEnum.REDIS:
       return <DatabaseAndRedisHealthStatus />;
     case AdminPanelIndicatorHealthStatusInputEnum.WORKER:

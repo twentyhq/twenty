@@ -7,7 +7,7 @@ import { H2Title } from 'twenty-ui';
 
 const StyledContainer = styled.div``;
 
-export const SettingsAdminHealthAccountSyncCountersTables = ({
+export const SettingsAdminHealthAccountSyncCountersTable = ({
   details,
   title,
 }: {

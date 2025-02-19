@@ -1,4 +1,4 @@
-import { SettingsAdminHealthAccountSyncCountersTables } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable';
+import { SettingsAdminHealthAccountSyncCountersTable } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import { useContext } from 'react';
 
@@ -25,7 +25,7 @@ export const AccountSyncMetrics = () => {
   return (
     <>
       {syncMetrics.map((metric) => (
-        <SettingsAdminHealthAccountSyncCountersTables
+        <SettingsAdminHealthAccountSyncCountersTable
           key={metric.title}
           details={metric.details}
           title={metric.title}
