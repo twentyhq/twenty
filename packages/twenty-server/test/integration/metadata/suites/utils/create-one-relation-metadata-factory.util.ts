@@ -5,7 +5,7 @@ import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metada
 type CreateOneRelationFactoryParams = {
   gqlFields: string;
   input?: {
-    relation: Omit<CreateRelationInput, 'workspaceId'>;
+    relationMetadata: Omit<CreateRelationInput, 'workspaceId'>;
   };
 };
 
