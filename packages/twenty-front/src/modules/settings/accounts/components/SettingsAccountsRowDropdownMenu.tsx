@@ -33,7 +33,6 @@ export const SettingsAccountsRowDropdownMenu = ({
     useState(false);
 
   const navigate = useNavigateSettings();
-        
   const { closeDropdown } = useDropdown(dropdownId);
 
   const { destroyOneRecord } = useDestroyOneRecord({
@@ -63,7 +62,7 @@ export const SettingsAccountsRowDropdownMenu = ({
               LeftIcon={IconMail}
               text="Emails settings"
               onClick={() => {
-                navigate(`/settings/accounts/emails`);
+                navigate(SettingsPath.AccountsEmails);
                 closeDropdown();
               }}
             />
@@ -71,7 +70,7 @@ export const SettingsAccountsRowDropdownMenu = ({
               LeftIcon={IconCalendarEvent}
               text="Calendar settings"
               onClick={() => {
-                navigate(`/settings/accounts/calendars`);
+                navigate(SettingsPath.AccountsCalendars);
                 closeDropdown();
               }}
             />
