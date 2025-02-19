@@ -247,7 +247,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     const bodyV2FieldExists = objectMetadata.fields.some(
       (field) => field.name === 'bodyV2',
     );
-    if (!bodyV2FieldExists) {
+    if (bodyV2FieldExists) {
       this.logger.warn(
         `BodyV2 field already exists for workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
       );
