@@ -244,23 +244,15 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       },
     ] as const;
 
-    const bodyV2FieldExists = objectMetadata.fields.some(
+    const shouldCreateColumn = objectMetadata.fields.some(
       (field) => field.name === `${richTextField.name}V2`,
     );
-    if (bodyV2FieldExists) {
+    if (!shouldCreateColumn) {
       this.logger.warn(
         `${richTextField.name}V2 field already exists for workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
       );
     }
 
-    const shouldForceCreate = bodyV2FieldExists && this.options.force;
-    if (shouldForceCreate) {
-      this.logger.warn(
-        `Force recreating ${richTextField.name}V2Markdown and ${richTextField.name}V2Blocknote for workspaceId: ${workspaceId} objectMetadata: ${objectMetadata.id}`,
-      );
-    }
-
-    const shouldCreateColumn = !bodyV2FieldExists || shouldForceCreate;
     await this.dryRunGuardedOperation(async () => {
       if (shouldCreateColumn) {
         await this.workspaceMigrationService.createCustomMigration(
@@ -290,9 +282,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
   > {
     const richTextFieldsWithHasCreatedColumns: RichTextFieldWithHasCreatedColumnsAndObjectMetadata[] =
       [];
-    const addToAcc = (
-      elementToPush: RichTextFieldWithHasCreatedColumnsAndObjectMetadata,
-    ) => richTextFieldsWithHasCreatedColumns.push(elementToPush);
 
     for (const richTextField of richTextFields) {
       const standardId = this.buildRichTextFieldStandardId(richTextField);
@@ -314,29 +303,14 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           standardId: newRichTextField.standardId ?? undefined,
           workspaceId,
         });
-      const fieldMetadataAlreadyExists = isDefined(existingFieldMetadata);
-      if (fieldMetadataAlreadyExists) {
+      if (isDefined(existingFieldMetadata)) {
         this.logger.warn(
           `FieldMetadata already exists in fieldMetadataRepository name: ${newRichTextField.name} standardId: ${newRichTextField.standardId} type: ${newRichTextField.type} workspaceId: ${workspaceId}`,
         );
       }
 
-      const shouldForceUpdateFieldMetadata =
-        fieldMetadataAlreadyExists && this.options.force;
-      if (shouldForceUpdateFieldMetadata) {
-        this.logger.warn(
-          `Force recreating FieldMetadata name: ${newRichTextField.name} standardId: ${newRichTextField.standardId} type: ${newRichTextField.type} workspaceId: ${workspaceId}`,
-        );
-      }
-
       await this.dryRunGuardedOperation(async () => {
-        if (shouldForceUpdateFieldMetadata) {
-          return await this.fieldMetadataRepository.update(
-            { id: existingFieldMetadata.id },
-            newRichTextField,
-          );
-        }
-        if (!fieldMetadataAlreadyExists) {
+        if (!isDefined(existingFieldMetadata)) {
           await this.fieldMetadataRepository.insert(newRichTextField);
         }
       });
@@ -352,7 +326,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         this.logger.warn(
           `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
         );
-        addToAcc({
+        richTextFieldsWithHasCreatedColumns.push({
           hasCreatedColumns: false,
           richTextField,
           objectMetadata,
@@ -366,7 +340,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         workspaceId,
       });
 
-      addToAcc({
+      richTextFieldsWithHasCreatedColumns.push({
         hasCreatedColumns,
         richTextField,
         objectMetadata,
@@ -477,7 +451,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
         if (shouldForceUpdate) {
           this.logger.warn(
-            `Will force udpate RICH_TEXT_V2 fieldValue for ${richTextField.id} of objectMetada ${objectMetadata.id} even it has already been migrated in the past`,
+            `Will force udpate RICH_TEXT_V2 fieldValue for ${richTextField.id} of objectMetadata ${objectMetadata.id} even it has already been migrated in the past`,
           );
         }
         await this.dryRunGuardedOperation(async () => {
