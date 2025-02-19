@@ -2419,6 +2419,13 @@ export type EditSsoIdentityProviderMutationVariables = Exact<{
 
 export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
+export type ValidateWorkspaceTrustedDomainMutationVariables = Exact<{
+  input: ValidateTrustedDomainInput;
+}>;
+
+
+export type ValidateWorkspaceTrustedDomainMutation = { __typename?: 'Mutation', validateWorkspaceTrustedDomain: boolean };
+
 export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -4519,6 +4526,37 @@ export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.Mutation
 export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
+export const ValidateWorkspaceTrustedDomainDocument = gql`
+    mutation ValidateWorkspaceTrustedDomain($input: ValidateTrustedDomainInput!) {
+  validateWorkspaceTrustedDomain(input: $input)
+}
+    `;
+export type ValidateWorkspaceTrustedDomainMutationFn = Apollo.MutationFunction<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>;
+
+/**
+ * __useValidateWorkspaceTrustedDomainMutation__
+ *
+ * To run a mutation, you first call `useValidateWorkspaceTrustedDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useValidateWorkspaceTrustedDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [validateWorkspaceTrustedDomainMutation, { data, loading, error }] = useValidateWorkspaceTrustedDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useValidateWorkspaceTrustedDomainMutation(baseOptions?: Apollo.MutationHookOptions<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>(ValidateWorkspaceTrustedDomainDocument, options);
+      }
+export type ValidateWorkspaceTrustedDomainMutationHookResult = ReturnType<typeof useValidateWorkspaceTrustedDomainMutation>;
+export type ValidateWorkspaceTrustedDomainMutationResult = Apollo.MutationResult<ValidateWorkspaceTrustedDomainMutation>;
+export type ValidateWorkspaceTrustedDomainMutationOptions = Apollo.BaseMutationOptions<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>;
 export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     query ListSSOIdentityProvidersByWorkspaceId {
   listSSOIdentityProvidersByWorkspaceId {

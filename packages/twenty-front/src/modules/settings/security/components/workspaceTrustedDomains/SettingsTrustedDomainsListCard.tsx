@@ -14,6 +14,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { workspaceTrustedDomainsState } from '@/settings/security/states/WorkspaceTrustedDomainsState';
 import { SettingsSecurityTrustedDomainRowDropdownMenu } from '@/settings/security/components/workspaceTrustedDomains/SettingsSecurityTrustedDomainRowDropdownMenu';
+import { SettingsSecurityTrustedDomainValidationEffect } from '@/settings/security/components/workspaceTrustedDomains/SettingsSecurityTrustedDomainValidationEffect';
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -22,12 +23,11 @@ const StyledLink = styled(Link)`
 export const SettingsTrustedDomainsListCard = () => {
   const { enqueueSnackBar } = useSnackBar();
   const navigate = useNavigate();
+  const { t } = useLingui();
 
   const [workspaceTrustedDomains, setWorkspaceTrustedDomains] = useRecoilState(
     workspaceTrustedDomainsState,
   );
-
-  const { t } = useLingui();
 
   const { loading } = useGetAllWorkspaceTrustedDomainsQuery({
     fetchPolicy: 'network-only',
@@ -49,22 +49,25 @@ export const SettingsTrustedDomainsListCard = () => {
       />
     </StyledLink>
   ) : (
-    <SettingsListCard
-      items={workspaceTrustedDomains}
-      getItemLabel={(workspaceTrustedDomain) =>
-        `${workspaceTrustedDomain.domain} - ${workspaceTrustedDomain.createdAt}`
-      }
-      RowIcon={IconAt}
-      RowRightComponent={({ item: workspaceTrustedDomain }) => (
-        <SettingsSecurityTrustedDomainRowDropdownMenu
-          workspaceTrustedDomain={workspaceTrustedDomain}
-        />
-      )}
-      hasFooter
-      footerButtonLabel="Add Trusted Domain"
-      onFooterButtonClick={() =>
-        navigate(getSettingsPath(SettingsPath.NewTrustedDomain))
-      }
-    />
+    <>
+      <SettingsSecurityTrustedDomainValidationEffect />
+      <SettingsListCard
+        items={workspaceTrustedDomains}
+        getItemLabel={(workspaceTrustedDomain) =>
+          `${workspaceTrustedDomain.domain} - ${workspaceTrustedDomain.createdAt}`
+        }
+        RowIcon={IconAt}
+        RowRightComponent={({ item: workspaceTrustedDomain }) => (
+          <SettingsSecurityTrustedDomainRowDropdownMenu
+            workspaceTrustedDomain={workspaceTrustedDomain}
+          />
+        )}
+        hasFooter
+        footerButtonLabel="Add Trusted Domain"
+        onFooterButtonClick={() =>
+          navigate(getSettingsPath(SettingsPath.NewTrustedDomain))
+        }
+      />
+    </>
   );
 };
