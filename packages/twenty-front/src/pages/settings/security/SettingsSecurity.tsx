@@ -10,6 +10,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsTrustedDomainsListCard } from '@/settings/security/components/workspaceTrustedDomains/SettingsTrustedDomainsListCard';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -28,6 +30,10 @@ const StyledSection = styled(Section)`
 
 export const SettingsSecurity = () => {
   const { t } = useLingui();
+
+  const IsTrustedDomainsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsTrustedDomainsEnabled,
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -58,13 +64,15 @@ export const SettingsSecurity = () => {
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </StyledSection>
-          <StyledSection>
-            <H2Title
-              title={t`Approved Email Domain`}
-              description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
-            />
-            <SettingsTrustedDomainsListCard />
-          </StyledSection>
+          {IsTrustedDomainsEnabled && (
+            <StyledSection>
+              <H2Title
+                title={t`Approved Email Domain`}
+                description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
+              />
+              <SettingsTrustedDomainsListCard />
+            </StyledSection>
+          )}
           <Section>
             <StyledContainer>
               <H2Title
