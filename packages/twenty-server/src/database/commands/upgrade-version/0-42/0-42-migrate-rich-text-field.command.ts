@@ -201,14 +201,19 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
   private buildRichTextFieldStandardId(richTextField: FieldMetadataEntity) {
     switch (true) {
-      case richTextField.standardId === TASK_STANDARD_FIELD_IDS.body:
+      case richTextField.standardId === TASK_STANDARD_FIELD_IDS.body: {
         return TASK_STANDARD_FIELD_IDS.bodyV2;
-      case richTextField.standardId === NOTE_STANDARD_FIELD_IDS.body:
+      }
+      case richTextField.standardId === NOTE_STANDARD_FIELD_IDS.body: {
         return NOTE_STANDARD_FIELD_IDS.bodyV2;
-      default: {
+      }
+      case !richTextField.isCustom: {
         throw new Error(
           `RICH_TEXT does not belong to a Task or a Note standard objects: ${richTextField.id}`,
         );
+      }
+      default: {
+        return null;
       }
     }
   }
