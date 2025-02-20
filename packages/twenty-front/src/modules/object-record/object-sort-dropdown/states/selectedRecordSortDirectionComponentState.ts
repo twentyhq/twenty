@@ -1,10 +1,10 @@
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
-import { SortDirection } from '@/object-record/object-sort-dropdown/types/SortDirection';
+import { RecordSortDirection } from '@/object-record/record-sort/types/RecordSortDirection';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const selectedSortDirectionComponentState =
-  createComponentStateV2<SortDirection>({
-    key: 'selectedSortDirectionComponentState',
+export const selectedRecordSortDirectionComponentState =
+  createComponentStateV2<RecordSortDirection>({
+    key: 'selectedRecordSortDirectionComponentState',
     defaultValue: 'asc',
     componentInstanceContext: ObjectSortDropdownComponentInstanceContext,
   });

@@ -1,8 +1,9 @@
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const isSortSelectedComponentState = createComponentStateV2<boolean>({
-  key: 'isSortSelectedComponentState',
-  defaultValue: false,
-  componentInstanceContext: ObjectSortDropdownComponentInstanceContext,
-});
+export const isRecordSortSelectedComponentState =
+  createComponentStateV2<boolean>({
+    key: 'isRecordSortSelectedComponentState',
+    defaultValue: false,
+    componentInstanceContext: ObjectSortDropdownComponentInstanceContext,
+  });
