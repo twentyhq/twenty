@@ -15,10 +15,10 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-@Entity({ name: 'workspaceTrustedDomain', schema: 'core' })
+@Entity({ name: 'approvedAccessDomain', schema: 'core' })
 @ObjectType()
 @Unique('IndexOnDomainAndWorkspaceId', ['domain', 'workspaceId'])
-export class WorkspaceTrustedDomain {
+export class ApprovedAccessDomain {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -37,7 +37,7 @@ export class WorkspaceTrustedDomain {
   @Column()
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.trustDomains, {
+  @ManyToOne(() => Workspace, (workspace) => workspace.approvedAccessDomains, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })

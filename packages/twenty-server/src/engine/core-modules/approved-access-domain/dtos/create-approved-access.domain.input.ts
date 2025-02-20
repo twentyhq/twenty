@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
 
 @InputType()
-export class CreateTrustedDomainInput {
+export class CreateApprovedAccessDomainInput {
   @Field(() => String)
   @IsString()
   @IsNotEmpty()

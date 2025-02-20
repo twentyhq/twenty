@@ -858,7 +858,7 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
-  createWorkspaceTrustedDomain: WorkspaceTrustedDomain;
+  createWorkspaceTrustedDomain: ApprovedAccessDomain;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
@@ -1420,7 +1420,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  getAllWorkspaceTrustedDomains: Array<WorkspaceTrustedDomain>;
+  getAllWorkspaceTrustedDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -2284,8 +2284,8 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
-export type WorkspaceTrustedDomain = {
-  __typename?: 'WorkspaceTrustedDomain';
+export type ApprovedAccessDomain = {
+  __typename?: 'ApprovedAccessDomain';
   createdAt: Scalars['DateTime']['output'];
   domain: Scalars['String']['output'];
   id: Scalars['UUID']['output'];

@@ -4,8 +4,8 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('WorkspaceTrustedDomain')
-export class WorkspaceTrustedDomain {
+@ObjectType('ApprovedAccessDomain')
+export class ApprovedAccessDomain {
   @IDField(() => UUIDScalarType)
   id: string;
 
