@@ -55,7 +55,11 @@ export class SocialSsoService {
             },
           },
         },
-        relations: ['workspaceUsers', 'workspaceUsers.user', 'trustDomains'],
+        relations: [
+          'workspaceUsers',
+          'workspaceUsers.user',
+          'approvedAccessDomains',
+        ],
       });
 
       return workspace ?? undefined;
@@ -65,7 +69,7 @@ export class SocialSsoService {
       where: {
         id: workspaceId,
       },
-      relations: ['trustDomains'],
+      relations: ['approvedAccessDomains'],
     });
   }
 }

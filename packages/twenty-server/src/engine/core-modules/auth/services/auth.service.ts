@@ -522,7 +522,7 @@ export class AuthService {
           where: {
             inviteHash: params.workspaceInviteHash,
           },
-          relations: ['trustDomains'],
+          relations: ['approvedAccessDomains'],
         })) ?? undefined
       );
     }
@@ -577,7 +577,7 @@ export class AuthService {
         : userData.existingUser.email;
 
     if (
-      workspace?.trustDomains.some(
+      workspace?.approvedAccessDomains.some(
         (trustDomain) =>
           trustDomain.isValidated && trustDomain.domain === email.split('@')[1],
       )

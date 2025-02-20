@@ -245,7 +245,7 @@ describe('AuthService', () => {
         workspace: {
           id: 'workspace-id',
           isPublicInviteLinkEnabled: true,
-          trustDomains: [],
+          approvedAccessDomains: [],
         } as unknown as Workspace,
       });
 
@@ -270,7 +270,7 @@ describe('AuthService', () => {
           workspace: {
             id: 'workspace-id',
             isPublicInviteLinkEnabled: true,
-            trustDomains: [],
+            approvedAccessDomains: [],
           } as unknown as Workspace,
         }),
       ).rejects.toThrow(new Error('Access denied'));
@@ -294,7 +294,7 @@ describe('AuthService', () => {
           workspace: {
             id: 'workspace-id',
             isPublicInviteLinkEnabled: false,
-            trustDomains: [],
+            approvedAccessDomains: [],
           } as unknown as Workspace,
         }),
       ).rejects.toThrow(
@@ -359,7 +359,7 @@ describe('AuthService', () => {
         } as ExistingUserOrNewUser['userData'],
         invitation: {} as AppToken,
         workspaceInviteHash: undefined,
-        workspace: { trustDomains: [] } as unknown as Workspace,
+        workspace: { approvedAccessDomains: [] } as unknown as Workspace,
       });
 
       expect(spy).toHaveBeenCalledTimes(0);
@@ -379,7 +379,7 @@ describe('AuthService', () => {
         workspaceInviteHash: 'workspaceInviteHash',
         workspace: {
           isPublicInviteLinkEnabled: true,
-          trustDomains: [],
+          approvedAccessDomains: [],
         } as unknown as Workspace,
       });
 
@@ -398,7 +398,9 @@ describe('AuthService', () => {
           workspaceInviteHash: 'workspaceInviteHash',
           workspace: {
             isPublicInviteLinkEnabled: true,
-            trustDomains: [{ domain: 'domain.com', isValidated: true }],
+            approvedAccessDomains: [
+              { domain: 'domain.com', isValidated: true },
+            ],
           } as unknown as Workspace,
         });
       }).not.toThrow();
@@ -424,7 +426,9 @@ describe('AuthService', () => {
     it('findWorkspaceForSignInUp - signup password auth with workspaceInviteHash', async () => {
       const spyWorkspaceRepository = jest
         .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ trustDomains: [] } as unknown as Workspace);
+        .mockResolvedValue({
+          approvedAccessDomains: [],
+        } as unknown as Workspace);
       const spySocialSsoService = jest.spyOn(
         socialSsoService,
         'findWorkspaceFromWorkspaceIdOrAuthProvider',
@@ -443,7 +447,9 @@ describe('AuthService', () => {
     it('findWorkspaceForSignInUp - signup social sso auth with workspaceInviteHash', async () => {
       const spyWorkspaceRepository = jest
         .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ trustDomains: [] } as unknown as Workspace);
+        .mockResolvedValue({
+          approvedAccessDomains: [],
+        } as unknown as Workspace);
       const spySocialSsoService = jest.spyOn(
         socialSsoService,
         'findWorkspaceFromWorkspaceIdOrAuthProvider',
