@@ -8,7 +8,6 @@ import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { shouldRedirectToShowPageOnCreation } from '@/object-record/utils/shouldRedirectToShowPageOnCreation';
 import { AppPath } from '@/types/AppPath';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -70,27 +69,6 @@ export const useCreateNewTableRecord = ({
         const recordId = v4();
 
         if (isCommandMenuV2Enabled) {
-          if (
-            shouldRedirectToShowPageOnCreation(objectMetadataItem.nameSingular)
-          ) {
-            await createOneRecord({
-              id: recordId,
-              name: 'Untitled',
-            });
-
-            navigate(AppPath.RecordShowPage, {
-              objectNameSingular: objectMetadataItem.nameSingular,
-              objectRecordId: recordId,
-            });
-
-            // TODO: we should open the record title cell here but because
-            // we are redirecting to the record show page, the hotkey scope will
-            // be overridden by the hotkey scope on mount. We need to deprecate
-            // the useHotkeyScopeOnMount hook.
-
-            return;
-          }
-
           const recordIndexOpenRecordIn = snapshot
             .getLoadable(recordIndexOpenRecordInState)
             .getValue();
