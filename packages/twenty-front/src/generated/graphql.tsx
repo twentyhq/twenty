@@ -499,6 +499,7 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
@@ -510,7 +511,6 @@ export enum FeatureFlagKey {
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
-  IsTrustedDomainsEnabled = 'IsTrustedDomainsEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }

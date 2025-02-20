@@ -31,8 +31,8 @@ const StyledSection = styled(Section)`
 export const SettingsSecurity = () => {
   const { t } = useLingui();
 
-  const IsTrustedDomainsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsTrustedDomainsEnabled,
+  const IsApprovedAccessDomainsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsApprovedAccessDomainsEnabled,
   );
 
   return (
@@ -64,7 +64,7 @@ export const SettingsSecurity = () => {
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </StyledSection>
-          {IsTrustedDomainsEnabled && (
+          {IsApprovedAccessDomainsEnabled && (
             <StyledSection>
               <H2Title
                 title={t`Approved Email Domain`}
