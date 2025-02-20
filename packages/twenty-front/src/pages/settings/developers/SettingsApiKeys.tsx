@@ -1,3 +1,4 @@
+import { SettingsApiPlaygroundCoverImage } from '@/settings/api/playground/components/SettingsApiPlaygroundCoverImage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
@@ -31,7 +32,7 @@ export const SettingsApiKeys = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`Developers`}
+      title={t`APIs`}
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
@@ -48,6 +49,7 @@ export const SettingsApiKeys = () => {
               title={t`Playground`}
               description={t`Try our REST or GraphQL API playgrounds.`}
             />
+            <SettingsApiPlaygroundCoverImage/>
           </Section>
           <Section>
             <H2Title
