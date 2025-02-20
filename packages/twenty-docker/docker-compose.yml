@@ -11,6 +11,8 @@ services:
       bash -c "
       chown -R 1000:1000 /tmp/server-local-data
       && chown -R 1000:1000 /tmp/docker-data"
+    # mem_limit: 32mb
+    # memswap_limit: -1
 
   server:
     image: twentycrm/twenty:${TAG:-latest}
@@ -32,7 +34,7 @@ services:
 
       APP_SECRET: ${APP_SECRET}
 
-      IS_MULTIWORKSPACE_ENABLED: true
+      # IS_MULTIWORKSPACE_ENABLED: true
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
@@ -44,6 +46,8 @@ services:
       timeout: 5s
       retries: 10
     restart: always
+    # mem_limit: 32mb
+    # memswap_limit: -1
 
   worker:
     image: twentycrm/twenty:${TAG:-latest}
@@ -66,6 +70,8 @@ services:
       server:
         condition: service_healthy
     restart: always
+    # mem_limit: 32mb
+    # memswap_limit: -1
 
   db:
     image: twentycrm/twenty-postgres-spilo:${TAG:-latest}
@@ -82,10 +88,14 @@ services:
       timeout: 5s
       retries: 10
     restart: always
+    # mem_limit: 32mb
+    # memswap_limit: -1
 
   redis:
     image: redis
     restart: always
+    # mem_limit: 32mb
+    # memswap_limit: -1
 
 volumes:
   docker-data:
