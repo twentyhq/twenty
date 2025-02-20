@@ -309,28 +309,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         />
         <WorkflowStepBody>
           {activeTabId === 'code' && (
-            <>
-              <WorkflowEditActionFormServerlessFunctionFields
-                functionInput={functionInput}
-                VariablePicker={WorkflowVariablePicker}
-                onInputChange={handleInputChange}
-                readonly={actionOptions.readonly}
-              />
-              <StyledCodeEditorContainer>
-                <CodeEditor
-                  height={343}
-                  value={formValues.code?.[INDEX_FILE_PATH]}
-                  language={'typescript'}
-                  onChange={handleCodeChange}
-                  onMount={handleEditorDidMount}
-                  setMarkers={getWrongExportedFunctionMarkers}
-                  options={{
-                    readOnly: actionOptions.readonly,
-                    domReadOnly: actionOptions.readonly,
-                  }}
-                />
-              </StyledCodeEditorContainer>
-            </>
+            
           )}
           {activeTabId === 'test' && (
             <>
