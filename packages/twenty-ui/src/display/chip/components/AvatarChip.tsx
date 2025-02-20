@@ -27,6 +27,7 @@ export type AvatarChipProps = {
   maxWidth?: number;
 };
 
+// TODO improve
 export enum AvatarChipVariant {
   Regular = 'regular',
   Transparent = 'transparent',
@@ -42,6 +43,7 @@ const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 
+// TODO prastoin debug
 // Ideally we would use the UndecoratedLink component from @ui/navigation
 // but it led to a bug probably linked to circular dependencies, which was hard to solve
 const StyledLink = styled(Link)`
@@ -52,10 +54,10 @@ export const AvatarChip = ({
   name,
   avatarUrl,
   avatarType = 'rounded',
-  variant = AvatarChipVariant.Regular,
+  variant: propsVariant = AvatarChipVariant.Regular,
   LeftIcon,
   LeftIconColor,
-  isIconInverted,
+  isIconInverted = false,
   className,
   placeholderColorSeed,
   onClick,
@@ -65,20 +67,42 @@ export const AvatarChip = ({
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
 
-  const chip = (
+  const isClickable = isDefined(onClick) || isDefined(to);
+  // TODO refactor
+  const getVariant = () => {
+    if (!isClickable) {
+      return ChipVariant.Transparent;
+    }
+    /// Hard to understand
+    if (propsVariant === AvatarChipVariant.Regular) {
+      //Regular but Highlighted -> missleading
+      return ChipVariant.Highlighted;
+    }
+
+    return ChipVariant.Regular;
+    ///
+  };
+
+  const avatarChip = (
     <Chip
       label={name}
-      variant={
-        isDefined(onClick) || isDefined(to)
-          ? variant === AvatarChipVariant.Regular
-            ? ChipVariant.Highlighted
-            : ChipVariant.Regular
-          : ChipVariant.Transparent
-      }
+      variant={getVariant()}
       size={size}
-      leftComponent={
-        isDefined(LeftIcon) ? (
-          isIconInverted === true ? (
+      leftComponent={(() => {
+        if (!isDefined(LeftIcon)) {
+          return (
+            <Avatar
+              avatarUrl={avatarUrl}
+              placeholderColorSeed={placeholderColorSeed}
+              placeholder={name}
+              size="sm"
+              type={avatarType}
+            />
+          );
+        }
+
+        if (isIconInverted) {
+          return (
             <StyledInvertedIconContainer
               backgroundColor={theme.background.invertedSecondary}
             >
@@ -88,34 +112,40 @@ export const AvatarChip = ({
                 stroke={theme.icon.stroke.sm}
               />
             </StyledInvertedIconContainer>
-          ) : (
-            <LeftIcon
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.sm}
-              color={LeftIconColor || 'currentColor'}
-            />
-          )
-        ) : (
-          <Avatar
-            avatarUrl={avatarUrl}
-            placeholderColorSeed={placeholderColorSeed}
-            placeholder={name}
-            size="sm"
-            type={avatarType}
+          );
+        }
+
+        return (
+          <LeftIcon
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+            color={LeftIconColor || 'currentColor'}
           />
-        )
-      }
-      clickable={isDefined(onClick) || isDefined(to)}
-      onClick={to ? undefined : onClick}
+        );
+      })()}
+      clickable={isClickable}
+      // TODO Ugh DX weird
+      onClick={(event) => {
+        if (isDefined(to) || !isDefined(onClick)) {
+          return undefined;
+        }
+
+        return onClick(event);
+      }}
       className={className}
       maxWidth={maxWidth}
     />
   );
 
-  if (!isDefined(to)) return chip;
+  if (!isDefined(to)) {
+    return avatarChip;
+  }
+
   return (
+    // TODO use unDecoratedLink
+    // Could on click be on chip ? redirection intercepts it ?
     <StyledLink to={to} onClick={onClick}>
-      {chip}
+      {avatarChip}
     </StyledLink>
   );
 };
