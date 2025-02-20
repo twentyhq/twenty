@@ -22,6 +22,8 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowStepResult } from 'src/modules/workflow/workflow-executor/types/workflow-step-result.type';
+import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-step.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -32,21 +34,12 @@ export enum WorkflowRunStatus {
   FAILED = 'FAILED',
 }
 
-type StepRunOutput = {
-  id: string;
-  outputs: {
-    attemptCount: number;
-    result: object | undefined;
-    error: string | undefined;
-  }[];
-};
-
 export type WorkflowRunOutput = {
   flow: {
     trigger: WorkflowTrigger;
-    steps: WorkflowAction[];
+    steps: (WorkflowAction | WorkflowStep)[];
   };
-  stepsOutput?: Record<string, StepRunOutput>;
+  stepsOutput?: Record<string, WorkflowStepResult>;
   error?: string;
 };
 

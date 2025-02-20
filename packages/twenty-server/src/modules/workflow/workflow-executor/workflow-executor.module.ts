@@ -2,26 +2,17 @@ import { Module } from '@nestjs/common';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
-import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
-import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
-import { SendEmailActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email-action.module';
-import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
+import { WorkflowActionExecutorModule } from 'src/modules/workflow/workflow-executor/workflow-actions/workflow-action-executor.module';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
   imports: [
     WorkflowCommonModule,
-    CodeActionModule,
-    SendEmailActionModule,
-    RecordCRUDActionModule,
     WorkflowRunModule,
+    WorkflowActionExecutorModule,
   ],
-  providers: [
-    WorkflowExecutorWorkspaceService,
-    ScopedWorkspaceContextFactory,
-    WorkflowActionFactory,
-  ],
+  providers: [WorkflowExecutorWorkspaceService, ScopedWorkspaceContextFactory],
   exports: [WorkflowExecutorWorkspaceService],
 })
 export class WorkflowExecutorModule {}

@@ -8,7 +8,7 @@ import {
   ObjectRecordOrderBy,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/interfaces/workflow-action.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -21,12 +21,12 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkflowStepResult } from 'src/modules/workflow/workflow-executor/types/workflow-step-result.type';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
 export class FindRecordsWorflowAction implements WorkflowAction {
@@ -39,7 +39,7 @@ export class FindRecordsWorflowAction implements WorkflowAction {
 
   async execute(
     workflowActionInput: WorkflowFindRecordsActionInput,
-  ): Promise<WorkflowActionResult> {
+  ): Promise<WorkflowStepResult> {
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
     );

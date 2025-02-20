@@ -3,19 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/interfaces/workflow-action.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { WorkflowStepResult } from 'src/modules/workflow/workflow-executor/types/workflow-step-result.type';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
 import { WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
 export class DeleteRecordWorkflowAction implements WorkflowAction {
@@ -29,7 +29,7 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
 
   async execute(
     workflowActionInput: WorkflowDeleteRecordActionInput,
-  ): Promise<WorkflowActionResult> {
+  ): Promise<WorkflowStepResult> {
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
     );
