@@ -165,7 +165,10 @@ export const ObjectOptionsDropdownMenuContent = () => {
               text={displayedExportProgress(progress)}
             />
             <MenuItem
-              onClick={() => openObjectRecordsSpreasheetImportDialog()}
+              onClick={() => {
+                closeDropdown();
+                openObjectRecordsSpreasheetImportDialog();
+              }}
               LeftIcon={IconFileImport}
               text="Import"
             />

@@ -120,6 +120,13 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
+    if (!payload.userWorkspaceId) {
+      throw new AuthException(
+        'UserWorkspace not found',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         id: payload.userWorkspaceId,

@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import {
   RecordPositionQueryFactory,
@@ -73,14 +73,14 @@ export class RecordPositionBackfillService {
         continue;
       }
 
-      const position = await this.recordPositionFactory.create(
-        'last',
-        {
+      const position = await this.recordPositionFactory.create({
+        objectMetadata: {
           isCustom: objectMetadata.isCustom,
           nameSingular: objectMetadata.nameSingular,
         },
+        value: 'last',
         workspaceId,
-      );
+      });
 
       for (
         let recordIndex = 0;

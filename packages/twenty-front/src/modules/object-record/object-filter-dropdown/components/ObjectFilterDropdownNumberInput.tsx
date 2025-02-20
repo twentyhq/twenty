@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback, useState } from 'react';
 import { v4 } from 'uuid';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -55,17 +55,16 @@ export const ObjectFilterDropdownNumberInput = () => {
 
           setInputValue(newValue);
 
-          const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-            field: fieldMetadataItemUsedInDropdown,
-          });
-
           applyRecordFilter({
             id: selectedFilter?.id ? selectedFilter.id : v4(),
             fieldMetadataId: fieldMetadataItemUsedInDropdown?.id ?? '',
             value: newValue,
             operand: selectedOperandInDropdown,
             displayValue: newValue,
-            definition: filterDefinition,
+            type: getFilterTypeFromFieldType(
+              fieldMetadataItemUsedInDropdown.type,
+            ),
+            label: fieldMetadataItemUsedInDropdown.label,
             viewFilterGroupId: selectedFilter?.viewFilterGroupId,
           });
         }}

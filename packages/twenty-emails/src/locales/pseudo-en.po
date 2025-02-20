@@ -13,102 +13,106 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/emails/send-invite-link.email.tsx:57
+#: src/emails/send-invite-link.email.tsx
 msgid "Accept invite"
 msgstr ""
 
-#: src/emails/clean-suspended-workspace.email.tsx:33
+#: src/emails/clean-suspended-workspace.email.tsx
 msgid "All data in this workspace has been permanently deleted."
 msgstr ""
 
-#: src/emails/send-email-verification-link.email.tsx:22
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:46
+#: src/emails/password-update-notify.email.tsx
 msgid "Connect to Twenty"
 msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:24
+#: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:24
+#: src/emails/password-update-notify.email.tsx
 msgid "Dear {userName}"
 msgstr ""
 
-#: src/emails/send-invite-link.email.tsx:50
+#: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:24
+#: src/emails/password-update-notify.email.tsx
 msgid "Hello"
 msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:40
+#: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr ""
 
-#: src/emails/warn-suspended-workspace.email.tsx:46
+#: src/emails/warn-suspended-workspace.email.tsx
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
 msgstr ""
 
-#: src/emails/clean-suspended-workspace.email.tsx:36
+#: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you wish to use Twenty again, you can create a new workspace."
 msgstr ""
 
-#: src/emails/warn-suspended-workspace.email.tsx:34
+#: src/emails/warn-suspended-workspace.email.tsx
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
 msgstr ""
 
-#: src/emails/send-invite-link.email.tsx:42
+#: src/emails/send-invite-link.email.tsx
 msgid "Join your team on Twenty"
 msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:29
+#: src/emails/password-update-notify.email.tsx
 msgid "Password updated"
 msgstr ""
 
-#: src/emails/password-reset-link.email.tsx:24
+#: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr ""
 
-#: src/emails/password-reset-link.email.tsx:23
+#: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr ""
 
-#: src/emails/send-email-verification-link.email.tsx:27
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr ""
 
-#: src/emails/warn-suspended-workspace.email.tsx:40
+#: src/emails/warn-suspended-workspace.email.tsx
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
 msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:34
+#: src/emails/password-update-notify.email.tsx
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr ""
 
-#: src/emails/password-update-notify.email.tsx:36
+#: src/emails/password-update-notify.email.tsx
 #~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 #~ msgstr ""
 
-#: src/emails/password-reset-link.email.tsx:26
+#: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr ""
 
-#: src/emails/password-reset-link.email.tsx:28
+#: src/emails/password-reset-link.email.tsx
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
 #~ msgstr ""
 
-#: src/emails/warn-suspended-workspace.email.tsx:53
+#: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
 msgstr ""
 
-#: src/emails/send-email-verification-link.email.tsx:23
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr ""
 
-#: src/emails/clean-suspended-workspace.email.tsx:27
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
 msgstr ""
+
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+#~ msgstr ""

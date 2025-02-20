@@ -39,7 +39,7 @@
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/serve-static": "^4.0.1",
-    "@nestjs/terminus": "^9.2.2",
+    "@nestjs/terminus": "^11.0.0",
     "@nestjs/typeorm": "^10.0.0",
     "@nx/eslint-plugin": "^17.2.8",
     "@octokit/graphql": "^7.0.2",

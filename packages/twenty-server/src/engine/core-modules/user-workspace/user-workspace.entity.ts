@@ -1,10 +1,11 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { SettingsFeatures } from 'twenty-shared';
+import { PermissionsOnAllObjectRecords, SettingsFeatures } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -22,6 +23,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(SettingsFeatures, {
   name: 'SettingsFeatures',
+});
+
+registerEnumType(PermissionsOnAllObjectRecords, {
+  name: 'PermissionsOnAllObjectRecords',
 });
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
@@ -63,7 +68,7 @@ export class UserWorkspace {
   updatedAt: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, type: 'timestamptz' })
+  @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
   @OneToMany(
@@ -74,4 +79,7 @@ export class UserWorkspace {
 
   @Field(() => [SettingsFeatures], { nullable: true })
   settingsPermissions?: SettingsFeatures[];
+
+  @Field(() => [PermissionsOnAllObjectRecords], { nullable: true })
+  objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
 }

@@ -1,23 +1,21 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 
-import {
-  formatFieldMetadataItemAsFilterDefinition,
-  getFilterTypeFromFieldType,
-} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { View } from '@/views/types/View';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewType } from '@/views/types/ViewType';
+import { act } from 'react';
 import { isDefined } from 'twenty-shared';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '../useApplyCurrentViewFiltersToCurrentRecordFilters';
-
-jest.mock('@/prefetch/hooks/usePrefetchedData');
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -34,11 +32,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
 
   const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
 
-  const mockFilterDefinition: RecordFilterDefinition =
-    formatFieldMetadataItemAsFilterDefinition({
-      field: mockFieldMetadataItem,
-    });
-
   const mockViewFilter: ViewFilter = {
     __typename: 'ViewFilter',
     id: 'filter-1',
@@ -48,21 +41,28 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     displayValue: mockFieldMetadataItem.label,
     viewFilterGroupId: 'group-1',
     positionInViewFilterGroup: 0,
-    definition: mockFilterDefinition,
   };
 
-  const mockView = {
+  const mockView: View = {
     id: 'view-1',
     name: 'Test View',
     objectMetadataId: mockObjectMetadataItem.id,
     viewFilters: [mockViewFilter],
+    type: ViewType.Table,
+    key: null,
+    isCompact: false,
+    viewFields: [],
+    viewGroups: [],
+    viewSorts: [],
+    kanbanFieldMetadataId: '',
+    kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+    icon: '',
+    kanbanAggregateOperationFieldMetadataId: '',
+    position: 0,
+    __typename: 'View',
   };
 
   it('should apply filters from current view', () => {
-    (usePrefetchedData as jest.Mock).mockReturnValue({
-      records: [mockView],
-    });
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
@@ -85,11 +85,12 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
-              currentViewIdComponentState.atomFamily({
+              contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
+            snapshot.set(prefetchViewsState, [mockView]);
           },
         }),
       },
@@ -108,18 +109,13 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         operand: mockViewFilter.operand,
         viewFilterGroupId: mockViewFilter.viewFilterGroupId,
         positionInViewFilterGroup: mockViewFilter.positionInViewFilterGroup,
-        definition: mockFilterDefinition,
-        label: mockViewFilter.displayValue,
+        label: mockFieldMetadataItem.label,
         type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
       } satisfies RecordFilter,
     ]);
   });
 
   it('should not apply filters when current view is not found', () => {
-    (usePrefetchedData as jest.Mock).mockReturnValue({
-      records: [],
-    });
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
@@ -142,11 +138,12 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
-              currentViewIdComponentState.atomFamily({
+              contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
+            snapshot.set(prefetchViewsState, []);
           },
         }),
       },
@@ -160,15 +157,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
   });
 
   it('should handle view with empty filters', () => {
-    const viewWithNoFilters = {
-      ...mockView,
-      viewFilters: [],
-    };
-
-    (usePrefetchedData as jest.Mock).mockReturnValue({
-      records: [viewWithNoFilters],
-    });
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
@@ -191,11 +179,14 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(
-              currentViewIdComponentState.atomFamily({
+              contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
+            snapshot.set(prefetchViewsState, [
+              { ...mockView, viewFilters: [] },
+            ]);
           },
         }),
       },

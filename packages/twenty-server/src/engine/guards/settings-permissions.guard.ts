@@ -14,6 +14,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import {
   PermissionsException,
   PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
@@ -46,6 +47,7 @@ export const SettingsPermissionsGuard = (
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           _setting: requiredPermission,
+          workspaceId,
         });
 
       if (hasPermission === true) {
@@ -53,7 +55,7 @@ export const SettingsPermissionsGuard = (
       }
 
       throw new PermissionsException(
-        'User is not authorized to perform this action',
+        PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }

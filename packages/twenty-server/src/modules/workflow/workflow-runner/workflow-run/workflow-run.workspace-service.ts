@@ -51,9 +51,11 @@ export class WorkflowRunWorkspaceService {
   async startWorkflowRun({
     workflowRunId,
     context,
+    output,
   }: {
     workflowRunId: string;
     context: Record<string, any>;
+    output: Pick<WorkflowRunOutput, 'flow'>;
   }) {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
@@ -82,6 +84,7 @@ export class WorkflowRunWorkspaceService {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
       context,
+      output,
     });
   }
 
@@ -110,13 +113,6 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    if (workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING) {
-      throw new WorkflowRunException(
-        'Workflow cannot be ended as it is not running',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
-    }
-
     return workflowRunRepository.update(workflowRunToUpdate.id, {
       status,
       endedAt: new Date().toISOString(),
@@ -133,7 +129,7 @@ export class WorkflowRunWorkspaceService {
     context,
   }: {
     workflowRunId: string;
-    output: WorkflowRunOutput;
+    output: Pick<WorkflowRunOutput, 'error' | 'stepsOutput'>;
     context: Record<string, any>;
   }) {
     const workflowRunRepository =
@@ -153,7 +149,13 @@ export class WorkflowRunWorkspaceService {
     }
 
     return workflowRunRepository.update(workflowRunId, {
-      output,
+      output: {
+        flow: workflowRunToUpdate.output?.flow ?? {
+          trigger: undefined,
+          steps: [],
+        },
+        ...output,
+      },
       context,
     });
   }

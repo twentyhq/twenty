@@ -570,11 +570,11 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Domain for the frontend application',
+    description: 'Url for the frontend application',
   })
-  @IsString()
+  @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
-  FRONT_DOMAIN?: string;
+  FRONTEND_URL: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
@@ -584,23 +584,6 @@ export class EnvironmentVariables {
   @IsString()
   @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
   DEFAULT_SUBDOMAIN = 'app';
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Protocol for the frontend application (http or https)',
-  })
-  @IsString()
-  @IsOptional()
-  FRONT_PROTOCOL?: 'http' | 'https' = 'http';
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Port for the frontend application',
-  })
-  @CastToPositiveNumber()
-  @IsNumber()
-  @IsOptional()
-  FRONT_PORT?: number;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
@@ -766,12 +749,12 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Port for the backend server',
+    description: 'Port for the node server',
   })
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
-  PORT = 3000;
+  NODE_PORT = 3000;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
@@ -913,13 +896,23 @@ export class EnvironmentVariables {
   })
   @CastToPositiveNumber()
   @IsNumber()
-  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION', {
+    message:
+      '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower than "WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION"',
+  })
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Number of inactive days before soft deleting workspaces',
+  })
+  @CastToPositiveNumber()
+  @IsNumber()
   @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', {
     message:
-      '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower than "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
+      '"WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION" should be strictly lower than "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
   })
-  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION = 14;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
@@ -927,8 +920,7 @@ export class EnvironmentVariables {
   })
   @CastToPositiveNumber()
   @IsNumber()
-  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 14;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 21;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
@@ -997,6 +989,15 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES = 5;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Enable or disable the attachment preview feature',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_ATTACHMENT_PREVIEW_ENABLED = true;
 }
 
 export const validate = (

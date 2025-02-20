@@ -7,6 +7,7 @@ import { IconComponent, MenuItemAccent } from 'twenty-ui';
 export enum ActionMenuEntryType {
   Standard = 'Standard',
   WorkflowRun = 'WorkflowRun',
+  Fallback = 'Fallback',
 }
 
 export enum ActionMenuEntryScope {

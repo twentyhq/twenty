@@ -7,7 +7,7 @@ import { act } from 'react';
 import {
   GetJestMetadataAndApolloMocksAndActionMenuWrapperProps,
   getJestMetadataAndApolloMocksAndActionMenuWrapper,
-} from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+} from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { useDestroyMultipleRecordsAction } from '../useDestroyMultipleRecordsAction';
@@ -90,12 +90,8 @@ describe('useDestroyMultipleRecordsAction', () => {
               value: '',
               displayValue: '',
               operand: ViewFilterOperand.IsNotEmpty,
-              definition: {
-                label: 'Deleted',
-                iconName: 'IconTrash',
-                fieldMetadataId: personMockObjectMetadataItemDeletedAtField.id,
-                type: 'DATE_TIME',
-              },
+              type: 'DATE_TIME',
+              label: 'Deleted',
             },
           ],
         }),

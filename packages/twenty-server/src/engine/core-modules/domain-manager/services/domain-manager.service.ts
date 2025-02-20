@@ -11,6 +11,8 @@ import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class DomainManagerService {
@@ -21,28 +23,10 @@ export class DomainManagerService {
   ) {}
 
   getFrontUrl() {
-    let baseUrl: URL;
-    const frontPort = this.environmentService.get('FRONT_PORT');
-    const frontDomain = this.environmentService.get('FRONT_DOMAIN');
-    const frontProtocol = this.environmentService.get('FRONT_PROTOCOL');
-
-    const serverUrl = this.environmentService.get('SERVER_URL');
-
-    if (!frontDomain) {
-      baseUrl = new URL(serverUrl);
-    } else {
-      baseUrl = new URL(`${frontProtocol}://${frontDomain}`);
-    }
-
-    if (frontPort) {
-      baseUrl.port = frontPort.toString();
-    }
-
-    if (frontProtocol) {
-      baseUrl.protocol = frontProtocol;
-    }
-
-    return baseUrl;
+    return new URL(
+      this.environmentService.get('FRONTEND_URL') ??
+        this.environmentService.get('SERVER_URL'),
+    );
   }
 
   getBaseUrl(): URL {
@@ -146,41 +130,35 @@ export class DomainManagerService {
   }
 
   private async getDefaultWorkspace() {
-    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      const defaultWorkspaceSubDomain =
-        this.environmentService.get('DEFAULT_SUBDOMAIN');
-
-      if (isDefined(defaultWorkspaceSubDomain)) {
-        const foundWorkspaceForDefaultSubDomain =
-          await this.workspaceRepository.findOne({
-            where: { subdomain: defaultWorkspaceSubDomain },
-            relations: ['workspaceSSOIdentityProviders'],
-          });
-
-        if (isDefined(foundWorkspaceForDefaultSubDomain)) {
-          return foundWorkspaceForDefaultSubDomain;
-        }
-      }
-
-      const workspaces = await this.workspaceRepository.find({
-        order: {
-          createdAt: 'DESC',
-        },
-        relations: ['workspaceSSOIdentityProviders'],
-      });
-
-      if (workspaces.length > 1) {
-        Logger.warn(
-          `In single-workspace mode, there should be only one workspace. Today there are ${workspaces.length} workspaces`,
-        );
-      }
-
-      return workspaces[0];
+    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      throw new Error(
+        'Default workspace does not exist when multi-workspace is enabled',
+      );
     }
 
-    throw new Error(
-      'Default workspace not exist when multi-workspace is enabled',
-    );
+    const workspaces = await this.workspaceRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: ['workspaceSSOIdentityProviders'],
+    });
+
+    if (workspaces.length > 1) {
+      Logger.warn(
+        ` ${workspaces.length} workspaces found in database. In single-workspace mode, there should be only one workspace. Apple seed workspace will be used as fallback if it found.`,
+      );
+    }
+
+    const foundWorkspace =
+      workspaces.length === 1
+        ? workspaces[0]
+        : workspaces.filter(
+            (workspace) => workspace.id === SEED_APPLE_WORKSPACE_ID,
+          )?.[0];
+
+    workspaceValidator.assertIsDefinedOrThrow(foundWorkspace);
+
+    return foundWorkspace;
   }
 
   async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
@@ -235,7 +213,9 @@ export class DomainManagerService {
   private getTwentyWorkspaceUrl(subdomain: string) {
     const url = this.getFrontUrl();
 
-    url.hostname = `${subdomain}.${url.hostname}`;
+    url.hostname = this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+      ? `${subdomain}.${url.hostname}`
+      : url.hostname;
 
     return url.toString();
   }

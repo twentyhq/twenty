@@ -4,9 +4,12 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
+import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -15,9 +18,11 @@ type useRecordTableProps = {
 };
 
 export const useTableColumns = (props?: useRecordTableProps) => {
-  const { onColumnsChange, setTableColumns } = useRecordTable({
+  const { onColumnsChange } = useRecordTable({
     recordTableId: props?.recordTableId,
   });
+
+  const { setTableColumns } = useSetTableColumns();
 
   const availableTableColumns = useRecoilComponentValueV2(
     availableTableColumnsComponentState,
@@ -35,13 +40,18 @@ export const useTableColumns = (props?: useRecordTableProps) => {
 
   const { handleColumnMove } = useMoveViewColumns();
 
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordTableComponentInstanceContext,
+    props?.recordTableId,
+  );
+
   const handleColumnsChange = useCallback(
     async (columns: ColumnDefinition<FieldMetadata>[]) => {
-      setTableColumns(columns);
+      setTableColumns(columns, instanceId);
 
       await onColumnsChange?.(columns);
     },
-    [onColumnsChange, setTableColumns],
+    [setTableColumns, instanceId, onColumnsChange],
   );
 
   const handleColumnVisibilityChange = useCallback(

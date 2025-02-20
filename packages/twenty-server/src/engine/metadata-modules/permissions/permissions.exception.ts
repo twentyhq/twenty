@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class PermissionsException extends CustomException {
-  code: PermissionsExceptionCode;
   constructor(message: string, code: PermissionsExceptionCode) {
     super(message, code);
   }
@@ -17,6 +16,8 @@ export enum PermissionsExceptionCode {
   WORKSPACE_MEMBER_NOT_FOUND = 'WORKSPACE_MEMBER_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
   CANNOT_UNASSIGN_LAST_ADMIN = 'CANNOT_UNASSIGN_LAST_ADMIN',
+  UNKNOWN_OPERATION_NAME = 'UNKNOWN_OPERATION_NAME',
+  UNKNOWN_REQUIRED_PERMISSION = 'UNKNOWN_REQUIRED_PERMISSION',
 }
 
 export enum PermissionsExceptionMessage {
@@ -29,4 +30,6 @@ export enum PermissionsExceptionMessage {
   WORKSPACE_MEMBER_NOT_FOUND = 'Workspace member not found',
   ROLE_NOT_FOUND = 'Role not found',
   CANNOT_UNASSIGN_LAST_ADMIN = 'Cannot unassign last admin',
+  UNKNOWN_OPERATION_NAME = 'Unknown operation name, cannot determine required permission',
+  UNKNOWN_REQUIRED_PERMISSION = 'Unknown required permission',
 }
