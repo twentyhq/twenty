@@ -104,7 +104,6 @@ export const SettingsSecurityApprovedAccessDomain = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 autoComplete="off"
-                label="Domain"
                 value={value}
                 onChange={(domain: string) => {
                   onChange(domain);
@@ -126,7 +125,6 @@ export const SettingsSecurityApprovedAccessDomain = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 autoComplete="off"
-                label="Email"
                 value={value.split('@')[0]}
                 onChange={onChange}
                 fullWidth
