@@ -22,7 +22,7 @@ type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
 export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
   approvedAccessDomain,
 }: SettingsSecurityApprovedAccessDomainRowDropdownMenuProps) => {
-  const dropdownId = `settings-account-row-${approvedAccessDomain.id}`;
+  const dropdownId = `settings-approved-access-domain-row-${approvedAccessDomain.id}`;
 
   const setApprovedAccessDomains = useSetRecoilState(
     approvedAccessDomainsState,
