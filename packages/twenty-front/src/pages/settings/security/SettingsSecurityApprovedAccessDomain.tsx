@@ -24,7 +24,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
   const [createApprovedAccessDomain] = useCreateApprovedAccessDomainMutation();
 
   const formConfig = useForm<{ domain: string; email: string }>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     resolver: zodResolver(
       z
         .object({
@@ -91,7 +91,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
       actionButton={
         <SaveAndCancelButtons
           onCancel={() => navigate(SettingsPath.Security)}
-          onSave={handleSave}
+          onSave={formConfig.handleSubmit(handleSave)}
         />
       }
       links={[
