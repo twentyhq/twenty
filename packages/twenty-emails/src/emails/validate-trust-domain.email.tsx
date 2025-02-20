@@ -49,8 +49,11 @@ export const SendTrustDomainValidation = ({
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
-        )<Trans>has added a trust domain: </Trans>
-        <b>{domain}</b>
+        )
+        <Trans>
+          Please validate this domain to allow users with <b>@{domain}</b> email
+          addresses to join your workspace without requiring an invitation.
+        </Trans>
         <br />
       </MainText>
       <HighlightedContainer>

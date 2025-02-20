@@ -46,17 +46,15 @@ export class WorkspaceTrustedDomainResolver {
     return true;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => WorkspaceTrustedDomain)
   async validateWorkspaceTrustedDomain(
     @Args('input')
     { validationToken, workspaceTrustedDomainId }: ValidateTrustedDomainInput,
-  ): Promise<boolean> {
-    await this.workspaceTrustedDomainService.validateTrustedDomain({
+  ): Promise<WorkspaceTrustedDomain> {
+    return await this.workspaceTrustedDomainService.validateTrustedDomain({
       validationToken,
       workspaceTrustedDomainId,
     });
-
-    return true;
   }
 
   @Query(() => [WorkspaceTrustedDomain])
