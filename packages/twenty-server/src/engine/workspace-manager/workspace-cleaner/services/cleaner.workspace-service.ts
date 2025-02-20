@@ -279,8 +279,7 @@ export class CleanerWorkspaceService {
         if (
           daysSinceSoftDeleted >
             this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete &&
-          deletedWorkspacesCount <=
-            this.maxNumberOfWorkspacesDeletedPerExecution
+          deletedWorkspacesCount < this.maxNumberOfWorkspacesDeletedPerExecution
         ) {
           this.logger.log(
             `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
