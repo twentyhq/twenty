@@ -81,17 +81,18 @@ export const useCreateNewTableRecord = ({
               objectNameSingular: objectMetadataItem.nameSingular,
               isNewRecord: true,
             });
+
+            openRecordTitleCell({
+              recordId,
+              fieldMetadataId:
+                objectMetadataItem.labelIdentifierFieldMetadataId,
+            });
           } else {
             navigate(AppPath.RecordShowPage, {
               objectNameSingular: objectMetadataItem.nameSingular,
               objectRecordId: recordId,
             });
           }
-
-          openRecordTitleCell({
-            recordId,
-            fieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
-          });
 
           return;
         }
