@@ -21,45 +21,42 @@ export const buildCreatedByFromAuthContext = async ({
 }: BuildCreatedByFromAuthContextArgs): Promise<ActorMetadata> => {
   const { workspace, workspaceMemberId, user, apiKey } = authContext;
 
-  switch (true) {
-    // TODO: remove that code once we have the workspace member id in all tokens
-    case isDefined(workspaceMemberId) && isDefined(user): {
-      return buildCreatedByFromFullNameMetadata({
-        fullNameMetadata: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
-        workspaceMemberId,
-      });
-    }
-    case isDefined(user): {
-      logger.warn("User doesn't have a workspace member id in the token");
-      const workspaceMemberRepository =
-        await twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-          workspace.id,
-          'workspaceMember',
-        );
-
-      const workspaceMember = await workspaceMemberRepository.findOneOrFail({
-        where: {
-          userId: user.id,
-        },
-      });
-
-      return buildCreatedByFromFullNameMetadata({
-        fullNameMetadata: workspaceMember.name,
-        workspaceMemberId: workspaceMember.id,
-      });
-    }
-    case isDefined(apiKey): {
-      return buildCreatedByFromApiKey({
-        apiKey,
-      });
-    }
-    default: {
-      throw new Error(
-        'Unable to build createdBy metadata - no valid actor information found in auth context',
-      );
-    }
+  // TODO: remove that code once we have the workspace member id in all tokens
+  if (isDefined(workspaceMemberId) && isDefined(user)) {
+    return buildCreatedByFromFullNameMetadata({
+      fullNameMetadata: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+      workspaceMemberId,
+    });
   }
+  if (isDefined(user)) {
+    logger.warn("User doesn't have a workspace member id in the token");
+    const workspaceMemberRepository =
+      await twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    return buildCreatedByFromFullNameMetadata({
+      fullNameMetadata: workspaceMember.name,
+      workspaceMemberId: workspaceMember.id,
+    });
+  }
+  if (isDefined(apiKey)) {
+    return buildCreatedByFromApiKey({
+      apiKey,
+    });
+  }
+
+  throw new Error(
+    'Unable to build createdBy metadata - no valid actor information found in auth context',
+  );
 };
