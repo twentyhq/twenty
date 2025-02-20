@@ -117,7 +117,8 @@ export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Billing`,
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
-          isHidden: !isBillingEnabled,
+          isHidden:
+            !isBillingEnabled || !permissionMap[SettingsFeatures.WORKSPACE],
         },
         {
           label: t`Roles`,

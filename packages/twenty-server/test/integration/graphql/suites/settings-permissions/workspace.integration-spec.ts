@@ -348,15 +348,12 @@ describe('WorkspaceResolver', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const queryData = {
           query: `
-            query BillingPortalSession($returnUrlPath: String!) {
-              billingPortalSession(returnUrlPath: $returnUrlPath) {
-                url
+            mutation UpdateBillingSubscription {
+              updateBillingSubscription {
+                success
               }
             }
           `,
-          variables: {
-            returnUrlPath: '/settings/billing',
-          },
         };
 
         await client
