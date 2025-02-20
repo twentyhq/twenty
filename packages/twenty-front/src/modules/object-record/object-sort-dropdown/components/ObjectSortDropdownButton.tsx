@@ -6,7 +6,7 @@ import { useCloseSortDropdown } from '@/object-record/object-sort-dropdown/hooks
 import { useResetRecordSortDropdownSearchInput } from '@/object-record/object-sort-dropdown/hooks/useResetRecordSortDropdownSearchInput';
 import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useResetSortDropdown';
 import { useToggleSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useToggleSortDropdown';
-import { isRecordSortDirectionMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionMenuUnfoldedComponentState';
+import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
 import { onSortSelectComponentState } from '@/object-record/object-sort-dropdown/states/onSortSelectScopedState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
@@ -84,7 +84,7 @@ export const ObjectSortDropdownButton = ({
   );
 
   const isRecordSortDirectionMenuUnfolded = useRecoilComponentValueV2(
-    isRecordSortDirectionMenuUnfoldedComponentState,
+    isRecordSortDirectionDropdownMenuUnfoldedComponentState,
   );
 
   const { resetSortDropdown } = useResetSortDropdown();
@@ -168,7 +168,7 @@ export const ObjectSortDropdownButton = ({
     useRecoilComponentStateV2(selectedRecordSortDirectionComponentState);
 
   const setIsRecordSortDirectionMenuUnfolded = useSetRecoilComponentStateV2(
-    isRecordSortDirectionMenuUnfoldedComponentState,
+    isRecordSortDirectionDropdownMenuUnfoldedComponentState,
   );
 
   const handleSortDirectionClick = (sortDirection: RecordSortDirection) => {
