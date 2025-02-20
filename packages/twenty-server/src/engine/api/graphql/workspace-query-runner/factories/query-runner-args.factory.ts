@@ -234,7 +234,33 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.LINKS: {
           const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
 
-          return [key, { ...value, primaryLinkUrl: newPrimaryLinkUrl }];
+          let secondaryLinks = value?.secondaryLinks;
+
+          if (secondaryLinks) {
+            try {
+              const secondaryLinksArray = JSON.parse(secondaryLinks);
+
+              secondaryLinks = JSON.stringify(
+                secondaryLinksArray.map((link) => {
+                  return {
+                    ...link,
+                    url: lowercaseDomain(link.url),
+                  };
+                }),
+              );
+            } catch {
+              /* empty */
+            }
+          }
+
+          return [
+            key,
+            {
+              ...value,
+              primaryLinkUrl: newPrimaryLinkUrl,
+              secondaryLinks,
+            },
+          ];
         }
         case FieldMetadataType.EMAILS: {
           let additionalEmails = value?.additionalEmails;
