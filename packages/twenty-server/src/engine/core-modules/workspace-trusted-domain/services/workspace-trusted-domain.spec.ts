@@ -69,110 +69,8 @@ describe('WorkspaceTrustedDomainService', () => {
       module.get<DomainManagerService>(DomainManagerService);
   });
 
-  describe('checkIsVerified', () => {
-    it('should mark the domain as verified if it is the workspace custom domain and custom domain is enabled', () => {
-      const domain = 'custom-domain.com';
-      const inWorkspace = {
-        customDomain: domain,
-        isCustomDomainEnabled: true,
-      } as Workspace;
-      const fromUser = {
-        email: 'user@otherdomain.com',
-        isEmailVerified: true,
-      } as User;
-
-      const result = (service as any).checkIsVerified(
-        domain,
-        inWorkspace,
-        fromUser,
-      );
-
-      expect(result).toBe(true);
-    });
-
-    it('should mark the domain as verified if the user email ends with the domain and the user email is verified', () => {
-      const domain = 'custom-domain.com';
-      const inWorkspace = {
-        customDomain: null,
-        isCustomDomainEnabled: false,
-      } as Workspace;
-      const fromUser = {
-        email: 'user@custom-domain.com',
-        isEmailVerified: true,
-      } as User;
-
-      const result = (service as any).checkIsVerified(
-        domain,
-        inWorkspace,
-        fromUser,
-      );
-
-      expect(result).toBe(true);
-    });
-
-    it('should not mark the domain as verified if it is not a work domain', () => {
-      const domain = 'gmail.com';
-      const inWorkspace = {
-        customDomain: null,
-        isCustomDomainEnabled: false,
-      } as Workspace;
-      const fromUser = {
-        email: 'user@gmail.com',
-        isEmailVerified: true,
-      } as User;
-
-      const result = (service as any).checkIsVerified(
-        domain,
-        inWorkspace,
-        fromUser,
-      );
-
-      expect(result).toBe(false);
-    });
-
-    it('should not mark the domain as verified if it is the workspace custom domain but custom domain is not enabled', () => {
-      const domain = 'custom-domain.com';
-      const inWorkspace = {
-        customDomain: domain,
-        isCustomDomainEnabled: false,
-      } as Workspace;
-      const fromUser = {
-        email: 'user@otherdomain.com',
-        isEmailVerified: true,
-      } as User;
-
-      const result = (service as any).checkIsVerified(
-        domain,
-        inWorkspace,
-        fromUser,
-      );
-
-      expect(result).toBe(false);
-    });
-
-    it('should not mark the domain as verified if the user email does not end with the domain or is not verified', () => {
-      const domain = 'example.com';
-      const inWorkspace = {
-        customDomain: null,
-        isCustomDomainEnabled: false,
-      } as Workspace;
-      const fromUser = {
-        email: 'user@otherdomain.com',
-        isEmailVerified: false,
-      } as User;
-
-      const result = (service as any).checkIsVerified(
-        domain,
-        inWorkspace,
-        fromUser,
-      );
-
-      expect(result).toBe(false);
-    });
-  });
-
   describe('createTrustedDomain', () => {
-    it('should successfully create a trusted domain and mark it as verified based on checkIsVerified', async () => {
+    it('should successfully create a trusted domain', async () => {
       const domain = 'custom-domain.com';
       const inWorkspace = {
         id: 'workspace-id',
@@ -187,7 +85,7 @@ describe('WorkspaceTrustedDomainService', () => {
       const expectedTrustedDomain = {
         workspaceId: 'workspace-id',
         domain,
-        isVerified: true,
+        isValidated: true,
       };
 
       jest
@@ -211,7 +109,6 @@ describe('WorkspaceTrustedDomainService', () => {
         expect.objectContaining({
           workspaceId: 'workspace-id',
           domain,
-          isVerified: true,
         }),
       );
       expect(result).toEqual(expectedTrustedDomain);
@@ -320,7 +217,7 @@ describe('WorkspaceTrustedDomainService', () => {
         ),
       ).rejects.toThrowError(
         new WorkspaceTrustedDomainException(
-          'Trusted domain does not match validator email',
+          'Trusted domain does not match email domain',
           WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,
         ),
       );
