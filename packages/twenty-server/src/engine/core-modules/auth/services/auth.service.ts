@@ -36,7 +36,7 @@ import {
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
+import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import {
@@ -67,7 +67,7 @@ export class AuthService {
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly socialSsoService: SocialSsoService,
+    private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
@@ -529,7 +529,7 @@ export class AuthService {
 
     if (params.authProvider !== 'password') {
       return (
-        (await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
+        (await this.authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
           {
             email: params.email,
             authProvider: params.authProvider,

@@ -3,19 +3,19 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
+import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-describe('SocialSsoService', () => {
-  let socialSsoService: SocialSsoService;
+describe('AuthSsoService', () => {
+  let authSsoService: AuthSsoService;
   let workspaceRepository: Repository<Workspace>;
   let environmentService: EnvironmentService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SocialSsoService,
+        AuthSsoService,
         {
           provide: getRepositoryToken(Workspace, 'core'),
           useClass: Repository,
@@ -29,7 +29,7 @@ describe('SocialSsoService', () => {
       ],
     }).compile();
 
-    socialSsoService = module.get<SocialSsoService>(SocialSsoService);
+    authSsoService = module.get<AuthSsoService>(AuthSsoService);
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
     );
@@ -46,7 +46,7 @@ describe('SocialSsoService', () => {
         .mockResolvedValue(mockWorkspace);
 
       const result =
-        await socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
+        await authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
           { authProvider: 'google', email: 'test@example.com' },
           workspaceId,
         );
@@ -68,7 +68,7 @@ describe('SocialSsoService', () => {
         .mockResolvedValue(mockWorkspace);
 
       const result =
-        await socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
+        await authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
           authProvider,
           email,
         });
@@ -92,7 +92,7 @@ describe('SocialSsoService', () => {
       jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue(null);
 
       const result =
-        await socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
+        await authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
           authProvider: 'google',
           email: 'notfound@example.com',
         });
@@ -104,7 +104,7 @@ describe('SocialSsoService', () => {
       jest.spyOn(environmentService, 'get').mockReturnValue(true);
 
       await expect(
-        socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
+        authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
           authProvider: 'invalid-provider' as any,
           email: 'test@example.com',
         }),
