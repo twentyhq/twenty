@@ -10,7 +10,7 @@ export const RightDrawerWorkflowViewStep = () => {
   const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
   if (!isDefined(workflowSelectedNode)) {
     throw new Error(
-      'Expected a node to be selected. Selecting a node is mandatory to edit it.',
+      'Expected a node to be selected. Selecting a node is mandatory to view its details.',
     );
   }
 
