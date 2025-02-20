@@ -1,5 +1,5 @@
+import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { flowState } from '@/workflow/states/flowState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -25,13 +25,9 @@ export const useAvailableVariablesInWorkflowStep = ({
   const workflowId = useRecoilValue(workflowIdState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
-  const flow = useRecoilValue(flowState);
+  const flow = useFlowOrThrow();
 
-  if (
-    !isDefined(workflowSelectedNode) ||
-    !isDefined(workflow) ||
-    !isDefined(flow)
-  ) {
+  if (!isDefined(workflowSelectedNode) || !isDefined(workflow)) {
     return [];
   }
 
