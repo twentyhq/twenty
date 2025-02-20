@@ -120,13 +120,15 @@ export const Attachments = ({
         title="All"
         attachments={attachments ?? []}
         button={
-          <Button
-            Icon={IconPlus}
-            size="small"
-            variant="secondary"
-            title="Add file"
-            onClick={handleUploadFileClick}
-          ></Button>
+          !hasObjectReadOnlyPermission && (
+            <Button
+              Icon={IconPlus}
+              size="small"
+              variant="secondary"
+              title="Add file"
+              onClick={handleUploadFileClick}
+            ></Button>
+          )
         }
       />
     </StyledAttachmentsContainer>

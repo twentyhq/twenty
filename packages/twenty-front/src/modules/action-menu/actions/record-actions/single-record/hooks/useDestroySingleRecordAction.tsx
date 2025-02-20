@@ -57,9 +57,9 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const shouldBeRegistered =
+    !hasObjectReadOnlyPermission &&
     !isRemoteObject &&
-    isDefined(selectedRecord?.deletedAt) &&
-    !hasObjectReadOnlyPermission;
+    isDefined(selectedRecord?.deletedAt);
 
   const onClick = () => {
     if (!shouldBeRegistered) {
