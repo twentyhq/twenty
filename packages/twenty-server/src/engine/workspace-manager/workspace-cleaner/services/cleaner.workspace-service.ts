@@ -278,7 +278,8 @@ export class CleanerWorkspaceService {
 
         if (
           daysSinceSoftDeleted >
-          this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete
+            this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete &&
+          deletedWorkspacesCount < this.maxNumberOfWorkspacesDeletedPerExecution
         ) {
           this.logger.log(
             `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
@@ -286,20 +287,16 @@ export class CleanerWorkspaceService {
           if (!dryRun) {
             await this.workspaceService.deleteWorkspace(workspace.id);
           }
+          deletedWorkspacesCount++;
 
           continue;
         }
-        if (
-          workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
-          deletedWorkspacesCount <=
-            this.maxNumberOfWorkspacesDeletedPerExecution
-        ) {
+        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
             workspaceInactivity,
             dryRun,
           );
-          deletedWorkspacesCount++;
 
           continue;
         }

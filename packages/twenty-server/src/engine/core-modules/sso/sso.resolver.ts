@@ -42,12 +42,12 @@ export class SSOResolver {
     );
   }
 
-  @UseGuards(EnterpriseFeaturesEnabledGuard)
+  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Query(() => [FindAvailableSSOIDPOutput])
-  async listSSOIdentityProvidersByWorkspaceId(
+  async getSSOIdentityProviders(
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.sSOService.listSSOIdentityProvidersByWorkspaceId(workspaceId);
+    return this.sSOService.getSSOIdentityProviders(workspaceId);
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)

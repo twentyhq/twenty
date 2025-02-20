@@ -10,6 +10,7 @@ module.exports = {
     'lingui',
   ],
   rules: {
+    'lingui/no-single-variables-to-translate': 'off',
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
     'no-control-regex': 0,
