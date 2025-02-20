@@ -12,47 +12,45 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { UnwrapRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { useDeleteWorkspaceTrustDomainMutation } from '~/generated/graphql';
-import { workspaceTrustedDomainsState } from '@/settings/security/states/WorkspaceTrustedDomainsState';
+import { useDeleteApprovedAccessDomainMutation } from '~/generated/graphql';
+import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 
-type SettingsSecurityTrustedDomainRowDropdownMenuProps = {
-  workspaceTrustedDomain: UnwrapRecoilValue<
-    typeof workspaceTrustedDomainsState
-  >[0];
+type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
+  approvedAccessDomain: UnwrapRecoilValue<typeof approvedAccessDomainsState>[0];
 };
 
-export const SettingsSecurityTrustedDomainRowDropdownMenu = ({
-  workspaceTrustedDomain,
-}: SettingsSecurityTrustedDomainRowDropdownMenuProps) => {
-  const dropdownId = `settings-account-row-${workspaceTrustedDomain.id}`;
+export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
+  approvedAccessDomain,
+}: SettingsSecurityApprovedAccessDomainRowDropdownMenuProps) => {
+  const dropdownId = `settings-account-row-${approvedAccessDomain.id}`;
 
-  const setWorkspaceTrustedDomains = useSetRecoilState(
-    workspaceTrustedDomainsState,
+  const setApprovedAccessDomains = useSetRecoilState(
+    approvedAccessDomainsState,
   );
 
   const { enqueueSnackBar } = useSnackBar();
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const [deleteWorkspaceTrustDomain] = useDeleteWorkspaceTrustDomainMutation();
+  const [deleteApprovedAccessDomain] = useDeleteApprovedAccessDomainMutation();
 
-  const handleDeleteWorkspaceTrustedDomain = async () => {
-    const result = await deleteWorkspaceTrustDomain({
+  const handleDeleteApprovedAccessDomain = async () => {
+    const result = await deleteApprovedAccessDomain({
       variables: {
         input: {
-          id: workspaceTrustedDomain.id,
+          id: approvedAccessDomain.id,
         },
       },
       onCompleted: () => {
-        setWorkspaceTrustedDomains((workspaceTrustedDomains) => {
-          return workspaceTrustedDomains.filter(
-            (trustedDomain) => trustedDomain.id !== workspaceTrustedDomain.id,
+        setApprovedAccessDomains((approvedAccessDomains) => {
+          return approvedAccessDomains.filter(
+            ({ id }) => id !== approvedAccessDomain.id,
           );
         });
       },
     });
     if (isDefined(result.errors)) {
-      enqueueSnackBar('Error deleting workspace trust domain', {
+      enqueueSnackBar('Error deleting approved access domain', {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
@@ -75,7 +73,7 @@ export const SettingsSecurityTrustedDomainRowDropdownMenu = ({
             LeftIcon={IconTrash}
             text="Delete"
             onClick={() => {
-              handleDeleteWorkspaceTrustedDomain();
+              handleDeleteApprovedAccessDomain();
               closeDropdown();
             }}
           />

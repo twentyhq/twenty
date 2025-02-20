@@ -14,7 +14,7 @@ import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
 import { APP_LOCALES, getImageAbsoluteURI } from 'twenty-shared';
 
-type SendTrustDomainValidationProps = {
+type SendApprovedAccessDomainValidationProps = {
   link: string;
   domain: string;
   workspace: { name: string | undefined; logo: string | undefined };
@@ -27,14 +27,14 @@ type SendTrustDomainValidationProps = {
   locale: keyof typeof APP_LOCALES;
 };
 
-export const SendTrustDomainValidation = ({
+export const SendApprovedAccessDomainValidation = ({
   link,
   domain,
   workspace,
   sender,
   serverUrl,
   locale,
-}: SendTrustDomainValidationProps) => {
+}: SendApprovedAccessDomainValidationProps) => {
   const workspaceLogo = workspace.logo
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;
@@ -49,8 +49,11 @@ export const SendTrustDomainValidation = ({
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
-        )<Trans>has added a trust domain: </Trans>
-        <b>{domain}</b>
+        )
+        <Trans>
+          Please validate this domain to allow users with <b>@{domain}</b> email
+          addresses to join your workspace without requiring an invitation.
+        </Trans>
         <br />
       </MainText>
       <HighlightedContainer>

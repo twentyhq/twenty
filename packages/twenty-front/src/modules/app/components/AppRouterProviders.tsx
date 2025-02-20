@@ -61,8 +61,8 @@ export const AppRouterProviders = () => {
                         </SnackBarProvider>
                         <MainContextStoreProvider />
                       </PrefetchDataProvider>
+                      <PageChangeEffect />
                     </ObjectMetadataItemsGater>
-                    <PageChangeEffect />
                   </ObjectMetadataItemsProvider>
                 </ApolloMetadataClientProvider>
               </AuthProvider>

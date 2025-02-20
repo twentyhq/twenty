@@ -12,7 +12,6 @@ import { WorkspaceTrustedDomain as WorkspaceTrustedDomainEntity } from 'src/engi
 import { WorkspaceTrustedDomain } from 'src/engine/core-modules/workspace-trusted-domain/dtos/trusted-domain.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { isWorkDomain } from 'src/utils/is-work-email';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
@@ -33,25 +32,6 @@ export class WorkspaceTrustedDomainService {
     private readonly domainManagerService: DomainManagerService,
   ) {}
 
-  private checkIsVerified(
-    domain: string,
-    inWorkspace: Workspace,
-    fromUser: User,
-  ) {
-    if (!isWorkDomain(domain)) return false;
-
-    if (
-      domain === inWorkspace.customDomain &&
-      inWorkspace.isCustomDomainEnabled
-    )
-      return true;
-
-    if (fromUser.email.endsWith(domain) && fromUser.isEmailVerified)
-      return true;
-
-    return false;
-  }
-
   async sendTrustedDomainValidationEmail(
     sender: User,
     to: string,
@@ -65,9 +45,9 @@ export class WorkspaceTrustedDomainService {
       );
     }
 
-    if (!to.endsWith(workspaceTrustedDomain.domain)) {
+    if (to.split('@')[1] !== workspaceTrustedDomain.domain) {
       throw new WorkspaceTrustedDomainException(
-        'Trusted domain does not match validator email',
+        'Trusted domain does not match email domain',
         WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,
       );
     }
@@ -154,8 +134,11 @@ export class WorkspaceTrustedDomainService {
         WorkspaceTrustedDomainExceptionCode.WORKSPACE_TRUSTED_DOMAIN_VALIDATION_TOKEN_INVALID,
       );
     }
-    workspaceTrustedDomain.isValidated = true;
-    this.workspaceTrustedDomainRepository.save(workspaceTrustedDomain);
+
+    return await this.workspaceTrustedDomainRepository.save({
+      ...workspaceTrustedDomain,
+      isValidated: true,
+    });
   }
 
   async createTrustedDomain(
@@ -168,7 +151,6 @@ export class WorkspaceTrustedDomainService {
       await this.workspaceTrustedDomainRepository.save({
         workspaceId: inWorkspace.id,
         domain,
-        isVerified: this.checkIsVerified(domain, inWorkspace, fromUser),
       });
 
     await this.sendTrustedDomainValidationEmail(

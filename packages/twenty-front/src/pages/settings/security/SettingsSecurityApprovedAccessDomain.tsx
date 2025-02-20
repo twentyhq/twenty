@@ -13,16 +13,16 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { z } from 'zod';
 import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useCreateWorkspaceTrustDomainMutation } from '~/generated/graphql';
+import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
 
-export const SettingsSecurityTrustedDomain = () => {
+export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
 
   const { t } = useLingui();
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const [createWorkspaceTrustDomain] = useCreateWorkspaceTrustDomainMutation();
+  const [createApprovedAccessDomain] = useCreateApprovedAccessDomainMutation();
 
   const formConfig = useForm<{ domain: string; email: string }>({
     mode: 'onChange',
@@ -44,7 +44,7 @@ export const SettingsSecurityTrustedDomain = () => {
 
   const handleSave = async () => {
     try {
-      createWorkspaceTrustDomain({
+      createApprovedAccessDomain({
         variables: {
           input: {
             domain: formConfig.getValues('domain'),
@@ -75,7 +75,7 @@ export const SettingsSecurityTrustedDomain = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="New Trusted Email Domain"
+      title="New Approved Access Domain"
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!formConfig.formState.isValid}
@@ -92,7 +92,7 @@ export const SettingsSecurityTrustedDomain = () => {
           children: <Trans>Security</Trans>,
           href: getSettingsPath(SettingsPath.Security),
         },
-        { children: <Trans>New Trusted Domain</Trans> },
+        { children: <Trans>New Approved Access Domain</Trans> },
       ]}
     >
       <SettingsPageContainer>
