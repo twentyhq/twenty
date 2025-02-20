@@ -21,6 +21,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
@@ -231,13 +232,7 @@ export class QueryRunnerArgsFactory {
           return [key, valueInBothFormats];
         }
         case FieldMetadataType.LINKS: {
-          let newPrimaryLinkUrl = value?.primaryLinkUrl;
-
-          try {
-            newPrimaryLinkUrl = new URL(newPrimaryLinkUrl).toString();
-          } catch {
-            newPrimaryLinkUrl = value?.primaryLinkUrl;
-          }
+          const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
 
           return [key, { ...value, primaryLinkUrl: newPrimaryLinkUrl }];
         }
