@@ -1,5 +1,6 @@
 import { IconArrowDown, IconArrowUp } from 'twenty-ui';
 
+import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
@@ -13,12 +14,15 @@ type EditableSortChipProps = {
 export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   const { deleteCombinedViewSort } = useDeleteCombinedViewSorts();
 
+  const { removeRecordSort } = useRemoveRecordSort();
+
   const { upsertCombinedViewSort } = useUpsertCombinedViewSorts();
 
   const { upsertRecordSort } = useUpsertRecordSort();
 
   const handleRemoveClick = () => {
     deleteCombinedViewSort(recordSort.fieldMetadataId);
+    removeRecordSort(recordSort.fieldMetadataId);
   };
 
   const handleClick = () => {

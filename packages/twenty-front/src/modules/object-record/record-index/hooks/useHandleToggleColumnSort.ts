@@ -29,7 +29,7 @@ export const useHandleToggleColumnSort = ({
   const { upsertRecordSort } = useUpsertRecordSort();
 
   const handleToggleColumnSort = useCallback(
-    (fieldMetadataId: string) => {
+    async (fieldMetadataId: string) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -48,8 +48,9 @@ export const useHandleToggleColumnSort = ({
         direction: 'asc',
       };
 
-      upsertCombinedViewSort(newSort);
       upsertRecordSort(newSort);
+
+      await upsertCombinedViewSort(newSort);
     },
     [columnDefinitions, upsertCombinedViewSort, upsertRecordSort],
   );
