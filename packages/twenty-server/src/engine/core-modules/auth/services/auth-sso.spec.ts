@@ -18,7 +18,9 @@ describe('AuthSsoService', () => {
         AuthSsoService,
         {
           provide: getRepositoryToken(Workspace, 'core'),
-          useClass: Repository,
+          useValue: {
+            findOne: jest.fn(),
+          },
         },
         {
           provide: EnvironmentService,
@@ -42,7 +44,7 @@ describe('AuthSsoService', () => {
       const mockWorkspace = { id: workspaceId } as Workspace;
 
       jest
-        .spyOn(workspaceRepository, 'findOneBy')
+        .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
 
       const result =
@@ -52,8 +54,11 @@ describe('AuthSsoService', () => {
         );
 
       expect(result).toEqual(mockWorkspace);
-      expect(workspaceRepository.findOneBy).toHaveBeenCalledWith({
-        id: workspaceId,
+      expect(workspaceRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          id: workspaceId,
+        },
+        relations: ['approvedAccessDomains'],
       });
     });
 
@@ -83,7 +88,11 @@ describe('AuthSsoService', () => {
             },
           },
         },
-        relations: ['workspaceUsers', 'workspaceUsers.user'],
+        relations: [
+          'workspaceUsers',
+          'workspaceUsers.user',
+          'approvedAccessDomains',
+        ],
       });
     });
 
