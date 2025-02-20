@@ -28,7 +28,7 @@ const StyledRightDrawerBody = styled.div`
   position: relative;
 `;
 
-const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
+const RIGHT_DRAWER_PAGES_CONFIG = {
   [RightDrawerPages.ViewEmailThread]: <RightDrawerEmailThread />,
   [RightDrawerPages.ViewCalendarEvent]: <RightDrawerCalendarEvent />,
   [RightDrawerPages.ViewRecord]: <RightDrawerRecord />,
@@ -41,7 +41,7 @@ const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
   ),
   [RightDrawerPages.WorkflowStepEdit]: <RightDrawerWorkflowEditStep />,
   [RightDrawerPages.WorkflowStepView]: <RightDrawerWorkflowViewStep />,
-};
+} satisfies Record<RightDrawerPages, JSX.Element>;
 
 export const RightDrawerRouter = () => {
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);

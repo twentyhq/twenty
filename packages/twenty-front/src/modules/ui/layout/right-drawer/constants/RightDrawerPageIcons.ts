@@ -9,4 +9,4 @@ export const RIGHT_DRAWER_PAGE_ICONS = {
   [RightDrawerPages.WorkflowStepSelectAction]: 'IconSparkles',
   [RightDrawerPages.WorkflowStepEdit]: 'IconSparkles',
   [RightDrawerPages.WorkflowStepView]: 'IconSparkles',
-};
+} satisfies Record<RightDrawerPages, string>;
