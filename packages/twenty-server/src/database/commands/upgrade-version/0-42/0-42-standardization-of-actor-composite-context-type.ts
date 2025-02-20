@@ -109,6 +109,8 @@ export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWor
       );
     }
 
-    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspaceId);
+    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+      workspaceId,
+    );
   }
 }

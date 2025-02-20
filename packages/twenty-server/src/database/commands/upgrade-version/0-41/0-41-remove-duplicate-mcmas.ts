@@ -91,6 +91,8 @@ export class RemoveDuplicateMcmasCommand extends ActiveWorkspacesCommandRunner {
       }
     }
 
-    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspaceId);
+    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+      workspaceId,
+    );
   }
 }
