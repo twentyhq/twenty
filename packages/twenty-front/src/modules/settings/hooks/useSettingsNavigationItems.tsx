@@ -50,7 +50,7 @@ export type SettingsNavigationItem = {
   soon?: boolean;
 };
 
-export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
+const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const billing = useRecoilValue(billingState);
 
   const isFunctionSettingsEnabled = false;
@@ -192,3 +192,5 @@ export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     },
   ];
 };
+
+export { useSettingsNavigationItems };
