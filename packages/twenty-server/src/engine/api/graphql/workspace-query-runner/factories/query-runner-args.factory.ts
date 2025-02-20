@@ -21,6 +21,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
@@ -229,6 +230,37 @@ export class QueryRunnerArgsFactory {
           };
 
           return [key, valueInBothFormats];
+        }
+        case FieldMetadataType.LINKS: {
+          const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
+
+          return [key, { ...value, primaryLinkUrl: newPrimaryLinkUrl }];
+        }
+        case FieldMetadataType.EMAILS: {
+          let additionalEmails = value?.additionalEmails;
+          const primaryEmail = value?.primaryEmail
+            ? value.primaryEmail.toLowerCase()
+            : '';
+
+          if (additionalEmails) {
+            try {
+              const emailArray = JSON.parse(additionalEmails) as string[];
+
+              additionalEmails = JSON.stringify(
+                emailArray.map((email) => email.toLowerCase()),
+              );
+            } catch {
+              /* empty */
+            }
+          }
+
+          return [
+            key,
+            {
+              primaryEmail,
+              additionalEmails,
+            },
+          ];
         }
         default:
           return [key, value];
