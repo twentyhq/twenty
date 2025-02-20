@@ -82,12 +82,12 @@ export const SettingsDevelopersApiKeysNew = () => {
       title={t`New key`}
       links={[
         {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
           children: t`Developers`,
           href: getSettingsPath(SettingsPath.Developers),
+        },
+        {
+          children: t`APIs`,
+          href: getSettingsPath(SettingsPath.DevelopersApiKeysMain),
         },
         { children: t`New Key` },
       ]}
@@ -95,7 +95,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigateSettings(SettingsPath.Developers);
+            navigateSettings(SettingsPath.DevelopersApiKeysMain);
           }}
           onSave={handleSave}
         />

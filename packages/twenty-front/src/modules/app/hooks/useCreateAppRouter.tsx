@@ -24,6 +24,7 @@ import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+import { Playground } from '~/pages/settings/playground/playground';
 
 export const useCreateAppRouter = (
   isBillingEnabled?: boolean,
@@ -70,9 +71,13 @@ export const useCreateAppRouter = (
           />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
+        <Route 
+                path='playground/:type'
+                element={<Playground />}
+           />
         <Route element={<BlankLayout />}>
           <Route path={AppPath.Authorize} element={<Authorize />} />
         </Route>
-      </Route>,
+      </Route>
     ),
   );

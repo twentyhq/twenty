@@ -12,6 +12,22 @@ const SettingsAccountsCalendars = lazy(() =>
   ),
 );
 
+const SettingsDevelopersApiKeysMain = lazy(()=>
+  import('~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysMain').then(
+    (module) => ({
+      default: module.SettingsDevelopersApiKeysMain,
+    }),
+  ),
+);
+
+const SettingsDevelopersWebhooksMain = lazy(()=>
+  import('~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksMain').then(
+    (module) => ({
+      default: module.SettingsDevelopersWebhooksMain,
+    }),
+  ),
+);
+
 const SettingsAccountsEmails = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
     default: module.SettingsAccountsEmails,
@@ -134,11 +150,7 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
-const SettingsDevelopers = lazy(() =>
-  import('~/pages/settings/developers/SettingsDevelopers').then((module) => ({
-    default: module.SettingsDevelopers,
-  })),
-);
+
 
 const SettingsIntegrations = lazy(() =>
   import('~/pages/settings/integrations/SettingsIntegrations').then(
@@ -319,11 +331,25 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}
       />
+      <Route 
+      path={SettingsPath.Developers}
+      element={<SettingsDevelopersApiKeysMain />}
+      />
+
+      <Route 
+      path={SettingsPath.DevelopersApiKeysMain}
+      element={<SettingsDevelopersApiKeysMain />}
+      />
+
+      <Route 
+      path={SettingsPath.DevelopersWebhooksMain}
+      element={<SettingsDevelopersWebhooksMain />}
+      />
+      
       <Route
         path={SettingsPath.DevelopersApiKeyDetail}
         element={<SettingsDevelopersApiKeyDetail />}

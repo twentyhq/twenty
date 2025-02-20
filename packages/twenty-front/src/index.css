@@ -17,3 +17,14 @@ button {
 .grecaptcha-badge {
   visibility: hidden !important;
 }
+
+.playgroundcontainer > div:nth-child(2){
+  flex-grow: 1;
+  padding: 0;
+}
+
+.playgroundcontainer{
+  height: 100vh;
+}
+
+.grow{flex-grow: 1;}

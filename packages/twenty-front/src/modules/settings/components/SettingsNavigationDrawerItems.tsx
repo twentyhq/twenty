@@ -38,6 +38,7 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
+import { IconWebhook } from '@tabler/icons-react';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -188,9 +189,14 @@ export const SettingsNavigationDrawerItems = () => {
         </AdvancedSettingsWrapper>
         <AdvancedSettingsWrapper navigationDrawerItem={true}>
           <SettingsNavigationDrawerItem
-            label={t`API & Webhooks`}
-            path={SettingsPath.Developers}
+            label={t`APIs`}
+            path={SettingsPath.DevelopersApiKeysMain}
             Icon={IconCode}
+          />
+                <SettingsNavigationDrawerItem
+            label={t`Webhooks`}
+            path={SettingsPath.DevelopersWebhooksMain}
+            Icon={IconWebhook}
           />
         </AdvancedSettingsWrapper>
         {isFunctionSettingsEnabled && (
