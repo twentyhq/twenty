@@ -125,7 +125,7 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
       );
     }
 
-    this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspaceId);
+    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspaceId);
   }
 
   private async addContextColumn(
