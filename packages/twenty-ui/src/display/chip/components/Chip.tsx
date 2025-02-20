@@ -29,8 +29,9 @@ type ChipProps = {
   maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
-  leftComponent?: ReactNode;
-  rightComponent?: ReactNode;
+  // Could be a function or ReactNode ?
+  leftComponent?: (() => ReactNode) | null;
+  rightComponent?: (() => ReactNode) | null;
   className?: string;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
@@ -128,8 +129,8 @@ export const Chip = ({
   disabled = false,
   clickable = true,
   variant = ChipVariant.Regular,
-  leftComponent,
-  rightComponent,
+  leftComponent = null,
+  rightComponent = null,
   accent = ChipAccent.TextPrimary,
   onClick,
   className,
@@ -147,9 +148,9 @@ export const Chip = ({
       className={className}
       maxWidth={maxWidth}
     >
-      {leftComponent}
+      {leftComponent?.()}
       <OverflowingTextWithTooltip size={size} text={label} />
-      {rightComponent}
+      {rightComponent?.()}
     </StyledContainer>
   );
 };

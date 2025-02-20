@@ -88,7 +88,7 @@ export const AvatarChip = ({
       label={name}
       variant={getVariant()}
       size={size}
-      leftComponent={(() => {
+      leftComponent={() => {
         if (!isDefined(LeftIcon)) {
           return (
             <Avatar
@@ -122,7 +122,7 @@ export const AvatarChip = ({
             color={LeftIconColor || 'currentColor'}
           />
         );
-      })()}
+      }}
       clickable={isClickable}
       // TODO Ugh DX weird
       onClick={(event) => {
