@@ -39,7 +39,7 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
-      'Running command to migrate search vector on note and task entities',
+      'Running command to update default view record opening on workflow objects to record page',
     );
 
     for (const [index, workspaceId] of workspaceIds.entries()) {
@@ -63,12 +63,22 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
         select: ['id'],
         where: {
           workspaceId,
-          nameSingular: In(['workflow', 'workflow_version', 'workflow_run']),
+          nameSingular: In(['workflow', 'workflowVersion', 'workflowRun']),
         },
       });
 
+      if (workflowObjectsMetadata.length === 0) {
+        this.logger.log(
+          chalk.yellow(
+            `No workflow objects found for workspace ${workspaceId}`,
+          ),
+        );
+
+        return;
+      }
+
       await this.updateDefaultViewsRecordOpening(
-        workflowObjectsMetadata,
+        workflowObjectsMetadata.map((metadata) => metadata.id),
         workspaceId,
       );
 
@@ -91,7 +101,7 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
   }
 
   private async updateDefaultViewsRecordOpening(
-    workflowObjectMetadata: ObjectMetadataEntity[],
+    workflowObjectMetadataIds: string[],
     workspaceId: string,
   ): Promise<void> {
     const viewRepository =
@@ -102,9 +112,7 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
 
     await viewRepository.update(
       {
-        objectMetadataId: In(
-          workflowObjectMetadata.map((metadata) => metadata.id),
-        ),
+        objectMetadataId: In(workflowObjectMetadataIds),
         key: 'INDEX',
       },
       {
