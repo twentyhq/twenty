@@ -188,14 +188,15 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       moveEditModeToTableCellPosition,
       initDraftValue,
       toggleClickOutsideListener,
+      setActiveDropdownFocusIdAndMemorizePrevious,
       leaveTableFocus,
       navigate,
       indexIdentifierUrl,
+      openRecordInCommandMenu,
       setViewableRecordId,
       setViewableRecordNameSingular,
       openRightDrawer,
       setHotkeyScope,
-      setActiveDropdownFocusIdAndMemorizePrevious,
     ],
   );
 
