@@ -238,7 +238,7 @@ export class QueryRunnerArgsFactory {
 
           if (secondaryLinks) {
             try {
-              const secondaryLinksArray = JSON.parse(secondaryLinks) as any[];
+              const secondaryLinksArray = JSON.parse(secondaryLinks);
 
               secondaryLinks = JSON.stringify(
                 secondaryLinksArray.map((link) => {
