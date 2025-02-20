@@ -1,8 +1,7 @@
-import { Logger } from '@nestjs/common/services/logger.service';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -12,11 +11,10 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { buildCreatedByFromAuthContext } from 'src/engine/core-modules/actor/utils/build-created-by-from-auth-context.util';
+import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 type CustomWorkspaceItem = Omit<
   CustomWorkspaceEntity,
@@ -30,12 +28,10 @@ type CustomWorkspaceItem = Omit<
 export class CreatedByCreateManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
-  private readonly logger = new Logger(CreatedByCreateManyPreQueryHook.name);
-
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    private readonly createdByFromAuthContextService: CreatedByFromAuthContextService,
   ) {}
 
   async execute(
@@ -65,11 +61,8 @@ export class CreatedByCreateManyPreQueryHook
       return payload;
     }
 
-    const createdBy = await buildCreatedByFromAuthContext({
-      authContext,
-      logger: this.logger,
-      twentyORMGlobalManager: this.twentyORMGlobalManager,
-    });
+    const createdBy =
+      await this.createdByFromAuthContextService.buildCreatedBy(authContext);
 
     for (const datum of payload.data) {
       // Front-end can fill the source field

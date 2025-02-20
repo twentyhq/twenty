@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-    ActorMetadata,
-    FieldActorSource,
+  ActorMetadata,
+  FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { CreatedByFromAuthContextService } from '../created-by-from-auth-context.service';
 
 type TestingAuthContext = Omit<AuthContext, 'workspace' | 'apiKey' | 'user'> & {
   workspace: Partial<Workspace>;
@@ -73,6 +73,7 @@ describe('CreatedByFromAuthContextService', () => {
       } as const satisfies TestingAuthContext;
 
       const result = await service.buildCreatedBy(authContext as AuthContext);
+
       expect(result).toEqual<ActorMetadata>({
         context: {},
         name: fromFullNameMetadataToName(authContext.user),
@@ -98,11 +99,13 @@ describe('CreatedByFromAuthContextService', () => {
           lastName: 'Dubois',
         },
       } as const satisfies Partial<WorkspaceMemberWorkspaceEntity>;
+
       mockWorkspaceMemberRepository.findOneOrFail.mockResolvedValueOnce(
         mockedWorkspaceMember,
       );
 
       const result = await service.buildCreatedBy(authContext as AuthContext);
+
       expect(result).toEqual<ActorMetadata>({
         context: {},
         name: fromFullNameMetadataToName(mockedWorkspaceMember.name),
@@ -121,11 +124,12 @@ describe('CreatedByFromAuthContextService', () => {
       } as const satisfies TestingAuthContext;
 
       const result = await service.buildCreatedBy(authContext as AuthContext);
+
       expect(result).toEqual<ActorMetadata>({
         source: FieldActorSource.API,
         workspaceMemberId: null,
         name: authContext.apiKey.name,
-        context: {}
+        context: {},
       });
     });
 
