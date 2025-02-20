@@ -109,6 +109,7 @@ export const useRightDrawerEmailThread = () => {
         messageId: true,
         messageChannelId: true,
         messageThreadExternalId: true,
+        messageExternalId: true,
       },
       skip: !lastMessageId || !isMessagesFetchComplete,
     });
@@ -144,6 +145,10 @@ export const useRightDrawerEmailThread = () => {
     messageChannelMessageAssociationData.length > 0
       ? messageChannelMessageAssociationData[0].messageThreadExternalId
       : null;
+  const lastMessageExternalId =
+    messageChannelMessageAssociationData.length > 0
+      ? messageChannelMessageAssociationData[0].messageExternalId
+      : null;
   const connectedAccountHandle =
     messageChannelData.length > 0 ? messageChannelData[0].handle : null;
 
@@ -175,6 +180,7 @@ export const useRightDrawerEmailThread = () => {
     connectedAccountProvider,
     threadLoading: messagesLoading,
     messageChannelLoading,
+    lastMessageExternalId,
     fetchMoreMessages,
   };
 };
