@@ -3,7 +3,6 @@ import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 
 export const useUpsertRecordSort = () => {
   const currentRecordSortsCallbackState = useRecoilComponentCallbackStateV2(
@@ -18,12 +17,12 @@ export const useUpsertRecordSort = () => {
           currentRecordSortsCallbackState,
         );
 
-        const foundRecordSortInCurrentRecordSorts = currentRecordSorts.some(
+        const hasFoundRecordSortInCurrentRecordSorts = currentRecordSorts.some(
           (existingSort) =>
             existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
         );
 
-        if (!isDefined(foundRecordSortInCurrentRecordSorts)) {
+        if (!hasFoundRecordSortInCurrentRecordSorts) {
           set(currentRecordSortsCallbackState, [
             ...currentRecordSorts,
             recordSortToSet,
@@ -37,6 +36,10 @@ export const useUpsertRecordSort = () => {
                 existingSort.fieldMetadataId ===
                 recordSortToSet.fieldMetadataId,
             );
+
+            if (indexOfSortToUpdate < 0) {
+              return newCurrentRecordSorts;
+            }
 
             newCurrentRecordSorts[indexOfSortToUpdate] = {
               ...recordSortToSet,
