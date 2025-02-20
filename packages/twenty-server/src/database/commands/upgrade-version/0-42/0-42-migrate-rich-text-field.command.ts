@@ -54,6 +54,7 @@ type ProcessRichTextFieldsArgs = {
   richTextFields: FieldMetadataEntity[];
   workspaceId: string;
 };
+
 @Command({
   name: 'upgrade-0.42:migrate-rich-text-field',
   description: 'Migrate RICH_TEXT fields to new composite structure',
@@ -111,6 +112,10 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           index,
           total: workspaceIds.length,
         });
+
+        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+          workspaceId,
+        );
       }
 
       this.logger.log(chalk.green('Command completed!'));
