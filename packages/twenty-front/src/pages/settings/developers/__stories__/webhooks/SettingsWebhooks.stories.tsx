@@ -3,13 +3,13 @@ import { within } from '@storybook/test';
 
 import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
 import {
-    PageDecorator,
-    PageDecoratorArgs,
+  PageDecorator,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Webhooks',
+  title: 'Pages/Settings/Developers/Webhooks',
   component: SettingsDevelopers,
   decorators: [PageDecorator],
   args: { routePath: '/settings/webhooks' },
