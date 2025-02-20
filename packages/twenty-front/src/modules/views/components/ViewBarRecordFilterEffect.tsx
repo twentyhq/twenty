@@ -21,6 +21,12 @@ export const ViewBarRecordFilterEffect = () => {
     contextStoreCurrentObjectMetadataItemComponentState,
   );
 
+  const currentView = useRecoilValue(
+    prefetchViewFromViewIdFamilySelector({
+      viewId: currentViewId ?? '',
+    }),
+  );
+
   const [
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
@@ -41,12 +47,6 @@ export const ViewBarRecordFilterEffect = () => {
 
   const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
     contextStoreCurrentObjectMetadataItem?.id,
-  );
-
-  const currentView = useRecoilValue(
-    prefetchViewFromViewIdFamilySelector({
-      viewId: currentViewId ?? '',
-    }),
   );
 
   useEffect(() => {

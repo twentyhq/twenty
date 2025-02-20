@@ -4,7 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
+import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -26,17 +29,14 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
-import { assertNever } from 'src/utils/assert';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
+import { assertNever } from 'src/utils/assert';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -70,7 +70,7 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersionId: string,
     payload: object,
     workspaceMemberId: string,
-    user: User,
+    { firstName, lastName }: User,
   ) {
     await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
       workflowVersionId,
@@ -80,7 +80,10 @@ export class WorkflowTriggerWorkspaceService {
       this.getWorkspaceId(),
       workflowVersionId,
       payload,
-      buildCreatedByFromWorkspaceMember(workspaceMemberId, user),
+      buildCreatedByFromFullNameMetadata({
+        fullNameMetadata: { firstName, lastName },
+        workspaceMemberId,
+      }),
     );
   }
 
