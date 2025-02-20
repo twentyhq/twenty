@@ -243,7 +243,17 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       },
     ] as const;
 
-    if (!this.options.dryRun && !fieldMetadataAlreadyExisting) {
+    const shouldForceCreateColumns =
+      this.options.force && fieldMetadataAlreadyExisting;
+    if (shouldForceCreateColumns) {
+      this.logger.warn(
+        `Force creating V2 columns for workspaceId: ${workspaceId} objectMetadaId: ${objectMetadata.id}`,
+      );
+    }
+    if (
+      !this.options.dryRun &&
+      (!fieldMetadataAlreadyExisting || shouldForceCreateColumns)
+    ) {
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(
           `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
