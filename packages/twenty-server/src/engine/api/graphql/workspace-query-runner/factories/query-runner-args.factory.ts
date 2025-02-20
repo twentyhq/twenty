@@ -230,6 +230,43 @@ export class QueryRunnerArgsFactory {
 
           return [key, valueInBothFormats];
         }
+        case FieldMetadataType.LINKS: {
+          let newPrimaryLinkUrl = value?.primaryLinkUrl;
+
+          try {
+            newPrimaryLinkUrl = new URL(newPrimaryLinkUrl).toString();
+          } catch {
+            newPrimaryLinkUrl = value?.primaryLinkUrl;
+          }
+
+          return [key, { ...value, primaryLinkUrl: newPrimaryLinkUrl }];
+        }
+        case FieldMetadataType.EMAILS: {
+          let additionalEmails = value?.additionalEmails;
+          const primaryEmail = value?.primaryEmail
+            ? value.primaryEmail?.toLowerCase()
+            : '';
+
+          if (additionalEmails) {
+            try {
+              const emailArray = JSON.parse(additionalEmails) as string[];
+
+              additionalEmails = JSON.stringify(
+                emailArray.map((email) => email.toLowerCase()),
+              );
+            } catch {
+              additionalEmails = null;
+            }
+          }
+
+          return [
+            key,
+            {
+              primaryEmail,
+              additionalEmails,
+            },
+          ];
+        }
         default:
           return [key, value];
       }
