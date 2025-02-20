@@ -54,8 +54,6 @@ type ProcessRichTextFieldsArgs = {
   richTextFields: FieldMetadataEntity[];
   workspaceId: string;
 };
-
-type AsyncMethod<T> = () => Promise<T>;
 @Command({
   name: 'upgrade-0.42:migrate-rich-text-field',
   description: 'Migrate RICH_TEXT fields to new composite structure',
@@ -245,6 +243,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
 
     const shouldForceCreateColumns =
       this.options.force && fieldMetadataAlreadyExisting;
+
     if (shouldForceCreateColumns) {
       this.logger.warn(
         `Force creating V2 columns for workspaceId: ${workspaceId} objectMetadaId: ${objectMetadata.id}`,
@@ -252,6 +251,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     }
     const shouldCreateColumns =
       !fieldMetadataAlreadyExisting || shouldForceCreateColumns;
+
     if (!this.options.dryRun && shouldCreateColumns) {
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(
@@ -301,6 +301,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           workspaceId,
         });
       const fieldMetadataAlreadyExisting = isDefined(existingFieldMetadata);
+
       if (fieldMetadataAlreadyExisting) {
         this.logger.warn(
           `FieldMetadata already exists in fieldMetadataRepository name: ${newRichTextField.name} standardId: ${newRichTextField.standardId} type: ${newRichTextField.type} workspaceId: ${workspaceId}`,
