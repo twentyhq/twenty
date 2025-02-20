@@ -6,22 +6,21 @@ import { useDeleteCombinedViewSorts } from '@/views/hooks/useDeleteCombinedViewS
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 
 export const RecordIndexRemoveSortingModal = ({
-  recordTableId,
+  recordIndexId,
 }: {
-  recordTableId: string;
+  recordIndexId: string;
 }) => {
   const { currentViewWithCombinedFiltersAndSorts } =
-    useGetCurrentView(recordTableId);
+    useGetCurrentView(recordIndexId);
 
   const viewSorts = currentViewWithCombinedFiltersAndSorts?.viewSorts || [];
   const fieldMetadataIds = viewSorts.map(
     (viewSort) => viewSort.fieldMetadataId,
   );
-  const isRemoveSortingModalOpen = useRecoilState(
-    isRemoveSortingModalOpenState,
-  );
+  const [isRemoveSortingModalOpen, setIsRemoveSortingModalOpen] =
+    useRecoilState(isRemoveSortingModalOpenState);
 
-  const { deleteCombinedViewSort } = useDeleteCombinedViewSorts(recordTableId);
+  const { deleteCombinedViewSort } = useDeleteCombinedViewSorts(recordIndexId);
 
   const handleRemoveClick = () => {
     fieldMetadataIds.forEach((id) => {
@@ -32,8 +31,8 @@ export const RecordIndexRemoveSortingModal = ({
   return (
     <>
       <ConfirmationModal
-        isOpen={isRemoveSortingModalOpen[0]}
-        setIsOpen={isRemoveSortingModalOpen[1]}
+        isOpen={isRemoveSortingModalOpen}
+        setIsOpen={setIsRemoveSortingModalOpen}
         title={'Remove sorting?'}
         subtitle={<>This is required to enable manual row reordering.</>}
         onConfirmClick={() => handleRemoveClick()}

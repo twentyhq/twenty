@@ -26,7 +26,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     objectNameSingular,
   });
 
-  const setIsRemoveSortingModalOpenState = useSetRecoilState(
+  const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
   );
 
@@ -69,7 +69,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
         }
 
         if (indexSorts.length > 0) {
-          setIsRemoveSortingModalOpenState(true);
+          setIsRemoveSortingModalOpen(true);
           return;
         }
 
@@ -129,7 +129,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
       objectMetadataItem.fields,
       recordIdsByGroupFamilyState,
       updateOneRow,
-      setIsRemoveSortingModalOpenState,
+      setIsRemoveSortingModalOpen,
     ],
   );
 
