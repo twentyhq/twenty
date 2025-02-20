@@ -49,10 +49,12 @@ export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWor
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    for (const workspaceId of workspaceIds) {
+    for (const [index, workspaceId] of workspaceIds.entries()) {
       try {
         await this.execute(workspaceId, options?.dryRun);
-        this.logger.verbose(`Added for workspace: ${workspaceId}`);
+        this.logger.verbose(
+          `[${index + 1}/${workspaceIds.length}] Added for workspace: ${workspaceId}`,
+        );
       } catch (error) {
         this.logger.error(`Error for workspace: ${workspaceId}`, error);
       }
