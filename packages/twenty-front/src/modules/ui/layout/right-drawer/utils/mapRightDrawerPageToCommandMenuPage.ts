@@ -17,6 +17,8 @@ export const mapRightDrawerPageToCommandMenuPage = (
     [RightDrawerPages.WorkflowStepSelectAction]:
       CommandMenuPages.WorkflowStepSelectAction,
     [RightDrawerPages.WorkflowStepView]: CommandMenuPages.WorkflowStepView,
+    [RightDrawerPages.WorkflowRunStepView]:
+      CommandMenuPages.WorkflowRunStepView,
     [RightDrawerPages.WorkflowStepEdit]: CommandMenuPages.WorkflowStepEdit,
   };
 
