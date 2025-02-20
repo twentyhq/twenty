@@ -9,7 +9,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Developers/Webhooks',
+  title: 'Pages/Settings/Webhooks',
   component: SettingsDevelopers,
   decorators: [PageDecorator],
   args: { routePath: '/settings/webhooks' },
