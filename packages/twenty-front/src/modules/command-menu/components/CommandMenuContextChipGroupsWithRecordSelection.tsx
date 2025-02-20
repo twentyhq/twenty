@@ -22,7 +22,7 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
       limit: 3,
     });
 
-  if (loading) {
+  if (loading || records.length === 0) {
     return null;
   }
 
