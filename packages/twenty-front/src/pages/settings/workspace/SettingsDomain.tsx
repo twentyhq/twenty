@@ -26,7 +26,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
 import { isDefined } from 'twenty-shared';
-import { domainSchema } from '@/settings/security/validation-schemas/domainSchema';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -41,7 +40,17 @@ export const SettingsDomain = () => {
         .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
           message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
         }),
-      customDomain: domainSchema.optional().or(z.literal('')),
+      customDomain: z
+        .string()
+        .regex(
+          /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+          {
+            message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+          },
+        )
+        .max(256)
+        .optional()
+        .or(z.literal('')),
     })
     .required();
 
