@@ -255,7 +255,7 @@ export class QueryRunnerArgsFactory {
                 emailArray.map((email) => email.toLowerCase()),
               );
             } catch {
-              additionalEmails = null;
+              /* empty */
             }
           }
 
