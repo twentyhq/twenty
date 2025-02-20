@@ -25,7 +25,6 @@
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
     "@lingui/core": "^5.1.2",
-    "@lingui/macro": "^5.1.2",
     "@lingui/react": "^5.1.2",
     "@mdx-js/react": "^3.0.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
