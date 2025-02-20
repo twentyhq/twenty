@@ -98,7 +98,7 @@ export const CommandMenuContainer = ({
         >
           <ActionMenuContext.Provider
             value={{
-              isInRightDrawer: false,
+              isInRightDrawer: true,
               onActionExecutedCallback: ({ key }) => {
                 if (
                   key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
