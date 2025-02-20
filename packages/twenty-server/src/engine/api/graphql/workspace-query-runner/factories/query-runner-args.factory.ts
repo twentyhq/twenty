@@ -244,7 +244,7 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.EMAILS: {
           let additionalEmails = value?.additionalEmails;
           const primaryEmail = value?.primaryEmail
-            ? value.primaryEmail?.toLowerCase()
+            ? value.primaryEmail.toLowerCase()
             : '';
 
           if (additionalEmails) {
