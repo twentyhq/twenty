@@ -1,4 +1,4 @@
-import { ContentContainer } from './_components/ui/layout/ContentContainer';
+import { ContentContainer } from '../_components/ui/layout/ContentContainer';
 
 export const dynamic = 'force-dynamic';
 
