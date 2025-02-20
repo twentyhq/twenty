@@ -181,7 +181,9 @@ export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Lab`,
           path: SettingsPath.Lab,
           Icon: IconFlask,
-          isHidden: !labPublicFeatureFlags.length,
+          isHidden:
+            !labPublicFeatureFlags.length ||
+            !permissionMap[SettingsFeatures.WORKSPACE],
         },
         {
           label: t`Releases`,
