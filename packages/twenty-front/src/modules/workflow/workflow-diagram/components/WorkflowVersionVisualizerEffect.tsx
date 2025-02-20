@@ -1,5 +1,5 @@
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { workflowVersionIdState } from '@/workflow/states/workflowVersionIdState';
+import { flowState } from '@/workflow/states/flowState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { markLeafNodes } from '@/workflow/workflow-diagram/utils/markLeafNodes';
@@ -14,12 +14,21 @@ export const WorkflowVersionVisualizerEffect = ({
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
 
-  const setWorkflowVersionId = useSetRecoilState(workflowVersionIdState);
+  const setFlow = useSetRecoilState(flowState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
   useEffect(() => {
-    setWorkflowVersionId(workflowVersionId);
-  }, [setWorkflowVersionId, workflowVersionId]);
+    if (!isDefined(workflowVersion)) {
+      setFlow(undefined);
+
+      return;
+    }
+
+    setFlow({
+      trigger: workflowVersion.trigger,
+      steps: workflowVersion.steps,
+    });
+  }, [setFlow, workflowVersion]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
