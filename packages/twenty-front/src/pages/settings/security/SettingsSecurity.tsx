@@ -9,7 +9,7 @@ import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/co
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsTrustedDomainsListCard } from '@/settings/security/components/workspaceTrustedDomains/SettingsTrustedDomainsListCard';
+import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -63,7 +63,7 @@ export const SettingsSecurity = () => {
               title={t`Approved Email Domain`}
               description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
             />
-            <SettingsTrustedDomainsListCard />
+            <SettingsApprovedAccessDomainsListCard />
           </StyledSection>
           <Section>
             <StyledContainer>

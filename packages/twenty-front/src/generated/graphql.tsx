@@ -2377,6 +2377,13 @@ export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> }> };
 
+export type CreateApprovedAccessDomainMutationVariables = Exact<{
+  input: CreateApprovedAccessDomainInput;
+}>;
+
+
+export type CreateApprovedAccessDomainMutation = { __typename?: 'Mutation', createApprovedAccessDomain: { __typename?: 'ApprovedAccessDomain', id: any, domain: string, isValidated: boolean, createdAt: string } };
+
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
 }>;
@@ -2391,12 +2398,12 @@ export type CreateSamlIdentityProviderMutationVariables = Exact<{
 
 export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
-export type CreateWorkspaceTrustDomainMutationVariables = Exact<{
-  input: CreateTrustedDomainInput;
+export type DeleteApprovedAccessDomainMutationVariables = Exact<{
+  input: DeleteApprovedAccessDomainInput;
 }>;
 
 
-export type CreateWorkspaceTrustDomainMutation = { __typename?: 'Mutation', createWorkspaceTrustedDomain: { __typename?: 'WorkspaceTrustedDomain', id: any, domain: string, isValidated: boolean, createdAt: string } };
+export type DeleteApprovedAccessDomainMutation = { __typename?: 'Mutation', deleteApprovedAccessDomain: boolean };
 
 export type DeleteSsoIdentityProviderMutationVariables = Exact<{
   input: DeleteSsoInput;
@@ -2405,13 +2412,6 @@ export type DeleteSsoIdentityProviderMutationVariables = Exact<{
 
 export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSsoOutput', identityProviderId: string } };
 
-export type DeleteWorkspaceTrustDomainMutationVariables = Exact<{
-  input: DeleteTrustedDomainInput;
-}>;
-
-
-export type DeleteWorkspaceTrustDomainMutation = { __typename?: 'Mutation', deleteWorkspaceTrustedDomain: boolean };
-
 export type EditSsoIdentityProviderMutationVariables = Exact<{
   input: EditSsoInput;
 }>;
@@ -2419,22 +2419,22 @@ export type EditSsoIdentityProviderMutationVariables = Exact<{
 
 export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
-export type ValidateWorkspaceTrustedDomainMutationVariables = Exact<{
-  input: ValidateTrustedDomainInput;
+export type ValidateApprovedAccessDomainMutationVariables = Exact<{
+  input: ValidateApprovedAccessDomainInput;
 }>;
 
 
-export type ValidateWorkspaceTrustedDomainMutation = { __typename?: 'Mutation', validateWorkspaceTrustedDomain: boolean };
+export type ValidateApprovedAccessDomainMutation = { __typename?: 'Mutation', validateApprovedAccessDomain: { __typename?: 'ApprovedAccessDomain', id: any, isValidated: boolean, domain: string, createdAt: string } };
+
+export type GetAllApprovedAccessDomainsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllApprovedAccessDomainsQuery = { __typename?: 'Query', getAllApprovedAccessDomains: Array<{ __typename?: 'ApprovedAccessDomain', id: any, createdAt: string, domain: string, isValidated: boolean }> };
 
 export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
-
-export type GetAllWorkspaceTrustedDomainsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetAllWorkspaceTrustedDomainsQuery = { __typename?: 'Query', getAllWorkspaceTrustedDomains: Array<{ __typename?: 'WorkspaceTrustedDomain', id: any, createdAt: string, domain: string, isValidated: boolean }> };
 
 export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingsFeatures> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> };
 
@@ -4319,6 +4319,42 @@ export function useGetRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetRolesQueryHookResult = ReturnType<typeof useGetRolesQuery>;
 export type GetRolesLazyQueryHookResult = ReturnType<typeof useGetRolesLazyQuery>;
 export type GetRolesQueryResult = Apollo.QueryResult<GetRolesQuery, GetRolesQueryVariables>;
+export const CreateApprovedAccessDomainDocument = gql`
+    mutation CreateApprovedAccessDomain($input: CreateApprovedAccessDomainInput!) {
+  createApprovedAccessDomain(input: $input) {
+    id
+    domain
+    isValidated
+    createdAt
+  }
+}
+    `;
+export type CreateApprovedAccessDomainMutationFn = Apollo.MutationFunction<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>;
+
+/**
+ * __useCreateApprovedAccessDomainMutation__
+ *
+ * To run a mutation, you first call `useCreateApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateApprovedAccessDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createApprovedAccessDomainMutation, { data, loading, error }] = useCreateApprovedAccessDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>(CreateApprovedAccessDomainDocument, options);
+      }
+export type CreateApprovedAccessDomainMutationHookResult = ReturnType<typeof useCreateApprovedAccessDomainMutation>;
+export type CreateApprovedAccessDomainMutationResult = Apollo.MutationResult<CreateApprovedAccessDomainMutation>;
+export type CreateApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>;
 export const CreateOidcIdentityProviderDocument = gql`
     mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
   createOIDCIdentityProvider(input: $input) {
@@ -4393,42 +4429,37 @@ export function useCreateSamlIdentityProviderMutation(baseOptions?: Apollo.Mutat
 export type CreateSamlIdentityProviderMutationHookResult = ReturnType<typeof useCreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationResult = Apollo.MutationResult<CreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationOptions = Apollo.BaseMutationOptions<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>;
-export const CreateWorkspaceTrustDomainDocument = gql`
-    mutation CreateWorkspaceTrustDomain($input: CreateTrustedDomainInput!) {
-  createWorkspaceTrustedDomain(input: $input) {
-    id
-    domain
-    isValidated
-    createdAt
-  }
+export const DeleteApprovedAccessDomainDocument = gql`
+    mutation DeleteApprovedAccessDomain($input: DeleteApprovedAccessDomainInput!) {
+  deleteApprovedAccessDomain(input: $input)
 }
     `;
-export type CreateWorkspaceTrustDomainMutationFn = Apollo.MutationFunction<CreateWorkspaceTrustDomainMutation, CreateWorkspaceTrustDomainMutationVariables>;
+export type DeleteApprovedAccessDomainMutationFn = Apollo.MutationFunction<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>;
 
 /**
- * __useCreateWorkspaceTrustDomainMutation__
+ * __useDeleteApprovedAccessDomainMutation__
  *
- * To run a mutation, you first call `useCreateWorkspaceTrustDomainMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateWorkspaceTrustDomainMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useDeleteApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteApprovedAccessDomainMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createWorkspaceTrustDomainMutation, { data, loading, error }] = useCreateWorkspaceTrustDomainMutation({
+ * const [deleteApprovedAccessDomainMutation, { data, loading, error }] = useDeleteApprovedAccessDomainMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateWorkspaceTrustDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceTrustDomainMutation, CreateWorkspaceTrustDomainMutationVariables>) {
+export function useDeleteApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateWorkspaceTrustDomainMutation, CreateWorkspaceTrustDomainMutationVariables>(CreateWorkspaceTrustDomainDocument, options);
+        return Apollo.useMutation<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>(DeleteApprovedAccessDomainDocument, options);
       }
-export type CreateWorkspaceTrustDomainMutationHookResult = ReturnType<typeof useCreateWorkspaceTrustDomainMutation>;
-export type CreateWorkspaceTrustDomainMutationResult = Apollo.MutationResult<CreateWorkspaceTrustDomainMutation>;
-export type CreateWorkspaceTrustDomainMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceTrustDomainMutation, CreateWorkspaceTrustDomainMutationVariables>;
+export type DeleteApprovedAccessDomainMutationHookResult = ReturnType<typeof useDeleteApprovedAccessDomainMutation>;
+export type DeleteApprovedAccessDomainMutationResult = Apollo.MutationResult<DeleteApprovedAccessDomainMutation>;
+export type DeleteApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>;
 export const DeleteSsoIdentityProviderDocument = gql`
     mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
   deleteSSOIdentityProvider(input: $input) {
@@ -4462,37 +4493,6 @@ export function useDeleteSsoIdentityProviderMutation(baseOptions?: Apollo.Mutati
 export type DeleteSsoIdentityProviderMutationHookResult = ReturnType<typeof useDeleteSsoIdentityProviderMutation>;
 export type DeleteSsoIdentityProviderMutationResult = Apollo.MutationResult<DeleteSsoIdentityProviderMutation>;
 export type DeleteSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>;
-export const DeleteWorkspaceTrustDomainDocument = gql`
-    mutation DeleteWorkspaceTrustDomain($input: DeleteTrustedDomainInput!) {
-  deleteWorkspaceTrustedDomain(input: $input)
-}
-    `;
-export type DeleteWorkspaceTrustDomainMutationFn = Apollo.MutationFunction<DeleteWorkspaceTrustDomainMutation, DeleteWorkspaceTrustDomainMutationVariables>;
-
-/**
- * __useDeleteWorkspaceTrustDomainMutation__
- *
- * To run a mutation, you first call `useDeleteWorkspaceTrustDomainMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteWorkspaceTrustDomainMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteWorkspaceTrustDomainMutation, { data, loading, error }] = useDeleteWorkspaceTrustDomainMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDeleteWorkspaceTrustDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkspaceTrustDomainMutation, DeleteWorkspaceTrustDomainMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteWorkspaceTrustDomainMutation, DeleteWorkspaceTrustDomainMutationVariables>(DeleteWorkspaceTrustDomainDocument, options);
-      }
-export type DeleteWorkspaceTrustDomainMutationHookResult = ReturnType<typeof useDeleteWorkspaceTrustDomainMutation>;
-export type DeleteWorkspaceTrustDomainMutationResult = Apollo.MutationResult<DeleteWorkspaceTrustDomainMutation>;
-export type DeleteWorkspaceTrustDomainMutationOptions = Apollo.BaseMutationOptions<DeleteWorkspaceTrustDomainMutation, DeleteWorkspaceTrustDomainMutationVariables>;
 export const EditSsoIdentityProviderDocument = gql`
     mutation EditSSOIdentityProvider($input: EditSsoInput!) {
   editSSOIdentityProvider(input: $input) {
@@ -4530,37 +4530,79 @@ export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.Mutation
 export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
-export const ValidateWorkspaceTrustedDomainDocument = gql`
-    mutation ValidateWorkspaceTrustedDomain($input: ValidateTrustedDomainInput!) {
-  validateWorkspaceTrustedDomain(input: $input)
+export const ValidateApprovedAccessDomainDocument = gql`
+    mutation ValidateApprovedAccessDomain($input: ValidateApprovedAccessDomainInput!) {
+  validateApprovedAccessDomain(input: $input) {
+    id
+    isValidated
+    domain
+    createdAt
+  }
 }
     `;
-export type ValidateWorkspaceTrustedDomainMutationFn = Apollo.MutationFunction<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>;
+export type ValidateApprovedAccessDomainMutationFn = Apollo.MutationFunction<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>;
 
 /**
- * __useValidateWorkspaceTrustedDomainMutation__
+ * __useValidateApprovedAccessDomainMutation__
  *
- * To run a mutation, you first call `useValidateWorkspaceTrustedDomainMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useValidateWorkspaceTrustedDomainMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useValidateApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useValidateApprovedAccessDomainMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [validateWorkspaceTrustedDomainMutation, { data, loading, error }] = useValidateWorkspaceTrustedDomainMutation({
+ * const [validateApprovedAccessDomainMutation, { data, loading, error }] = useValidateApprovedAccessDomainMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useValidateWorkspaceTrustedDomainMutation(baseOptions?: Apollo.MutationHookOptions<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>) {
+export function useValidateApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>(ValidateWorkspaceTrustedDomainDocument, options);
+        return Apollo.useMutation<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>(ValidateApprovedAccessDomainDocument, options);
       }
-export type ValidateWorkspaceTrustedDomainMutationHookResult = ReturnType<typeof useValidateWorkspaceTrustedDomainMutation>;
-export type ValidateWorkspaceTrustedDomainMutationResult = Apollo.MutationResult<ValidateWorkspaceTrustedDomainMutation>;
-export type ValidateWorkspaceTrustedDomainMutationOptions = Apollo.BaseMutationOptions<ValidateWorkspaceTrustedDomainMutation, ValidateWorkspaceTrustedDomainMutationVariables>;
+export type ValidateApprovedAccessDomainMutationHookResult = ReturnType<typeof useValidateApprovedAccessDomainMutation>;
+export type ValidateApprovedAccessDomainMutationResult = Apollo.MutationResult<ValidateApprovedAccessDomainMutation>;
+export type ValidateApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>;
+export const GetAllApprovedAccessDomainsDocument = gql`
+    query GetAllApprovedAccessDomains {
+  getAllApprovedAccessDomains {
+    id
+    createdAt
+    domain
+    isValidated
+  }
+}
+    `;
+
+/**
+ * __useGetAllApprovedAccessDomainsQuery__
+ *
+ * To run a query within a React component, call `useGetAllApprovedAccessDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllApprovedAccessDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllApprovedAccessDomainsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllApprovedAccessDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>(GetAllApprovedAccessDomainsDocument, options);
+      }
+export function useGetAllApprovedAccessDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>(GetAllApprovedAccessDomainsDocument, options);
+        }
+export type GetAllApprovedAccessDomainsQueryHookResult = ReturnType<typeof useGetAllApprovedAccessDomainsQuery>;
+export type GetAllApprovedAccessDomainsLazyQueryHookResult = ReturnType<typeof useGetAllApprovedAccessDomainsLazyQuery>;
+export type GetAllApprovedAccessDomainsQueryResult = Apollo.QueryResult<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>;
 export const GetSsoIdentityProvidersDocument = gql`
     query GetSSOIdentityProviders {
   getSSOIdentityProviders {
@@ -4599,43 +4641,6 @@ export function useGetSsoIdentityProvidersLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetSsoIdentityProvidersQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersQuery>;
 export type GetSsoIdentityProvidersLazyQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersLazyQuery>;
 export type GetSsoIdentityProvidersQueryResult = Apollo.QueryResult<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>;
-export const GetAllWorkspaceTrustedDomainsDocument = gql`
-    query GetAllWorkspaceTrustedDomains {
-  getAllWorkspaceTrustedDomains {
-    id
-    createdAt
-    domain
-    isValidated
-  }
-}
-    `;
-
-/**
- * __useGetAllWorkspaceTrustedDomainsQuery__
- *
- * To run a query within a React component, call `useGetAllWorkspaceTrustedDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllWorkspaceTrustedDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllWorkspaceTrustedDomainsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllWorkspaceTrustedDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>(GetAllWorkspaceTrustedDomainsDocument, options);
-      }
-export function useGetAllWorkspaceTrustedDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>(GetAllWorkspaceTrustedDomainsDocument, options);
-        }
-export type GetAllWorkspaceTrustedDomainsQueryHookResult = ReturnType<typeof useGetAllWorkspaceTrustedDomainsQuery>;
-export type GetAllWorkspaceTrustedDomainsLazyQueryHookResult = ReturnType<typeof useGetAllWorkspaceTrustedDomainsLazyQuery>;
-export type GetAllWorkspaceTrustedDomainsQueryResult = Apollo.QueryResult<GetAllWorkspaceTrustedDomainsQuery, GetAllWorkspaceTrustedDomainsQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUser {
