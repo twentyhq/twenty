@@ -250,10 +250,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         `Force creating V2 columns for workspaceId: ${workspaceId} objectMetadaId: ${objectMetadata.id}`,
       );
     }
-    if (
-      !this.options.dryRun &&
-      (!fieldMetadataAlreadyExisting || shouldForceCreateColumns)
-    ) {
+    const shouldCreateColumns =
+      !fieldMetadataAlreadyExisting || shouldForceCreateColumns;
+    if (!this.options.dryRun && shouldCreateColumns) {
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(
           `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
@@ -268,6 +267,8 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         ],
       );
     }
+
+    return shouldCreateColumns;
   }
 
   private async createIfMissingNewRichTextFieldsColumn({
@@ -329,7 +330,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         continue;
       }
 
-      await this.createMarkdownBlockNoteV2Columns({
+      const hasCreatedColumns = await this.createMarkdownBlockNoteV2Columns({
         objectMetadata,
         richTextField,
         workspaceId,
@@ -337,7 +338,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       });
 
       richTextFieldsWithHasCreatedColumns.push({
-        hasCreatedColumns: fieldMetadataAlreadyExisting,
+        hasCreatedColumns,
         richTextField,
         objectMetadata,
       });
@@ -440,15 +441,12 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           serverBlockNoteEditor,
         });
 
-        const shouldForceUpdate = !hasCreatedColumns && this.options.force;
-        const shouldUpdateFieldValue = hasCreatedColumns || shouldForceUpdate;
-
-        if (shouldForceUpdate) {
+        if (this.options.force) {
           this.logger.warn(
-            `Will force udpate RICH_TEXT_V2 fieldValue for ${richTextField.id} of objectMetadata ${objectMetadata.id} even it has already been migrated in the past`,
+            `Force udpate rowId: ${row.id} RICH_TEXT_FIELD ${richTextField.id} objectMetadata ${objectMetadata.id}`,
           );
         }
-        if (!this.options.dryRun && shouldUpdateFieldValue) {
+        if (!this.options.dryRun && (hasCreatedColumns || this.options.force)) {
           await workspaceDataSource.query(
             `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
             [blocknoteFieldValue, markdownFieldValue, row.id],
