@@ -7,7 +7,7 @@ export type FileWorkspaceFolderDeletionJobData = {
   workspaceId: string;
 };
 
-@Processor(MessageQueue.workspaceQueue)
+@Processor(MessageQueue.deleteCascadeQueue)
 export class FileWorkspaceFolderDeletionJob {
   constructor(private readonly fileService: FileService) {}
 

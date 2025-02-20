@@ -16,7 +16,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 @Injectable()
 export class FileAttachmentListener {
   constructor(
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 

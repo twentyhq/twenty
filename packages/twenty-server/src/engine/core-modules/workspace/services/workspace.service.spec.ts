@@ -104,7 +104,7 @@ describe('WorkspaceService', () => {
           useValue: {},
         },
         {
-          provide: getQueueToken(MessageQueue.workspaceQueue),
+          provide: getQueueToken(MessageQueue.deleteCascadeQueue),
           useValue: {},
         },
       ],

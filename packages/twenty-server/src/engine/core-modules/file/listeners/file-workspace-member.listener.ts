@@ -16,7 +16,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @Injectable()
 export class FileWorkspaceMemberListener {
   constructor(
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 

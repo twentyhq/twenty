@@ -70,7 +70,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly permissionsService: PermissionsService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super(workspaceRepository);

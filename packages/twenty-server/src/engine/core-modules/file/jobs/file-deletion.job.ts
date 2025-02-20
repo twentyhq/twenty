@@ -10,7 +10,7 @@ export type FileDeletionJobData = {
   fullPath: string;
 };
 
-@Processor(MessageQueue.workspaceQueue)
+@Processor(MessageQueue.deleteCascadeQueue)
 export class FileDeletionJob {
   constructor(private readonly fileService: FileService) {}
 
