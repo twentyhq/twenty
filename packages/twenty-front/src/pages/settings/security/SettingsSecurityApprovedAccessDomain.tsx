@@ -7,30 +7,39 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { domainSchema } from '@/settings/security/validation-schemas/domainSchema';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { z } from 'zod';
 import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useCreateWorkspaceTrustDomainMutation } from '~/generated/graphql';
+import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
 
-export const SettingsSecurityTrustedDomain = () => {
+export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
 
   const { t } = useLingui();
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const [createWorkspaceTrustDomain] = useCreateWorkspaceTrustDomainMutation();
+  const [createApprovedAccessDomain] = useCreateApprovedAccessDomainMutation();
 
   const formConfig = useForm<{ domain: string; email: string }>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     resolver: zodResolver(
       z
         .object({
-          domain: domainSchema,
-          email: z.string().min(1),
+          domain: z
+            .string()
+            .regex(
+              /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+              {
+                message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+              },
+            )
+            .max(256),
+          email: z.string().min(1, {
+            message: t`Email can not be empty`,
+          }),
         })
         .strict(),
     ),
@@ -44,7 +53,10 @@ export const SettingsSecurityTrustedDomain = () => {
 
   const handleSave = async () => {
     try {
-      createWorkspaceTrustDomain({
+      if (!formConfig.formState.isValid) {
+        return;
+      }
+      createApprovedAccessDomain({
         variables: {
           input: {
             domain: formConfig.getValues('domain'),
@@ -75,12 +87,11 @@ export const SettingsSecurityTrustedDomain = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="New Trusted Email Domain"
+      title="New Approved Access Domain"
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!formConfig.formState.isValid}
           onCancel={() => navigate(SettingsPath.Security)}
-          onSave={handleSave}
+          onSave={formConfig.handleSubmit(handleSave)}
         />
       }
       links={[
@@ -92,7 +103,7 @@ export const SettingsSecurityTrustedDomain = () => {
           children: <Trans>Security</Trans>,
           href: getSettingsPath(SettingsPath.Security),
         },
-        { children: <Trans>New Trusted Domain</Trans> },
+        { children: <Trans>New Approved Access Domain</Trans> },
       ]}
     >
       <SettingsPageContainer>
@@ -101,16 +112,16 @@ export const SettingsSecurityTrustedDomain = () => {
           <Controller
             name="domain"
             control={formConfig.control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextInput
                 autoComplete="off"
-                label="Domain"
                 value={value}
                 onChange={(domain: string) => {
                   onChange(domain);
                 }}
                 fullWidth
                 placeholder="yourdomain.com"
+                error={error?.message}
               />
             )}
           />
@@ -123,13 +134,13 @@ export const SettingsSecurityTrustedDomain = () => {
           <Controller
             name="email"
             control={formConfig.control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextInput
                 autoComplete="off"
-                label="Email"
                 value={value.split('@')[0]}
                 onChange={onChange}
                 fullWidth
+                error={error?.message}
               />
             )}
           />

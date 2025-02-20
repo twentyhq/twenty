@@ -1,42 +1,42 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared';
-import { useValidateWorkspaceTrustedDomainMutation } from '~/generated/graphql';
+import { useValidateApprovedAccessDomainMutation } from '~/generated/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSearchParams } from 'react-router-dom';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 
-export const SettingsSecurityTrustedDomainValidationEffect = () => {
-  const [validateWorkspaceTrustedDomainMutation] =
-    useValidateWorkspaceTrustedDomainMutation();
+export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
+  const [validateApprovedAccessDomainMutation] =
+    useValidateApprovedAccessDomainMutation();
   const { enqueueSnackBar } = useSnackBar();
   const [searchParams] = useSearchParams();
-  const workspaceTrustedDomainId = searchParams.get('wtdId');
+  const approvedAccessDomainId = searchParams.get('wtdId');
   const validationToken = searchParams.get('validationToken');
 
   useEffect(() => {
-    if (isDefined(validationToken) && isDefined(workspaceTrustedDomainId)) {
-      validateWorkspaceTrustedDomainMutation({
+    if (isDefined(validationToken) && isDefined(approvedAccessDomainId)) {
+      validateApprovedAccessDomainMutation({
         variables: {
           input: {
             validationToken,
-            workspaceTrustedDomainId,
+            approvedAccessDomainId,
           },
         },
         onCompleted: () => {
-          enqueueSnackBar('Trusted domain validated', {
-            dedupeKey: 'trusted-domain-validation-dedupe-key',
+          enqueueSnackBar('Approved access domain validated', {
+            dedupeKey: 'approved-access-domain-validation-dedupe-key',
             variant: SnackBarVariant.Success,
           });
         },
         onError: () => {
-          enqueueSnackBar('Error validating trusted domain', {
-            dedupeKey: 'trusted-domain-validation-error-dedupe-key',
+          enqueueSnackBar('Error validating approved access domain', {
+            dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
             variant: SnackBarVariant.Error,
           });
         },
       });
     }
-    // Validate trusted domain only needs to run once at mount
+    // Validate approved access domain only needs to run once at mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

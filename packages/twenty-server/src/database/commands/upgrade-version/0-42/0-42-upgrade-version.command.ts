@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
@@ -11,6 +11,11 @@ import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-versi
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
+type Upgrade042CommandCustomOptions = {
+  force: boolean;
+};
+export type Upgrade042CommandOptions = BaseCommandOptions &
+  Upgrade042CommandCustomOptions;
 @Command({
   name: 'upgrade-0.42',
   description: 'Upgrade to 0.42',
@@ -27,9 +32,19 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
     super(workspaceRepository);
   }
 
+  @Option({
+    flags: '-f, --force [boolean]',
+    description:
+      'Force RICH_TEXT_FIELD value update even if column migration has already be run',
+    required: false,
+  })
+  parseForceValue(val?: boolean): boolean {
+    return val ?? false;
+  }
+
   async executeActiveWorkspacesCommand(
     passedParam: string[],
-    options: BaseCommandOptions,
+    options: Upgrade042CommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log('Running command to upgrade to 0.42');

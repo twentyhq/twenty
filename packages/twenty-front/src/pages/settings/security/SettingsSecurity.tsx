@@ -9,7 +9,7 @@ import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/co
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsTrustedDomainsListCard } from '@/settings/security/components/workspaceTrustedDomains/SettingsTrustedDomainsListCard';
+import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -31,8 +31,8 @@ const StyledSection = styled(Section)`
 export const SettingsSecurity = () => {
   const { t } = useLingui();
 
-  const IsTrustedDomainsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsTrustedDomainsEnabled,
+  const IsApprovedAccessDomainsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsApprovedAccessDomainsEnabled,
   );
 
   return (
@@ -64,13 +64,13 @@ export const SettingsSecurity = () => {
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </StyledSection>
-          {IsTrustedDomainsEnabled && (
+          {IsApprovedAccessDomainsEnabled && (
             <StyledSection>
               <H2Title
                 title={t`Approved Email Domain`}
                 description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
               />
-              <SettingsTrustedDomainsListCard />
+              <SettingsApprovedAccessDomainsListCard />
             </StyledSection>
           )}
           <Section>

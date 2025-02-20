@@ -20,7 +20,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceTrustedDomain } from 'src/engine/core-modules/workspace-trusted-domain/workspace-trusted-domain.entity';
+import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -86,10 +86,10 @@ export class Workspace {
   featureFlags: Relation<FeatureFlag[]>;
 
   @OneToMany(
-    () => WorkspaceTrustedDomain,
-    (trustDomain) => trustDomain.workspace,
+    () => ApprovedAccessDomain,
+    (approvedAccessDomain) => approvedAccessDomain.workspace,
   )
-  trustDomains: Relation<WorkspaceTrustedDomain[]>;
+  approvedAccessDomains: Relation<ApprovedAccessDomain[]>;
 
   @Field({ nullable: true })
   workspaceMembersCount: number;
