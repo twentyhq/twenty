@@ -3,16 +3,12 @@ import { RestApiWrapper } from '@/settings/api/playground/components/RestApiWrap
 import { useState } from 'react';
 
 const RestPlaygroundMetadata = () => {
-  const [openApiJson, setOpenApiJson] = useState<{}>();
-
-  const children = <RestApiWrapper openApiJson={openApiJson} />;
+  const [openApiJson, setOpenApiJson] = useState<object>();
 
   return (
-    <Playground
-      children={children}
-      setOpenApiJson={setOpenApiJson}
-      subDoc="metadata"
-    />
+    <Playground setOpenApiJson={setOpenApiJson} subDoc="metadata">
+      <RestApiWrapper openApiJson={openApiJson} />;
+    </Playground>
   );
 };
 

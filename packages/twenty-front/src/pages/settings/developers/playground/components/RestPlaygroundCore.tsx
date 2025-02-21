@@ -12,10 +12,7 @@ const RestPlaygroundCore = () => {
 
   return (
     <StyledContainer>
-      <Playground
-        setOpenApiJson={setOpenApiJson}
-        subDoc="core"
-      >
+      <Playground setOpenApiJson={setOpenApiJson} subDoc="core">
         <RestApiWrapper openApiJson={openApiJson} />;
       </Playground>
     </StyledContainer>
