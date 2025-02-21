@@ -16,10 +16,7 @@ export const WorkflowRunVisualizerContent = ({
 
   return (
     <>
-      <WorkflowRunVisualizerEffect
-        workflowRun={workflowRun}
-        workflowVersionId={workflowVersion.id}
-      />
+      <WorkflowRunVisualizerEffect workflowRun={workflowRun} />
 
       <WorkflowDiagramCanvasReadonly versionStatus={workflowVersion.status} />
     </>

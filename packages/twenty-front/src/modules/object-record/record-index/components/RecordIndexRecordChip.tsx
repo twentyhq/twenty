@@ -11,6 +11,7 @@ export type RecordIdentifierChipProps = {
   size?: ChipSize;
   to?: string;
   maxWidth?: number;
+  onClick?: () => void;
 };
 
 export const RecordIdentifierChip = ({
@@ -18,6 +19,7 @@ export const RecordIdentifierChip = ({
   record,
   variant,
   size,
+  onClick,
   to,
   maxWidth,
 }: RecordIdentifierChipProps) => {
@@ -40,6 +42,7 @@ export const RecordIdentifierChip = ({
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       to={to}
+      onClick={onClick}
       variant={variant}
       LeftIcon={LeftIcon}
       LeftIconColor={LeftIconColor}

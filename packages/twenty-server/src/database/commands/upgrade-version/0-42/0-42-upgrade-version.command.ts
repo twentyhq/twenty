@@ -8,6 +8,7 @@ import { BaseCommandOptions } from 'src/database/commands/base.command';
 import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-42/0-42-fix-body-v2-view-field-position.command';
 import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
+import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -28,6 +29,7 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
     private readonly fixBodyV2ViewFieldPositionCommand: FixBodyV2ViewFieldPositionCommand,
     private readonly limitAmountOfViewFieldCommand: LimitAmountOfViewFieldCommand,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
+    private readonly standardizationOfActorCompositeContextType: StandardizationOfActorCompositeContextTypeCommand,
   ) {
     super(workspaceRepository);
   }
@@ -73,6 +75,12 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
         ...options,
         force: true,
       },
+      workspaceIds,
+    );
+
+    await this.standardizationOfActorCompositeContextType.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
       workspaceIds,
     );
   }

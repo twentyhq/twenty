@@ -54,6 +54,7 @@ type ProcessRichTextFieldsArgs = {
   richTextFields: FieldMetadataEntity[];
   workspaceId: string;
 };
+
 @Command({
   name: 'upgrade-0.42:migrate-rich-text-field',
   description: 'Migrate RICH_TEXT fields to new composite structure',
@@ -104,19 +105,25 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       this.logger.setVerbose(options.verbose ?? false);
     }
 
-    try {
-      for (const [index, workspaceId] of workspaceIds.entries()) {
+    for (const [index, workspaceId] of workspaceIds.entries()) {
+      try {
         await this.processWorkspace({
           workspaceId,
           index,
           total: workspaceIds.length,
         });
+      } catch (error) {
+        this.logger.log(
+          chalk.red(`Error in workspace ${workspaceId}: ${error}`),
+        );
       }
 
-      this.logger.log(chalk.green('Command completed!'));
-    } catch (error) {
-      this.logger.log(chalk.red('Error in workspace'));
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
     }
+
+    this.logger.log(chalk.green('Command completed!'));
   }
 
   private async processWorkspace({
@@ -165,9 +172,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         );
       }
 
-      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-        workspaceId,
-      );
       this.logger.log(
         chalk.green(`Command completed for workspace ${workspaceId}`),
       );
@@ -398,9 +402,19 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       return null;
     }
 
-    return await serverBlockNoteEditor.blocksToMarkdownLossy(
-      jsonParsedblocknoteFieldValue,
-    );
+    let markdown: string | null = null;
+
+    try {
+      markdown = await serverBlockNoteEditor.blocksToMarkdownLossy(
+        jsonParsedblocknoteFieldValue,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Error converting blocknote to markdown for ${blocknoteFieldValue}`,
+      );
+    }
+
+    return markdown;
   }
 
   private async migrateToNewRichTextFieldsColumn({

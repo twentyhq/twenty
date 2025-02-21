@@ -17,6 +17,7 @@ import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SoftDeleteFilterChip } from '@/views/components/SoftDeleteFilterChip';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
+import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -163,10 +164,14 @@ export const ViewBarDetails = ({
   const { applyCurrentViewFiltersToCurrentRecordFilters } =
     useApplyCurrentViewFiltersToCurrentRecordFilters();
 
+  const { applyCurrentViewSortsToCurrentRecordSorts } =
+    useApplyCurrentViewSortsToCurrentRecordSorts();
+
   const handleCancelClick = () => {
     if (isDefined(viewId)) {
       resetUnsavedViewStates(viewId);
       applyCurrentViewFiltersToCurrentRecordFilters();
+      applyCurrentViewSortsToCurrentRecordSorts();
       toggleSoftDeleteFilterState(false);
     }
   };
@@ -204,8 +209,11 @@ export const ViewBarDetails = ({
           {mapViewSortsToSorts(
             currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [],
             availableSortDefinitions,
-          ).map((sort) => (
-            <EditableSortChip key={sort.fieldMetadataId} viewSort={sort} />
+          ).map((recordSort) => (
+            <EditableSortChip
+              key={recordSort.fieldMetadataId}
+              recordSort={recordSort}
+            />
           ))}
           {isNonEmptyArray(recordFilters) &&
             isNonEmptyArray(

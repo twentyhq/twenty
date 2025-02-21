@@ -586,6 +586,10 @@ msgstr "Retning"
 msgid "Display Name"
 msgstr "Visningsnavn"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Visningsværdi"
@@ -1327,6 +1331,10 @@ msgstr "Objekt Metadata-id"
 msgid "Object name"
 msgstr "Objektnavn"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operand"
@@ -1540,7 +1548,8 @@ msgstr "Køringer"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Scopes"
-msgstr "R\n"
+msgstr ""
+"R\n"
 "ettigheder"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts

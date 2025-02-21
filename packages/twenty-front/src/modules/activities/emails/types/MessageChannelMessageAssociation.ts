@@ -4,4 +4,5 @@ export type MessageChannelMessageAssociation = {
   messageId: string;
   messageChannelId: string;
   messageThreadExternalId: string;
+  messageExternalId: string;
 };

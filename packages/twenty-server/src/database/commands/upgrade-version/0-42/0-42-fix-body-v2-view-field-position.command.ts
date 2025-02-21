@@ -185,5 +185,9 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
     } catch (error) {
       this.logger.log(chalk.red(`Error in workspace ${workspaceId}`));
     }
+
+    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+      workspaceId,
+    );
   }
 }

@@ -321,7 +321,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     );
 
     if (softDelete) {
-      return await this.workspaceRepository.softDelete({ id });
+      await this.workspaceRepository.softDelete({ id });
+
+      return workspace;
     }
 
     await this.deleteMetadataSchemaCacheAndUserWorkspace(workspace);
@@ -330,8 +332,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       FileWorkspaceFolderDeletionJob.name,
       { workspaceId: id },
     );
+    await this.workspaceRepository.delete(id);
 
-    return await this.workspaceRepository.delete(id);
+    return workspace;
   }
 
   async handleRemoveWorkspaceMember(

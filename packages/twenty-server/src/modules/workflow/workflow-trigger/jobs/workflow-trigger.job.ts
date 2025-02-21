@@ -1,8 +1,10 @@
 import { Scope } from '@nestjs/common';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
@@ -15,8 +17,6 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
 export type WorkflowTriggerJobData = {
   workspaceId: string;
@@ -75,6 +75,8 @@ export class WorkflowTriggerJob {
         {
           source: FieldActorSource.WORKFLOW,
           name: workflow.name,
+          context: {},
+          workspaceMemberId: null,
         },
       );
     } catch (e) {

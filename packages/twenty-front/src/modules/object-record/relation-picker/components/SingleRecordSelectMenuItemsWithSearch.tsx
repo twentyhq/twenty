@@ -5,6 +5,7 @@ import {
 import { useRecordPickerRecordsOptions } from '@/object-record/relation-picker/hooks/useRecordPickerRecordsOptions';
 import { useRecordSelectSearch } from '@/object-record/relation-picker/hooks/useRecordSelectSearch';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -48,6 +49,8 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
     RecordPickerComponentInstanceContext,
   );
 
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   const { records, recordPickerSearchFilter } = useRecordPickerRecordsOptions({
     objectNameSingular,
     selectedRecordIds,
@@ -69,9 +72,11 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
     <>
       {dropdownPlacement?.includes('end') && (
         <>
-          <DropdownMenuItemsContainer scrollable={false}>
-            {createNewButton}
-          </DropdownMenuItemsContainer>
+          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+            <DropdownMenuItemsContainer scrollable={false}>
+              {createNewButton}
+            </DropdownMenuItemsContainer>
+          )}
           {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
           {shouldDisplayDropdownMenuItems && (
             <SingleRecordSelectMenuItems
@@ -120,7 +125,7 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
           {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}
-          {isDefined(onCreate) && (
+          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>

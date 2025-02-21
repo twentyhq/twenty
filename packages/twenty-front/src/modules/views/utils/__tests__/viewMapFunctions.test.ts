@@ -1,6 +1,6 @@
-import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -39,8 +39,9 @@ describe('mapViewSortsToSorts', () => {
         direction: 'asc',
       },
     ];
-    const expectedSorts: Sort[] = [
+    const expectedSorts: RecordSort[] = [
       {
+        id: 'id',
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         direction: 'asc',
         definition: baseDefinition,
