@@ -9,11 +9,13 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 type LinksFieldInputProps = {
   onCancel?: () => void;
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
+  onError?: (hasError: boolean, hasItem: boolean) => void;
 };
 
 export const LinksFieldInput = ({
   onCancel,
   onClickOutside,
+  onError,
 }: LinksFieldInputProps) => {
   const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
 
@@ -60,6 +62,7 @@ export const LinksFieldInput = ({
         isValid: absoluteUrlSchema.safeParse(input).success,
         errorMessage: '',
       })}
+      onError={onError}
       formatInput={(input) => ({ url: input, label: '' })}
       renderItem={({
         value: link,
