@@ -21,7 +21,6 @@ export enum SettingsPath {
   Domain = 'domain',
   APIs = 'apis',
   Webhooks = 'webhooks',
-  DevelopersApiKey = '/apis',
   DevelopersNewApiKey = 'developers/api-keys/new',
   DevelopersApiKeyDetail = 'developers/api-keys/:apiKeyId',
   Integrations = 'integrations',

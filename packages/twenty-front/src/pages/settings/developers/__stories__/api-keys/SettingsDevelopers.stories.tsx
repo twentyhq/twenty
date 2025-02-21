@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
-import { SettingsApiKeys } from '~/pages/settings/developers/SettingsApiKeys';
+import { SettingsApiKeys } from '~/pages/settings/developers/api-keys/SettingsApiKeys';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -12,7 +12,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/ApiKeys',
   component: SettingsApiKeys,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/api-keys' },
+  args: { routePath: '/settings/apis' },
   parameters: {
     msw: graphqlMocks,
   },

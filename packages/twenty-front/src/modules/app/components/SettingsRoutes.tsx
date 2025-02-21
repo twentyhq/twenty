@@ -6,7 +6,8 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsFeatures } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { SettingsApiKeys } from '~/pages/settings/developers/SettingsApiKeys';
+import { SettingsApiKeys } from '~/pages/settings/developers/api-keys/SettingsApiKeys';
+import { SettingsWebhooks } from '~/pages/settings/developers/webhooks/components/SettingsWebhooks';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -337,7 +338,7 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       </Route>
       <Route
-        path={SettingsPath.DevelopersApiKey}
+        path={SettingsPath.APIs}
         element={<SettingsApiKeys />}
       />
       <Route
@@ -347,6 +348,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.DevelopersApiKeyDetail}
         element={<SettingsDevelopersApiKeyDetail />}
+      />
+      <Route
+        path={SettingsPath.Webhooks}
+        element={<SettingsWebhooks/>}
       />
       <Route
         path={SettingsPath.DevelopersNewWebhookDetail}
