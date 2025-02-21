@@ -63,7 +63,7 @@ export const ApiPlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
 
-  const { control, handleSubmit, formState } = useForm<ApiPlaygroundSetupFormValues>({
+  const { control, handleSubmit } = useForm<ApiPlaygroundSetupFormValues>({
       mode: 'onTouched',
       resolver: zodResolver(apiPlaygroundSetupFormSchema),
   });
@@ -126,6 +126,7 @@ export const ApiPlaygroundSetupForm = () => {
       <Controller
         name={'schema'}
         control={control}
+        defaultValue={PlaygroundSchemas.CORE}
         render={({ field: { onChange, value } }) => (
           <Select
             dropdownId="schema"
@@ -142,6 +143,7 @@ export const ApiPlaygroundSetupForm = () => {
       <Controller
         name={'apiPlayground'}
         control={control}
+        defaultValue={PlaygroundTypes.REST}
         render={({ field: { onChange, value } }) => (
           <Select
             dropdownId="apiPlaygroundType"
