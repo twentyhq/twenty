@@ -23,18 +23,18 @@ const StyledTableRow = styled(TableRow)`
   }
 `;
 
+const records = [
+  { name: 'CNAME', validationType: 'redirection' as const },
+  { name: 'TXT Validation', validationType: 'ownership' as const },
+  { name: 'SSL Certificate Generation', validationType: 'ssl' as const },
+];
+
 export const SettingsCustomDomainRecordsStatus = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { customDomainRecords, loading } = useRecoilValue(
     customDomainRecordsState,
   );
-
-  const records = [
-    { name: 'CNAME', validationType: 'redirection' as const },
-    { name: 'TXT Validation', validationType: 'ownership' as const },
-    { name: 'SSL Certificate Generation', validationType: 'ssl' as const },
-  ];
 
   const defaultValues: { status: string; color: ThemeColor } =
     currentWorkspace?.customDomain === customDomainRecords?.customDomain
@@ -67,20 +67,18 @@ export const SettingsCustomDomainRecordsStatus = () => {
 
   return (
     <StyledTable>
-      {Object.values(rows).map((row) => {
-        return (
-          <StyledTableRow key={row.name}>
-            <TableCell>{row.name}</TableCell>
-            <TableCell>
-              <Status
-                color={row.color}
-                text={row.status}
-                isLoaderVisible={loading}
-              />
-            </TableCell>
-          </StyledTableRow>
-        );
-      })}
+      {rows.map((row) => (
+        <StyledTableRow key={row.name}>
+          <TableCell>{row.name}</TableCell>
+          <TableCell>
+            <Status
+              color={row.color}
+              text={row.status}
+              isLoaderVisible={loading}
+            />
+          </TableCell>
+        </StyledTableRow>
+      ))}
     </StyledTable>
   );
 };
