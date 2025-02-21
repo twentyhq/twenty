@@ -57,6 +57,8 @@ export const useCommandMenu = () => {
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
 
+        setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
+
         if (isCommandMenuOpened) {
           return;
         }
@@ -67,7 +69,6 @@ export const useCommandMenu = () => {
         });
 
         set(isCommandMenuOpenedState, true);
-        setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
         set(hasUserSelectedCommandState, false);
       },
     [
@@ -152,8 +153,7 @@ export const useCommandMenu = () => {
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
     });
-    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
-  }, [navigateCommandMenu, setHotkeyScopeAndMemorizePreviousScope]);
+  }, [navigateCommandMenu]);
 
   const toggleCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
