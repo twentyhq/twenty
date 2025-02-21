@@ -586,6 +586,10 @@ msgstr "方向"
 msgid "Display Name"
 msgstr "表示名"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "表示値"
@@ -1326,6 +1330,10 @@ msgstr "オブジェクトメタデータID"
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object name"
 msgstr "オブジェクト名"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr ""
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"

@@ -586,6 +586,10 @@ msgstr "כיוון"
 msgid "Display Name"
 msgstr "שם תצוגה"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "ערך תצוגה"
@@ -1326,6 +1330,10 @@ msgstr "מזהה מטא-נתונים של אובייקט"
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object name"
 msgstr "שם האובייקט"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr ""
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
