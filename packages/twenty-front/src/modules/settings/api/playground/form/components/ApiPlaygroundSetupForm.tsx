@@ -106,7 +106,6 @@ export const ApiPlaygroundSetupForm = () => {
       <Controller
         name={'apiKey'}
         control={control}
-        defaultValue=''
         render={({ field: { onChange, value } }) => (
           <Select
             dropdownId="apiKey"
@@ -115,7 +114,7 @@ export const ApiPlaygroundSetupForm = () => {
               ? apiKeys.map((apiKey) => ({
                   value: apiKey.id, 
                   label: apiKey.name 
-                })) 
+                }))
               : [{ value: '', label: 'No API Key' }]}
             value={value}
             onChange={onChange}
