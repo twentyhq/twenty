@@ -14,7 +14,7 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
 import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
-import { useGetAllApprovedAccessDomainsQuery } from '~/generated/graphql';
+import { useGetApprovedAccessDomainsQuery } from '~/generated/graphql';
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -29,10 +29,10 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     approvedAccessDomainsState,
   );
 
-  const { loading } = useGetAllApprovedAccessDomainsQuery({
+  const { loading } = useGetApprovedAccessDomainsQuery({
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      setApprovedAccessDomains(data?.getAllApprovedAccessDomains ?? []);
+      setApprovedAccessDomains(data?.getApprovedAccessDomains ?? []);
     },
     onError: (error: Error) => {
       enqueueSnackBar(error.message, {

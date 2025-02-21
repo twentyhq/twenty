@@ -1292,7 +1292,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  getAllApprovedAccessDomains: Array<ApprovedAccessDomain>;
+  getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -2426,10 +2426,10 @@ export type ValidateApprovedAccessDomainMutationVariables = Exact<{
 
 export type ValidateApprovedAccessDomainMutation = { __typename?: 'Mutation', validateApprovedAccessDomain: { __typename?: 'ApprovedAccessDomain', id: any, isValidated: boolean, domain: string, createdAt: string } };
 
-export type GetAllApprovedAccessDomainsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetApprovedAccessDomainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllApprovedAccessDomainsQuery = { __typename?: 'Query', getAllApprovedAccessDomains: Array<{ __typename?: 'ApprovedAccessDomain', id: any, createdAt: string, domain: string, isValidated: boolean }> };
+export type GetApprovedAccessDomainsQuery = { __typename?: 'Query', getApprovedAccessDomains: Array<{ __typename?: 'ApprovedAccessDomain', id: any, createdAt: string, domain: string, isValidated: boolean }> };
 
 export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4566,9 +4566,9 @@ export function useValidateApprovedAccessDomainMutation(baseOptions?: Apollo.Mut
 export type ValidateApprovedAccessDomainMutationHookResult = ReturnType<typeof useValidateApprovedAccessDomainMutation>;
 export type ValidateApprovedAccessDomainMutationResult = Apollo.MutationResult<ValidateApprovedAccessDomainMutation>;
 export type ValidateApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>;
-export const GetAllApprovedAccessDomainsDocument = gql`
-    query GetAllApprovedAccessDomains {
-  getAllApprovedAccessDomains {
+export const GetApprovedAccessDomainsDocument = gql`
+    query GetApprovedAccessDomains {
+  getApprovedAccessDomains {
     id
     createdAt
     domain
@@ -4578,31 +4578,31 @@ export const GetAllApprovedAccessDomainsDocument = gql`
     `;
 
 /**
- * __useGetAllApprovedAccessDomainsQuery__
+ * __useGetApprovedAccessDomainsQuery__
  *
- * To run a query within a React component, call `useGetAllApprovedAccessDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllApprovedAccessDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetApprovedAccessDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApprovedAccessDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAllApprovedAccessDomainsQuery({
+ * const { data, loading, error } = useGetApprovedAccessDomainsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetAllApprovedAccessDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>) {
+export function useGetApprovedAccessDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>(GetAllApprovedAccessDomainsDocument, options);
+        return Apollo.useQuery<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>(GetApprovedAccessDomainsDocument, options);
       }
-export function useGetAllApprovedAccessDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>) {
+export function useGetApprovedAccessDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>(GetAllApprovedAccessDomainsDocument, options);
+          return Apollo.useLazyQuery<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>(GetApprovedAccessDomainsDocument, options);
         }
-export type GetAllApprovedAccessDomainsQueryHookResult = ReturnType<typeof useGetAllApprovedAccessDomainsQuery>;
-export type GetAllApprovedAccessDomainsLazyQueryHookResult = ReturnType<typeof useGetAllApprovedAccessDomainsLazyQuery>;
-export type GetAllApprovedAccessDomainsQueryResult = Apollo.QueryResult<GetAllApprovedAccessDomainsQuery, GetAllApprovedAccessDomainsQueryVariables>;
+export type GetApprovedAccessDomainsQueryHookResult = ReturnType<typeof useGetApprovedAccessDomainsQuery>;
+export type GetApprovedAccessDomainsLazyQueryHookResult = ReturnType<typeof useGetApprovedAccessDomainsLazyQuery>;
+export type GetApprovedAccessDomainsQueryResult = Apollo.QueryResult<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>;
 export const GetSsoIdentityProvidersDocument = gql`
     query GetSSOIdentityProviders {
   getSSOIdentityProviders {

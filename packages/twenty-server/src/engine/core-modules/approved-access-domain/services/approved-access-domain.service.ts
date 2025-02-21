@@ -174,7 +174,7 @@ export class ApprovedAccessDomainService {
     await this.approvedAccessDomainRepository.delete(approvedAccessDomain);
   }
 
-  async getAllApprovedAccessDomains(workspace: Workspace) {
+  async getApprovedAccessDomains(workspace: Workspace) {
     return await this.approvedAccessDomainRepository.find({
       where: {
         workspaceId: workspace.id,
