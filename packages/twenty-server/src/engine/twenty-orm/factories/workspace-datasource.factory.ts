@@ -188,9 +188,6 @@ export class WorkspaceDatasourceFactory {
   }
 
   public async destroy(workspaceId: string): Promise<void> {
-    const cachedWorkspaceMetadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
     const cacheKeys = Object.keys(this.cachedDatasourcePromise).filter((key) =>
       key.startsWith(`${workspaceId}`),
     );
