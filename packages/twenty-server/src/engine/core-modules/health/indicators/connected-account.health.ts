@@ -9,7 +9,7 @@ import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.
 import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
 
 @Injectable()
-export class AccountSyncHealthIndicator {
+export class ConnectedAccountHealth {
   constructor(
     private readonly healthIndicatorService: HealthIndicatorService,
     private readonly healthCacheService: HealthCacheService,
@@ -57,7 +57,10 @@ export class AccountSyncHealthIndicator {
           ? HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_TIMEOUT
           : HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_CHECK_FAILED;
 
-      return indicator.down(errorMessage);
+      return indicator.down({
+        error: errorMessage,
+        details: {},
+      });
     }
   }
 
@@ -103,22 +106,49 @@ export class AccountSyncHealthIndicator {
           ? HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_TIMEOUT
           : HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_CHECK_FAILED;
 
-      return indicator.down(errorMessage);
+      return indicator.down({
+        error: errorMessage,
+        details: {},
+      });
     }
   }
 
   async isHealthy(): Promise<HealthIndicatorResult> {
+    const indicator = this.healthIndicatorService.check('connectedAccount');
+
     const [messageResult, calendarResult] = await Promise.all([
       this.checkMessageSyncHealth(),
       this.checkCalendarSyncHealth(),
     ]);
 
-    const indicator = this.healthIndicatorService.check('accountSync');
-    const details = {
-      messageSync: messageResult.messageSync,
-      calendarSync: calendarResult.calendarSync,
-    };
+    const isMessageSyncDown = messageResult.messageSync.status === 'down';
+    const isCalendarSyncDown = calendarResult.calendarSync.status === 'down';
 
-    return indicator.up({ details });
+    if (isMessageSyncDown || isCalendarSyncDown) {
+      let error: string;
+
+      if (isMessageSyncDown && isCalendarSyncDown) {
+        error = `${messageResult.messageSync.error} and ${calendarResult.calendarSync.error}`;
+      } else if (isMessageSyncDown) {
+        error = messageResult.messageSync.error;
+      } else {
+        error = calendarResult.calendarSync.error;
+      }
+
+      return indicator.down({
+        error,
+        details: {
+          messageSync: messageResult.messageSync,
+          calendarSync: calendarResult.calendarSync,
+        },
+      });
+    }
+
+    return indicator.up({
+      details: {
+        messageSync: messageResult.messageSync,
+        calendarSync: calendarResult.calendarSync,
+      },
+    });
   }
 }

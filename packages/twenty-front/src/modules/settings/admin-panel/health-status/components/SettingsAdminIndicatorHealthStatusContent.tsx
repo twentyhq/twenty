@@ -1,21 +1,20 @@
-import { AccountSyncMetrics } from '@/settings/admin-panel/health-status/components/AccountSyncMetrics';
+import { ConnectedAccountHealthStatus } from '@/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus';
 import { DatabaseAndRedisHealthStatus } from '@/settings/admin-panel/health-status/components/DatabaseAndRedisHealthStatus';
 import { WorkerHealthStatus } from '@/settings/admin-panel/health-status/components/WorkerHealthStatus';
-import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
-import { useContext } from 'react';
-import { AdminPanelIndicatorHealthStatusInputEnum } from '~/generated/graphql';
+import { useParams } from 'react-router-dom';
+import { HealthIndicatorId } from '~/generated/graphql';
 
 export const SettingsAdminIndicatorHealthStatusContent = () => {
-  const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
-  const indicatorName = indicatorHealth.indicatorName;
-  switch (indicatorName) {
-    case AdminPanelIndicatorHealthStatusInputEnum.DATABASE:
-    case AdminPanelIndicatorHealthStatusInputEnum.REDIS:
+  const { indicatorId } = useParams();
+
+  switch (indicatorId) {
+    case HealthIndicatorId.database:
+    case HealthIndicatorId.redis:
       return <DatabaseAndRedisHealthStatus />;
-    case AdminPanelIndicatorHealthStatusInputEnum.WORKER:
+    case HealthIndicatorId.worker:
       return <WorkerHealthStatus />;
-    case AdminPanelIndicatorHealthStatusInputEnum.ACCOUNT_SYNC:
-      return <AccountSyncMetrics />;
+    case HealthIndicatorId.connectedAccount:
+      return <ConnectedAccountHealthStatus />;
     default:
       return null;
   }

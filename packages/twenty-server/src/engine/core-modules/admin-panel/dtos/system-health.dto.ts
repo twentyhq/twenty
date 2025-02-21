@@ -1,18 +1,22 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
+import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+
+@ObjectType()
+export class SystemHealthService {
+  @Field(() => HealthIndicatorId)
+  id: HealthIndicatorId;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => AdminPanelHealthServiceStatus)
+  status: AdminPanelHealthServiceStatus;
+}
 
 @ObjectType()
 export class SystemHealth {
-  @Field(() => AdminPanelHealthServiceStatus)
-  database: AdminPanelHealthServiceStatus;
-
-  @Field(() => AdminPanelHealthServiceStatus)
-  redis: AdminPanelHealthServiceStatus;
-
-  @Field(() => AdminPanelHealthServiceStatus)
-  worker: AdminPanelHealthServiceStatus;
-
-  @Field(() => AdminPanelHealthServiceStatus)
-  accountSync: AdminPanelHealthServiceStatus;
+  @Field(() => [SystemHealthService])
+  services: SystemHealthService[];
 }

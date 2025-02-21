@@ -35,7 +35,7 @@ export const DatabaseAndRedisHealthStatus = () => {
     <Section>
       {isDatabaseOrRedisDown && !loading ? (
         <StyledErrorMessage>
-          {`${indicatorHealth.indicatorName} information is not available because the service is down`}
+          {`${indicatorHealth.label} information is not available because the service is down`}
         </StyledErrorMessage>
       ) : (
         <StyledDetailsContainer>{formattedDetails}</StyledDetailsContainer>

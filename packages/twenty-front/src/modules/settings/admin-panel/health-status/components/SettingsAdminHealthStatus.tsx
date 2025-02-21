@@ -1,5 +1,4 @@
 import { SettingsHealthStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsHealthStatusListCard';
-import { AdminHealthService } from '@/settings/admin-panel/types/AdminHealthService';
 import { H2Title, Section } from 'twenty-ui';
 import { useGetSystemHealthStatusQuery } from '~/generated/graphql';
 
@@ -8,29 +7,7 @@ export const SettingsAdminHealthStatus = () => {
     fetchPolicy: 'network-only',
   });
 
-  const services = [
-    {
-      id: 'DATABASE',
-      name: 'Database Status',
-      status: data?.getSystemHealthStatus.database,
-    },
-    {
-      id: 'REDIS',
-      name: 'Redis Status',
-      status: data?.getSystemHealthStatus.redis,
-    },
-    {
-      id: 'WORKER',
-      name: 'Worker Status',
-      status: data?.getSystemHealthStatus.worker,
-    },
-    {
-      id: 'ACCOUNT_SYNC',
-      name: 'Account Sync Metrics',
-      status: data?.getSystemHealthStatus.accountSync,
-    },
-  ].filter((service): service is AdminHealthService => !!service.status);
-
+  const services = data?.getSystemHealthStatus.services ?? [];
   return (
     <>
       <Section>

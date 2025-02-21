@@ -35,7 +35,7 @@ export enum SettingsPath {
   AdminPanel = 'admin-panel',
   FeatureFlags = 'admin-panel/feature-flags',
   AdminPanelHealthStatus = 'admin-panel#health-status',
-  AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorName',
+  AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
   Lab = 'lab',
   Roles = 'roles',
   RoleDetail = 'roles/:roleId',

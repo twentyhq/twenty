@@ -4,12 +4,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
-import { AccountSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/account-sync.health';
+import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-describe('AccountSyncHealthIndicator', () => {
-  let service: AccountSyncHealthIndicator;
+describe('ConnectedAccountHealth', () => {
+  let service: ConnectedAccountHealth;
   let healthCacheService: jest.Mocked<HealthCacheService>;
   let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
 
@@ -22,17 +22,24 @@ describe('AccountSyncHealthIndicator', () => {
     healthIndicatorService = {
       check: jest.fn().mockImplementation((key) => ({
         up: jest.fn().mockImplementation((data) => ({
-          [key]: { status: 'up', ...data },
+          [key]: {
+            status: 'up',
+            details: data.details,
+          },
         })),
-        down: jest.fn().mockImplementation((error) => ({
-          [key]: { status: 'down', error },
+        down: jest.fn().mockImplementation((data) => ({
+          [key]: {
+            status: 'down',
+            error: data.error,
+            details: data.details,
+          },
         })),
       })),
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AccountSyncHealthIndicator,
+        ConnectedAccountHealth,
         {
           provide: HealthCacheService,
           useValue: healthCacheService,
@@ -44,12 +51,9 @@ describe('AccountSyncHealthIndicator', () => {
       ],
     }).compile();
 
-    service = module.get<AccountSyncHealthIndicator>(
-      AccountSyncHealthIndicator,
-    );
+    service = module.get<ConnectedAccountHealth>(ConnectedAccountHealth);
     jest.useFakeTimers();
   });
-
   afterEach(() => {
     jest.useRealTimers();
   });
@@ -79,12 +83,17 @@ describe('AccountSyncHealthIndicator', () => {
 
       const result = await service.isHealthy();
 
-      expect(result.accountSync.details.messageSync.status).toBe('up');
-      expect(result.accountSync.details.messageSync.details.totalJobs).toBe(0);
-      expect(result.accountSync.details.messageSync.details.failedJobs).toBe(0);
-      expect(result.accountSync.details.messageSync.details.failureRate).toBe(
-        0,
-      );
+      expect(result.connectedAccount.status).toBe('up');
+      expect(result.connectedAccount.details.messageSync.status).toBe('up');
+      expect(
+        result.connectedAccount.details.messageSync.details.totalJobs,
+      ).toBe(0);
+      expect(
+        result.connectedAccount.details.messageSync.details.failedJobs,
+      ).toBe(0);
+      expect(
+        result.connectedAccount.details.messageSync.details.failureRate,
+      ).toBe(0);
     });
 
     it('should return down status when message sync failure rate is above 20%', async () => {
@@ -107,12 +116,16 @@ describe('AccountSyncHealthIndicator', () => {
 
       const result = await service.isHealthy();
 
-      expect(result.accountSync.details.messageSync.status).toBe('down');
-      expect(result.accountSync.details.messageSync.error.error).toBe(
+      expect(result.connectedAccount.status).toBe('down');
+      expect(result.connectedAccount.error).toBe(
+        HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_HIGH_FAILURE_RATE,
+      );
+      expect(result.connectedAccount.details.messageSync.status).toBe('down');
+      expect(result.connectedAccount.details.messageSync.error).toBe(
         HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_HIGH_FAILURE_RATE,
       );
       expect(
-        result.accountSync.details.messageSync.error.details.failureRate,
+        result.connectedAccount.details.messageSync.details.failureRate,
       ).toBe(33.33);
     });
   });
@@ -138,14 +151,17 @@ describe('AccountSyncHealthIndicator', () => {
 
       const result = await service.isHealthy();
 
-      expect(result.accountSync.details.calendarSync.status).toBe('up');
-      expect(result.accountSync.details.calendarSync.details.totalJobs).toBe(0);
-      expect(result.accountSync.details.calendarSync.details.failedJobs).toBe(
-        0,
-      );
-      expect(result.accountSync.details.calendarSync.details.failureRate).toBe(
-        0,
-      );
+      expect(result.connectedAccount.status).toBe('up');
+      expect(result.connectedAccount.details.calendarSync.status).toBe('up');
+      expect(
+        result.connectedAccount.details.calendarSync.details.totalJobs,
+      ).toBe(0);
+      expect(
+        result.connectedAccount.details.calendarSync.details.failedJobs,
+      ).toBe(0);
+      expect(
+        result.connectedAccount.details.calendarSync.details.failureRate,
+      ).toBe(0);
     });
 
     it('should return down status when calendar sync failure rate is above 20%', async () => {
@@ -168,12 +184,16 @@ describe('AccountSyncHealthIndicator', () => {
 
       const result = await service.isHealthy();
 
-      expect(result.accountSync.details.calendarSync.status).toBe('down');
-      expect(result.accountSync.details.calendarSync.error.error).toBe(
+      expect(result.connectedAccount.status).toBe('down');
+      expect(result.connectedAccount.error).toBe(
+        HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_HIGH_FAILURE_RATE,
+      );
+      expect(result.connectedAccount.details.calendarSync.status).toBe('down');
+      expect(result.connectedAccount.details.calendarSync.error).toBe(
         HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_HIGH_FAILURE_RATE,
       );
       expect(
-        result.accountSync.details.calendarSync.error.details.failureRate,
+        result.connectedAccount.details.calendarSync.details.failureRate,
       ).toBe(33.33);
     });
   });
@@ -199,8 +219,12 @@ describe('AccountSyncHealthIndicator', () => {
       jest.advanceTimersByTime(HEALTH_INDICATORS_TIMEOUT + 1);
       const result = await healthCheckPromise;
 
-      expect(result.accountSync.details.messageSync.status).toBe('down');
-      expect(result.accountSync.details.messageSync.error).toBe(
+      expect(result.connectedAccount.status).toBe('down');
+      expect(result.connectedAccount.error).toBe(
+        HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_TIMEOUT,
+      );
+      expect(result.connectedAccount.details.messageSync.status).toBe('down');
+      expect(result.connectedAccount.details.messageSync.error).toBe(
         HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_TIMEOUT,
       );
     });
@@ -225,8 +249,12 @@ describe('AccountSyncHealthIndicator', () => {
       jest.advanceTimersByTime(HEALTH_INDICATORS_TIMEOUT + 1);
       const result = await healthCheckPromise;
 
-      expect(result.accountSync.details.calendarSync.status).toBe('down');
-      expect(result.accountSync.details.calendarSync.error).toBe(
+      expect(result.connectedAccount.status).toBe('down');
+      expect(result.connectedAccount.error).toBe(
+        HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_TIMEOUT,
+      );
+      expect(result.connectedAccount.details.calendarSync.status).toBe('down');
+      expect(result.connectedAccount.details.calendarSync.error).toBe(
         HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_TIMEOUT,
       );
     });
@@ -252,17 +280,17 @@ describe('AccountSyncHealthIndicator', () => {
 
       const result = await service.isHealthy();
 
-      expect(result.accountSync.status).toBe('up');
-      expect(result.accountSync.details.messageSync.status).toBe('up');
-      expect(result.accountSync.details.calendarSync.status).toBe('up');
+      expect(result.connectedAccount.status).toBe('up');
+      expect(result.connectedAccount.details.messageSync.status).toBe('up');
+      expect(result.connectedAccount.details.calendarSync.status).toBe('up');
     });
 
-    it('should include both results even when one check fails', async () => {
+    it('should return down status when both syncs fail', async () => {
       healthCacheService.getMessageChannelSyncJobByStatusCounter.mockResolvedValue(
         {
           [MessageChannelSyncStatus.NOT_SYNCED]: 0,
-          [MessageChannelSyncStatus.ACTIVE]: 8,
-          [MessageChannelSyncStatus.FAILED_UNKNOWN]: 1,
+          [MessageChannelSyncStatus.ACTIVE]: 1,
+          [MessageChannelSyncStatus.FAILED_UNKNOWN]: 2,
         },
       );
 
@@ -276,9 +304,12 @@ describe('AccountSyncHealthIndicator', () => {
 
       const result = await service.isHealthy();
 
-      expect(result.accountSync.status).toBe('up');
-      expect(result.accountSync.details.messageSync.status).toBe('up');
-      expect(result.accountSync.details.calendarSync.status).toBe('down');
+      expect(result.connectedAccount.status).toBe('down');
+      expect(result.connectedAccount.error).toBe(
+        `${HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_HIGH_FAILURE_RATE} and ${HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_HIGH_FAILURE_RATE}`,
+      );
+      expect(result.connectedAccount.details.messageSync.status).toBe('down');
+      expect(result.connectedAccount.details.calendarSync.status).toBe('down');
     });
   });
 });

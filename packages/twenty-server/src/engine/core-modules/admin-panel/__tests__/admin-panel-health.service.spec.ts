@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
-import { AdminPanelIndicatorHealthStatusInputEnum } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-indicator-health-status.input';
+import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constants';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
-import { AccountSyncHealthIndicator } from 'src/engine/core-modules/health/indicators/account-sync.health';
+import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
@@ -15,44 +16,21 @@ describe('AdminPanelHealthService', () => {
   let databaseHealth: jest.Mocked<DatabaseHealthIndicator>;
   let redisHealth: jest.Mocked<RedisHealthIndicator>;
   let workerHealth: jest.Mocked<WorkerHealthIndicator>;
-  let accountSyncHealth: jest.Mocked<AccountSyncHealthIndicator>;
+  let connectedAccountHealth: jest.Mocked<ConnectedAccountHealth>;
 
   beforeEach(async () => {
-    databaseHealth = {
-      isHealthy: jest.fn(),
-    } as any;
-
-    redisHealth = {
-      isHealthy: jest.fn(),
-    } as any;
-
-    workerHealth = {
-      isHealthy: jest.fn(),
-    } as any;
-
-    accountSyncHealth = {
-      isHealthy: jest.fn(),
-    } as any;
+    databaseHealth = { isHealthy: jest.fn() } as any;
+    redisHealth = { isHealthy: jest.fn() } as any;
+    workerHealth = { isHealthy: jest.fn() } as any;
+    connectedAccountHealth = { isHealthy: jest.fn() } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminPanelHealthService,
-        {
-          provide: DatabaseHealthIndicator,
-          useValue: databaseHealth,
-        },
-        {
-          provide: RedisHealthIndicator,
-          useValue: redisHealth,
-        },
-        {
-          provide: WorkerHealthIndicator,
-          useValue: workerHealth,
-        },
-        {
-          provide: AccountSyncHealthIndicator,
-          useValue: accountSyncHealth,
-        },
+        { provide: DatabaseHealthIndicator, useValue: databaseHealth },
+        { provide: RedisHealthIndicator, useValue: redisHealth },
+        { provide: WorkerHealthIndicator, useValue: workerHealth },
+        { provide: ConnectedAccountHealth, useValue: connectedAccountHealth },
       ],
     }).compile();
 
@@ -63,127 +41,165 @@ describe('AdminPanelHealthService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should transform health check response to SystemHealth format', async () => {
-    databaseHealth.isHealthy.mockResolvedValue({
-      database: {
-        status: 'up',
-        details: 'Database is healthy',
-      },
-    });
-    redisHealth.isHealthy.mockResolvedValue({
-      redis: {
-        status: 'up',
-        details: 'Redis is connected',
-      },
-    });
-    workerHealth.isHealthy.mockResolvedValue({
-      worker: {
-        status: 'up',
-        queues: [
-          {
-            name: 'test',
-            workers: 1,
-            metrics: {
-              active: 1,
-              completed: 0,
-              delayed: 4,
-              failed: 3,
-              waiting: 0,
-              prioritized: 0,
+  describe('getSystemHealthStatus', () => {
+    it('should transform health check response to SystemHealth format', async () => {
+      databaseHealth.isHealthy.mockResolvedValue({
+        database: { status: 'up', details: 'Database is healthy' },
+      });
+      redisHealth.isHealthy.mockResolvedValue({
+        redis: { status: 'up', details: 'Redis is connected' },
+      });
+      workerHealth.isHealthy.mockResolvedValue({
+        worker: {
+          status: 'up',
+          queues: [
+            {
+              queueName: 'test',
+              workers: 1,
+              metrics: {
+                active: 1,
+                completed: 0,
+                delayed: 4,
+                failed: 3,
+                waiting: 0,
+                prioritized: 0,
+              },
             },
+          ],
+        },
+      });
+      connectedAccountHealth.isHealthy.mockResolvedValue({
+        connectedAccount: {
+          status: 'up',
+          details: 'Account sync is operational',
+        },
+      });
+
+      const result = await service.getSystemHealthStatus();
+
+      const expected: SystemHealth = {
+        services: [
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.database],
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.redis],
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.worker],
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.connectedAccount],
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
           },
         ],
-      },
-    });
-    accountSyncHealth.isHealthy.mockResolvedValue({
-      accountSync: {
-        status: 'up',
-        details: 'Account sync is operational',
-      },
+      };
+
+      expect(result).toStrictEqual(expected);
     });
 
-    const result = await service.getSystemHealthStatus();
+    it('should handle mixed health statuses', async () => {
+      databaseHealth.isHealthy.mockResolvedValue({
+        database: { status: 'up' },
+      });
+      redisHealth.isHealthy.mockRejectedValue(
+        new Error(HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED),
+      );
+      workerHealth.isHealthy.mockResolvedValue({
+        worker: { status: 'up', queues: [] },
+      });
+      connectedAccountHealth.isHealthy.mockResolvedValue({
+        connectedAccount: { status: 'up' },
+      });
 
-    const expected: SystemHealth = {
-      database: AdminPanelHealthServiceStatus.OPERATIONAL,
-      redis: AdminPanelHealthServiceStatus.OPERATIONAL,
-      worker: AdminPanelHealthServiceStatus.OPERATIONAL,
-      accountSync: AdminPanelHealthServiceStatus.OPERATIONAL,
-    };
+      const result = await service.getSystemHealthStatus();
 
-    expect(result).toStrictEqual(expected);
-  });
-
-  it('should handle mixed health statuses', async () => {
-    databaseHealth.isHealthy.mockResolvedValue({
-      database: { status: 'up' },
+      expect(result).toStrictEqual({
+        services: [
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.database],
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.redis],
+            status: AdminPanelHealthServiceStatus.OUTAGE,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.worker],
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.connectedAccount],
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
+          },
+        ],
+      });
     });
-    redisHealth.isHealthy.mockRejectedValue(
-      new Error(HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED),
-    );
-    workerHealth.isHealthy.mockResolvedValue({
-      worker: { status: 'up', queues: [] },
-    });
-    accountSyncHealth.isHealthy.mockResolvedValue({
-      accountSync: { status: 'up' },
-    });
 
-    const result = await service.getSystemHealthStatus();
+    it('should handle all services down', async () => {
+      databaseHealth.isHealthy.mockRejectedValue(
+        new Error(HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED),
+      );
+      redisHealth.isHealthy.mockRejectedValue(
+        new Error(HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED),
+      );
+      workerHealth.isHealthy.mockRejectedValue(
+        new Error(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS),
+      );
+      connectedAccountHealth.isHealthy.mockRejectedValue(
+        new Error(HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_CHECK_FAILED),
+      );
 
-    expect(result).toStrictEqual({
-      database: AdminPanelHealthServiceStatus.OPERATIONAL,
-      redis: AdminPanelHealthServiceStatus.OUTAGE,
-      worker: AdminPanelHealthServiceStatus.OPERATIONAL,
-      accountSync: AdminPanelHealthServiceStatus.OPERATIONAL,
-    });
-  });
+      const result = await service.getSystemHealthStatus();
 
-  it('should handle all services down', async () => {
-    databaseHealth.isHealthy.mockRejectedValue(
-      new Error(HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED),
-    );
-    redisHealth.isHealthy.mockRejectedValue(
-      new Error(HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED),
-    );
-    workerHealth.isHealthy.mockRejectedValue(
-      new Error(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS),
-    );
-    accountSyncHealth.isHealthy.mockRejectedValue(
-      new Error(HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_CHECK_FAILED),
-    );
-
-    const result = await service.getSystemHealthStatus();
-
-    expect(result).toStrictEqual({
-      database: AdminPanelHealthServiceStatus.OUTAGE,
-      redis: AdminPanelHealthServiceStatus.OUTAGE,
-      worker: AdminPanelHealthServiceStatus.OUTAGE,
-      accountSync: AdminPanelHealthServiceStatus.OUTAGE,
+      expect(result).toStrictEqual({
+        services: [
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.database],
+            status: AdminPanelHealthServiceStatus.OUTAGE,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.redis],
+            status: AdminPanelHealthServiceStatus.OUTAGE,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.worker],
+            status: AdminPanelHealthServiceStatus.OUTAGE,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.connectedAccount],
+            status: AdminPanelHealthServiceStatus.OUTAGE,
+          },
+        ],
+      });
     });
   });
 
   describe('getIndicatorHealthStatus', () => {
     it('should return health status for database indicator', async () => {
+      const details = {
+        version: '15.0',
+        connections: { active: 5, max: 100 },
+      };
+
       databaseHealth.isHealthy.mockResolvedValue({
         database: {
           status: 'up',
-          details: {
-            version: '15.0',
-            connections: { active: 5, max: 100 },
-          },
+          details,
         },
       });
 
       const result = await service.getIndicatorHealthStatus(
-        AdminPanelIndicatorHealthStatusInputEnum.DATABASE,
+        HealthIndicatorId.database,
       );
 
       expect(result).toStrictEqual({
+        ...HEALTH_INDICATORS[HealthIndicatorId.database],
         status: AdminPanelHealthServiceStatus.OPERATIONAL,
-        details: JSON.stringify({
-          version: '15.0',
-          connections: { active: 5, max: 100 },
-        }),
+        details: JSON.stringify(details),
         queues: undefined,
       });
     });
@@ -191,7 +207,7 @@ describe('AdminPanelHealthService', () => {
     it('should return health status with queues for worker indicator', async () => {
       const mockQueues = [
         {
-          name: 'queue1',
+          queueName: 'queue1',
           workers: 2,
           metrics: {
             active: 1,
@@ -203,7 +219,7 @@ describe('AdminPanelHealthService', () => {
           },
         },
         {
-          name: 'queue2',
+          queueName: 'queue2',
           workers: 0,
           metrics: {
             active: 0,
@@ -224,22 +240,21 @@ describe('AdminPanelHealthService', () => {
       });
 
       const result = await service.getIndicatorHealthStatus(
-        AdminPanelIndicatorHealthStatusInputEnum.WORKER,
+        HealthIndicatorId.worker,
       );
 
       expect(result).toStrictEqual({
+        ...HEALTH_INDICATORS[HealthIndicatorId.worker],
         status: AdminPanelHealthServiceStatus.OPERATIONAL,
         details: undefined,
-        queues: [
-          {
-            ...mockQueues[0],
-            status: AdminPanelHealthServiceStatus.OPERATIONAL,
-          },
-          {
-            ...mockQueues[1],
-            status: AdminPanelHealthServiceStatus.OUTAGE,
-          },
-        ],
+        queues: mockQueues.map((queue) => ({
+          ...queue,
+          id: `worker-${queue.queueName}`,
+          status:
+            queue.workers > 0
+              ? AdminPanelHealthServiceStatus.OPERATIONAL
+              : AdminPanelHealthServiceStatus.OUTAGE,
+        })),
       });
     });
 
@@ -249,10 +264,11 @@ describe('AdminPanelHealthService', () => {
       );
 
       const result = await service.getIndicatorHealthStatus(
-        AdminPanelIndicatorHealthStatusInputEnum.REDIS,
+        HealthIndicatorId.redis,
       );
 
       expect(result).toStrictEqual({
+        ...HEALTH_INDICATORS[HealthIndicatorId.redis],
         status: AdminPanelHealthServiceStatus.OUTAGE,
         details: HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED,
       });

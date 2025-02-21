@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
-  AdminPanelIndicatorHealthStatusInputEnum,
+  HealthIndicatorId,
   useGetIndicatorHealthStatusQuery,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -21,10 +21,10 @@ const StyledH2Title = styled(H2Title)`
 
 export const SettingsAdminIndicatorHealthStatus = () => {
   const { t } = useLingui();
-  const { indicatorName } = useParams();
+  const { indicatorId } = useParams();
   const { data, loading } = useGetIndicatorHealthStatusQuery({
     variables: {
-      indicatorName: indicatorName as AdminPanelIndicatorHealthStatusInputEnum,
+      indicatorId: indicatorId as HealthIndicatorId,
     },
     fetchPolicy: 'network-only',
   });
@@ -44,30 +44,31 @@ export const SettingsAdminIndicatorHealthStatus = () => {
           children: t`Health Status`,
           href: getSettingsPath(SettingsPath.AdminPanelHealthStatus),
         },
-        { children: `${indicatorName}` },
+        { children: `${data?.getIndicatorHealthStatus?.label}` },
       ]}
     >
       <SettingsPageContainer>
         <SettingsAdminIndicatorHealthContext.Provider
           value={{
             indicatorHealth: {
-              ...(data?.getIndicatorHealthStatus ?? {}),
-              indicatorName:
-                indicatorName as AdminPanelIndicatorHealthStatusInputEnum,
+              id: data?.getIndicatorHealthStatus?.id ?? '',
+              label: data?.getIndicatorHealthStatus?.label ?? '',
+              description: data?.getIndicatorHealthStatus?.description ?? '',
               status:
                 data?.getIndicatorHealthStatus?.status ??
                 AdminPanelHealthServiceStatus.OUTAGE,
+              details: data?.getIndicatorHealthStatus?.details,
+              queues: data?.getIndicatorHealthStatus?.queues,
             },
             loading: loading,
           }}
         >
           <Section>
             <StyledH2Title
-              title={`${indicatorName}`}
-              description="Health status"
+              title={`${data?.getIndicatorHealthStatus?.label}`}
+              description={data?.getIndicatorHealthStatus?.description}
             />
-            {indicatorName !==
-              AdminPanelIndicatorHealthStatusInputEnum.ACCOUNT_SYNC &&
+            {indicatorId !== HealthIndicatorId.connectedAccount &&
               data?.getIndicatorHealthStatus?.status && (
                 <SettingsAdminHealthStatusRightContainer
                   status={data?.getIndicatorHealthStatus.status}
