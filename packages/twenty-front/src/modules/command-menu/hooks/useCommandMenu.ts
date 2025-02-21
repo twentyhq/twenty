@@ -7,6 +7,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { IconDotsVertical, IconSearch, useIcons } from 'twenty-ui';
 
+import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import {
@@ -25,6 +26,7 @@ import { mainContextStoreComponentInstanceIdState } from '@/context-store/states
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -45,6 +47,8 @@ export const useCommandMenu = () => {
 
   const { copyContextStoreStates } = useCopyContextStoreStates();
   const { resetContextStoreStates } = useResetContextStoreStates();
+
+  const { closeDropdown } = useDropdownV2();
 
   const openCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -77,8 +81,9 @@ export const useCommandMenu = () => {
     ({ set }) =>
       () => {
         set(isCommandMenuOpenedState, false);
+        closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
       },
-    [],
+    [closeDropdown],
   );
 
   const onCommandMenuCloseAnimationComplete = useRecoilCallback(
@@ -115,6 +120,7 @@ export const useCommandMenu = () => {
       }: CommandMenuNavigationStackItem & {
         resetNavigationStack?: boolean;
       }) => {
+        closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
           title: pageTitle,

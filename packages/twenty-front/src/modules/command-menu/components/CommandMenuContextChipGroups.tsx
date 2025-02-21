@@ -1,3 +1,4 @@
+import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -59,7 +60,7 @@ export const CommandMenuContextChipGroups = ({
           dropdownHotkeyScope={{
             scope: AppHotkeyScope.CommandMenu,
           }}
-          dropdownId="command-menu-context-chip-groups"
+          dropdownId={COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID}
           dropdownPlacement="bottom-start"
         ></Dropdown>
       )}
