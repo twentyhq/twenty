@@ -26,6 +26,7 @@ import { BillingProductService } from 'src/engine/core-modules/billing/services/
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -176,8 +177,9 @@ export class BillingSubscriptionService {
       );
 
     if (isBillingPlansEnabled) {
+      const planKey = getPlanKeyFromSubscription(billingSubscription);
       const billingProductsByPlan =
-        await this.billingProductService.getProductsByPlan(BillingPlanKey.PRO);
+        await this.billingProductService.getProductsByPlan(planKey);
       const pricesPerPlanArray =
         this.billingProductService.getProductPricesByInterval({
           interval: newInterval,
