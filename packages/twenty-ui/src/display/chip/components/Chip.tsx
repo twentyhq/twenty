@@ -21,7 +21,7 @@ export enum ChipVariant {
   Rounded = 'rounded',
 }
 
-type ChipProps = {
+export type ChipProps = {
   size?: ChipSize;
   disabled?: boolean;
   clickable?: boolean;

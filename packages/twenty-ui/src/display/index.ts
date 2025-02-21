@@ -10,6 +10,8 @@ export * from './checkmark/components/Checkmark';
 export * from './chip/components/AvatarChip';
 export * from './chip/components/Chip';
 export * from './chip/components/LinkAvatarChip';
+export * from './chip/components/LinkChip';
+export * from './chip/hooks/getAvatarChipBuilder';
 export * from './color/components/ColorSample';
 export * from './icon/components/IconAddressBook';
 export * from './icon/components/IconGmail';
