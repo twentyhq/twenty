@@ -1,4 +1,5 @@
 import { SettingsApiPlaygroundCoverImage } from '@/settings/api/playground/components/SettingsApiPlaygroundCoverImage';
+import { ApiPlaygroundSetupForm } from '@/settings/api/playground/form/components/ApiPlaygroundSetupForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
@@ -50,6 +51,7 @@ export const SettingsApiKeys = () => {
               description={t`Try our REST or GraphQL API playgrounds.`}
             />
             <SettingsApiPlaygroundCoverImage/>
+            <ApiPlaygroundSetupForm/>
           </Section>
           <Section>
             <H2Title
