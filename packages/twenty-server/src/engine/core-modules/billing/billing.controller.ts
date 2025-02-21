@@ -69,7 +69,7 @@ export class BillingController {
         throw error;
       }
       const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error occurred';
+        error instanceof Error ? error.message : JSON.stringify(error);
 
       throw new BillingException(
         errorMessage,
