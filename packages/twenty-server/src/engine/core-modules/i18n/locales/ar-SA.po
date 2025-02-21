@@ -586,6 +586,10 @@ msgstr "الاتجاه"
 msgid "Display Name"
 msgstr "اسم العرض"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "قيمة العرض"
@@ -1327,6 +1331,10 @@ msgstr "معرف بيانات الكائن"
 msgid "Object name"
 msgstr "اسم الكائن"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "العملية"
@@ -1584,7 +1592,9 @@ msgstr "مؤشر التزامن"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr "\n"
+msgstr ""
+"\n"
+""
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts

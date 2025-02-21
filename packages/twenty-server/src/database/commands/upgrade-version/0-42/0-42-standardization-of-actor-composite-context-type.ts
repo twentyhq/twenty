@@ -25,12 +25,13 @@ export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWor
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
+
     this.logger = new CommandLogger({
       constructorName: this.constructor.name,
       verbose: false,

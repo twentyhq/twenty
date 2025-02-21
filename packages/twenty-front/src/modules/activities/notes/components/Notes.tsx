@@ -4,6 +4,7 @@ import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import styled from '@emotion/styled';
 import {
   AnimatedPlaceholder,
@@ -31,6 +32,8 @@ export const Notes = ({
 }) => {
   const { notes, loading } = useNotes(targetableObject);
 
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -56,16 +59,18 @@ export const Notes = ({
             There are no associated notes with this record.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        <Button
-          Icon={IconPlus}
-          title="New note"
-          variant="secondary"
-          onClick={() =>
-            openCreateActivity({
-              targetableObjects: [targetableObject],
-            })
-          }
-        />
+        {!hasObjectReadOnlyPermission && (
+          <Button
+            Icon={IconPlus}
+            title="New note"
+            variant="secondary"
+            onClick={() =>
+              openCreateActivity({
+                targetableObjects: [targetableObject],
+              })
+            }
+          />
+        )}
       </AnimatedPlaceholderEmptyContainer>
     );
   }
@@ -76,17 +81,19 @@ export const Notes = ({
         title="All"
         notes={notes}
         button={
-          <Button
-            Icon={IconPlus}
-            size="small"
-            variant="secondary"
-            title="Add note"
-            onClick={() =>
-              openCreateActivity({
-                targetableObjects: [targetableObject],
-              })
-            }
-          ></Button>
+          !hasObjectReadOnlyPermission && (
+            <Button
+              Icon={IconPlus}
+              size="small"
+              variant="secondary"
+              title="Add note"
+              onClick={() =>
+                openCreateActivity({
+                  targetableObjects: [targetableObject],
+                })
+              }
+            />
+          )
         }
       />
     </StyledNotesContainer>

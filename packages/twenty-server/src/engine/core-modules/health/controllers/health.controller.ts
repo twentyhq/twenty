@@ -23,7 +23,7 @@ export class HealthController {
     return this.health.check([]);
   }
 
-  @Get('/:serviceName')
+  @Get('/:indicatorId')
   @HealthCheck()
   checkService(@Param('indicatorId') indicatorId: HealthIndicatorId) {
     const checks = {

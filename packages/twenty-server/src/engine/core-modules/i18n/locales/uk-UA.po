@@ -586,6 +586,10 @@ msgstr "Напрямок"
 msgid "Display Name"
 msgstr "Назва для відображення"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Значення для відображення"
@@ -1326,6 +1330,10 @@ msgstr "ID метаданих об'єкту"
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object name"
 msgstr "Назва об'єкта"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr ""
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
