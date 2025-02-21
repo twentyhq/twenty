@@ -122,17 +122,21 @@ export const CommandMenuTopBar = () => {
   );
 
   const contextChips = useMemo(() => {
-    return commandMenuNavigationStack
-      .filter((page) => page.page !== CommandMenuPages.Root)
-      .map((page, index) => {
-        return {
-          Icons: [<page.pageIcon size={theme.icon.size.sm} />],
-          text: page.pageTitle,
-          onClick: () => {
-            navigateCommandMenuHistory(index);
-          },
-        };
-      });
+    const filteredCommandMenuNavigationStack =
+      commandMenuNavigationStack.filter(
+        (page) => page.page !== CommandMenuPages.Root,
+      );
+
+    return filteredCommandMenuNavigationStack.map((page, index) => ({
+      Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+      text: page.pageTitle,
+      onClick:
+        index === filteredCommandMenuNavigationStack.length - 1
+          ? undefined
+          : () => {
+              navigateCommandMenuHistory(index);
+            },
+    }));
   }, [
     commandMenuNavigationStack,
     navigateCommandMenuHistory,
