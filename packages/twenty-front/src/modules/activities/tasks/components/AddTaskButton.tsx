@@ -4,6 +4,7 @@ import { Button, IconPlus } from 'twenty-ui';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 
 export const AddTaskButton = ({
   activityTargetableObjects,
@@ -14,7 +15,12 @@ export const AddTaskButton = ({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  if (!isNonEmptyArray(activityTargetableObjects)) {
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
+  if (
+    !isNonEmptyArray(activityTargetableObjects) ||
+    hasObjectReadOnlyPermission
+  ) {
     return <></>;
   }
 
