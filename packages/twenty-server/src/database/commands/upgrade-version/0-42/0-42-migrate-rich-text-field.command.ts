@@ -105,23 +105,25 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       this.logger.setVerbose(options.verbose ?? false);
     }
 
-    try {
-      for (const [index, workspaceId] of workspaceIds.entries()) {
+    for (const [index, workspaceId] of workspaceIds.entries()) {
+      try {
         await this.processWorkspace({
           workspaceId,
           index,
           total: workspaceIds.length,
         });
-
+      } catch (error) {
+        this.logger.log(
+          chalk.red(`Error in workspace ${workspaceId}: ${error}`),
+        );
+      } finally {
         await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
           workspaceId,
         );
       }
-
-      this.logger.log(chalk.green('Command completed!'));
-    } catch (error) {
-      this.logger.log(chalk.red('Error in workspace'));
     }
+
+    this.logger.log(chalk.green('Command completed!'));
   }
 
   private async processWorkspace({
