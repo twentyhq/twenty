@@ -10,18 +10,6 @@ export const DOCS_INDEX = {
       { fileName: 'troubleshooting' },
     ],
   },
-  Extending: {
-    'Rest APIs': [
-      { fileName: 'rest-apis' },
-      { fileName: 'core-api-rest' },
-      { fileName: 'metadata-api-rest' },
-    ],
-    'GraphQL APIs': [
-      { fileName: 'graphql-apis' },
-      { fileName: 'core-api-graphql' },
-      { fileName: 'metadata-api-graphql' },
-    ],
-  },
   Contributing: {
     'Bugs and Requests': [{ fileName: 'bug-and-requests' }],
     'Frontend Development': [
