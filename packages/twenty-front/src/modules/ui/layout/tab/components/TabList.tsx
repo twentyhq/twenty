@@ -2,12 +2,11 @@ import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabList
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import * as React from 'react';
-import { useEffect } from 'react';
-import { IconComponent } from 'twenty-ui';
+import { useEffect, useRef, useState } from 'react';
 import { Tab } from './Tab';
+import { MoreTabsDropdown } from './TabMoreDropdown';
+import { IconComponent, IconChevronDown } from 'twenty-ui';
 
 export type SingleTabProps = {
   title: string;
@@ -38,17 +37,38 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
+const StyledDropdownContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const TabList = ({
   tabs,
   tabListInstanceId,
-  loading,
+  loading = false,
   behaveAsLinks = true,
-  isInRightDrawer,
+  isInRightDrawer = false,
   className,
 }: TabListProps) => {
+  const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
-  const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
+  const [maxVisibleTabs, setMaxVisibleTabs] = useState<number>(visibleTabs.length);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const firstTab = containerRef.current.querySelector('.tab-item') as HTMLElement;
+      const tabWidth = firstTab.offsetWidth + 16; // 16px := gap between tabs
+      const calculatedMaxVisible = Math.floor(containerWidth / tabWidth) - 1; // -1 to make space for the dropdown button
+      setMaxVisibleTabs(calculatedMaxVisible);
+    }
+  }, []);
+
+  const truncatedTabs = visibleTabs.slice(0, maxVisibleTabs);
+  const remainingTabs = visibleTabs.slice(maxVisibleTabs);
 
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
@@ -60,39 +80,65 @@ export const TabList = ({
     return null;
   }
 
+  const handleTabClick = (tabId: string) => {
+    if (!behaveAsLinks) {
+      setActiveTabId(tabId);
+    }
+  };
+
   return (
     <TabListScope tabListScopeId={tabListInstanceId}>
       <TabListFromUrlOptionalEffect
-        isInRightDrawer={!!isInRightDrawer}
+        isInRightDrawer={isInRightDrawer}
         componentInstanceId={tabListInstanceId}
         tabListIds={tabs.map((tab) => tab.id)}
       />
-      <ScrollWrapper
-        defaultEnableYScroll={false}
-        contextProviderName="tabList"
-        componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
-      >
-        <StyledContainer className={className}>
-          {visibleTabs.map((tab) => (
-            <Tab
-              id={tab.id}
-              key={tab.id}
-              title={tab.title}
-              Icon={tab.Icon}
-              logo={tab.logo}
-              active={tab.id === activeTabId}
-              disabled={tab.disabled ?? loading}
-              pill={tab.pill}
-              to={behaveAsLinks ? `#${tab.id}` : undefined}
-              onClick={() => {
-                if (!behaveAsLinks) {
-                  setActiveTabId(tab.id);
-                }
-              }}
-            />
-          ))}
-        </StyledContainer>
-      </ScrollWrapper>
+      <StyledContainer className={className} ref={containerRef}>
+        {truncatedTabs.map((tab) => (
+          <Tab
+            key={tab.id}
+            id={tab.id}
+            title={tab.title}
+            Icon={tab.Icon}
+            logo={tab.logo}
+            active={tab.id === activeTabId}
+            disabled={tab.disabled ?? loading}
+            pill={tab.pill}
+            to={behaveAsLinks ? `#${tab.id}` : undefined}
+            onClick={() => handleTabClick(tab.id)}
+            inDropdown={false}
+            // Add a class for measurement
+            className="tab-item"
+          />
+        ))}
+        {remainingTabs.length > 0 && (
+          <MoreTabsDropdown
+            id="more-button"
+            title={`+${remainingTabs.length} More`}
+            Icon={IconChevronDown}
+            dropdownContent={
+              <StyledDropdownContainer>
+                {remainingTabs.map((tab) => (
+                  <Tab
+                    key={tab.id}
+                    id={tab.id}
+                    title={tab.title}
+                    Icon={tab.Icon}
+                    logo={tab.logo}
+                    active={tab.id === activeTabId}
+                    disabled={tab.disabled ?? loading}
+                    pill={tab.pill}
+                    to={behaveAsLinks ? `#${tab.id}` : undefined}
+                    onClick={() => handleTabClick(tab.id)}
+                    inDropdown={true}
+                  />
+                ))}
+              </StyledDropdownContainer>
+            }
+            dropdownPlacement="bottom-start"
+          />
+        )}
+      </StyledContainer>
     </TabListScope>
   );
 };
