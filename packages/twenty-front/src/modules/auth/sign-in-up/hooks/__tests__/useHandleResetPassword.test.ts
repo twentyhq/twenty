@@ -1,29 +1,46 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
+import { RecoilRoot } from 'recoil';
+import { SOURCE_LOCALE } from 'twenty-shared';
+
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 // Mocks
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
 jest.mock('~/generated/graphql');
+
+dynamicActivate(SOURCE_LOCALE);
+
+const renderHooks = () => {
+  const { result } = renderHook(() => useHandleResetPassword(), {
+    wrapper: ({ children }) =>
+      RecoilRoot({ children: I18nProvider({ i18n, children }) }),
+  });
+  return { result };
+};
 
 describe('useHandleResetPassword', () => {
   const enqueueSnackBarMock = jest.fn();
   const emailPasswordResetLinkMock = jest.fn();
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     (useSnackBar as jest.Mock).mockReturnValue({
       enqueueSnackBar: enqueueSnackBarMock,
     });
     (useEmailPasswordResetLinkMutation as jest.Mock).mockReturnValue([
       emailPasswordResetLinkMock,
     ]);
-    jest.clearAllMocks();
   });
 
   it('should show error message if email is invalid', async () => {
-    const { result } = renderHook(() => useHandleResetPassword());
+    const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('')());
 
     expect(enqueueSnackBarMock).toHaveBeenCalledWith('Invalid email', {
@@ -36,7 +53,7 @@ describe('useHandleResetPassword', () => {
       data: { emailPasswordResetLink: { success: true } },
     });
 
-    const { result } = renderHook(() => useHandleResetPassword());
+    const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
     expect(enqueueSnackBarMock).toHaveBeenCalledWith(
@@ -50,10 +67,10 @@ describe('useHandleResetPassword', () => {
       data: { emailPasswordResetLink: { success: false } },
     });
 
-    const { result } = renderHook(() => useHandleResetPassword());
+    const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueSnackBarMock).toHaveBeenCalledWith('There was some issue', {
+    expect(enqueueSnackBarMock).toHaveBeenCalledWith('There was an issue', {
       variant: SnackBarVariant.Error,
     });
   });
@@ -62,7 +79,7 @@ describe('useHandleResetPassword', () => {
     const errorMessage = 'Network Error';
     emailPasswordResetLinkMock.mockRejectedValue(new Error(errorMessage));
 
-    const { result } = renderHook(() => useHandleResetPassword());
+    const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
     expect(enqueueSnackBarMock).toHaveBeenCalledWith(errorMessage, {

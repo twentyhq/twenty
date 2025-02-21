@@ -18,13 +18,15 @@ export const CleanSuspendedWorkspaceEmail = ({
   workspaceDisplayName,
   locale,
 }: CleanSuspendedWorkspaceEmailProps) => {
-  const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
-
   return (
     <BaseEmail width={333} locale={locale}>
       <Title value={<Trans>Deleted Workspace</Trans>} />
       <MainText>
-        {helloString},
+        {userName?.length > 1 ? (
+          <Trans>Dear {userName},</Trans>
+        ) : (
+          <Trans>Hello,</Trans>
+        )}
         <br />
         <br />
         <Trans>
