@@ -24,6 +24,13 @@ import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-builder.workspace-service';
+import { isWorkflowAction } from 'src/modules/workflow/workflow-executor/guards/is-workflow-action.guard';
+import { isWorkflowStep } from 'src/modules/workflow/workflow-executor/guards/is-workflow-step.guard';
+import {
+  WorkflowActionStepSettings,
+  WorkflowStep,
+  WorkflowStepType,
+} from 'src/modules/workflow/workflow-executor/types/workflow-step.type';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   WorkflowAction,
@@ -515,18 +522,53 @@ export class WorkflowVersionStepWorkspaceService {
     step,
     workspaceId,
   }: {
-    step: WorkflowAction;
+    step: WorkflowAction | WorkflowStep;
     workspaceId: string;
   }) {
-    switch (step.type) {
+    if (isWorkflowAction(step)) {
+      switch (step.type) {
+        case WorkflowActionType.CODE: {
+          if (
+            !(await this.serverlessFunctionService.hasServerlessFunctionPublishedVersion(
+              step.settings.input.serverlessFunctionId,
+            ))
+          ) {
+            await this.serverlessFunctionService.deleteOneServerlessFunction({
+              id: step.settings.input.serverlessFunctionId,
+              workspaceId,
+            });
+          }
+          break;
+        }
+      }
+    } else if (isWorkflowStep(step)) {
+      switch (step.type) {
+        case WorkflowStepType.ACTION: {
+          await this.runWorkflowActionStepDeletionSideEffects({
+            stepSettings: step.stepSettings,
+            workspaceId,
+          });
+        }
+      }
+    }
+  }
+
+  private async runWorkflowActionStepDeletionSideEffects({
+    stepSettings,
+    workspaceId,
+  }: {
+    stepSettings: WorkflowActionStepSettings;
+    workspaceId: string;
+  }) {
+    switch (stepSettings.type) {
       case WorkflowActionType.CODE: {
         if (
           !(await this.serverlessFunctionService.hasServerlessFunctionPublishedVersion(
-            step.settings.input.serverlessFunctionId,
+            stepSettings.actionSettings.input.serverlessFunctionId,
           ))
         ) {
           await this.serverlessFunctionService.deleteOneServerlessFunction({
-            id: step.settings.input.serverlessFunctionId,
+            id: stepSettings.actionSettings.input.serverlessFunctionId,
             workspaceId,
           });
         }

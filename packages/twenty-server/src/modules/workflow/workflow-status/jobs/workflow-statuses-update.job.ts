@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -13,6 +14,12 @@ import {
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { isWorkflowAction } from 'src/modules/workflow/workflow-executor/guards/is-workflow-action.guard';
+import { isWorkflowStep } from 'src/modules/workflow/workflow-executor/guards/is-workflow-step.guard';
+import {
+  WorkflowStep,
+  WorkflowStepType,
+} from 'src/modules/workflow/workflow-executor/types/workflow-step.type';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -20,7 +27,6 @@ import {
 import { getStatusCombinationFromArray } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-array.util';
 import { getStatusCombinationFromUpdate } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-update.util';
 import { getWorkflowStatusesFromCombination } from 'src/modules/workflow/workflow-status/utils/get-statuses-from-combination.util';
-import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -159,52 +165,115 @@ export class WorkflowStatusesUpdateJob {
       ).length > 0;
 
     if (shouldComputeNewSteps) {
-      const newSteps: WorkflowAction[] = [];
+      const newSteps: (WorkflowAction | WorkflowStep)[] = [];
 
       for (const step of workflowVersion.steps || []) {
-        const newStep = { ...step };
-
-        if (step.type === WorkflowActionType.CODE) {
-          try {
-            await this.serverlessFunctionService.publishOneServerlessFunction(
-              step.settings.input.serverlessFunctionId,
-              workspaceId,
-            );
-          } catch (e) {
-            // publishOneServerlessFunction throws if no change have been
-            // applied between draft and lastPublished version.
-            // If no change have been applied, we just use the same
-            // serverless function version
-            if (
-              e.code !==
-              ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED
-            ) {
-              this.logger.error(
-                `Error while publishing serverless function '${step.settings.input.serverlessFunctionId}': ${e}`,
-              );
-            }
-          }
-
-          const serverlessFunction =
-            await this.serverlessFunctionService.findOneOrFail({
-              id: step.settings.input.serverlessFunctionId,
-              workspaceId,
-            });
-
-          const newStepSettings = { ...step.settings };
-
-          newStepSettings.input.serverlessFunctionVersion =
-            serverlessFunction.latestVersion;
-
-          newStep.settings = newStepSettings;
+        if (isWorkflowAction(step)) {
+          newSteps.push(
+            await this.getNewStepForWorkflowAction(step, workspaceId),
+          );
+        } else if (isWorkflowStep(step)) {
+          newSteps.push(
+            await this.getNewStepForWorkflowStep(step, workspaceId),
+          );
         }
-        newSteps.push(newStep);
       }
 
       await workflowVersionRepository.update(statusUpdate.workflowVersionId, {
         steps: newSteps,
       });
     }
+  }
+
+  private async getNewStepForWorkflowAction(
+    step: WorkflowAction,
+    workspaceId: string,
+  ): Promise<WorkflowAction> {
+    const newStep = { ...step };
+
+    if (step.type === WorkflowActionType.CODE) {
+      try {
+        await this.serverlessFunctionService.publishOneServerlessFunction(
+          step.settings.input.serverlessFunctionId,
+          workspaceId,
+        );
+      } catch (e) {
+        // publishOneServerlessFunction throws if no change have been
+        // applied between draft and lastPublished version.
+        // If no change have been applied, we just use the same
+        // serverless function version
+        if (
+          e.code !==
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED
+        ) {
+          this.logger.error(
+            `Error while publishing serverless function '${step.settings.input.serverlessFunctionId}': ${e}`,
+          );
+        }
+      }
+
+      const serverlessFunction =
+        await this.serverlessFunctionService.findOneOrFail({
+          id: step.settings.input.serverlessFunctionId,
+          workspaceId,
+        });
+
+      const newStepSettings = { ...step.settings };
+
+      newStepSettings.input.serverlessFunctionVersion =
+        serverlessFunction.latestVersion;
+
+      newStep.settings = newStepSettings;
+    }
+
+    return newStep;
+  }
+
+  private async getNewStepForWorkflowStep(
+    step: WorkflowStep,
+    workspaceId: string,
+  ): Promise<WorkflowStep> {
+    const newStep = { ...step };
+
+    if (
+      step.type === WorkflowStepType.ACTION &&
+      step.stepSettings.type === WorkflowActionType.CODE
+    ) {
+      try {
+        await this.serverlessFunctionService.publishOneServerlessFunction(
+          step.stepSettings.actionSettings.input.serverlessFunctionId,
+          workspaceId,
+        );
+      } catch (e) {
+        // publishOneServerlessFunction throws if no change have been
+        // applied between draft and lastPublished version.
+        // If no change have been applied, we just use the same
+        // serverless function version
+        if (
+          e.code !==
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED
+        ) {
+          this.logger.error(
+            `Error while publishing serverless function '${step.stepSettings.actionSettings.input.serverlessFunctionId}': ${e}`,
+          );
+        }
+      }
+
+      const serverlessFunction =
+        await this.serverlessFunctionService.findOneOrFail({
+          id: step.stepSettings.actionSettings.input.serverlessFunctionId,
+          workspaceId,
+        });
+
+      const newStepSettings = { ...step.stepSettings };
+
+      newStepSettings.actionSettings.input.serverlessFunctionVersion =
+        serverlessFunction.latestVersion;
+
+      newStep.stepSettings = newStepSettings;
+    }
+
+    return newStep;
   }
 
   private async handleWorkflowVersionStatusUpdated(
