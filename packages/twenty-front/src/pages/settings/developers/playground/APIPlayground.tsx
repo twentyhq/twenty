@@ -6,11 +6,11 @@ import { useParams } from 'react-router-dom';
 const APIPlayground = () => {
   const { schema, type } = useParams<{schema: PlaygroundSchemas, type: PlaygroundTypes }>()
   
-  if (type === PlaygroundTypes.GRAPH_QL) {
+  if (type === PlaygroundTypes.GRAPH_QL.toLocaleLowerCase()) {
     return <GraphQLWrapper schema={schema as PlaygroundSchemas} />;
   }
 
-  return <RestApiWrapper schema={schema as PlaygroundSchemas}/>
+  return <RestApiWrapper/>
 };
 
 export default APIPlayground;

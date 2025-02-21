@@ -1,9 +1,12 @@
-import { PlaygroundSchemas } from '@/settings/api/playground/form/ApiPlaygroundSetupForm';
 import { openAPIReference } from '@/settings/api/playground/state/openAPIReference';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
 import { ApiReferenceReact } from '@scalar/api-reference-react';
 import '@scalar/api-reference-react/style.css';
 import { useRecoilState } from 'recoil';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
   height: 100vh;
@@ -11,21 +14,32 @@ const StyledContainer = styled.div`
   width: 100vw;
 `;
 
-export const RestApiWrapper = ({
-  schema
-} : {
-  schema: PlaygroundSchemas
-}) => {
+export const RestApiWrapper = () => {
   const [ openApiJson ] = useRecoilState(openAPIReference)
+
   return (
-    <StyledContainer>
-      <ApiReferenceReact
-        configuration={{
-          spec: {
-            content: openApiJson,
-          },
-        }}
-      />
-    </StyledContainer>
+    <SubMenuTopBarContainer
+      links={[
+        {
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        {
+          children: <Trans>APIs</Trans>,
+          href: getSettingsPath(SettingsPath.APIs),
+        },
+        { children: <Trans>Rest API Playground</Trans> },
+      ]}
+    >
+      <StyledContainer>
+        <ApiReferenceReact
+          configuration={{
+            spec: {
+              content: openApiJson,
+            },
+          }}
+        />
+      </StyledContainer>
+    </SubMenuTopBarContainer>
   );
 };

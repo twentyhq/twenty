@@ -1,22 +1,32 @@
 import { PlaygroundSchemas } from '@/settings/api/playground/form/ApiPlaygroundSetupForm';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
+import { Trans } from '@lingui/react/macro';
 import { GraphiQL } from 'graphiql';
 import 'graphiql/graphiql.css';
-import { useState } from 'react';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
   height: 100%;
 `;
 
+const StyledPlaygroundContainer = styled.div`
+  height: 100vh;
+  position: relative;
+  width: 100vw;
+`;
+
 const SchemaToPath = {
-  [PlaygroundSchemas.CORE]: 'graphql',
-  [PlaygroundSchemas.METADATA]: 'metadata',
+  [PlaygroundSchemas.CORE.toLocaleLowerCase()]: 'graphql',
+  [PlaygroundSchemas.METADATA.toLocaleLowerCase()]: 'metadata',
 };
 
-const GraphQlComponent = ({ token, baseUrl, path }: any) => {
+const GraphQlComponent = ({ apiKey, baseUrl, path }: any) => {
   const explorer = explorerPlugin({
     showAttribution: true,
   });
@@ -25,7 +35,7 @@ const GraphQlComponent = ({ token, baseUrl, path }: any) => {
     url: baseUrl + '/' + path,
   });
 
-  if (!baseUrl || !token) {
+  if (!baseUrl || !apiKey) {
     return <></>;
   }
 
@@ -34,22 +44,38 @@ const GraphQlComponent = ({ token, baseUrl, path }: any) => {
       <GraphiQL
         plugins={[explorer]}
         fetcher={fetcher}
-        defaultHeaders={JSON.stringify({ Authorization: `Bearer ${token}` })}
+        defaultHeaders={JSON.stringify({ Authorization: `Bearer ${apiKey}` })}
       />
     </StyledContainer>
   );
 };
 
 const GraphQLWrapper = ({ schema }: { schema: PlaygroundSchemas }) => {
-  const [token, setToken] = useState<string>();
-  const [baseUrl, setBaseUrl] = useState<string>();
+  const apiKey = sessionStorage.getItem('apiKey')
+  const baseUrl = REACT_APP_SERVER_BASE_URL
 
   return (
-      <GraphQlComponent
-        token={token}
-        baseUrl={baseUrl}
-        path={SchemaToPath[schema]}
-      />
+    <SubMenuTopBarContainer
+      links={[
+        {
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        {
+          children: <Trans>APIs</Trans>,
+          href: getSettingsPath(SettingsPath.APIs),
+        },
+        { children: <Trans>GraphQL API Playground</Trans> },
+      ]}
+    >
+      <StyledPlaygroundContainer>
+        <GraphQlComponent
+          apiKey={apiKey}
+          baseUrl={baseUrl}
+          path={SchemaToPath[schema]}
+        />
+      </StyledPlaygroundContainer>
+    </SubMenuTopBarContainer>
   );
 };
 export default GraphQLWrapper;
