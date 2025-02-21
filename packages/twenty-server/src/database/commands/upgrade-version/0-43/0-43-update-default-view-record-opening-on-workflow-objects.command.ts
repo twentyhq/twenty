@@ -13,6 +13,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
@@ -63,7 +64,11 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
         select: ['id'],
         where: {
           workspaceId,
-          nameSingular: In(['workflow', 'workflowVersion', 'workflowRun']),
+          standardId: In([
+            STANDARD_OBJECT_IDS.workflow,
+            STANDARD_OBJECT_IDS.workflowVersion,
+            STANDARD_OBJECT_IDS.workflowRun,
+          ]),
         },
       });
 
