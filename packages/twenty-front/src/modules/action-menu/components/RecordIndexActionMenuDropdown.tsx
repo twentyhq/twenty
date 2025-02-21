@@ -2,6 +2,10 @@ import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionM
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -29,6 +33,12 @@ export const RecordIndexActionMenuDropdown = () => {
     actionMenuEntriesComponentSelector,
   );
 
+  const recordIndexActions = actionMenuEntries.filter(
+    (actionMenuEntry) =>
+      actionMenuEntry.type === ActionMenuEntryType.Standard &&
+      actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
+  );
+
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
   );
@@ -44,7 +54,7 @@ export const RecordIndexActionMenuDropdown = () => {
   );
 
   //TODO: remove this
-  const width = actionMenuEntries.some(
+  const width = recordIndexActions.some(
     (actionMenuEntry) =>
       i18n._(actionMenuEntry.label) === 'Remove from favorites',
   )
@@ -68,7 +78,7 @@ export const RecordIndexActionMenuDropdown = () => {
       dropdownComponents={
         <StyledDropdownMenuContainer className="action-menu-dropdown">
           <DropdownMenuItemsContainer>
-            {actionMenuEntries.map((item) => (
+            {recordIndexActions.map((item) => (
               <MenuItem
                 key={item.key}
                 LeftIcon={item.Icon}
