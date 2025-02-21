@@ -11,6 +11,7 @@ import { useColumnNewCardActions } from '@/object-record/record-board/record-boa
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
 
@@ -97,6 +98,8 @@ export const RecordBoardColumnHeader = () => {
     columnDefinition.id ?? '',
   );
 
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
 
@@ -146,12 +149,13 @@ export const RecordBoardColumnHeader = () => {
                   Icon={IconDotsVertical}
                   onClick={handleBoardColumnMenuOpen}
                 />
-
-                <LightIconButton
-                  accent="tertiary"
-                  Icon={IconPlus}
-                  onClick={() => handleNewButtonClick('first', isOpportunity)}
-                />
+                {!hasObjectReadOnlyPermission && (
+                  <LightIconButton
+                    accent="tertiary"
+                    Icon={IconPlus}
+                    onClick={() => handleNewButtonClick('first', isOpportunity)}
+                  />
+                )}
               </StyledHeaderActions>
             )}
           </StyledRightContainer>

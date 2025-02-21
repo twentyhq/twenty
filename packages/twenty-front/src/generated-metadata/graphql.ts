@@ -1,6 +1,9 @@
 /* eslint-disable */
+import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { WhatsappTemplatesResponse } from '@/chat/call-center/types/WhatsappTemplate';
 import { UpdateAgentInput } from '@/settings/service-center/agents/types/UpdateAgentInput';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import { Agent } from 'http';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -55,14 +58,14 @@ export type AdminPanelHealthServiceData = {
 
 export enum AdminPanelHealthServiceStatus {
   OPERATIONAL = 'OPERATIONAL',
-  OUTAGE = 'OUTAGE'
+  OUTAGE = 'OUTAGE',
 }
 
 export enum AdminPanelIndicatorHealthStatusInputEnum {
   DATABASE = 'DATABASE',
   MESSAGE_SYNC = 'MESSAGE_SYNC',
   REDIS = 'REDIS',
-  WORKER = 'WORKER'
+  WORKER = 'WORKER',
 }
 
 export type AdminPanelWorkerQueueHealth = {
@@ -264,11 +267,6 @@ export enum BillingUsageType {
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']['input']>;
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type BuildDraftServerlessFunctionInput = {
-  /** The id of the function. */
-  id: Scalars['ID']['input'];
 };
 
 export enum CalendarChannelVisibility {
@@ -906,7 +904,6 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
-  buildDraftServerlessFunction: ServerlessFunction;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
@@ -999,10 +996,6 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String']['input'];
   codeChallenge?: InputMaybe<Scalars['String']['input']>;
   redirectUrl: Scalars['String']['input'];
-};
-
-export type MutationBuildDraftServerlessFunctionArgs = {
-  input: BuildDraftServerlessFunctionInput;
 };
 
 export type MutationCheckoutSessionArgs = {
@@ -1424,7 +1417,7 @@ export enum PermissionsOnAllObjectRecords {
   DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
   READ_ALL_OBJECT_RECORDS = 'READ_ALL_OBJECT_RECORDS',
   SOFT_DELETE_ALL_OBJECT_RECORDS = 'SOFT_DELETE_ALL_OBJECT_RECORDS',
-  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
+  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS',
 }
 
 export type PostgresCredentials = {
@@ -1565,11 +1558,9 @@ export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
 };
 
-
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
 };
-
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String']['input'];
@@ -2913,28 +2904,6 @@ export type ServerlessFunctionFieldsFragment = {
   publishedVersions: Array<string>;
   createdAt: any;
   updatedAt: any;
-};
-
-export type BuildDraftServerlessFunctionMutationVariables = Exact<{
-  input: BuildDraftServerlessFunctionInput;
-}>;
-
-export type BuildDraftServerlessFunctionMutation = {
-  __typename?: 'Mutation';
-  buildDraftServerlessFunction: {
-    __typename?: 'ServerlessFunction';
-    id: any;
-    name: string;
-    description?: string | null;
-    runtime: string;
-    timeoutSeconds: number;
-    syncStatus: ServerlessFunctionSyncStatus;
-    latestVersion?: string | null;
-    latestVersionInputSchema?: any | null;
-    publishedVersions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  };
 };
 
 export type CreateOneServerlessFunctionItemMutationVariables = Exact<{
@@ -5229,93 +5198,6 @@ export const ObjectMetadataItemsDocument = {
 } as unknown as DocumentNode<
   ObjectMetadataItemsQuery,
   ObjectMetadataItemsQueryVariables
->;
-export const BuildDraftServerlessFunctionDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'BuildDraftServerlessFunction' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: {
-                kind: 'Name',
-                value: 'BuildDraftServerlessFunctionInput',
-              },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'buildDraftServerlessFunction' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  BuildDraftServerlessFunctionMutation,
-  BuildDraftServerlessFunctionMutationVariables
 >;
 export const CreateOneServerlessFunctionItemDocument = {
   kind: 'Document',

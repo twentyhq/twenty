@@ -1,6 +1,7 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -29,6 +30,7 @@ export const mockedViewsData: View[] = [
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,
+    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
     viewFilterGroups: [],
     viewGroups: [],
     viewFields: [],
@@ -48,6 +50,7 @@ export const mockedViewsData: View[] = [
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,
+    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
     viewFilterGroups: [],
     viewGroups: [],
     viewFields: [],
@@ -67,6 +70,7 @@ export const mockedViewsData: View[] = [
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,
+    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
     viewFilterGroups: [],
     viewGroups: [],
     viewFields: [],
@@ -86,6 +90,7 @@ export const mockedViewsData: View[] = [
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,
+    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
     viewFilterGroups: [],
     viewGroups: [],
     viewFields: [],

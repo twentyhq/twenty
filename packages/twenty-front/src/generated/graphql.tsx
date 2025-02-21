@@ -31,7 +31,10 @@ export type ActivateWorkspaceInput = {
 
 export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
+  description: Scalars['String'];
   details?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  label: Scalars['String'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
   status: AdminPanelHealthServiceStatus;
 };
@@ -41,17 +44,11 @@ export enum AdminPanelHealthServiceStatus {
   OUTAGE = 'OUTAGE'
 }
 
-export enum AdminPanelIndicatorHealthStatusInputEnum {
-  DATABASE = 'DATABASE',
-  MESSAGE_SYNC = 'MESSAGE_SYNC',
-  REDIS = 'REDIS',
-  WORKER = 'WORKER'
-}
-
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
+  id: Scalars['String'];
   metrics: WorkerQueueMetrics;
-  name: Scalars['String'];
+  queueName: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
   workers: Scalars['Float'];
 };
@@ -246,11 +243,6 @@ export enum BillingUsageType {
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
   isNot?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type BuildDraftServerlessFunctionInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
 };
 
 export enum CalendarChannelVisibility {
@@ -709,6 +701,13 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String'];
 };
 
+export enum HealthIndicatorId {
+  connectedAccount = 'connectedAccount',
+  database = 'database',
+  redis = 'redis',
+  worker = 'worker'
+}
+
 export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
@@ -875,7 +874,6 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
-  buildDraftServerlessFunction: ServerlessFunction;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
@@ -967,11 +965,6 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
   redirectUrl: Scalars['String'];
-};
-
-
-export type MutationBuildDraftServerlessFunctionArgs = {
-  input: BuildDraftServerlessFunctionInput;
 };
 
 
@@ -1570,7 +1563,7 @@ export type QueryGetAvailablePackagesArgs = {
 
 
 export type QueryGetIndicatorHealthStatusArgs = {
-  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
+  indicatorId: HealthIndicatorId;
 };
 
 
@@ -1970,10 +1963,14 @@ export type Support = {
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
-  database: AdminPanelHealthServiceData;
-  messageSync: AdminPanelHealthServiceData;
-  redis: AdminPanelHealthServiceData;
-  worker: AdminPanelHealthServiceData;
+  services: Array<SystemHealthService>;
+};
+
+export type SystemHealthService = {
+  __typename?: 'SystemHealthService';
+  id: HealthIndicatorId;
+  label: Scalars['String'];
+  status: AdminPanelHealthServiceStatus;
 };
 
 export type TimelineCalendarEvent = {
@@ -2734,16 +2731,16 @@ export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]
 export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> } };
 
 export type GetIndicatorHealthStatusQueryVariables = Exact<{
-  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
+  indicatorId: HealthIndicatorId;
 }>;
 
 
-export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', name: string, status: AdminPanelHealthServiceStatus, workers: number, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null } };
+export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: string, label: string, description: string, status: AdminPanelHealthServiceStatus, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus, workers: number, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null } };
 
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null }, redis: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null }, worker: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', name: string, workers: number, status: AdminPanelHealthServiceStatus, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null }, messageSync: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null } } };
+export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -4648,12 +4645,16 @@ export type GetEnvironmentVariablesGroupedQueryHookResult = ReturnType<typeof us
 export type GetEnvironmentVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedLazyQuery>;
 export type GetEnvironmentVariablesGroupedQueryResult = Apollo.QueryResult<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>;
 export const GetIndicatorHealthStatusDocument = gql`
-    query GetIndicatorHealthStatus($indicatorName: AdminPanelIndicatorHealthStatusInputEnum!) {
-  getIndicatorHealthStatus(indicatorName: $indicatorName) {
+    query GetIndicatorHealthStatus($indicatorId: HealthIndicatorId!) {
+  getIndicatorHealthStatus(indicatorId: $indicatorId) {
+    id
+    label
+    description
     status
     details
     queues {
-      name
+      id
+      queueName
       status
       workers
       metrics {
@@ -4681,7 +4682,7 @@ export const GetIndicatorHealthStatusDocument = gql`
  * @example
  * const { data, loading, error } = useGetIndicatorHealthStatusQuery({
  *   variables: {
- *      indicatorName: // value for 'indicatorName'
+ *      indicatorId: // value for 'indicatorId'
  *   },
  * });
  */
@@ -4699,33 +4700,10 @@ export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicato
 export const GetSystemHealthStatusDocument = gql`
     query GetSystemHealthStatus {
   getSystemHealthStatus {
-    database {
+    services {
+      id
+      label
       status
-      details
-    }
-    redis {
-      status
-      details
-    }
-    worker {
-      status
-      queues {
-        name
-        workers
-        status
-        metrics {
-          failed
-          completed
-          waiting
-          active
-          delayed
-          prioritized
-        }
-      }
-    }
-    messageSync {
-      status
-      details
     }
   }
 }

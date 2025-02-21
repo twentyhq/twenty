@@ -586,6 +586,10 @@ msgstr "Κατεύθυνση"
 msgid "Display Name"
 msgstr "Εμφανιζόμενο Όνομα"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Εμφανιζόμενη Αξία"
@@ -1326,6 +1330,10 @@ msgstr "Αναγνωριστικό Μετα-δεδομένων Αντικειμ�
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object name"
 msgstr "Όνομα αντικειμένου"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr ""
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"

@@ -586,6 +586,10 @@ msgstr "Riktning"
 msgid "Display Name"
 msgstr "Visningsnamn"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Visningsvärde"
@@ -1327,6 +1331,10 @@ msgstr "Objektmetadata-id"
 msgid "Object name"
 msgstr "Objektnamn"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr ""
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operand"
@@ -1481,7 +1489,8 @@ msgstr "F\"or\"aldrade f\"argschema"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred language"
-msgstr "F\"or\"aldrat spr\n"
+msgstr ""
+"F\"or\"aldrat spr\n"
 "k"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1585,7 +1594,8 @@ msgstr "Synkkurs"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr "Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
+msgstr ""
+"Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
 "n kalenderleverant\"oren"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts

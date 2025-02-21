@@ -52,7 +52,7 @@ export type SettingsNavigationItem = {
   soon?: boolean;
 };
 
-export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
+const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const billing = useRecoilValue(billingState);
 
   const isFunctionSettingsEnabled = false;
@@ -144,7 +144,8 @@ export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Billing`,
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
-          isHidden: !isBillingEnabled,
+          isHidden:
+            !isBillingEnabled || !permissionMap[SettingsFeatures.WORKSPACE],
         },
         {
           label: t`Roles`,
@@ -208,7 +209,9 @@ export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Lab`,
           path: SettingsPath.Lab,
           Icon: IconFlask,
-          isHidden: !labPublicFeatureFlags.length,
+          isHidden:
+            !labPublicFeatureFlags.length ||
+            !permissionMap[SettingsFeatures.WORKSPACE],
         },
         {
           label: t`Releases`,
@@ -219,3 +222,5 @@ export const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     },
   ];
 };
+
+export { useSettingsNavigationItems };

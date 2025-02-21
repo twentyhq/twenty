@@ -312,7 +312,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            requiredFeatureFlag={FeatureFlagKey.IsBillingPlansEnabled}
+            settingsPermission={SettingsFeatures.WORKSPACE}
           />
         }
       >
@@ -481,7 +481,15 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route path={SettingsPath.Lab} element={<SettingsLab />} />
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={SettingsFeatures.WORKSPACE}
+          />
+        }
+      >
+        <Route path={SettingsPath.Lab} element={<SettingsLab />} />
+      </Route>
     </Routes>
   </Suspense>
 );

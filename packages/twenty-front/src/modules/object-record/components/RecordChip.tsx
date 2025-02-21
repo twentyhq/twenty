@@ -1,9 +1,13 @@
 import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { MouseEvent } from 'react';
+import { useRecoilValue } from 'recoil';
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -23,8 +27,20 @@ export const RecordChip = ({
     record,
   });
 
+  const { openRecordInCommandMenu } = useCommandMenu();
+
+  const recordIndexOpenRecordIn = useRecoilValue(
+    recordIndexOpenRecordInSelector,
+  );
+
   const handleClick = (e: MouseEvent<Element>) => {
     e.stopPropagation();
+    if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+      openRecordInCommandMenu({
+        recordId: record.id,
+        objectNameSingular,
+      });
+    }
   };
 
   return (
@@ -36,7 +52,11 @@ export const RecordChip = ({
       className={className}
       variant={variant}
       onClick={handleClick}
-      to={getLinkToShowPage(objectNameSingular, record)}
+      to={
+        recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
+          ? getLinkToShowPage(objectNameSingular, record)
+          : undefined
+      }
     />
   );
 };

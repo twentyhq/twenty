@@ -87,6 +87,10 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner
         error,
       );
       throw error;
+    } finally {
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
     }
   }
 

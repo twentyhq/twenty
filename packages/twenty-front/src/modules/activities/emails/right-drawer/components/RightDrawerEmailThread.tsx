@@ -55,6 +55,7 @@ export const RightDrawerEmailThread = () => {
     connectedAccountHandle,
     messageChannelLoading,
     connectedAccountProvider,
+    lastMessageExternalId,
   } = useRightDrawerEmailThread();
 
   useEffect(() => {
@@ -117,7 +118,7 @@ export const RightDrawerEmailThread = () => {
     let url: string;
     switch (connectedAccountProvider) {
       case ConnectedAccountProvider.MICROSOFT:
-        url = `https://outlook.office365.com/mail/inbox/id/${messageThreadExternalId}`;
+        url = `https://outlook.office.com/mail/deeplink?ItemID=${lastMessageExternalId}`;
         window.open(url, '_blank');
         break;
       case ConnectedAccountProvider.GOOGLE:

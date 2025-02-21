@@ -56,9 +56,9 @@ export const actorCompositeType: CompositeType = {
 
 export type ActorMetadata = {
   source: FieldActorSource;
-  workspaceMemberId?: string;
+  workspaceMemberId: string | null;
   name: string;
-  context?: {
+  context: {
     provider?: ConnectedAccountProvider;
   };
 };

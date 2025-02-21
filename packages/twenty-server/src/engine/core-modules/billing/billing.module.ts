@@ -34,6 +34,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     StripeModule,
     DomainManagerModule,
     MessageQueueModule,
+    PermissionsModule,
     TypeOrmModule.forFeature(
       [
         BillingSubscription,

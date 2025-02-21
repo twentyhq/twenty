@@ -6,6 +6,7 @@ import { ObjectOptionsDropdownRecordGroupFieldsContent } from '@/object-record/o
 import { ObjectOptionsDropdownRecordGroupsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent';
 import { ObjectOptionsDropdownRecordGroupSortContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupSortContent';
 import { ObjectOptionsDropdownViewSettingsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent';
+import { ObjectOptionsDropdownViewSettingsOpenInContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 
 export const ObjectOptionsDropdownContent = () => {
@@ -14,6 +15,8 @@ export const ObjectOptionsDropdownContent = () => {
   switch (currentContentId) {
     case 'viewSettings':
       return <ObjectOptionsDropdownViewSettingsContent />;
+    case 'viewSettingsOpenIn':
+      return <ObjectOptionsDropdownViewSettingsOpenInContent />;
     case 'fields':
       return <ObjectOptionsDropdownFieldsContent />;
     case 'hiddenFields':
