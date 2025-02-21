@@ -291,7 +291,10 @@ export class CleanerWorkspaceService {
 
           continue;
         }
-        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
+        if (
+          workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
+          !isDefined(workspace.deletedAt)
+        ) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
             workspaceInactivity,
