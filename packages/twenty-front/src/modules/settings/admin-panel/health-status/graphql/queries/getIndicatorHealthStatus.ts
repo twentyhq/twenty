@@ -1,14 +1,16 @@
 import { gql } from '@apollo/client';
 
 export const GET_INDICATOR_HEALTH_STATUS = gql`
-  query GetIndicatorHealthStatus(
-    $indicatorName: AdminPanelIndicatorHealthStatusInputEnum!
-  ) {
-    getIndicatorHealthStatus(indicatorName: $indicatorName) {
+  query GetIndicatorHealthStatus($indicatorId: HealthIndicatorId!) {
+    getIndicatorHealthStatus(indicatorId: $indicatorId) {
+      id
+      label
+      description
       status
       details
       queues {
-        name
+        id
+        queueName
         status
         workers
         metrics {

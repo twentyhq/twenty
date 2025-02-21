@@ -15,4 +15,9 @@ export class MetricsController {
   getInvalidCaptchaCounter() {
     return this.healthCacheService.getInvalidCaptchaCounter();
   }
+
+  @Get('/calendar-channel-sync-job-by-status-counter')
+  getCalendarChannelSyncJobByStatusCounter() {
+    return this.healthCacheService.getCalendarChannelSyncJobByStatusCounter();
+  }
 }

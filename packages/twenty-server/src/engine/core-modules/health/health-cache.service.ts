@@ -4,8 +4,9 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { AccountSyncJobByStatusCounter } from 'src/engine/core-modules/health/types/account-sync-metrics.types';
 import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/health-counter-cache-keys.type';
-import { MessageChannelSyncJobByStatusCounter } from 'src/engine/core-modules/health/types/message-sync-metrics.types';
+import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -48,9 +49,7 @@ export class HealthCacheService {
     );
 
     const currentCounter =
-      await this.cacheStorage.get<MessageChannelSyncJobByStatusCounter>(
-        cacheKey,
-      );
+      await this.cacheStorage.get<AccountSyncJobByStatusCounter>(cacheKey);
 
     const updatedCounter = {
       ...(currentCounter || {}),
@@ -80,7 +79,7 @@ export class HealthCacheService {
 
     for (const key of cacheKeys) {
       const counter =
-        await this.cacheStorage.get<MessageChannelSyncJobByStatusCounter>(key);
+        await this.cacheStorage.get<AccountSyncJobByStatusCounter>(key);
 
       if (!counter) continue;
 
@@ -126,6 +125,60 @@ export class HealthCacheService {
       const counter = await this.cacheStorage.get<number>(key);
 
       aggregatedCounter += counter || 0;
+    }
+
+    return aggregatedCounter;
+  }
+
+  async incrementCalendarChannelSyncJobByStatusCounter(
+    status: CalendarChannelSyncStatus,
+    increment: number,
+  ) {
+    const cacheKey = this.getCacheKeyWithTimestamp(
+      HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
+    );
+
+    const currentCounter =
+      await this.cacheStorage.get<AccountSyncJobByStatusCounter>(cacheKey);
+
+    const updatedCounter = {
+      ...(currentCounter || {}),
+      [status]: (currentCounter?.[status] || 0) + increment,
+    };
+
+    return await this.cacheStorage.set(
+      cacheKey,
+      updatedCounter,
+      this.healthCacheTtl,
+    );
+  }
+
+  async getCalendarChannelSyncJobByStatusCounter() {
+    const cacheKeys = this.getLastXMinutesTimestamps(
+      this.healthMonitoringTimeWindowInMinutes,
+    ).map((timestamp) =>
+      this.getCacheKeyWithTimestamp(
+        HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
+        timestamp,
+      ),
+    );
+
+    const aggregatedCounter = Object.fromEntries(
+      Object.values(CalendarChannelSyncStatus).map((status) => [status, 0]),
+    );
+
+    for (const key of cacheKeys) {
+      const counter =
+        await this.cacheStorage.get<AccountSyncJobByStatusCounter>(key);
+
+      if (!counter) continue;
+
+      for (const [status, count] of Object.entries(counter) as [
+        CalendarChannelSyncStatus,
+        number,
+      ][]) {
+        aggregatedCounter[status] += count;
+      }
     }
 
     return aggregatedCounter;
