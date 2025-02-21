@@ -4,7 +4,7 @@ import { Card } from 'twenty-ui';
 import DarkCoverImage from '../assets/cover-dark.png';
 import LightCoverImage from '../assets/cover-light.png';
 
-const StyledCoverImageContainer = styled(Card)`
+export const SettingsApiPlaygroundCoverImage = styled(Card)`
   align-items: center;
   background-image: ${({ theme }) =>
     theme.name === 'light'
@@ -19,9 +19,3 @@ const StyledCoverImageContainer = styled(Card)`
   position: relative;
   margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
-
-export const SettingsApiPlaygroundCoverImage = () => {
-  return (
-    <StyledCoverImageContainer/>
-  );
-};

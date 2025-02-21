@@ -1,4 +1,3 @@
-'use client';
 import styled from '@emotion/styled';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';

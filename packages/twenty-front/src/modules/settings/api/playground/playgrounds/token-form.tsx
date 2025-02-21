@@ -1,10 +1,6 @@
-'use client';
-
-import { usePathname, useRouter } from 'next/navigation';
+import styled from '@emotion/styled';
 import React, { useEffect, useState } from 'react';
 import { TbApi, TbChevronLeft, TbLink } from 'react-icons/tb';
-
-import tokenForm from '!css-loader!./token-form.css';
 
 export type SubDoc = 'core' | 'metadata';
 export type TokenFormProps = {
@@ -17,6 +13,94 @@ export type TokenFormProps = {
   subDoc?: SubDoc;
 };
 
+const FormContainer = styled.div`
+    height: 45px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--ifm-color-secondary-light);
+    position: sticky;
+    top: calc(var(--ifm-navbar-height) + 10px);
+    padding: 0 8px;
+    background: var(--ifm-color-secondary-contrast-background);
+    z-index: 2;
+    display: flex;
+`;
+
+const Form = styled.form`
+    display: flex;
+    height: 45px;
+    gap: 10px;
+    width: 50%;
+    margin-left: auto;
+    flex: 0.7;
+`;
+
+const InputWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    flex: 1;
+    position: relative;
+`;
+
+const BackButton = styled.div`
+    position: absolute;
+    display: flex;
+    left: 8px;
+    height: 100%;
+    align-items: center;
+    cursor: pointer;
+    color: #999999;
+
+    &:hover {
+        color: #16233f;
+    }
+`;
+
+const InputIcon = styled.div`
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    padding: 5px;
+    color: #B3B3B3;
+`;
+
+const Input = styled.input`
+    padding: 6px;
+    margin: 5px 0;
+    max-width: 460px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding-left: 30px;
+    height: 32px;
+
+    &:disabled {
+        color: rgb(153, 153, 153);
+    }
+
+    &[data-isinvalid="true"] {
+        border: 1px solid #f83e3e;
+    }
+`;
+
+const Select = styled.select`
+  padding: 6px;
+  margin: 5px 0;
+  max-width: 460px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #f3f3f3;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  height: 32px;
+  flex: 1;
+`;
+
+
+
 const TokenForm = ({
   setOpenApiJson,
   setToken,
@@ -26,10 +110,6 @@ const TokenForm = ({
   subDoc,
   setLoadingState,
 }: TokenFormProps) => {
-  const router = useRouter();
-
-  const pathname = usePathname();
-
   const [isLoading, setIsLoading] = useState(false);
   const [locationSetting, setLocationSetting] = useState(
     (typeof window !== 'undefined' &&
@@ -127,25 +207,15 @@ const TokenForm = ({
     })();
   }, []);
 
-  // We load playground style using useEffect as it breaks remaining docs style
-  useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = tokenForm.toString();
-    document.head.append(styleElement);
-
-    return () => styleElement.remove();
-  }, []);
-
   return (
-    <div className="form-container">
-      <form className="form">
-        <div className="backButton" onClick={() => router.back()}>
+    <FormContainer>
+      <Form>
+        <BackButton>
           <TbChevronLeft size={18} />
           <span>Back</span>
-        </div>
-        <div className="inputWrapper">
-          <select
-            className="select"
+        </BackButton>
+        <InputWrapper>
+          <Select
             onChange={(event) => {
               updateBaseUrl(baseUrl, event.target.value);
             }}
@@ -155,14 +225,13 @@ const TokenForm = ({
             <option value="demo">Demo API</option>
             <option value="localhost">Localhost</option>
             <option value="other">Other</option>
-          </select>
-        </div>
-        <div className="inputWrapper">
-          <div className="inputIcon" title="Base URL">
+          </Select>
+        </InputWrapper>
+        <InputWrapper>
+          <InputIcon title="Base URL">
             <TbLink size={20} />
-          </div>
-          <input
-            className={'input'}
+          </InputIcon>
+          <Input
             type="text"
             readOnly={isLoading}
             disabled={locationSetting !== 'other'}
@@ -173,38 +242,36 @@ const TokenForm = ({
             }
             onBlur={() => submitToken(token)}
           />
-        </div>
-        <div className="inputWrapper">
-          <div className="inputIcon" title="Api Key">
+        </InputWrapper>
+        <InputWrapper>
+          <InputIcon>
             <TbApi size={20} />
-          </div>
-          <input
-            className={!isTokenValid && !isLoading ? 'input invalid' : 'input'}
+          </InputIcon>
+          <Input
+            data-isinvalid={!isTokenValid && !isLoading}
             type="text"
             readOnly={isLoading}
             placeholder="API Key"
             defaultValue={token}
             onChange={updateToken}
           />
-        </div>
-        <div className="inputWrapper" style={{ maxWidth: '100px' }}>
-          <select
-            className="select"
-            onChange={(event) =>
-              router.replace(
-                pathname.split('/').slice(0, -1).join('/') +
-                  '/' +
-                  event.target.value,
-              )
+        </InputWrapper>
+        <InputWrapper>
+          <Select
+            onChange={(event) => console.log("hey")
+              // router.replace(
+              //   pathname.split('/').slice(0, -1).join('/') +
+              //     '/' +
+              //     event.target.value,
             }
-            value={pathname.split('/').at(-1)}
+            // value={pathname.split('/').at(-1)}
           >
             <option value="core">Core</option>
             <option value="metadata">Metadata</option>
-          </select>
-        </div>
-      </form>
-    </div>
+          </Select>
+        </InputWrapper>
+      </Form>
+    </FormContainer>
   );
 };
 
