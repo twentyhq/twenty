@@ -6,22 +6,22 @@ import styled from '@emotion/styled';
 import TokenForm, { TokenFormProps } from './token-form';
 
 const StyledContainer = styled.div`
-  position: relative;
-  width: 100%;
   height: 100%;
   padding-top: 15px;
+  position: relative;
+  width: 100%;
 `;
 
-const AbsoluteDiv = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
+const StyledDiv = styled.div`
+  align-items: center;
+  background: rgba(23, 23, 23, 0.2);
   display: flex;
   flex-flow: column;
-  align-items: center;
+  height: 100%;
   justify-content: center;
+  position: absolute;
+  width: 100%;
   z-index: 2;
-  background: rgba(23, 23, 23, 0.2);
 `;
 
 const StyledBox = styled.div`
@@ -32,7 +32,7 @@ const StyledBox = styled.div`
   border-radius: 8px;
 `;
 
-const Link = styled.a`
+const StyledLink = styled.a`
   color: white;
   text-decoration: underline;
   position: relative;
@@ -44,11 +44,11 @@ const Link = styled.a`
   }
 `;
 
-const LoaderContainer = styled.div`
-  display: flex;
-  justify-content: center;
+const StyledLoaderContainer = styled.div`
   align-items: center;
+  display: flex;
   height: 50px;
+  justify-content: center;
 `;
 
 const animate = keyframes`
@@ -60,10 +60,10 @@ const animate = keyframes`
   }
 `;
 
-const Loader = styled(TbLoader2)`
+const StyledLoader = styled(TbLoader2)`
+  animation: ${animate} 2s infinite;
   color: #16233f;
   font-size: 2rem;
-  animation: ${animate} 2s infinite;
 `;
 
 const Playground = ({
@@ -91,23 +91,21 @@ const Playground = ({
         setLoadingState={setIsLoading}
       />
       {!isTokenValid && (
-        <AbsoluteDiv>
+        <StyledDiv>
           <StyledBox>
             A token is required as APIs are dynamically generated for each
             workspace based on their unique metadata. <br /> Generate your token
             under{' '}
-            <Link
-              href="https://app.twenty.com/settings/developers"
-            >
+            <StyledLink href="https://app.twenty.com/settings/developers">
               Settings &gt; Developers
-            </Link>
+            </StyledLink>
           </StyledBox>
           {isLoading && (
-            <LoaderContainer>
-              <Loader />
-            </LoaderContainer>
+            <StyledLoaderContainer>
+              <StyledLoader />
+            </StyledLoaderContainer>
           )}
-        </AbsoluteDiv>
+        </StyledDiv>
       )}
       {children}
     </StyledContainer>

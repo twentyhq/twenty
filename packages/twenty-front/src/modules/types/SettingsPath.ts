@@ -24,7 +24,6 @@ export enum SettingsPath {
   PlaygroundRestMeta = 'playground/rest/meta',
   PlaygroundGraphQLCore = 'playground/graphql/core',
   PlaygroundGraphQLMeta = 'playground/graphql/meta',
-  Webhooks = 'webhooks',
   DevelopersNewApiKey = 'developers/api-keys/new',
   DevelopersApiKeyDetail = 'developers/api-keys/:apiKeyId',
   Integrations = 'integrations',

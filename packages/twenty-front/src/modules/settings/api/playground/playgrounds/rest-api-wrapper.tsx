@@ -2,7 +2,6 @@ import { ApiReferenceReact } from '@scalar/api-reference-react';
 import '@scalar/api-reference-react/style.css';
 
 export const RestApiWrapper = ({ openApiJson }: { openApiJson: any }) => {
-
   return (
     <div
       style={{
@@ -14,7 +13,7 @@ export const RestApiWrapper = ({ openApiJson }: { openApiJson: any }) => {
       <ApiReferenceReact
         configuration={{
           spec: {
-            content: openApiJson
+            content: openApiJson,
           },
         }}
       />

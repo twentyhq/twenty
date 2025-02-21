@@ -50,8 +50,8 @@ export const SettingsApiKeys = () => {
               title={t`Playground`}
               description={t`Try our REST or GraphQL API playgrounds.`}
             />
-            <SettingsApiPlaygroundCoverImage/>
-            <ApiPlaygroundSetupForm/>
+            <SettingsApiPlaygroundCoverImage />
+            <ApiPlaygroundSetupForm />
           </Section>
           <Section>
             <H2Title

@@ -349,25 +349,22 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       </Route>
-      <Route
-        path={SettingsPath.APIs}
-        element={<SettingsApiKeys />}
-      />
+      <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
       <Route
         path={SettingsPath.PlaygroundRestCore}
-        element={<RestPlaygroundCore/>}
+        element={<RestPlaygroundCore />}
       />
       <Route
         path={SettingsPath.PlaygroundRestMeta}
-        element={<RestPlaygroundMetadata/>}
+        element={<RestPlaygroundMetadata />}
       />
       <Route
         path={SettingsPath.PlaygroundGraphQLCore}
-        element={<GraphQLPlaygroundCore/>}
+        element={<GraphQLPlaygroundCore />}
       />
       <Route
         path={SettingsPath.PlaygroundGraphQLMeta}
-        element={<GraphQLPlaygroundMetadata/>}
+        element={<GraphQLPlaygroundMetadata />}
       />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
@@ -377,10 +374,7 @@ export const SettingsRoutes = ({
         path={SettingsPath.DevelopersApiKeyDetail}
         element={<SettingsDevelopersApiKeyDetail />}
       />
-      <Route
-        path={SettingsPath.Webhooks}
-        element={<SettingsWebhooks/>}
-      />
+      <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
       <Route
         path={SettingsPath.DevelopersNewWebhookDetail}
         element={<SettingsDevelopersWebhooksDetail />}

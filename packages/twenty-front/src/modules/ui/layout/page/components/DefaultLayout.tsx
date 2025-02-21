@@ -104,8 +104,8 @@ export const DefaultLayout = () => {
         >
           {showAuthModal ? (
             <StyledAppNavigationDrawerMock />
-          ) : (
-            showPlayground ? null : <StyledAppNavigationDrawer />
+          ) : showPlayground ? null : (
+            <StyledAppNavigationDrawer />
           )}
           {showAuthModal ? (
             <>

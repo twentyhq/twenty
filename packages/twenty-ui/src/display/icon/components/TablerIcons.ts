@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 export {
-  Icon123,
-  Icon24Hours,
+  Icon123, Icon24Hours,
   IconAlertCircle,
   IconAlertTriangle,
   IconApi, IconApps,
@@ -20,8 +19,7 @@ export {
   IconBookmarkPlus,
   IconBox, IconBracketsAngle, IconBracketsContain,
   IconBrandGithub,
-  IconBrandGoogle,
-  IconBrandLinkedin,
+  IconBrandGoogle, IconBrandGraphql, IconBrandLinkedin,
   IconBrandX,
   IconBriefcase, IconBuildingSkyscraper, IconCalendar,
   IconCalendarDue,

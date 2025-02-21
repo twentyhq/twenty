@@ -17,7 +17,7 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
-  IconWebhook
+  IconWebhook,
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';

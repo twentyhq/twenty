@@ -48,22 +48,15 @@ const GraphQlPlayground = ({ subDoc }: { subDoc: SubDoc }) => {
   const [token, setToken] = useState<string>();
   const [baseUrl, setBaseUrl] = useState<string>();
 
-  const children = (
-    <GraphQlComponent
-      token={token}
-      baseUrl={baseUrl}
-      path={SubDocToPath[subDoc]}
-    />
-  );
-
   return (
     <div style={{ height: '100vh', width: '100vw' }}>
-      <Playground
-        children={children}
-        setToken={setToken}
-        setBaseUrl={setBaseUrl}
-        subDoc={subDoc}
-      />
+      <Playground setToken={setToken} setBaseUrl={setBaseUrl} subDoc={subDoc}>
+        <GraphQlComponent
+          token={token}
+          baseUrl={baseUrl}
+          path={SubDocToPath[subDoc]}
+        />
+      </Playground>
     </div>
   );
 };

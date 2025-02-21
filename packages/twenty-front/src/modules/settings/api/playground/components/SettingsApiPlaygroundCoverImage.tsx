@@ -4,7 +4,7 @@ import { Card } from 'twenty-ui';
 import DarkCoverImage from '../assets/cover-dark.png';
 import LightCoverImage from '../assets/cover-light.png';
 
-export const SettingsApiPlaygroundCoverImage = styled(Card)`
+export const StyledSettingsApiPlaygroundCoverImage = styled(Card)`
   align-items: center;
   background-image: ${({ theme }) =>
     theme.name === 'light'
