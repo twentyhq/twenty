@@ -5,6 +5,7 @@ import {
 } from '@nestjs/terminus';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
+import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/health/constants/metrics-failure-rate-threshold.const';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
 
@@ -43,7 +44,7 @@ export class ConnectedAccountHealth {
         failureRate,
       };
 
-      if (totalJobs === 0 || failureRate < 20) {
+      if (totalJobs === 0 || failureRate < METRICS_FAILURE_RATE_THRESHOLD) {
         return indicator.up({ details });
       }
 
@@ -92,7 +93,7 @@ export class ConnectedAccountHealth {
         failureRate,
       };
 
-      if (totalJobs === 0 || failureRate < 20) {
+      if (totalJobs === 0 || failureRate < METRICS_FAILURE_RATE_THRESHOLD) {
         return indicator.up({ details });
       }
 
