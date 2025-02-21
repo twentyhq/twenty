@@ -27,9 +27,9 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
 
-import { WorkspaceService } from './services/workspace.service';
-import { FeatureFlagEntity } from '../feature-flag/feature-flag.entity';
+import { FeatureFlag } from '../feature-flag/feature-flag.entity';
 import { StripeIntegration } from '../stripe/integrations/stripe-integration.entity';
+import { WorkspaceService } from './services/workspace.service';
 
 @Module({
   imports: [
@@ -44,7 +44,7 @@ import { StripeIntegration } from '../stripe/integrations/stripe-integration.ent
         FileUploadModule,
         WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [User, Workspace, UserWorkspace, FeatureFlagEntity, StripeIntegration],
+          [User, Workspace, UserWorkspace, FeatureFlag, StripeIntegration],
           'core',
         ),
         UserWorkspaceModule,

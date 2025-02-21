@@ -1,33 +1,33 @@
-import { Post, Controller, Logger, Req, Res } from '@nestjs/common';
+import { Controller, Logger, Post, Req, Res } from '@nestjs/common';
 
 import Stripe from 'stripe';
 
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { StripeIntegrationService } from 'src/engine/core-modules/stripe/integrations/stripe-integration.service';
-
-const stripeSecretKey = process.env.WEBHOOK_STRIPE_SK;
-
-if (!stripeSecretKey) {
-  throw new Error('WEBHOOK_STRIPE_SECRETKEY is not defined');
-}
-
-const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2024-10-28.acacia',
-});
 
 @Controller('stripe')
 export class SripeController {
   protected readonly logger = new Logger(SripeController.name);
+  private readonly stripe: Stripe;
 
   constructor(
     private readonly stripeIntegrationService: StripeIntegrationService,
-  ) {}
+    private readonly environmentService: EnvironmentService,
+  ) {
+    this.stripe = new Stripe(
+      this.environmentService.get('WEBHOOK_STRIPE_SECRETKEY'),
+      {
+        apiVersion: '2024-10-28.acacia',
+      },
+    );
+  }
 
   @Post('/account_link')
   async handleCreateAccountLink(@Req() req: any, @Res() res: any) {
     try {
       const { account } = req.body;
 
-      const accouuntLink = await stripe.accountLinks.create({
+      const accouuntLink = await this.stripe.accountLinks.create({
         account: account,
         return_url: `${req.headers.origin}/settings/integrations/stripe`,
         refresh_url: `${req.headers.origin}/refresh/${account}`,
@@ -52,9 +52,9 @@ export class SripeController {
 
       console.log('workspaceId:', workspaceId);
 
-      const account = await stripe.accounts.create({});
+      const account = await this.stripe.accounts.create({});
 
-      const accountDetails = await stripe.accounts.retrieve(account.id);
+      const accountDetails = await this.stripe.accounts.retrieve(account.id);
 
       await this.stripeIntegrationService.saveAccountId(
         account.id,
@@ -83,7 +83,7 @@ export class SripeController {
     try {
       const { amount, currency } = req.body;
 
-      const session = await stripe.checkout.sessions.create({
+      const session = await this.stripe.checkout.sessions.create({
         line_items: [
           {
             price_data: {
