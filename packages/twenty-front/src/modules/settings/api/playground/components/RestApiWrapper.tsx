@@ -1,18 +1,24 @@
-import Playground from '@/settings/api/playground/components/Playground';
-import { PlaygroundSchemas } from '@/settings/api/playground/form/components/ApiPlaygroundSetupForm';
+import { PlaygroundSchemas } from '@/settings/api/playground/form/ApiPlaygroundSetupForm';
+import { openAPIReference } from '@/settings/api/playground/state/openAPIReference';
+import styled from '@emotion/styled';
 import { ApiReferenceReact } from '@scalar/api-reference-react';
 import '@scalar/api-reference-react/style.css';
-import { useState } from 'react';
+import { useRecoilState } from 'recoil';
+
+const StyledContainer = styled.div`
+  height: 100vh;
+  position: relative;
+  width: 100vw;
+`;
 
 export const RestApiWrapper = ({
-  subDoc
+  schema
 } : {
-  subDoc: PlaygroundSchemas
+  schema: PlaygroundSchemas
 }) => {
-  const [openApiJson, setOpenApiJson] = useState<object>();
-
+  const [ openApiJson ] = useRecoilState(openAPIReference)
   return (
-    <Playground setOpenApiJson={setOpenApiJson} subDoc={subDoc}>
+    <StyledContainer>
       <ApiReferenceReact
         configuration={{
           spec: {
@@ -20,6 +26,6 @@ export const RestApiWrapper = ({
           },
         }}
       />
-    </Playground>
+    </StyledContainer>
   );
 };

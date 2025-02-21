@@ -1,20 +1,17 @@
+import { PlaygroundSchemas } from '@/settings/api/playground/form/ApiPlaygroundSetupForm';
 import styled from '@emotion/styled';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
+import '@graphiql/plugin-explorer/dist/style.css';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
-import { useState } from 'react';
-
-import Playground from './Playground';
-
-import { PlaygroundSchemas } from '@/settings/api/playground/form/components/ApiPlaygroundSetupForm';
-import '@graphiql/plugin-explorer/dist/style.css';
 import 'graphiql/graphiql.css';
+import { useState } from 'react';
 
 const StyledContainer = styled.div`
   height: 100%;
 `;
 
-const SubDocToPath = {
+const SchemaToPath = {
   [PlaygroundSchemas.CORE]: 'graphql',
   [PlaygroundSchemas.METADATA]: 'metadata',
 };
@@ -43,18 +40,16 @@ const GraphQlComponent = ({ token, baseUrl, path }: any) => {
   );
 };
 
-const GraphQLWrapper = ({ subDoc }: { subDoc: PlaygroundSchemas }) => {
+const GraphQLWrapper = ({ schema }: { schema: PlaygroundSchemas }) => {
   const [token, setToken] = useState<string>();
   const [baseUrl, setBaseUrl] = useState<string>();
 
   return (
-    <Playground setToken={setToken} setBaseUrl={setBaseUrl} subDoc={subDoc}>
       <GraphQlComponent
         token={token}
         baseUrl={baseUrl}
-        path={SubDocToPath[subDoc]}
+        path={SchemaToPath[schema]}
       />
-    </Playground>
   );
 };
 export default GraphQLWrapper;

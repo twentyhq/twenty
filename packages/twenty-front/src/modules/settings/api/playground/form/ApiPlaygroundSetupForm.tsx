@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { openAPIReference } from '@/settings/api/playground/state/openAPIReference';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
@@ -7,6 +8,7 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useRecoilState } from 'recoil';
 import {
   Button,
   IconApi,
@@ -15,6 +17,7 @@ import {
   IconFolderRoot,
 } from 'twenty-ui';
 import { z } from 'zod';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const PlaygroundTypes = {
@@ -52,6 +55,7 @@ const StyledForm = styled.form`
 export const ApiPlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
+  const [, setOpenAPIReference] = useRecoilState(openAPIReference)
 
   const { control, handleSubmit } = useForm<ApiPlaygroundSetupFormValues>({
     mode: 'onTouched',
@@ -63,26 +67,26 @@ export const ApiPlaygroundSetupForm = () => {
     filter: { revokedAt: { is: 'NULL' } },
   });
 
+  const getOpenAPIConfig =  async (values: ApiPlaygroundSetupFormValues) => {
+    const response = await fetch(REACT_APP_SERVER_BASE_URL + '/open-api/' + values.schema, {
+      headers: { Authorization: `Bearer ${values.apiKey}` },
+    })
+
+    let openAPIReference = await response.json();
+    if(!openAPIReference.tags){
+      throw new Error("Invalid Token")
+    }
+
+    setOpenAPIReference(openAPIReference)
+  }
+
   const onSubmit = async (values: ApiPlaygroundSetupFormValues) => {
-    window.localStorage.setItem(
-      'TryIt_securitySchemeValues',
-      JSON.stringify({ bearerAuth: values.apiKey }),
+    sessionStorage.setItem(
+      'apiKey',
+      values.apiKey
     );
 
-    window.localStorage.setItem(
-      'baseUrl',
-      JSON.stringify({
-        baseUrl: 'http://localhost:3000',
-        locationSetting: 'localhost',
-      }),
-    );
-
-    window.localStorage.setItem(
-      'schema',
-      JSON.stringify({
-        schema: values.schema,
-      }),
-    );
+    await getOpenAPIConfig(values)
 
     navigateSettings(
       SettingsPath.APIPlayground,

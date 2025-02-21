@@ -1,5 +1,5 @@
 import { StyledSettingsApiPlaygroundCoverImage } from '@/settings/api/playground/components/SettingsApiPlaygroundCoverImage';
-import { ApiPlaygroundSetupForm } from '@/settings/api/playground/form/components/ApiPlaygroundSetupForm';
+import { ApiPlaygroundSetupForm } from '@/settings/api/playground/form/ApiPlaygroundSetupForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
