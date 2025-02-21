@@ -61,10 +61,10 @@ export class ApprovedAccessDomainResolver {
   }
 
   @Query(() => [ApprovedAccessDomain])
-  async getAllApprovedAccessDomains(
+  async getApprovedAccessDomains(
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<Array<ApprovedAccessDomain>> {
-    return await this.approvedAccessDomainService.getAllApprovedAccessDomains(
+    return await this.approvedAccessDomainService.getApprovedAccessDomains(
       currentWorkspace,
     );
   }

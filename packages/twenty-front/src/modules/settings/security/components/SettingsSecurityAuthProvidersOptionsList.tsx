@@ -24,7 +24,7 @@ const StyledSettingsSecurityOptionsList = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const SettingsSecurityOptionsList = () => {
+export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueSnackBar } = useSnackBar();

@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import { render } from '@react-email/render';
 import { Repository } from 'typeorm';
 import { APP_LOCALES } from 'twenty-shared';
-import { SendTrustDomainValidation } from 'twenty-emails';
+import { SendApprovedAccessDomainValidation } from 'twenty-emails';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -60,7 +60,7 @@ export class ApprovedAccessDomainService {
       },
     });
 
-    const emailTemplate = SendTrustDomainValidation({
+    const emailTemplate = SendApprovedAccessDomainValidation({
       link: link.toString(),
       workspace: { name: workspace.displayName, logo: workspace.logo },
       domain: approvedAccessDomain.domain,
@@ -174,7 +174,7 @@ export class ApprovedAccessDomainService {
     await this.approvedAccessDomainRepository.delete(approvedAccessDomain);
   }
 
-  async getAllApprovedAccessDomains(workspace: Workspace) {
+  async getApprovedAccessDomains(workspace: Workspace) {
     return await this.approvedAccessDomainRepository.find({
       where: {
         workspaceId: workspace.id,
