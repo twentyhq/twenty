@@ -1,7 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { IconComponent, CardContent } from 'twenty-ui';
+import { Link } from 'react-router-dom';
+import { isDefined } from 'twenty-shared';
+import { CardContent, IconComponent } from 'twenty-ui';
 
 const StyledRow = styled(CardContent)`
   align-items: center;
@@ -19,12 +21,22 @@ const StyledLabel = styled.span`
   flex: 1 0 auto;
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: ${({ theme }) => theme.font.color.secondary};
+
+  &:hover {
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
+`;
+
 type SettingsListItemCardContentProps = {
   label: string;
   divider?: boolean;
   LeftIcon?: IconComponent;
   onClick?: () => void;
   rightComponent: ReactNode;
+  to?: string;
 };
 
 export const SettingsListItemCardContent = ({
@@ -33,14 +45,21 @@ export const SettingsListItemCardContent = ({
   LeftIcon,
   onClick,
   rightComponent,
+  to,
 }: SettingsListItemCardContentProps) => {
   const theme = useTheme();
 
-  return (
+  const content = (
     <StyledRow onClick={onClick} divider={divider}>
       {!!LeftIcon && <LeftIcon size={theme.icon.size.md} />}
       <StyledLabel>{label}</StyledLabel>
       {rightComponent}
     </StyledRow>
   );
+
+  if (isDefined(to)) {
+    return <StyledLink to={to}>{content}</StyledLink>;
+  }
+
+  return content;
 };
