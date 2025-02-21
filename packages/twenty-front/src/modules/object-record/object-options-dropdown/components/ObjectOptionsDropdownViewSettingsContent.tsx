@@ -15,7 +15,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownViewSettingsContent = () => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
@@ -37,27 +39,33 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
         View settings
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        <MenuItem
-          onClick={() => onContentChange('viewSettingsOpenIn')}
-          LeftIcon={
-            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-              ? IconLayoutSidebarRight
-              : IconLayoutNavbar
-          }
-          text="Open in"
-          contextualText={
-            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-              ? 'Side Panel'
-              : 'Record Page'
-          }
-          hasSubMenu
-        />
+        {isCommandMenuV2Enabled && (
+          <MenuItem
+            onClick={() => onContentChange('viewSettingsOpenIn')}
+            LeftIcon={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? IconLayoutSidebarRight
+                : IconLayoutNavbar
+            }
+            text="Open in"
+            contextualText={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? 'Side Panel'
+                : 'Record Page'
+            }
+            hasSubMenu
+          />
+        )}
         {viewType === ViewType.Kanban && (
           <MenuItemToggle
             LeftIcon={IconBaselineDensitySmall}

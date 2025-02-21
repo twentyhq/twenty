@@ -31,7 +31,10 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const {
@@ -98,21 +101,29 @@ export const ObjectOptionsDropdownMenuContent = () => {
     objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
     objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task;
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   return (
     <>
       <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
         {currentView?.name}
       </DropdownMenuHeader>
 
-      <DropdownMenuItemsContainer scrollable={false}>
-        <MenuItem
-          onClick={() => onContentChange('viewSettings')}
-          LeftIcon={IconLayout}
-          text="View settings"
-          hasSubMenu
-        />
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
+      {(isCommandMenuV2Enabled || viewType === ViewType.Kanban) && (
+        <>
+          <DropdownMenuItemsContainer scrollable={false}>
+            <MenuItem
+              onClick={() => onContentChange('viewSettings')}
+              LeftIcon={IconLayout}
+              text="View settings"
+              hasSubMenu
+            />
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+        </>
+      )}
 
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
