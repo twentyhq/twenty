@@ -2239,6 +2239,11 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 
 export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
 
+export type BillingBaseProductPricesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BillingBaseProductPricesQuery = { __typename?: 'Query', plans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, baseProduct: { __typename?: 'BillingProductDTO', prices: Array<{ __typename?: 'BillingPriceLicensedDTO', unitAmount: number, stripePriceId: string, recurringInterval: SubscriptionInterval } | { __typename?: 'BillingPriceMeteredDTO' } | null> } }> };
+
 export type BillingPortalSessionQueryVariables = Exact<{
   returnUrlPath?: InputMaybe<Scalars['String']>;
 }>;
@@ -3618,6 +3623,49 @@ export function useValidatePasswordResetTokenLazyQuery(baseOptions?: Apollo.Lazy
 export type ValidatePasswordResetTokenQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenQuery>;
 export type ValidatePasswordResetTokenLazyQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenLazyQuery>;
 export type ValidatePasswordResetTokenQueryResult = Apollo.QueryResult<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>;
+export const BillingBaseProductPricesDocument = gql`
+    query billingBaseProductPrices {
+  plans {
+    planKey
+    baseProduct {
+      prices {
+        ... on BillingPriceLicensedDTO {
+          unitAmount
+          stripePriceId
+          recurringInterval
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useBillingBaseProductPricesQuery__
+ *
+ * To run a query within a React component, call `useBillingBaseProductPricesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBillingBaseProductPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBillingBaseProductPricesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useBillingBaseProductPricesQuery(baseOptions?: Apollo.QueryHookOptions<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>(BillingBaseProductPricesDocument, options);
+      }
+export function useBillingBaseProductPricesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>(BillingBaseProductPricesDocument, options);
+        }
+export type BillingBaseProductPricesQueryHookResult = ReturnType<typeof useBillingBaseProductPricesQuery>;
+export type BillingBaseProductPricesLazyQueryHookResult = ReturnType<typeof useBillingBaseProductPricesLazyQuery>;
+export type BillingBaseProductPricesQueryResult = Apollo.QueryResult<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>;
 export const BillingPortalSessionDocument = gql`
     query BillingPortalSession($returnUrlPath: String) {
   billingPortalSession(returnUrlPath: $returnUrlPath) {
