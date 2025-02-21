@@ -18,18 +18,27 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import { isSubscriptionIncompleteOnboardingStatus } from 'src/engine/core-modules/billing/utils/is-subscription-incomplete-onboarding-status.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
@@ -41,6 +50,8 @@ export class BillingResolver {
     private readonly stripePriceService: StripePriceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly billingService: BillingService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @Query(() => BillingProductPricesOutput)
@@ -80,6 +91,7 @@ export class BillingResolver {
   async checkoutSession(
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args()
     {
       recurringInterval,
@@ -88,6 +100,10 @@ export class BillingResolver {
       requirePaymentMethod,
     }: BillingCheckoutSessionInput,
   ) {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
     const isBillingPlansEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IsBillingPlansEnabled,
@@ -157,5 +173,43 @@ export class BillingResolver {
     const plans = await this.billingPlanService.getPlans();
 
     return plans.map(formatBillingDatabaseProductToGraphqlDTO);
+  }
+
+  private async validateCanCheckoutSessionPermissionOrThrow({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }) {
+    const isPermissionsEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsPermissionsEnabled,
+      workspaceId,
+    );
+
+    if (isPermissionsEnabled) {
+      const hasAnySubscription =
+        await this.billingService.hasWorkspaceAnySubscription(workspaceId);
+
+      if (isSubscriptionIncompleteOnboardingStatus(hasAnySubscription)) {
+        return;
+      } else {
+        const userHasPermission =
+          await this.permissionsService.userHasWorkspaceSettingPermission({
+            userWorkspaceId,
+            workspaceId,
+            _setting: SettingsFeatures.WORKSPACE,
+          });
+
+        if (!userHasPermission) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.PERMISSION_DENIED,
+            PermissionsExceptionCode.PERMISSION_DENIED,
+          );
+        }
+
+        return;
+      }
+    }
   }
 }
