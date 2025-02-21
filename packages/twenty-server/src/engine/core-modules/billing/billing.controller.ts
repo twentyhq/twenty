@@ -47,23 +47,34 @@ export class BillingController {
     @Res() res: Response,
   ) {
     if (!req.rawBody) {
-      res.status(400).end();
-
-      return;
+      throw new BillingException(
+        'Missing request body',
+        BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
+      );
     }
-    const event = this.stripeWebhookService.constructEventFromPayload(
-      signature,
-      req.rawBody,
-    );
 
     try {
+      const event = this.stripeWebhookService.constructEventFromPayload(
+        signature,
+        req.rawBody,
+      );
       const result = await this.handleStripeEvent(event);
 
       res.status(200).send(result).end();
     } catch (error) {
-      if (error instanceof BillingException) {
-        res.status(404).end();
+      if (
+        error instanceof BillingException ||
+        error instanceof Stripe.errors.StripeError
+      ) {
+        throw error;
       }
+      const errorMessage =
+        error instanceof Error ? error.message : JSON.stringify(error);
+
+      throw new BillingException(
+        errorMessage,
+        BillingExceptionCode.BILLING_UNHANDLED_ERROR,
+      );
     }
   }
 
