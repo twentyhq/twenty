@@ -21,6 +21,7 @@ import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/A
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -30,10 +31,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
-import { isDefined } from 'twenty-shared';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -127,10 +127,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
         {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: t`Developers`,
-          href: getSettingsPath(SettingsPath.Developers),
         },
         { children: t`Webhook` },
       ]}

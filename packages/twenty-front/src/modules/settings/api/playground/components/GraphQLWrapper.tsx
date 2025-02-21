@@ -1,16 +1,15 @@
-'use client';
-import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
+import { useState } from 'react';
 
-import { SubDoc } from '@/app/_components/playground/token-form';
+import { SubDoc } from './TokenForm';
 
-import Playground from './playground';
+import Playground from './Playground';
 
-import 'graphiql/graphiql.css';
 import '@graphiql/plugin-explorer/dist/style.css';
+import 'graphiql/graphiql.css';
 
 const StyledContainer = styled.div`
   height: 100%;
@@ -45,27 +44,18 @@ const GraphQlComponent = ({ token, baseUrl, path }: any) => {
   );
 };
 
-const GraphQlPlayground = ({ subDoc }: { subDoc: SubDoc }) => {
+const GraphQLWrapper = ({ subDoc }: { subDoc: SubDoc }) => {
   const [token, setToken] = useState<string>();
   const [baseUrl, setBaseUrl] = useState<string>();
 
-  const children = (
-    <GraphQlComponent
-      token={token}
-      baseUrl={baseUrl}
-      path={SubDocToPath[subDoc]}
-    />
-  );
-
   return (
-    <div style={{ height: '100vh', width: '100vw' }}>
-      <Playground
-        children={children}
-        setToken={setToken}
-        setBaseUrl={setBaseUrl}
-        subDoc={subDoc}
+    <Playground setToken={setToken} setBaseUrl={setBaseUrl} subDoc={subDoc}>
+      <GraphQlComponent
+        token={token}
+        baseUrl={baseUrl}
+        path={SubDocToPath[subDoc]}
       />
-    </div>
+    </Playground>
   );
 };
-export default GraphQlPlayground;
+export default GraphQLWrapper;

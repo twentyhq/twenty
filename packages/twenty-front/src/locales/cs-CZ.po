@@ -200,7 +200,6 @@ msgid "and"
 msgstr "a"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -224,6 +223,10 @@ msgstr "Název API (množné číslo)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
 msgstr "API název (jednotné číslo)"
+
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "APIs"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -1046,7 +1049,8 @@ msgstr "Neplatný poskytovatel ověřování"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Neplatná vlastní doména. Vlastní domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat mezery, nesmí obsahovat žádné speciální znaky jako jsou _~\n"
+msgstr ""
+"Neplatná vlastní doména. Vlastní domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat mezery, nesmí obsahovat žádné speciální znaky jako jsou _~\n"
 "`!@#$%^*()=+{}[]|\\;:'\"<>/? a nesmí začínat ani končit znakem '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -1998,6 +2002,7 @@ msgid "Webhook"
 msgstr "Webhook"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooky"
 

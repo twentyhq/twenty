@@ -200,7 +200,6 @@ msgid "and"
 msgstr "e"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
 msgstr "API e Webhook"
 
@@ -224,6 +223,10 @@ msgstr "Nomi API (Plurale)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
 msgstr "Nome dell'API (Singolare)"
+
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "APIs"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -1997,6 +2000,7 @@ msgid "Webhook"
 msgstr "Webhook"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
 

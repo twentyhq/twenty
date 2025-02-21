@@ -53,7 +53,8 @@ msgstr "24시간 ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr "\\\n"
+msgstr ""
+"\\\n"
 "팀과 함께 고객 관계를 관리할 수 있는 공유 환경입니다."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
@@ -201,7 +202,6 @@ msgid "and"
 msgstr "및"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
 msgstr "API 및 웹훅"
 
@@ -225,6 +225,10 @@ msgstr "API 이름(복수형)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
 msgstr "API 이름 (단수)"
+
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "APIs"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -1998,6 +2002,7 @@ msgid "Webhook"
 msgstr "Webhook"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
 

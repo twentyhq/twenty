@@ -1,11 +1,15 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPermissions } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { SettingsApiKeys } from '~/pages/settings/developers/api-keys/SettingsApiKeys';
+import APIPlayground from '~/pages/settings/developers/playground/APIPlayground';
+import { SettingsWebhooks } from '~/pages/settings/developers/webhooks/components/SettingsWebhooks';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -134,12 +138,6 @@ const SettingsAccounts = lazy(() =>
 const SettingsBilling = lazy(() =>
   import('~/pages/settings/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
-  })),
-);
-
-const SettingsDevelopers = lazy(() =>
-  import('~/pages/settings/developers/SettingsDevelopers').then((module) => ({
-    default: module.SettingsDevelopers,
   })),
 );
 
@@ -349,7 +347,11 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       </Route>
-      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
+      <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
+      <Route
+        path={SettingsPath.APIPlayground}
+        element={<APIPlayground />}
+      />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}
@@ -358,6 +360,7 @@ export const SettingsRoutes = ({
         path={SettingsPath.DevelopersApiKeyDetail}
         element={<SettingsDevelopersApiKeyDetail />}
       />
+      <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
       <Route
         path={SettingsPath.DevelopersNewWebhookDetail}
         element={<SettingsDevelopersWebhooksDetail />}

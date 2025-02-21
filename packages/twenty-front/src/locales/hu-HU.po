@@ -200,7 +200,6 @@ msgid "and"
 msgstr "és"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -224,6 +223,10 @@ msgstr "API nevek (többes szám)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
 msgstr "API Név (egyes szám)"
+
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "APIs"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -1997,6 +2000,7 @@ msgid "Webhook"
 msgstr "Webhorog"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhorgok"
 
