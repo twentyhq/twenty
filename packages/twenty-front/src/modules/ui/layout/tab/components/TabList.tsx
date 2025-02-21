@@ -54,13 +54,17 @@ export const TabList = ({
   const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
-  const [maxVisibleTabs, setMaxVisibleTabs] = useState<number>(visibleTabs.length);
+  const [maxVisibleTabs, setMaxVisibleTabs] = useState<number>(
+    visibleTabs.length,
+  );
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
+    if (containerRef.current !== null) {
       const containerWidth = containerRef.current.offsetWidth;
-      const firstTab = containerRef.current.querySelector('.tab-item') as HTMLElement;
+      const firstTab = containerRef.current.querySelector(
+        '.tab-item',
+      ) as HTMLElement;
       const tabWidth = firstTab.offsetWidth + 16; // 16px := gap between tabs
       const calculatedMaxVisible = Math.floor(containerWidth / tabWidth) - 1; // -1 to make space for the dropdown button
       setMaxVisibleTabs(calculatedMaxVisible);
