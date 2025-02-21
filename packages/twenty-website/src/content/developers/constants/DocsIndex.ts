@@ -9,6 +9,10 @@ export const DOCS_INDEX = {
       { fileName: 'cloud-providers' },
       { fileName: 'troubleshooting' },
     ],
+    'API and Webhooks': [
+      { fileName: 'api' },
+      { fileName: 'webhooks' }
+    ]
   },
   Contributing: {
     'Bugs and Requests': [{ fileName: 'bug-and-requests' }],
