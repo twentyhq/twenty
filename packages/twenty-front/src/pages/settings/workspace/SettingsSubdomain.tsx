@@ -23,13 +23,17 @@ const StyledDomain = styled.h2`
   white-space: nowrap;
 `;
 
-export const SettingsSubdomain = () => {
+export const SettingsSubdomain = ({
+  handleSave,
+}: {
+  handleSave: () => void;
+}) => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
   const { t } = useLingui();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const { control } = useFormContext<{
+  const { control, handleSubmit } = useFormContext<{
     subdomain: string;
   }>();
 
@@ -52,6 +56,11 @@ export const SettingsSubdomain = () => {
                 error={error?.message}
                 disabled={!!currentWorkspace?.customDomain}
                 fullWidth
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSubmit(handleSave);
+                  }
+                }}
               />
               {isDefined(domainConfiguration.frontDomain) && (
                 <StyledDomain>

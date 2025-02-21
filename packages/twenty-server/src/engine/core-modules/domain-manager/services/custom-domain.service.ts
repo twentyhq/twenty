@@ -81,8 +81,6 @@ export class CustomDomainService {
         ]
           .map<CustomDomainValidRecords['records'][0] | undefined>(
             (record: Record<string, string>) => {
-              if (!record) return;
-
               if (
                 'txt_name' in record &&
                 'txt_value' in record &&
@@ -92,7 +90,11 @@ export class CustomDomainService {
                 return {
                   validationType: 'ssl' as const,
                   type: 'txt' as const,
-                  status: response.result[0].ssl.status ?? 'pending',
+                  status:
+                    !response.result[0].ssl.status ||
+                    response.result[0].ssl.status.startsWith('pending')
+                      ? 'pending'
+                      : response.result[0].ssl.status,
                   key: record.txt_name,
                   value: record.txt_value,
                 };
@@ -120,10 +122,16 @@ export class CustomDomainService {
               validationType: 'redirection' as const,
               type: 'cname' as const,
               status:
-                response.result[0].verification_errors?.[0] ===
-                'custom hostname does not CNAME to this zone.'
-                  ? 'error'
-                  : 'success',
+                // wait 10s before starting the real check
+                response.result[0].created_at &&
+                new Date().getTime() -
+                  new Date(response.result[0].created_at).getTime() <
+                  1000 * 10
+                  ? 'pending'
+                  : response.result[0].verification_errors?.[0] ===
+                      'custom hostname does not CNAME to this zone.'
+                    ? 'error'
+                    : 'success',
               key: response.result[0].hostname,
               value: this.domainManagerService.getFrontUrl().hostname,
             },

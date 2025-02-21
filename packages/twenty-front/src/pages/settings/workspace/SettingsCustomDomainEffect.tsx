@@ -6,32 +6,35 @@ import { useCheckCustomDomainValidRecordsMutation } from '~/generated/graphql';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 
 export const SettingsCustomDomainEffect = () => {
-  const [checkCustomDomainValidRecords, { data: customDomainRecords }] =
+  const [checkCustomDomainValidRecords] =
     useCheckCustomDomainValidRecordsMutation();
 
   const setCustomDomainRecords = useSetRecoilState(customDomainRecordsState);
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const initInterval = useCallback(() => {
-    return setInterval(async () => {
-      await checkCustomDomainValidRecords();
-      if (isDefined(customDomainRecords?.checkCustomDomainValidRecords)) {
-        setCustomDomainRecords(
-          customDomainRecords.checkCustomDomainValidRecords,
-        );
-      }
-    }, 3000);
-  }, [
-    checkCustomDomainValidRecords,
-    customDomainRecords,
-    setCustomDomainRecords,
-  ]);
+  const checkCustomDomainValidRecordsPolling = useCallback(async () => {
+    setCustomDomainRecords((currentState) => ({
+      ...currentState,
+      loading: true,
+    }));
+    checkCustomDomainValidRecords({
+      onCompleted: (data) => {
+        if (isDefined(data.checkCustomDomainValidRecords)) {
+          setCustomDomainRecords({
+            loading: false,
+            customDomainRecords: data.checkCustomDomainValidRecords,
+          });
+        }
+      },
+    });
+  }, [checkCustomDomainValidRecords, setCustomDomainRecords]);
 
   useEffect(() => {
     let pollIntervalFn: null | ReturnType<typeof setInterval> = null;
     if (isDefined(currentWorkspace?.customDomain)) {
-      pollIntervalFn = initInterval();
+      checkCustomDomainValidRecordsPolling();
+      pollIntervalFn = setInterval(checkCustomDomainValidRecordsPolling, 6000);
     }
 
     return () => {
@@ -39,7 +42,7 @@ export const SettingsCustomDomainEffect = () => {
         clearInterval(pollIntervalFn);
       }
     };
-  }, [currentWorkspace?.customDomain, initInterval]);
+  }, [checkCustomDomainValidRecordsPolling, currentWorkspace?.customDomain]);
 
   return <></>;
 };

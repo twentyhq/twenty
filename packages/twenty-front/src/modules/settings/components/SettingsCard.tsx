@@ -12,6 +12,7 @@ type SettingsCardProps = {
   onClick?: () => void;
   title: string;
   className?: string;
+  Status?: ReactNode;
 };
 
 const StyledCard = styled(Card)<{
@@ -77,6 +78,7 @@ export const SettingsCard = ({
   onClick,
   title,
   className,
+  Status,
 }: SettingsCardProps) => {
   const theme = useTheme();
 
@@ -94,6 +96,7 @@ export const SettingsCard = ({
             {title}
             {soon && <Pill label="Soon" />}
           </StyledTitle>
+          {Status && Status}
           <StyledIconChevronRight size={theme.icon.size.sm} />
         </StyledHeader>
         {description && <StyledDescription>{description}</StyledDescription>}

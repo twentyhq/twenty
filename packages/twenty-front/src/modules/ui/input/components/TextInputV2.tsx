@@ -11,7 +11,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import { AutogrowWrapper, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
+import {
+  AutogrowWrapper,
+  IconComponent,
+  IconEye,
+  IconEyeOff,
+  Loader,
+} from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -158,6 +164,7 @@ export type TextInputV2ComponentProps = Omit<
   dataTestId?: string;
   sizeVariant?: TextInputV2Size;
   inheritFontStyles?: boolean;
+  loading?: boolean;
 };
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
@@ -193,6 +200,7 @@ const TextInputV2Component = forwardRef<
       inheritFontStyles = false,
       dataTestId,
       autoGrow = false,
+      loading = false,
     },
     ref,
   ) => {
@@ -282,6 +290,12 @@ const TextInputV2Component = forwardRef<
             {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
               <StyledTrailingIcon>
                 <RightIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            )}
+
+            {!error && type !== INPUT_TYPE_PASSWORD && !!loading && (
+              <StyledTrailingIcon>
+                <Loader color={'gray'} />
               </StyledTrailingIcon>
             )}
           </StyledTrailingIconContainer>
