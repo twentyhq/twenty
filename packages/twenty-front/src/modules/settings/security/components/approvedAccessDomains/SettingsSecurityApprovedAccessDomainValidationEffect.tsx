@@ -24,11 +24,13 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
         },
         onCompleted: () => {
           enqueueSnackBar('Approved access domain validated', {
+            dedupeKey: 'approved-access-domain-validation-dedupe-key',
             variant: SnackBarVariant.Success,
           });
         },
         onError: () => {
           enqueueSnackBar('Error validating approved access domain', {
+            dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
             variant: SnackBarVariant.Error,
           });
         },

@@ -10,6 +10,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -28,6 +30,10 @@ const StyledSection = styled(Section)`
 
 export const SettingsSecurity = () => {
   const { t } = useLingui();
+
+  const IsApprovedAccessDomainsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsApprovedAccessDomainsEnabled,
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -58,13 +64,15 @@ export const SettingsSecurity = () => {
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </StyledSection>
-          <StyledSection>
-            <H2Title
-              title={t`Approved Email Domain`}
-              description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
-            />
-            <SettingsApprovedAccessDomainsListCard />
-          </StyledSection>
+          {IsApprovedAccessDomainsEnabled && (
+            <StyledSection>
+              <H2Title
+                title={t`Approved Email Domain`}
+                description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
+              />
+              <SettingsApprovedAccessDomainsListCard />
+            </StyledSection>
+          )}
           <Section>
             <StyledContainer>
               <H2Title
