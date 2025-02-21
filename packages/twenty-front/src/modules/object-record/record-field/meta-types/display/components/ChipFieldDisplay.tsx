@@ -2,7 +2,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
 import { ChipSize } from 'twenty-ui';
@@ -15,7 +15,9 @@ export const ChipFieldDisplay = () => {
     labelIdentifierLink,
   } = useChipFieldDisplay();
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useRecoilValue(
+    recordIndexOpenRecordInSelector,
+  );
 
   const { openRecordInCommandMenu } = useCommandMenu();
 
