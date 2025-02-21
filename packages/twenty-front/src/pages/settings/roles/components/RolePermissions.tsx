@@ -8,7 +8,7 @@ import {
   IconTrashX,
   Section,
 } from 'twenty-ui';
-import { Role, SettingsFeatures } from '~/generated-metadata/graphql';
+import { Role, SettingsPermissions } from '~/generated-metadata/graphql';
 import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/components/RolePermissionsObjectsTableHeader';
 import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/components/RolePermissionsSettingsTableHeader';
 import { RolePermissionsSettingsTableRow } from '~/pages/settings/roles/components/RolePermissionsSettingsTableRow';
@@ -63,43 +63,43 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
 
   const settingsPermissionsConfig = [
     {
-      key: SettingsFeatures.API_KEYS_AND_WEBHOOKS,
+      key: SettingsPermissions.API_KEYS_AND_WEBHOOKS,
       label: 'API Keys and Webhooks',
       type: 'Developer',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.ROLES,
+      key: SettingsPermissions.ROLES,
       label: 'Roles',
       type: 'Members',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.WORKSPACE,
+      key: SettingsPermissions.WORKSPACE,
       label: 'Workspace Settings',
       type: 'General',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.WORKSPACE_USERS,
+      key: SettingsPermissions.WORKSPACE_USERS,
       label: 'Workspace Users',
       type: 'Members',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.DATA_MODEL,
+      key: SettingsPermissions.DATA_MODEL,
       label: 'Data Model',
       type: 'Data Model',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.ADMIN_PANEL,
+      key: SettingsPermissions.ADMIN_PANEL,
       label: 'Admin Panel',
       type: 'Admin Panel',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.SECURITY,
+      key: SettingsPermissions.SECURITY,
       label: 'Security Settings',
       type: 'Security',
       value: role.canUpdateAllSettings,

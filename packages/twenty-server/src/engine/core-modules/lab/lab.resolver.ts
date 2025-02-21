@@ -1,7 +1,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -15,7 +15,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
-@UseGuards(SettingsPermissionsGuard(SettingsFeatures.WORKSPACE))
+@UseGuards(SettingsPermissionsGuard(SettingsPermissions.WORKSPACE))
 export class LabResolver {
   constructor(private labService: LabService) {}
 

@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
+import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SSO/SettingsSSOIdentityProviderRowRightContainer';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import { SettingsPath } from '@/types/SettingsPath';

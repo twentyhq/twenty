@@ -2,8 +2,8 @@
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioCardContainer';
-import { SettingsSSOOIDCForm } from '@/settings/security/components/SettingsSSOOIDCForm';
-import { SettingsSSOSAMLForm } from '@/settings/security/components/SettingsSSOSAMLForm';
+import { SettingsSSOOIDCForm } from '@/settings/security/components/SSO/SettingsSSOOIDCForm';
+import { SettingsSSOSAMLForm } from '@/settings/security/components/SSO/SettingsSSOSAMLForm';
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
