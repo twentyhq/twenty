@@ -70,11 +70,6 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
         direction: mockViewSort.direction,
-        definition: {
-          fieldMetadataId: mockViewSort.fieldMetadataId,
-          label: mockFieldMetadataItem.label,
-          iconName: mockFieldMetadataItem.icon ?? '',
-        },
       } satisfies RecordSort,
     ]);
   });
