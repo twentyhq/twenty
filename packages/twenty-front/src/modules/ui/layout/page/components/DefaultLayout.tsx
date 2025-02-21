@@ -9,6 +9,7 @@ import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSet
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+import { useShowPlayground } from '@/ui/layout/hooks/useShowPlayground';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
@@ -69,6 +70,7 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
+  const showPlayground = useShowPlayground();
 
   return (
     <>
@@ -90,7 +92,7 @@ export const DefaultLayout = () => {
         <StyledPageContainer
           animate={{
             marginLeft:
-              isSettingsPage && !isMobile
+              isSettingsPage && !isMobile && !showPlayground
                 ? (windowsWidth -
                     (OBJECT_SETTINGS_WIDTH +
                       NAV_DRAWER_WIDTHS.menu.desktop.expanded +
@@ -103,7 +105,7 @@ export const DefaultLayout = () => {
           {showAuthModal ? (
             <StyledAppNavigationDrawerMock />
           ) : (
-            <StyledAppNavigationDrawer />
+            showPlayground ? null : <StyledAppNavigationDrawer />
           )}
           {showAuthModal ? (
             <>
