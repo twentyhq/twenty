@@ -105,23 +105,25 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       this.logger.setVerbose(options.verbose ?? false);
     }
 
-    try {
-      for (const [index, workspaceId] of workspaceIds.entries()) {
+    for (const [index, workspaceId] of workspaceIds.entries()) {
+      try {
         await this.processWorkspace({
           workspaceId,
           index,
           total: workspaceIds.length,
         });
-
-        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-          workspaceId,
+      } catch (error) {
+        this.logger.log(
+          chalk.red(`Error in workspace ${workspaceId}: ${error}`),
         );
       }
 
-      this.logger.log(chalk.green('Command completed!'));
-    } catch (error) {
-      this.logger.log(chalk.red('Error in workspace'));
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
     }
+
+    this.logger.log(chalk.green('Command completed!'));
   }
 
   private async processWorkspace({
@@ -170,9 +172,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         );
       }
 
-      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-        workspaceId,
-      );
       this.logger.log(
         chalk.green(`Command completed for workspace ${workspaceId}`),
       );

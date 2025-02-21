@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared';
-import { In, Repository } from 'typeorm';
+import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import {
   BaseCommandOptions,
@@ -10,19 +10,47 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export type ActiveWorkspacesCommandOptions = BaseCommandOptions & {
   workspaceId?: string;
+  startFromWorkspaceId?: string;
+  workspaceCountLimit?: number;
 };
 
 export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
   private workspaceIds: string[] = [];
+  private startFromWorkspaceId: string | undefined;
+  private workspaceCountLimit: number | undefined;
 
   constructor(protected readonly workspaceRepository: Repository<Workspace>) {
     super();
   }
 
   @Option({
+    flags: '--start-from-workspace-id [workspace_id]',
+    description:
+      'Start from a specific workspace id. Workspaces are processed in ascending order of id.',
+    required: false,
+  })
+  parseStartFromWorkspaceId(val: string): string {
+    this.startFromWorkspaceId = val;
+
+    return val;
+  }
+
+  @Option({
+    flags: '--workspace-count-limit [count]',
+    description:
+      'Limit the number of workspaces to process. Workspaces are processed in ascending order of id.',
+    required: false,
+  })
+  parseWorkspaceCountLimit(val: number): number {
+    this.workspaceCountLimit = val;
+
+    return val;
+  }
+
+  @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description:
-      'workspace id. Command runs on all active workspaces if not provided',
+      'workspace id. Command runs on all active workspaces if not provided.',
     required: false,
   })
   parseWorkspaceId(val: string): string[] {
@@ -39,10 +67,14 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
           WorkspaceActivationStatus.ACTIVE,
           WorkspaceActivationStatus.SUSPENDED,
         ]),
+        ...(this.startFromWorkspaceId
+          ? { id: MoreThanOrEqual(this.startFromWorkspaceId) }
+          : {}),
       },
       order: {
-        createdAt: 'ASC',
+        id: 'ASC',
       },
+      take: this.workspaceCountLimit,
     });
 
     return activeWorkspaces.map((workspace) => workspace.id);
