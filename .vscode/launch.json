@@ -42,7 +42,8 @@
         "nx",
         "run",
         "twenty-server:command",
-        "workspace:clean",
+        "my-command",
+        "--my-parameter value"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",

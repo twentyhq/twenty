@@ -43,7 +43,7 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
       'Running command to update default view record opening on workflow objects to record page',
     );
 
-    this.executeForWorkspaceWithDataSource(
+    this.executeByWorkspaceWithDataSource(
       workspaceIds,
       async ({ workspaceId, index, total }) => {
         await this.processWorkspace(workspaceId, index, total);
