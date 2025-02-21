@@ -5,7 +5,7 @@ import { JSDOM } from 'jsdom';
 import { isDefined, isValidUuid } from 'twenty-shared';
 import { z } from 'zod';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -15,19 +15,19 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
 import {
   SendEmailActionException,
   SendEmailActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/exceptions/send-email-action.exception';
 import { WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 export type WorkflowSendEmailStepOutputSchema = {
   success: boolean;
 };
 
 @Injectable()
-export class SendEmailWorkflowAction implements WorkflowAction {
+export class SendEmailWorkflowAction implements WorkflowExecutor {
   private readonly logger = new Logger(SendEmailWorkflowAction.name);
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
@@ -81,7 +81,7 @@ export class SendEmailWorkflowAction implements WorkflowAction {
 
   async execute(
     workflowActionInput: WorkflowSendEmailActionInput,
-  ): Promise<WorkflowActionResult> {
+  ): Promise<WorkflowExecutorOutput> {
     const emailProvider = await this.getEmailClient(
       workflowActionInput.connectedAccountId,
     );

@@ -8,7 +8,7 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
-import { FindRecordsWorflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
+import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 
 @Module({
@@ -22,13 +22,13 @@ import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
     CreateRecordWorkflowAction,
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
-    FindRecordsWorflowAction,
+    FindRecordsWorkflowAction,
   ],
   exports: [
     CreateRecordWorkflowAction,
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
-    FindRecordsWorflowAction,
+    FindRecordsWorkflowAction,
   ],
 })
 export class RecordCRUDActionModule {}

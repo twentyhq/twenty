@@ -8,6 +8,7 @@ import {
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -125,11 +126,14 @@ export class WorkflowRunWorkspaceService {
 
   async saveWorkflowRunState({
     workflowRunId,
-    output,
+    stepOutput,
     context,
   }: {
     workflowRunId: string;
-    output: Pick<WorkflowRunOutput, 'error' | 'stepsOutput'>;
+    stepOutput: {
+      id: string;
+      output: WorkflowExecutorOutput;
+    };
     context: Record<string, any>;
   }) {
     const workflowRunRepository =
@@ -154,7 +158,8 @@ export class WorkflowRunWorkspaceService {
           trigger: undefined,
           steps: [],
         },
-        ...output,
+        ...(workflowRunToUpdate.output?.stepsOutput ?? {}),
+        [stepOutput.id]: stepOutput,
       },
       context,
     });

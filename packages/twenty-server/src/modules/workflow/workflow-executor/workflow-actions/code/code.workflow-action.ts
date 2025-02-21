@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -8,11 +8,11 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
 import { WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
-export class CodeWorkflowAction implements WorkflowAction {
+export class CodeWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -20,7 +20,7 @@ export class CodeWorkflowAction implements WorkflowAction {
 
   async execute(
     workflowActionInput: WorkflowCodeActionInput,
-  ): Promise<WorkflowActionResult> {
+  ): Promise<WorkflowExecutorOutput> {
     try {
       const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
@@ -40,7 +40,7 @@ export class CodeWorkflowAction implements WorkflowAction {
         );
 
       if (result.error) {
-        return { error: result.error };
+        return { error: result.error.errorMessage };
       }
 
       return { result: result.data || {} };

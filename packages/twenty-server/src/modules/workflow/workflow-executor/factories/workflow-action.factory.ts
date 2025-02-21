@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import {
   WorkflowStepExecutorException,
@@ -10,7 +10,7 @@ import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workf
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
-import { FindRecordsWorflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
+import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -22,7 +22,7 @@ export class WorkflowActionFactory {
     private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
     private readonly deleteRecordWorkflowAction: DeleteRecordWorkflowAction,
-    private readonly findRecordsWorflowAction: FindRecordsWorflowAction,
+    private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowAction {
@@ -38,7 +38,7 @@ export class WorkflowActionFactory {
       case WorkflowActionType.DELETE_RECORD:
         return this.deleteRecordWorkflowAction;
       case WorkflowActionType.FIND_RECORDS:
-        return this.findRecordsWorflowAction;
+        return this.findRecordsWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,
