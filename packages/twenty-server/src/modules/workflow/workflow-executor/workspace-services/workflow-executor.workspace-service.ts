@@ -138,18 +138,12 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         context: updatedContext,
       });
 
-      if (currentStepIndex < steps.length - 1) {
-        return await this.execute({
-          workflowRunId,
-          currentStepIndex: currentStepIndex + 1,
-          steps,
-          context: updatedContext,
-        });
-      }
-
-      return {
-        result: result.result,
-      };
+      return this.execute({
+        workflowRunId,
+        currentStepIndex: currentStepIndex + 1,
+        steps,
+        context: updatedContext,
+      });
     }
 
     if (step.stepSettings.errorHandlingOptions.continueOnFailure.value) {
@@ -159,25 +153,19 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         context,
       });
 
-      if (currentStepIndex < steps.length - 1) {
-        return await this.execute({
-          workflowRunId,
-          currentStepIndex: currentStepIndex + 1,
-          steps,
-          context,
-        });
-      }
-
-      return {
-        result: result.result,
-      };
+      return this.execute({
+        workflowRunId,
+        currentStepIndex: currentStepIndex + 1,
+        steps,
+        context,
+      });
     }
 
     if (
       step.stepSettings.errorHandlingOptions.retryOnFailure.value &&
       attemptCount < MAX_RETRIES_ON_FAILURE
     ) {
-      return await this.execute({
+      return this.execute({
         workflowRunId,
         currentStepIndex,
         steps,
@@ -264,18 +252,12 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         context: updatedContext,
       });
 
-      if (currentStepIndex < steps.length - 1) {
-        return await this.execute({
-          workflowRunId,
-          currentStepIndex: currentStepIndex + 1,
-          steps,
-          context: updatedContext,
-        });
-      }
-
-      return {
-        result: result.result,
-      };
+      return this.execute({
+        workflowRunId,
+        currentStepIndex: currentStepIndex + 1,
+        steps,
+        context: updatedContext,
+      });
     }
 
     if (action.settings.errorHandlingOptions.continueOnFailure.value) {
@@ -285,25 +267,19 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         context,
       });
 
-      if (currentStepIndex < steps.length - 1) {
-        return await this.execute({
-          workflowRunId,
-          currentStepIndex: currentStepIndex + 1,
-          steps,
-          context,
-        });
-      }
-
-      return {
-        result: result.result,
-      };
+      return this.execute({
+        workflowRunId,
+        currentStepIndex: currentStepIndex + 1,
+        steps,
+        context,
+      });
     }
 
     if (
       action.settings.errorHandlingOptions.retryOnFailure.value &&
       attemptCount < MAX_RETRIES_ON_FAILURE
     ) {
-      return await this.execute({
+      return this.execute({
         workflowRunId,
         currentStepIndex,
         steps,
