@@ -31,7 +31,7 @@ type ApiPlaygroundFormProps = {
 
 const StyledInputsContainer = styled.div`
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 0.5fr;
+  grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
   align-items: end;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -62,7 +62,12 @@ export const ApiPlaygroundSetupForm = ({
           <Select
             dropdownId="apiKey"
             label="API Key"
-            options={apiKeys.map((apiKey) => ({value: apiKey.id, label: apiKey.name }))}
+            options={apiKeys.length > 0 
+              ? apiKeys.map((apiKey) => ({
+                  value: apiKey.id, 
+                  label: apiKey.name 
+                })) 
+              : [{ value: '', label: 'No API Key' }]}
             value={value}
             onChange={onChange}
             callToActionButton={{ 
