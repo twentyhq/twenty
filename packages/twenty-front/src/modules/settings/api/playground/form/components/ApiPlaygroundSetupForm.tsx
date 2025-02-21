@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { IconBrandGraphql } from '@tabler/icons-react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
   Button,
   IconApi,
@@ -99,11 +99,14 @@ export const ApiPlaygroundSetupForm = () => {
     )    
   };
 
+  const apiKey = useWatch({control, name: 'apiKey'})
+
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name={'apiKey'}
         control={control}
+        defaultValue=''
         render={({ field: { onChange, value } }) => (
           <Select
             dropdownId="apiKey"
@@ -158,6 +161,7 @@ export const ApiPlaygroundSetupForm = () => {
         )}
       />
       <Button
+        disabled={!apiKey || apiKey.length === 0}
         title="Launch"
         variant="primary"
         accent="blue"
