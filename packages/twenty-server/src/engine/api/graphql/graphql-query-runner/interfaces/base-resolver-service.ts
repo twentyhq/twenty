@@ -5,7 +5,7 @@ import {
   capitalize,
   isObjectRecordUnderObjectRecordsPermissions,
   PermissionsOnAllObjectRecords,
-  SettingsFeatures,
+  SettingsPermissions,
 } from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
 
@@ -208,7 +208,7 @@ export abstract class GraphqlQueryBaseResolverService<
           );
         }
 
-        const permissionRequired: SettingsFeatures =
+        const permissionRequired: SettingsPermissions =
           SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
             objectMetadataItemWithFieldMaps.nameSingular
           ];

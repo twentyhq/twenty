@@ -13,7 +13,10 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { PermissionsOnAllObjectRecords, SettingsFeatures } from 'twenty-shared';
+import {
+  PermissionsOnAllObjectRecords,
+  SettingsPermissions,
+} from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
@@ -119,17 +122,17 @@ export class UserResolver {
           workspaceId: workspace.id,
         });
 
-      const permittedFeatures: SettingsFeatures[] = (
-        Object.keys(settingsPermissions) as SettingsFeatures[]
+      const grantedSettingsPermissions: SettingsPermissions[] = (
+        Object.keys(settingsPermissions) as SettingsPermissions[]
       ).filter((feature) => settingsPermissions[feature] === true);
 
-      const permittedObjectRecordsPermissions = (
+      const grantedObjectRecordsPermissions = (
         Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
       ).filter((permission) => objectRecordsPermissions[permission] === true);
 
-      currentUserWorkspace.settingsPermissions = permittedFeatures;
+      currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
       currentUserWorkspace.objectRecordsPermissions =
-        permittedObjectRecordsPermissions;
+        grantedObjectRecordsPermissions;
       user.currentUserWorkspace = currentUserWorkspace;
     }
 

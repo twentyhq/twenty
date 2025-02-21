@@ -1,5 +1,4 @@
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
@@ -103,7 +102,6 @@ export const useUpsertCombinedViewSorts = (viewBarComponentId?: string) => {
           ...unsavedToUpsertViewSorts,
           {
             ...upsertedSort,
-            id: v4(),
             __typename: 'ViewSort',
           } satisfies ViewSort,
         ]);

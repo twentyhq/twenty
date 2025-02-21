@@ -4,7 +4,6 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { sortRecordsByPosition } from '@/object-record/utils/sortRecordsByPosition';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared';
@@ -49,7 +48,6 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
             (record) =>
               record[recordGroupFieldMetadata.name] === recordGroup?.value,
           )
-          .sort(sortRecordsByPosition)
           .map((record) => record.id);
 
         if (!isDeeplyEqual(existingRecordGroupRowIds, recordGroupRowIds)) {
