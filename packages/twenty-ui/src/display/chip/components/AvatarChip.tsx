@@ -8,9 +8,6 @@ import { Nullable } from '@ui/utilities/types/Nullable';
 import { MouseEvent, useContext } from 'react';
 import { isDefined } from 'twenty-shared';
 
-// Import Link from react-router-dom instead of UndecoratedLink
-import { Link } from 'react-router-dom';
-
 export type AvatarChipProps = {
   name: string;
   avatarUrl?: string;
@@ -23,7 +20,7 @@ export type AvatarChipProps = {
   className?: string;
   placeholderColorSeed?: string;
   onClick?: (event: MouseEvent) => void;
-  to?: string;
+  clickable?: boolean;
   maxWidth?: number;
 };
 
@@ -43,34 +40,26 @@ const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 
-// TODO prastoin debug
-// Ideally we would use the UndecoratedLink component from @ui/navigation
-// but it led to a bug probably linked to circular dependencies, which was hard to solve
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
-
 export const AvatarChip = ({
   name,
   avatarUrl,
-  avatarType = 'rounded',
-  variant: propsVariant = AvatarChipVariant.Regular,
   LeftIcon,
   LeftIconColor,
-  isIconInverted = false,
   className,
   placeholderColorSeed,
   onClick,
-  to,
-  size = ChipSize.Small,
   maxWidth,
+  avatarType = 'rounded',
+  variant: propsVariant = AvatarChipVariant.Regular,
+  isIconInverted = false,
+  size = ChipSize.Small,
+  clickable = isDefined(onClick),
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
 
-  const isClickable = isDefined(onClick) || isDefined(to);
   // TODO refactor
   const getVariant = () => {
-    if (!isClickable) {
+    if (!clickable) {
       return ChipVariant.Transparent;
     }
     /// Hard to understand
@@ -83,7 +72,7 @@ export const AvatarChip = ({
     ///
   };
 
-  const avatarChip = (
+  return (
     <Chip
       label={name}
       variant={getVariant()}
@@ -123,29 +112,10 @@ export const AvatarChip = ({
           />
         );
       }}
-      clickable={isClickable}
-      // TODO Ugh DX weird
-      onClick={(event) => {
-        if (isDefined(to) || !isDefined(onClick)) {
-          return undefined;
-        }
-
-        return onClick(event);
-      }}
+      clickable={clickable}
+      onClick={onClick}
       className={className}
       maxWidth={maxWidth}
     />
-  );
-
-  if (!isDefined(to)) {
-    return avatarChip;
-  }
-
-  return (
-    // TODO use unDecoratedLink
-    // Could on click be on chip ? redirection intercepts it ?
-    <StyledLink to={to} onClick={onClick}>
-      {avatarChip}
-    </StyledLink>
   );
 };

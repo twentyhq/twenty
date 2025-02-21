@@ -1,4 +1,4 @@
-import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
+import { AvatarChip, AvatarChipVariant, LinkAvatarChip } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
@@ -14,7 +14,7 @@ export type RecordChipProps = {
   record: ObjectRecord;
   className?: string;
   variant?: AvatarChipVariant;
-  isClickable?: boolean;
+  navigateToShowPageOnClick?: boolean;
 };
 
 export const RecordChip = ({
@@ -22,7 +22,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
-  isClickable = true,
+  navigateToShowPageOnClick = true,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -45,6 +45,32 @@ export const RecordChip = ({
     }
   };
 
+  if (navigateToShowPageOnClick) {
+    return (
+      <LinkAvatarChip
+        placeholderColorSeed={record.id}
+        name={recordChipData.name}
+        avatarType={recordChipData.avatarType}
+        avatarUrl={recordChipData.avatarUrl ?? ''}
+        className={className}
+        variant={variant}
+        onClick={handleClick}
+        /*
+        TODO handle this new logic from conflicts with bosi
+             to={
+        recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
+          ? getLinkToShowPage(objectNameSingular, record)
+          : undefined
+      }
+        */
+        to={
+          getLinkToShowPage(objectNameSingular, record)
+
+        }
+      />
+    );
+  }
+
   return (
     <AvatarChip
       placeholderColorSeed={record.id}
@@ -54,11 +80,6 @@ export const RecordChip = ({
       className={className}
       variant={variant}
       onClick={handleClick}
-      to={
-        recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-          ? getLinkToShowPage(objectNameSingular, record)
-          : undefined
-      }
     />
   );
 };
