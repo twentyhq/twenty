@@ -99,7 +99,11 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
+  const {
+    closeCommandMenu,
+    goBackFromCommandMenu,
+    navigateCommandMenuHistory,
+  } = useCommandMenu();
 
   const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemComponentState,
@@ -120,13 +124,20 @@ export const CommandMenuTopBar = () => {
   const contextChips = useMemo(() => {
     return commandMenuNavigationStack
       .filter((page) => page.page !== CommandMenuPages.Root)
-      .map((page) => {
+      .map((page, index) => {
         return {
           Icons: [<page.pageIcon size={theme.icon.size.sm} />],
           text: page.pageTitle,
+          onClick: () => {
+            navigateCommandMenuHistory(index);
+          },
         };
       });
-  }, [commandMenuNavigationStack, theme.icon.size.sm]);
+  }, [
+    commandMenuNavigationStack,
+    navigateCommandMenuHistory,
+    theme.icon.size.sm,
+  ]);
 
   const location = useLocation();
   const isButtonVisible =
