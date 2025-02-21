@@ -10,6 +10,7 @@ import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-v
 import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-search-vector-on-note-and-task-entities.command';
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
   name: 'upgrade-0.43',
@@ -19,12 +20,13 @@ export class UpgradeTo0_43Command extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly addTasksAssignedToMeViewCommand: AddTasksAssignedToMeViewCommand,
     private readonly migrateSearchVectorOnNoteAndTaskEntitiesCommand: MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
     private readonly updateDefaultViewRecordOpeningOnWorkflowObjectsCommand: UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
     private readonly standardizationOfActorCompositeContextTypeCommand: StandardizationOfActorCompositeContextTypeCommand,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   async executeActiveWorkspacesCommand(

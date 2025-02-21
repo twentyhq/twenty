@@ -8,6 +8,8 @@ import {
   BaseCommandRunner,
 } from 'src/database/commands/base.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 export type ActiveWorkspacesCommandOptions = BaseCommandOptions & {
   workspaceId?: string;
   startFromWorkspaceId?: string;
@@ -19,7 +21,10 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
 
-  constructor(protected readonly workspaceRepository: Repository<Workspace>) {
+  constructor(
+    protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {
     super();
   }
 
@@ -120,6 +125,54 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
       options,
       activeWorkspaceIds,
     );
+  }
+
+  protected async processEachWorkspaceWithWorkspaceDataSource(
+    workspaceIds: string[],
+    callback: ({
+      workspaceId,
+      index,
+      total,
+      dataSource,
+    }: {
+      workspaceId: string;
+      index: number;
+      total: number;
+      dataSource: WorkspaceDataSource;
+    }) => Promise<void>,
+  ): Promise<void> {
+    this.logger.log(
+      chalk.green(`Running command on ${workspaceIds.length} workspaces`),
+    );
+    for (const [index, workspaceId] of workspaceIds.entries()) {
+      this.logger.log(
+        chalk.green(
+          `Processing workspace ${workspaceId} (${index + 1}/${
+            workspaceIds.length
+          })`,
+        ),
+      );
+
+      const dataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
+          workspaceId,
+          false,
+        );
+
+      try {
+        await callback({
+          workspaceId,
+          index,
+          total: workspaceIds.length,
+          dataSource,
+        });
+      } catch (error) {
+        this.logger.error(`Error in workspace ${workspaceId}: ${error}`);
+      }
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
+    }
   }
 
   protected abstract executeActiveWorkspacesCommand(
