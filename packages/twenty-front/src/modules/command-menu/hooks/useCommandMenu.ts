@@ -142,7 +142,7 @@ export const useCommandMenu = () => {
         openCommandMenu();
       };
     },
-    [openCommandMenu],
+    [closeDropdown, openCommandMenu],
   );
 
   const openRootCommandMenu = useCallback(() => {
@@ -152,7 +152,8 @@ export const useCommandMenu = () => {
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
     });
-  }, [navigateCommandMenu]);
+    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
+  }, [navigateCommandMenu, setHotkeyScopeAndMemorizePreviousScope]);
 
   const toggleCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
