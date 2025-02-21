@@ -9,6 +9,7 @@ export * from './checkmark/components/AnimatedCheckmark';
 export * from './checkmark/components/Checkmark';
 export * from './chip/components/AvatarChip';
 export * from './chip/components/Chip';
+export * from './chip/components/LinkAvatarChip';
 export * from './color/components/ColorSample';
 export * from './icon/components/IconAddressBook';
 export * from './icon/components/IconGmail';

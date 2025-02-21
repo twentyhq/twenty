@@ -1,4 +1,4 @@
-import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
+import { AvatarChip, AvatarChipVariant, LinkAvatarChip } from 'twenty-ui';
 
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
@@ -10,7 +10,7 @@ export type RecordChipProps = {
   record: ObjectRecord;
   className?: string;
   variant?: AvatarChipVariant;
-  isClickable?: boolean;
+  navigateToShowPageOnClick?: boolean;
 };
 
 export const RecordChip = ({
@@ -18,7 +18,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
-  isClickable = true,
+  navigateToShowPageOnClick = true,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -29,6 +29,24 @@ export const RecordChip = ({
     e.stopPropagation();
   };
 
+  if (navigateToShowPageOnClick) {
+    return (
+      <LinkAvatarChip
+        placeholderColorSeed={record.id}
+        name={recordChipData.name}
+        avatarType={recordChipData.avatarType}
+        avatarUrl={recordChipData.avatarUrl ?? ''}
+        className={className}
+        variant={variant}
+        onClick={handleClick}
+        to={
+          getLinkToShowPage(objectNameSingular, record)
+
+        }
+      />
+    );
+  }
+
   return (
     <AvatarChip
       placeholderColorSeed={record.id}
@@ -38,9 +56,6 @@ export const RecordChip = ({
       className={className}
       variant={variant}
       onClick={handleClick}
-      to={
-        isClickable ? getLinkToShowPage(objectNameSingular, record) : undefined
-      }
     />
   );
 };
