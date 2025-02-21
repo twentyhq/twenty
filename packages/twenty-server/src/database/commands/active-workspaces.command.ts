@@ -169,7 +169,9 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
       } catch (error) {
         this.logger.error(`Error in workspace ${workspaceId}: ${error}`);
       }
-      await dataSource.destroy();
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
     }
   }
 
