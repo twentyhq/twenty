@@ -17,6 +17,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import {
   WorkspaceCleanerException,
@@ -42,6 +43,7 @@ export class CleanerWorkspaceService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     this.inactiveDaysBeforeSoftDelete = this.environmentService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
@@ -291,7 +293,10 @@ export class CleanerWorkspaceService {
 
           continue;
         }
-        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
+        if (
+          workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
+          !isDefined(workspace.deletedAt)
+        ) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
             workspaceInactivity,
@@ -315,6 +320,10 @@ export class CleanerWorkspaceService {
           `Error while processing workspace ${workspace.id} ${workspace.displayName}: ${error}`,
         );
       }
+
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspace.id,
+      );
     }
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces done!`,
