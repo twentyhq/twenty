@@ -1,16 +1,14 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPermissions } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsApiKeys } from '~/pages/settings/developers/api-keys/SettingsApiKeys';
-import GraphQLPlaygroundCore from '~/pages/settings/developers/playground/components/GraphQLPlaygroundCore';
-import GraphQLPlaygroundMetadata from '~/pages/settings/developers/playground/components/GraphQLPlaygroundMetadata';
-import RestPlaygroundCore from '~/pages/settings/developers/playground/components/RestPlaygroundCore';
-import RestPlaygroundMetadata from '~/pages/settings/developers/playground/components/RestPlaygroundMetadata';
+import APIPlayground from '~/pages/settings/developers/playground/APIPlayground';
 import { SettingsWebhooks } from '~/pages/settings/developers/webhooks/components/SettingsWebhooks';
 
 const SettingsAccountsCalendars = lazy(() =>
@@ -351,20 +349,8 @@ export const SettingsRoutes = ({
       </Route>
       <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
       <Route
-        path={SettingsPath.PlaygroundRestCore}
-        element={<RestPlaygroundCore />}
-      />
-      <Route
-        path={SettingsPath.PlaygroundRestMeta}
-        element={<RestPlaygroundMetadata />}
-      />
-      <Route
-        path={SettingsPath.PlaygroundGraphQLCore}
-        element={<GraphQLPlaygroundCore />}
-      />
-      <Route
-        path={SettingsPath.PlaygroundGraphQLMeta}
-        element={<GraphQLPlaygroundMetadata />}
+        path={SettingsPath.APIPlayground}
+        element={<APIPlayground />}
       />
       <Route
         path={SettingsPath.DevelopersNewApiKey}

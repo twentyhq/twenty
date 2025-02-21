@@ -6,10 +6,10 @@ import styled from '@emotion/styled';
 import TokenForm, { TokenFormProps } from './TokenForm';
 
 const StyledContainer = styled.div`
-  height: 100%;
+  height: 100vh;
   padding-top: 15px;
   position: relative;
-  width: 100%;
+  width: 100vw;
 `;
 
 const StyledDiv = styled.div`

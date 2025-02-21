@@ -17,11 +17,11 @@ import {
 import { z } from 'zod';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const PlaygroundTypes = {
+export const PlaygroundTypes = {
   GRAPH_QL: 'GraphQl',
   REST: 'Rest',
 } as const;
-type PlaygroundTypes = (typeof PlaygroundTypes)[keyof typeof PlaygroundTypes];
+export type PlaygroundTypes = (typeof PlaygroundTypes)[keyof typeof PlaygroundTypes];
 
 const PlaygroundSchemas = {
   METADATA: 'Metadata',
@@ -48,17 +48,6 @@ const StyledForm = styled.form`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
-
-const FormResponseToPathMap = {
-  [PlaygroundTypes.GRAPH_QL]: {
-    [PlaygroundSchemas.CORE]: SettingsPath.PlaygroundGraphQLCore,
-    [PlaygroundSchemas.METADATA]: SettingsPath.PlaygroundGraphQLMeta,
-  },
-  [PlaygroundTypes.REST]: {
-    [PlaygroundSchemas.CORE]: SettingsPath.PlaygroundRestCore,
-    [PlaygroundSchemas.METADATA]: SettingsPath.PlaygroundRestMeta,
-  },
-};
 
 export const ApiPlaygroundSetupForm = () => {
   const { t } = useLingui();
@@ -96,7 +85,8 @@ export const ApiPlaygroundSetupForm = () => {
     );
 
     navigateSettings(
-      FormResponseToPathMap[values.apiPlayground][values.schema],
+      SettingsPath.APIPlayground,
+      { schema: values.schema.toLowerCase(), type: values.apiPlayground.toLowerCase() }
     );
   };
 

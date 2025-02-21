@@ -8,10 +8,7 @@ export const useShowPlayground = () => {
 
   return useMemo(() => {
     if (
-      isMatchingLocation('settings/' + SettingsPath.PlaygroundGraphQLCore) ||
-      isMatchingLocation('settings/' + SettingsPath.PlaygroundGraphQLMeta) ||
-      isMatchingLocation('settings/' + SettingsPath.PlaygroundRestCore) ||
-      isMatchingLocation('settings/' + SettingsPath.PlaygroundRestMeta)
+      isMatchingLocation('settings/' + SettingsPath.APIPlayground)
     ) {
       return true;
     }

@@ -109,13 +109,15 @@ const TokenForm = ({
   setLoadingState,
 }: TokenFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  
   const [locationSetting, setLocationSetting] = useState(
     (typeof window !== 'undefined' &&
       window.localStorage.getItem('baseUrl') &&
-      JSON.parse(window.localStorage.getItem('baseUrl') ?? '')
-        ?.locationSetting) ??
+      JSON.parse(window.localStorage.getItem('baseUrl') ?? '')?.locationSetting
+    ) ??
       'production',
   );
+
   const [baseUrl, setBaseUrl] = useState(
     (typeof window !== 'undefined' &&
       window.localStorage.getItem('baseUrl') &&

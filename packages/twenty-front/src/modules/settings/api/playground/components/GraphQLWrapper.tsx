@@ -44,20 +44,18 @@ const GraphQlComponent = ({ token, baseUrl, path }: any) => {
   );
 };
 
-const GraphQlPlayground = ({ subDoc }: { subDoc: SubDoc }) => {
+const GraphQLWrapper = ({ subDoc }: { subDoc: SubDoc }) => {
   const [token, setToken] = useState<string>();
   const [baseUrl, setBaseUrl] = useState<string>();
 
   return (
-    <div style={{ height: '100vh', width: '100vw' }}>
-      <Playground setToken={setToken} setBaseUrl={setBaseUrl} subDoc={subDoc}>
-        <GraphQlComponent
-          token={token}
-          baseUrl={baseUrl}
-          path={SubDocToPath[subDoc]}
-        />
-      </Playground>
-    </div>
+    <Playground setToken={setToken} setBaseUrl={setBaseUrl} subDoc={subDoc}>
+      <GraphQlComponent
+        token={token}
+        baseUrl={baseUrl}
+        path={SubDocToPath[subDoc]}
+      />
+    </Playground>
   );
 };
-export default GraphQlPlayground;
+export default GraphQLWrapper;

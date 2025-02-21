@@ -1,15 +1,18 @@
+import Playground from '@/settings/api/playground/components/Playground';
+import { SubDoc } from '@/settings/api/playground/components/TokenForm';
 import { ApiReferenceReact } from '@scalar/api-reference-react';
 import '@scalar/api-reference-react/style.css';
+import { useState } from 'react';
 
-export const RestApiWrapper = ({ openApiJson }: { openApiJson: any }) => {
+export const RestApiWrapper = ({
+  subDoc
+} : {
+  subDoc: SubDoc
+}) => {
+  const [openApiJson, setOpenApiJson] = useState<object>();
+
   return (
-    <div
-      style={{
-        height: 'calc(100vh - var(--ifm-navbar-height) - 45px)',
-        width: '100%',
-        overflow: 'auto',
-      }}
-    >
+    <Playground setOpenApiJson={setOpenApiJson} subDoc={subDoc}>
       <ApiReferenceReact
         configuration={{
           spec: {
@@ -17,6 +20,6 @@ export const RestApiWrapper = ({ openApiJson }: { openApiJson: any }) => {
           },
         }}
       />
-    </div>
+    </Playground>
   );
 };
