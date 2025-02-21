@@ -1,11 +1,10 @@
-import { SettingsApiPlaygroundCoverImage } from '@/settings/api/playground/components/SettingsApiPlaygroundCoverImage';
+import { StyledSettingsApiPlaygroundCoverImage } from '@/settings/api/playground/components/SettingsApiPlaygroundCoverImage';
 import { ApiPlaygroundSetupForm } from '@/settings/api/playground/form/components/ApiPlaygroundSetupForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
@@ -20,7 +19,7 @@ const StyledButtonContainer = styled.div`
   }
 `;
 
-const StyledContainer = styled.div<{ isMobile: boolean }>`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -28,7 +27,6 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
 `;
 
 export const SettingsApiKeys = () => {
-  const isMobile = useIsMobile();
   const { t } = useLingui();
 
   return (
@@ -44,13 +42,13 @@ export const SettingsApiKeys = () => {
       ]}
     >
       <SettingsPageContainer>
-        <StyledContainer isMobile={isMobile}>
+        <StyledContainer>
           <Section>
             <H2Title
               title={t`Playground`}
               description={t`Try our REST or GraphQL API playgrounds.`}
             />
-            <SettingsApiPlaygroundCoverImage />
+            <StyledSettingsApiPlaygroundCoverImage />
             <ApiPlaygroundSetupForm />
           </Section>
           <Section>

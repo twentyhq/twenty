@@ -159,7 +159,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.APIs,
           Icon: IconApi,
           isAdvanced: true,
-          isHidden: !permissionMap[SettingsFeatures.API_KEYS_AND_WEBHOOKS],
+          isHidden: !permissionMap[SettingsPermissions.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Webhooks`,

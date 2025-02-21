@@ -1,7 +1,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -20,7 +20,7 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionsGuard(SettingsFeatures.WORKSPACE_USERS),
+  SettingsPermissionsGuard(SettingsPermissions.WORKSPACE_USERS),
 )
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 @Resolver()
