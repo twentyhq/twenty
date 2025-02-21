@@ -3,13 +3,10 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Tab } from './Tab';
 import { MoreTabsDropdown } from './TabMoreDropdown';
 import { IconComponent, IconChevronDown } from 'twenty-ui';
-import { TAB_CONSTANTS } from '../constants/TabConstants';
-
-const MAX_VISIBLE_TABS = TAB_CONSTANTS.MAX_VISIBLE_TABS;
 
 export type SingleTabProps = {
   title: string;
@@ -56,8 +53,22 @@ export const TabList = ({
 }: TabListProps) => {
   const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
   const visibleTabs = tabs.filter((tab) => !tab.hide);
-  const truncatedTabs = visibleTabs.slice(0, MAX_VISIBLE_TABS);
-  const remainingTabs = visibleTabs.slice(MAX_VISIBLE_TABS, visibleTabs.length);
+
+  const [maxVisibleTabs, setMaxVisibleTabs] = useState<number>(visibleTabs.length);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const firstTab = containerRef.current.querySelector('.tab-item') as HTMLElement;
+      const tabWidth = firstTab.offsetWidth + 16; // 16px := gap between tabs
+      const calculatedMaxVisible = Math.floor(containerWidth / tabWidth) - 1; // -1 to make space for the dropdown button
+      setMaxVisibleTabs(calculatedMaxVisible);
+    }
+  }, []);
+
+  const truncatedTabs = visibleTabs.slice(0, maxVisibleTabs);
+  const remainingTabs = visibleTabs.slice(maxVisibleTabs);
 
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
@@ -82,7 +93,7 @@ export const TabList = ({
         componentInstanceId={tabListInstanceId}
         tabListIds={tabs.map((tab) => tab.id)}
       />
-      <StyledContainer className={className}>
+      <StyledContainer className={className} ref={containerRef}>
         {truncatedTabs.map((tab) => (
           <Tab
             key={tab.id}
@@ -96,6 +107,8 @@ export const TabList = ({
             to={behaveAsLinks ? `#${tab.id}` : undefined}
             onClick={() => handleTabClick(tab.id)}
             inDropdown={false}
+            // Add a class for measurement
+            className="tab-item"
           />
         ))}
         {remainingTabs.length > 0 && (
