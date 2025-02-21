@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { IconChevronDown, MenuItem, useIcons } from 'twenty-ui';
 
+import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useCloseSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useCloseSortDropdown';
@@ -12,7 +13,6 @@ import { objectSortDropdownSearchInputComponentState } from '@/object-record/obj
 import { onSortSelectComponentState } from '@/object-record/object-sort-dropdown/states/onSortSelectScopedState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useSortableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-sort/hooks/useSortableFieldMetadataItemsInRecordIndexContext';
 import {
   RECORD_SORT_DIRECTIONS,
   RecordSortDirection,
@@ -30,6 +30,7 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 export const StyledInput = styled.input`
@@ -89,14 +90,17 @@ export const ObjectSortDropdownButton = ({
 
   const { resetSortDropdown } = useResetSortDropdown();
 
-  const { recordIndexId } = useRecordIndexContextOrThrow();
+  const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const objectSortDropdownSearchInput = useRecoilComponentValueV2(
     objectSortDropdownSearchInputComponentState,
   );
 
-  const { sortableFieldMetadataItems } =
-    useSortableFieldMetadataItemsInRecordIndexContext();
+  const sortableFieldMetadataItems = useRecoilValue(
+    availableFieldMetadataItemsForSortFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
 
   const { getIcon } = useIcons();
 
