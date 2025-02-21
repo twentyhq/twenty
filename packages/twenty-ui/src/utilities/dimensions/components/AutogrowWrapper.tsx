@@ -10,6 +10,7 @@ type AutogrowWrapperProps = {
 const StyledNodeWrapper = styled.span`
   pointer-events: none;
   visibility: hidden;
+  white-space: pre;
 `;
 
 const StyledContainer = styled.div`
