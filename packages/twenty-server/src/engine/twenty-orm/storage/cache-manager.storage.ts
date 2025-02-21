@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared';
 
-type CacheKey = `${string}-${string}`;
+import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
 
