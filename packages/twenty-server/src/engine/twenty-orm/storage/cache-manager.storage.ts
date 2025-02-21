@@ -52,6 +52,9 @@ export class CacheManager<T> {
       await onDelete?.(cachedValue);
       this.cache.delete(cacheKey);
     }
+    // TODO: remove this once we have debug on prod
+    // eslint-disable-next-line no-console
+    console.log(this.cache.size);
   }
 
   async clear(onDelete?: (value: T) => Promise<void> | void): Promise<void> {

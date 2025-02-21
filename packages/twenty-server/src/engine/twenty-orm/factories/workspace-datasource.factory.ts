@@ -191,9 +191,13 @@ export class WorkspaceDatasourceFactory {
     const cachedWorkspaceMetadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
-    await this.cacheManager.clearKey(
-      `${workspaceId}-${cachedWorkspaceMetadataVersion}`,
+    const cacheKeys = Object.keys(this.cachedDatasourcePromise).filter((key) =>
+      key.startsWith(`${workspaceId}`),
     );
+
+    for (const cacheKey of cacheKeys) {
+      await this.cacheManager.clearKey(cacheKey as '`${string}-${string}`');
+    }
   }
 
   private async getWorkspaceMetadataVersionFromCache(
