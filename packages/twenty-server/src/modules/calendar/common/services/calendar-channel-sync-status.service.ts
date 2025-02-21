@@ -5,6 +5,7 @@ import { Any } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   CalendarChannelSyncStage,
@@ -22,6 +23,7 @@ export class CalendarChannelSyncStatusService {
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
+    private readonly healthCacheService: HealthCacheService,
   ) {}
 
   public async scheduleFullCalendarEventListFetch(
@@ -77,6 +79,11 @@ export class CalendarChannelSyncStatusService {
       syncStatus: CalendarChannelSyncStatus.ONGOING,
       syncStageStartedAt: new Date().toISOString(),
     });
+
+    await this.healthCacheService.incrementCalendarChannelSyncJobByStatusCounter(
+      CalendarChannelSyncStatus.ONGOING,
+      calendarChannelIds.length,
+    );
   }
 
   public async resetAndScheduleFullCalendarEventListFetch(
@@ -175,6 +182,11 @@ export class CalendarChannelSyncStatusService {
     });
 
     await this.schedulePartialCalendarEventListFetch(calendarChannelIds);
+
+    await this.healthCacheService.incrementCalendarChannelSyncJobByStatusCounter(
+      CalendarChannelSyncStatus.ACTIVE,
+      calendarChannelIds.length,
+    );
   }
 
   public async markAsFailedUnknownAndFlushCalendarEventsToImport(
@@ -200,6 +212,11 @@ export class CalendarChannelSyncStatusService {
       syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
       syncStage: CalendarChannelSyncStage.FAILED,
     });
+
+    await this.healthCacheService.incrementCalendarChannelSyncJobByStatusCounter(
+      CalendarChannelSyncStatus.FAILED_UNKNOWN,
+      calendarChannelIds.length,
+    );
   }
 
   public async markAsFailedInsufficientPermissionsAndFlushCalendarEventsToImport(
@@ -249,6 +266,11 @@ export class CalendarChannelSyncStatusService {
     await this.addToAccountsToReconnect(
       calendarChannels.map((calendarChannel) => calendarChannel.id),
       workspaceId,
+    );
+
+    await this.healthCacheService.incrementCalendarChannelSyncJobByStatusCounter(
+      CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+      calendarChannelIds.length,
     );
   }
 

@@ -26,6 +26,7 @@ export const USER_QUERY_FRAGMENT = gql`
     }
     currentUserWorkspace {
       settingsPermissions
+      objectRecordsPermissions
     }
     currentWorkspace {
       id

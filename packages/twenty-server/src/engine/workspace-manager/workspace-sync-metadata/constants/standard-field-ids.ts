@@ -435,6 +435,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
     '20202020-b1b3-4bf3-85e4-dc7d58aa9b02',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
+  openRecordIn: '20202020-086d-4eef-9f03-56c6392eacb8',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
   viewGroups: '20202020-e1a1-419f-ac81-1986a5ea59a8',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',

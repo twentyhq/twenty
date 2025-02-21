@@ -18,9 +18,8 @@ export const mapViewFiltersToFilters = (
       );
 
       if (!isDefined(availableFieldMetadataItem)) {
-        throw new Error(
-          `Field metadata item not found for view filter ${viewFilter.id} and field metadata id ${viewFilter.fieldMetadataId}`,
-        );
+        // Todo: we we don't throw an error yet as we have race condition on view change
+        return undefined;
       }
 
       const filterType = getFilterTypeFromFieldType(

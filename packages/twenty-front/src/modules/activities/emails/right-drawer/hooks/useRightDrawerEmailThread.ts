@@ -109,6 +109,7 @@ export const useRightDrawerEmailThread = () => {
         messageId: true,
         messageChannelId: true,
         messageThreadExternalId: true,
+        messageExternalId: true,
       },
       skip: !lastMessageId || !isMessagesFetchComplete,
     });
@@ -132,7 +133,10 @@ export const useRightDrawerEmailThread = () => {
       recordGqlFields: {
         id: true,
         handle: true,
-        connectedAccountId: true,
+        connectedAccount: {
+          id: true,
+          provider: true,
+        },
       },
       skip: !lastMessageChannelId,
     });
@@ -140,6 +144,10 @@ export const useRightDrawerEmailThread = () => {
   const messageThreadExternalId =
     messageChannelMessageAssociationData.length > 0
       ? messageChannelMessageAssociationData[0].messageThreadExternalId
+      : null;
+  const lastMessageExternalId =
+    messageChannelMessageAssociationData.length > 0
+      ? messageChannelMessageAssociationData[0].messageExternalId
       : null;
   const connectedAccountHandle =
     messageChannelData.length > 0 ? messageChannelData[0].handle : null;
@@ -159,13 +167,20 @@ export const useRightDrawerEmailThread = () => {
     })
     .filter(isDefined);
 
+  const connectedAccount =
+    messageChannelData.length > 0
+      ? messageChannelData[0]?.connectedAccount
+      : null;
+  const connectedAccountProvider = connectedAccount?.provider ?? null;
   return {
     thread,
     messages: messagesWithSender,
     messageThreadExternalId,
     connectedAccountHandle,
+    connectedAccountProvider,
     threadLoading: messagesLoading,
     messageChannelLoading,
+    lastMessageExternalId,
     fetchMoreMessages,
   };
 };

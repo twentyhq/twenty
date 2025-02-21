@@ -188,6 +188,17 @@ jobs:
         uses: ./.github/workflows/actions/restore-cache
         with:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+      - name: Server / Build
+        run: npx nx build twenty-server
+      - name: Build dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-emails
+      - name: Server / Create Test DB
+        env:
+          NODE_ENV: test
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:

@@ -10,6 +10,7 @@ export const findAllViewsOperationSignatureFactory: RecordGqlOperationSignatureF
       createdAt: true,
       updatedAt: true,
       isCompact: true,
+      openRecordIn: true,
       objectMetadataId: true,
       position: true,
       type: true,

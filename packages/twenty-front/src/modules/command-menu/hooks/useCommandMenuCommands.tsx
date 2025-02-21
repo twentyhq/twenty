@@ -1,4 +1,3 @@
-import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import {
   ActionMenuEntryScope,
@@ -129,24 +128,20 @@ export const useCommandMenuCommands = () => {
       hotKeys: actionMenuEntry.hotKeys,
     }));
 
-  const searchRecordsAction = actionMenuEntries.find(
-    (actionMenuEntry) =>
-      actionMenuEntry.key === RecordAgnosticActionsKey.SEARCH_RECORDS,
-  );
-
-  const fallbackCommands: Command[] = searchRecordsAction
-    ? [
-        {
-          id: searchRecordsAction.key,
-          label: i18n._(searchRecordsAction.label),
-          Icon: searchRecordsAction.Icon,
-          onCommandClick: searchRecordsAction.onClick,
-          type: CommandType.StandardAction,
-          scope: CommandScope.Global,
-          hotKeys: searchRecordsAction.hotKeys,
-        },
-      ]
-    : [];
+  const fallbackCommands: Command[] = actionMenuEntries
+    ?.filter(
+      (actionMenuEntry) =>
+        actionMenuEntry.type === ActionMenuEntryType.Fallback,
+    )
+    ?.map((actionMenuEntry) => ({
+      id: actionMenuEntry.key,
+      label: i18n._(actionMenuEntry.label),
+      Icon: actionMenuEntry.Icon,
+      onCommandClick: actionMenuEntry.onClick,
+      type: CommandType.Fallback,
+      scope: CommandScope.Global,
+      hotKeys: actionMenuEntry.hotKeys,
+    }));
 
   return {
     copilotCommands,

@@ -1,36 +1,38 @@
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
-import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
-import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
+import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 export const MainContextStoreProviderEffect = ({
   mainContextStoreComponentInstanceIdToSet,
   viewId,
   objectMetadataItem,
+  pageName,
 }: {
   mainContextStoreComponentInstanceIdToSet: string;
-  viewId: string;
+  viewId?: string;
   objectMetadataItem: ObjectMetadataItem;
+  pageName: string;
 }) => {
   const [
     mainContextStoreComponentInstanceId,
     setMainContextStoreComponentInstanceId,
   ] = useRecoilState(mainContextStoreComponentInstanceIdState);
 
-  const { getLastVisitedViewIdFromObjectNamePlural, setLastVisitedView } =
-    useLastVisitedView();
+  const { setLastVisitedViewForObjectMetadataNamePlural } =
+    useSetLastVisitedViewForObjectMetadataNamePlural();
 
-  const { lastVisitedObjectMetadataItemId, setLastVisitedObjectMetadataItem } =
-    useLastVisitedObjectMetadataItem();
-
-  const lastVisitedViewId = getLastVisitedViewIdFromObjectNamePlural(
-    objectMetadataItem.namePlural,
-  );
+  const { setLastVisitedObjectMetadataId } =
+    useSetLastVisitedObjectMetadataId();
 
   const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
     useRecoilComponentStateV2(
@@ -38,17 +40,29 @@ export const MainContextStoreProviderEffect = ({
       mainContextStoreComponentInstanceId,
     );
 
+  const [contextStoreCurrentViewType, setContextStoreCurrentViewType] =
+    useRecoilComponentStateV2(
+      contextStoreCurrentViewTypeComponentState,
+      mainContextStoreComponentInstanceId,
+    );
+
   const [
-    contextStoreCurrentObjectMetadataId,
-    setContextStoreCurrentObjectMetadataId,
+    contextStoreCurrentObjectMetadataItem,
+    setContextStoreCurrentObjectMetadataItem,
   ] = useRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
+    contextStoreCurrentObjectMetadataItemComponentState,
     mainContextStoreComponentInstanceId,
   );
 
+  const view = useRecoilValue(
+    prefetchViewFromViewIdFamilySelector({
+      viewId: viewId ?? '',
+    }),
+  );
+
   useEffect(() => {
-    if (contextStoreCurrentObjectMetadataId !== objectMetadataItem.id) {
-      setContextStoreCurrentObjectMetadataId(objectMetadataItem.id);
+    if (contextStoreCurrentObjectMetadataItem?.id !== objectMetadataItem.id) {
+      setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
     }
 
     if (
@@ -60,35 +74,49 @@ export const MainContextStoreProviderEffect = ({
       );
     }
 
-    if (viewId !== lastVisitedViewId) {
-      setLastVisitedView({
-        objectNamePlural: objectMetadataItem.namePlural,
-        viewId: viewId,
-      });
-    }
+    setLastVisitedViewForObjectMetadataNamePlural({
+      objectNamePlural: objectMetadataItem.namePlural,
+      viewId: viewId ?? '',
+    });
 
-    if (objectMetadataItem.id !== lastVisitedObjectMetadataItemId) {
-      setLastVisitedObjectMetadataItem(objectMetadataItem.namePlural);
-    }
+    setLastVisitedObjectMetadataId({
+      objectMetadataItemId: objectMetadataItem.id,
+    });
 
     if (contextStoreCurrentViewId !== viewId) {
       setContextStoreCurrentViewId(viewId);
     }
   }, [
-    contextStoreCurrentObjectMetadataId,
+    contextStoreCurrentObjectMetadataItem,
     contextStoreCurrentViewId,
-    lastVisitedObjectMetadataItemId,
-    lastVisitedViewId,
     mainContextStoreComponentInstanceId,
     mainContextStoreComponentInstanceIdToSet,
     objectMetadataItem,
     objectMetadataItem.namePlural,
-    setContextStoreCurrentObjectMetadataId,
+    setContextStoreCurrentObjectMetadataItem,
     setContextStoreCurrentViewId,
-    setLastVisitedObjectMetadataItem,
-    setLastVisitedView,
+    setLastVisitedObjectMetadataId,
+    setLastVisitedViewForObjectMetadataNamePlural,
     setMainContextStoreComponentInstanceId,
     viewId,
+  ]);
+
+  useEffect(() => {
+    const viewType =
+      pageName === 'record-show'
+        ? ContextStoreViewType.ShowPage
+        : view && view.type === ViewType.Kanban
+          ? ContextStoreViewType.Kanban
+          : ContextStoreViewType.Table;
+
+    if (contextStoreCurrentViewType !== viewType) {
+      setContextStoreCurrentViewType(viewType);
+    }
+  }, [
+    contextStoreCurrentViewType,
+    pageName,
+    setContextStoreCurrentViewType,
+    view,
   ]);
 
   return null;

@@ -4,9 +4,11 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableEmptyStateByGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateByGroupNoRecordAtAll';
 import { RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
 import { RecordTableEmptyStateNoRecordFoundForFilter } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter';
+import { RecordTableEmptyStateReadOnly } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly';
 import { RecordTableEmptyStateRemote } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote';
 import { RecordTableEmptyStateSoftDelete } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableEmptyState = () => {
@@ -17,6 +19,8 @@ export const RecordTableEmptyState = () => {
     hasRecordGroupsComponentSelector,
   );
 
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   const { totalCount } = useFindManyRecords({ objectNameSingular, limit: 1 });
   const noRecordAtAll = totalCount === 0;
 
@@ -26,6 +30,10 @@ export const RecordTableEmptyState = () => {
     isSoftDeleteFilterActiveComponentState,
     recordTableId,
   );
+
+  if (hasObjectReadOnlyPermission) {
+    return <RecordTableEmptyStateReadOnly />;
+  }
 
   if (isRemote) {
     return <RecordTableEmptyStateRemote />;

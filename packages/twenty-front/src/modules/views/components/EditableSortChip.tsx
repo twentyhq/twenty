@@ -1,36 +1,46 @@
 import { IconArrowDown, IconArrowUp } from 'twenty-ui';
 
-import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
+import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
+import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useDeleteCombinedViewSorts } from '@/views/hooks/useDeleteCombinedViewSorts';
 import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
 
 type EditableSortChipProps = {
-  viewSort: Sort;
+  recordSort: RecordSort;
 };
 
-export const EditableSortChip = ({ viewSort }: EditableSortChipProps) => {
+export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   const { deleteCombinedViewSort } = useDeleteCombinedViewSorts();
+
+  const { removeRecordSort } = useRemoveRecordSort();
 
   const { upsertCombinedViewSort } = useUpsertCombinedViewSorts();
 
+  const { upsertRecordSort } = useUpsertRecordSort();
+
   const handleRemoveClick = () => {
-    deleteCombinedViewSort(viewSort.fieldMetadataId);
+    deleteCombinedViewSort(recordSort.fieldMetadataId);
+    removeRecordSort(recordSort.fieldMetadataId);
   };
 
   const handleClick = () => {
-    upsertCombinedViewSort({
-      ...viewSort,
-      direction: viewSort.direction === 'asc' ? 'desc' : 'asc',
-    });
+    const newSort: RecordSort = {
+      ...recordSort,
+      direction: recordSort.direction === 'asc' ? 'desc' : 'asc',
+    };
+
+    upsertCombinedViewSort(newSort);
+    upsertRecordSort(newSort);
   };
 
   return (
     <SortOrFilterChip
-      key={viewSort.fieldMetadataId}
-      testId={viewSort.fieldMetadataId}
-      labelValue={viewSort.definition.label}
-      Icon={viewSort.direction === 'desc' ? IconArrowDown : IconArrowUp}
+      key={recordSort.fieldMetadataId}
+      testId={recordSort.fieldMetadataId}
+      labelValue={recordSort.definition.label}
+      Icon={recordSort.direction === 'desc' ? IconArrowDown : IconArrowUp}
       onRemove={handleRemoveClick}
       onClick={handleClick}
     />

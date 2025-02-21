@@ -1,9 +1,10 @@
 /* @license Enterprise */
 
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { GraphQLError } from 'graphql';
+import { SettingsFeatures } from 'twenty-shared';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingProductInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-product.input';
@@ -26,10 +27,13 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -55,7 +59,10 @@ export class BillingResolver {
   }
 
   @Query(() => BillingSessionOutput)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+  )
   async billingPortalSession(
     @AuthWorkspace() workspace: Workspace,
     @Args() { returnUrlPath }: BillingSessionInput,
@@ -134,7 +141,10 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingUpdateOutput)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+  )
   async updateBillingSubscription(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.applyBillingSubscription(workspace);
 

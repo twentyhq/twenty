@@ -13,11 +13,11 @@ import { Note } from '@/activities/types/Note';
 import { NoteTarget } from '@/activities/types/NoteTarget';
 import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconList } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -68,6 +68,8 @@ export const useOpenCreateActivityDrawer = ({
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
+  const { openRecordInCommandMenu } = useCommandMenu();
+
   const openCreateActivityDrawer = async ({
     targetableObjects,
     customAssignee,
@@ -76,10 +78,12 @@ export const useOpenCreateActivityDrawer = ({
     customAssignee?: WorkspaceMember;
   }) => {
     setIsNewViewableRecordLoading(true);
-    openRightDrawer(RightDrawerPages.ViewRecord, {
-      title: activityObjectNameSingular,
-      Icon: IconList,
-    });
+    if (!isCommandMenuV2Enabled) {
+      openRightDrawer(RightDrawerPages.ViewRecord, {
+        title: activityObjectNameSingular,
+        Icon: IconList,
+      });
+    }
     setViewableRecordId(null);
     setViewableRecordNameSingular(activityObjectNameSingular);
 
@@ -122,7 +126,11 @@ export const useOpenCreateActivityDrawer = ({
     }
 
     if (isCommandMenuV2Enabled) {
-      setHotkeyScope(AppHotkeyScope.CommandMenuOpen, { goto: false });
+      openRecordInCommandMenu({
+        recordId: activity.id,
+        objectNameSingular: activityObjectNameSingular,
+        isNewRecord: true,
+      });
     } else {
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     }

@@ -1,5 +1,5 @@
 import {
-  WorkflowRunOutput,
+  WorkflowRunOutputStepsOutput,
   WorkflowStep,
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
@@ -76,18 +76,14 @@ describe('generateWorkflowRunDiagram', () => {
         },
       },
     ];
-    const output: WorkflowRunOutput = {
-      steps: {
-        step1: {
-          id: 'step1',
-          name: 'Step 1',
-          outputs: [],
-          type: 'CODE',
-        },
+    const stepsOutput: WorkflowRunOutputStepsOutput = {
+      step1: {
+        id: 'step1',
+        outputs: [],
       },
     };
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, output });
+    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
 
     expect(result).toMatchInlineSnapshot(`
 {
@@ -249,24 +245,20 @@ describe('generateWorkflowRunDiagram', () => {
         },
       },
     ];
-    const output: WorkflowRunOutput = {
-      steps: {
-        step1: {
-          id: 'step1',
-          name: 'Step 1',
-          outputs: [
-            {
-              attemptCount: 1,
-              result: undefined,
-              error: '',
-            },
-          ],
-          type: 'CODE',
-        },
+    const stepsOutput: WorkflowRunOutputStepsOutput = {
+      step1: {
+        id: 'step1',
+        outputs: [
+          {
+            attemptCount: 1,
+            result: undefined,
+            error: '',
+          },
+        ],
       },
     };
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, output });
+    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
 
     expect(result).toMatchInlineSnapshot(`
 {
@@ -428,48 +420,40 @@ describe('generateWorkflowRunDiagram', () => {
         },
       },
     ];
-    const output: WorkflowRunOutput = {
-      steps: {
-        step1: {
-          id: 'step1',
-          name: 'Step 1',
-          outputs: [
-            {
-              attemptCount: 1,
-              result: {},
-              error: undefined,
-            },
-          ],
-          type: 'CODE',
-        },
-        step2: {
-          id: 'step2',
-          name: 'Step 2',
-          outputs: [
-            {
-              attemptCount: 1,
-              result: {},
-              error: undefined,
-            },
-          ],
-          type: 'CODE',
-        },
-        step3: {
-          id: 'step3',
-          name: 'Step 3',
-          outputs: [
-            {
-              attemptCount: 1,
-              result: {},
-              error: undefined,
-            },
-          ],
-          type: 'CODE',
-        },
+    const stepsOutput: WorkflowRunOutputStepsOutput = {
+      step1: {
+        id: 'step1',
+        outputs: [
+          {
+            attemptCount: 1,
+            result: {},
+            error: undefined,
+          },
+        ],
+      },
+      step2: {
+        id: 'step2',
+        outputs: [
+          {
+            attemptCount: 1,
+            result: {},
+            error: undefined,
+          },
+        ],
+      },
+      step3: {
+        id: 'step3',
+        outputs: [
+          {
+            attemptCount: 1,
+            result: {},
+            error: undefined,
+          },
+        ],
       },
     };
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, output });
+    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
 
     expect(result).toMatchInlineSnapshot(`
 {
@@ -633,9 +617,9 @@ describe('generateWorkflowRunDiagram', () => {
         },
       },
     ];
-    const output = null;
+    const stepsOutput = undefined;
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, output });
+    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
 
     expect(result).toMatchInlineSnapshot(`
 {
@@ -815,24 +799,20 @@ describe('generateWorkflowRunDiagram', () => {
         },
       },
     ];
-    const output: WorkflowRunOutput = {
-      steps: {
-        step1: {
-          id: 'step1',
-          name: 'Step 1',
-          outputs: [
-            {
-              attemptCount: 1,
-              result: {},
-              error: undefined,
-            },
-          ],
-          type: 'CODE',
-        },
+    const stepsOutput: WorkflowRunOutputStepsOutput = {
+      step1: {
+        id: 'step1',
+        outputs: [
+          {
+            attemptCount: 1,
+            result: {},
+            error: undefined,
+          },
+        ],
       },
     };
 
-    const result = generateWorkflowRunDiagram({ trigger, steps, output });
+    const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
 
     expect(result).toMatchInlineSnapshot(`
 {

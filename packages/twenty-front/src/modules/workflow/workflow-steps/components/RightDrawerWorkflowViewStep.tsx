@@ -1,22 +1,25 @@
-import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { workflowVersionIdState } from '@/workflow/states/workflowVersionIdState';
-import { RightDrawerWorkflowViewStepContent } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStepContent';
+import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
+import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const RightDrawerWorkflowViewStep = () => {
-  const workflowVersionId = useRecoilValue(workflowVersionIdState);
-  if (!isDefined(workflowVersionId)) {
-    throw new Error('Expected a workflow version id');
-  }
+  const flow = useFlowOrThrow();
 
-  const workflowVersion = useWorkflowVersion(workflowVersionId);
-
-  if (!isDefined(workflowVersion)) {
-    return null;
+  const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
+  if (!isDefined(workflowSelectedNode)) {
+    throw new Error(
+      'Expected a node to be selected. Selecting a node is mandatory to view its details.',
+    );
   }
 
   return (
-    <RightDrawerWorkflowViewStepContent workflowVersion={workflowVersion} />
+    <WorkflowStepDetail
+      stepId={workflowSelectedNode}
+      trigger={flow.trigger}
+      steps={flow.steps}
+      readonly
+    />
   );
 };

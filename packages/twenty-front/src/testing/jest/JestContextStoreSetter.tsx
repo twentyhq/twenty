@@ -1,6 +1,6 @@
 import { PropsWithChildren, useEffect, useState } from 'react';
 
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import {
@@ -26,7 +26,7 @@ export const JestContextStoreSetter = ({
     selectedRecordIds: [],
   },
   contextStoreNumberOfSelectedRecords = 0,
-  contextStoreCurrentObjectMetadataNameSingular = '',
+  contextStoreCurrentObjectMetadataNameSingular = 'company',
   contextStoreFilters = [],
   children,
 }: JestContextStoreSetterProps) => {
@@ -34,8 +34,8 @@ export const JestContextStoreSetter = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const setContextStoreCurrentObjectMetadataId = useSetRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
+  const setContextStoreCurrentObjectMetadataItem = useSetRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
   );
 
   const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
@@ -55,20 +55,21 @@ export const JestContextStoreSetter = ({
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
     setContextStoreTargetedRecordsRule(contextStoreTargetedRecordsRule);
-    setContextStoreCurrentObjectMetadataId(contextStoreCurrentObjectMetadataId);
+    setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
     setContextStoreNumberOfSelectedRecords(contextStoreNumberOfSelectedRecords);
     setcontextStoreFiltersComponentState(contextStoreFilters);
 
     setIsLoaded(true);
   }, [
     setContextStoreTargetedRecordsRule,
-    setContextStoreCurrentObjectMetadataId,
+    setContextStoreCurrentObjectMetadataItem,
     contextStoreTargetedRecordsRule,
     contextStoreCurrentObjectMetadataId,
     setContextStoreNumberOfSelectedRecords,
     contextStoreNumberOfSelectedRecords,
     setcontextStoreFiltersComponentState,
     contextStoreFilters,
+    objectMetadataItem,
   ]);
 
   return isLoaded ? <>{children}</> : null;

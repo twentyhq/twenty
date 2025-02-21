@@ -1,9 +1,13 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
@@ -32,6 +36,12 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.InviteTeam) ||
     isMatchingLocation(AppPath.PlanRequired) ||
     isMatchingLocation(AppPath.PlanRequiredSuccess);
+
+  const objectNamePlural = useParams().objectNamePlural ?? '';
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
+  );
 
   if (isMatchingOpenRoute) {
     return;
@@ -94,6 +104,13 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (isMatchingLocation(AppPath.Index) && isLoggedIn) {
     return defaultHomePagePath;
+  }
+
+  if (
+    isMatchingLocation(AppPath.RecordIndexPage) &&
+    !isDefined(objectMetadataItem)
+  ) {
+    return AppPath.NotFound;
   }
 
   return;

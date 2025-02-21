@@ -15,6 +15,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { AppPath } from '@/types/AppPath';
 import { ApolloFactory, Options } from '../services/apollo.factory';
 
@@ -34,6 +35,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
+  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
 
   const setWorkspaces = useSetRecoilState(workspacesState);
   const [, setPreviousUrl] = useRecoilState(previousUrlState);
@@ -71,6 +73,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
         setCurrentWorkspace(null);
+        setCurrentUserWorkspace(null);
         setWorkspaces([]);
         if (
           !isMatchingLocation(AppPath.Verify) &&
