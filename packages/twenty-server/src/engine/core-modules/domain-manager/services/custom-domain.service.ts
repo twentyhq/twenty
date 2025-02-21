@@ -81,8 +81,6 @@ export class CustomDomainService {
         ]
           .map<CustomDomainValidRecords['records'][0] | undefined>(
             (record: Record<string, string>) => {
-              if (!record) return;
-
               if (
                 'txt_name' in record &&
                 'txt_value' in record &&
