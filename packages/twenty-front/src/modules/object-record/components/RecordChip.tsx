@@ -3,7 +3,7 @@ import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { MouseEvent } from 'react';
@@ -29,7 +29,9 @@ export const RecordChip = ({
 
   const { openRecordInCommandMenu } = useCommandMenu();
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useRecoilValue(
+    recordIndexOpenRecordInSelector,
+  );
 
   const handleClick = (e: MouseEvent<Element>) => {
     e.stopPropagation();
