@@ -21,7 +21,7 @@ export const AddTaskButton = ({
     !isNonEmptyArray(activityTargetableObjects) ||
     hasObjectReadOnlyPermission
   ) {
-    return <></>;
+    return null;
   }
 
   return (
@@ -35,6 +35,6 @@ export const AddTaskButton = ({
           targetableObjects: activityTargetableObjects,
         })
       }
-    ></Button>
+    />
   );
 };

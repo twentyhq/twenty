@@ -92,7 +92,7 @@ export const Notes = ({
                   targetableObjects: [targetableObject],
                 })
               }
-            ></Button>
+            />
           )
         }
       />
