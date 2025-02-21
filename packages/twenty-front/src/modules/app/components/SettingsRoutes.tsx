@@ -138,12 +138,6 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
-const SettingsDevelopers = lazy(() =>
-  import('~/pages/settings/developers/SettingsDevelopers').then((module) => ({
-    default: module.SettingsDevelopers,
-  })),
-);
-
 const SettingsIntegrations = lazy(() =>
   import('~/pages/settings/integrations/SettingsIntegrations').then(
     (module) => ({
@@ -342,7 +336,6 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       </Route>
-      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
         path={SettingsPath.DevelopersApiKey}
         element={<SettingsApiKeys />}
