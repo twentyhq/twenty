@@ -192,20 +192,6 @@ export type BillingProductDto = {
   type: BillingUsageType;
 };
 
-export type BillingProductPriceDto = {
-  __typename?: 'BillingProductPriceDTO';
-  created: Scalars['Float'];
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String'];
-  unitAmount: Scalars['Float'];
-};
-
-export type BillingProductPricesOutput = {
-  __typename?: 'BillingProductPricesOutput';
-  productPrices: Array<BillingProductPriceDto>;
-  totalNumberOfPrices: Scalars['Int'];
-};
-
 export type BillingSessionOutput = {
   __typename?: 'BillingSessionOutput';
   url?: Maybe<Scalars['String']>;
@@ -1254,7 +1240,6 @@ export type Query = {
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
-  getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
@@ -1311,11 +1296,6 @@ export type QueryGetAvailablePackagesArgs = {
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
-};
-
-
-export type QueryGetProductPricesArgs = {
-  product: Scalars['String'];
 };
 
 
@@ -2260,13 +2240,6 @@ export type CheckoutSessionMutationVariables = Exact<{
 
 
 export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'BillingSessionOutput', url?: string | null } };
-
-export type GetProductPricesQueryVariables = Exact<{
-  product: Scalars['String'];
-}>;
-
-
-export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { __typename?: 'BillingProductPricesOutput', productPrices: Array<{ __typename?: 'BillingProductPriceDTO', created: number, recurringInterval: SubscriptionInterval, stripePriceId: string, unitAmount: number }> } };
 
 export type UpdateBillingSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3742,46 +3715,6 @@ export function useCheckoutSessionMutation(baseOptions?: Apollo.MutationHookOpti
 export type CheckoutSessionMutationHookResult = ReturnType<typeof useCheckoutSessionMutation>;
 export type CheckoutSessionMutationResult = Apollo.MutationResult<CheckoutSessionMutation>;
 export type CheckoutSessionMutationOptions = Apollo.BaseMutationOptions<CheckoutSessionMutation, CheckoutSessionMutationVariables>;
-export const GetProductPricesDocument = gql`
-    query GetProductPrices($product: String!) {
-  getProductPrices(product: $product) {
-    productPrices {
-      created
-      recurringInterval
-      stripePriceId
-      unitAmount
-    }
-  }
-}
-    `;
-
-/**
- * __useGetProductPricesQuery__
- *
- * To run a query within a React component, call `useGetProductPricesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProductPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProductPricesQuery({
- *   variables: {
- *      product: // value for 'product'
- *   },
- * });
- */
-export function useGetProductPricesQuery(baseOptions: Apollo.QueryHookOptions<GetProductPricesQuery, GetProductPricesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProductPricesQuery, GetProductPricesQueryVariables>(GetProductPricesDocument, options);
-      }
-export function useGetProductPricesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProductPricesQuery, GetProductPricesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProductPricesQuery, GetProductPricesQueryVariables>(GetProductPricesDocument, options);
-        }
-export type GetProductPricesQueryHookResult = ReturnType<typeof useGetProductPricesQuery>;
-export type GetProductPricesLazyQueryHookResult = ReturnType<typeof useGetProductPricesLazyQuery>;
-export type GetProductPricesQueryResult = Apollo.QueryResult<GetProductPricesQuery, GetProductPricesQueryVariables>;
 export const UpdateBillingSubscriptionDocument = gql`
     mutation UpdateBillingSubscription {
   updateBillingSubscription {
