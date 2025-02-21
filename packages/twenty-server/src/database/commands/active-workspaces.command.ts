@@ -42,10 +42,10 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
     required: false,
   })
   parseWorkspaceCountLimit(val: string): number {
-    try {
-      this.workspaceCountLimit = parseInt(val);
-    } catch (error) {
-      throw new Error('Invalid workspace count limit');
+    this.workspaceCountLimit = parseInt(val);
+
+    if (isNaN(this.workspaceCountLimit)) {
+      throw new Error('Workspace count limit must be a number');
     }
 
     if (this.workspaceCountLimit <= 0) {
