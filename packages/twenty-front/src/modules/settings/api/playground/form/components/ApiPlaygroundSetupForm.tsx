@@ -8,6 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconBrandGraphql } from '@tabler/icons-react';
 import { Controller, useForm } from 'react-hook-form';
 import {
+  Button,
   IconApi,
   IconBracketsAngle,
   IconFolderRoot
@@ -30,6 +31,7 @@ type ApiPlaygroundFormProps = {
 
 const StyledInputsContainer = styled.div`
   display: flex;
+  align-items: end;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
@@ -52,54 +54,62 @@ export const ApiPlaygroundSetupForm = ({
 
   return (
     <StyledInputsContainer>
-        <Controller
-            name={'apiKey'}
-            control={control}
-            render={({ field: { onChange, value } }) => (
-                <Select
-                  dropdownId="schema"
-                  label="Schema"
-                  options={[
-                    { value: 'core', label: 'Core' },
-                    { value: 'metadata', label: 'Metadata' },
-                  ]}
-                  value={value}
-                  onChange={onChange}
-                />
-            )}
-        />
-        <Controller
-            name={'schema'}
-            control={control}
-            render={({ field: { onChange, value } }) => (
-                <Select
-                  dropdownId="schema"
-                  label="Schema"
-                  options={[
-                    { value: 'core', label: 'Core', Icon: IconFolderRoot },
-                    { value: 'metadata', label: 'Metadata', Icon: IconBracketsAngle },
-                  ]}
-                  value={value}
-                  onChange={onChange}
-                />
-            )}
-        />
-        <Controller
-            name={'apiPlayground'}
-            control={control}
-            render={({ field: { onChange, value } }) => (
-                <Select
-                    dropdownId="apiPlaygroundType"
-                    label="API"
-                    options={[
-                        { value: 'rest', label: 'REST', Icon: IconApi },
-                        { value: 'graphql', label: 'GraphQL', Icon: IconBrandGraphql },
-                    ]}
-                    value={value}
-                    onChange={onChange}
-                />
-            )}
-        />
+      <Controller
+        name={'apiKey'}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            fullWidth
+            dropdownId="apiKey"
+            label="API Key"
+            options={[
+              { value: 'core', label: 'Core' },
+              { value: 'metadata', label: 'Metadata' },
+            ]}
+            value={value}
+            onChange={onChange}
+          />
+        )}
+      />
+      <Controller
+        name={'schema'}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            fullWidth
+            dropdownId="schema"
+            label="Schema"
+            options={[
+              { value: 'core', label: 'Core', Icon: IconFolderRoot },
+              { value: 'metadata', label: 'Metadata', Icon: IconBracketsAngle },
+            ]}
+            value={value}
+            onChange={onChange}
+          />
+        )}
+      />
+      <Controller
+        name={'apiPlayground'}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            fullWidth
+            dropdownId="apiPlaygroundType"
+            label="API"
+            options={[
+                { value: 'rest', label: 'REST', Icon: IconApi },
+                { value: 'graphql', label: 'GraphQL', Icon: IconBrandGraphql },
+            ]}
+            value={value}
+            onChange={onChange}
+          />
+        )}
+      />
+      <Button
+        title="Launch"
+        variant="primary"
+        accent="blue"
+      />
     </StyledInputsContainer>
   );
 };
