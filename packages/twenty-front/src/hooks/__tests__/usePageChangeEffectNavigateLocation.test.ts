@@ -19,8 +19,8 @@ const setupMockOnboardingStatus = (
   jest.mocked(useOnboardingStatus).mockReturnValueOnce(onboardingStatus);
 };
 
-jest.mock('@/workspace/hooks/useIsWorkspaceActivationStatusSuspended');
-const setupMockIsWorkspaceActivationStatusSuspended = (
+jest.mock('@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo');
+const setupMockIsWorkspaceActivationStatusEqualsTo = (
   isWorkspaceSuspended: boolean,
 ) => {
   jest
@@ -270,7 +270,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
     it(`with location ${testCase.loc} and onboardingStatus ${testCase.onboardingStatus} and isWorkspaceSuspended ${testCase.isWorkspaceSuspended} should return ${testCase.res}`, () => {
       setupMockIsMatchingLocation(testCase.loc);
       setupMockOnboardingStatus(testCase.onboardingStatus);
-      setupMockIsWorkspaceActivationStatusSuspended(
+      setupMockIsWorkspaceActivationStatusEqualsTo(
         testCase.isWorkspaceSuspended,
       );
       setupMockIsLogged(testCase.isLoggedIn);
