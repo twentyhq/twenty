@@ -1,4 +1,4 @@
-import GraphQlPlayground from '@/settings/api/playground/playgrounds/graphql-playground';
+import GraphQlPlayground from '@/settings/api/playground/components/GraphQLPlayground';
 
 const GraphQLPlaygroundCore = () => {
   return <GraphQlPlayground subDoc={'core'} />;

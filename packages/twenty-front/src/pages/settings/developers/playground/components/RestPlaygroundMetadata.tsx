@@ -1,5 +1,5 @@
-import Playground from '@/settings/api/playground/playgrounds/playground';
-import { RestApiWrapper } from '@/settings/api/playground/playgrounds/rest-api-wrapper';
+import Playground from '@/settings/api/playground/components/Playground';
+import { RestApiWrapper } from '@/settings/api/playground/components/RestApiWrapper';
 import { useState } from 'react';
 
 const RestPlaygroundMetadata = () => {

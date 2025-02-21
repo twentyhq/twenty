@@ -1,4 +1,4 @@
-import GraphQlPlayground from '@/settings/api/playground/playgrounds/graphql-playground';
+import GraphQlPlayground from '@/settings/api/playground/components/GraphQLPlayground';
 
 const GraphQLPlaygroundMetadata = () => {
   return <GraphQlPlayground subDoc={'metadata'} />;

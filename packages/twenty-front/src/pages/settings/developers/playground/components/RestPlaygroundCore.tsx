@@ -1,5 +1,5 @@
-import Playground from '@/settings/api/playground/playgrounds/playground';
-import { RestApiWrapper } from '@/settings/api/playground/playgrounds/rest-api-wrapper';
+import Playground from '@/settings/api/playground/components/Playground';
+import { RestApiWrapper } from '@/settings/api/playground/components/RestApiWrapper';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -10,15 +10,14 @@ const StyledContainer = styled.div`
 const RestPlaygroundCore = () => {
   const [openApiJson, setOpenApiJson] = useState({});
 
-  const children = <RestApiWrapper openApiJson={openApiJson} />;
-
   return (
     <StyledContainer>
       <Playground
-        children={children}
         setOpenApiJson={setOpenApiJson}
         subDoc="core"
-      />
+      >
+        <RestApiWrapper openApiJson={openApiJson} />;
+      </Playground>
     </StyledContainer>
   );
 };
