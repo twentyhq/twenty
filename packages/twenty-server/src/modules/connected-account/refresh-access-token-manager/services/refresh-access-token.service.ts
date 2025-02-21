@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/drivers/google/services/google-api-refresh-access-token.service';
+import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/drivers/microsoft/services/microsoft-api-refresh-access-token.service';
 import {
   RefreshAccessTokenException,
   RefreshAccessTokenExceptionCode,
@@ -12,6 +13,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 export class RefreshAccessTokenService {
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
+    private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -31,7 +33,6 @@ export class RefreshAccessTokenService {
 
     switch (connectedAccount.provider) {
       case 'microsoft':
-        return '';
       case 'google': {
         try {
           accessToken = await this.refreshAccessToken(
@@ -71,6 +72,10 @@ export class RefreshAccessTokenService {
     switch (connectedAccount.provider) {
       case 'google':
         return this.googleAPIRefreshAccessTokenService.refreshAccessToken(
+          refreshToken,
+        );
+      case 'microsoft':
+        return this.microsoftAPIRefreshAccessTokenService.refreshAccessToken(
           refreshToken,
         );
       default:
