@@ -3,7 +3,7 @@ import { TbLoader2 } from 'react-icons/tb';
 
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import TokenForm, { TokenFormProps } from './token-form';
+import TokenForm, { TokenFormProps } from './TokenForm';
 
 const StyledContainer = styled.div`
   height: 100%;

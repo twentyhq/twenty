@@ -4,9 +4,9 @@ import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 import { useState } from 'react';
 
-import { SubDoc } from './token-form';
+import { SubDoc } from './TokenForm';
 
-import Playground from './playground';
+import Playground from './Playground';
 
 import '@graphiql/plugin-explorer/dist/style.css';
 import 'graphiql/graphiql.css';
