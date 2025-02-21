@@ -7,7 +7,7 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -78,7 +78,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
           },
           create: {
             many: { disabled: true },
-            guards: [SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL)],
+            guards: [SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL)],
           },
           update: { disabled: true },
           delete: { disabled: true },

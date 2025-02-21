@@ -26,10 +26,10 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
     protected readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   async executeActiveWorkspacesCommand(
@@ -185,5 +185,9 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
     } catch (error) {
       this.logger.log(chalk.red(`Error in workspace ${workspaceId}`));
     }
+
+    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+      workspaceId,
+    );
   }
 }

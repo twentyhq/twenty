@@ -70,7 +70,7 @@ export class WorkflowExecutorWorkspaceService {
       };
     }
 
-    const stepOutput = workflowExecutorState.stepsOutput[step.id];
+    const stepOutput = workflowExecutorState.stepsOutput?.[step.id];
 
     const error =
       result.error?.errorMessage ??

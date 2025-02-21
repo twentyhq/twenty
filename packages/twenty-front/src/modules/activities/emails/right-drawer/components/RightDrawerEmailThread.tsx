@@ -13,6 +13,8 @@ import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { ConnectedAccountProvider } from 'twenty-shared';
 import { Button, IconArrowBackUp } from 'twenty-ui';
 
 const StyledWrapper = styled.div`
@@ -52,6 +54,8 @@ export const RightDrawerEmailThread = () => {
     messageThreadExternalId,
     connectedAccountHandle,
     messageChannelLoading,
+    connectedAccountProvider,
+    lastMessageExternalId,
   } = useRightDrawerEmailThread();
 
   useEffect(() => {
@@ -94,17 +98,38 @@ export const RightDrawerEmailThread = () => {
 
   const canReply = useMemo(() => {
     return (
-      connectedAccountHandle && lastMessage && messageThreadExternalId != null
+      connectedAccountHandle &&
+      connectedAccountProvider &&
+      lastMessage &&
+      messageThreadExternalId != null
     );
-  }, [connectedAccountHandle, lastMessage, messageThreadExternalId]);
+  }, [
+    connectedAccountHandle,
+    connectedAccountProvider,
+    lastMessage,
+    messageThreadExternalId,
+  ]);
 
   const handleReplyClick = () => {
     if (!canReply) {
       return;
     }
 
-    const url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
-    window.open(url, '_blank');
+    let url: string;
+    switch (connectedAccountProvider) {
+      case ConnectedAccountProvider.MICROSOFT:
+        url = `https://outlook.office.com/mail/deeplink?ItemID=${lastMessageExternalId}`;
+        window.open(url, '_blank');
+        break;
+      case ConnectedAccountProvider.GOOGLE:
+        url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
+        window.open(url, '_blank');
+        break;
+      case null:
+        throw new Error('Account provider not provided');
+      default:
+        assertUnreachable(connectedAccountProvider);
+    }
   };
   if (!thread || !messages.length) {
     return null;

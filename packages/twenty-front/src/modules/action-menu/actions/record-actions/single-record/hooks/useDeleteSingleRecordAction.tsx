@@ -6,6 +6,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { isNull } from '@sniptt/guards';
@@ -20,6 +21,8 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: objectMetadataItem.namePlural,
@@ -61,7 +64,9 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const shouldBeRegistered =
-    !isRemoteObject && isNull(selectedRecord?.deletedAt);
+    !isRemoteObject &&
+    isNull(selectedRecord?.deletedAt) &&
+    !hasObjectReadOnlyPermission;
 
   const onClick = () => {
     if (!shouldBeRegistered) {

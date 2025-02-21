@@ -1,3 +1,4 @@
+import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
@@ -11,6 +12,8 @@ export const RightDrawerWorkflowEditStepContent = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
+  const flow = useFlowOrThrow();
+
   const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
   if (!isDefined(workflowSelectedNode)) {
     throw new Error(
@@ -26,7 +29,8 @@ export const RightDrawerWorkflowEditStepContent = ({
   return (
     <WorkflowStepDetail
       stepId={workflowSelectedNode}
-      workflowVersion={workflow.currentVersion}
+      trigger={flow.trigger}
+      steps={flow.steps}
       onActionUpdate={updateStep}
       onTriggerUpdate={updateTrigger}
     />

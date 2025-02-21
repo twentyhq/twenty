@@ -2,7 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { SettingsFeatures, SOURCE_LOCALE } from 'twenty-shared';
+import { SettingsPermissions, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
 import omit from 'lodash.omit';
 
@@ -342,7 +342,7 @@ export class AuthResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionsGuard(SettingsPermissions.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(

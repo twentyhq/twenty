@@ -8,7 +8,7 @@ import {
   IconTrashX,
   Section,
 } from 'twenty-ui';
-import { Role, SettingsFeatures } from '~/generated-metadata/graphql';
+import { Role, SettingsPermissions } from '~/generated-metadata/graphql';
 import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/components/RolePermissionsObjectsTableHeader';
 import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/components/RolePermissionsSettingsTableHeader';
 import { RolePermissionsSettingsTableRow } from '~/pages/settings/roles/components/RolePermissionsSettingsTableRow';
@@ -21,73 +21,85 @@ const StyledRolePermissionsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const RolePermissions = ({ role }: { role: Role }) => {
+type RolePermissionsProps = {
+  role: Pick<
+    Role,
+    | 'id'
+    | 'canUpdateAllSettings'
+    | 'canReadAllObjectRecords'
+    | 'canUpdateAllObjectRecords'
+    | 'canSoftDeleteAllObjectRecords'
+    | 'canDestroyAllObjectRecords'
+  >;
+};
+
+export const RolePermissions = ({ role }: RolePermissionsProps) => {
   const objectPermissionsConfig: RolePermissionsObjectPermission[] = [
     {
       key: 'seeRecords',
       label: 'See Records on All Objects',
       icon: <IconEye size={14} />,
-      value: true,
+      value: role.canReadAllObjectRecords,
     },
     {
       key: 'editRecords',
       label: 'Edit Records on All Objects',
       icon: <IconPencil size={14} />,
-      value: true,
+      value: role.canUpdateAllObjectRecords,
     },
     {
       key: 'deleteRecords',
       label: 'Delete Records on All Objects',
       icon: <IconTrash size={14} />,
-      value: true,
+      value: role.canSoftDeleteAllObjectRecords,
     },
     {
       key: 'destroyRecords',
       label: 'Destroy Records on All Objects',
       icon: <IconTrashX size={14} />,
-      value: true,
+      value: role.canDestroyAllObjectRecords,
     },
   ];
 
   const settingsPermissionsConfig = [
     {
-      key: SettingsFeatures.API_KEYS_AND_WEBHOOKS,
+      key: SettingsPermissions.API_KEYS_AND_WEBHOOKS,
       label: 'API Keys and Webhooks',
       type: 'Developer',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.ROLES,
+      key: SettingsPermissions.ROLES,
       label: 'Roles',
       type: 'Members',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.WORKSPACE,
+      key: SettingsPermissions.WORKSPACE,
       label: 'Workspace Settings',
       type: 'General',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.WORKSPACE_USERS,
+      key: SettingsPermissions.WORKSPACE_USERS,
       label: 'Workspace Users',
       type: 'Members',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.DATA_MODEL,
+      key: SettingsPermissions.DATA_MODEL,
       label: 'Data Model',
       type: 'Data Model',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.ADMIN_PANEL,
+      key: SettingsPermissions.ADMIN_PANEL,
       label: 'Admin Panel',
       type: 'Admin Panel',
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsFeatures.SECURITY,
+      key: SettingsPermissions.SECURITY,
       label: 'Security Settings',
       type: 'Security',
       value: role.canUpdateAllSettings,

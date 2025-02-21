@@ -3,7 +3,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
@@ -26,7 +26,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 
 @Resolver()
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
-@UseGuards(SettingsPermissionsGuard(SettingsFeatures.SECURITY))
+@UseGuards(SettingsPermissionsGuard(SettingsPermissions.SECURITY))
 export class SSOResolver {
   constructor(private readonly sSOService: SSOService) {}
 
@@ -42,12 +42,12 @@ export class SSOResolver {
     );
   }
 
-  @UseGuards(EnterpriseFeaturesEnabledGuard)
+  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Query(() => [FindAvailableSSOIDPOutput])
-  async listSSOIdentityProvidersByWorkspaceId(
+  async getSSOIdentityProviders(
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.sSOService.listSSOIdentityProvidersByWorkspaceId(workspaceId);
+    return this.sSOService.getSSOIdentityProviders(workspaceId);
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)

@@ -18,7 +18,6 @@ import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/works
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -71,6 +70,7 @@ export class QueryResultGettersFactory {
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
+    isNewRelationEnabled: boolean,
   ): Promise<IConnection<ObjectRecord>> {
     return {
       ...connection,
@@ -82,6 +82,7 @@ export class QueryResultGettersFactory {
             objectMetadataItemId,
             objectMetadataMaps,
             workspaceId,
+            isNewRelationEnabled,
           ),
         })),
       ),
@@ -93,6 +94,7 @@ export class QueryResultGettersFactory {
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
+    isNewRelationEnabled: boolean,
   ) {
     return {
       ...result,
@@ -104,6 +106,7 @@ export class QueryResultGettersFactory {
               objectMetadataItemId,
               objectMetadataMaps,
               workspaceId,
+              isNewRelationEnabled,
             ),
         ),
       ),
@@ -115,6 +118,7 @@ export class QueryResultGettersFactory {
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
+    isNewRelationEnabled: boolean,
   ) {
     return await Promise.all(
       recordArray.map(
@@ -124,6 +128,7 @@ export class QueryResultGettersFactory {
             objectMetadataItemId,
             objectMetadataMaps,
             workspaceId,
+            isNewRelationEnabled,
           ),
       ),
     );
@@ -134,13 +139,9 @@ export class QueryResultGettersFactory {
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
+    isNewRelationEnabled: boolean,
   ): Promise<ObjectRecord> {
     const objectMetadataMapItem = objectMetadataMaps.byId[objectMetadataItemId];
-
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      workspaceId,
-    );
 
     const handler = this.getHandler(objectMetadataMapItem.nameSingular);
 
@@ -191,6 +192,7 @@ export class QueryResultGettersFactory {
             relationObjectMetadataItem.id,
             objectMetadataMaps,
             workspaceId,
+            isNewRelationEnabled,
           );
       } else {
         if (!isDefined(relationField.relationTargetObjectMetadataId)) {
@@ -203,6 +205,7 @@ export class QueryResultGettersFactory {
             relationField.relationTargetObjectMetadataId,
             objectMetadataMaps,
             workspaceId,
+            isNewRelationEnabled,
           );
       }
     }
@@ -225,6 +228,7 @@ export class QueryResultGettersFactory {
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
+    isNewRelationEnabled: boolean,
   ) {
     if (isQueryResultFieldValueAConnection(queryResultField)) {
       return await this.processConnection(
@@ -232,6 +236,7 @@ export class QueryResultGettersFactory {
         objectMetadataItemId,
         objectMetadataMaps,
         workspaceId,
+        isNewRelationEnabled,
       );
     } else if (isQueryResultFieldValueANestedRecordArray(queryResultField)) {
       return await this.processNestedRecordArray(
@@ -239,6 +244,7 @@ export class QueryResultGettersFactory {
         objectMetadataItemId,
         objectMetadataMaps,
         workspaceId,
+        isNewRelationEnabled,
       );
     } else if (isQueryResultFieldValueARecordArray(queryResultField)) {
       return await this.processRecordArray(
@@ -246,6 +252,7 @@ export class QueryResultGettersFactory {
         objectMetadataItemId,
         objectMetadataMaps,
         workspaceId,
+        isNewRelationEnabled,
       );
     } else if (isQueryResultFieldValueARecord(queryResultField)) {
       return await this.processRecord(
@@ -253,6 +260,7 @@ export class QueryResultGettersFactory {
         objectMetadataItemId,
         objectMetadataMaps,
         workspaceId,
+        isNewRelationEnabled,
       );
     } else {
       this.logger.warn(
@@ -269,12 +277,14 @@ export class QueryResultGettersFactory {
     objectMetadataItem: ObjectMetadataInterface,
     workspaceId: string,
     objectMetadataMaps: ObjectMetadataMaps,
+    isNewRelationEnabled: boolean,
   ): Promise<any> {
     return await this.processQueryResultField(
       result,
       objectMetadataItem.id,
       objectMetadataMaps,
       workspaceId,
+      isNewRelationEnabled,
     );
   }
 

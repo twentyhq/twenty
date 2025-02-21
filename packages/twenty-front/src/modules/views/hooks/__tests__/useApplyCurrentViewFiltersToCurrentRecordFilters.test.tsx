@@ -10,10 +10,11 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { View } from '@/views/types/View';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { act } from 'react';
 import { isDefined } from 'twenty-shared';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '../useApplyCurrentViewFiltersToCurrentRecordFilters';
 
@@ -51,6 +52,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     type: ViewType.Table,
     key: null,
     isCompact: false,
+    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
     viewFields: [],
     viewGroups: [],
     viewSorts: [],

@@ -1,8 +1,4 @@
-import {
-  WorkflowAction,
-  WorkflowTrigger,
-  WorkflowVersion,
-} from '@/workflow/types/Workflow';
+import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionFormCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormCreateRecord';
@@ -25,30 +21,34 @@ const WorkflowEditActionFormServerlessFunction = lazy(() =>
   })),
 );
 
-type WorkflowStepDetailProps =
+type WorkflowStepDetailProps = {
+  stepId: string;
+  trigger: WorkflowTrigger | null;
+  steps: Array<WorkflowAction> | null;
+} & (
   | {
-      stepId: string;
-      workflowVersion: WorkflowVersion;
       readonly: true;
       onTriggerUpdate?: undefined;
       onActionUpdate?: undefined;
     }
   | {
       stepId: string;
-      workflowVersion: WorkflowVersion;
       readonly?: false;
       onTriggerUpdate: (trigger: WorkflowTrigger) => void;
       onActionUpdate: (action: WorkflowAction) => void;
-    };
+    }
+);
 
 export const WorkflowStepDetail = ({
   stepId,
-  workflowVersion,
+  trigger,
+  steps,
   ...props
 }: WorkflowStepDetailProps) => {
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
-    workflowVersion,
+    trigger,
+    steps,
   });
   if (!isDefined(stepDefinition) || !isDefined(stepDefinition.definition)) {
     return null;

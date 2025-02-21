@@ -13,7 +13,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, __dirname, '');
+
+  console.log(__dirname);
 
   const {
     REACT_APP_SERVER_BASE_URL,

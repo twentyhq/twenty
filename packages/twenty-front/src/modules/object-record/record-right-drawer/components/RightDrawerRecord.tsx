@@ -8,6 +8,7 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -46,30 +47,34 @@ export const RightDrawerRecord = () => {
     <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: `record-show-${objectRecordId}` }}
     >
-      <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: `record-show-${objectRecordId}`,
-        }}
+      <RecordSortsComponentInstanceContext.Provider
+        value={{ instanceId: `record-show-${objectRecordId}` }}
       >
-        <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: `record-show-${objectRecordId}` }}
+        <ContextStoreComponentInstanceContext.Provider
+          value={{
+            instanceId: `record-show-${objectRecordId}`,
+          }}
         >
-          <StyledRightDrawerRecord isMobile={isMobile}>
-            <RecordFieldValueSelectorContextProvider>
-              {!isNewViewableRecordLoading && (
-                <RecordValueSetterEffect recordId={objectRecordId} />
-              )}
-              <RecordShowContainer
-                objectNameSingular={objectNameSingular}
-                objectRecordId={objectRecordId}
-                loading={false}
-                isInRightDrawer={true}
-                isNewRightDrawerItemLoading={isNewViewableRecordLoading}
-              />
-            </RecordFieldValueSelectorContextProvider>
-          </StyledRightDrawerRecord>
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: `record-show-${objectRecordId}` }}
+          >
+            <StyledRightDrawerRecord isMobile={isMobile}>
+              <RecordFieldValueSelectorContextProvider>
+                {!isNewViewableRecordLoading && (
+                  <RecordValueSetterEffect recordId={objectRecordId} />
+                )}
+                <RecordShowContainer
+                  objectNameSingular={objectNameSingular}
+                  objectRecordId={objectRecordId}
+                  loading={false}
+                  isInRightDrawer={true}
+                  isNewRightDrawerItemLoading={isNewViewableRecordLoading}
+                />
+              </RecordFieldValueSelectorContextProvider>
+            </StyledRightDrawerRecord>
+          </ActionMenuComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </RecordSortsComponentInstanceContext.Provider>
     </RecordFiltersComponentInstanceContext.Provider>
   );
 };

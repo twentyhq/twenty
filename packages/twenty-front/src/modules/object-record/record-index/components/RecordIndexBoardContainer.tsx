@@ -6,6 +6,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 
 type RecordIndexBoardContainerProps = {
@@ -50,6 +51,7 @@ export const RecordIndexBoardContainer = ({
       }}
     >
       <RecordBoard />
+      <RecordIndexRemoveSortingModal recordIndexId={recordBoardId} />
     </RecordBoardContext.Provider>
   );
 };

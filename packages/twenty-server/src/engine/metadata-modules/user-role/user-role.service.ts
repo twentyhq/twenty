@@ -109,7 +109,7 @@ export class UserRoleService {
   }: {
     userWorkspaceIds: string[];
     workspaceId: string;
-  }): Promise<Map<string, RoleDTO[]>> {
+  }): Promise<Map<string, RoleEntity[]>> {
     if (!userWorkspaceIds.length) {
       return new Map();
     }
@@ -128,7 +128,7 @@ export class UserRoleService {
       return new Map();
     }
 
-    const rolesMap = new Map<string, RoleDTO[]>();
+    const rolesMap = new Map<string, RoleEntity[]>();
 
     for (const userWorkspaceId of userWorkspaceIds) {
       const userWorkspaceRolesOfUserWorkspace = allUserWorkspaceRoles.filter(
