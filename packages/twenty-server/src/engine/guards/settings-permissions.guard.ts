@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -19,7 +19,7 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 export const SettingsPermissionsGuard = (
-  requiredPermission: SettingsFeatures,
+  requiredPermission: SettingsPermissions,
 ): Type<CanActivate> => {
   @Injectable()
   class SettingsPermissionsMixin implements CanActivate {

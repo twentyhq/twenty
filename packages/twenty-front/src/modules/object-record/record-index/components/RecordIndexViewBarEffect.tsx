@@ -23,27 +23,21 @@ export const RecordIndexViewBarEffect = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions, sortDefinitions } =
+  const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const {
-    setViewObjectMetadataId,
-    setAvailableSortDefinitions,
-    setAvailableFieldDefinitions,
-  } = useInitViewBar(viewBarId);
+  const { setViewObjectMetadataId, setAvailableFieldDefinitions } =
+    useInitViewBar(viewBarId);
 
   useEffect(() => {
     if (isUndefinedOrNull(objectMetadataItem)) {
       return;
     }
     setViewObjectMetadataId?.(objectMetadataItem.id);
-    setAvailableSortDefinitions?.(sortDefinitions);
     setAvailableFieldDefinitions?.(columnDefinitions);
   }, [
     setViewObjectMetadataId,
     objectMetadataItem,
-    setAvailableSortDefinitions,
-    sortDefinitions,
     setAvailableFieldDefinitions,
     columnDefinitions,
   ]);

@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilValue } from 'recoil';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldValueReadOnly } from '../utils/isFieldValueReadOnly';
@@ -20,11 +21,14 @@ export const useIsFieldValueReadOnly = () => {
     objectNameSingular: metadata.objectMetadataNameSingular ?? '',
   });
 
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   return isFieldValueReadOnly({
     objectNameSingular: metadata.objectMetadataNameSingular,
     fieldName: metadata.fieldName,
     fieldType: type,
     isObjectRemote: objectMetadataItem.isRemote,
     isRecordDeleted: recordFromStore?.deletedAt,
+    hasObjectReadOnlyPermission,
   });
 };

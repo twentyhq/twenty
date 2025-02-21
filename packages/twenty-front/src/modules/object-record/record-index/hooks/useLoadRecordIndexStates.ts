@@ -1,8 +1,8 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
@@ -10,6 +10,7 @@ import { recordIndexFiltersState } from '@/object-record/record-index/states/rec
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
@@ -48,6 +49,9 @@ export const useLoadRecordIndexStates = () => {
     recordIndexIsCompactModeActiveState,
   );
   const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
+  const setRecordIndexOpenRecordIn = useSetRecoilState(
+    recordIndexOpenRecordInState,
+  );
   const setRecordIndexViewKanbanFieldMetadataIdState = useSetRecoilState(
     recordIndexKanbanFieldMetadataIdState,
   );
@@ -77,9 +81,13 @@ export const useLoadRecordIndexStates = () => {
           )
           .getValue();
 
-        const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-          fields: activeFieldMetadataItems,
-        });
+        const sortableFieldMetadataItems = snapshot
+          .getLoadable(
+            availableFieldMetadataItemsForSortFamilySelector({
+              objectMetadataItemId: objectMetadataItem.id,
+            }),
+          )
+          .getValue();
 
         const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
           activeFieldMetadataItems
@@ -97,9 +105,12 @@ export const useLoadRecordIndexStates = () => {
                   (fieldMetadataItem) =>
                     fieldMetadataItem.id === column.fieldMetadataId,
                 );
-              const existsInSortDefinitions = sortDefinitions.some(
-                (sort) => sort.fieldMetadataId === column.fieldMetadataId,
+
+              const existsInSortDefinitions = sortableFieldMetadataItems.some(
+                (fieldMetadataItem) =>
+                  fieldMetadataItem.id === column.fieldMetadataId,
               );
+
               return {
                 ...column,
                 isFilterable: existsInFilterDefinitions,
@@ -224,24 +235,15 @@ export const useLoadRecordIndexStates = () => {
           ),
         }));
 
-        const activeFieldMetadataItems = objectMetadataItem.fields.filter(
-          ({ isActive, isSystem }) => isActive && !isSystem,
-        );
-
-        const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-          fields: activeFieldMetadataItems,
-        });
-
         set(
           tableSortsComponentState.atomFamily({
             instanceId: recordIndexId,
           }),
-          mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+          mapViewSortsToSorts(view.viewSorts),
         );
-        setRecordIndexSorts(
-          mapViewSortsToSorts(view.viewSorts, sortDefinitions),
-        );
+        setRecordIndexSorts(mapViewSortsToSorts(view.viewSorts));
         setRecordIndexViewType(view.type);
+        setRecordIndexOpenRecordIn(view.openRecordIn);
         setRecordIndexViewKanbanFieldMetadataIdState(
           view.kanbanFieldMetadataId,
         );
@@ -272,6 +274,7 @@ export const useLoadRecordIndexStates = () => {
       setRecordIndexViewKanbanAggregateOperationState,
       setRecordIndexViewKanbanFieldMetadataIdState,
       setRecordIndexViewType,
+      setRecordIndexOpenRecordIn,
     ],
   );
 

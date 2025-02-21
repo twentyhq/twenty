@@ -11,12 +11,12 @@ import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-p
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-data.dto';
-import { AdminPanelIndicatorHealthStatusInputEnum } from './dtos/admin-panel-indicator-health-status.input';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -70,11 +70,11 @@ export class AdminPanelResolver {
 
   @Query(() => AdminPanelHealthServiceData)
   async getIndicatorHealthStatus(
-    @Args('indicatorName', {
-      type: () => AdminPanelIndicatorHealthStatusInputEnum,
+    @Args('indicatorId', {
+      type: () => HealthIndicatorId,
     })
-    indicatorName: AdminPanelIndicatorHealthStatusInputEnum,
+    indicatorId: HealthIndicatorId,
   ): Promise<AdminPanelHealthServiceData> {
-    return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorName);
+    return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
   }
 }

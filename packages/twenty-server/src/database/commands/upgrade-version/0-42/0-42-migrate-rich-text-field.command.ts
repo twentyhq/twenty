@@ -64,6 +64,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -71,12 +72,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     @InjectRepository(FeatureFlag, 'core')
     protected readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   @Option({
@@ -105,23 +105,25 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       this.logger.setVerbose(options.verbose ?? false);
     }
 
-    try {
-      for (const [index, workspaceId] of workspaceIds.entries()) {
+    for (const [index, workspaceId] of workspaceIds.entries()) {
+      try {
         await this.processWorkspace({
           workspaceId,
           index,
           total: workspaceIds.length,
         });
-
-        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-          workspaceId,
+      } catch (error) {
+        this.logger.log(
+          chalk.red(`Error in workspace ${workspaceId}: ${error}`),
         );
       }
 
-      this.logger.log(chalk.green('Command completed!'));
-    } catch (error) {
-      this.logger.log(chalk.red('Error in workspace'));
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
     }
+
+    this.logger.log(chalk.green('Command completed!'));
   }
 
   private async processWorkspace({
@@ -170,9 +172,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         );
       }
 
-      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-        workspaceId,
-      );
       this.logger.log(
         chalk.green(`Command completed for workspace ${workspaceId}`),
       );

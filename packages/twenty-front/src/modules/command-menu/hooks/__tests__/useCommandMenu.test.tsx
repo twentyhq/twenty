@@ -192,6 +192,7 @@ describe('useCommandMenu', () => {
 
     act(() => {
       result.current.commandMenu.goBackFromCommandMenu();
+      result.current.commandMenu.onCommandMenuCloseAnimationComplete();
     });
 
     expect(result.current.commandMenuNavigationStack).toEqual([]);

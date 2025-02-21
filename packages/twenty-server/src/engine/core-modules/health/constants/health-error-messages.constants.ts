@@ -9,4 +9,7 @@ export const HEALTH_ERROR_MESSAGES = {
   MESSAGE_SYNC_TIMEOUT: 'Message sync check timeout',
   MESSAGE_SYNC_CHECK_FAILED: 'Message sync check failed',
   MESSAGE_SYNC_HIGH_FAILURE_RATE: 'High failure rate in message sync jobs',
+  CALENDAR_SYNC_TIMEOUT: 'Calendar sync check timeout',
+  CALENDAR_SYNC_CHECK_FAILED: 'Calendar sync check failed',
+  CALENDAR_SYNC_HIGH_FAILURE_RATE: 'High failure rate in calendar sync jobs',
 } as const;

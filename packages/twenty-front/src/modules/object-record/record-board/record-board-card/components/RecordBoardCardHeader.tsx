@@ -1,42 +1,45 @@
-import {
-  AvatarChipVariant,
-  Checkbox,
-  CheckboxVariant,
-  LightIconButton,
-  IconEye,
-  IconEyeOff,
-} from 'twenty-ui';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeaderContainer';
-import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
-import styled from '@emotion/styled';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
+import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
+import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import {
   FieldContext,
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { useRecoilValue } from 'recoil';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
+import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import styled from '@emotion/styled';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import {
+  AvatarChipVariant,
+  Checkbox,
+  CheckboxVariant,
+  IconEye,
+  IconEyeOff,
+  LightIconButton,
+} from 'twenty-ui';
 
 const StyledTextInput = styled(TextInput)`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -116,6 +119,12 @@ export const RecordBoardCardHeader = ({
     return [updateEntity, { loading: false }];
   };
 
+  const recordIndexOpenRecordIn = useRecoilValue(
+    recordIndexOpenRecordInSelector,
+  );
+
+  const { openRecordInCommandMenu } = useCommandMenu();
+
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
       <StopPropagationContainer>
@@ -178,7 +187,21 @@ export const RecordBoardCardHeader = ({
             record={record as ObjectRecord}
             variant={AvatarChipVariant.Transparent}
             maxWidth={150}
-            to={indexIdentifierUrl(recordId)}
+            onClick={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? () => {
+                    openRecordInCommandMenu({
+                      recordId,
+                      objectNameSingular: objectMetadataItem.nameSingular,
+                    });
+                  }
+                : undefined
+            }
+            to={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
+                ? indexIdentifierUrl(recordId)
+                : undefined
+            }
           />
         )}
       </StopPropagationContainer>

@@ -19,6 +19,7 @@ type RecordTableEmptyStateDisplayButtonProps = {
   ButtonIcon: IconComponent;
   buttonTitle: string;
   onClick: () => void;
+  buttonIsDisabled?: boolean;
 };
 
 type RecordTableEmptyStateDisplayProps = {
@@ -54,6 +55,7 @@ export const RecordTableEmptyStateDisplay = (
           title={props.buttonTitle}
           variant={'secondary'}
           onClick={props.onClick}
+          disabled={props.buttonIsDisabled}
         />
       )}
     </AnimatedPlaceholderEmptyContainer>

@@ -10,6 +10,7 @@ import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-ver
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
 import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 type Upgrade042CommandCustomOptions = {
@@ -25,13 +26,14 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly migrateRichTextFieldCommand: MigrateRichTextFieldCommand,
     private readonly fixBodyV2ViewFieldPositionCommand: FixBodyV2ViewFieldPositionCommand,
     private readonly limitAmountOfViewFieldCommand: LimitAmountOfViewFieldCommand,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly standardizationOfActorCompositeContextType: StandardizationOfActorCompositeContextTypeCommand,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   @Option({

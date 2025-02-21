@@ -1,9 +1,9 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useRecoilValue } from 'recoil';
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 export const useHasSettingsPermission = (
-  settingsPermission?: SettingsFeatures,
+  settingsPermission?: SettingsPermissions,
 ) => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 

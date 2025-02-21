@@ -20,11 +20,14 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared';
 
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useNavigate } from 'react-router-dom';
 import { IconList } from 'twenty-ui';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -75,6 +78,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
+  const { openRecordInCommandMenu } = useCommandMenu();
+
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
@@ -115,7 +120,20 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         ) {
           leaveTableFocus();
 
-          navigate(indexIdentifierUrl(recordId));
+          const openRecordIn = snapshot
+            .getLoadable(recordIndexOpenRecordInSelector)
+            .getValue();
+
+          if (openRecordIn === ViewOpenRecordInType.RECORD_PAGE) {
+            navigate(indexIdentifierUrl(recordId));
+          }
+
+          if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+            openRecordInCommandMenu({
+              recordId,
+              objectNameSingular,
+            });
+          }
 
           return;
         }
@@ -170,14 +188,15 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       moveEditModeToTableCellPosition,
       initDraftValue,
       toggleClickOutsideListener,
+      setActiveDropdownFocusIdAndMemorizePrevious,
       leaveTableFocus,
       navigate,
       indexIdentifierUrl,
+      openRecordInCommandMenu,
       setViewableRecordId,
       setViewableRecordNameSingular,
       openRightDrawer,
       setHotkeyScope,
-      setActiveDropdownFocusIdAndMemorizePrevious,
     ],
   );
 

@@ -8,7 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { isDefined, SettingsFeatures } from 'twenty-shared';
+import { isDefined, SettingsPermissions } from 'twenty-shared';
 
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
@@ -22,7 +22,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
-@UseGuards(SettingsPermissionsGuard(SettingsFeatures.ROLES))
+@UseGuards(SettingsPermissionsGuard(SettingsPermissions.ROLES))
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class RoleResolver {
   constructor(
