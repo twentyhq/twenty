@@ -6,7 +6,7 @@ import assert from 'assert';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import {
   isDefined,
-  SettingsFeatures,
+  SettingsPermissions,
   WorkspaceActivationStatus,
 } from 'twenty-shared';
 import { Repository } from 'typeorm';
@@ -416,7 +416,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          _setting: SettingsFeatures.SECURITY,
+          _setting: SettingsPermissions.SECURITY,
           workspaceId: workspaceId,
         });
 
@@ -452,7 +452,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
-          _setting: SettingsFeatures.WORKSPACE,
+          _setting: SettingsPermissions.WORKSPACE,
         });
 
       if (!userHasPermission) {

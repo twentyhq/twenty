@@ -1,4 +1,4 @@
-export enum SettingsFeatures {
+export enum SettingsPermissions {
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_USERS = 'WORKSPACE_USERS',

@@ -1804,7 +1804,7 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY'
 }
 
-export enum SettingsFeatures {
+export enum SettingsPermissions {
   ADMIN_PANEL = 'ADMIN_PANEL',
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
@@ -2130,7 +2130,7 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
-  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
+  settingsPermissions?: Maybe<Array<SettingsPermissions>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];

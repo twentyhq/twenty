@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { PermissionsOnAllObjectRecords, SettingsFeatures } from 'twenty-shared';
+import {
+  PermissionsOnAllObjectRecords,
+  SettingsPermissions,
+} from 'twenty-shared';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
@@ -25,7 +28,7 @@ export class PermissionsService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<{
-    settingsPermissions: Record<SettingsFeatures, boolean>;
+    settingsPermissions: Record<SettingsPermissions, boolean>;
     objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
   }> {
     const [roleOfUserWorkspace] = await this.userRoleService
@@ -41,12 +44,12 @@ export class PermissionsService {
       hasPermissionOnSettingFeature = true;
     }
 
-    const settingsPermissionsMap = Object.keys(SettingsFeatures).reduce(
+    const settingsPermissionsMap = Object.keys(SettingsPermissions).reduce(
       (acc, feature) => ({
         ...acc,
         [feature]: hasPermissionOnSettingFeature,
       }),
-      {} as Record<SettingsFeatures, boolean>,
+      {} as Record<SettingsPermissions, boolean>,
     );
 
     const objectRecordsPermissionsMap: Record<
@@ -76,7 +79,7 @@ export class PermissionsService {
   }: {
     userWorkspaceId: string;
     workspaceId: string;
-    _setting: SettingsFeatures;
+    _setting: SettingsPermissions;
   }): Promise<boolean> {
     const [roleOfUserWorkspace] = await this.userRoleService
       .getRolesByUserWorkspaces({
