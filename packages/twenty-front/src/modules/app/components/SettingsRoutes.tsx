@@ -6,6 +6,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsFeatures } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { SettingsApiKeys } from '~/pages/settings/developers/SettingsApiKeys';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -342,6 +343,10 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       </Route>
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
+      <Route
+        path={SettingsPath.DevelopersApiKey}
+        element={<SettingsApiKeys />}
+      />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}
