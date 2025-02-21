@@ -62,12 +62,13 @@ export const ApiPlaygroundSetupForm = ({
             fullWidth
             dropdownId="apiKey"
             label="API Key"
-            options={[
-              { value: 'core', label: 'Core' },
-              { value: 'metadata', label: 'Metadata' },
-            ]}
+            options={apiKeys.map((apiKey) => ({value: apiKey.id, label: apiKey.name }))}
             value={value}
             onChange={onChange}
+            callToActionButton={{ 
+              text: 'Create API Key',
+              onClick: () => console.log("HA")
+            }}
           />
         )}
       />
