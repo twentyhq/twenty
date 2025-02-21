@@ -30,7 +30,8 @@ type ApiPlaygroundFormProps = {
 };
 
 const StyledInputsContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 0.5fr;
   align-items: end;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -59,7 +60,6 @@ export const ApiPlaygroundSetupForm = ({
         control={control}
         render={({ field: { onChange, value } }) => (
           <Select
-            fullWidth
             dropdownId="apiKey"
             label="API Key"
             options={apiKeys.map((apiKey) => ({value: apiKey.id, label: apiKey.name }))}
@@ -77,7 +77,6 @@ export const ApiPlaygroundSetupForm = ({
         control={control}
         render={({ field: { onChange, value } }) => (
           <Select
-            fullWidth
             dropdownId="schema"
             label="Schema"
             options={[
@@ -94,7 +93,6 @@ export const ApiPlaygroundSetupForm = ({
         control={control}
         render={({ field: { onChange, value } }) => (
           <Select
-            fullWidth
             dropdownId="apiPlaygroundType"
             label="API"
             options={[
