@@ -52,6 +52,7 @@ import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
 import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
+import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -88,6 +89,7 @@ import { FileModule } from './file/file.module';
     AgentModule,
     InboxModule,
     GoogleStorageModule,
+    TelephonyModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [EnvironmentService],
