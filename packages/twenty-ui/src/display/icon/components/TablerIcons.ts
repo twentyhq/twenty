@@ -52,6 +52,7 @@ export {
   IconClockPlay,
   IconClockShare,
   IconCode,
+  IconStepInto,
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,
