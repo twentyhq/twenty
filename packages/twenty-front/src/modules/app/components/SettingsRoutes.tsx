@@ -296,7 +296,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            requiredFeatureFlag={FeatureFlagKey.IsBillingPlansEnabled}
+            settingsPermission={SettingsFeatures.WORKSPACE}
           />
         }
       >

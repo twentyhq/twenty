@@ -403,9 +403,19 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       return null;
     }
 
-    return await serverBlockNoteEditor.blocksToMarkdownLossy(
-      jsonParsedblocknoteFieldValue,
-    );
+    let markdown: string | null = null;
+
+    try {
+      markdown = await serverBlockNoteEditor.blocksToMarkdownLossy(
+        jsonParsedblocknoteFieldValue,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Error converting blocknote to markdown for ${blocknoteFieldValue}`,
+      );
+    }
+
+    return markdown;
   }
 
   private async migrateToNewRichTextFieldsColumn({
