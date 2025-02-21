@@ -120,7 +120,7 @@ export const ApiPlaygroundSetupForm = () => {
             onChange={onChange}
             callToActionButton={{ 
               text: 'Create API Key',
-              onClick: () => console.log("HA")
+              onClick: () => navigateSettings(SettingsPath.DevelopersNewApiKey)
             }}
           />
         )}
