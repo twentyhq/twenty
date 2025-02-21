@@ -2,9 +2,9 @@
 
 import { gql } from '@apollo/client';
 
-export const LIST_WORKSPACE_SSO_IDENTITY_PROVIDERS = gql`
-  query ListSSOIdentityProvidersByWorkspaceId {
-    listSSOIdentityProvidersByWorkspaceId {
+export const GET_SSO_IDENTITY_PROVIDERS = gql`
+  query GetSSOIdentityProviders {
+    getSSOIdentityProviders {
       type
       id
       name

@@ -10,6 +10,14 @@ sectionInfo: Learn how to connect Twenty to your other tools.
 
 The system links emails from known contacts directly to their CRM records, keeping all communication up to date. It's important to avoid syncing emails from impersonal addresses such as team@ and support@, or from personal email providers like Gmail or Outlook, to ensure privacy and relevance.
 
+
+### Internal Emails
+
+Internal emails are emails between two people in the same organization. We consider an email to be internal when every participant shares the same domain: *from*, *to*, *cc* and *bcc*. **Internal emails are not synced to the CRM.**
+
+If you use a personal email provider like `@gmail.com`, all your emails will be synced to the CRM. 
+
+
 ### Reading an Email
 
 Go to a specific `Person` or `Company` record page, then select the `Emails` tab to view synced emails instantly. Click on an email to open it.
@@ -42,7 +50,11 @@ From here, you can choose different levels of sharing for outbound and inbound e
 
 ### Contacts Auto-Creation
 
-Contact auto-creation is a handy built-in feature. This default feature automatically adds email contacts not already in your CRM, boosting your contact list without any extra effort on your part. To manage this feature, go to `Settings` > `Email`. You can toggle it on or off. Remember, turning it off means that all new email contacts must be manually entered into the CRM.
+Contact auto-creation is a handy built-in feature. This default feature automatically adds email contacts not already in your CRM, boosting your contact list without any extra effort on your part. To manage this feature, go to `Settings` > `Email`. You can toggle it on or off. Remember, turning it off means that all new email contacts must be manually entered into the CRM.  
+
+So if you delete a contact from Twenty, it will not be re-imported when receiving a new email from that contact.  
+
+Note that internal emails are not synced to the CRM, so your colleagues won't be automatically created.
 
 <img src="/images/user-guide/emails/auto-creation.png" style={{width:'100%'}}/>
 

@@ -3,6 +3,8 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import { OnboardingStatus } from '~/generated/graphql';
 
@@ -47,8 +49,30 @@ jest.mocked(useDefaultHomePagePath).mockReturnValue({
   defaultHomePagePath,
 });
 
+jest.mock('react-router-dom');
+const setupMockUseParams = (objectNamePlural?: string) => {
+  jest
+    .mocked(useParams)
+    .mockReturnValueOnce({ objectNamePlural: objectNamePlural ?? '' });
+};
+
+jest.mock('recoil');
+const setupMockRecoil = (objectNamePlural?: string) => {
+  jest
+    .mocked(useRecoilValue)
+    .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }]);
+};
+
 // prettier-ignore
-const testCases = [
+const testCases: {
+  loc: AppPath;
+  isLoggedIn: boolean;
+  isWorkspaceSuspended: boolean;
+  onboardingStatus: OnboardingStatus | undefined;
+  res: string | undefined;
+  objectNamePluralFromParams?: string;
+  objectNamePluralFromMetadata?: string;
+}[] = [
   { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
   { loc: AppPath.Verify, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
@@ -183,6 +207,8 @@ const testCases = [
   { loc: AppPath.RecordIndexPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
   { loc: AppPath.RecordIndexPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
   { loc: AppPath.RecordIndexPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.RecordIndexPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'existing-object', objectNamePluralFromMetadata: 'existing-object' },
+  { loc: AppPath.RecordIndexPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: AppPath.NotFound, objectNamePluralFromParams: 'non-existing-object', objectNamePluralFromMetadata: 'existing-object' },
 
   { loc: AppPath.RecordShowPage, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.RecordShowPage, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
@@ -248,6 +274,9 @@ describe('usePageChangeEffectNavigateLocation', () => {
         testCase.isWorkspaceSuspended,
       );
       setupMockIsLogged(testCase.isLoggedIn);
+      setupMockUseParams(testCase.objectNamePluralFromParams);
+      setupMockRecoil(testCase.objectNamePluralFromMetadata);
+
       expect(usePageChangeEffectNavigateLocation()).toEqual(testCase.res);
     });
   });
@@ -257,7 +286,9 @@ describe('usePageChangeEffectNavigateLocation', () => {
       expect(testCases.length).toEqual(
         (Object.keys(AppPath).length - UNTESTED_APP_PATHS.length) *
           (Object.keys(OnboardingStatus).length +
-            ['isWorkspaceSuspended:true', 'isWorkspaceSuspended:false'].length),
+            ['isWorkspaceSuspended:true', 'isWorkspaceSuspended:false']
+              .length) +
+          ['nonExistingObjectInParam', 'existingObjectInParam:false'].length,
       );
     });
   });

@@ -7,5 +7,9 @@ export const ROLE_FRAGMENT = gql`
     description
     canUpdateAllSettings
     isEditable
+    canReadAllObjectRecords
+    canUpdateAllObjectRecords
+    canSoftDeleteAllObjectRecords
+    canDestroyAllObjectRecords
   }
 `;

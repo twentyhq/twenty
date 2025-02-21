@@ -1,5 +1,5 @@
 import {
-  WorkflowRunOutput,
+  WorkflowRunOutputStepsOutput,
   WorkflowStep,
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
@@ -21,11 +21,11 @@ import { v4 } from 'uuid';
 export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
-  output,
+  stepsOutput,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
-  output: WorkflowRunOutput | null;
+  stepsOutput: WorkflowRunOutputStepsOutput | undefined;
 }): WorkflowRunDiagram => {
   const triggerBase = getWorkflowDiagramTriggerNode({ trigger });
 
@@ -78,7 +78,7 @@ export const generateWorkflowRunDiagram = ({
       });
     }
 
-    const runResult = output?.steps[nodeId];
+    const runResult = stepsOutput?.[nodeId];
 
     let runStatus: WorkflowDiagramRunStatus;
     if (skippedExecution) {

@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
@@ -32,7 +32,7 @@ export const useUpsertCombinedViewSorts = (viewBarComponentId?: string) => {
 
   const upsertCombinedViewSort = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (upsertedSort: Sort) => {
+      async (upsertedSort: RecordSort) => {
         const currentViewId = getSnapshotValue(
           snapshot,
           currentViewIdCallbackState,

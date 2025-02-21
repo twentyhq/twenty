@@ -11,14 +11,6 @@ export const getRelationObjectMetadataNameSingular = ({
   return field.relationDefinition?.targetObjectMetadata.nameSingular;
 };
 
-export const getRelationObjectMetadataNamePlural = ({
-  field,
-}: {
-  field: ObjectMetadataItem['fields'][0];
-}): string | undefined => {
-  return field.relationDefinition?.targetObjectMetadata.namePlural;
-};
-
 export const getFilterTypeFromFieldType = (
   fieldType: FieldMetadataType,
 ): FilterableFieldType => {

@@ -1,8 +1,8 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 
 const sortDefinition: SortDefinition = {
   fieldMetadataId: 'id',
@@ -42,8 +42,9 @@ describe('turnSortsIntoOrderBy', () => {
   });
 
   it('should create OrderByField with single sort', () => {
-    const sorts: Sort[] = [
+    const sorts: RecordSort[] = [
       {
+        id: 'id',
         fieldMetadataId: 'field1',
         direction: 'asc',
         definition: sortDefinition,
@@ -56,13 +57,15 @@ describe('turnSortsIntoOrderBy', () => {
   });
 
   it('should create OrderByField with multiple sorts', () => {
-    const sorts: Sort[] = [
+    const sorts: RecordSort[] = [
       {
+        id: 'id',
         fieldMetadataId: 'field1',
         direction: 'asc',
         definition: sortDefinition,
       },
       {
+        id: 'id',
         fieldMetadataId: 'field2',
         direction: 'desc',
         definition: sortDefinition,
@@ -82,8 +85,9 @@ describe('turnSortsIntoOrderBy', () => {
   });
 
   it('should ignore if field not found', () => {
-    const sorts: Sort[] = [
+    const sorts: RecordSort[] = [
       {
+        id: 'id',
         fieldMetadataId: 'invalidField',
         direction: 'asc',
         definition: sortDefinition,
@@ -95,8 +99,9 @@ describe('turnSortsIntoOrderBy', () => {
   });
 
   it('should not return position for remotes', () => {
-    const sorts: Sort[] = [
+    const sorts: RecordSort[] = [
       {
+        id: 'id',
         fieldMetadataId: 'invalidField',
         direction: 'asc',
         definition: sortDefinition,
