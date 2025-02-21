@@ -1,49 +1,25 @@
-// import { styled } from '@linaria/react';
+import { LinkChip } from '@ui/display/chip/components/LinkChip';
 import {
-  AvatarChip,
-  AvatarChipProps,
-} from '@ui/display/chip/components/AvatarChip';
-import { UndecoratedLink } from '@ui/navigation';
-// import { Link } from 'react-router-dom';
+  AvatarChipsCommonProps,
+  userGetAvatarChipsBuilder,
+} from '@ui/display/chip/hooks/getAvatarChipBuilder';
 
-export type LinkAvatarChipProps = AvatarChipProps & { to: string };
+export type LinkAvatarChipProps = AvatarChipsCommonProps & { to: string };
 
-// const StyledLink = styled(Link)`
-//   text-decoration: none;
-// `;
+export const LinkAvatarChip = ({ to, ...commonProps }: LinkAvatarChipProps) => {
+  const { getLeftComponent, variant } = userGetAvatarChipsBuilder(commonProps);
 
-export const LinkAvatarChip = ({
-  to,
-  onClick,
-  name,
-  LeftIcon,
-  LeftIconColor,
-  avatarType,
-  avatarUrl,
-  className,
-  clickable,
-  isIconInverted,
-  maxWidth,
-  placeholderColorSeed,
-  size,
-  variant,
-}: LinkAvatarChipProps) => {
+  const { size, clickable, className, maxWidth, name } = commonProps;
   return (
-    <UndecoratedLink to={to} onClick={onClick}>
-      <AvatarChip
-        name={name}
-        LeftIcon={LeftIcon}
-        LeftIconColor={LeftIconColor}
-        avatarType={avatarType}
-        avatarUrl={avatarUrl}
-        className={className}
-        clickable={clickable}
-        isIconInverted={isIconInverted}
-        maxWidth={maxWidth}
-        placeholderColorSeed={placeholderColorSeed}
-        size={size}
-        variant={variant}
-      />
-    </UndecoratedLink>
+    <LinkChip
+      to={to}
+      label={name}
+      variant={variant}
+      size={size}
+      leftComponent={getLeftComponent}
+      clickable={clickable}
+      className={className}
+      maxWidth={maxWidth}
+    />
   );
 };
