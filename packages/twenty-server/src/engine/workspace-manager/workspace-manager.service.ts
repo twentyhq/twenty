@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -32,6 +32,8 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 @Injectable()
 export class WorkspaceManagerService {
+  private readonly logger = new Logger(WorkspaceManagerService.name);
+
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -71,7 +73,7 @@ export class WorkspaceManagerService {
 
     const schemaCreationEnd = performance.now();
 
-    console.log(
+    this.logger.log(
       `Schema creation took ${schemaCreationEnd - schemaCreationStart}ms`,
     );
 
@@ -89,7 +91,7 @@ export class WorkspaceManagerService {
 
     const dataSourceMetadataCreationEnd = performance.now();
 
-    console.log(
+    this.logger.log(
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
 
@@ -103,7 +105,7 @@ export class WorkspaceManagerService {
 
     const permissionsEnabledEnd = performance.now();
 
-    console.log(
+    this.logger.log(
       `Permissions enabled took ${permissionsEnabledEnd - permissionsEnabledStart}ms`,
     );
 
@@ -116,7 +118,7 @@ export class WorkspaceManagerService {
 
     const prefillStandardObjectsEnd = performance.now();
 
-    console.log(
+    this.logger.log(
       `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
     );
   }

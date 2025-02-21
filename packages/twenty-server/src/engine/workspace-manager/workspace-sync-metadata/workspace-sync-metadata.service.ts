@@ -92,7 +92,7 @@ export class WorkspaceSyncMetadataService {
 
       const workspaceObjectMigrationsEnd = performance.now();
 
-      console.log(
+      this.logger.log(
         `Workspace object migrations took ${workspaceObjectMigrationsEnd - workspaceObjectMigrationsStart}ms`,
       );
 
@@ -108,7 +108,7 @@ export class WorkspaceSyncMetadataService {
 
       const workspaceFieldMigrationsEnd = performance.now();
 
-      console.log(
+      this.logger.log(
         `Workspace field migrations took ${workspaceFieldMigrationsEnd - workspaceFieldMigrationsStart}ms`,
       );
 
@@ -124,7 +124,7 @@ export class WorkspaceSyncMetadataService {
 
       const workspaceRelationMigrationsEnd = performance.now();
 
-      console.log(
+      this.logger.log(
         `Workspace relation migrations took ${workspaceRelationMigrationsEnd - workspaceRelationMigrationsStart}ms`,
       );
 
@@ -140,7 +140,7 @@ export class WorkspaceSyncMetadataService {
 
       const workspaceIndexMigrationsEnd = performance.now();
 
-      console.log(
+      this.logger.log(
         `Workspace index migrations took ${workspaceIndexMigrationsEnd - workspaceIndexMigrationsStart}ms`,
       );
 
@@ -156,7 +156,7 @@ export class WorkspaceSyncMetadataService {
 
       const workspaceObjectMetadataIdentifiersEnd = performance.now();
 
-      console.log(
+      this.logger.log(
         `Workspace object metadata identifiers took ${workspaceObjectMetadataIdentifiersEnd - workspaceObjectMetadataIdentifiersStart}ms`,
       );
 
@@ -172,7 +172,7 @@ export class WorkspaceSyncMetadataService {
 
       const workspaceMigrationsSaveEnd = performance.now();
 
-      console.log(
+      this.logger.log(
         `Workspace migrations save took ${workspaceMigrationsSaveEnd - workspaceMigrationsSaveStart}ms`,
       );
 
@@ -201,7 +201,7 @@ export class WorkspaceSyncMetadataService {
       );
       const executeMigrationsEnd = performance.now();
 
-      console.log(
+      this.logger.log(
         `Execute migrations took ${executeMigrationsEnd - executeMigrationsStart}ms`,
       );
     } catch (error) {
