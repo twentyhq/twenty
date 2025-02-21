@@ -144,6 +144,7 @@ export const useCommandMenu = () => {
       page: CommandMenuPages.Root,
       pageTitle: 'Command Menu',
       pageIcon: IconDotsVertical,
+      resetNavigationStack: true,
     });
   }, [navigateCommandMenu]);
 
