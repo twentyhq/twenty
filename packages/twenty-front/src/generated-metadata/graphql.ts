@@ -102,6 +102,14 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
+export type ApprovedAccessDomain = {
+  __typename?: 'ApprovedAccessDomain';
+  createdAt: Scalars['DateTime']['output'];
+  domain: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  isValidated: Scalars['Boolean']['output'];
+};
+
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean']['output'];
@@ -300,6 +308,11 @@ export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime']['input'];
 };
 
+export type CreateApprovedAccessDomainInput = {
+  domain: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['String']['input'];
@@ -421,6 +434,10 @@ export type CustomDomainValidRecords = {
   customDomain: Scalars['String']['output'];
   id: Scalars['String']['output'];
   records: Array<CustomDomainRecord>;
+};
+
+export type DeleteApprovedAccessDomainInput = {
+  id: Scalars['String']['input'];
 };
 
 export type DeleteOneFieldInput = {
@@ -545,6 +562,7 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
@@ -833,6 +851,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
+  createApprovedAccessDomain: ApprovedAccessDomain;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
@@ -844,6 +863,7 @@ export type Mutation = {
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
+  deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
@@ -894,6 +914,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
+  validateApprovedAccessDomain: ApprovedAccessDomain;
 };
 
 
@@ -924,6 +945,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateApprovedAccessDomainArgs = {
+  input: CreateApprovedAccessDomainInput;
 };
 
 
@@ -979,6 +1005,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteApprovedAccessDomainArgs = {
+  input: DeleteApprovedAccessDomainInput;
 };
 
 
@@ -1214,6 +1245,11 @@ export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String']['input'];
 };
 
+
+export type MutationValidateApprovedAccessDomainArgs = {
+  input: ValidateApprovedAccessDomainInput;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime']['output'];
@@ -1382,6 +1418,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -2099,6 +2136,11 @@ export type UserWorkspace = {
   userId: Scalars['String']['output'];
   workspace?: Maybe<Workspace>;
   workspaceId: Scalars['String']['output'];
+};
+
+export type ValidateApprovedAccessDomainInput = {
+  approvedAccessDomainId: Scalars['String']['input'];
+  validationToken: Scalars['String']['input'];
 };
 
 export type ValidatePasswordResetToken = {
