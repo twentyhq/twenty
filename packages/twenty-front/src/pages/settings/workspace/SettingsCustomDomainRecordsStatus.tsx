@@ -50,9 +50,7 @@ export const SettingsCustomDomainRecordsStatus = () => {
   const rows = records.map<{ name: string; status: string; color: ThemeColor }>(
     (record) => {
       const foundRecord = customDomainRecords?.records.find(
-        ({ validationType }) => {
-          return validationType === record.validationType;
-        },
+        ({ validationType }) => validationType === record.validationType,
       );
       return {
         name: record.name,
