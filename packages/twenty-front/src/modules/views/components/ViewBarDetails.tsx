@@ -15,6 +15,7 @@ import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryP
 
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { SoftDeleteFilterChip } from '@/views/components/SoftDeleteFilterChip';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
@@ -22,9 +23,8 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
-import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
-import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared';
 
@@ -123,8 +123,8 @@ export const ViewBarDetails = ({
     currentRecordFiltersComponentState,
   );
 
-  const availableSortDefinitions = useRecoilComponentValueV2(
-    availableSortDefinitionsComponentState,
+  const currentRecordSorts = useRecoilComponentValueV2(
+    currentRecordSortsComponentState,
   );
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -206,19 +206,14 @@ export const ViewBarDetails = ({
               <StyledSeperator />
             </StyledSeperatorContainer>
           )}
-          {mapViewSortsToSorts(
-            currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [],
-            availableSortDefinitions,
-          ).map((recordSort) => (
+          {currentRecordSorts.map((recordSort) => (
             <EditableSortChip
               key={recordSort.fieldMetadataId}
               recordSort={recordSort}
             />
           ))}
           {isNonEmptyArray(recordFilters) &&
-            isNonEmptyArray(
-              currentViewWithCombinedFiltersAndSorts?.viewSorts,
-            ) && (
+            isNonEmptyArray(currentRecordSorts) && (
               <StyledSeperatorContainer>
                 <StyledSeperator />
               </StyledSeperatorContainer>

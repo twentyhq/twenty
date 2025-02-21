@@ -40,11 +40,6 @@ export const useHandleToggleColumnSort = ({
       const newSort: RecordSort = {
         id: v4(),
         fieldMetadataId,
-        definition: {
-          fieldMetadataId,
-          label: correspondingColumnDefinition.label,
-          iconName: correspondingColumnDefinition.iconName,
-        },
         direction: 'asc',
       };
 
