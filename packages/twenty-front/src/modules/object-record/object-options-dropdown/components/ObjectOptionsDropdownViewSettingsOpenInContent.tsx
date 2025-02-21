@@ -12,6 +12,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 
 export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
@@ -26,7 +27,7 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
         StartIcon={IconChevronLeft}
         onClick={() => onContentChange('viewSettings')}
       >
-        Open in
+        {t`Open in`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <MenuItemSelect
