@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,22 +15,31 @@ import {
   IconFolderRoot
 } from 'twenty-ui';
 import { z } from 'zod';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+const PlaygroundTypes = {
+  GRAPH_QL: "GraphQl",
+  REST: "Rest"
+} as const
+type PlaygroundTypes = (typeof PlaygroundTypes)[keyof typeof PlaygroundTypes]
+
+const PlaygroundSchemas = {
+  METADATA: "Metadata",
+  CORE: "Core"
+} as const
+type PlaygroundSchemas = (typeof PlaygroundSchemas)[keyof typeof PlaygroundSchemas]
 
 export const apiPlaygroundSetupFormSchema = z.object({
     apiKey: z.string(),
-    schema: z.string(),
-    apiPlayground: z.string()
+    schema: z.nativeEnum(PlaygroundSchemas),
+    apiPlayground: z.nativeEnum(PlaygroundTypes)
 })
 
 type ApiPlaygroundSetupFormValues = z.infer<
   typeof apiPlaygroundSetupFormSchema
 >;
 
-type ApiPlaygroundFormProps = {
-  onBlur?: () => void;
-};
-
-const StyledInputsContainer = styled.div`
+const StyledForm = styled.form`
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
   align-items: end;
@@ -38,12 +48,22 @@ const StyledInputsContainer = styled.div`
   width: 100%;
 `;
 
-export const ApiPlaygroundSetupForm = ({
-  onBlur,
-}: ApiPlaygroundFormProps) => {
-  const { t } = useLingui();
+const FormResponseToPathMap = {
+  [PlaygroundTypes.GRAPH_QL]: {
+    [PlaygroundSchemas.CORE]: SettingsPath.PlaygroundGraphQLCore,
+    [PlaygroundSchemas.METADATA]: SettingsPath.PlaygroundGraphQLMeta
+  },
+  [PlaygroundTypes.REST]: {
+    [PlaygroundSchemas.CORE]: SettingsPath.PlaygroundRestCore,
+    [PlaygroundSchemas.METADATA]: SettingsPath.PlaygroundRestMeta
+  }
+}
 
-  const { control } = useForm<ApiPlaygroundSetupFormValues>({
+export const ApiPlaygroundSetupForm = () => {
+  const { t } = useLingui();
+  const navigateSettings = useNavigateSettings();
+
+  const { control, handleSubmit, formState } = useForm<ApiPlaygroundSetupFormValues>({
       mode: 'onTouched',
       resolver: zodResolver(apiPlaygroundSetupFormSchema),
   });
@@ -53,8 +73,34 @@ export const ApiPlaygroundSetupForm = ({
       filter: { revokedAt: { is: 'NULL' } },
   });
 
+  const onSubmit = async (values: ApiPlaygroundSetupFormValues) => {
+    window.localStorage.setItem(
+      'TryIt_securitySchemeValues',
+      JSON.stringify({ bearerAuth: values.apiKey }),
+    );
+
+    window.localStorage.setItem(
+      'baseUrl',
+      JSON.stringify({ 
+        baseUrl: 'https://api.twenty.com', 
+        locationSetting: 'production' 
+      }),
+    );
+
+    window.localStorage.setItem(
+      'schema',
+      JSON.stringify({ 
+        schema: values.schema
+      }),
+    );
+
+    navigateSettings(
+      FormResponseToPathMap[values.apiPlayground][values.schema]
+    )    
+  };
+
   return (
-    <StyledInputsContainer>
+    <StyledForm onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name={'apiKey'}
         control={control}
@@ -85,8 +131,8 @@ export const ApiPlaygroundSetupForm = ({
             dropdownId="schema"
             label="Schema"
             options={[
-              { value: 'core', label: 'Core', Icon: IconFolderRoot },
-              { value: 'metadata', label: 'Metadata', Icon: IconBracketsAngle },
+              { value: PlaygroundSchemas.CORE, label: PlaygroundSchemas.CORE, Icon: IconFolderRoot },
+              { value: PlaygroundSchemas.METADATA, label: PlaygroundSchemas.METADATA, Icon: IconBracketsAngle },
             ]}
             value={value}
             onChange={onChange}
@@ -101,8 +147,8 @@ export const ApiPlaygroundSetupForm = ({
             dropdownId="apiPlaygroundType"
             label="API"
             options={[
-                { value: 'rest', label: 'REST', Icon: IconApi },
-                { value: 'graphql', label: 'GraphQL', Icon: IconBrandGraphql },
+                { value: PlaygroundTypes.REST, label: PlaygroundTypes.REST, Icon: IconApi },
+                { value: PlaygroundTypes.GRAPH_QL, label: PlaygroundTypes.GRAPH_QL, Icon: IconBrandGraphql },
             ]}
             value={value}
             onChange={onChange}
@@ -113,7 +159,8 @@ export const ApiPlaygroundSetupForm = ({
         title="Launch"
         variant="primary"
         accent="blue"
+        type='submit'
       />
-    </StyledInputsContainer>
+    </StyledForm>
   );
 };
