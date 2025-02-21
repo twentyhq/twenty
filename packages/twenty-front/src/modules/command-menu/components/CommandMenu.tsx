@@ -73,9 +73,9 @@ export const CommandMenu = () => {
     },
   ];
 
-  const selectableItems: Command[] = commandGroups
-    .flatMap((group) => group.items ?? [])
-    .filter(isDefined);
+  const selectableItems: Command[] = commandGroups.flatMap(
+    (group) => group.items ?? [],
+  );
 
   const selectableItemIds = selectableItems.map((item) => item.id);
 
