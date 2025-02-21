@@ -116,11 +116,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         this.logger.log(
           chalk.red(`Error in workspace ${workspaceId}: ${error}`),
         );
-      } finally {
-        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-          workspaceId,
-        );
       }
+
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
     }
 
     this.logger.log(chalk.green('Command completed!'));
@@ -172,9 +172,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         );
       }
 
-      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-        workspaceId,
-      );
       this.logger.log(
         chalk.green(`Command completed for workspace ${workspaceId}`),
       );
