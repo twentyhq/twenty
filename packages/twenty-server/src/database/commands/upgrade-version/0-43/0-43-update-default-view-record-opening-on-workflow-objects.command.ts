@@ -43,7 +43,7 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
       'Running command to update default view record opening on workflow objects to record page',
     );
 
-    this.executeByWorkspaceWithDataSource(
+    this.processEachWorkspaceWithWorkspaceDataSource(
       workspaceIds,
       async ({ workspaceId, index, total }) => {
         await this.processWorkspace(workspaceId, index, total);
@@ -87,14 +87,6 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
 
       await this.updateDefaultViewsRecordOpening(
         workflowObjectsMetadata.map((metadata) => metadata.id),
-        workspaceId,
-      );
-
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        workspaceId,
-      );
-
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
 

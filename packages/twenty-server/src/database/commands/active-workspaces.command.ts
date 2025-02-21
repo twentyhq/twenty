@@ -127,7 +127,7 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
     );
   }
 
-  protected async executeByWorkspaceWithDataSource(
+  protected async processEachWorkspaceWithWorkspaceDataSource(
     workspaceIds: string[],
     callback: ({
       workspaceId,
