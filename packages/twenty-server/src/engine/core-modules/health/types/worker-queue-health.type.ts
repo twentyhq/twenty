@@ -5,7 +5,7 @@ import { WorkerQueueMetrics } from 'src/engine/core-modules/health/types/worker-
 @ObjectType()
 export class WorkerQueueHealth {
   @Field(() => String)
-  name: string;
+  queueName: string;
 
   @Field(() => Number)
   workers: number;

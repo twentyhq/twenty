@@ -170,6 +170,7 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps,
         authContext.workspace.id,
         options.objectMetadataMaps,
+        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       );
 
       const resultWithGettersArray = Array.isArray(resultWithGetters)

@@ -113,7 +113,6 @@ export const AvatarChip = ({
   );
 
   if (!isDefined(to)) return chip;
-
   return (
     <StyledLink to={to} onClick={onClick}>
       {chip}

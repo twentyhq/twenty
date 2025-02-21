@@ -39,11 +39,11 @@ export const SettingsAdminQueueHealthButtons = ({
     <StyledQueueButtonsRow>
       {queues.map((queue) => (
         <StyledQueueHealthButton
-          key={queue.name}
-          onClick={() => toggleQueueVisibility(queue.name)}
-          title={queue.name}
+          key={queue.queueName}
+          onClick={() => toggleQueueVisibility(queue.queueName)}
+          title={queue.queueName}
           variant="secondary"
-          isSelected={selectedQueue === queue.name}
+          isSelected={selectedQueue === queue.queueName}
           status={queue.status}
         />
       ))}

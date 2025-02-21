@@ -12,6 +12,7 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useState } from 'react';
@@ -25,6 +26,8 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     const { resetTableRowSelection } = useRecordTable({
       recordTableId: objectMetadataItem.namePlural,
     });
+
+    const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
     const { destroyManyRecords } = useDestroyManyRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
@@ -86,6 +89,7 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     const isRemoteObject = objectMetadataItem.isRemote;
 
     const shouldBeRegistered =
+      !hasObjectReadOnlyPermission &&
       !isRemoteObject &&
       isDeletedFilterActive &&
       isDefined(contextStoreNumberOfSelectedRecords) &&

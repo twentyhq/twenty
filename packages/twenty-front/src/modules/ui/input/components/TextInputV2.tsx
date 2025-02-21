@@ -189,7 +189,7 @@ const TextInputV2Component = forwardRef<
       LeftIcon,
       autoComplete,
       maxLength,
-      sizeVariant = 'md',
+      sizeVariant = 'lg',
       inheritFontStyles = false,
       dataTestId,
       autoGrow = false,

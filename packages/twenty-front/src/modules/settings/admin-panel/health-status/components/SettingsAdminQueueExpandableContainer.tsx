@@ -43,7 +43,7 @@ export const SettingsAdminQueueExpandableContainer = ({
   selectedQueue: string | null;
 }) => {
   const selectedQueueData = queues.find(
-    (queue) => queue.name === selectedQueue,
+    (queue) => queue.queueName === selectedQueue,
   );
 
   return (
@@ -55,10 +55,12 @@ export const SettingsAdminQueueExpandableContainer = ({
         <>
           <StyledContainer>
             <SettingsListCard
-              items={[{ ...selectedQueueData, id: selectedQueueData.name }]}
+              items={[
+                { ...selectedQueueData, id: selectedQueueData.queueName },
+              ]}
               getItemLabel={(
                 item: AdminPanelWorkerQueueHealth & { id: string },
-              ) => item.name}
+              ) => item.queueName}
               isLoading={false}
               RowRightComponent={({
                 item,
