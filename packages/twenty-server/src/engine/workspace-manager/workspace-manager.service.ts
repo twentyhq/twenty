@@ -63,11 +63,19 @@ export class WorkspaceManagerService {
     workspaceId: string;
     userId: string;
   }): Promise<void> {
+    const schemaCreationStart = performance.now();
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
       );
 
+    const schemaCreationEnd = performance.now();
+
+    console.log(
+      `Schema creation took ${schemaCreationEnd - schemaCreationStart}ms`,
+    );
+
+    const dataSourceMetadataCreationStart = performance.now();
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
@@ -79,6 +87,13 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
+    const dataSourceMetadataCreationEnd = performance.now();
+
+    console.log(
+      `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
+    );
+
+    const permissionsEnabledStart = performance.now();
     const permissionsEnabled =
       await this.permissionsService.isPermissionsEnabled();
 
@@ -86,9 +101,23 @@ export class WorkspaceManagerService {
       await this.initPermissions({ workspaceId, userId });
     }
 
+    const permissionsEnabledEnd = performance.now();
+
+    console.log(
+      `Permissions enabled took ${permissionsEnabledEnd - permissionsEnabledStart}ms`,
+    );
+
+    const prefillStandardObjectsStart = performance.now();
+
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
       workspaceId,
+    );
+
+    const prefillStandardObjectsEnd = performance.now();
+
+    console.log(
+      `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
     );
   }
 
