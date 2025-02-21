@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -45,6 +47,7 @@ import {
   SignInUpBaseParams,
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -56,7 +59,6 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -424,12 +426,14 @@ export class AuthService {
     const html = render(emailTemplate, { pretty: true });
     const text = render(emailTemplate, { plainText: true });
 
+    i18n.activate(locale);
+
     this.emailService.send({
       from: `${this.environmentService.get(
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: user.email,
-      subject: 'Your Password Has Been Successfully Changed',
+      subject: t`Your Password Has Been Successfully Changed`,
       text,
       html,
     });

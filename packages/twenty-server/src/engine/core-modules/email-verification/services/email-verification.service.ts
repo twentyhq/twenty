@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -13,6 +15,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
+import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import {
   EmailVerificationException,
@@ -21,7 +24,6 @@ import {
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -40,6 +42,7 @@ export class EmailVerificationService {
     userId: string,
     email: string,
     workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
+    locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -57,7 +60,7 @@ export class EmailVerificationService {
 
     const emailData = {
       link: verificationLink.toString(),
-      locale: 'en' as keyof typeof APP_LOCALES,
+      locale,
     };
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
@@ -68,12 +71,14 @@ export class EmailVerificationService {
       plainText: true,
     });
 
+    i18n.activate(locale);
+
     await this.emailService.send({
       from: `${this.environmentService.get(
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: 'Welcome to Twenty: Please Confirm Your Email',
+      subject: t`Welcome to Twenty: Please Confirm Your Email`,
       text,
       html,
     });
@@ -84,6 +89,7 @@ export class EmailVerificationService {
   async resendEmailVerificationToken(
     email: string,
     workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
+    locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
@@ -125,7 +131,7 @@ export class EmailVerificationService {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
-    await this.sendVerificationEmail(user.id, email, workspace);
+    await this.sendVerificationEmail(user.id, email, workspace, locale);
 
     return { success: true };
   }

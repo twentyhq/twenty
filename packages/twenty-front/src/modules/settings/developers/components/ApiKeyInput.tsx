@@ -5,7 +5,7 @@ import { Button, IconCopy } from 'twenty-ui';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-
+import { useLingui } from '@lingui/react/macro';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -20,6 +20,7 @@ type ApiKeyInputProps = { apiKey: string };
 
 export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
 
   const { enqueueSnackBar } = useSnackBar();
   return (
@@ -31,7 +32,7 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
         Icon={IconCopy}
         title="Copy"
         onClick={() => {
-          enqueueSnackBar('API Key copied to clipboard', {
+          enqueueSnackBar(t`API Key copied to clipboard`, {
             variant: SnackBarVariant.Success,
             icon: <IconCopy size={theme.icon.size.md} />,
             duration: 2000,

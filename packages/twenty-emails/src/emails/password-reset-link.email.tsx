@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -20,8 +19,8 @@ export const PasswordResetLinkEmail = ({
 }: PasswordResetLinkEmailProps) => {
   return (
     <BaseEmail locale={locale}>
-      <Title value={t`Reset your password 🗝`} />
-      <CallToAction href={link} value={t`Reset`} />
+      <Title value={<Trans>Reset your password 🗝</Trans>} />
+      <CallToAction href={link} value={<Trans>Reset</Trans>} />
       <MainText>
         <Trans>
           This link is only valid for the next {duration}. If the link does not

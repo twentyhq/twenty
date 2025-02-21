@@ -6,6 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared';
@@ -57,6 +58,7 @@ export const SettingsSSOSAMLForm = () => {
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
   const { setValue, getValues, watch, trigger } = useFormContext();
+  const { t } = useLingui();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
@@ -64,7 +66,7 @@ export const SettingsSSOSAMLForm = () => {
       const samlMetadataParsed = parseSAMLMetadataFromXMLFile(text);
       e.target.value = '';
       if (!samlMetadataParsed.success) {
-        return enqueueSnackBar('Invalid File', {
+        return enqueueSnackBar(t`Invalid File`, {
           variant: SnackBarVariant.Error,
           duration: 2000,
         });
@@ -100,7 +102,7 @@ export const SettingsSSOSAMLForm = () => {
       `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
     );
     if (!response.ok) {
-      return enqueueSnackBar('Metadata file generation failed', {
+      return enqueueSnackBar(t`Metadata file generation failed`, {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
@@ -120,8 +122,8 @@ export const SettingsSSOSAMLForm = () => {
     <>
       <Section>
         <H2Title
-          title="Identity Provider Metadata XML"
-          description="Upload the XML file with your connection infos"
+          title={t`Identity Provider Metadata XML`}
+          description={t`Upload the XML file with your connection infos`}
         />
         <StyledUploadFileContainer>
           <StyledFileInput
@@ -133,7 +135,7 @@ export const SettingsSSOSAMLForm = () => {
           <Button
             Icon={IconUpload}
             onClick={handleUploadFileClick}
-            title="Upload file"
+            title={t`Upload file`}
           ></Button>
           {isXMLMetadataValid() && (
             <IconCheck
@@ -146,15 +148,15 @@ export const SettingsSSOSAMLForm = () => {
       </Section>
       <Section>
         <H2Title
-          title="Service Provider Details"
-          description="Enter the infos to set the connection"
+          title={t`Service Provider Details`}
+          description={t`Enter the infos to set the connection`}
         />
         <StyledInputsContainer>
           <StyledContainer>
             <Button
               Icon={IconDownload}
               onClick={downloadMetadata}
-              title="Download file"
+              title={t`Download file`}
             ></Button>
           </StyledContainer>
           <HorizontalSeparator text={'Or'} />
@@ -194,9 +196,9 @@ export const SettingsSSOSAMLForm = () => {
             <StyledButtonCopy>
               <Button
                 Icon={IconCopy}
-                title="Copy"
+                title={t`Copy`}
                 onClick={() => {
-                  enqueueSnackBar('Entity ID copied to clipboard', {
+                  enqueueSnackBar(t`Entity ID copied to clipboard`, {
                     variant: SnackBarVariant.Success,
                     icon: <IconCopy size={theme.icon.size.md} />,
                     duration: 2000,
