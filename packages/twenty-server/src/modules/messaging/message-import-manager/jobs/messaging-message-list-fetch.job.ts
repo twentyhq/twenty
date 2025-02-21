@@ -79,17 +79,12 @@ export class MessagingMessageListFetchJob {
     }
 
     try {
-      console.log(
-        'refreshAccessToken microsoft ',
-        messageChannel.connectedAccount.accessToken,
-      );
       messageChannel.connectedAccount.accessToken =
         await this.refreshAccessTokenService.refreshAndSaveAccessToken(
           messageChannel.connectedAccount,
           workspaceId,
         );
     } catch (error) {
-      console.log('refreshAccessToken microsoft ERROR ', error);
       switch (error.code) {
         case RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
         case RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
