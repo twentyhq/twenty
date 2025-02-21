@@ -7,6 +7,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsFeatures } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsApiKeys } from '~/pages/settings/developers/api-keys/SettingsApiKeys';
+import GraphQLPlaygroundCore from '~/pages/settings/developers/playground/components/GraphQLPlaygroundCore';
+import GraphQLPlaygroundMetadata from '~/pages/settings/developers/playground/components/GraphQLPlaygroundMetadata';
+import RestPlaygroundCore from '~/pages/settings/developers/playground/components/RestPlaygroundCore';
+import RestPlaygroundMetadata from '~/pages/settings/developers/playground/components/RestPlaygroundMetadata';
 import { SettingsWebhooks } from '~/pages/settings/developers/webhooks/components/SettingsWebhooks';
 
 const SettingsAccountsCalendars = lazy(() =>
@@ -340,6 +344,22 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.APIs}
         element={<SettingsApiKeys />}
+      />
+      <Route
+        path={SettingsPath.PlaygroundRestCore}
+        element={<RestPlaygroundCore/>}
+      />
+      <Route
+        path={SettingsPath.PlaygroundRestMeta}
+        element={<RestPlaygroundMetadata/>}
+      />
+      <Route
+        path={SettingsPath.PlaygroundGraphQLCore}
+        element={<GraphQLPlaygroundCore/>}
+      />
+      <Route
+        path={SettingsPath.PlaygroundGraphQLMeta}
+        element={<GraphQLPlaygroundMetadata/>}
       />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
