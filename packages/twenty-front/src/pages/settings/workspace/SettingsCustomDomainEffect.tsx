@@ -34,7 +34,7 @@ export const SettingsCustomDomainEffect = () => {
     let pollIntervalFn: null | ReturnType<typeof setInterval> = null;
     if (isDefined(currentWorkspace?.customDomain)) {
       checkCustomDomainValidRecordsPolling();
-      pollIntervalFn = setInterval(checkCustomDomainValidRecordsPolling, 3000);
+      pollIntervalFn = setInterval(checkCustomDomainValidRecordsPolling, 6000);
     }
 
     return () => {

@@ -6,21 +6,30 @@ import styled from '@emotion/styled';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared';
 
 const StyledTable = styled(Table)`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   border: 1px solid ${({ theme }) => theme.border.color.light};
+  padding: 0 ${({ theme }) => theme.spacing(2)};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
 const StyledTableRow = styled(TableRow)`
   display: flex;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: 0;
   align-items: center;
   justify-content: space-between;
+  padding: 0;
+  font-size: ${({ theme }) => theme.font.size.sm};
   &:last-child {
     border-bottom: none;
   }
+`;
+
+const StyledTableCell = styled(TableCell)`
+  padding: 0;
 `;
 
 const records = [
@@ -32,9 +41,7 @@ const records = [
 export const SettingsCustomDomainRecordsStatus = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const { customDomainRecords, loading } = useRecoilValue(
-    customDomainRecordsState,
-  );
+  const { customDomainRecords } = useRecoilValue(customDomainRecordsState);
 
   const defaultValues: { status: string; color: ThemeColor } =
     currentWorkspace?.customDomain === customDomainRecords?.customDomain
@@ -69,14 +76,10 @@ export const SettingsCustomDomainRecordsStatus = () => {
     <StyledTable>
       {rows.map((row) => (
         <StyledTableRow key={row.name}>
-          <TableCell>{row.name}</TableCell>
-          <TableCell>
-            <Status
-              color={row.color}
-              text={row.status}
-              isLoaderVisible={loading}
-            />
-          </TableCell>
+          <StyledTableCell>{row.name}</StyledTableCell>
+          <StyledTableCell>
+            <Status color={row.color} text={capitalize(row.status)} />
+          </StyledTableCell>
         </StyledTableRow>
       ))}
     </StyledTable>

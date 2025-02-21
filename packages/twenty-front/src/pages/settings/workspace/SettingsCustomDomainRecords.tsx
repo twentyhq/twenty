@@ -28,7 +28,7 @@ const StyledButton = styled(Button)`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  height: ${({ theme }) => theme.spacing(7)};
+  height: ${({ theme }) => theme.spacing(6)};
   overflow: hidden;
   user-select: text;
   width: 100%;

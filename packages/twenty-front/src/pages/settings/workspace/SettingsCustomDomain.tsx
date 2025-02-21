@@ -17,6 +17,10 @@ const StyledDomainFormWrapper = styled.div`
 
 const StyledRecordsWrapper = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
+
+  & > :not(:first-of-type) {
+    margin-top: ${({ theme }) => theme.spacing(4)};
+  }
 `;
 
 export const SettingsCustomDomain = ({
@@ -24,7 +28,7 @@ export const SettingsCustomDomain = ({
 }: {
   handleSave: () => void;
 }) => {
-  const { customDomainRecords } = useRecoilValue(
+  const { customDomainRecords, loading } = useRecoilValue(
     customDomainRecordsState,
   );
 
@@ -58,6 +62,7 @@ export const SettingsCustomDomain = ({
                   handleSubmit(handleSave);
                 }
               }}
+              loading={!!loading}
               fullWidth
             />
           )}
