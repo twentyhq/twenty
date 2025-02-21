@@ -10,7 +10,6 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @Injectable()
 export class BillingService {
@@ -18,7 +17,6 @@ export class BillingService {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly isFeatureEnabledService: FeatureFlagService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
@@ -55,5 +53,12 @@ export class BillingService {
       workspaceId,
       entitlementKey,
     );
+  }
+
+  async isSubscriptionIncompleteOnboardingStatus(workspaceId: string) {
+    const hasAnySubscription =
+      await this.hasWorkspaceAnySubscription(workspaceId);
+
+    return !hasAnySubscription;
   }
 }

@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceActivationStatus } from 'twenty-shared';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { isSubscriptionIncompleteOnboardingStatus } from 'src/engine/core-modules/billing/utils/is-subscription-incomplete-onboarding-status.util';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -28,13 +27,6 @@ export class OnboardingService {
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
   ) {}
 
-  private async isSubscriptionIncompleteOnboardingStatus(workspace: Workspace) {
-    const hasAnySubscription =
-      await this.billingService.hasWorkspaceAnySubscription(workspace.id);
-
-    return isSubscriptionIncompleteOnboardingStatus(hasAnySubscription);
-  }
-
   private isWorkspaceActivationPending(workspace: Workspace) {
     return (
       workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
@@ -42,7 +34,11 @@ export class OnboardingService {
   }
 
   async getOnboardingStatus(user: User, workspace: Workspace) {
-    if (await this.isSubscriptionIncompleteOnboardingStatus(workspace)) {
+    if (
+      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
+        workspace.id,
+      )
+    ) {
       return OnboardingStatus.PLAN_REQUIRED;
     }
 

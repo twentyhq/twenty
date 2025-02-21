@@ -22,7 +22,6 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
-import { isSubscriptionIncompleteOnboardingStatus } from 'src/engine/core-modules/billing/utils/is-subscription-incomplete-onboarding-status.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -187,29 +186,32 @@ export class BillingResolver {
       workspaceId,
     );
 
-    if (isPermissionsEnabled) {
-      const hasAnySubscription =
-        await this.billingService.hasWorkspaceAnySubscription(workspaceId);
-
-      if (isSubscriptionIncompleteOnboardingStatus(hasAnySubscription)) {
-        return;
-      } else {
-        const userHasPermission =
-          await this.permissionsService.userHasWorkspaceSettingPermission({
-            userWorkspaceId,
-            workspaceId,
-            _setting: SettingsFeatures.WORKSPACE,
-          });
-
-        if (!userHasPermission) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.PERMISSION_DENIED,
-            PermissionsExceptionCode.PERMISSION_DENIED,
-          );
-        }
-
-        return;
-      }
+    if (!isPermissionsEnabled) {
+      return;
     }
+
+    if (
+      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
+        workspaceId,
+      )
+    ) {
+      return;
+    }
+
+    const userHasPermission =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId,
+        workspaceId,
+        _setting: SettingsFeatures.WORKSPACE,
+      });
+
+    if (!userHasPermission) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return;
   }
 }
