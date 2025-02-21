@@ -10,9 +10,6 @@ import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workf
 
 export enum WorkflowStepType {
   ACTION = 'ACTION',
-  FORM = 'FORM',
-  ROUTER = 'ROUTER',
-  LOOP = 'LOOP',
 }
 
 type BaseWorkflowStep = {

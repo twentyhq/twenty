@@ -29,7 +29,7 @@ import {
 import { WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
-export class FindRecordsWorflowAction implements WorkflowAction {
+export class FindRecordsWorkflowAction implements WorkflowAction {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,

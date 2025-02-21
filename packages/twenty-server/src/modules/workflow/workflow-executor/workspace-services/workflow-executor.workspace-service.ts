@@ -49,11 +49,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     workflowRunId,
   }: WorkflowExecutorInput): Promise<WorkflowStepResult> {
     if (currentStepIndex >= steps.length) {
-      return {
-        error: {
-          errorMessage: 'No more steps to execute',
-        },
-      };
+      return {};
     }
 
     const step = steps[currentStepIndex];
