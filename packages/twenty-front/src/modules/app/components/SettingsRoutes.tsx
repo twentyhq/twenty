@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -348,10 +347,7 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       </Route>
       <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
-      <Route
-        path={SettingsPath.APIPlayground}
-        element={<APIPlayground />}
-      />
+      <Route path={SettingsPath.APIPlayground} element={<APIPlayground />} />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}

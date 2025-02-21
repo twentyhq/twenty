@@ -1,4 +1,4 @@
-import { PlaygroundSchemas } from '@/settings/api/playground/form/ApiPlaygroundSetupForm';
+import { PlaygroundSchemas } from '@/settings/playground/components/ApiPlaygroundSetupForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
@@ -51,8 +51,8 @@ const GraphQlComponent = ({ apiKey, baseUrl, path }: any) => {
 };
 
 const GraphQLWrapper = ({ schema }: { schema: PlaygroundSchemas }) => {
-  const apiKey = sessionStorage.getItem('apiKey')
-  const baseUrl = REACT_APP_SERVER_BASE_URL
+  const apiKey = sessionStorage.getItem('apiKey');
+  const baseUrl = REACT_APP_SERVER_BASE_URL;
 
   return (
     <SubMenuTopBarContainer

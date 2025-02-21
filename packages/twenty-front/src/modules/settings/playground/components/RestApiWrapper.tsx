@@ -1,4 +1,4 @@
-import { openAPIReference } from '@/settings/api/playground/state/openAPIReference';
+import { openAPIReferenceState } from '@/settings/playground/states/openAPIReference';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
 `;
 
 export const RestApiWrapper = () => {
-  const [ openApiJson ] = useRecoilState(openAPIReference)
+  const [openAPIReference] = useRecoilState(openAPIReferenceState);
 
   return (
     <SubMenuTopBarContainer
@@ -35,7 +35,7 @@ export const RestApiWrapper = () => {
         <ApiReferenceReact
           configuration={{
             spec: {
-              content: openApiJson,
+              content: openAPIReference,
             },
           }}
         />

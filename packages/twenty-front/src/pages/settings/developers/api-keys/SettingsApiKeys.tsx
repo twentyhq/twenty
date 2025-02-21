@@ -1,8 +1,8 @@
-import { StyledSettingsApiPlaygroundCoverImage } from '@/settings/api/playground/components/SettingsApiPlaygroundCoverImage';
-import { ApiPlaygroundSetupForm } from '@/settings/api/playground/form/ApiPlaygroundSetupForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
+import { ApiPlaygroundSetupForm } from '@/settings/playground/components/ApiPlaygroundSetupForm';
+import { StyledSettingsApiPlaygroundCoverImage } from '@/settings/playground/components/SettingsApiPlaygroundCoverImage';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';

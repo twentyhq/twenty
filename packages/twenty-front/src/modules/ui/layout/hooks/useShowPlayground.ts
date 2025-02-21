@@ -7,9 +7,7 @@ export const useShowPlayground = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
 
   return useMemo(() => {
-    if (
-      isMatchingLocation('settings/' + SettingsPath.APIPlayground)
-    ) {
+    if (isMatchingLocation('settings/' + SettingsPath.APIPlayground)) {
       return true;
     }
 

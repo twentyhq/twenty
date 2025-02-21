@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { openAPIReference } from '@/settings/api/playground/state/openAPIReference';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
+import { openAPIReferenceState } from '@/settings/playground/states/openAPIReference';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
@@ -20,18 +20,15 @@ import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const PlaygroundTypes = {
-  GRAPH_QL: 'GraphQl',
-  REST: 'Rest',
-} as const;
-export type PlaygroundTypes = (typeof PlaygroundTypes)[keyof typeof PlaygroundTypes];
+export enum PlaygroundTypes {
+  GRAPH_QL = 'GraphQl',
+  REST = 'Rest',
+}
 
-export const PlaygroundSchemas = {
-  METADATA: 'Metadata',
-  CORE: 'Core',
-} as const;
-export type PlaygroundSchemas =
-  (typeof PlaygroundSchemas)[keyof typeof PlaygroundSchemas];
+export enum PlaygroundSchemas {
+  METADATA = 'Metadata',
+  CORE = 'Core',
+}
 
 export const apiPlaygroundSetupFormSchema = z.object({
   apiKey: z.string(),
@@ -55,7 +52,7 @@ const StyledForm = styled.form`
 export const ApiPlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const [, setOpenAPIReference] = useRecoilState(openAPIReference)
+  const [, setOpenAPIReference] = useRecoilState(openAPIReferenceState);
 
   const { control, handleSubmit } = useForm<ApiPlaygroundSetupFormValues>({
     mode: 'onTouched',
@@ -67,31 +64,31 @@ export const ApiPlaygroundSetupForm = () => {
     filter: { revokedAt: { is: 'NULL' } },
   });
 
-  const getOpenAPIConfig =  async (values: ApiPlaygroundSetupFormValues) => {
-    const response = await fetch(REACT_APP_SERVER_BASE_URL + '/open-api/' + values.schema, {
-      headers: { Authorization: `Bearer ${values.apiKey}` },
-    })
+  const getOpenAPIConfig = async (values: ApiPlaygroundSetupFormValues) => {
+    const response = await fetch(
+      REACT_APP_SERVER_BASE_URL + '/open-api/' + values.schema,
+      {
+        headers: { Authorization: `Bearer ${values.apiKey}` },
+      },
+    );
 
-    let openAPIReference = await response.json();
-    if(!openAPIReference.tags){
-      throw new Error("Invalid Token")
+    const openAPIReference = await response.json();
+    if (!openAPIReference.tags) {
+      throw new Error('Invalid Token');
     }
 
-    setOpenAPIReference(openAPIReference)
-  }
+    setOpenAPIReference(openAPIReference);
+  };
 
   const onSubmit = async (values: ApiPlaygroundSetupFormValues) => {
-    sessionStorage.setItem(
-      'apiKey',
-      values.apiKey
-    );
+    sessionStorage.setItem('apiKey', values.apiKey);
 
-    await getOpenAPIConfig(values)
+    await getOpenAPIConfig(values);
 
-    navigateSettings(
-      SettingsPath.APIPlayground,
-      { schema: values.schema.toLowerCase(), type: values.apiPlayground.toLowerCase() }
-    );
+    navigateSettings(SettingsPath.APIPlayground, {
+      schema: values.schema.toLowerCase(),
+      type: values.apiPlayground.toLowerCase(),
+    });
   };
 
   const apiKey = useWatch({ control, name: 'apiKey' });
@@ -104,7 +101,7 @@ export const ApiPlaygroundSetupForm = () => {
         render={({ field: { onChange, value } }) => (
           <Select
             dropdownId="apiKey"
-            label="API Key"
+            label={t`API Key`}
             options={
               apiKeys.length > 0
                 ? apiKeys.map((apiKey) => ({
@@ -116,7 +113,7 @@ export const ApiPlaygroundSetupForm = () => {
             value={value}
             onChange={onChange}
             callToActionButton={{
-              text: 'Create API Key',
+              text: t`Create API Key`,
               onClick: () => navigateSettings(SettingsPath.DevelopersNewApiKey),
             }}
           />
@@ -129,7 +126,7 @@ export const ApiPlaygroundSetupForm = () => {
         render={({ field: { onChange, value } }) => (
           <Select
             dropdownId="schema"
-            label="Schema"
+            label={t`Schema`}
             options={[
               {
                 value: PlaygroundSchemas.CORE,
@@ -154,7 +151,7 @@ export const ApiPlaygroundSetupForm = () => {
         render={({ field: { onChange, value } }) => (
           <Select
             dropdownId="apiPlaygroundType"
-            label="API"
+            label={t`API`}
             options={[
               {
                 value: PlaygroundTypes.REST,
@@ -174,7 +171,7 @@ export const ApiPlaygroundSetupForm = () => {
       />
       <Button
         disabled={!apiKey || apiKey.length === 0}
-        title="Launch"
+        title={t`Launch`}
         variant="primary"
         accent="blue"
         type="submit"
