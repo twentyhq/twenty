@@ -93,7 +93,7 @@ export class MessagingMessageListFetchJob {
             workspaceId,
             connectedAccountId: messageChannel.connectedAccountId,
             messageChannelId: messageChannel.id,
-            message: `${error.code}: ${error.reason}`,
+            message: `${error.code}: ${error.reason ?? ''}`,
           });
           throw {
             code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
