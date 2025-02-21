@@ -34,7 +34,10 @@ export type ActivateWorkspaceInput = {
 
 export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
+  description: Scalars['String']['output'];
   details?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
   status: AdminPanelHealthServiceStatus;
 };
@@ -44,17 +47,11 @@ export enum AdminPanelHealthServiceStatus {
   OUTAGE = 'OUTAGE'
 }
 
-export enum AdminPanelIndicatorHealthStatusInputEnum {
-  DATABASE = 'DATABASE',
-  MESSAGE_SYNC = 'MESSAGE_SYNC',
-  REDIS = 'REDIS',
-  WORKER = 'WORKER'
-}
-
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
+  id: Scalars['String']['output'];
   metrics: WorkerQueueMetrics;
-  name: Scalars['String']['output'];
+  queueName: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
   workers: Scalars['Float']['output'];
 };
@@ -688,6 +685,13 @@ export type GetServerlessFunctionSourceCodeInput = {
   /** The version of the function */
   version?: Scalars['String']['input'];
 };
+
+export enum HealthIndicatorId {
+  connectedAccount = 'connectedAccount',
+  database = 'database',
+  redis = 'redis',
+  worker = 'worker'
+}
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -1469,7 +1473,7 @@ export type QueryGetAvailablePackagesArgs = {
 
 
 export type QueryGetIndicatorHealthStatusArgs = {
-  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
+  indicatorId: HealthIndicatorId;
 };
 
 
@@ -1834,10 +1838,14 @@ export type Support = {
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
-  database: AdminPanelHealthServiceData;
-  messageSync: AdminPanelHealthServiceData;
-  redis: AdminPanelHealthServiceData;
-  worker: AdminPanelHealthServiceData;
+  services: Array<SystemHealthService>;
+};
+
+export type SystemHealthService = {
+  __typename?: 'SystemHealthService';
+  id: HealthIndicatorId;
+  label: Scalars['String']['output'];
+  status: AdminPanelHealthServiceStatus;
 };
 
 export type TimelineCalendarEvent = {

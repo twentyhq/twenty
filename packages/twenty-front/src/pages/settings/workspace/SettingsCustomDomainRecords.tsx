@@ -4,11 +4,11 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { Button } from 'twenty-ui';
 import { Table } from '@/ui/layout/table/components/Table';
-import { CustomDomainValidRecords } from '~/generated/graphql';
 import styled from '@emotion/styled';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useDebouncedCallback } from 'use-debounce';
+import { CustomDomainValidRecords } from '~/generated/graphql';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};

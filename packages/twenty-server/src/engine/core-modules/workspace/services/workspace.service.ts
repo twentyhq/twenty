@@ -380,7 +380,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.getCustomDomainDetails(
         workspace.customDomain,
       );
-
+    console.log('>>>>>>>>>>>>>>', customDomainDetails);
     if (!customDomainDetails) return;
 
     const isCustomDomainWorking =

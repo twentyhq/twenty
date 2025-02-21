@@ -3,7 +3,9 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { Status, ThemeColor } from 'twenty-ui';
 import styled from '@emotion/styled';
-import { CustomDomainValidRecords } from '~/generated/graphql';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
+import { useRecoilValue } from 'recoil';
 
 const StyledTable = styled(Table)`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -21,52 +23,62 @@ const StyledTableRow = styled(TableRow)`
   }
 `;
 
-export const SettingsCustomDomainRecordsStatus = ({
-  records,
-}: {
-  records: CustomDomainValidRecords['records'];
-}) => {
-  const rows = records.reduce(
-    (acc, record) => {
-      acc[record.validationType] = {
-        name: acc[record.validationType].name,
-        status: record.status,
+export const SettingsCustomDomainRecordsStatus = () => {
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const { customDomainRecords, loading } = useRecoilValue(
+    customDomainRecordsState,
+  );
+
+  const records = [
+    { name: 'CNAME', validationType: 'redirection' as const },
+    { name: 'TXT Validation', validationType: 'ownership' as const },
+    { name: 'SSL Certificate Generation', validationType: 'ssl' as const },
+  ];
+
+  const defaultValues: { status: string; color: ThemeColor } =
+    currentWorkspace?.customDomain === customDomainRecords?.customDomain
+      ? {
+          status: 'success',
+          color: 'green',
+        }
+      : {
+          status: 'loading',
+          color: 'gray',
+        };
+
+  const rows = records.map<{ name: string; status: string; color: ThemeColor }>(
+    (record) => {
+      const foundRecord = customDomainRecords?.records.find(
+        ({ validationType }) => {
+          return validationType === record.validationType;
+        },
+      );
+      return {
+        name: record.name,
+        status: foundRecord ? foundRecord.status : defaultValues.status,
         color:
-          record.status === 'error'
+          foundRecord && foundRecord.status === 'error'
             ? 'red'
-            : record.status === 'pending'
+            : foundRecord && foundRecord.status === 'pending'
               ? 'yellow'
-              : 'green',
+              : defaultValues.color,
       };
-      return acc;
     },
-    {
-      ssl: {
-        name: 'SSL',
-        status: 'success',
-        color: 'green',
-      },
-      redirection: {
-        name: 'Redirection',
-        status: 'success',
-        color: 'green',
-      },
-      ownership: {
-        name: 'Ownership',
-        status: 'success',
-        color: 'green',
-      },
-    } as Record<string, { name: string; status: string; color: ThemeColor }>,
   );
 
   return (
     <StyledTable>
       {Object.values(rows).map((row) => {
         return (
-          <StyledTableRow>
+          <StyledTableRow key={row.name}>
             <TableCell>{row.name}</TableCell>
             <TableCell>
-              <Status color={row.color} text={row.status} />
+              <Status
+                color={row.color}
+                text={row.status}
+                isLoaderVisible={loading}
+              />
             </TableCell>
           </StyledTableRow>
         );
