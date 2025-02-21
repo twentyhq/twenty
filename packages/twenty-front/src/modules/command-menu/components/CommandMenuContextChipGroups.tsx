@@ -1,4 +1,8 @@
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from 'twenty-shared';
+import { MenuItem } from 'twenty-ui';
 import {
   CommandMenuContextChip,
   CommandMenuContextChipProps,
@@ -34,9 +38,30 @@ export const CommandMenuContextChipGroups = ({
   return (
     <>
       {firstChips.length > 0 && (
-        <CommandMenuContextChip
-          Icons={firstChips.map((chip) => chip.Icons?.[0])}
-        />
+        <Dropdown
+          clickableComponent={
+            <CommandMenuContextChip
+              Icons={firstChips.map((chip) => chip.Icons?.[0])}
+              onClick={() => {}}
+            />
+          }
+          dropdownComponents={
+            <DropdownMenuItemsContainer>
+              {firstChips.map((chip) => (
+                <MenuItem
+                  //LeftIcon={chip.Icons?.[0]}
+                  text={chip.text}
+                  onClick={chip.onClick}
+                />
+              ))}
+            </DropdownMenuItemsContainer>
+          }
+          dropdownHotkeyScope={{
+            scope: AppHotkeyScope.CommandMenu,
+          }}
+          dropdownId="command-menu-context-chip-groups"
+          dropdownPlacement="bottom-start"
+        ></Dropdown>
       )}
 
       {isDefined(lastChip) && (
