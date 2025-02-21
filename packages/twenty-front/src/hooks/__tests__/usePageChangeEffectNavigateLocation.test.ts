@@ -2,7 +2,7 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -19,12 +19,12 @@ const setupMockOnboardingStatus = (
   jest.mocked(useOnboardingStatus).mockReturnValueOnce(onboardingStatus);
 };
 
-jest.mock('@/workspace/hooks/useIsWorkspaceActivationStatusSuspended');
-const setupMockIsWorkspaceActivationStatusSuspended = (
+jest.mock('@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo');
+const setupMockIsWorkspaceActivationStatusEqualsTo = (
   isWorkspaceSuspended: boolean,
 ) => {
   jest
-    .mocked(useIsWorkspaceActivationStatusSuspended)
+    .mocked(useIsWorkspaceActivationStatusEqualsTo)
     .mockReturnValueOnce(isWorkspaceSuspended);
 };
 
@@ -270,7 +270,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
     it(`with location ${testCase.loc} and onboardingStatus ${testCase.onboardingStatus} and isWorkspaceSuspended ${testCase.isWorkspaceSuspended} should return ${testCase.res}`, () => {
       setupMockIsMatchingLocation(testCase.loc);
       setupMockOnboardingStatus(testCase.onboardingStatus);
-      setupMockIsWorkspaceActivationStatusSuspended(
+      setupMockIsWorkspaceActivationStatusEqualsTo(
         testCase.isWorkspaceSuspended,
       );
       setupMockIsLogged(testCase.isLoggedIn);

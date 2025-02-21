@@ -4,10 +4,10 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
@@ -15,7 +15,9 @@ export const usePageChangeEffectNavigateLocation = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
   const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const isMatchingOpenRoute =
