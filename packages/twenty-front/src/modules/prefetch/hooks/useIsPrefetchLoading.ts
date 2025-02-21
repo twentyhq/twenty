@@ -1,10 +1,13 @@
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useRecoilValue } from 'recoil';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 
 export const useIsPrefetchLoading = () => {
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+  const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.ACTIVE,
+  );
   const isFavoriteFoldersPrefetched = useRecoilValue(
     prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
   );
@@ -14,7 +17,7 @@ export const useIsPrefetchLoading = () => {
   );
 
   return (
-    !isWorkspaceSuspended &&
+    isWorkspaceActive &&
     (!areFavoritesPrefetched || !isFavoriteFoldersPrefetched)
   );
 };

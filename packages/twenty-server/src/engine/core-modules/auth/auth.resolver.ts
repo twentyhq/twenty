@@ -3,7 +3,7 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import omit from 'lodash.omit';
-import { APP_LOCALES, SettingsFeatures, SOURCE_LOCALE } from 'twenty-shared';
+import { SOURCE_LOCALE, SettingsPermissions } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
@@ -241,7 +241,7 @@ export class AuthResolver {
       user.id,
       user.email,
       workspace,
-      signUpInput.locale ?? APP_LOCALES.en,
+      signUpInput.locale ?? SOURCE_LOCALE,
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -343,7 +343,7 @@ export class AuthResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionsGuard(SettingsPermissions.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(

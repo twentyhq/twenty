@@ -4,7 +4,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { GraphQLError } from 'graphql';
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingProductInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-product.input';
@@ -71,7 +71,7 @@ export class BillingResolver {
   @Query(() => BillingSessionOutput)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
   )
   async billingPortalSession(
     @AuthWorkspace() workspace: Workspace,
@@ -158,7 +158,7 @@ export class BillingResolver {
   @Mutation(() => BillingUpdateOutput)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
   )
   async updateBillingSubscription(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.applyBillingSubscription(workspace);
@@ -202,7 +202,7 @@ export class BillingResolver {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        _setting: SettingsFeatures.WORKSPACE,
+        _setting: SettingsPermissions.WORKSPACE,
       });
 
     if (!userHasPermission) {

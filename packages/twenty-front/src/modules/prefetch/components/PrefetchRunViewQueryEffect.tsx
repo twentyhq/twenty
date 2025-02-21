@@ -9,14 +9,16 @@ import { findAllViewsOperationSignatureFactory } from '@/prefetch/graphql/operat
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { View } from '@/views/types/View';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
-import { isDefined } from 'twenty-shared';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunViewQueryEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
 
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+  const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.ACTIVE,
+  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -30,7 +32,7 @@ export const PrefetchRunViewQueryEffect = () => {
     objectNameSingular: CoreObjectNameSingular.View,
     filter: findAllViewsOperationSignature.variables.filter,
     recordGqlFields: findAllViewsOperationSignature.fields,
-    skip: !currentUser || isWorkspaceSuspended,
+    skip: !currentUser || !isWorkspaceActive,
   });
 
   const setPrefetchViewsState = useRecoilCallback(

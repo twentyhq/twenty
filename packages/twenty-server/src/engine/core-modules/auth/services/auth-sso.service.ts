@@ -8,7 +8,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
-export class SocialSsoService {
+export class AuthSsoService {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -55,14 +55,21 @@ export class SocialSsoService {
             },
           },
         },
-        relations: ['workspaceUsers', 'workspaceUsers.user'],
+        relations: [
+          'workspaceUsers',
+          'workspaceUsers.user',
+          'approvedAccessDomains',
+        ],
       });
 
       return workspace ?? undefined;
     }
 
-    return await this.workspaceRepository.findOneBy({
-      id: workspaceId,
+    return await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceId,
+      },
+      relations: ['approvedAccessDomains'],
     });
   }
 }
