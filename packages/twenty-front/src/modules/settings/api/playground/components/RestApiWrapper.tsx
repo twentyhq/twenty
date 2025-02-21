@@ -1,5 +1,5 @@
 import Playground from '@/settings/api/playground/components/Playground';
-import { SubDoc } from '@/settings/api/playground/components/TokenForm';
+import { PlaygroundSchemas } from '@/settings/api/playground/form/components/ApiPlaygroundSetupForm';
 import { ApiReferenceReact } from '@scalar/api-reference-react';
 import '@scalar/api-reference-react/style.css';
 import { useState } from 'react';
@@ -7,7 +7,7 @@ import { useState } from 'react';
 export const RestApiWrapper = ({
   subDoc
 } : {
-  subDoc: SubDoc
+  subDoc: PlaygroundSchemas
 }) => {
   const [openApiJson, setOpenApiJson] = useState<object>();
 

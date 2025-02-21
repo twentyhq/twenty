@@ -23,11 +23,11 @@ export const PlaygroundTypes = {
 } as const;
 export type PlaygroundTypes = (typeof PlaygroundTypes)[keyof typeof PlaygroundTypes];
 
-const PlaygroundSchemas = {
+export const PlaygroundSchemas = {
   METADATA: 'Metadata',
   CORE: 'Core',
 } as const;
-type PlaygroundSchemas =
+export type PlaygroundSchemas =
   (typeof PlaygroundSchemas)[keyof typeof PlaygroundSchemas];
 
 export const apiPlaygroundSetupFormSchema = z.object({

@@ -1,8 +1,8 @@
+import { PlaygroundSchemas } from '@/settings/api/playground/form/components/ApiPlaygroundSetupForm';
 import styled from '@emotion/styled';
 import React, { useEffect, useState } from 'react';
 import { TbApi, TbChevronLeft, TbLink } from 'react-icons/tb';
 
-export type SubDoc = 'core' | 'metadata';
 export type TokenFormProps = {
   setOpenApiJson?: (json: object) => void;
   setToken?: (token: string) => void;
@@ -10,7 +10,7 @@ export type TokenFormProps = {
   isTokenValid?: boolean;
   setIsTokenValid?: (arg: boolean) => void;
   setLoadingState?: (arg: boolean) => void;
-  subDoc?: SubDoc;
+  subDoc?: PlaygroundSchemas;
 };
 
 const StyledFormContainer = styled.div`
@@ -174,7 +174,7 @@ const TokenForm = ({
   const getJson = async (token: string) => {
     updateLoading(true);
 
-    return await fetch(baseUrl + '/open-api/' + (subDoc ?? 'core'), {
+    return await fetch(baseUrl + '/open-api/' + (subDoc?.toLocaleLowerCase() ?? 'core'), {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

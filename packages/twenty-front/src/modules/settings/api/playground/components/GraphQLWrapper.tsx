@@ -4,10 +4,9 @@ import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 import { useState } from 'react';
 
-import { SubDoc } from './TokenForm';
-
 import Playground from './Playground';
 
+import { PlaygroundSchemas } from '@/settings/api/playground/form/components/ApiPlaygroundSetupForm';
 import '@graphiql/plugin-explorer/dist/style.css';
 import 'graphiql/graphiql.css';
 
@@ -16,8 +15,8 @@ const StyledContainer = styled.div`
 `;
 
 const SubDocToPath = {
-  core: 'graphql',
-  metadata: 'metadata',
+  [PlaygroundSchemas.CORE]: 'graphql',
+  [PlaygroundSchemas.METADATA]: 'metadata',
 };
 
 const GraphQlComponent = ({ token, baseUrl, path }: any) => {
@@ -44,7 +43,7 @@ const GraphQlComponent = ({ token, baseUrl, path }: any) => {
   );
 };
 
-const GraphQLWrapper = ({ subDoc }: { subDoc: SubDoc }) => {
+const GraphQLWrapper = ({ subDoc }: { subDoc: PlaygroundSchemas }) => {
   const [token, setToken] = useState<string>();
   const [baseUrl, setBaseUrl] = useState<string>();
 
