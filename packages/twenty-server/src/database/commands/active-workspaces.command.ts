@@ -41,10 +41,18 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
       'Limit the number of workspaces to process. Workspaces are processed in ascending order of id.',
     required: false,
   })
-  parseWorkspaceCountLimit(val: number): number {
-    this.workspaceCountLimit = val;
+  parseWorkspaceCountLimit(val: string): number {
+    try {
+      this.workspaceCountLimit = parseInt(val);
+    } catch (error) {
+      throw new Error('Invalid workspace count limit');
+    }
 
-    return val;
+    if (this.workspaceCountLimit <= 0) {
+      throw new Error('Workspace count limit must be greater than 0');
+    }
+
+    return this.workspaceCountLimit;
   }
 
   @Option({
