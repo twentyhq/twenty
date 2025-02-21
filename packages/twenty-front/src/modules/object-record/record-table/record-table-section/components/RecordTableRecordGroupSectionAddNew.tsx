@@ -3,6 +3,7 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { IconPlus } from 'twenty-ui';
 
@@ -15,6 +16,8 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     recordIndexAllRecordIdsComponentSelector,
   );
 
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   const { createNewTableRecordInGroup } = useCreateNewTableRecord({
     objectMetadataItem,
     recordTableId,
@@ -23,6 +26,10 @@ export const RecordTableRecordGroupSectionAddNew = () => {
   const handleAddNewRecord = () => {
     createNewTableRecordInGroup(currentRecordGroupId);
   };
+
+  if (hasObjectReadOnlyPermission) {
+    return null;
+  }
 
   return (
     <RecordTableActionRow

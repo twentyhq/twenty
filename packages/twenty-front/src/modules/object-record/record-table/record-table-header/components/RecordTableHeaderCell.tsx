@@ -13,6 +13,7 @@ import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -212,6 +213,8 @@ export const RecordTableHeaderCell = ({
 
   const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
 
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
@@ -229,7 +232,8 @@ export const RecordTableHeaderCell = ({
         <RecordTableColumnHeadWithDropdown column={column} />
         {(useIsMobile() || iconVisibility) &&
           !!column.isLabelIdentifier &&
-          !isReadOnly && (
+          !isReadOnly &&
+          !hasObjectReadOnlyPermission && (
             <StyledHeaderIcon>
               <LightIconButton
                 Icon={IconPlus}

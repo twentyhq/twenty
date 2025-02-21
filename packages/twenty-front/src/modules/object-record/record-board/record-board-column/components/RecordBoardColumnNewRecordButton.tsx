@@ -1,4 +1,5 @@
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui';
@@ -28,6 +29,12 @@ export const RecordBoardColumnNewRecordButton = ({
   const theme = useTheme();
 
   const { handleNewButtonClick } = useColumnNewCardActions(columnId);
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
+  if (hasObjectReadOnlyPermission) {
+    return null;
+  }
 
   return (
     <StyledNewButton onClick={() => handleNewButtonClick('last', false)}>
