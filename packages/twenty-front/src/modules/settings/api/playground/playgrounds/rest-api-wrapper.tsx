@@ -1,19 +1,7 @@
-import { useEffect } from 'react';
-// @ts-expect-error Migration loader as text not passing warnings
-import { API } from '@stoplight/elements';
-
-
-import spotlightTheme from '!css-loader!@stoplight/elements/styles.min.css';
+import { ApiReferenceReact } from '@scalar/api-reference-react';
+import '@scalar/api-reference-react/style.css';
 
 export const RestApiWrapper = ({ openApiJson }: { openApiJson: any }) => {
-  // We load spotlightTheme style using useEffect as it breaks remaining docs style
-  useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = spotlightTheme.toString();
-    document.head.append(styleElement);
-
-    return () => styleElement.remove();
-  }, []);
 
   return (
     <div
@@ -23,10 +11,12 @@ export const RestApiWrapper = ({ openApiJson }: { openApiJson: any }) => {
         overflow: 'auto',
       }}
     >
-      <API
-        apiDescriptionDocument={JSON.stringify(openApiJson)}
-        hideSchemas={true}
-        router="hash"
+      <ApiReferenceReact
+        configuration={{
+          spec: {
+            content: openApiJson
+          },
+        }}
       />
     </div>
   );
