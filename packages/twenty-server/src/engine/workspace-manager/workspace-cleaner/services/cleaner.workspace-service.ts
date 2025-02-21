@@ -321,7 +321,9 @@ export class CleanerWorkspaceService {
         );
       }
 
-      this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspace.id);
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspace.id,
+      );
     }
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces done!`,
