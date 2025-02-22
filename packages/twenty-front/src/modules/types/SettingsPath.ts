@@ -20,7 +20,7 @@ export enum SettingsPath {
   Workspace = 'workspace',
   Domain = 'domain',
   APIs = 'apis',
-  APIPlayground = 'playground/:type/:schema',
+  PlaygroundRouter = 'playground/:type/:schema',
   DevelopersNewApiKey = 'apis/new',
   DevelopersApiKeyDetail = 'apis/:apiKeyId',
   Integrations = 'integrations',

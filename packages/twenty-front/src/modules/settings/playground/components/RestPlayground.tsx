@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   width: 100vw;
 `;
 
-export const RestApiWrapper = () => {
+export const RestPlayground = () => {
   const [openAPIReference] = useRecoilState(openAPIReferenceState);
   const { theme } = useContext(ThemeContext);
 

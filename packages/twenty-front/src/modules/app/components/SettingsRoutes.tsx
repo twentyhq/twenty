@@ -7,7 +7,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPermissions } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsApiKeys } from '~/pages/settings/developers/api-keys/SettingsApiKeys';
-import APIPlayground from '~/pages/settings/developers/playground/APIPlayground';
+import { PlaygroundRouter } from '~/pages/settings/developers/playground/PlaygroundRouter';
 import { SettingsWebhooks } from '~/pages/settings/developers/webhooks/components/SettingsWebhooks';
 
 const SettingsAccountsCalendars = lazy(() =>
@@ -347,7 +347,7 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       </Route>
       <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
-      <Route path={SettingsPath.APIPlayground} element={<APIPlayground />} />
+      <Route path={SettingsPath.PlaygroundRouter} element={<PlaygroundRouter />} />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}

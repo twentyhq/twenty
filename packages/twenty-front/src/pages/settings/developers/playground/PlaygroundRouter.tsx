@@ -2,21 +2,19 @@ import {
   PlaygroundSchemas,
   PlaygroundTypes,
 } from '@/settings/playground/components/ApiPlaygroundSetupForm';
-import GraphQLWrapper from '@/settings/playground/components/GraphQLWrapper';
-import { RestApiWrapper } from '@/settings/playground/components/RestApiWrapper';
+import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
+import { RestPlayground } from '@/settings/playground/components/RestPlayground';
 import { useParams } from 'react-router-dom';
 
-const APIPlayground = () => {
+export const PlaygroundRouter = () => {
   const { schema, type } = useParams<{
     schema: PlaygroundSchemas;
     type: PlaygroundTypes;
   }>();
 
   if (type === PlaygroundTypes.GRAPH_QL.toLocaleLowerCase()) {
-    return <GraphQLWrapper schema={schema as PlaygroundSchemas} />;
+    return <GraphQLPlayground schema={schema as PlaygroundSchemas} />;
   }
 
-  return <RestApiWrapper />;
+  return <RestPlayground />;
 };
-
-export default APIPlayground;

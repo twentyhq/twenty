@@ -50,7 +50,7 @@ const GraphQlComponent = ({ apiKey, baseUrl, path }: any) => {
   );
 };
 
-const GraphQLWrapper = ({ schema }: { schema: PlaygroundSchemas }) => {
+export const GraphQLPlayground = ({ schema }: { schema: PlaygroundSchemas }) => {
   const apiKey = sessionStorage.getItem('apiKey');
   const baseUrl = REACT_APP_SERVER_BASE_URL;
 
@@ -78,4 +78,3 @@ const GraphQLWrapper = ({ schema }: { schema: PlaygroundSchemas }) => {
     </SubMenuTopBarContainer>
   );
 };
-export default GraphQLWrapper;
