@@ -1,6 +1,7 @@
 import { openAPIReferenceState } from '@/settings/playground/states/openAPIReference';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { ApiReferenceReact } from '@scalar/api-reference-react';
@@ -10,31 +11,39 @@ import { useRecoilState } from 'recoil';
 import { ThemeContext } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledContainer = styled.div`
-  height: 100vh;
-  position: relative;
-  width: 100vw;
+const StyledPage = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const StyledMainContainer = styled.div<{ showPlayground?: boolean }>`
+  width: 100%;
+  overflow-y: scroll;
 `;
 
 export const RestPlayground = () => {
   const [openAPIReference] = useRecoilState(openAPIReferenceState);
   const { theme } = useContext(ThemeContext);
 
+  const links= [
+    {
+      children: <Trans>Workspace</Trans>,
+      href: getSettingsPath(SettingsPath.Workspace),
+    },
+    {
+      children: <Trans>APIs</Trans>,
+      href: getSettingsPath(SettingsPath.APIs),
+    },
+    { children: <Trans>Rest API Playground</Trans> },
+  ]
+
   return (
-    <SubMenuTopBarContainer
-      links={[
-        {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: <Trans>APIs</Trans>,
-          href: getSettingsPath(SettingsPath.APIs),
-        },
-        { children: <Trans>Rest API Playground</Trans> },
-      ]}
-    >
-      <StyledContainer>
+    <StyledPage>
+      <PageHeader title={<Breadcrumb links={links} />}>
+        {/* {actionButton} */}
+      </PageHeader>
+      <StyledMainContainer>
         <ApiReferenceReact
           configuration={{
             spec: {
@@ -43,7 +52,7 @@ export const RestPlayground = () => {
             forceDarkModeState: theme.name as 'dark' | 'light'
           }}
         />
-      </StyledContainer>
-    </SubMenuTopBarContainer>
+      </StyledMainContainer>
+    </StyledPage>
   );
 };
