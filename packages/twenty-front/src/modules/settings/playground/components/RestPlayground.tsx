@@ -3,12 +3,13 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { ApiReferenceReact } from '@scalar/api-reference-react';
 import '@scalar/api-reference-react/style.css';
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
-import { ThemeContext } from 'twenty-ui';
+import { Button, IconX, ThemeContext, useIsMobile } from 'twenty-ui';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledPage = styled.div`
@@ -25,7 +26,10 @@ const StyledMainContainer = styled.div<{ showPlayground?: boolean }>`
 export const RestPlayground = () => {
   const [openAPIReference] = useRecoilState(openAPIReferenceState);
   const { theme } = useContext(ThemeContext);
-
+  const isMobile = useIsMobile();
+  const { t } = useLingui();
+  const navigateSettings = useNavigateSettings();
+  
   const links= [
     {
       children: <Trans>Workspace</Trans>,
@@ -38,10 +42,22 @@ export const RestPlayground = () => {
     { children: <Trans>Rest API Playground</Trans> },
   ]
 
+  const closePlayground = () => {
+    navigateSettings(SettingsPath.APIs);
+  }
+
   return (
     <StyledPage>
       <PageHeader title={<Breadcrumb links={links} />}>
-        {/* {actionButton} */}
+        <Button
+          Icon={IconX}
+          dataTestId="close-button"
+          size={isMobile ? 'medium' : 'small'}
+          variant="secondary"
+          accent="default"
+          onClick={closePlayground}
+          ariaLabel={t`Close playground`}
+        />
       </PageHeader>
       <StyledMainContainer>
         <ApiReferenceReact
