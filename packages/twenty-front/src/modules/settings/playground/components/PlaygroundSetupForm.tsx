@@ -36,9 +36,7 @@ export const playgroundSetupFormSchema = z.object({
   apiPlayground: z.nativeEnum(PlaygroundTypes),
 });
 
-type PlaygroundSetupFormValues = z.infer<
-  typeof playgroundSetupFormSchema
->;
+type PlaygroundSetupFormValues = z.infer<typeof playgroundSetupFormSchema>;
 
 const StyledForm = styled.form`
   display: grid;

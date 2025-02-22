@@ -27,14 +27,14 @@ export const RestPlayground = () => {
         { children: <Trans>Rest API Playground</Trans> },
       ]}
     >
-        <ApiReferenceReact
-          configuration={{
-            spec: {
-              content: openAPIReference,
-            },
-            forceDarkModeState: theme.name as 'dark' | 'light'
-          }}
-        />
+      <ApiReferenceReact
+        configuration={{
+          spec: {
+            content: openAPIReference,
+          },
+          forceDarkModeState: theme.name as 'dark' | 'light',
+        }}
+      />
     </PlaygroundPage>
   );
 };

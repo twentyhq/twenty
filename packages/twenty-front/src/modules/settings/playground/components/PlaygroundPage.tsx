@@ -1,6 +1,9 @@
 import { SettingsPath } from '@/types/SettingsPath';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { Breadcrumb, BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import {
+  Breadcrumb,
+  BreadcrumbProps,
+} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import '@scalar/api-reference-react/style.css';
@@ -8,8 +11,8 @@ import { Button, IconX, useIsMobile } from 'twenty-ui';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type PlaygroundPageProps = {
-    children: JSX.Element | JSX.Element[];
-    links: BreadcrumbProps['links'];
+  children: JSX.Element | JSX.Element[];
+  links: BreadcrumbProps['links'];
 };
 
 const StyledPage = styled.div`
@@ -19,21 +22,18 @@ const StyledPage = styled.div`
 `;
 
 const StyledMainContainer = styled.div<{ showPlayground?: boolean }>`
-  width: 100%;
   overflow-y: scroll;
+  width: 100%;
 `;
 
-export const PlaygroundPage = ({
-    children,
-    links
-}: PlaygroundPageProps) => {
+export const PlaygroundPage = ({ children, links }: PlaygroundPageProps) => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
 
   const closePlayground = () => {
     navigateSettings(SettingsPath.APIs);
-  }
+  };
 
   return (
     <StyledPage>
@@ -48,9 +48,7 @@ export const PlaygroundPage = ({
           ariaLabel={t`Close playground`}
         />
       </PageHeader>
-      <StyledMainContainer>
-        {children}
-      </StyledMainContainer>
+      <StyledMainContainer>{children}</StyledMainContainer>
     </StyledPage>
   );
 };

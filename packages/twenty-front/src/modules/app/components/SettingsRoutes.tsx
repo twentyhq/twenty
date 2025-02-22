@@ -347,7 +347,10 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
       </Route>
       <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
-      <Route path={SettingsPath.PlaygroundRouter} element={<PlaygroundRouter />} />
+      <Route
+        path={SettingsPath.PlaygroundRouter}
+        element={<PlaygroundRouter />}
+      />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}

@@ -49,7 +49,11 @@ const GraphQlComponent = ({ apiKey, baseUrl, path }: any) => {
   );
 };
 
-export const GraphQLPlayground = ({ schema }: { schema: PlaygroundSchemas }) => {
+export const GraphQLPlayground = ({
+  schema,
+}: {
+  schema: PlaygroundSchemas;
+}) => {
   const apiKey = sessionStorage.getItem('apiKey');
   const baseUrl = REACT_APP_SERVER_BASE_URL;
 
@@ -67,11 +71,11 @@ export const GraphQLPlayground = ({ schema }: { schema: PlaygroundSchemas }) => 
         { children: <Trans>GraphQL API Playground</Trans> },
       ]}
     >
-        <GraphQlComponent
-          apiKey={apiKey}
-          baseUrl={baseUrl}
-          path={SchemaToPath[schema]}
-        />
+      <GraphQlComponent
+        apiKey={apiKey}
+        baseUrl={baseUrl}
+        path={SchemaToPath[schema]}
+      />
     </PlaygroundPage>
   );
 };
