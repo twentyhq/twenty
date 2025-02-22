@@ -1,6 +1,6 @@
+import { PlaygroundPage } from '@/settings/playground/components/PlaygroundPage';
 import { PlaygroundSchemas } from '@/settings/playground/components/PlaygroundSetupForm';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
@@ -14,13 +14,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
-  height: 100%;
-`;
-
-const StyledPlaygroundContainer = styled.div`
   height: 100vh;
-  position: relative;
-  width: 100vw;
 `;
 
 const SchemaToPath = {
@@ -60,7 +54,7 @@ export const GraphQLPlayground = ({ schema }: { schema: PlaygroundSchemas }) => 
   const baseUrl = REACT_APP_SERVER_BASE_URL;
 
   return (
-    <SubMenuTopBarContainer
+    <PlaygroundPage
       links={[
         {
           children: <Trans>Workspace</Trans>,
@@ -73,13 +67,11 @@ export const GraphQLPlayground = ({ schema }: { schema: PlaygroundSchemas }) => 
         { children: <Trans>GraphQL API Playground</Trans> },
       ]}
     >
-      <StyledPlaygroundContainer>
         <GraphQlComponent
           apiKey={apiKey}
           baseUrl={baseUrl}
           path={SchemaToPath[schema]}
         />
-      </StyledPlaygroundContainer>
-    </SubMenuTopBarContainer>
+    </PlaygroundPage>
   );
 };
