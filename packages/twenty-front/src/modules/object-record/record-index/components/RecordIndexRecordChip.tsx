@@ -2,7 +2,11 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isNonEmptyString } from '@sniptt/guards';
-import { AvatarChip, AvatarChipVariant, ChipSize } from 'twenty-ui';
+import {
+  AvatarChip,
+  AvatarChipVariant,
+  ChipSize,
+} from 'twenty-ui';
 
 export type RecordIdentifierChipProps = {
   objectNameSingular: string;
@@ -12,6 +16,7 @@ export type RecordIdentifierChipProps = {
   to?: string;
   maxWidth?: number;
   onClick?: () => void;
+  isLabelHidden?: boolean;
 };
 
 export const RecordIdentifierChip = ({
@@ -22,6 +27,7 @@ export const RecordIdentifierChip = ({
   onClick,
   to,
   maxWidth,
+  isLabelHidden,
 }: RecordIdentifierChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -39,6 +45,7 @@ export const RecordIdentifierChip = ({
     <AvatarChip
       placeholderColorSeed={record.id}
       name={recordChipData.name}
+      isLabelHidden={isLabelHidden}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       to={to}

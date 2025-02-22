@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 
 export type AvatarChipProps = {
   name: string;
+  isLabelHidden?: boolean;
   avatarUrl?: string;
   avatarType?: Nullable<AvatarType>;
   variant?: AvatarChipVariant;
@@ -50,6 +51,7 @@ const StyledLink = styled(Link)`
 
 export const AvatarChip = ({
   name,
+  isLabelHidden = false,
   avatarUrl,
   avatarType = 'rounded',
   variant = AvatarChipVariant.Regular,
@@ -68,6 +70,7 @@ export const AvatarChip = ({
   const chip = (
     <Chip
       label={name}
+      isLabelHidden={isLabelHidden}
       variant={
         isDefined(onClick) || isDefined(to)
           ? variant === AvatarChipVariant.Regular
