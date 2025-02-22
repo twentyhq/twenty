@@ -1,8 +1,8 @@
 import { SettingsPath } from '@/types/SettingsPath';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import {
-    Breadcrumb,
-    BreadcrumbProps,
+  Breadcrumb,
+  BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -23,9 +23,9 @@ const StyledPage = styled.div`
 `;
 
 const StyledMainContainer = styled.div`
+  flex: 1 1 auto;
   overflow-y: scroll;
   width: 100vw;
-  flex: 1 1 auto;
 `;
 
 export const PlaygroundPage = ({ children, links }: PlaygroundPageProps) => {
