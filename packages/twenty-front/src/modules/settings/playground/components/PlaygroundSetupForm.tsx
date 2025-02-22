@@ -30,14 +30,14 @@ export enum PlaygroundSchemas {
   CORE = 'Core',
 }
 
-export const apiPlaygroundSetupFormSchema = z.object({
+export const playgroundSetupFormSchema = z.object({
   apiKey: z.string(),
   schema: z.nativeEnum(PlaygroundSchemas),
   apiPlayground: z.nativeEnum(PlaygroundTypes),
 });
 
-type ApiPlaygroundSetupFormValues = z.infer<
-  typeof apiPlaygroundSetupFormSchema
+type PlaygroundSetupFormValues = z.infer<
+  typeof playgroundSetupFormSchema
 >;
 
 const StyledForm = styled.form`
@@ -49,14 +49,14 @@ const StyledForm = styled.form`
   width: 100%;
 `;
 
-export const ApiPlaygroundSetupForm = () => {
+export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const [, setOpenAPIReference] = useRecoilState(openAPIReferenceState);
 
-  const { control, handleSubmit } = useForm<ApiPlaygroundSetupFormValues>({
+  const { control, handleSubmit } = useForm<PlaygroundSetupFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(apiPlaygroundSetupFormSchema),
+    resolver: zodResolver(playgroundSetupFormSchema),
   });
 
   const { records: apiKeys } = useFindManyRecords<ApiKey>({
@@ -64,7 +64,7 @@ export const ApiPlaygroundSetupForm = () => {
     filter: { revokedAt: { is: 'NULL' } },
   });
 
-  const getOpenAPIConfig = async (values: ApiPlaygroundSetupFormValues) => {
+  const getOpenAPIConfig = async (values: PlaygroundSetupFormValues) => {
     const response = await fetch(
       REACT_APP_SERVER_BASE_URL + '/open-api/' + values.schema,
       {
@@ -80,7 +80,7 @@ export const ApiPlaygroundSetupForm = () => {
     setOpenAPIReference(openAPIReference);
   };
 
-  const onSubmit = async (values: ApiPlaygroundSetupFormValues) => {
+  const onSubmit = async (values: PlaygroundSetupFormValues) => {
     sessionStorage.setItem('apiKey', values.apiKey);
 
     await getOpenAPIConfig(values);

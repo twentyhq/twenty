@@ -1,8 +1,8 @@
+import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
 import {
   PlaygroundSchemas,
   PlaygroundTypes,
-} from '@/settings/playground/components/ApiPlaygroundSetupForm';
-import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
+} from '@/settings/playground/components/PlaygroundSetupForm';
 import { RestPlayground } from '@/settings/playground/components/RestPlayground';
 import { useParams } from 'react-router-dom';
 

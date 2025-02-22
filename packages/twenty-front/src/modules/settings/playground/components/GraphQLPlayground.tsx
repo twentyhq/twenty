@@ -1,4 +1,4 @@
-import { PlaygroundSchemas } from '@/settings/playground/components/ApiPlaygroundSetupForm';
+import { PlaygroundSchemas } from '@/settings/playground/components/PlaygroundSetupForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
