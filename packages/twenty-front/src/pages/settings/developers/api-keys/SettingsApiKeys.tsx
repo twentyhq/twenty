@@ -38,7 +38,7 @@ export const SettingsApiKeys = () => {
           children: <Trans>Workspace</Trans>,
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: <Trans>API Keys</Trans> },
+        { children: <Trans>APIs</Trans> },
       ]}
     >
       <SettingsPageContainer>
