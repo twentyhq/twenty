@@ -356,6 +356,7 @@
   "name": "twenty",
   "packageManager": "yarn@4.4.0",
   "resolutions": {
+    "@codemirror/state": "6.4.1",
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
     "typescript": "5.3.3",
