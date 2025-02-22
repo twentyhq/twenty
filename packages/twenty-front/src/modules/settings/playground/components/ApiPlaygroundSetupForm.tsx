@@ -85,7 +85,7 @@ export const ApiPlaygroundSetupForm = () => {
 
     await getOpenAPIConfig(values);
 
-    navigateSettings(SettingsPath.APIPlayground, {
+    navigateSettings(SettingsPath.PlaygroundRouter, {
       schema: values.schema.toLowerCase(),
       type: values.apiPlayground.toLowerCase(),
     });
