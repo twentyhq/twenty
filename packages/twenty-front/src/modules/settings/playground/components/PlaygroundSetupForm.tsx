@@ -7,7 +7,8 @@ import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useMemo } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import {
   Button,
@@ -89,25 +90,26 @@ export const PlaygroundSetupForm = () => {
     });
   };
 
-  const apiKey = useWatch({ control, name: 'apiKey' });
+  const options = useMemo(() => {
+    return apiKeys.length > 0
+      ? apiKeys.map((apiKey) => ({
+          value: apiKey.id,
+          label: apiKey.name,
+        }))
+      : [{ value: '', label: 'No API Key' }];
+  }, [apiKeys]);
 
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name={'apiKey'}
         control={control}
+        defaultValue={options[0].value}
         render={({ field: { onChange, value } }) => (
           <Select
             dropdownId="apiKey"
             label={t`API Key`}
-            options={
-              apiKeys.length > 0
-                ? apiKeys.map((apiKey) => ({
-                    value: apiKey.id,
-                    label: apiKey.name,
-                  }))
-                : [{ value: '', label: 'No API Key' }]
-            }
+            options={options}
             value={value}
             onChange={onChange}
             callToActionButton={{
@@ -167,13 +169,7 @@ export const PlaygroundSetupForm = () => {
           />
         )}
       />
-      <Button
-        disabled={!apiKey || apiKey.length === 0}
-        title={t`Launch`}
-        variant="primary"
-        accent="blue"
-        type="submit"
-      />
+      <Button title={t`Launch`} variant="primary" accent="blue" type="submit" />
     </StyledForm>
   );
 };
