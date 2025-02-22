@@ -1,8 +1,8 @@
 import { SettingsPath } from '@/types/SettingsPath';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import {
-  Breadcrumb,
-  BreadcrumbProps,
+    Breadcrumb,
+    BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -18,12 +18,14 @@ type PlaygroundPageProps = {
 const StyledPage = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 100dvw;
+  height: 100dvh;
 `;
 
-const StyledMainContainer = styled.div<{ showPlayground?: boolean }>`
+const StyledMainContainer = styled.div`
   overflow-y: scroll;
-  width: 100%;
+  width: 100vw;
+  flex: 1 1 auto;
 `;
 
 export const PlaygroundPage = ({ children, links }: PlaygroundPageProps) => {

@@ -1,7 +1,6 @@
 import { PlaygroundPage } from '@/settings/playground/components/PlaygroundPage';
 import { PlaygroundSchemas } from '@/settings/playground/components/PlaygroundSetupForm';
 import { SettingsPath } from '@/types/SettingsPath';
-import styled from '@emotion/styled';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
@@ -12,10 +11,6 @@ import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-const StyledContainer = styled.div`
-  height: 100vh;
-`;
 
 const SchemaToPath = {
   [PlaygroundSchemas.CORE.toLocaleLowerCase()]: 'graphql',
@@ -38,14 +33,12 @@ const GraphQlComponent = ({ apiKey, baseUrl, path }: any) => {
   }
 
   return (
-    <StyledContainer>
-      <GraphiQL
-        forcedTheme={theme.name as 'light' | 'dark'}
-        plugins={[explorer]}
-        fetcher={fetcher}
-        defaultHeaders={JSON.stringify({ Authorization: `Bearer ${apiKey}` })}
-      />
-    </StyledContainer>
+    <GraphiQL
+      forcedTheme={theme.name as 'light' | 'dark'}
+      plugins={[explorer]}
+      fetcher={fetcher}
+      defaultHeaders={JSON.stringify({ Authorization: `Bearer ${apiKey}` })}
+    />
   );
 };
 
