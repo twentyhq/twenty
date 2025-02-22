@@ -8,6 +8,8 @@ import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { Trans } from '@lingui/react/macro';
 import { GraphiQL } from 'graphiql';
 import 'graphiql/graphiql.css';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -27,6 +29,8 @@ const SchemaToPath = {
 };
 
 const GraphQlComponent = ({ apiKey, baseUrl, path }: any) => {
+  const { theme } = useContext(ThemeContext);
+
   const explorer = explorerPlugin({
     showAttribution: true,
   });
@@ -42,6 +46,7 @@ const GraphQlComponent = ({ apiKey, baseUrl, path }: any) => {
   return (
     <StyledContainer>
       <GraphiQL
+        forcedTheme={theme.name as 'light' | 'dark'}
         plugins={[explorer]}
         fetcher={fetcher}
         defaultHeaders={JSON.stringify({ Authorization: `Bearer ${apiKey}` })}
