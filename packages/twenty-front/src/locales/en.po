@@ -1150,6 +1150,7 @@ msgid "Events you participated in are displayed in red."
 msgstr "Events you participated in are displayed in red."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Everything"
 msgstr "Everything"
 
@@ -1671,6 +1672,7 @@ msgid "Members"
 msgstr "Members"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -1928,6 +1930,10 @@ msgstr "Objects"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Off the beaten path"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "Only date & participants will be shared with your team."
+msgstr "Only date & participants will be shared with your team."
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
@@ -2589,6 +2595,10 @@ msgstr "The values of this field"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field must be unique"
 msgstr "The values of this field must be unique"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "The whole event details will be shared with your team."
+msgstr "The whole event details will be shared with your team."
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."

@@ -1157,6 +1157,7 @@ msgid "Events you participated in are displayed in red."
 msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Everything"
 msgstr ""
 
@@ -1678,6 +1679,7 @@ msgid "Members"
 msgstr "회원"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Metadata"
 msgstr ""
 
@@ -1935,6 +1937,10 @@ msgstr "개체"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "잘 알려지지 않은 길"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "Only date & participants will be shared with your team."
+msgstr ""
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
@@ -2596,6 +2602,10 @@ msgstr "이 필드의 값"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field must be unique"
 msgstr "이 필드의 값은 고유해야 합니다"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "The whole event details will be shared with your team."
+msgstr ""
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."

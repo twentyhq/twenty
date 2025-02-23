@@ -1,5 +1,4 @@
 import { Tag } from 'twenty-ui';
-import { t } from '@lingui/core/macro';
 import { ObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 
 type SettingsDataModelObjectTypeTagProps = {

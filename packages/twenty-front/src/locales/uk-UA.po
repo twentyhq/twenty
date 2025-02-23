@@ -1211,6 +1211,7 @@ msgid "Events you participated in are displayed in red."
 msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Everything"
 msgstr ""
 
@@ -1732,6 +1733,7 @@ msgid "Members"
 msgstr "Члени"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Metadata"
 msgstr ""
 
@@ -1989,6 +1991,10 @@ msgstr "Об'єкти"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Не по традиційному шляху"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "Only date & participants will be shared with your team."
+msgstr ""
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
@@ -2650,6 +2656,10 @@ msgstr "Значення цього поля"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field must be unique"
 msgstr "Значення цього поля повинні бути унікальними"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "The whole event details will be shared with your team."
+msgstr ""
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."

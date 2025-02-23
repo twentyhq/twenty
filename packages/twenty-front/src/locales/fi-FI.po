@@ -1155,6 +1155,7 @@ msgid "Events you participated in are displayed in red."
 msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Everything"
 msgstr ""
 
@@ -1676,6 +1677,7 @@ msgid "Members"
 msgstr "Jäsenet"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Metadata"
 msgstr ""
 
@@ -1933,6 +1935,10 @@ msgstr "Objektit"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Kulkemattomia polkuja pitkin"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "Only date & participants will be shared with your team."
+msgstr ""
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
@@ -2594,6 +2600,10 @@ msgstr "Tämän kentän arvot"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field must be unique"
 msgstr "Tämän kentän arvojen tulee olla yksilöllisiä"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "The whole event details will be shared with your team."
+msgstr ""
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
