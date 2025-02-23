@@ -18,34 +18,6 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid ": Empty"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid ": Future"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid ": Not"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid ": NotEmpty"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid ": NotNull"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid ": Past"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid ": Today"
-msgstr ""
-
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} z {fieldLabel}"
@@ -67,23 +39,9 @@ msgstr "{workspaceMemberName} bude odebrán z následující role:"
 msgid "1 000 workflow node executions"
 msgstr "1 000 spuštění uzlů Workflow"
 
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
-msgid "1. Select a field type"
-msgstr ""
-
-#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
-#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
-msgid "1. Type"
-msgstr ""
-
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12h ({hour12Label})"
-
-#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
-#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
-msgid "2. Configure"
-msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
@@ -107,7 +65,6 @@ msgstr "Přerušit"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "O aplikaci"
 
@@ -136,7 +93,6 @@ msgstr "Akce"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Activate"
 msgstr "Aktivovat"
@@ -158,10 +114,6 @@ msgstr "Aktivní API klíče vytvořené vámi nebo vaším týmem."
 msgid "Add"
 msgstr "Přidat"
 
-#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
-msgid "Add account"
-msgstr ""
-
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
 msgstr ""
@@ -170,21 +122,9 @@ msgstr ""
 msgid "Add Field"
 msgstr "Přidat pole"
 
-#: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
-msgid "Add filter"
-msgstr ""
-
-#: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
-msgid "Add new"
-msgstr ""
-
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Přidat objekt"
-
-#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
-msgid "Add option"
-msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
@@ -193,11 +133,6 @@ msgstr "Přidat poskytovatele identity SSO"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
 msgstr "Přidat do seznamu blokovaných"
-
-#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
-#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
-msgid "Add to Favorite"
-msgstr ""
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
@@ -213,10 +148,6 @@ msgstr ""
 msgid "Add to favorites"
 msgstr "Přidat do oblíbených"
 
-#: src/modules/views/view-picker/components/ViewPickerListContent.tsx
-msgid "Add view"
-msgstr ""
-
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
 msgstr "Přidejte svůj první {objectLabel}"
@@ -224,10 +155,6 @@ msgstr "Přidejte svůj první {objectLabel}"
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Přidáno {beautifiedCreatedAt}"
-
-#: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
-msgid "Added to blocklist"
-msgstr ""
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -245,29 +172,9 @@ msgstr "Vše"
 msgid "All ({relationRecordsCount})"
 msgstr "Vše ({relationRecordsCount})"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "All Actions"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "All emails and events linked to this account will be deleted"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
-msgid "All lines"
-msgstr ""
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "All Objects"
-msgstr ""
-
 #: src/pages/settings/roles/SettingsRoles.tsx
 msgid "All roles"
 msgstr "Všechny role"
-
-#: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions.ts
-#~ msgid "All the basic field types you need to start"
-#~ msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -330,10 +237,6 @@ msgstr "Název API (množné číslo)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
 msgstr "API název (jednotné číslo)"
-
-#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
-msgid "API values"
-msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -404,30 +307,6 @@ msgstr ""
 msgid "Authorize"
 msgstr "Autorizovat"
 
-#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
-msgid "Authorized URI"
-msgstr ""
-
-#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
-msgid "Authorized URL copied to clipboard"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
-msgid "Auto-creation"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
-msgid "Automatically create contacts for people you've participated in an event with."
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
-msgid "Automatically create contacts for people."
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Automatically create People records when receiving or sending emails"
-msgstr ""
-
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Average"
@@ -462,10 +341,6 @@ msgstr "Spočítat"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
 msgstr "Kalendář"
-
-#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "Calendar settings"
-msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -518,14 +393,6 @@ msgstr "Čínština — tradiční"
 msgid "Choose an object"
 msgstr "Vyberte objekt"
 
-#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-msgid "Choose between OIDC and SAML protocols"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "Choose the default currency that will apply"
-msgstr ""
-
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Choose the fields that will identify your records"
 msgstr "Vyberte pole, která budou identifikovat vaše záznamy"
@@ -537,18 +404,6 @@ msgstr "Vyberte svého poskytovatele"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
 msgstr "Vyberte si Trial"
-
-#: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
-msgid "Clear"
-msgstr ""
-
-#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
-msgid "Client ID"
-msgstr ""
-
-#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
-msgid "Client Secret"
-msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
@@ -562,14 +417,6 @@ msgstr "Zavřít"
 msgid "Close command menu"
 msgstr "Zavřít příkazové menu"
 
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
-msgid "Color code"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
-msgid "Compact view"
-msgstr ""
-
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
 msgstr "Nakonfigurujte připojení SSO"
@@ -581,10 +428,6 @@ msgstr "Nakonfigurujte a přizpůsobte si předvolby kalendáře."
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure how dates are displayed across the app"
 msgstr "Nakonfigurujte, jak se mají zobrazovat data v aplikaci"
-
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
-msgid "Configure how we should display your events in your calendar"
-msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -609,15 +452,6 @@ msgstr "Připojit s Microsoft"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Connected accounts"
 msgstr "Připojené účty"
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
-msgid "Contact auto-creation"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Contains"
-msgstr ""
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Context"
@@ -654,7 +488,6 @@ msgstr "Kopilot"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
-#: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "Copy"
 msgstr ""
 
@@ -670,7 +503,6 @@ msgstr "Kopírovat odkaz"
 msgid "Copy this key as it will not be visible again"
 msgstr "Zkopírujte tento klíč, nebude již znovu viditelný"
 
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "Count"
@@ -691,14 +523,6 @@ msgstr "Počet neprázdných"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
 msgstr "Počet unikátních hodnot"
-
-#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-msgid "Create"
-msgstr ""
-
-#: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions.ts
-#~ msgid "Create a relation with another object"
-#~ msgstr ""
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
@@ -721,15 +545,6 @@ msgstr "Vytvořit profil"
 msgid "Create Role"
 msgstr "Vytvořit roli"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-msgid "Create select field"
-msgstr ""
-
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-#: src/modules/views/components/UpdateViewButtonGroup.tsx
-msgid "Create view"
-msgstr ""
-
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Create Webhook"
 msgstr "Vytvořit Webhook"
@@ -737,10 +552,6 @@ msgstr "Vytvořit Webhook"
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Create your workspace"
 msgstr "Vytvořte svůj pracovní prostor"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Created"
-msgstr ""
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -757,10 +568,6 @@ msgstr "Přizpůsobit pole dostupná ve zobrazeních {objectLabelSingular}."
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Customize Domain"
 msgstr "Přizpůsobit doménu"
-
-#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
-msgid "Customize fields"
-msgstr ""
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
@@ -787,10 +594,6 @@ msgstr "Dánština"
 msgid "Dark"
 msgstr "Tmavý"
 
-#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "Data deletion"
-msgstr ""
-
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Data model"
@@ -811,10 +614,6 @@ msgstr "Datum"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Date and time"
 msgstr "Datum a čas"
-
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
-msgid "Date format"
-msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
@@ -841,39 +640,13 @@ msgstr "Deaktivovat toto pole"
 msgid "Deactivate Workflow"
 msgstr "Deaktivovat Workflow"
 
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
-msgid "Deactivated"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
-msgid "Default Country"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
-msgid "Default Country Code"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
-msgid "Default Value"
-msgstr ""
-
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
 msgstr "Definujte název a popis vašeho objektu"
 
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
-msgid "Define what will be visible to other users in your workspace"
-msgstr ""
-
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
-#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
@@ -891,7 +664,6 @@ msgstr "Smazat"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account"
 msgstr "Smazat účet"
 
@@ -939,14 +711,6 @@ msgstr "Smazat pracovní prostor"
 msgid "Delete your whole workspace"
 msgstr "Smazat celý pracovní prostor"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Deleted"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Deleted {objectNamePlural}"
-msgstr ""
-
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
@@ -980,47 +744,18 @@ msgstr "Vývojáři"
 msgid "Discard Draft"
 msgstr "Zrušit koncept"
 
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
-msgid "Display"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "Display as a plain number or a percentage"
-msgstr ""
-
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
 msgstr "Zobrazit jako relativní datum"
 
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
-msgid "Display text on multiple lines"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Doesn't contain"
-msgstr ""
-
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
 msgstr "Doména"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain added successfully."
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
-msgid "Don’t auto-create contacts."
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -1044,22 +779,9 @@ msgstr "Nejdříve"
 msgid "Earliest date"
 msgstr "Nejstarší datum"
 
-#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-msgid "Edit"
-msgstr ""
-
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
 msgstr "Upravit fakturační interval"
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
-msgid "Edit field values"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-msgid "Edit Fields"
-msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -1089,10 +811,6 @@ msgstr "Integrace e-mailů"
 msgid "Email or domain is already in blocklist"
 msgstr "E-mail nebo doména již je v seznamu blokovaných"
 
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email verification"
-msgstr ""
-
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
 msgstr ""
@@ -1105,20 +823,12 @@ msgstr ""
 msgid "Email verified."
 msgstr ""
 
-#: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
-msgid "Email/Domain"
-msgstr ""
-
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Emails"
 msgstr "E-maily"
-
-#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "Emails settings"
-msgstr ""
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -1154,20 +864,12 @@ msgstr ""
 msgid "Enter the infos to set the connection"
 msgstr ""
 
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Enter user ID or email address"
-msgstr ""
-
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
 msgstr "Podnik"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID copied to clipboard"
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-msgid "Env Variables"
 msgstr ""
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -1206,27 +908,6 @@ msgstr "Chyba při přepínání předplatného {to}."
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Vytvořte koncové body Webhook pro oznámení o asynchronních událostech."
 
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
-msgid "Event visibility"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
-msgid "Events you participated in are displayed in red."
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-msgid "Everything"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Exclude group emails"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Exclude non-professional emails"
-msgstr ""
-
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
 #~ msgstr "Exclude the following people and domains from my email sync"
@@ -1254,7 +935,6 @@ msgid "Experience"
 msgstr "Zkušenosti"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Expiration"
 msgstr "Platnost"
 
@@ -1270,7 +950,6 @@ msgstr ""
 msgid "Expires in"
 msgstr "Vyprší za"
 
-#: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -1309,25 +988,9 @@ msgstr "Exportovat zobrazení"
 msgid "Export Workflows"
 msgstr "Exportovat pracovní postupy"
 
-#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
-msgid "False"
-msgstr ""
-
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
 msgstr "Oblíbené"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Feature Flag"
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Feature Flags & Impersonation"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-msgid "Field name"
-msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -1337,8 +1000,6 @@ msgstr "Typ pole"
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Fields"
 msgstr "Pole"
 
@@ -1360,20 +1021,7 @@ msgstr "Filtry"
 msgid "Finnish"
 msgstr "Finština"
 
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
-msgid "First 10 lines"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
-msgid "First 2 lines"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
-msgid "First 5 lines"
-msgstr ""
-
 #: src/pages/onboarding/CreateProfile.tsx
-#: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "Jméno"
 
@@ -1405,7 +1053,6 @@ msgstr "Funkce"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "General"
 msgstr "Obecné"
 
@@ -1425,29 +1072,15 @@ msgstr "Získejte své předplatné"
 msgid "Global"
 msgstr "Globální"
 
-#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-msgid "Go to Settings"
-msgstr ""
-
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Twenty podpoře dočasně udělit přístup do vašeho pracovního prostoru, aby bylo možné řešit problémy nebo obnovit obsah za vás. Přístup můžete kdykoli zrušit."
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Greater than"
-msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Greek"
 msgstr "Řečtina"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Group by"
-msgstr ""
-
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "Zdravotní stav"
 
@@ -1455,22 +1088,9 @@ msgstr "Zdravotní stav"
 msgid "Hebrew"
 msgstr "Hebrejština"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-msgid "Hidden"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
-msgid "Hidden Fields"
-msgstr ""
-
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
 msgstr "Skrýt"
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
-msgid "Hide empty groups"
-msgstr ""
 
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -1479,10 +1099,6 @@ msgstr "Jak budete identifikováni v aplikaci."
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
 msgstr "Maďarština"
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-msgid "Icon"
-msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -1504,18 +1120,6 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Pokud jste ztratili tento klíč, můžete jej obnovit, ale mějte na paměti, že všechny skripty používající tento klíč bude potřeba aktualizovat. Prosím, napište \"<b>{confirmationValue}</b>\" pro potvrzení."
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Impersonate"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Import"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
-msgid "Importing"
-msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1603,54 +1207,6 @@ msgstr "Pozvánka odeslána na e-mailové adresy"
 msgid "Invite your team"
 msgstr "Pozvěte svůj tým"
 
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is after"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is before"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is empty"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is in future"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is in past"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is not"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is not empty"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is not null"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is relative"
-msgstr ""
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Is today"
-msgstr ""
-
-#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
-msgid "Issuer URI"
-msgstr ""
-
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
 msgstr "Italština"
@@ -1659,16 +1215,10 @@ msgstr "Italština"
 msgid "Japanese"
 msgstr "Japonština"
 
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-msgid "Kanban"
-msgstr ""
-
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Korean"
 msgstr "Korejština"
 
-#: src/pages/settings/lab/SettingsLab.tsx
-#: src/pages/settings/lab/SettingsLab.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Lab"
 msgstr "Laboratoř"
@@ -1678,7 +1228,6 @@ msgid "Language"
 msgstr "Jazyk"
 
 #: src/pages/onboarding/CreateProfile.tsx
-#: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
 msgstr "Příjmení"
 
@@ -1689,10 +1238,6 @@ msgstr "Nejnovější"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Latest date"
 msgstr "Nejnovější datum"
-
-#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
-msgid "Less than"
-msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Light"
@@ -1714,19 +1259,6 @@ msgstr "Odhlásit se"
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
 msgid "Logout"
 msgstr "Odhlásit"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Look up users and manage their workspace feature flags or impersonate them."
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Look up users to impersonate them."
-msgstr ""
-
-#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
-#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
-msgid "Manage favorite"
-msgstr ""
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
@@ -1760,11 +1292,6 @@ msgstr "Maximální"
 msgid "Members"
 msgstr "Členové"
 
-#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-msgid "Metadata"
-msgstr ""
-
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
 msgstr ""
@@ -1774,11 +1301,6 @@ msgstr ""
 msgid "Min"
 msgstr "Minimální"
 
-#: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions.ts
-#~ msgid "More advanced fields for advanced projects"
-#~ msgstr ""
-
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "More options"
@@ -1807,9 +1329,6 @@ msgstr "Posunout doprava"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
-#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "Název"
 
@@ -1904,10 +1423,6 @@ msgstr "Nový záznam"
 #~ msgstr "New Role"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
-msgid "New SSO Configuration"
-msgstr ""
-
-#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
 msgstr ""
 
@@ -1918,10 +1433,6 @@ msgstr ""
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
 msgstr "Žádný propojený účet"
-
-#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
-msgid "No country"
-msgstr ""
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members assigned to this role yet"
@@ -1955,10 +1466,6 @@ msgstr ""
 msgid "No Results"
 msgstr "Žádné výsledky"
 
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-msgid "No Select field"
-msgstr ""
-
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Zatím žádné běhy workflow"
@@ -1967,55 +1474,23 @@ msgstr "Zatím žádné běhy workflow"
 msgid "No workflow versions yet"
 msgstr "Zatím žádné verze workflow"
 
-#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-msgid "None"
-msgstr ""
-
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Norwegian"
 msgstr "Norština"
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Not available on Default View"
-msgstr ""
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "Není prázdný"
 
-#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
-msgid "Not synced"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "Number"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "Number of decimals"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "Number type"
-msgstr ""
-
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Objekt"
-
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-msgid "Object destination"
-msgstr ""
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Objects"
 msgstr "Objekty"
@@ -2024,16 +1499,11 @@ msgstr "Objekty"
 msgid "Off the beaten path"
 msgstr "Mimo ušlapané cesty"
 
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-msgid "Only date & participants will be shared with your team."
-msgstr ""
-
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
 msgstr "Otevřít příkazové menu"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Open in"
 msgstr ""
 
@@ -2041,12 +1511,7 @@ msgstr ""
 msgid "Opened"
 msgstr "Otevřený"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
-msgstr ""
-
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
 msgid "Options"
 msgstr "Možnosti"
@@ -2055,8 +1520,6 @@ msgstr "Možnosti"
 msgid "or"
 msgstr "nebo"
 
-#: src/pages/settings/Releases.tsx
-#: src/pages/settings/lab/SettingsLab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2080,15 +1543,6 @@ msgstr "Heslo bylo aktualizováno"
 msgid "Password reset link has been sent to the email"
 msgstr "Odkaz pro resetování hesla byl odeslán na email"
 
-#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
-msgid "People I’ve sent emails to and received emails from."
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
-msgid "People I’ve sent emails to."
-msgstr ""
-
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "Percent"
@@ -2101,10 +1555,6 @@ msgstr "Procento prázdné"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Percent not empty"
 msgstr "Procento neprázdné"
-
-#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "Percentage"
-msgstr ""
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2207,23 +1657,6 @@ msgstr "Přečtěte si dokumentaci"
 msgid "Receive an email containing password update link"
 msgstr "Obdržíte e-mail s odkazem na aktualizaci hesla"
 
-#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "Reconnect"
-msgstr ""
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
-msgid "Record image"
-msgstr ""
-
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
-msgid "Record label"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
-msgid "Record Page"
-msgstr ""
-
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
 msgstr "Výběr záznamů"
@@ -2231,10 +1664,6 @@ msgstr "Výběr záznamů"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirect Url copied to clipboard"
 msgstr ""
-
-#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
-#~ msgid "Redirect URL copied to clipboard"
-#~ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirection URI"
@@ -2253,10 +1682,6 @@ msgstr "Znovu vygenerujte klíč"
 msgid "Regenerate Key"
 msgstr "Znovu vygenerujte klíč"
 
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-msgid "Relation type"
-msgstr ""
-
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/Releases.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2273,14 +1698,6 @@ msgstr "Odstranit"
 msgid "Remove {workspaceMemberName}?"
 msgstr "Odebrat uživatele {workspaceMemberName}?"
 
-#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
-msgid "Remove account"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
-msgid "Remove as default"
-msgstr ""
-
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -2292,14 +1709,6 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Remove from favorites"
 msgstr "Odebrat z oblíbených"
-
-#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
-msgid "Remove option"
-msgstr ""
-
-#: src/modules/views/components/ViewBarDetails.tsx
-msgid "Reset"
-msgstr ""
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "Reset Password"
@@ -2331,16 +1740,7 @@ msgstr "Spusťte pracovní postup a vraťte se sem pro zobrazení jeho proveden�
 msgid "Russian"
 msgstr "Ruština"
 
-#: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
-msgid "Save"
-msgstr ""
-
-#: src/modules/views/components/UpdateViewButtonGroup.tsx
-msgid "Save as new view"
-msgstr ""
-
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
@@ -2359,16 +1759,11 @@ msgstr "Hledat ve sloupci..."
 msgid "Search a member"
 msgstr "Vyhledejte člena"
 
-#: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
-msgid "Search a type"
-msgstr ""
-
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Search an index..."
 msgstr "Hledat v indexu..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx
 msgid "Search fields"
 msgstr "Hledání ve sloupcích"
@@ -2377,18 +1772,10 @@ msgstr "Hledání ve sloupcích"
 msgid "Search for an object..."
 msgstr "Hledat objekt..."
 
-#: src/modules/ui/input/components/IconPicker.tsx
-msgid "Search icon"
-msgstr ""
-
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search records"
 msgstr "Hledání záznamů"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Secret"
-msgstr ""
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2420,10 +1807,6 @@ msgstr "Zobrazit verze"
 msgid "See versions history"
 msgstr "Zobrazit historii verzí"
 
-#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
-msgid "Select the default value for this boolean field"
-msgstr ""
-
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Vyberte události, které chcete poslat na tento koncový bod"
@@ -2435,14 +1818,6 @@ msgstr "Vyberte preferovaný jazyk"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "Pošlete pozvánku e-mailem vašemu týmu"
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
-msgid "Sent"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
-msgid "Sent and Received"
-msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
@@ -2460,10 +1835,6 @@ msgstr "Administrační panel serveru"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
-msgid "Set as default"
 msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -2507,11 +1878,6 @@ msgstr "Měla by změna popisku pole změnit také API název?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Měla by změna popisku objektu změnit také API?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
-msgid "Side Panel"
-msgstr ""
-
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Přihlásit se"
@@ -2524,17 +1890,12 @@ msgstr "Zaregistrovat se"
 msgid "Single sign-on (SSO)"
 msgstr "Jednotné přihlášení (SSO)"
 
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-msgid "Singular"
-msgstr ""
-
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
 msgstr "Přeskočit"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Sort"
 msgstr "Seřadit"
 
@@ -2545,14 +1906,6 @@ msgstr "Španělština"
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "SSO"
 msgstr "Jednotné přihlášení"
-
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-msgid "Stages"
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Status"
-msgstr ""
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Subdomain"
@@ -2570,18 +1923,6 @@ msgstr "Subdoména nemůže být delší než 30 znaků"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdoména nemůže být kratší než 3 znaky"
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-msgid "Subject and metadata"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-msgid "Subject and metadata will be shared with your team."
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-msgid "Subject, body and attachments will be shared with your team."
-msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Subscription has been switched {to}"
@@ -2612,14 +1953,6 @@ msgstr "Přepnout {to}"
 msgid "Switch billing {to}"
 msgstr "Přepnout fakturaci {to}"
 
-#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
-msgid "Sync failed"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
-msgid "Synced"
-msgstr ""
-
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Synchronize Field Label and API Name"
 msgstr "Synchronizace popisku pole a API názvu"
@@ -2629,8 +1962,6 @@ msgid "Synchronize Objects Labels and API Names"
 msgstr "Synchronizace popisků objektů a API názvů"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "System settings"
 msgstr "Systémová nastavení"
 
@@ -2641,10 +1972,6 @@ msgstr "Systémová nastavení - {systemDateFormatLabel}"
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr "Systémová nastavení - {systemTimeFormatLabel}"
-
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-msgid "Table"
-msgstr ""
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -2663,14 +1990,6 @@ msgstr "Testovat pracovní postupy"
 msgid "Text copied to clipboard"
 msgstr ""
 
-#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
-msgid "The default country code for new phone numbers."
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
-msgid "The default country for new addresses"
-msgstr ""
-
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
@@ -2684,14 +2003,6 @@ msgstr "Email spojený s vaším účtem"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The name and icon of this field"
 msgstr "Název a ikona tohoto pole"
-
-#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-msgid "The name of your connection"
-msgstr ""
-
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "The name of your Domain"
-msgstr ""
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
@@ -2709,10 +2020,6 @@ msgstr "Hodnoty tohoto pole"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field must be unique"
 msgstr "Hodnoty tohoto pole musí být unikátní"
-
-#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
-msgid "The whole event details will be shared with your team."
-msgstr ""
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
@@ -2752,14 +2059,6 @@ msgstr "Tuto roli mají přiřazení následující členové pracovního prosto
 msgid "Time format"
 msgstr "Formát času"
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
-msgid "Time zone"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
-msgid "Timestamp and participants will be shared with your team."
-msgstr ""
-
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to monthly"
 msgstr "na měsíční"
@@ -2767,10 +2066,6 @@ msgstr "na měsíční"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to yearly"
 msgstr "na roční"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr ""
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 msgid "Trigger Type"
@@ -2780,10 +2075,6 @@ msgstr "Typ spouštěče"
 msgid "Trigger type should be Manual - when no record(s) are selected"
 msgstr "Typ spouštěče by měl být ruční - když nejsou vybráni žádní záznamy"
 
-#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
-msgid "True"
-msgstr ""
-
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "Turečtina"
@@ -2791,7 +2082,6 @@ msgstr "Turečtina"
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Type"
 msgstr "Typ"
 
@@ -2815,10 +2105,6 @@ msgstr "Neznámá chyba"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Neomezený počet kontaktů"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Updated"
-msgstr ""
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -2855,38 +2141,13 @@ msgstr "Použijte naše API nebo ručně přidejte první {objectLabel}"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Uživatel"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Impersonation"
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Info"
-msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Uživatel není přihlášen"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2894,17 +2155,9 @@ msgstr ""
 msgid "Values"
 msgstr "Hodnoty"
 
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Version of the application"
-msgstr ""
-
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Vietnamese"
 msgstr "Vietnamština"
-
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-msgid "View"
-msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
@@ -2912,27 +2165,6 @@ msgstr "Zobrazit detaily fakturace"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr ""
-
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-msgid "View type"
-msgstr ""
-
-#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Visibility"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
-msgid "Visible"
-msgstr ""
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
-msgid "Visible groups"
 msgstr ""
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
@@ -2946,10 +2178,6 @@ msgstr "Podporujeme vaše čtvercové PNG, JPEG a GIFy menší než 10MB"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Na tento koncový bod budeme zasílat POST požadavky při každé nové události"
-
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "We will send your a link to verify domain ownership"
-msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Webhook"
@@ -2990,6 +2218,7 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
+#: src/pages/settings/Releases.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -3004,7 +2233,6 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
-#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -3024,28 +2252,11 @@ msgstr "Logo pracovního prostoru"
 msgid "Workspace name"
 msgstr "Název pracovního prostoru"
 
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr ""
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Workspaces"
-msgstr ""
-
-#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
-msgid "Wrap on record pages"
-msgstr ""
-
 #: src/pages/settings/roles/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
 msgstr "Napište popis"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Write a secret"
-msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
