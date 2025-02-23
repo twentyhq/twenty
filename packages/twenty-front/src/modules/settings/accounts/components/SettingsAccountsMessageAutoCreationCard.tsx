@@ -1,6 +1,7 @@
 import { MessageChannelContactAutoCreationPolicy } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageAutoCreationIcon } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationIcon';
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
+import { msg } from '@lingui/core/macro';
 
 type SettingsAccountsMessageAutoCreationCardProps = {
   onChange: (nextValue: MessageChannelContactAutoCreationPolicy) => void;
@@ -9,22 +10,22 @@ type SettingsAccountsMessageAutoCreationCardProps = {
 
 const autoCreationOptions = [
   {
-    title: 'Sent and Received',
-    description: 'People I’ve sent emails to and received emails from.',
+    title: msg`Sent and Received`,
+    description: msg`People I’ve sent emails to and received emails from.`,
     value: MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED,
     cardMedia: (
       <SettingsAccountsMessageAutoCreationIcon isSentActive isReceivedActive />
     ),
   },
   {
-    title: 'Sent',
-    description: 'People I’ve sent emails to.',
+    title: msg`Sent`,
+    description: msg`People I’ve sent emails to.`,
     value: MessageChannelContactAutoCreationPolicy.SENT,
     cardMedia: <SettingsAccountsMessageAutoCreationIcon isSentActive />,
   },
   {
-    title: 'None',
-    description: 'Don’t auto-create contacts.',
+    title: msg`None`,
+    description: msg`Don’t auto-create contacts.`,
     value: MessageChannelContactAutoCreationPolicy.NONE,
     cardMedia: (
       <SettingsAccountsMessageAutoCreationIcon

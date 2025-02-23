@@ -9,6 +9,7 @@ import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { useLingui } from '@lingui/react/macro';
 type SettingsDataModelFieldAddressFormProps = {
   disabled?: boolean;
   defaultCountry?: string;
@@ -30,6 +31,7 @@ export const SettingsDataModelFieldAddressForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldAddressFormProps) => {
+  const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
   const countries = [
     {
@@ -71,8 +73,8 @@ export const SettingsDataModelFieldAddressForm = ({
         return (
           <SettingsOptionCardContentSelect
             Icon={IconMap}
-            title="Default Country"
-            description="The default country for new addresses"
+            title={t`Default Country`}
+            description={t`The default country for new addresses`}
           >
             <Select<string>
               dropdownWidth={220}
