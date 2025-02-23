@@ -92,6 +92,7 @@ msgstr "Toiminnot"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Activate"
 msgstr "Aktivoi"
@@ -113,6 +114,10 @@ msgstr "Sinun tai tiimisi luomat aktiiviset API-avaimet."
 msgid "Add"
 msgstr "Lisää"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Add Approved Access Domain"
+msgstr ""
+
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "Lisää kenttä"
@@ -121,7 +126,7 @@ msgstr "Lisää kenttä"
 msgid "Add object"
 msgstr "Lisää objekti"
 
-#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Lisää SSO-identiteetintarjoaja"
 
@@ -171,19 +176,19 @@ msgstr "Kaikki ({relationRecordsCount})"
 msgid "All roles"
 msgstr "Kaikki roolit"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
 msgstr "Salli kirjautumiset Googlen yksittäisen kirjautumisen toiminnolla."
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Salli kirjautumiset Microsoftin yksittäisen kirjautumisen toiminnolla."
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Salli uusien käyttäjien kutsuminen jakamalla kutsulinkki."
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow users to sign in with an email and password."
 msgstr "Salli käyttäjien kirjautua sisään sähköpostilla ja salasanalla."
 
@@ -199,6 +204,10 @@ msgstr "Valinnainen kuvaus"
 msgid "and"
 msgstr "ja"
 
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
@@ -208,6 +217,10 @@ msgstr "API & Webhooks"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "API Key"
 msgstr "API-avain"
+
+#: src/modules/settings/developers/components/ApiKeyInput.tsx
+msgid "API Key copied to clipboard"
+msgstr ""
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "API keys"
@@ -228,6 +241,10 @@ msgstr "API-nimi (yksikkö)"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Ulkoasu"
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Approved Email Domain"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -274,13 +291,17 @@ msgstr "Tehtävänanto"
 msgid "At least 8 characters long."
 msgstr "Vähintään 8 merkkiä pitkä."
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "At least one authentication method must be enabled"
 msgstr "Ainakin yksi todennusmenetelmä on oltava käytössä"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Authentication"
 msgstr "Todennus"
+
+#: src/modules/auth/hooks/useVerifyLogin.ts
+msgid "Authentication failed"
+msgstr ""
 
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -384,6 +405,10 @@ msgstr "Valitse palveluntarjoajasi"
 msgid "Choose your Trial"
 msgstr "Valitse kokeilusi"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Client Settings"
+msgstr ""
+
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "Sulje"
@@ -452,9 +477,19 @@ msgstr "Jatka Googlella"
 msgid "Continue with Microsoft"
 msgstr "Jatka Microsoftin avulla"
 
+#: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+msgid "Copied to clipboard!"
+msgstr ""
+
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Copilot"
 msgstr "Avustaja"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Copy"
+msgstr ""
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -582,6 +617,7 @@ msgstr "Päivämäärä ja kellonaika"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deactivate"
@@ -610,6 +646,7 @@ msgstr "Määritä objektisi nimi ja kuvaus"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
@@ -717,6 +754,14 @@ msgstr "N\\u00e4yt\\u00e4 suhteellisena p\\u00e4iv\\u00e4m\\u00e4\\u00e4r\\u00e4
 msgid "Domain"
 msgstr "Verkkotunnus"
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domain added successfully."
+msgstr ""
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Download file"
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
 msgstr "Hollanti"
@@ -754,6 +799,10 @@ msgstr "Muokkaa alasivustosi nime\\u00e4 tai aseta mukautettu verkkotunnus."
 msgid "Email"
 msgstr "S\\u00e4hk\\u00f6posti"
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email can not be empty"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
 msgstr "S\\u00e4hk\\u00f6posti-integraatio"
@@ -761,6 +810,18 @@ msgstr "S\\u00e4hk\\u00f6posti-integraatio"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Email or domain is already in blocklist"
 msgstr "S\\u00e4hk\\u00f6posti tai verkkotunnus on jo estolistalla"
+
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verification failed."
+msgstr ""
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
+msgid "Email verification link resent!"
+msgstr ""
+
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verified."
+msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -795,17 +856,49 @@ msgstr "Englanti"
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Nauti {withCreditCardTrialPeriodDuration}-p\\u00e4iv\\u00e4isen ilmaisen kokeilun"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Enter the credentials to set the connection"
+msgstr ""
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Enter the infos to set the connection"
+msgstr ""
+
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
 msgstr "Yritys"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Entity ID copied to clipboard"
+msgstr ""
+
+#: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
+msgid "Error copying to clipboard"
+msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key: {err}"
 msgstr "Virhe API-avaimen poistamisessa: {err}"
 
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Error deleting invitation"
+msgstr ""
+
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+msgid "Error deleting SSO Identity Provider"
+msgstr ""
+
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+msgid "Error editing SSO Identity Provider"
+msgstr ""
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
 msgstr "Virhe API-avaimen uudelleengeneroinnissa: {err}"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Error resending invitation"
+msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
@@ -848,6 +941,10 @@ msgstr "Vanheneminen"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "Expiration Date"
 msgstr "Vanhenemispäivä"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Expired"
+msgstr ""
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
@@ -1012,6 +1109,14 @@ msgstr "Ikoni ja nimi"
 msgid "Identifier"
 msgstr "Tunnistetieto"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Identity Provider"
+msgstr ""
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Identity Provider Metadata XML"
+msgstr ""
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Jos olet hukannut tämän avaimen, voit luoda sen uudelleen, mutta muista, että kaikki skriptit, jotka käyttävät tätä avainta, on päivitettävä. Kirjoita vahvistukseksi \"{confirmationValue}\"."
@@ -1040,15 +1145,22 @@ msgstr "Instanssit"
 msgid "Integrations"
 msgstr "Integraatiot"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Virheellinen autentikointipalvelu"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Virheellinen mukautettu verkkotunnus. Mukautetut verkkotunnukset on oltava alle 256 merkkiä pitkiä, eivät saa olla IP-osoitteita, eivät saa sisältää välilyöntejä, eivät saa sisältää erikoismerkkejä, kuten _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? eivätkä saa alkaa tai päättyä '-'-merkillä."
+#~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+#~ msgstr "Virheellinen mukautettu verkkotunnus. Mukautetut verkkotunnukset on oltava alle 256 merkkiä pitkiä, eivät saa olla IP-osoitteita, eivät saa sisältää välilyöntejä, eivät saa sisältää erikoismerkkejä, kuten _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? eivätkä saa alkaa tai päättyä '-'-merkillä."
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr ""
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+#: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
 msgstr "Virheellinen sähköpostiosoite"
 
@@ -1056,6 +1168,14 @@ msgstr "Virheellinen sähköpostiosoite"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Invalid email or domain"
 msgstr "Virheellinen sähköpostiosoite tai verkkotunnus"
+
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Invalid email verification link."
+msgstr ""
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Invalid File"
+msgstr ""
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
@@ -1073,7 +1193,7 @@ msgstr "Kutsu sähköpostitse"
 msgid "Invite by link"
 msgstr "Kutsu linkillä"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invite by Link"
 msgstr "Kutsu linkillä"
 
@@ -1170,6 +1290,10 @@ msgstr "Suurin"
 msgid "Members"
 msgstr "Jäsenet"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Metadata file generation failed"
+msgstr ""
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Min"
@@ -1261,6 +1385,10 @@ msgstr "Uusi {capitalizedObjectNameSingular}"
 msgid "New account"
 msgstr "Uusi käyttäjätili"
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "New Approved Access Domain"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
 msgstr "Uusi kenttä"
@@ -1292,6 +1420,10 @@ msgstr "Uusi tietue"
 #~ msgid "New Role"
 #~ msgstr "New Role"
 
+#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
+msgid "New SSO provider"
+msgstr ""
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
 #~ msgid "New Webhook"
 #~ msgstr "New Webhook"
@@ -1319,6 +1451,10 @@ msgstr "Ei yhdistettyä käyttäjätiliä"
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Ei enää jäseniä osoitettavana"
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+msgid "No records found"
+msgstr ""
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No Result"
@@ -1365,6 +1501,10 @@ msgstr "Kulkemattomia polkuja pitkin"
 msgid "Open command menu"
 msgstr "Avaa komento-valikko"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
+msgid "Open in"
+msgstr ""
+
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Avattu"
@@ -1388,7 +1528,7 @@ msgstr "Muu"
 msgid "Page Not Found"
 msgstr "Sivua ei löydy"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Password"
 msgstr "Salasana"
 
@@ -1397,6 +1537,7 @@ msgid "Password has been updated"
 msgstr "Salasana on päivitetty"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Salasanan palautuslinkki on lähetetty sähköpostiin"
 
@@ -1430,6 +1571,10 @@ msgstr "Tuhotaan työnkulut pysyvästi"
 msgid "Permissions"
 msgstr "Oikeudet"
 
+#: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
+msgid "Phone number copied to clipboard"
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Picture"
@@ -1438,6 +1583,10 @@ msgstr "Kuva"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
 msgstr "Anna kelvollinen URL-osoite"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Please search for a user first"
+msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
@@ -1490,6 +1639,10 @@ msgstr "Tietosuojakäytäntö"
 msgid "Profile"
 msgstr "Profiili"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Provide your OIDC provider details"
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
 msgstr "Pseudosuomi"
@@ -1505,6 +1658,14 @@ msgstr "Vastaanota sähköposti salasanan päivityslinkillä"
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
 msgstr "Valitse tietueet"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Redirect Url copied to clipboard"
+msgstr ""
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Redirection URI"
+msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1614,6 +1775,8 @@ msgstr "Etsi objekti..."
 msgid "Search records"
 msgstr "Hae tietueita"
 
+#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1667,6 +1830,10 @@ msgstr "Palvelimen ylläpitäjä"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 msgid "Server Admin Panel"
 msgstr "Palvelimen hallintapaneeli"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Service Provider Details"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
@@ -1817,6 +1984,10 @@ msgstr "Testi"
 msgid "Test Workflow"
 msgstr "Testaa Työvaiheet"
 
+#: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
+msgid "Text copied to clipboard"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
@@ -1853,6 +2024,8 @@ msgid "There was an error while updating password."
 msgstr "Salasanan päivityksessä tapahtui virhe."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+#: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"
 msgstr "Ongelman esiintyi"
 
@@ -1935,6 +2108,14 @@ msgstr "Rajattomat yhteystiedot"
 msgid "Upload"
 msgstr "Lataa"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Upload file"
+msgstr ""
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Upload the XML file with your connection infos"
+msgstr ""
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "URL"
 msgstr "Verkko-osoite"
@@ -1961,8 +2142,8 @@ msgstr "Käytä APIamme tai lisää ensimmäinen {objectLabel} käsin"
 msgid "User"
 msgstr "Käyttäjä"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Käyttäjä ei ole kirjautunut sisään"
 
@@ -1979,6 +2160,10 @@ msgstr "Vietnam"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
 msgstr "Näytä laskutustiedot"
+
+#: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
+msgid "View execution details"
+msgstr ""
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
@@ -2020,11 +2205,21 @@ msgstr "Milloin avain poistetaan käytöstä"
 msgid "Workflow cannot be tested"
 msgstr "Työnkulkua ei voida testata"
 
+#: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
+msgid "Workflow is running..."
+msgstr ""
+
+#: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
+msgid "Workflow run failed"
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
@@ -2065,6 +2260,10 @@ msgstr "Kirjoita kuvaus"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
 msgstr "kyllä"
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+msgid "You are not allowed to create records in this object"
+msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
