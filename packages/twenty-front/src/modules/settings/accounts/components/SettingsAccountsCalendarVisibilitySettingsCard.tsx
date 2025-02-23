@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
+import { msg } from '@lingui/core/macro';
 import { CalendarChannelVisibility } from '~/generated/graphql';
-import { t } from '@lingui/core/macro';
 
 type SettingsAccountsEventVisibilitySettingsCardProps = {
   onChange: (nextValue: CalendarChannelVisibility) => void;
@@ -16,14 +16,14 @@ const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
 
 const eventSettingsVisibilityOptions = [
   {
-    title: t`Everything`,
-    description: t`The whole event details will be shared with your team.`,
+    title: msg`Everything`,
+    description: msg`The whole event details will be shared with your team.`,
     value: CalendarChannelVisibility.SHARE_EVERYTHING,
     cardMedia: <StyledCardMedia subject="active" body="active" />,
   },
   {
-    title: t`Metadata`,
-    description: t`Only date & participants will be shared with your team.`,
+    title: msg`Metadata`,
+    description: msg`Only date & participants will be shared with your team.`,
     value: CalendarChannelVisibility.METADATA,
     cardMedia: <StyledCardMedia subject="active" body="inactive" />,
   },

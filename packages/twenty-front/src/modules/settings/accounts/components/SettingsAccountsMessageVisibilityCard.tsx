@@ -1,7 +1,7 @@
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
+import { msg } from '@lingui/core/macro';
 import { MessageChannelVisibility } from '~/generated/graphql';
-import { t } from '@lingui/core/macro';
 
 type SettingsAccountsMessageVisibilityCardProps = {
   onChange: (nextValue: MessageChannelVisibility) => void;
@@ -10,8 +10,8 @@ type SettingsAccountsMessageVisibilityCardProps = {
 
 const inboxSettingsVisibilityOptions = [
   {
-    title: t`Everything`,
-    description: t`Subject, body and attachments will be shared with your team.`,
+    title: msg`Everything`,
+    description: msg`Subject, body and attachments will be shared with your team.`,
     value: MessageChannelVisibility.SHARE_EVERYTHING,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
@@ -22,8 +22,8 @@ const inboxSettingsVisibilityOptions = [
     ),
   },
   {
-    title: t`Subject and metadata`,
-    description: t`Subject and metadata will be shared with your team.`,
+    title: msg`Subject and metadata`,
+    description: msg`Subject and metadata will be shared with your team.`,
     value: MessageChannelVisibility.SUBJECT,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
@@ -34,8 +34,8 @@ const inboxSettingsVisibilityOptions = [
     ),
   },
   {
-    title: t`Metadata`,
-    description: t`Timestamp and participants will be shared with your team.`,
+    title: msg`Metadata`,
+    description: msg`Timestamp and participants will be shared with your team.`,
     value: MessageChannelVisibility.METADATA,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
