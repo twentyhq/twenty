@@ -24,7 +24,6 @@ import {
   useImpersonateMutation,
   useUpdateWorkspaceFeatureFlagMutation,
 } from '~/generated/graphql';
-import { t } from '@lingui/core/macro';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
