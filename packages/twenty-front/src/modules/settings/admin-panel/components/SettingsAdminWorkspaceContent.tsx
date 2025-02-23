@@ -23,6 +23,7 @@ import {
   useImpersonateMutation,
   useUpdateWorkspaceFeatureFlagMutation,
 } from '~/generated/graphql';
+import { t } from '@lingui/core/macro';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
@@ -51,7 +52,7 @@ export const SettingsAdminWorkspaceContent = ({
 
   const handleImpersonate = async (workspaceId: string) => {
     if (!userLookupResult?.user.id) {
-      enqueueSnackBar('Please search for a user first', {
+      enqueueSnackBar(t`Please search for a user first`, {
         variant: SnackBarVariant.Error,
       });
       return;
@@ -116,19 +117,19 @@ export const SettingsAdminWorkspaceContent = ({
 
   return (
     <>
-      <H2Title title={activeWorkspace.name} description={'Workspace Name'} />
+      <H2Title title={activeWorkspace.name} description={t`Workspace Name`} />
       <H2Title
         title={`${activeWorkspace.totalUsers} ${
-          activeWorkspace.totalUsers > 1 ? 'Users' : 'User'
+          activeWorkspace.totalUsers > 1 ? t`Users` : t`User`
         }`}
-        description={'Total Users'}
+        description={t`Total Users`}
       />
       {currentUser?.canImpersonate && (
         <Button
           Icon={IconUser}
           variant="primary"
           accent="blue"
-          title={'Impersonate'}
+          title={t`Impersonate`}
           onClick={() => handleImpersonate(activeWorkspace.id)}
           disabled={
             isImpersonateLoading || activeWorkspace.allowImpersonation === false
@@ -143,8 +144,8 @@ export const SettingsAdminWorkspaceContent = ({
             gridAutoColumns="1fr 100px"
             mobileGridAutoColumns="1fr 80px"
           >
-            <TableHeader>Feature Flag</TableHeader>
-            <TableHeader align="right">Status</TableHeader>
+            <TableHeader>{t`Feature Flag`}</TableHeader>
+            <TableHeader align="right">{t`Status`}</TableHeader>
           </TableRow>
 
           {activeWorkspace.featureFlags.map((flag) => (

@@ -32,7 +32,7 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
       <DropdownMenuItemsContainer>
         <MenuItemSelect
           LeftIcon={IconLayoutSidebarRight}
-          text="Side Panel"
+          text={t`Side Panel`}
           selected={recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL}
           onClick={() =>
             setAndPersistOpenRecordIn(
@@ -43,7 +43,7 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
         />
         <MenuItemSelect
           LeftIcon={IconLayoutNavbar}
-          text="Record Page"
+          text={t`Record Page`}
           selected={
             recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
           }
