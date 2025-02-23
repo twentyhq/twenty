@@ -1208,6 +1208,7 @@ msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Everything"
 msgstr ""
 
@@ -1754,6 +1755,7 @@ msgstr "Členové"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Metadata"
 msgstr ""
 
@@ -2014,6 +2016,10 @@ msgstr "Mimo ušlapané cesty"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
+msgstr ""
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Only the timestamp & participants will be shared with your team."
 msgstr ""
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
@@ -2556,6 +2562,7 @@ msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdoména nemůže být kratší než 3 znaky"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Subject and metadata"
 msgstr ""
 
@@ -3047,6 +3054,14 @@ msgstr "Okamžitě budete účtováni za celý rok."
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr "Váš kreditní zůstatek bude použit na uhrazení měsíčních účtů."
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your email subjects and meeting titles will be shared with your team."
+msgstr ""
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your emails and events content will be shared with your team."
+msgstr ""
 
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"

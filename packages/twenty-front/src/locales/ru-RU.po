@@ -1208,6 +1208,7 @@ msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Everything"
 msgstr ""
 
@@ -1752,6 +1753,7 @@ msgstr "Участники"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Metadata"
 msgstr ""
 
@@ -2012,6 +2014,10 @@ msgstr "В стороне от пути"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
+msgstr ""
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Only the timestamp & participants will be shared with your team."
 msgstr ""
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
@@ -2554,6 +2560,7 @@ msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Субдомен не может быть короче 3 символов"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Subject and metadata"
 msgstr ""
 
@@ -3045,6 +3052,14 @@ msgstr "Вам сразу будет выставлен счет на весь �
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr "Ваш кредитный баланс будет использоваться для оплаты ежемесячных счетов."
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your email subjects and meeting titles will be shared with your team."
+msgstr ""
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your emails and events content will be shared with your team."
+msgstr ""
 
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"

@@ -1203,6 +1203,7 @@ msgstr "Events you participated in are displayed in red."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Everything"
 msgstr "Everything"
 
@@ -1747,6 +1748,7 @@ msgstr "Members"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -2008,6 +2010,10 @@ msgstr "Off the beaten path"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Only date & participants will be shared with your team."
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Only the timestamp & participants will be shared with your team."
+msgstr "Only the timestamp & participants will be shared with your team."
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
@@ -2549,6 +2555,7 @@ msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdomain can not be shorter than 3 characters"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Subject and metadata"
 msgstr "Subject and metadata"
 
@@ -3040,6 +3047,14 @@ msgstr "You will be charged immediately for the full year."
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr "Your credit balance will be used to pay the monthly bills."
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your email subjects and meeting titles will be shared with your team."
+msgstr "Your email subjects and meeting titles will be shared with your team."
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your emails and events content will be shared with your team."
+msgstr "Your emails and events content will be shared with your team."
 
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"
