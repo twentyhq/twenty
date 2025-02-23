@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { differenceInDays } from 'date-fns';
 import {
@@ -112,10 +114,13 @@ export class CleanerWorkspaceService {
       inactiveDaysBeforeDelete: this.inactiveDaysBeforeSoftDelete,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName: `${workspaceDisplayName}`,
+      locale: workspaceMember.locale,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
     const html = render(emailTemplate, { pretty: true });
     const text = render(emailTemplate, { plainText: true });
+
+    i18n.activate(workspaceMember.locale);
 
     this.emailService.send({
       to: workspaceMember.userEmail,
@@ -123,7 +128,7 @@ export class CleanerWorkspaceService {
       from: `${this.environmentService.get(
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-      subject: 'Action needed to prevent workspace deletion',
+      subject: t`Action needed to prevent workspace deletion`,
       html,
       text,
     });
@@ -186,6 +191,7 @@ export class CleanerWorkspaceService {
       daysSinceInactive: daysSinceInactive,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName,
+      locale: workspaceMember.locale,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
     const html = render(emailTemplate, { pretty: true });

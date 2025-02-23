@@ -5,10 +5,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Button, H2Title, IconCopy, Section } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { t } from '@lingui/core/macro';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -36,6 +36,7 @@ export const SettingsSSOOIDCForm = () => {
   const { control } = useFormContext();
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
+  const { t } = useLingui();
 
   const authorizedUrl = window.location.origin;
   const redirectionUrl = `${REACT_APP_SERVER_BASE_URL}/auth/oidc/callback`;
@@ -86,7 +87,7 @@ export const SettingsSSOOIDCForm = () => {
                 Icon={IconCopy}
                 title={t`Copy`}
                 onClick={() => {
-                  enqueueSnackBar(t`Redirect URL copied to clipboard`, {
+                  enqueueSnackBar(t`Redirect Url copied to clipboard`, {
                     variant: SnackBarVariant.Success,
                     icon: <IconCopy size={theme.icon.size.md} />,
                     duration: 2000,
