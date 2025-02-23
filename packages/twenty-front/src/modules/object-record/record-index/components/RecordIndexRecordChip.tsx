@@ -2,11 +2,7 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  AvatarChip,
-  AvatarChipVariant,
-  ChipSize,
-} from 'twenty-ui';
+import { AvatarChip, AvatarChipVariant, ChipSize } from 'twenty-ui';
 
 export type RecordIdentifierChipProps = {
   objectNameSingular: string;

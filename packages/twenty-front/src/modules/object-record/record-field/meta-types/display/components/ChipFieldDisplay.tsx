@@ -1,15 +1,12 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { useIsChipFieldDisplayLabelHidden } from '@/object-record/record-field/meta-types/display/hooks/useIsChipFieldDisplayLabelHidden';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
-import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ChipSize, useIsMobile } from 'twenty-ui';
+import { ChipSize } from 'twenty-ui';
 
 export const ChipFieldDisplay = () => {
   const {
@@ -25,18 +22,7 @@ export const ChipFieldDisplay = () => {
 
   const { openRecordInCommandMenu } = useCommandMenu();
 
-  const isMobile = useIsMobile();
-
-  const isRecordTableScrolledLeft = useRecoilComponentValueV2(
-    isRecordTableScrolledLeftComponentState,
-  );
-
-  const { columnDefinition } = useContext(RecordTableCellContext);
-
-  const isLabelIdentifierInRecordTable = columnDefinition.isLabelIdentifier;
-
-  const isLabelHidden =
-    isMobile && !isRecordTableScrolledLeft && isLabelIdentifierInRecordTable;
+  const isChipFieldDisplayLabelHidden = useIsChipFieldDisplayLabelHidden();
 
   if (!recordValue) {
     return null;
@@ -44,7 +30,7 @@ export const ChipFieldDisplay = () => {
 
   return isLabelIdentifier ? (
     <RecordIdentifierChip
-      isLabelHidden={isLabelHidden}
+      isLabelHidden={isChipFieldDisplayLabelHidden}
       objectNameSingular={objectNameSingular}
       record={recordValue}
       size={ChipSize.Small}
