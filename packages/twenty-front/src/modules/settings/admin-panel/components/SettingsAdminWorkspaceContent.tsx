@@ -15,6 +15,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -49,9 +50,11 @@ export const SettingsAdminWorkspaceContent = ({
   const { updateFeatureFlagState } = useFeatureFlagState();
   const userLookupResult = useRecoilValue(userLookupResultState);
 
+  const { t } = useLingui();
+
   const handleImpersonate = async (workspaceId: string) => {
     if (!userLookupResult?.user.id) {
-      enqueueSnackBar('Please search for a user first', {
+      enqueueSnackBar(t`Please search for a user first`, {
         variant: SnackBarVariant.Error,
       });
       return;
