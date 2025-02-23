@@ -53,7 +53,7 @@ export const SettingsDataModelFieldNumberForm = ({
               title={t`Number type`}
               description={t`Display as a plain number or a percentage`}
             >
-              <Select
+              <Select<string>
                 selectSizeVariant="small"
                 dropdownId="number-type"
                 dropdownWidth={120}
