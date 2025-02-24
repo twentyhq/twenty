@@ -2286,4 +2286,3 @@ msgstr "您的密码已成功更改"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "负责管理公司账户的团队成员"
-

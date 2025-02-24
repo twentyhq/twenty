@@ -3084,4 +3084,3 @@ msgstr "Dit arbejdsområde"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Dit arbejdsområde vil blive deaktiveret"
-

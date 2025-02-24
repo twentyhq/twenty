@@ -2286,4 +2286,3 @@ msgstr "הסיסמה שלך שונתה בהצלחה"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "חבר הצוות שלך אחראי על ניהול חשבון החברה"
-
