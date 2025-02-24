@@ -18,7 +18,6 @@ export class WorkerHealthIndicator {
     private readonly healthIndicatorService: HealthIndicatorService,
   ) {}
 
-  // Existing health check method
   async isHealthy() {
     const indicator = this.healthIndicatorService.check('worker');
 
@@ -45,7 +44,6 @@ export class WorkerHealthIndicator {
     }
   }
 
-  // Reusable queue details fetching method
   private async getQueueDetails(
     queueName: MessageQueue,
   ): Promise<WorkerQueueHealth | null> {
@@ -106,7 +104,6 @@ export class WorkerHealthIndicator {
     }
   }
 
-  // Existing worker check method
   private async checkWorkers() {
     const queues = Object.values(MessageQueue);
     const queueStatuses: WorkerQueueHealth[] = [];
@@ -130,7 +127,6 @@ export class WorkerHealthIndicator {
     };
   }
 
-  // Fixed metrics methods
   async getQueueMetricsOverTime(
     queueName: MessageQueue,
     timeRange: '7D' | '1D' | '12H' | '4H',
@@ -139,19 +135,15 @@ export class WorkerHealthIndicator {
     const queue = new Queue(queueName, { connection: redis });
 
     try {
-      // Get queue details first
       const queueDetails = await this.getQueueDetails(queueName);
 
-      // Convert time range to number of data points (minutes)
       const pointsNeeded = this.getPointsForTimeRange(timeRange);
 
-      // Fetch metrics for both completed and failed jobs
       const [completedMetricsObj, failedMetricsObj] = await Promise.all([
         queue.getMetrics('completed', 0, pointsNeeded - 1),
         queue.getMetrics('failed', 0, pointsNeeded - 1),
       ]);
 
-      // Convert metrics objects to arrays of data points
       const completedMetrics = this.extractBullMQMetrics(completedMetricsObj);
       const failedMetrics = this.extractBullMQMetrics(failedMetricsObj);
 
@@ -179,18 +171,16 @@ export class WorkerHealthIndicator {
   }
 
   private getPointsForTimeRange(timeRange: '7D' | '1D' | '12H' | '4H'): number {
-    // Convert time ranges to minutes
     const timeRangeMap = {
-      '4H': 4 * 60, // 4 hours in minutes
-      '12H': 12 * 60, // 12 hours in minutes
-      '1D': 24 * 60, // 1 day in minutes
-      '7D': 7 * 24 * 60, // 7 days in minutes
+      '4H': 4 * 60,
+      '12H': 12 * 60,
+      '1D': 24 * 60,
+      '7D': 7 * 24 * 60,
     };
 
     return timeRangeMap[timeRange];
   }
 
-  // Method to handle the BullMQ metrics format directly
   private extractBullMQMetrics(
     metrics: Metrics,
   ): { timestamp: number; count: number }[] {
@@ -198,13 +188,9 @@ export class WorkerHealthIndicator {
       return [];
     }
 
-    // Get current timestamp for relative time calculation
     const now = Date.now();
 
-    // Extract timestamps and counts from the metrics array
     return metrics.data.map((count, index) => {
-      // BullMQ metrics are stored with the most recent first (index 0)
-      // and each step back represents 1 minute in the past
       const timestamp = now - index * 60 * 1000;
 
       return {
@@ -221,10 +207,8 @@ export class WorkerHealthIndicator {
     queueName: MessageQueue,
     queueDetails: WorkerQueueHealth | null,
   ): WorkerMetricsData {
-    // Create a map of timestamps to ensure we have data for each point
     const timestampMap = new Map();
 
-    // Add completed metrics to the map
     completedMetrics.forEach((metric) => {
       const date = new Date(metric.timestamp);
       const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:00`;
@@ -236,7 +220,6 @@ export class WorkerHealthIndicator {
       });
     });
 
-    // Add failed metrics to the map
     failedMetrics.forEach((metric) => {
       const date = new Date(metric.timestamp);
       const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:00`;
@@ -254,7 +237,6 @@ export class WorkerHealthIndicator {
       }
     });
 
-    // Convert map to array and sort by timestamp
     const dataPoints = Array.from(timestampMap.values()).sort(
       (a, b) => new Date(a.x).getTime() - new Date(b.x).getTime(),
     );
@@ -267,12 +249,12 @@ export class WorkerHealthIndicator {
         {
           id: 'Completed Jobs',
           data: dataPoints.map((point) => ({ x: point.x, y: point.completed })),
-          color: '#4caf50', // Green color for completed
+          color: '#4caf50', // not sure if we can hardcode colors for this?
         },
         {
           id: 'Failed Jobs',
           data: dataPoints.map((point) => ({ x: point.x, y: point.failed })),
-          color: '#f44336', // Red color for failed
+          color: '#f44336', // same as above
         },
       ],
     };

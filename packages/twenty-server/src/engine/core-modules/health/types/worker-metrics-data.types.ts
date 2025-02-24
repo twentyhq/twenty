@@ -3,10 +3,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class MetricsDataPoint {
   @Field()
-  x: string; // Timestamp in format: YYYY-MM-DD HH:MM:SS
+  x: string;
 
   @Field()
-  y: number; // Count value
+  y: number;
 }
 
 @ObjectType()
