@@ -2470,7 +2470,7 @@ msgstr "Nastavte viditelnost emailu, spravujte váš seznam blokovaných a dalš
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Nastavte název vaší vlastní domény a nakonfigurujte záznamy DNS."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

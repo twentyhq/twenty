@@ -2470,7 +2470,7 @@ msgstr "Imposta la visibilità dell'email, gestisci la tua blocklist e altro."
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Imposta il nome del tuo dominio personalizzato e configura i record DNS."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

@@ -2470,7 +2470,7 @@ msgstr "メールの可視性を設定し、ブロックリストを管理する
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "カスタムドメインの名前を設定し、DNSレコードを構成します。"
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

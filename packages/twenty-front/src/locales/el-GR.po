@@ -2470,7 +2470,7 @@ msgstr "Ρυθμίστε την ορατότητα του email, διαχειρ�
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Ορίστε το όνομα του προσαρμοσμένου τομέα σας και διαμορφώστε τα αρχεία DNS σας."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

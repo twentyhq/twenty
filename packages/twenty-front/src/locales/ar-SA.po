@@ -2470,7 +2470,7 @@ msgstr "اضبط خصوصية البريد الإلكتروني، وإدارة �
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "عيّن اسم النطاق المخصص لديك وقم بتكوين سجلات DNS الخاصة بك."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

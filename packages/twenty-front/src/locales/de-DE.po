@@ -2470,7 +2470,7 @@ msgstr "E-Mail-Sichtbarkeit festlegen, Blockliste verwalten und mehr."
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Geben Sie den Namen Ihrer benutzerdefinierten Domäne ein und konfigurieren Sie Ihre DNS-Einträge."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

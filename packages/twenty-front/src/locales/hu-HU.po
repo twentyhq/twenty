@@ -2470,7 +2470,7 @@ msgstr "Beállíthatja az e-mail láthatóságát, kezelheti a tiltólistáját 
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Állítsd be az egyéni domain neved és konfiguráld a DNS rekordjaidat."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

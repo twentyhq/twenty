@@ -2472,7 +2472,7 @@ msgstr "이메일 공개 여부 설정, 차단 목록 관리 등을 할 수 있�
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "사용자 지정 도메인의 이름을 설정하고 DNS 레코드를 구성하십시오."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

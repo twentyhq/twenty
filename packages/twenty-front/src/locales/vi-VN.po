@@ -2470,7 +2470,7 @@ msgstr "Thiết lập hiển thị email, quản lý danh sách chặn và hơn 
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Đặt tên miền tùy chỉnh của bạn và cấu hình các bản ghi DNS của bạn."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

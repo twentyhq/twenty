@@ -2470,7 +2470,7 @@ msgstr "設置電子郵件可見性，管理您的屏蔽列表等。"
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "設置您的自定義域名名稱並配置您的DNS記錄。"
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

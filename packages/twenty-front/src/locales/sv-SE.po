@@ -2470,7 +2470,7 @@ msgstr "Ställ in e-postns synlighet, hantera din blocklista och mer."
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Ange namnet på din anpassade domän och konfigurera dina DNS-poster."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

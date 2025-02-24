@@ -2470,7 +2470,7 @@ msgstr "E-posta görünürlüğünü ayarlayın, engel listenizi yönetin ve dah
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Özel alan adınızın adını belirleyin ve DNS kayıtlarınızı yapılandırın."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

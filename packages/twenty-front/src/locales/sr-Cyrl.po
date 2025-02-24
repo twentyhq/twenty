@@ -2470,7 +2470,7 @@ msgstr "Подесите видљивост имејла, управљајте �
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Поставите назив вашег корисничког домена и конфигуришите DNS записе."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

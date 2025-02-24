@@ -2526,7 +2526,7 @@ msgstr "Налаштуйте видимість електронної пошт�
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Встановіть ім'я вашого домашнього домену та налаштуйте записи DNS."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 

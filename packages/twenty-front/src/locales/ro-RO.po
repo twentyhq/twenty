@@ -2470,7 +2470,7 @@ msgstr "Setează vizibilitatea emailului, administrează lista de blocare și al
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Setează numele domeniului tău personalizat și configurează înregistrările DNS."
 
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/pages/settings/workspace/SettingsHostname.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 
