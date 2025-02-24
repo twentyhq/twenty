@@ -1459,6 +1459,7 @@ msgstr ""
 msgid "Point of Contact"
 msgstr ""
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2253,6 +2254,10 @@ msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member name"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
 msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts

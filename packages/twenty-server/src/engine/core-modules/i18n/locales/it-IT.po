@@ -1464,6 +1464,7 @@ msgstr "Telefoni"
 msgid "Point of Contact"
 msgstr "Punto di contatto"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2259,6 +2260,10 @@ msgstr "Avatar del membro dello spazio di lavoro"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member name"
 msgstr "Nome del membro dello spazio di lavoro"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
