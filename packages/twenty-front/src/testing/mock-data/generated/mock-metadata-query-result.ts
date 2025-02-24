@@ -8413,7 +8413,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "dd7abd0e-fb7a-44b5-b445-a886451da34f",
               type: "UUID",
-              name: "workspaceMemberId",
+              name: "forWorkspaceMemberId",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -8434,7 +8434,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "b37d7cda-7edd-4fb7-8443-4cb60d16bfa5",
               type: "RELATION",
-              name: "workspaceMember",
+              name: "forWorkspaceMember",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -9240,7 +9240,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "d138fd97-afec-4b74-9f61-5932fde251b4",
               type: "UUID",
-              name: "workspaceMemberId",
+              name: "forWorkspaceMemberId",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -9261,7 +9261,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "0447657b-e2a8-4f8b-ad9b-aa9509ac0ac2",
               type: "RELATION",
-              name: "workspaceMember",
+              name: "forWorkspaceMember",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -9289,7 +9289,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceFieldMetadata: {
                   __typename: "Field",
                   id: "0447657b-e2a8-4f8b-ad9b-aa9509ac0ac2",
-                  name: "workspaceMember"
+                  name: "forWorkspaceMember"
                 },
                 targetObjectMetadata: {
                   __typename: "Object",

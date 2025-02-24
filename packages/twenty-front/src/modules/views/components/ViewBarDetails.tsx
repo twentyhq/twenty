@@ -179,8 +179,8 @@ export const ViewBarDetails = ({
 
   const shouldExpandViewBar =
     viewFiltersAreDifferentFromRecordFilters ||
-    ((currentViewWithCombinedFiltersAndSorts?.viewSorts?.length ||
-      currentRecordFilters?.length) &&
+    viewSortsAreDifferentFromRecordSorts ||
+    ((currentRecordSorts?.length || currentRecordFilters?.length) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {

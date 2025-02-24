@@ -1,4 +1,4 @@
-import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
+import { absoluteUrlSchema } from '../absoluteUrlSchema';
 
 describe('absoluteUrlSchema', () => {
   it('validates an absolute url', () => {
@@ -27,6 +27,7 @@ describe('absoluteUrlSchema', () => {
   });
 
   it('fails for invalid urls', () => {
+    expect(absoluteUrlSchema.safeParse('https://2').success).toBe(false);
     expect(absoluteUrlSchema.safeParse('?o').success).toBe(false);
     expect(absoluteUrlSchema.safeParse('\\').success).toBe(false);
   });
