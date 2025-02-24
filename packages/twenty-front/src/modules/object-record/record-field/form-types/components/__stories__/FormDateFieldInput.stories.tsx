@@ -11,6 +11,7 @@ import {
   within,
 } from '@storybook/test';
 import { DateTime } from 'luxon';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { FormDateFieldInput } from '../FormDateFieldInput';
 
 const meta: Meta<typeof FormDateFieldInput> = {
@@ -18,6 +19,7 @@ const meta: Meta<typeof FormDateFieldInput> = {
   component: FormDateFieldInput,
   args: {},
   argTypes: {},
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;

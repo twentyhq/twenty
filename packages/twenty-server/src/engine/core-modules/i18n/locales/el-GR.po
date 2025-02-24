@@ -136,6 +136,14 @@ msgstr "Ιδιοκτήτης λογαριασμού για εταιρείες"
 msgid "Account Owner For Companies"
 msgstr "Ιδιοκτήτης Λογαριασμού Για Εταιρείες"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Απαιτείται δράση για την αποτροπή διαγραφής του χώρου εργασίας"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Απαιτείται δράση για να γίνει επαναφορά κωδικού πρόσβασης"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Διεύθυνση"
@@ -684,7 +692,7 @@ msgstr "Εμφανιζόμενο Όνομα"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
-msgstr ""
+msgstr "Προβολή των εγγραφών σε ένα πλευρικό πάνελ ή σε μία σελίδα εγγραφής"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
@@ -1111,6 +1119,10 @@ msgstr "Είναι Ενεργοποιημένος ο Συγχρονισμός"
 msgid "Job Title"
 msgstr "Επαγγελματική Επωνυμία"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Συμμετέχετε στην ομάδα σας στο Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1471,7 +1483,7 @@ msgstr "Όνομα αντικειμένου"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
-msgstr ""
+msgstr "Άνοιγμα εγγραφής στο"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -1599,6 +1611,7 @@ msgstr "\\\\"
 msgid "Point of Contact"
 msgstr "\\\\"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2288,6 +2301,10 @@ msgstr "URL στόχου άγκιστρου ιστού"
 msgid "Webhooks"
 msgstr "Άγκιστρα Ιστού"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Καλώς ήρθατε στο Twenty: Παρακαλώ επιβεβαιώστε το email σας"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2418,6 +2435,10 @@ msgid "Workspace member name"
 msgstr "Όνομα μέλους χώρου εργασίας"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Μέλη Χώρου Εργασίας"
 
@@ -2430,6 +2451,10 @@ msgstr "ΜέλοςΧώρουΕργασίας"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "Χ"
+
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Ο κωδικός πρόσβασης άλλαξε με επιτυχία"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

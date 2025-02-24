@@ -1,14 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-
-const sortDefinition: SortDefinition = {
-  fieldMetadataId: 'id',
-  label: 'definition label',
-  iconName: 'icon',
-};
 
 const objectMetadataItem: ObjectMetadataItem = {
   id: 'object1',
@@ -47,7 +40,6 @@ describe('turnSortsIntoOrderBy', () => {
         id: 'id',
         fieldMetadataId: 'field1',
         direction: 'asc',
-        definition: sortDefinition,
       },
     ];
     const fields = [{ id: 'field1', name: 'field1' }] as FieldMetadataItem[];
@@ -62,13 +54,11 @@ describe('turnSortsIntoOrderBy', () => {
         id: 'id',
         fieldMetadataId: 'field1',
         direction: 'asc',
-        definition: sortDefinition,
       },
       {
         id: 'id',
         fieldMetadataId: 'field2',
         direction: 'desc',
-        definition: sortDefinition,
       },
     ];
     const fields = [
@@ -90,7 +80,6 @@ describe('turnSortsIntoOrderBy', () => {
         id: 'id',
         fieldMetadataId: 'invalidField',
         direction: 'asc',
-        definition: sortDefinition,
       },
     ];
     expect(turnSortsIntoOrderBy(objectMetadataItem, sorts)).toEqual([
@@ -104,7 +93,6 @@ describe('turnSortsIntoOrderBy', () => {
         id: 'id',
         fieldMetadataId: 'invalidField',
         direction: 'asc',
-        definition: sortDefinition,
       },
     ];
     expect(

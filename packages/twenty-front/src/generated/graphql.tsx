@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -104,6 +104,14 @@ export type AppTokenEdge = {
   cursor: Scalars['ConnectionCursor'];
   /** The node containing the AppToken */
   node: AppToken;
+};
+
+export type ApprovedAccessDomain = {
+  __typename?: 'ApprovedAccessDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
+  isValidated: Scalars['Boolean'];
 };
 
 export type AuthProviders = {
@@ -322,6 +330,11 @@ export type CreateAgentInput = {
   workspaceId: Scalars['ID'];
 };
 
+export type CreateApprovedAccessDomainInput = {
+  domain: Scalars['String'];
+  email: Scalars['String'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['String'];
@@ -364,6 +377,11 @@ export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+};
+
+export type CreateStripeIntegrationInput = {
+  accountId: Scalars['String'];
+  workspaceId: Scalars['ID'];
 };
 
 export type CreateTelephonyInput = {
@@ -447,6 +465,10 @@ export type CustomDomainValidRecords = {
   customDomain: Scalars['String'];
   id: Scalars['String'];
   records: Array<CustomDomainRecord>;
+};
+
+export type DeleteApprovedAccessDomainInput = {
+  id: Scalars['String'];
 };
 
 export type DeleteOneFieldInput = {
@@ -573,6 +595,7 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
@@ -887,6 +910,7 @@ export type Mutation = {
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createAgent: Agent;
+  createApprovedAccessDomain: ApprovedAccessDomain;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
@@ -895,11 +919,13 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createSector: Sector;
+  createStripeIntegration: StripeIntegration;
   createTelephony: Telephony;
   createWhatsappIntegration: WhatsappIntegration;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteAgent: Agent;
+  deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
@@ -923,10 +949,12 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeStripeIntegration: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveStripeAccountId: StripeIntegration;
   sendEventMessage: Scalars['Boolean'];
   sendInvitations: SendInvitationsOutput;
   sendMessage: Scalars['Boolean'];
@@ -944,6 +972,7 @@ export type Mutation = {
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSector: Sector;
+  updateStripeIntegration: StripeIntegration;
   updateTelephony: Telephony;
   updateWhatsappIntegration: WhatsappIntegration;
   updateWhatsappIntegrationServiceLevel: WhatsappIntegration;
@@ -957,6 +986,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   userLookupAdminPanel: UserLookup;
+  validateApprovedAccessDomain: ApprovedAccessDomain;
 };
 
 
@@ -995,6 +1025,11 @@ export type MutationCreateAgentArgs = {
 };
 
 
+export type MutationCreateApprovedAccessDomainArgs = {
+  input: CreateApprovedAccessDomainInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -1025,6 +1060,11 @@ export type MutationCreateSectorArgs = {
 };
 
 
+export type MutationCreateStripeIntegrationArgs = {
+  createStripeIntegrationInput: CreateStripeIntegrationInput;
+};
+
+
 export type MutationCreateTelephonyArgs = {
   createTelephonyInput: CreateTelephonyInput;
 };
@@ -1047,6 +1087,11 @@ export type MutationDeactivateWorkflowVersionArgs = {
 
 export type MutationDeleteAgentArgs = {
   agentId: Scalars['String'];
+};
+
+
+export type MutationDeleteApprovedAccessDomainArgs = {
+  input: DeleteApprovedAccessDomainInput;
 };
 
 
@@ -1145,6 +1190,11 @@ export type MutationPublishServerlessFunctionArgs = {
 };
 
 
+export type MutationRemoveStripeIntegrationArgs = {
+  accountId: Scalars['String'];
+};
+
+
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String'];
 };
@@ -1162,6 +1212,12 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSaveStripeAccountIdArgs = {
+  accountId: Scalars['String'];
+  workspaceId: Scalars['String'];
 };
 
 
@@ -1248,6 +1304,11 @@ export type MutationUpdateSectorArgs = {
 };
 
 
+export type MutationUpdateStripeIntegrationArgs = {
+  updateStripeIntegrationInput: UpdateStripeIntegrationInput;
+};
+
+
 export type MutationUpdateTelephonyArgs = {
   id: Scalars['ID'];
   updateTelephonyInput: UpdateTelephonyInput;
@@ -1320,6 +1381,11 @@ export type MutationUploadWorkspaceLogoArgs = {
 
 export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String'];
+};
+
+
+export type MutationValidateApprovedAccessDomainArgs = {
+  input: ValidateApprovedAccessDomainInput;
 };
 
 export type Object = {
@@ -1499,6 +1565,8 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAllExtensions?: Maybe<Array<TelephonyExtension>>;
+  getAllStripeIntegrations: Array<StripeIntegration>;
+  getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -1508,6 +1576,7 @@ export type Query = {
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
+  getStripeIntegrationById: StripeIntegration;
   getSystemHealthStatus: SystemHealth;
   getTelephonyCallFlows?: Maybe<Array<TelephonyCallFlow>>;
   getTelephonyDids?: Maybe<Array<TelephonyDids>>;
@@ -1579,6 +1648,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 };
 
 
+export type QueryGetAllStripeIntegrationsArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
 };
@@ -1596,6 +1670,11 @@ export type QueryGetProductPricesArgs = {
 
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
+};
+
+
+export type QueryGetStripeIntegrationByIdArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -1918,14 +1997,14 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY'
 }
 
-export enum SettingsFeatures {
+export enum SettingsPermissions {
   ADMIN_PANEL = 'ADMIN_PANEL',
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   WORKSPACE = 'WORKSPACE',
-  WORKSPACE_USERS = 'WORKSPACE_USERS'
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
 
 export type SetupOidcSsoInput = {
@@ -1957,6 +2036,13 @@ export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type StripeIntegration = {
+  __typename?: 'StripeIntegration';
+  accountId: Scalars['String'];
+  id: Scalars['UUID'];
+  workspace: Workspace;
 };
 
 export enum SubscriptionInterval {
@@ -2270,6 +2356,11 @@ export type UpdateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type UpdateStripeIntegrationInput = {
+  accountId?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+};
+
 export type UpdateTelephonyInput = {
   SIPPassword?: InputMaybe<Scalars['String']>;
   advancedFowarding1?: InputMaybe<Scalars['String']>;
@@ -2411,12 +2502,17 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
-  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
+  settingsPermissions?: Maybe<Array<SettingsPermissions>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
   workspace?: Maybe<Workspace>;
   workspaceId: Scalars['String'];
+};
+
+export type ValidateApprovedAccessDomainInput = {
+  approvedAccessDomainId: Scalars['String'];
+  validationToken: Scalars['String'];
 };
 
 export type ValidatePasswordResetToken = {
@@ -2498,6 +2594,7 @@ export type Workspace = {
   isPublicInviteLinkEnabled: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  stripeIntegrations: Array<StripeIntegration>;
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   workspaceMembersCount?: Maybe<Scalars['Float']>;
@@ -2968,6 +3065,13 @@ export type CreateSamlIdentityProviderMutationVariables = Exact<{
 
 export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
+export type DeleteApprovedAccessDomainMutationVariables = Exact<{
+  input: DeleteApprovedAccessDomainInput;
+}>;
+
+
+export type DeleteApprovedAccessDomainMutation = { __typename?: 'Mutation', deleteApprovedAccessDomain: boolean };
+
 export type DeleteSsoIdentityProviderMutationVariables = Exact<{
   input: DeleteSsoInput;
 }>;
@@ -2981,6 +3085,18 @@ export type EditSsoIdentityProviderMutationVariables = Exact<{
 
 
 export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+
+export type ValidateApprovedAccessDomainMutationVariables = Exact<{
+  input: ValidateApprovedAccessDomainInput;
+}>;
+
+
+export type ValidateApprovedAccessDomainMutation = { __typename?: 'Mutation', validateApprovedAccessDomain: { __typename?: 'ApprovedAccessDomain', id: any, isValidated: boolean, domain: string, createdAt: string } };
+
+export type GetApprovedAccessDomainsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetApprovedAccessDomainsQuery = { __typename?: 'Query', getApprovedAccessDomains: Array<{ __typename?: 'ApprovedAccessDomain', id: any, createdAt: string, domain: string, isValidated: boolean }> };
 
 export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5322,6 +5438,42 @@ export function useGetRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetRolesQueryHookResult = ReturnType<typeof useGetRolesQuery>;
 export type GetRolesLazyQueryHookResult = ReturnType<typeof useGetRolesLazyQuery>;
 export type GetRolesQueryResult = Apollo.QueryResult<GetRolesQuery, GetRolesQueryVariables>;
+export const CreateApprovedAccessDomainDocument = gql`
+    mutation CreateApprovedAccessDomain($input: CreateApprovedAccessDomainInput!) {
+  createApprovedAccessDomain(input: $input) {
+    id
+    domain
+    isValidated
+    createdAt
+  }
+}
+    `;
+export type CreateApprovedAccessDomainMutationFn = Apollo.MutationFunction<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>;
+
+/**
+ * __useCreateApprovedAccessDomainMutation__
+ *
+ * To run a mutation, you first call `useCreateApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateApprovedAccessDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createApprovedAccessDomainMutation, { data, loading, error }] = useCreateApprovedAccessDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>(CreateApprovedAccessDomainDocument, options);
+      }
+export type CreateApprovedAccessDomainMutationHookResult = ReturnType<typeof useCreateApprovedAccessDomainMutation>;
+export type CreateApprovedAccessDomainMutationResult = Apollo.MutationResult<CreateApprovedAccessDomainMutation>;
+export type CreateApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>;
 export const CreateOidcIdentityProviderDocument = gql`
     mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
   createOIDCIdentityProvider(input: $input) {
@@ -5396,6 +5548,37 @@ export function useCreateSamlIdentityProviderMutation(baseOptions?: Apollo.Mutat
 export type CreateSamlIdentityProviderMutationHookResult = ReturnType<typeof useCreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationResult = Apollo.MutationResult<CreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationOptions = Apollo.BaseMutationOptions<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>;
+export const DeleteApprovedAccessDomainDocument = gql`
+    mutation DeleteApprovedAccessDomain($input: DeleteApprovedAccessDomainInput!) {
+  deleteApprovedAccessDomain(input: $input)
+}
+    `;
+export type DeleteApprovedAccessDomainMutationFn = Apollo.MutationFunction<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>;
+
+/**
+ * __useDeleteApprovedAccessDomainMutation__
+ *
+ * To run a mutation, you first call `useDeleteApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteApprovedAccessDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteApprovedAccessDomainMutation, { data, loading, error }] = useDeleteApprovedAccessDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>(DeleteApprovedAccessDomainDocument, options);
+      }
+export type DeleteApprovedAccessDomainMutationHookResult = ReturnType<typeof useDeleteApprovedAccessDomainMutation>;
+export type DeleteApprovedAccessDomainMutationResult = Apollo.MutationResult<DeleteApprovedAccessDomainMutation>;
+export type DeleteApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>;
 export const DeleteSsoIdentityProviderDocument = gql`
     mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
   deleteSSOIdentityProvider(input: $input) {
@@ -5466,6 +5649,79 @@ export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.Mutation
 export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
+export const ValidateApprovedAccessDomainDocument = gql`
+    mutation ValidateApprovedAccessDomain($input: ValidateApprovedAccessDomainInput!) {
+  validateApprovedAccessDomain(input: $input) {
+    id
+    isValidated
+    domain
+    createdAt
+  }
+}
+    `;
+export type ValidateApprovedAccessDomainMutationFn = Apollo.MutationFunction<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>;
+
+/**
+ * __useValidateApprovedAccessDomainMutation__
+ *
+ * To run a mutation, you first call `useValidateApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useValidateApprovedAccessDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [validateApprovedAccessDomainMutation, { data, loading, error }] = useValidateApprovedAccessDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useValidateApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>(ValidateApprovedAccessDomainDocument, options);
+      }
+export type ValidateApprovedAccessDomainMutationHookResult = ReturnType<typeof useValidateApprovedAccessDomainMutation>;
+export type ValidateApprovedAccessDomainMutationResult = Apollo.MutationResult<ValidateApprovedAccessDomainMutation>;
+export type ValidateApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>;
+export const GetApprovedAccessDomainsDocument = gql`
+    query GetApprovedAccessDomains {
+  getApprovedAccessDomains {
+    id
+    createdAt
+    domain
+    isValidated
+  }
+}
+    `;
+
+/**
+ * __useGetApprovedAccessDomainsQuery__
+ *
+ * To run a query within a React component, call `useGetApprovedAccessDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApprovedAccessDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApprovedAccessDomainsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetApprovedAccessDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>(GetApprovedAccessDomainsDocument, options);
+      }
+export function useGetApprovedAccessDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>(GetApprovedAccessDomainsDocument, options);
+        }
+export type GetApprovedAccessDomainsQueryHookResult = ReturnType<typeof useGetApprovedAccessDomainsQuery>;
+export type GetApprovedAccessDomainsLazyQueryHookResult = ReturnType<typeof useGetApprovedAccessDomainsLazyQuery>;
+export type GetApprovedAccessDomainsQueryResult = Apollo.QueryResult<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>;
 export const GetSsoIdentityProvidersDocument = gql`
     query GetSSOIdentityProviders {
   getSSOIdentityProviders {

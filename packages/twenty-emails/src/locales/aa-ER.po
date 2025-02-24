@@ -34,6 +34,10 @@ msgstr "crwdns5:0crwdne5:0"
 msgid "Connect to Twenty"
 msgstr "crwdns7:0crwdne7:0"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr "crwdns4865:0crwdne4865:0"
+
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr "Dear"
@@ -42,6 +46,14 @@ msgstr "crwdns7:0crwdne7:0"
 msgid "Dear {userName}"
 msgstr "crwdns9:0{userName}crwdne9:0"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Dear {userName},"
+msgstr "crwdns4867:0{userName}crwdne4867:0"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr "crwdns4869:0crwdne4869:0"
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "crwdns11:0crwdne11:0"
@@ -49,6 +61,10 @@ msgstr "crwdns11:0crwdne11:0"
 #: src/emails/password-update-notify.email.tsx
 msgid "Hello"
 msgstr "crwdns13:0crwdne13:0"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr "crwdns4871:0crwdne4871:0"
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -74,6 +90,10 @@ msgstr "crwdns23:0crwdne23:0"
 msgid "Password updated"
 msgstr "crwdns25:0crwdne25:0"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+msgstr "crwdns4873:0{domain}crwdne4873:0"
+
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "crwdns27:0crwdne27:0"
@@ -81,6 +101,10 @@ msgstr "crwdns27:0crwdne27:0"
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "crwdns29:0crwdne29:0"
+
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Suspended Workspace "
+msgstr "crwdns4875:0crwdne4875:0"
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -110,6 +134,11 @@ msgstr "crwdns37:0{duration}crwdne37:0"
 msgid "Update your subscription"
 msgstr "crwdns39:0crwdne39:0"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "crwdns4877:0crwdne4877:0"
+
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "crwdns41:0crwdne41:0"
@@ -121,4 +150,3 @@ msgstr "crwdns4845:0{workspaceDisplayName}crwdnd4845:0{daysSinceInactive}crwdne4
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 #~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-

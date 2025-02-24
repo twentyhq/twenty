@@ -136,6 +136,14 @@ msgstr "Yrityksen tilin omistaja"
 msgid "Account Owner For Companies"
 msgstr "Yrityksen Tilin Omistaja"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Toimia tarvitaan työtilan poistamisen estämiseksi"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Toimia tarvitaan salasanan nollaamiseksi"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Osoite"
@@ -684,7 +692,7 @@ msgstr "Näyttönimi"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
-msgstr ""
+msgstr "Näytä tietueet sivupaneelissa tai tietuesivulla"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
@@ -1111,6 +1119,10 @@ msgstr "Onko synkronointi käytössä"
 msgid "Job Title"
 msgstr "Työnimike"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Liity tiimiisi Twentyssä"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1471,7 +1483,7 @@ msgstr "Kohteen nimi"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
-msgstr ""
+msgstr "Avaa tietue"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -1599,6 +1611,7 @@ msgstr "Puhelimet"
 msgid "Point of Contact"
 msgstr "Yhteyshenkilö"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2288,6 +2301,10 @@ msgstr "Web-koukun kohde-URL"
 msgid "Webhooks"
 msgstr "Web-koukut"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Tervetuloa Twentyyn: Vahvista sähköpostisi"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2418,6 +2435,10 @@ msgid "Workspace member name"
 msgstr "Työtilan jäsenen nimi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Työtilan jäsenet"
 
@@ -2430,6 +2451,10 @@ msgstr "TyötilanJäsen"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr ""
+
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Salasanasi on vaihdettu onnistuneesti"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

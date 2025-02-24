@@ -15,6 +15,7 @@ import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { t } from '@lingui/core/macro';
 
 type GenerateExportOptions = {
   columns: ColumnDefinition<FieldMetadata>[];
@@ -100,7 +101,7 @@ const percentage = (part: number, whole: number): number => {
 
 export const displayedExportProgress = (progress?: ExportProgress): string => {
   if (isUndefinedOrNull(progress?.exportedRecordCount)) {
-    return 'Export';
+    return t`Export`;
   }
 
   if (

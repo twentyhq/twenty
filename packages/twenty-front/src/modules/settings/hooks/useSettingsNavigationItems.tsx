@@ -21,8 +21,8 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsFeatures } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { SettingsPermissions } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
@@ -107,13 +107,13 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`General`,
           path: SettingsPath.Workspace,
           Icon: IconSettings,
-          isHidden: !permissionMap[SettingsFeatures.WORKSPACE],
+          isHidden: !permissionMap[SettingsPermissions.WORKSPACE],
         },
         {
           label: t`Members`,
           path: SettingsPath.WorkspaceMembersPage,
           Icon: IconUsers,
-          isHidden: !permissionMap[SettingsFeatures.WORKSPACE_USERS],
+          isHidden: !permissionMap[SettingsPermissions.WORKSPACE_MEMBERS],
         },
         {
           label: 'Service Center',
@@ -145,7 +145,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
           isHidden:
-            !isBillingEnabled || !permissionMap[SettingsFeatures.WORKSPACE],
+            !isBillingEnabled || !permissionMap[SettingsPermissions.WORKSPACE],
         },
         {
           label: t`Roles`,
@@ -153,26 +153,26 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconLock,
           isHidden:
             !featureFlags[FeatureFlagKey.IsPermissionsEnabled] ||
-            !permissionMap[SettingsFeatures.ROLES],
+            !permissionMap[SettingsPermissions.ROLES],
         },
         {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
-          isHidden: !permissionMap[SettingsFeatures.DATA_MODEL],
+          isHidden: !permissionMap[SettingsPermissions.DATA_MODEL],
         },
         {
           label: t`Integrations`,
           path: SettingsPath.Integrations,
           Icon: IconApps,
-          isHidden: !permissionMap[SettingsFeatures.API_KEYS_AND_WEBHOOKS],
+          isHidden: !permissionMap[SettingsPermissions.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Security`,
           path: SettingsPath.Security,
           Icon: IconKey,
           isAdvanced: true,
-          isHidden: !permissionMap[SettingsFeatures.SECURITY],
+          isHidden: !permissionMap[SettingsPermissions.SECURITY],
         },
       ],
     },
@@ -185,7 +185,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Developers,
           Icon: IconCode,
           isAdvanced: true,
-          isHidden: !permissionMap[SettingsFeatures.API_KEYS_AND_WEBHOOKS],
+          isHidden: !permissionMap[SettingsPermissions.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Functions`,
@@ -211,7 +211,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconFlask,
           isHidden:
             !labPublicFeatureFlags.length ||
-            !permissionMap[SettingsFeatures.WORKSPACE],
+            !permissionMap[SettingsPermissions.WORKSPACE],
         },
         {
           label: t`Releases`,

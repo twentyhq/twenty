@@ -19,6 +19,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -28,7 +29,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   account,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
-
+  const { t } = useLingui();
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
 
@@ -59,7 +60,7 @@ export const SettingsAccountsRowDropdownMenu = ({
           <DropdownMenuItemsContainer>
             <MenuItem
               LeftIcon={IconMail}
-              text="Emails settings"
+              text={t`Emails settings`}
               onClick={() => {
                 navigate(SettingsPath.AccountsEmails);
                 closeDropdown();
@@ -67,7 +68,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             />
             <MenuItem
               LeftIcon={IconCalendarEvent}
-              text="Calendar settings"
+              text={t`Calendar settings`}
               onClick={() => {
                 navigate(SettingsPath.AccountsCalendars);
                 closeDropdown();
@@ -76,7 +77,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             {account.authFailedAt && (
               <MenuItem
                 LeftIcon={IconRefresh}
-                text="Reconnect"
+                text={t`Reconnect`}
                 onClick={() => {
                   triggerApisOAuth(account.provider);
                   closeDropdown();
@@ -86,7 +87,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}
-              text="Remove account"
+              text={t`Remove account`}
               onClick={() => {
                 setIsDeleteAccountModalOpen(true);
                 closeDropdown();
@@ -98,12 +99,14 @@ export const SettingsAccountsRowDropdownMenu = ({
       <ConfirmationModal
         isOpen={isDeleteAccountModalOpen}
         setIsOpen={setIsDeleteAccountModalOpen}
-        title="Data deletion"
+        title={t`Data deletion`}
         subtitle={
-          <>All emails and events linked to this account will be deleted</>
+          <Trans>
+            All emails and events linked to this account will be deleted
+          </Trans>
         }
         onConfirmClick={deleteAccount}
-        deleteButtonText="Delete account"
+        deleteButtonText={t`Delete account`}
       />
     </>
   );

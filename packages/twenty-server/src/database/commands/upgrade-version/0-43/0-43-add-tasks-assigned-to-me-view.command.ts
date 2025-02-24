@@ -17,7 +17,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
-import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { TASK_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
@@ -37,11 +36,10 @@ export class AddTasksAssignedToMeViewCommand extends ActiveWorkspacesCommandRunn
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   async executeActiveWorkspacesCommand(

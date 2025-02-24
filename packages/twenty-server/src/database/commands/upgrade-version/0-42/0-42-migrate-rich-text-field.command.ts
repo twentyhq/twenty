@@ -64,6 +64,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -71,12 +72,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     @InjectRepository(FeatureFlag, 'core')
     protected readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   @Option({

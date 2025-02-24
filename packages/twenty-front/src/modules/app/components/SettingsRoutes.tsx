@@ -4,8 +4,8 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsFeatures } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { SettingsPermissions } from '~/generated/graphql';
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
 import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappNewDatabaseConnection';
@@ -246,6 +246,14 @@ const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   ),
 );
 
+const SettingsSecurityApprovedAccessDomain = lazy(() =>
+  import('~/pages/settings/security/SettingsSecurityApprovedAccessDomain').then(
+    (module) => ({
+      default: module.SettingsSecurityApprovedAccessDomain,
+    }),
+  ),
+);
+
 const SettingsAdmin = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdmin').then((module) => ({
     default: module.SettingsAdmin,
@@ -312,7 +320,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsFeatures.WORKSPACE}
+            settingsPermission={SettingsPermissions.WORKSPACE}
           />
         }
       >
@@ -363,7 +371,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsFeatures.DATA_MODEL}
+            settingsPermission={SettingsPermissions.DATA_MODEL}
           />
         }
       >
@@ -381,7 +389,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsFeatures.ROLES}
+            settingsPermission={SettingsPermissions.ROLES}
             requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
           />
         }
@@ -468,6 +476,11 @@ export const SettingsRoutes = ({
         path={SettingsPath.NewSSOIdentityProvider}
         element={<SettingsSecuritySSOIdentifyProvider />}
       />
+      <Route
+        path={SettingsPath.NewApprovedAccessDomain}
+        element={<SettingsSecurityApprovedAccessDomain />}
+      />
+
       {isAdminPageEnabled && (
         <>
           <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
@@ -484,7 +497,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsFeatures.WORKSPACE}
+            settingsPermission={SettingsPermissions.WORKSPACE}
           />
         }
       >

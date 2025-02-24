@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -30,8 +31,9 @@ export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesCommandRunner 
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   async executeActiveWorkspacesCommand(

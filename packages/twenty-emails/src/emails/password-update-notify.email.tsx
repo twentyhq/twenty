@@ -26,7 +26,7 @@ export const PasswordUpdateNotifyEmail = ({
 
   return (
     <BaseEmail locale={locale}>
-      <Title value={t`Password updated`} />
+      <Title value={<Trans>Password updated</Trans>} />
       <MainText>
         {helloString},
         <br />
@@ -43,7 +43,7 @@ export const PasswordUpdateNotifyEmail = ({
         </Trans>
         <br />
       </MainText>
-      <CallToAction value={t`Connect to Twenty`} href={link} />
+      <CallToAction value={<Trans>Connect to Twenty</Trans>} href={link} />
     </BaseEmail>
   );
 };

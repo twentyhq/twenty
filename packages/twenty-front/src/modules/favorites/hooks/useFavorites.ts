@@ -27,7 +27,7 @@ export const useFavorites = () => {
       favoriteObjectMetadataItem.fields.filter(
         (fieldMetadataItem) =>
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.name !== 'workspaceMember' &&
+          fieldMetadataItem.name !== 'forWorkspaceMember' &&
           fieldMetadataItem.name !== 'favoriteFolder',
       ),
     [favoriteObjectMetadataItem.fields],
