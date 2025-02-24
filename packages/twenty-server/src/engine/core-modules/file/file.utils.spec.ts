@@ -3,6 +3,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import {
   checkFilename,
   checkFilePath,
+  checkFileFolder,
 } from 'src/engine/core-modules/file/file.utils';
 
 describe('FileUtils', () => {
@@ -56,6 +57,23 @@ describe('FileUtils', () => {
       const filename = `\0`;
 
       expect(() => checkFilename(filename)).toThrow(`Filename is not allowed`);
+    });
+  });
+
+  describe('checkFileFolder', () => {
+    it('should return root folder', () => {
+      const filePath = `${FileFolder.Attachment}/file.png`;
+      const rootFolder = checkFileFolder(filePath);
+
+      expect(rootFolder).toBe(`${FileFolder.Attachment}`);
+    });
+
+    it('should throw an error for invalid root folder', () => {
+      const folder = `invalid-folder`;
+
+      expect(() => checkFileFolder(folder)).toThrow(
+        `Folder ${folder} is not allowed`,
+      );
     });
   });
 });
