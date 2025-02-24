@@ -1,4 +1,3 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeaderContainer';
@@ -32,7 +31,9 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import {
+  AvatarChip,
   AvatarChipVariant,
   Checkbox,
   CheckboxVariant,
@@ -123,88 +124,99 @@ export const RecordBoardCardHeader = ({
     recordIndexOpenRecordInSelector,
   );
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  // TODO handle gracefully record is null
+  // Could be if !isCreating ?
+  if (!isDefined(record)) {
+    return null;
+  }
+
+  const toRename = () => {
+    if (isCreating && position !== undefined) {
+      return (
+        <RecordInlineCellEditMode>
+          <StyledTextInput
+            autoFocus
+            value={newLabelValue}
+            onInputEnter={() =>
+              handleInputEnter(
+                identifierFieldDefinition.label ?? '',
+                newLabelValue,
+                position,
+                onCreateSuccess,
+              )
+            }
+            onBlur={() =>
+              handleBlur(
+                identifierFieldDefinition.label ?? '',
+                newLabelValue,
+                position,
+                onCreateSuccess,
+              )
+            }
+            onChange={(text: string) => setNewLabelValue(text)}
+            placeholder={identifierFieldDefinition.label}
+          />
+        </RecordInlineCellEditMode>
+      );
+    }
+
+    if (isIdentifierEmpty) {
+      return (
+        <FieldContext.Provider
+          value={{
+            recordId: (record as ObjectRecord).id,
+            maxWidth: 156,
+            recoilScopeId:
+              (isCreating ? 'new' : recordId) +
+              identifierFieldDefinition.fieldMetadataId,
+            isLabelIdentifier: true,
+            fieldDefinition: {
+              disableTooltip: false,
+              fieldMetadataId: identifierFieldDefinition.fieldMetadataId,
+              label: `Set ${identifierFieldDefinition.label}`,
+              iconName: identifierFieldDefinition.iconName,
+              type: identifierFieldDefinition.type,
+              metadata: identifierFieldDefinition.metadata,
+              defaultValue: identifierFieldDefinition.defaultValue,
+              editButtonIcon: getFieldButtonIcon({
+                metadata: identifierFieldDefinition.metadata,
+                type: identifierFieldDefinition.type,
+              }),
+            },
+            useUpdateRecord: useUpdateOneRecordHook,
+            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+          }}
+        >
+          <RecordInlineCell />
+        </FieldContext.Provider>
+      );
+    }
+
+    if (recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE) {
+      <RecordIdentifierChip
+        objectNameSingular={objectMetadataItem.nameSingular}
+        record={record}
+        variant={AvatarChipVariant.Transparent}
+        maxWidth={150}
+        to={indexIdentifierUrl(recordId)}
+      />;
+    }
+
+    return (
+      <AvatarChip
+        placeholderColorSeed={record.id}
+        name={record.name}
+        avatarType={record.avatarType}
+        avatarUrl={record.avatarUrl ?? ''}
+        maxWidth={150}
+        variant={AvatarChipVariant.Transparent}
+      />
+    );
+  };
 
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
-      <StopPropagationContainer>
-        {isCreating && position !== undefined ? (
-          <RecordInlineCellEditMode>
-            <StyledTextInput
-              autoFocus
-              value={newLabelValue}
-              onInputEnter={() =>
-                handleInputEnter(
-                  identifierFieldDefinition.label ?? '',
-                  newLabelValue,
-                  position,
-                  onCreateSuccess,
-                )
-              }
-              onBlur={() =>
-                handleBlur(
-                  identifierFieldDefinition.label ?? '',
-                  newLabelValue,
-                  position,
-                  onCreateSuccess,
-                )
-              }
-              onChange={(text: string) => setNewLabelValue(text)}
-              placeholder={identifierFieldDefinition.label}
-            />
-          </RecordInlineCellEditMode>
-        ) : isIdentifierEmpty ? (
-          <FieldContext.Provider
-            value={{
-              recordId: (record as ObjectRecord).id,
-              maxWidth: 156,
-              recoilScopeId:
-                (isCreating ? 'new' : recordId) +
-                identifierFieldDefinition.fieldMetadataId,
-              isLabelIdentifier: true,
-              fieldDefinition: {
-                disableTooltip: false,
-                fieldMetadataId: identifierFieldDefinition.fieldMetadataId,
-                label: `Set ${identifierFieldDefinition.label}`,
-                iconName: identifierFieldDefinition.iconName,
-                type: identifierFieldDefinition.type,
-                metadata: identifierFieldDefinition.metadata,
-                defaultValue: identifierFieldDefinition.defaultValue,
-                editButtonIcon: getFieldButtonIcon({
-                  metadata: identifierFieldDefinition.metadata,
-                  type: identifierFieldDefinition.type,
-                }),
-              },
-              useUpdateRecord: useUpdateOneRecordHook,
-              hotkeyScope: InlineCellHotkeyScope.InlineCell,
-            }}
-          >
-            <RecordInlineCell />
-          </FieldContext.Provider>
-        ) : (
-          <RecordIdentifierChip
-            objectNameSingular={objectMetadataItem.nameSingular}
-            record={record as ObjectRecord}
-            variant={AvatarChipVariant.Transparent}
-            maxWidth={150}
-            onClick={
-              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-                ? () => {
-                    openRecordInCommandMenu({
-                      recordId,
-                      objectNameSingular: objectMetadataItem.nameSingular,
-                    });
-                  }
-                : undefined
-            }
-            to={
-              recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-                ? indexIdentifierUrl(recordId)
-                : undefined
-            }
-          />
-        )}
-      </StopPropagationContainer>
+      <StopPropagationContainer>{toRename()}</StopPropagationContainer>
 
       {!isCreating && (
         <>

@@ -6,7 +6,6 @@ import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 
 export type RecordChipProps = {
@@ -14,7 +13,6 @@ export type RecordChipProps = {
   record: ObjectRecord;
   className?: string;
   variant?: AvatarChipVariant;
-  navigateToShowPageOnClick?: boolean;
 };
 
 export const RecordChip = ({
@@ -22,7 +20,6 @@ export const RecordChip = ({
   record,
   className,
   variant,
-  navigateToShowPageOnClick = true,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -35,54 +32,38 @@ export const RecordChip = ({
     recordIndexOpenRecordInSelector,
   );
 
-  const handleClick = (e: MouseEvent<Element>) => {
-    e.stopPropagation();
-    if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-      openRecordInCommandMenu({
-        recordId: record.id,
-        objectNameSingular,
-      });
-    }
-  };
-
-  if (navigateToShowPageOnClick) {
+  if (recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE) {
     return (
-      <LinkAvatarChip
+      <AvatarChip
         placeholderColorSeed={record.id}
         name={recordChipData.name}
         avatarType={recordChipData.avatarType}
         avatarUrl={recordChipData.avatarUrl ?? ''}
         className={className}
         variant={variant}
-        // onClick={handleClick} // TODO might be required
-        /*
-        TODO handle this new logic from conflicts with bosi
-             to={
-        recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-          ? getLinkToShowPage(objectNameSingular, record)
-          : undefined
-      }
-        */
-        to={
-          getLinkToShowPage(objectNameSingular, record)
-
-        }
       />
     );
   }
 
+  const onClick =
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+      ? () =>
+          openRecordInCommandMenu({
+            recordId: record.id,
+            objectNameSingular,
+          })
+      : undefined;
+
   return (
-    <AvatarChip
+    <LinkAvatarChip
       placeholderColorSeed={record.id}
       name={recordChipData.name}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
       variant={variant}
-      // Really required ?
-      onClick={(e: MouseEvent<Element>) => {
-        e.stopPropagation();
-      }}
+      to={getLinkToShowPage(objectNameSingular, record)}
+      onClick={onClick}
     />
   );
 };

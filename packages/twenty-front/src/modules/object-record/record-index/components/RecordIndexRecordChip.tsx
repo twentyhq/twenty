@@ -1,31 +1,23 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  AvatarChip,
-  AvatarChipVariant,
-  ChipSize,
-  LinkAvatarChip,
-} from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { AvatarChipVariant, ChipSize, LinkAvatarChip } from 'twenty-ui';
 
-type RecordIdentifierChipCommonsProps = {
+type RecordIdentifierChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   variant?: AvatarChipVariant;
   size?: ChipSize;
   maxWidth?: number;
+  to: string;
 };
 
-type RecordIdentifierChipLinkProps = { to: string };
-type RecordIdentifierChipRegularProps = { onClick: () => void };
-type RecordIdentifierChipProps = RecordIdentifierChipCommonsProps &
-  (RecordIdentifierChipRegularProps | RecordIdentifierChipLinkProps);
-
-const isLinkChip = (
-  props: RecordIdentifierChipRegularProps | RecordIdentifierChipLinkProps,
-): props is RecordIdentifierChipLinkProps => Object.hasOwn(props, 'to');
-
+// TODO not the same as file ?
 export const RecordIdentifierChip = ({
   objectNameSingular,
   record,
@@ -38,7 +30,10 @@ export const RecordIdentifierChip = ({
     objectNameSingular,
     record,
   });
-
+  const recordIndexOpenRecordIn = useRecoilValue(
+    recordIndexOpenRecordInSelector,
+  );
+  const { openRecordInCommandMenu } = useCommandMenu();
   const { Icon: LeftIcon, IconColor: LeftIconColor } =
     useGetStandardObjectIcon(objectNameSingular);
 
@@ -46,35 +41,28 @@ export const RecordIdentifierChip = ({
     return null;
   }
 
-  if (isLinkChip(props)) {
-    return (
-      <LinkAvatarChip
-        placeholderColorSeed={record.id}
-        name={recordChipData.name}
-        avatarType={recordChipData.avatarType}
-        avatarUrl={recordChipData.avatarUrl ?? ''}
-        to={props.to}
-        variant={variant}
-        LeftIcon={LeftIcon}
-        LeftIconColor={LeftIconColor}
-        size={size}
-        maxWidth={maxWidth}
-      />
-    );
-  }
+  const onClick =
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+      ? () =>
+          openRecordInCommandMenu({
+            recordId: record.id,
+            objectNameSingular,
+          })
+      : undefined;
 
   return (
-    <AvatarChip
+    <LinkAvatarChip
       placeholderColorSeed={record.id}
       name={recordChipData.name}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
-      onClick={props.onClick}
+      to={props.to}
       variant={variant}
       LeftIcon={LeftIcon}
       LeftIconColor={LeftIconColor}
       size={size}
       maxWidth={maxWidth}
+      onClick={onClick}
     />
   );
 };
