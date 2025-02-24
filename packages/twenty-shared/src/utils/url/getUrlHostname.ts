@@ -1,4 +1,4 @@
-import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
+import { getAbsoluteUrl } from 'src/utils/url/getAbsoluteUrl';
 
 export const getUrlHostname = (
   url: string,

@@ -1,4 +1,4 @@
-import { isDomain } from '~/utils/is-domain';
+import { isDomain } from 'src/utils/url/isDomain';
 
 describe('isDomain', () => {
   it(`should return false if null`, () => {

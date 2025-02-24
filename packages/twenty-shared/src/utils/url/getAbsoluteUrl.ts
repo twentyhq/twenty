@@ -1,4 +1,4 @@
-import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
+import { absoluteUrlSchema } from 'src/utils/url/absoluteUrlSchema';
 
 export const getAbsoluteUrl = (url: string) => {
   try {

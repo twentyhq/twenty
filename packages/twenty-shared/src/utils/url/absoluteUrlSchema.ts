@@ -1,3 +1,4 @@
+import { isDomain } from 'src/utils/url/isDomain';
 import { z } from 'zod';
 
 export const absoluteUrlSchema = z
@@ -9,11 +10,12 @@ export const absoluteUrlSchema = z
       .transform((value) => {
         try {
           const url = `https://${value}`.trim();
-          return isNaN(Number(value.trim())) &&
-            new URL(url) &&
-            /\.[a-z]{2,}$/.test(url)
-            ? url
-            : '';
+          const parsedUrl = new URL(url);
+
+          if (!isDomain(parsedUrl.hostname)) {
+            return '';
+          }
+          return url;
         } catch {
           return '';
         }
