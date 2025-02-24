@@ -11,6 +11,7 @@ export * from './chip/components/AvatarChip';
 export * from './chip/components/Chip';
 export * from './color/components/ColorSample';
 export * from './icon/components/IconAddressBook';
+export * from './icon/components/IconAuth0';
 export * from './icon/components/IconGmail';
 export * from './icon/components/IconGoogle';
 export * from './icon/components/IconGoogleCalendar';

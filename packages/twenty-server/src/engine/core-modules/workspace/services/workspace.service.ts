@@ -195,6 +195,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
       password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
       microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+      auth0: this.environmentService.get('AUTH_AUTH0_ENABLED'),
     };
 
     if (payload.isGoogleAuthEnabled && !authProvidersBySystem.google) {
@@ -212,6 +213,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     if (payload.isPasswordAuthEnabled && !authProvidersBySystem.password) {
       throw new WorkspaceException(
         'Password auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+    if (payload.isAuth0AuthEnabled && !authProvidersBySystem.auth0) {
+      throw new WorkspaceException(
+        'Auth0 auth is not enabled in the system.',
         WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
       );
     }
@@ -407,6 +414,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       'isGoogleAuthEnabled' in payload ||
       'isMicrosoftAuthEnabled' in payload ||
       'isPasswordAuthEnabled' in payload ||
+      'isAuth0AuthEnabled' in payload ||
       'isPublicInviteLinkEnabled' in payload
     ) {
       if (!userWorkspaceId) {

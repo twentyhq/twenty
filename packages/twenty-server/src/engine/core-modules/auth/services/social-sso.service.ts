@@ -30,6 +30,10 @@ export class SocialSsoService {
       return 'isPasswordAuthEnabled';
     }
 
+    if (authProvider === 'auth0') {
+      return 'isAuth0AuthEnabled';
+    }
+
     throw new Error(`${authProvider} is not a valid auth provider.`);
   }
 

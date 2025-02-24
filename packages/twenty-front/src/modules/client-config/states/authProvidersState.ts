@@ -9,8 +9,7 @@ export const authProvidersState = createState<AuthProviders>({
     magicLink: false,
     password: true,
     microsoft: false,
-    sso: false,
-    auth0: false,
     sso: [],
+    auth0: false,
   },
 });

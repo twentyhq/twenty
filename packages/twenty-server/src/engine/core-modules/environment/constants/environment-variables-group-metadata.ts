@@ -37,6 +37,11 @@ export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
     description: 'Configure Microsoft integration (login, calendar, email)',
     isHiddenOnLoad: false,
   },
+  [EnvironmentVariablesGroup.Auth0Auth]: {
+    position: 550,
+    description: 'Configure Auth0 integration (login, calendar, email)',
+    isHiddenOnLoad: false,
+  },
   [EnvironmentVariablesGroup.EmailSettings]: {
     position: 600,
     description:

@@ -372,23 +372,6 @@ export class EnvironmentVariables {
   @IsOptional()
   STORAGE_S3_SECRET_ACCESS_KEY: string;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  AUTH_AUTH0_ENABLED = false;
-
-  @IsString()
-  @ValidateIf((env) => env.AUTH_AUTH0_ENABLED)
-  AUTH_AUTH0_CLIENT_ID: string;
-
-  @IsString()
-  @ValidateIf((env) => env.AUTH_AUTH0_ENABLED)
-  AUTH_AUTH0_CLIENT_SECRET: string;
-
-  @IsUrl({ require_tld: false })
-  @ValidateIf((env) => env.AUTH_AUTH0_ENABLED)
-  AUTH_AUTH0_CALLBACK_URL: string;
-
   // Custom Code Engine
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerlessConfig,
@@ -998,6 +981,39 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_ATTACHMENT_PREVIEW_ENABLED = true;
+
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_AUTH0_ENABLED = false;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Auth0Auth,
+    sensitive: true,
+    description: 'Client ID for Auth0 authentication',
+  })
+  @IsString()
+  @ValidateIf((env) => env.AUTH_AUTH0_ENABLED)
+  AUTH_AUTH0_CLIENT_ID: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Auth0Auth,
+    sensitive: true,
+    description: 'Client secret for Auth0 authentication',
+  })
+  @IsString()
+  @ValidateIf((env) => env.AUTH_AUTH0_ENABLED)
+  AUTH_AUTH0_CLIENT_SECRET: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Auth0Auth,
+    sensitive: true,
+    description: 'Callback URL for Auth0 authentication',
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.AUTH_AUTH0_ENABLED)
+  AUTH_AUTH0_CALLBACK_URL: string;
 }
 
 export const validate = (

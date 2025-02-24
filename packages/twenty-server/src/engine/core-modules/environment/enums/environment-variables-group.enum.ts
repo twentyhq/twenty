@@ -3,6 +3,7 @@ export enum EnvironmentVariablesGroup {
   RateLimiting = 'rate-limiting',
   StorageConfig = 'storage-config',
   GoogleAuth = 'google-auth',
+  Auth0Auth = 'auth0-auth',
   MicrosoftAuth = 'microsoft-auth',
   EmailSettings = 'email-settings',
   Logging = 'logging',

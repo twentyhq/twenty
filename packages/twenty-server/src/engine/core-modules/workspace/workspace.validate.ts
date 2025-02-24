@@ -32,6 +32,7 @@ const isAuthEnabledOrThrow = (
 ) => {
   if (provider === 'google' && workspace.isGoogleAuthEnabled) return true;
   if (provider === 'microsoft' && workspace.isMicrosoftAuthEnabled) return true;
+  if (provider === 'auth0' && workspace.isAuth0AuthEnabled) return true;
   if (provider === 'password' && workspace.isPasswordAuthEnabled) return true;
   if (provider === 'sso') return true;
 

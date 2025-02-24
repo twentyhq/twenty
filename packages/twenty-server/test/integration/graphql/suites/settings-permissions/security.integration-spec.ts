@@ -60,6 +60,7 @@ describe('Security permissions', () => {
             logo: "${originalWorkspaceState.logo}",
             isGoogleAuthEnabled: ${originalWorkspaceState.isGoogleAuthEnabled},
             isMicrosoftAuthEnabled: ${originalWorkspaceState.isMicrosoftAuthEnabled},
+            isAuth0AuthEnabled: ${originalWorkspaceState.isAuth0AuthEnabled},
             isPasswordAuthEnabled: ${originalWorkspaceState.isPasswordAuthEnabled}
             isPublicInviteLinkEnabled: ${originalWorkspaceState.isPublicInviteLinkEnabled}
           }) {

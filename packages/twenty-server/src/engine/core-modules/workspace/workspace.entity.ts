@@ -139,6 +139,10 @@ export class Workspace {
   isMicrosoftAuthEnabled: boolean;
 
   @Field()
+  @Column({ default: true })
+  isAuth0AuthEnabled: boolean;
+
+  @Field()
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 }

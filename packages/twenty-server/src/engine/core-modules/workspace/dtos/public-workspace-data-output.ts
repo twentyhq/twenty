@@ -41,6 +41,9 @@ export class AuthProviders {
 
   @Field(() => Boolean)
   microsoft: boolean;
+
+  @Field(() => Boolean)
+  auth0: boolean;
 }
 
 @ObjectType()
