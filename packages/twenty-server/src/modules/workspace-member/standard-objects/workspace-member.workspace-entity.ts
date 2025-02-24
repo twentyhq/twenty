@@ -253,6 +253,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Favorites linked to the workspace member`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
+    inverseSideFieldKey: 'forWorkspaceMember',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   favorites: Relation<FavoriteWorkspaceEntity[]>;
