@@ -82,7 +82,7 @@ export const sortedFavorites = [
     labelIdentifier: ' ',
     link: '/object/person/3',
     objectNameSingular: 'person',
-    forWorWorkspaceMemberId: '1',
+    forWorkspaceMemberId: '1',
     favoriteFolderId: '1',
     __typename: 'Favorite',
   },
@@ -446,7 +446,7 @@ mutation UpdateOneFavorite(
       workflowId
     }
     workflowVersionId
-    workspaceMember {
+    forWorkspaceMember {
       __typename
       avatarUrl
       colorScheme
@@ -834,7 +834,7 @@ export const mocks = [
               userEmail
               userId
             }
-            workspaceMemberId
+            forWorkspaceMemberId
           }
         }
       `,
