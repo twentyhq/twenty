@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import isEmpty from 'lodash.isempty';
+
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
@@ -52,6 +54,13 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
+
+    if (isEmpty(formattedExistingRecords)) {
+      throw new GraphqlQueryRunnerException(
+        'Record not found',
+        GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+      );
+    }
 
     const nonFormattedUpdatedObjectRecords = await queryBuilder
       .update(data)
