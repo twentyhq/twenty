@@ -38,7 +38,7 @@ const StyledChildContainer = styled.div`
   }
 `;
 
-const UnShrinkableContainer = styled.div`
+const StyledUnShrinkableContainer = styled.div`
   flex-shrink: 0;
 `;
 
@@ -154,12 +154,12 @@ export const ExpandableList = ({
       </StyledChildrenContainer>
       {canDisplayChipCount && (
         <AnimatedContainer>
-          <UnShrinkableContainer onClick={handleChipCountClick}>
+          <StyledUnShrinkableContainer onClick={handleChipCountClick}>
             <OverflowingTextWithTooltip
               size={ChipSize.Small}
               text={`+${hiddenChildrenCount}`}
             />
-          </UnShrinkableContainer>
+          </StyledUnShrinkableContainer>
         </AnimatedContainer>
       )}
       {isListExpanded && (

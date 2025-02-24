@@ -6,7 +6,6 @@ import {
   ChipVariant,
 } from '@ui/display/chip/components/Chip';
 import { UndecoratedLink } from '@ui/navigation';
-import { isDefined } from 'twenty-shared';
 
 type LinkChipProps = Omit<ChipProps, 'onClick'> & {
   to: string;
@@ -31,11 +30,8 @@ export const LinkChip = ({
     <UndecoratedLink
       to={to}
       onClick={(e) => {
-        if (isDefined(onClick)) {
-          // Or preventDefault ?
-          e.stopPropagation();
-          onClick();
-        }
+        e.stopPropagation();
+        onClick?.();
       }}
     >
       <Chip
