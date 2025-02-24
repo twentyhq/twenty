@@ -32,7 +32,7 @@ export const RecordChip = ({
   maxWidth,
   to,
   size,
-  forceDisableClick,
+  forceDisableClick = false,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
