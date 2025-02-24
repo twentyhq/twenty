@@ -30,6 +30,7 @@ const StyledLinkContainer = styled.div`
 const StyledButtonCopy = styled.div`
   align-items: end;
   display: flex;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettingsSSOOIDCForm = () => {

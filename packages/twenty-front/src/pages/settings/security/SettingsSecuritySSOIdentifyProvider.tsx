@@ -56,33 +56,33 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
-      <SubMenuTopBarContainer
-        title={t`New SSO Configuration`}
-        actionButton={
-          <SaveAndCancelButtons
-            onCancel={() => navigate(SettingsPath.Security)}
-            isSaveDisabled={form.formState.isSubmitting}
-          />
-        }
-        links={[
-          {
-            children: <Trans>Workspace</Trans>,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          {
-            children: <Trans>Security</Trans>,
-            href: getSettingsPath(SettingsPath.Security),
-          },
-          { children: <Trans>New SSO provider</Trans> },
-        ]}
+      <FormProvider
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...form}
       >
-        <FormProvider
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...form}
+        <SubMenuTopBarContainer
+          title={t`New SSO Configuration`}
+          actionButton={
+            <SaveAndCancelButtons
+              onCancel={() => navigate(SettingsPath.Security)}
+              isSaveDisabled={form.formState.isSubmitting}
+            />
+          }
+          links={[
+            {
+              children: <Trans>Workspace</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            {
+              children: <Trans>Security</Trans>,
+              href: getSettingsPath(SettingsPath.Security),
+            },
+            { children: <Trans>New SSO provider</Trans> },
+          ]}
         >
           <SettingsSSOIdentitiesProvidersForm />
-        </FormProvider>
-      </SubMenuTopBarContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
     </form>
   );
 };
