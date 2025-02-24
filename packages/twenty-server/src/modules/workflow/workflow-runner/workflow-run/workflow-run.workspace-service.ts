@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
+  StepOutput,
   WorkflowRunOutput,
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -130,10 +130,7 @@ export class WorkflowRunWorkspaceService {
     context,
   }: {
     workflowRunId: string;
-    stepOutput: {
-      id: string;
-      output: WorkflowExecutorOutput;
-    };
+    stepOutput: StepOutput;
     context: Record<string, any>;
   }) {
     const workflowRunRepository =
@@ -158,8 +155,10 @@ export class WorkflowRunWorkspaceService {
           trigger: undefined,
           steps: [],
         },
-        ...(workflowRunToUpdate.output?.stepsOutput ?? {}),
-        [stepOutput.id]: stepOutput,
+        stepsOutput: {
+          ...(workflowRunToUpdate.output?.stepsOutput ?? {}),
+          [stepOutput.id]: stepOutput.output,
+        },
       },
       context,
     });

@@ -8,6 +8,7 @@ import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
+  StepOutput,
   WorkflowRunOutput,
   WorkflowRunStatus,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -40,7 +41,11 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     workflowRunId,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
     if (currentStepIndex >= steps.length) {
-      return {};
+      return {
+        result: {
+          success: true,
+        },
+      };
     }
 
     const step = steps[currentStepIndex];
@@ -67,7 +72,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
       this.sendWorkflowNodeRunEvent();
     }
 
-    const stepOutput: { id: string; output: WorkflowExecutorOutput } = {
+    const stepOutput: StepOutput = {
       id: step.id,
       output: actionOutput,
     };

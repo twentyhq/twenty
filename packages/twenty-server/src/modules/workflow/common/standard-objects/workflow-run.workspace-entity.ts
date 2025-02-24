@@ -33,6 +33,11 @@ export enum WorkflowRunStatus {
   FAILED = 'FAILED',
 }
 
+export type StepOutput = {
+  id: string;
+  output: WorkflowExecutorOutput;
+};
+
 export type WorkflowRunOutput = {
   flow: {
     trigger: WorkflowTrigger;
