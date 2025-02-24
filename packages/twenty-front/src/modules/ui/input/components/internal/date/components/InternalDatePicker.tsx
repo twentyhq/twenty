@@ -252,6 +252,10 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
 
   & .react-datepicker__day--outside-month {
     color: ${({ theme }) => theme.font.color.tertiary};
+
+    &.react-datepicker__day--selected {
+      color: ${({ theme }) => theme.background.primary};
+    }
   }
 
   & .react-datepicker__day:hover {
