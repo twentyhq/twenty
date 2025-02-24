@@ -2263,7 +2263,7 @@ msgstr "Nombre del miembro del espacio de trabajo"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Posición del miembro del espacio de trabajo"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
@@ -2286,3 +2286,4 @@ msgstr "Tu contraseña ha sido cambiada con éxito"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Miembro de su equipo responsable de gestionar la cuenta de la empresa"
+

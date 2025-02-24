@@ -2263,7 +2263,7 @@ msgstr "工作區成員名稱"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "工作區成員職位"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
@@ -2286,3 +2286,4 @@ msgstr "您的密碼已成功更改"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "負責管理公司帳戶的團隊成員"
+

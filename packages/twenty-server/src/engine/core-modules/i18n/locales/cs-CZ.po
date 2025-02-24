@@ -2263,7 +2263,7 @@ msgstr "Jméno člena pracovního prostoru"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Pozice člena pracovního prostoru"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
@@ -2286,3 +2286,4 @@ msgstr "Vaše heslo bylo úspěšně změněno"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Člen vašeho týmu odpovědný za správu firemního účtu"
+

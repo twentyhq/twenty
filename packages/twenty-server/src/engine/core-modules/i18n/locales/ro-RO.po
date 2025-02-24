@@ -2263,7 +2263,7 @@ msgstr "Numele membrului spațiului de lucru"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Funcția membrului spațiului de lucru"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
@@ -2286,3 +2286,4 @@ msgstr "Parola dumneavoastră a fost schimbată cu succes"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Membrul echipei dumneavoastră responsabil de gestionarea contului companiei"
+

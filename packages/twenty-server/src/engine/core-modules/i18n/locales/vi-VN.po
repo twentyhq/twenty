@@ -2263,7 +2263,7 @@ msgstr "Tên thành viên không gian làm việc"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Vị trí thành viên không gian làm việc"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
@@ -2286,3 +2286,4 @@ msgstr "Mật khẩu của bạn đã được thay đổi thành công"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Thành viên trong nhóm của bạn phụ trách quản lý tài khoản công ty"
+
