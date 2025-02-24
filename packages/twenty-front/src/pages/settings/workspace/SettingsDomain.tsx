@@ -197,38 +197,41 @@ export const SettingsDomain = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title={t`Domain`}
-      links={[
-        {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: <Trans>General</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        { children: <Trans>Domain</Trans> },
-      ]}
-      actionButton={
-        <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.Workspace)}
-          onSave={form.handleSubmit(handleSave)}
-        />
-      }
-    >
-      <SettingsPageContainer>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <FormProvider {...form}>
-          <SettingsSubdomain handleSave={handleSave} />
-          {isCustomDomainEnabled && (
-            <>
-              <SettingsCustomDomainEffect />
-              <SettingsCustomDomain handleSave={handleSave} />
-            </>
-          )}
-        </FormProvider>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    <form onSubmit={form.handleSubmit(handleSave)}>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...form}>
+        <SubMenuTopBarContainer
+          title={t`Domain`}
+          links={[
+            {
+              children: <Trans>Workspace</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            {
+              children: <Trans>General</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            { children: <Trans>Domain</Trans> },
+          ]}
+          actionButton={
+            <SaveAndCancelButtons
+              onCancel={() => navigate(SettingsPath.Workspace)}
+              onSave={form.handleSubmit(handleSave)}
+              isSaveDisabled={form.formState.isSubmitting}
+            />
+          }
+        >
+          <SettingsPageContainer>
+            <SettingsSubdomain />
+            {isCustomDomainEnabled && (
+              <>
+                <SettingsCustomDomainEffect />
+                <SettingsCustomDomain />
+              </>
+            )}
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
+    </form>
   );
 };

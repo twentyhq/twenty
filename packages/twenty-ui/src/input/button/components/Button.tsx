@@ -415,6 +415,7 @@ export const Button = ({
   dataTestId,
   hotkeys,
   ariaLabel,
+  type,
 }: ButtonProps) => {
   const theme = useTheme();
 
@@ -438,6 +439,7 @@ export const Button = ({
       target={target}
       data-testid={dataTestId}
       aria-label={ariaLabel}
+      type={type}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
