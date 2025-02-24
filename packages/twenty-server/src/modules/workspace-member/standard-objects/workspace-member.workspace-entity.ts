@@ -157,35 +157,83 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   userId: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userDocument,
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
     type: FieldMetadataType.TEXT,
-    label: msg`User Document`,
-    description: msg`Associated User Document`,
-    icon: 'IconDocument',
+    label: msg`Time zone`,
+    defaultValue: "'system'",
+    description: msg`User time zone`,
+    icon: 'IconTimezone',
   })
-  @WorkspaceIsNullable()
-  @WorkspaceIsUnique()
-  userDocument: string | null;
+  @WorkspaceIsSystem()
+  timeZone: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userPhone,
-    type: FieldMetadataType.PHONES,
-    label: msg`User phone`,
-    description: msg`Associated User Phone`,
-    icon: 'IconPhone',
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
+    type: FieldMetadataType.SELECT,
+    label: msg`Date format`,
+    description: msg`User's preferred date format`,
+    icon: 'IconCalendarEvent',
+    options: [
+      {
+        value: WorkspaceMemberDateFormatEnum.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'turquoise',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.MONTH_FIRST,
+        label: 'Month First',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.DAY_FIRST,
+        label: 'Day First',
+        position: 2,
+        color: 'purple',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.YEAR_FIRST,
+        label: 'Year First',
+        position: 3,
+        color: 'sky',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
   })
-  @WorkspaceIsNullable()
-  userPhone: PhonesMetadata | null;
+  @WorkspaceIsSystem()
+  dateFormat: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.agentId,
-    type: FieldMetadataType.TEXT,
-    label: msg`Agent Id`,
-    description: msg`Associated Agent Id`,
-    icon: 'IconCircleUsers',
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
+    type: FieldMetadataType.SELECT,
+    label: msg`Time format`,
+    description: msg`User's preferred time format`,
+    icon: 'IconClock2',
+    options: [
+      {
+        value: WorkspaceMemberTimeFormatEnum.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'sky',
+      },
+      {
+        value: WorkspaceMemberTimeFormatEnum.HOUR_24,
+        label: '24HRS',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: WorkspaceMemberTimeFormatEnum.HOUR_12,
+        label: '12HRS',
+        position: 2,
+        color: 'purple',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
   })
-  @WorkspaceIsNullable()
-  agentId: string | null;
+  @WorkspaceIsSystem()
+  timeFormat: string;
 
   // Relations
   @WorkspaceRelation({
@@ -311,6 +359,40 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   auditLogs: Relation<AuditLogWorkspaceEntity[]>;
+
+  // Kvoip changes
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userDocument,
+    type: FieldMetadataType.TEXT,
+    label: msg`User Document`,
+    description: msg`Associated User Document`,
+    icon: 'IconDocument',
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsUnique()
+  userDocument: string | null;
+
+  // Kvoip changes
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userPhone,
+    type: FieldMetadataType.PHONES,
+    label: msg`User phone`,
+    description: msg`Associated User Phone`,
+    icon: 'IconPhone',
+  })
+  @WorkspaceIsNullable()
+  userPhone: PhonesMetadata | null;
+
+  // kvoip changes
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.agentId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Agent Id`,
+    description: msg`Associated Agent Id`,
+    icon: 'IconCircleUsers',
+  })
+  @WorkspaceIsNullable()
+  agentId: string | null;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,
