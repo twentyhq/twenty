@@ -17,9 +17,9 @@ export const absoluteUrlSchema = z.string().transform((value, ctx) => {
     .replace('https://', '')
     .replace('http://', '');
 
-  if (/^\d+$/.test(valueWithoutProtocol)) {
-    // if the value without protocol is a number, it's not a valid url
-    // if we let URL() parse it, it will throw cast an IP address
+  if (/^\d+\//.test(valueWithoutProtocol)) {
+    // if the hostname is a number, it's not a valid url
+    // if we let URL() parse it, it will throw cast an IP address and we lose the information
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'domain is not a valid url',

@@ -22,5 +22,6 @@ describe('isValidUrl', () => {
     expect(isValidUrl('')).toBe(false);
     expect(isValidUrl('\\')).toBe(false);
     expect(isValidUrl('wwwexamplecom')).toBe(false);
+    expect(isValidUrl('2/toto')).toBe(false);
   });
 });
