@@ -136,6 +136,7 @@ export const SettingsSSOSAMLForm = () => {
             Icon={IconUpload}
             onClick={handleUploadFileClick}
             title={t`Upload file`}
+            type="button"
           ></Button>
           {isXMLMetadataValid() && (
             <IconCheck
@@ -157,7 +158,8 @@ export const SettingsSSOSAMLForm = () => {
               Icon={IconDownload}
               onClick={downloadMetadata}
               title={t`Download file`}
-            ></Button>
+              type="button"
+            />
           </StyledContainer>
           <HorizontalSeparator text={'Or'} />
           <StyledContainer>
@@ -181,6 +183,7 @@ export const SettingsSSOSAMLForm = () => {
                   });
                   navigator.clipboard.writeText(acsUrl);
                 }}
+                type="button"
               />
             </StyledButtonCopy>
           </StyledContainer>
@@ -205,6 +208,7 @@ export const SettingsSSOSAMLForm = () => {
                   });
                   navigator.clipboard.writeText(entityID);
                 }}
+                type="button"
               />
             </StyledButtonCopy>
           </StyledContainer>

@@ -70,6 +70,7 @@ export const SettingsSSOOIDCForm = () => {
                   });
                   navigator.clipboard.writeText(authorizedUrl);
                 }}
+                type="button"
               />
             </StyledButtonCopy>
           </StyledContainer>
@@ -94,6 +95,7 @@ export const SettingsSSOOIDCForm = () => {
                   });
                   navigator.clipboard.writeText(redirectionUrl);
                 }}
+                type="button"
               />
             </StyledButtonCopy>
           </StyledContainer>

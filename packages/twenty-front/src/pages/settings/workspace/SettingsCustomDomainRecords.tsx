@@ -67,6 +67,7 @@ export const SettingsCustomDomainRecords = ({
               <StyledButton
                 title={record.key}
                 onClick={() => copyToClipboardDebounced(record.key)}
+                type="button"
               />
             </StyledTableCell>
             <StyledTableCell>
@@ -75,12 +76,14 @@ export const SettingsCustomDomainRecords = ({
                 onClick={() =>
                   copyToClipboardDebounced(record.type.toUpperCase())
                 }
+                type="button"
               />
             </StyledTableCell>
             <StyledTableCell>
               <StyledButton
                 title={record.value}
                 onClick={() => copyToClipboardDebounced(record.value)}
+                type="button"
               />
             </StyledTableCell>
           </TableRow>
