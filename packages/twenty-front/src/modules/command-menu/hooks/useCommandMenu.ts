@@ -125,7 +125,10 @@ export const useCommandMenu = () => {
           .getLoadable(commandMenuNavigationStackState)
           .getValue();
 
-        if (resetNavigationStack) {
+        if (
+          resetNavigationStack ||
+          currentNavigationStack.some((item) => item.page === page)
+        ) {
           set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
         } else {
           set(commandMenuNavigationStackState, [
@@ -133,6 +136,7 @@ export const useCommandMenu = () => {
             { page, pageTitle, pageIcon },
           ]);
         }
+
         openCommandMenu();
       };
     },
