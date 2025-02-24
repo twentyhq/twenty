@@ -24,7 +24,7 @@ export type CurrentWorkspace = Pick<
   | 'workspaceUrls'
   | 'metadataVersion'
 > & {
-  defaultRole: Omit<Role, 'workspaceMembers'> | null;
+  defaultRole?: Omit<Role, 'workspaceMembers'> | null;
 };
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({
