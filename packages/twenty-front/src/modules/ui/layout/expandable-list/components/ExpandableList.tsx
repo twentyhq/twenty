@@ -1,6 +1,10 @@
 import styled from '@emotion/styled';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatedContainer, Chip, ChipVariant } from 'twenty-ui';
+import {
+  AnimatedContainer,
+  ChipSize,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui';
 
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
@@ -34,7 +38,7 @@ const StyledChildContainer = styled.div`
   }
 `;
 
-const StyledChipCount = styled(Chip)`
+const UnShrinkableContainer = styled.div`
   flex-shrink: 0;
 `;
 
@@ -150,12 +154,12 @@ export const ExpandableList = ({
       </StyledChildrenContainer>
       {canDisplayChipCount && (
         <AnimatedContainer>
-          <StyledChipCount
-            label={`+${hiddenChildrenCount}`}
-            variant={ChipVariant.Highlighted}
-            // TODO prastoin determine context
-            onClick={handleChipCountClick}
-          />
+          <UnShrinkableContainer onClick={handleChipCountClick}>
+            <OverflowingTextWithTooltip
+              size={ChipSize.Small}
+              text={`+${hiddenChildrenCount}`}
+            />
+          </UnShrinkableContainer>
         </AnimatedContainer>
       )}
       {isListExpanded && (
