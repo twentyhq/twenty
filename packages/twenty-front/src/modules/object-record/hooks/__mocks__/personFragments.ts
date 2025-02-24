@@ -170,6 +170,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             createdAt
             deletedAt
             favoriteFolderId
+            forWorkspaceMemberId
             id
             noteId
             opportunityId
@@ -183,7 +184,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             workflowId
             workflowRunId
             workflowVersionId
-            workspaceMemberId
           }
         }
       }
