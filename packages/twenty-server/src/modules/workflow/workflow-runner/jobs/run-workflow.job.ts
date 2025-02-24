@@ -70,7 +70,7 @@ export class RunWorkflowJob {
       const { error } = await this.workflowExecutorWorkspaceService.execute({
         workflowRunId,
         currentStepIndex: 0,
-        steps: workflowVersion.steps ?? [],
+        steps: workflowVersion.steps,
         context,
       });
 

@@ -47,7 +47,7 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
 
     if (!isWorkflowUpdateRecordAction(step)) {
       throw new WorkflowStepExecutorException(
-        'Step is not a update record action',
+        'Step is not an update record action',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
