@@ -150,7 +150,7 @@ export const CommandMenuTopBar = () => {
     !location.pathname.startsWith('/object/');
 
   const backButtonAnimationDuration =
-    contextChips.length > 1 ? theme.animation.duration.instant : 0;
+    contextChips.length > 0 ? theme.animation.duration.instant : 0;
 
   return (
     <StyledInputContainer>
