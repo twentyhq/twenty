@@ -31,28 +31,30 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        graphql.query('GetProductPrices', () => {
+        graphql.query('BillingBaseProductPrices', () => {
           return HttpResponse.json({
             data: {
-              getProductPrices: {
-                __typename: 'ProductPricesEntity',
-                productPrices: [
-                  {
-                    __typename: 'ProductPriceEntity',
-                    created: 1699860608,
-                    recurringInterval: 'Month',
-                    stripePriceId: 'monthly8usd',
-                    unitAmount: 900,
+              plans: [
+                {
+                  planKey: 'PRO',
+                  baseProduct: {
+                    prices: [
+                      {
+                        __typename: 'BillingPriceLicensedDTO',
+                        recurringInterval: 'month',
+                        stripePriceId: 'monthly8usd',
+                        unitAmount: 900,
+                      },
+                      {
+                        __typename: 'BillingPriceLicensedDTO',
+                        recurringInterval: 'year',
+                        stripePriceId: 'priceId',
+                        unitAmount: 9000,
+                      },
+                    ],
                   },
-                  {
-                    __typename: 'ProductPriceEntity',
-                    created: 1701874964,
-                    recurringInterval: 'Year',
-                    stripePriceId: 'priceId',
-                    unitAmount: 9000,
-                  },
-                ],
-              },
+                },
+              ],
             },
           });
         }),
