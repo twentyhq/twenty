@@ -15,7 +15,7 @@ describe('searchFavoritesResolver (e2e)', () => {
                 createdAt
                 updatedAt
                 deletedAt
-                workspaceMemberId
+                forWorkspaceMemberId
                 personId
                 companyId
                 opportunityId
@@ -59,7 +59,7 @@ describe('searchFavoritesResolver (e2e)', () => {
           expect(searchFavorites).toHaveProperty('createdAt');
           expect(searchFavorites).toHaveProperty('updatedAt');
           expect(searchFavorites).toHaveProperty('deletedAt');
-          expect(searchFavorites).toHaveProperty('workspaceMemberId');
+          expect(searchFavorites).toHaveProperty('forWorkspaceMemberId');
           expect(searchFavorites).toHaveProperty('personId');
           expect(searchFavorites).toHaveProperty('companyId');
           expect(searchFavorites).toHaveProperty('opportunityId');

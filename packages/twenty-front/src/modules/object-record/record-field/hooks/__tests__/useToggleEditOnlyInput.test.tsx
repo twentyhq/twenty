@@ -105,6 +105,7 @@ const mocks: MockedResponse[] = [
                   createdAt
                   deletedAt
                   favoriteFolderId
+                  forWorkspaceMemberId
                   id
                   noteId
                   opportunityId
@@ -118,7 +119,6 @@ const mocks: MockedResponse[] = [
                   workflowId
                   workflowRunId
                   workflowVersionId
-                  workspaceMemberId
                 }
               }
             }

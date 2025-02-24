@@ -67,20 +67,17 @@ export class RunWorkflowJob {
 
       await this.throttleExecution(workflowVersion.workflowId);
 
-      const { status } = await this.workflowExecutorWorkspaceService.execute({
+      const { error } = await this.workflowExecutorWorkspaceService.execute({
         workflowRunId,
         currentStepIndex: 0,
-        steps: workflowVersion.steps ?? [],
+        steps: workflowVersion.steps,
         context,
-        workflowExecutorState: {
-          stepsOutput: {},
-          status: WorkflowRunStatus.RUNNING,
-        },
       });
 
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
-        status,
+        status: error ? WorkflowRunStatus.FAILED : WorkflowRunStatus.COMPLETED,
+        error,
       });
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
