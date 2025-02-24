@@ -13,13 +13,6 @@ import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
 import { FieldMetadataType } from '~/generated/graphql';
 
-const baseDefinition = {
-  fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
-  label: 'label',
-  iconName: 'iconName',
-  fieldName: 'fieldName',
-};
-
 const baseFieldMetadataItem = {
   id: '05731f68-6e7a-4903-8374-c0b6a9063482',
   createdAt: '2021-01-01',
@@ -44,12 +37,9 @@ describe('mapViewSortsToSorts', () => {
         id: 'id',
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         direction: 'asc',
-        definition: baseDefinition,
       },
     ];
-    expect(mapViewSortsToSorts(viewSorts, [baseDefinition])).toEqual(
-      expectedSorts,
-    );
+    expect(mapViewSortsToSorts(viewSorts)).toEqual(expectedSorts);
   });
 });
 

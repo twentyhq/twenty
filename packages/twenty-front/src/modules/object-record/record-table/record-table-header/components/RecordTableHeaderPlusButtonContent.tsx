@@ -15,8 +15,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordTableHeaderPlusButtonContent = () => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const { closeDropdown } = useDropdown();
@@ -64,7 +66,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}
         >
-          <MenuItem LeftIcon={IconSettings} text="Customize fields" />
+          <MenuItem LeftIcon={IconSettings} text={t`Customize fields`} />
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </>

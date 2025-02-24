@@ -128,6 +128,14 @@ msgstr "crwdns869:0crwdne869:0"
 msgid "Account Owner For Companies"
 msgstr "crwdns871:0crwdne871:0"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "crwdns4965:0crwdne4965:0"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "crwdns4971:0crwdne4971:0"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "crwdns873:0crwdne873:0"
@@ -586,6 +594,10 @@ msgstr "crwdns1065:0crwdne1065:0"
 msgid "Display Name"
 msgstr "crwdns1067:0crwdne1067:0"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr "crwdns4975:0crwdne4975:0"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "crwdns1069:0crwdne1069:0"
@@ -970,6 +982,10 @@ msgstr "crwdns1229:0crwdne1229:0"
 msgid "Job Title"
 msgstr "crwdns1231:0crwdne1231:0"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "crwdns4977:0crwdne4977:0"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1326,6 +1342,10 @@ msgstr "crwdns1377:0crwdne1377:0"
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object name"
 msgstr "crwdns1379:0crwdne1379:0"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr "crwdns4979:0crwdne4979:0"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -2107,6 +2127,10 @@ msgstr "crwdns1713:0crwdne1713:0"
 msgid "Webhooks"
 msgstr "crwdns1715:0crwdne1715:0"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "crwdns4981:0crwdne4981:0"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2250,7 +2274,10 @@ msgstr "crwdns1775:0crwdne1775:0"
 msgid "X"
 msgstr "crwdns1777:0crwdne1777:0"
 
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "crwdns4983:0crwdne4983:0"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "crwdns1779:0crwdne1779:0"
-

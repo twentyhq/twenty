@@ -8,13 +8,14 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { isDefined, SettingsFeatures } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -22,7 +23,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
-@UseGuards(SettingsPermissionsGuard(SettingsFeatures.ROLES))
+@UseGuards(SettingsPermissionsGuard(SettingsPermissions.ROLES))
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class RoleResolver {
   constructor(

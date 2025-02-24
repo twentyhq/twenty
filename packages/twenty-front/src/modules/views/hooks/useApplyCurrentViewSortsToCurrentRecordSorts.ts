@@ -1,6 +1,4 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
-import { useSortableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-sort/hooks/useSortableFieldMetadataItemsInRecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -25,18 +23,9 @@ export const useApplyCurrentViewSortsToCurrentRecordSorts = () => {
     currentRecordSortsComponentState,
   );
 
-  const { sortableFieldMetadataItems } =
-    useSortableFieldMetadataItemsInRecordIndexContext();
-
   const applyCurrentViewSortsToCurrentRecordSorts = () => {
-    const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-      fields: sortableFieldMetadataItems,
-    });
-
     if (isDefined(currentView)) {
-      setCurrentRecordSorts(
-        mapViewSortsToSorts(currentView.viewSorts, sortDefinitions),
-      );
+      setCurrentRecordSorts(mapViewSortsToSorts(currentView.viewSorts));
     }
   };
 

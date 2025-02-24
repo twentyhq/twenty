@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -32,6 +32,8 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 @Injectable()
 export class WorkspaceManagerService {
+  private readonly logger = new Logger(WorkspaceManagerService.name);
+
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -63,11 +65,19 @@ export class WorkspaceManagerService {
     workspaceId: string;
     userId: string;
   }): Promise<void> {
+    const schemaCreationStart = performance.now();
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
       );
 
+    const schemaCreationEnd = performance.now();
+
+    this.logger.log(
+      `Schema creation took ${schemaCreationEnd - schemaCreationStart}ms`,
+    );
+
+    const dataSourceMetadataCreationStart = performance.now();
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
@@ -79,6 +89,13 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
+    const dataSourceMetadataCreationEnd = performance.now();
+
+    this.logger.log(
+      `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
+    );
+
+    const permissionsEnabledStart = performance.now();
     const permissionsEnabled =
       await this.permissionsService.isPermissionsEnabled();
 
@@ -86,9 +103,23 @@ export class WorkspaceManagerService {
       await this.initPermissions({ workspaceId, userId });
     }
 
+    const permissionsEnabledEnd = performance.now();
+
+    this.logger.log(
+      `Permissions enabled took ${permissionsEnabledEnd - permissionsEnabledStart}ms`,
+    );
+
+    const prefillStandardObjectsStart = performance.now();
+
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
       workspaceId,
+    );
+
+    const prefillStandardObjectsEnd = performance.now();
+
+    this.logger.log(
+      `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
     );
   }
 

@@ -13,6 +13,7 @@ import {
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 interface SyncCustomerDataCommandOptions
   extends ActiveWorkspacesCommandOptions {}
@@ -28,8 +29,9 @@ export class BillingSyncCustomerDataCommand extends ActiveWorkspacesCommandRunne
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     @InjectRepository(BillingCustomer, 'core')
     protected readonly billingCustomerRepository: Repository<BillingCustomer>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   async executeActiveWorkspacesCommand(
