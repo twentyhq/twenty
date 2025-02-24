@@ -306,6 +306,7 @@ export class SignInUpService {
       // if the workspace doesn't exist it means it's the first user of the workspace
       user.canImpersonate = true;
       user.canAccessFullAdminPanel = true;
+
       // let the creation of the first workspace
       if (workspacesCount > 0) {
         throw new AuthException(
