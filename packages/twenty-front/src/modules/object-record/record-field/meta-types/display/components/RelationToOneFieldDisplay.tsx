@@ -14,9 +14,8 @@ export const RelationToOneFieldDisplay = () => {
     return null;
   }
 
-  // TODO later handle isWorkspaceMemberFieldMetadataRelation
   const isWorkspaceMemberFieldMetadataRelation =
-    fieldDefinition.metadata.relationObjectMetadataNameSingular !==
+    fieldDefinition.metadata.relationObjectMetadataNameSingular ===
     CoreObjectNameSingular.WorkspaceMember;
   const recordChipData = generateRecordChipData(fieldValue);
 
@@ -25,6 +24,7 @@ export const RelationToOneFieldDisplay = () => {
       key={recordChipData.recordId}
       objectNameSingular={recordChipData.objectNameSingular}
       record={fieldValue}
+      forceNoopOnClick={isWorkspaceMemberFieldMetadataRelation}
     />
   );
 };
