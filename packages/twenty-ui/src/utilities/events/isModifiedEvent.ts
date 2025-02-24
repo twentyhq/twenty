@@ -3,11 +3,10 @@ type LimitedMouseEvent = Pick<
   'button' | 'metaKey' | 'altKey' | 'ctrlKey' | 'shiftKey'
 >;
 
-export function isModifiedEvent({
+export const isModifiedEvent = ({
   altKey,
   ctrlKey,
   shiftKey,
   metaKey,
-}: LimitedMouseEvent) {
-  return [altKey, ctrlKey, shiftKey, metaKey].some((key) => key);
-}
+}: LimitedMouseEvent) =>
+  [altKey, ctrlKey, shiftKey, metaKey].some((key) => key);
