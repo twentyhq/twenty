@@ -18,6 +18,34 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Empty"
+msgstr "crwdns4985:0crwdne4985:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Future"
+msgstr "crwdns4987:0crwdne4987:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Not"
+msgstr "crwdns4989:0crwdne4989:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": NotEmpty"
+msgstr "crwdns4991:0crwdne4991:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": NotNull"
+msgstr "crwdns4993:0crwdne4993:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Past"
+msgstr "crwdns4995:0crwdne4995:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Today"
+msgstr "crwdns4997:0crwdne4997:0"
+
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "crwdns45:0{aggregateLabel}crwdnd45:0{fieldLabel}crwdne45:0"
@@ -39,9 +67,23 @@ msgstr "crwdns1783:0{workspaceMemberName}crwdne1783:0"
 msgid "1 000 workflow node executions"
 msgstr "crwdns51:0crwdne51:0"
 
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
+msgid "1. Select a field type"
+msgstr "crwdns4999:0crwdne4999:0"
+
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
+msgid "1. Type"
+msgstr "crwdns5001:0crwdne5001:0"
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "crwdns53:0{hour12Label}crwdne53:0"
+
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
+msgid "2. Configure"
+msgstr "crwdns5003:0crwdne5003:0"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
@@ -65,6 +107,7 @@ msgstr "crwdns61:0crwdne61:0"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "crwdns63:0crwdne63:0"
 
@@ -93,6 +136,7 @@ msgstr "crwdns1785:0crwdne1785:0"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Activate"
 msgstr "crwdns71:0crwdne71:0"
@@ -114,6 +158,10 @@ msgstr "crwdns77:0crwdne77:0"
 msgid "Add"
 msgstr "crwdns79:0crwdne79:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
+msgid "Add account"
+msgstr "crwdns5005:0crwdne5005:0"
+
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
 msgstr "crwdns4879:0crwdne4879:0"
@@ -122,9 +170,21 @@ msgstr "crwdns4879:0crwdne4879:0"
 msgid "Add Field"
 msgstr "crwdns81:0crwdne81:0"
 
+#: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
+msgid "Add filter"
+msgstr "crwdns5007:0crwdne5007:0"
+
+#: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
+msgid "Add new"
+msgstr "crwdns5009:0crwdne5009:0"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "crwdns83:0crwdne83:0"
+
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "Add option"
+msgstr "crwdns5011:0crwdne5011:0"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
@@ -133,6 +193,11 @@ msgstr "crwdns85:0crwdne85:0"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
 msgstr "crwdns87:0crwdne87:0"
+
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+msgid "Add to Favorite"
+msgstr "crwdns5013:0crwdne5013:0"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
@@ -148,6 +213,10 @@ msgstr "crwdns87:0crwdne87:0"
 msgid "Add to favorites"
 msgstr "crwdns89:0crwdne89:0"
 
+#: src/modules/views/view-picker/components/ViewPickerListContent.tsx
+msgid "Add view"
+msgstr "crwdns5015:0crwdne5015:0"
+
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
 msgstr "crwdns91:0{objectLabel}crwdne91:0"
@@ -155,6 +224,10 @@ msgstr "crwdns91:0{objectLabel}crwdne91:0"
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx
 msgid "Added {beautifiedCreatedAt}"
 msgstr "crwdns93:0{beautifiedCreatedAt}crwdne93:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
+msgid "Added to blocklist"
+msgstr "crwdns5017:0crwdne5017:0"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -171,6 +244,22 @@ msgstr "crwdns95:0crwdne95:0"
 #: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx
 msgid "All ({relationRecordsCount})"
 msgstr "crwdns97:0{relationRecordsCount}crwdne97:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "All Actions"
+msgstr "crwdns5019:0crwdne5019:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "All emails and events linked to this account will be deleted"
+msgstr "crwdns5021:0crwdne5021:0"
+
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "All lines"
+msgstr "crwdns5023:0crwdne5023:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "All Objects"
+msgstr "crwdns5025:0crwdne5025:0"
 
 #: src/pages/settings/roles/SettingsRoles.tsx
 msgid "All roles"
@@ -237,6 +326,10 @@ msgstr "crwdns3981:0crwdne3981:0"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
 msgstr "crwdns3983:0crwdne3983:0"
+
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "API values"
+msgstr "crwdns5027:0crwdne5027:0"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -307,6 +400,30 @@ msgstr "crwdns4887:0crwdne4887:0"
 msgid "Authorize"
 msgstr "crwdns143:0crwdne143:0"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Authorized URI"
+msgstr "crwdns5029:0crwdne5029:0"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Authorized URL copied to clipboard"
+msgstr "crwdns5031:0crwdne5031:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Auto-creation"
+msgstr "crwdns5033:0crwdne5033:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Automatically create contacts for people you've participated in an event with."
+msgstr "crwdns5035:0crwdne5035:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Automatically create contacts for people."
+msgstr "crwdns5037:0crwdne5037:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Automatically create People records when receiving or sending emails"
+msgstr "crwdns5039:0crwdne5039:0"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Average"
@@ -341,6 +458,10 @@ msgstr "crwdns157:0crwdne157:0"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
 msgstr "crwdns159:0crwdne159:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Calendar settings"
+msgstr "crwdns5041:0crwdne5041:0"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -393,6 +514,14 @@ msgstr "crwdns177:0crwdne177:0"
 msgid "Choose an object"
 msgstr "crwdns179:0crwdne179:0"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+msgid "Choose between OIDC and SAML protocols"
+msgstr "crwdns5043:0crwdne5043:0"
+
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Choose the default currency that will apply"
+msgstr "crwdns5045:0crwdne5045:0"
+
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Choose the fields that will identify your records"
 msgstr "crwdns3985:0crwdne3985:0"
@@ -404,6 +533,18 @@ msgstr "crwdns181:0crwdne181:0"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
 msgstr "crwdns183:0crwdne183:0"
+
+#: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
+msgid "Clear"
+msgstr "crwdns5047:0crwdne5047:0"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Client ID"
+msgstr "crwdns5049:0crwdne5049:0"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Client Secret"
+msgstr "crwdns5051:0crwdne5051:0"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
@@ -417,6 +558,14 @@ msgstr "crwdns185:0crwdne185:0"
 msgid "Close command menu"
 msgstr "crwdns4859:0crwdne4859:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Color code"
+msgstr "crwdns5053:0crwdne5053:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+msgid "Compact view"
+msgstr "crwdns5055:0crwdne5055:0"
+
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
 msgstr "crwdns187:0crwdne187:0"
@@ -428,6 +577,10 @@ msgstr "crwdns189:0crwdne189:0"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure how dates are displayed across the app"
 msgstr "crwdns191:0crwdne191:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Configure how we should display your events in your calendar"
+msgstr "crwdns5057:0crwdne5057:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -452,6 +605,15 @@ msgstr "crwdns199:0crwdne199:0"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Connected accounts"
 msgstr "crwdns201:0crwdne201:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Contact auto-creation"
+msgstr "crwdns5059:0crwdne5059:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Contains"
+msgstr "crwdns5061:0crwdne5061:0"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Context"
@@ -488,6 +650,7 @@ msgstr "crwdns213:0crwdne213:0"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+#: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "Copy"
 msgstr "crwdns4893:0crwdne4893:0"
 
@@ -503,6 +666,7 @@ msgstr "crwdns3987:0crwdne3987:0"
 msgid "Copy this key as it will not be visible again"
 msgstr "crwdns217:0crwdne217:0"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "Count"
@@ -523,6 +687,10 @@ msgstr "crwdns225:0crwdne225:0"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
 msgstr "crwdns227:0crwdne227:0"
+
+#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+msgid "Create"
+msgstr "crwdns5063:0crwdne5063:0"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
@@ -545,6 +713,15 @@ msgstr "crwdns235:0crwdne235:0"
 msgid "Create Role"
 msgstr "crwdns237:0crwdne237:0"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+msgid "Create select field"
+msgstr "crwdns5065:0crwdne5065:0"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+#: src/modules/views/components/UpdateViewButtonGroup.tsx
+msgid "Create view"
+msgstr "crwdns5067:0crwdne5067:0"
+
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Create Webhook"
 msgstr "crwdns239:0crwdne239:0"
@@ -552,6 +729,10 @@ msgstr "crwdns239:0crwdne239:0"
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Create your workspace"
 msgstr "crwdns241:0crwdne241:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Created"
+msgstr "crwdns5069:0crwdne5069:0"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -568,6 +749,10 @@ msgstr "crwdns245:0{objectLabelSingular}crwdne245:0"
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Customize Domain"
 msgstr "crwdns247:0crwdne247:0"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
+msgid "Customize fields"
+msgstr "crwdns5071:0crwdne5071:0"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
@@ -594,6 +779,10 @@ msgstr "crwdns1803:0crwdne1803:0"
 msgid "Dark"
 msgstr "crwdns3989:0crwdne3989:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Data deletion"
+msgstr "crwdns5073:0crwdne5073:0"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Data model"
@@ -614,6 +803,10 @@ msgstr "crwdns257:0crwdne257:0"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Date and time"
 msgstr "crwdns259:0crwdne259:0"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
+msgid "Date format"
+msgstr "crwdns5075:0crwdne5075:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
@@ -640,13 +833,39 @@ msgstr "crwdns265:0crwdne265:0"
 msgid "Deactivate Workflow"
 msgstr "crwdns267:0crwdne267:0"
 
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "Deactivated"
+msgstr "crwdns5077:0crwdne5077:0"
+
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Default Country"
+msgstr "crwdns5079:0crwdne5079:0"
+
+#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
+msgid "Default Country Code"
+msgstr "crwdns5081:0crwdne5081:0"
+
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+msgid "Default Value"
+msgstr "crwdns5083:0crwdne5083:0"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
 msgstr "crwdns269:0crwdne269:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Define what will be visible to other users in your workspace"
+msgstr "crwdns5085:0crwdne5085:0"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
@@ -664,6 +883,7 @@ msgstr "crwdns271:0crwdne271:0"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account"
 msgstr "crwdns273:0crwdne273:0"
 
@@ -711,6 +931,14 @@ msgstr "crwdns291:0crwdne291:0"
 msgid "Delete your whole workspace"
 msgstr "crwdns293:0crwdne293:0"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Deleted"
+msgstr "crwdns5087:0crwdne5087:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Deleted {objectNamePlural}"
+msgstr "crwdns5089:0{objectNamePlural}crwdne5089:0"
+
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
@@ -744,19 +972,48 @@ msgstr "crwdns301:0crwdne301:0"
 msgid "Discard Draft"
 msgstr "crwdns303:0crwdne303:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Display"
+msgstr "crwdns5091:0crwdne5091:0"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Display as a plain number or a percentage"
+msgstr "crwdns5093:0crwdne5093:0"
+
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
 msgstr "crwdns305:0crwdne305:0"
 
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "Display text on multiple lines"
+msgstr "crwdns5095:0crwdne5095:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Doesn't contain"
+msgstr "crwdns5097:0crwdne5097:0"
+
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
 msgstr "crwdns307:0crwdne307:0"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain added successfully."
 msgstr "crwdns4895:0crwdne4895:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "Don’t auto-create contacts."
+msgstr "crwdns5099:0crwdne5099:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Don’t create contacts from/to Gmail, Outlook emails"
+msgstr "crwdns5101:0crwdne5101:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Don’t sync emails from team@ support@ noreply@..."
+msgstr "crwdns5103:0crwdne5103:0"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -779,9 +1036,22 @@ msgstr "crwdns311:0crwdne311:0"
 msgid "Earliest date"
 msgstr "crwdns313:0crwdne313:0"
 
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+msgid "Edit"
+msgstr "crwdns5105:0crwdne5105:0"
+
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
 msgstr "crwdns315:0crwdne315:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
+msgid "Edit field values"
+msgstr "crwdns5107:0crwdne5107:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
+msgid "Edit Fields"
+msgstr "crwdns5109:0crwdne5109:0"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -811,6 +1081,10 @@ msgstr "crwdns323:0crwdne323:0"
 msgid "Email or domain is already in blocklist"
 msgstr "crwdns325:0crwdne325:0"
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email verification"
+msgstr "crwdns5111:0crwdne5111:0"
+
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
 msgstr "crwdns4901:0crwdne4901:0"
@@ -823,12 +1097,20 @@ msgstr "crwdns4903:0crwdne4903:0"
 msgid "Email verified."
 msgstr "crwdns4905:0crwdne4905:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
+msgid "Email/Domain"
+msgstr "crwdns5113:0crwdne5113:0"
+
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Emails"
 msgstr "crwdns327:0crwdne327:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Emails settings"
+msgstr "crwdns5115:0crwdne5115:0"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -864,6 +1146,10 @@ msgstr "crwdns4907:0crwdne4907:0"
 msgid "Enter the infos to set the connection"
 msgstr "crwdns4909:0crwdne4909:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Enter user ID or email address"
+msgstr "crwdns5117:0crwdne5117:0"
+
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
 msgstr "crwdns341:0crwdne341:0"
@@ -871,6 +1157,10 @@ msgstr "crwdns341:0crwdne341:0"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID copied to clipboard"
 msgstr "crwdns4911:0crwdne4911:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+msgid "Env Variables"
+msgstr "crwdns5119:0crwdne5119:0"
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
@@ -908,6 +1198,28 @@ msgstr "crwdns347:0{to}crwdne347:0"
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "crwdns349:0crwdne349:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Event visibility"
+msgstr "crwdns5121:0crwdne5121:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Events you participated in are displayed in red."
+msgstr "crwdns5123:0crwdne5123:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Everything"
+msgstr "crwdns5125:0crwdne5125:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Exclude group emails"
+msgstr "crwdns5127:0crwdne5127:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Exclude non-professional emails"
+msgstr "crwdns5129:0crwdne5129:0"
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
 #~ msgstr "Exclude the following people and domains from my email sync"
@@ -935,6 +1247,7 @@ msgid "Experience"
 msgstr "crwdns357:0crwdne357:0"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Expiration"
 msgstr "crwdns359:0crwdne359:0"
 
@@ -950,6 +1263,7 @@ msgstr "crwdns4923:0crwdne4923:0"
 msgid "Expires in"
 msgstr "crwdns363:0crwdne363:0"
 
+#: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -988,9 +1302,25 @@ msgstr "crwdns371:0crwdne371:0"
 msgid "Export Workflows"
 msgstr "crwdns373:0crwdne373:0"
 
+#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+msgid "False"
+msgstr "crwdns5131:0crwdne5131:0"
+
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
 msgstr "crwdns375:0crwdne375:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Feature Flag"
+msgstr "crwdns5133:0crwdne5133:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Feature Flags & Impersonation"
+msgstr "crwdns5135:0crwdne5135:0"
+
+#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+msgid "Field name"
+msgstr "crwdns5137:0crwdne5137:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -1000,6 +1330,8 @@ msgstr "crwdns377:0crwdne377:0"
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Fields"
 msgstr "crwdns379:0crwdne379:0"
 
@@ -1021,7 +1353,20 @@ msgstr "crwdns385:0crwdne385:0"
 msgid "Finnish"
 msgstr "crwdns1807:0crwdne1807:0"
 
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "First 10 lines"
+msgstr "crwdns5139:0crwdne5139:0"
+
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "First 2 lines"
+msgstr "crwdns5141:0crwdne5141:0"
+
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "First 5 lines"
+msgstr "crwdns5143:0crwdne5143:0"
+
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "crwdns387:0crwdne387:0"
 
@@ -1053,6 +1398,7 @@ msgstr "crwdns399:0crwdne399:0"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "General"
 msgstr "crwdns401:0crwdne401:0"
 
@@ -1072,15 +1418,29 @@ msgstr "crwdns407:0crwdne407:0"
 msgid "Global"
 msgstr "crwdns409:0crwdne409:0"
 
+#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+msgid "Go to Settings"
+msgstr "crwdns5145:0crwdne5145:0"
+
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "crwdns411:0crwdne411:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than"
+msgstr "crwdns5147:0crwdne5147:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Greek"
 msgstr "crwdns1809:0crwdne1809:0"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Group by"
+msgstr "crwdns5149:0crwdne5149:0"
+
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "crwdns4855:0crwdne4855:0"
 
@@ -1088,9 +1448,22 @@ msgstr "crwdns4855:0crwdne4855:0"
 msgid "Hebrew"
 msgstr "crwdns1811:0crwdne1811:0"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
+msgid "Hidden"
+msgstr "crwdns5151:0crwdne5151:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+msgid "Hidden Fields"
+msgstr "crwdns5153:0crwdne5153:0"
+
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
 msgstr "crwdns413:0crwdne413:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+msgid "Hide empty groups"
+msgstr "crwdns5155:0crwdne5155:0"
 
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -1099,6 +1472,10 @@ msgstr "crwdns415:0crwdne415:0"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
 msgstr "crwdns1813:0crwdne1813:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Icon"
+msgstr "crwdns5157:0crwdne5157:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -1120,6 +1497,18 @@ msgstr "crwdns4927:0crwdne4927:0"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "crwdns421:0{confirmationValue}crwdne421:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Impersonate"
+msgstr "crwdns5159:0crwdne5159:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Import"
+msgstr "crwdns5161:0crwdne5161:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+msgid "Importing"
+msgstr "crwdns5163:0crwdne5163:0"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1205,6 +1594,54 @@ msgstr "crwdns447:0crwdne447:0"
 msgid "Invite your team"
 msgstr "crwdns449:0crwdne449:0"
 
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is"
+msgstr "crwdns5165:0crwdne5165:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is after"
+msgstr "crwdns5167:0crwdne5167:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is before"
+msgstr "crwdns5169:0crwdne5169:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is empty"
+msgstr "crwdns5171:0crwdne5171:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is in future"
+msgstr "crwdns5173:0crwdne5173:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is in past"
+msgstr "crwdns5175:0crwdne5175:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is not"
+msgstr "crwdns5177:0crwdne5177:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is not empty"
+msgstr "crwdns5179:0crwdne5179:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is not null"
+msgstr "crwdns5181:0crwdne5181:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is relative"
+msgstr "crwdns5183:0crwdne5183:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is today"
+msgstr "crwdns5185:0crwdne5185:0"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Issuer URI"
+msgstr "crwdns5187:0crwdne5187:0"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
 msgstr "crwdns451:0crwdne451:0"
@@ -1213,10 +1650,16 @@ msgstr "crwdns451:0crwdne451:0"
 msgid "Japanese"
 msgstr "crwdns453:0crwdne453:0"
 
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Kanban"
+msgstr "crwdns5189:0crwdne5189:0"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Korean"
 msgstr "crwdns455:0crwdne455:0"
 
+#: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/lab/SettingsLab.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Lab"
 msgstr "crwdns457:0crwdne457:0"
@@ -1226,6 +1669,7 @@ msgid "Language"
 msgstr "crwdns459:0crwdne459:0"
 
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
 msgstr "crwdns461:0crwdne461:0"
 
@@ -1236,6 +1680,10 @@ msgstr "crwdns463:0crwdne463:0"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Latest date"
 msgstr "crwdns465:0crwdne465:0"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than"
+msgstr "crwdns5191:0crwdne5191:0"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Light"
@@ -1257,6 +1705,19 @@ msgstr "crwdns469:0crwdne469:0"
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
 msgid "Logout"
 msgstr "crwdns471:0crwdne471:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Look up users and manage their workspace feature flags or impersonate them."
+msgstr "crwdns5193:0crwdne5193:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Look up users to impersonate them."
+msgstr "crwdns5195:0crwdne5195:0"
+
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+msgid "Manage favorite"
+msgstr "crwdns5197:0crwdne5197:0"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
@@ -1290,6 +1751,12 @@ msgstr "crwdns483:0crwdne483:0"
 msgid "Members"
 msgstr "crwdns485:0crwdne485:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Metadata"
+msgstr "crwdns5199:0crwdne5199:0"
+
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
 msgstr "crwdns4935:0crwdne4935:0"
@@ -1299,6 +1766,7 @@ msgstr "crwdns4935:0crwdne4935:0"
 msgid "Min"
 msgstr "crwdns487:0crwdne487:0"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "More options"
@@ -1327,6 +1795,9 @@ msgstr "crwdns493:0crwdne493:0"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "crwdns495:0crwdne495:0"
 
@@ -1421,6 +1892,10 @@ msgstr "crwdns527:0crwdne527:0"
 #~ msgstr "New Role"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
+msgid "New SSO Configuration"
+msgstr "crwdns5201:0crwdne5201:0"
+
+#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
 msgstr "crwdns4939:0crwdne4939:0"
 
@@ -1431,6 +1906,10 @@ msgstr "crwdns4939:0crwdne4939:0"
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
 msgstr "crwdns531:0crwdne531:0"
+
+#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
+msgid "No country"
+msgstr "crwdns5203:0crwdne5203:0"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members assigned to this role yet"
@@ -1464,6 +1943,10 @@ msgstr "crwdns4941:0crwdne4941:0"
 msgid "No Results"
 msgstr "crwdns4857:0crwdne4857:0"
 
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "No Select field"
+msgstr "crwdns5205:0crwdne5205:0"
+
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "crwdns533:0crwdne533:0"
@@ -1472,23 +1955,55 @@ msgstr "crwdns533:0crwdne533:0"
 msgid "No workflow versions yet"
 msgstr "crwdns535:0crwdne535:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+msgid "None"
+msgstr "crwdns5207:0crwdne5207:0"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Norwegian"
 msgstr "crwdns1825:0crwdne1825:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Not available on Default View"
+msgstr "crwdns5209:0crwdne5209:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "crwdns537:0crwdne537:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+msgid "Not synced"
+msgstr "crwdns5211:0crwdne5211:0"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Number"
+msgstr "crwdns5213:0crwdne5213:0"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Number of decimals"
+msgstr "crwdns5215:0crwdne5215:0"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Number type"
+msgstr "crwdns5217:0crwdne5217:0"
+
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "crwdns539:0crwdne539:0"
+
+#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+msgid "Object destination"
+msgstr "crwdns5219:0crwdne5219:0"
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Objects"
 msgstr "crwdns541:0crwdne541:0"
@@ -1497,11 +2012,20 @@ msgstr "crwdns541:0crwdne541:0"
 msgid "Off the beaten path"
 msgstr "crwdns543:0crwdne543:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "Only date & participants will be shared with your team."
+msgstr "crwdns5221:0crwdne5221:0"
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Only the timestamp & participants will be shared with your team."
+msgstr "crwdns5223:0crwdne5223:0"
+
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
 msgstr "crwdns4861:0crwdne4861:0"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Open in"
 msgstr "crwdns4943:0crwdne4943:0"
 
@@ -1509,7 +2033,12 @@ msgstr "crwdns4943:0crwdne4943:0"
 msgid "Opened"
 msgstr "crwdns545:0crwdne545:0"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+msgstr "crwdns5225:0crwdne5225:0"
+
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
 msgid "Options"
 msgstr "crwdns547:0crwdne547:0"
@@ -1518,6 +2047,8 @@ msgstr "crwdns547:0crwdne547:0"
 msgid "or"
 msgstr "crwdns549:0crwdne549:0"
 
+#: src/pages/settings/Releases.tsx
+#: src/pages/settings/lab/SettingsLab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1541,6 +2072,15 @@ msgstr "crwdns557:0crwdne557:0"
 msgid "Password reset link has been sent to the email"
 msgstr "crwdns559:0crwdne559:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "People I’ve sent emails to and received emails from."
+msgstr "crwdns5227:0crwdne5227:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "People I’ve sent emails to."
+msgstr "crwdns5229:0crwdne5229:0"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "Percent"
@@ -1553,6 +2093,10 @@ msgstr "crwdns563:0crwdne563:0"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Percent not empty"
 msgstr "crwdns565:0crwdne565:0"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Percentage"
+msgstr "crwdns5231:0crwdne5231:0"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -1655,6 +2199,23 @@ msgstr "crwdns595:0crwdne595:0"
 msgid "Receive an email containing password update link"
 msgstr "crwdns597:0crwdne597:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Reconnect"
+msgstr "crwdns5233:0crwdne5233:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+msgid "Record image"
+msgstr "crwdns5235:0crwdne5235:0"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+msgid "Record label"
+msgstr "crwdns5237:0crwdne5237:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+msgid "Record Page"
+msgstr "crwdns5239:0crwdne5239:0"
+
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
 msgstr "crwdns599:0crwdne599:0"
@@ -1680,6 +2241,10 @@ msgstr "crwdns603:0crwdne603:0"
 msgid "Regenerate Key"
 msgstr "crwdns605:0crwdne605:0"
 
+#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+msgid "Relation type"
+msgstr "crwdns5241:0crwdne5241:0"
+
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/Releases.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1696,6 +2261,14 @@ msgstr "crwdns609:0crwdne609:0"
 msgid "Remove {workspaceMemberName}?"
 msgstr "crwdns1829:0{workspaceMemberName}crwdne1829:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Remove account"
+msgstr "crwdns5243:0crwdne5243:0"
+
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Remove as default"
+msgstr "crwdns5245:0crwdne5245:0"
+
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1707,6 +2280,14 @@ msgstr "crwdns1829:0{workspaceMemberName}crwdne1829:0"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Remove from favorites"
 msgstr "crwdns611:0crwdne611:0"
+
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Remove option"
+msgstr "crwdns5247:0crwdne5247:0"
+
+#: src/modules/views/components/ViewBarDetails.tsx
+msgid "Reset"
+msgstr "crwdns5249:0crwdne5249:0"
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "Reset Password"
@@ -1738,7 +2319,16 @@ msgstr "crwdns621:0crwdne621:0"
 msgid "Russian"
 msgstr "crwdns1833:0crwdne1833:0"
 
+#: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
+msgid "Save"
+msgstr "crwdns5251:0crwdne5251:0"
+
+#: src/modules/views/components/UpdateViewButtonGroup.tsx
+msgid "Save as new view"
+msgstr "crwdns5253:0crwdne5253:0"
+
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
@@ -1757,11 +2347,16 @@ msgstr "crwdns627:0crwdne627:0"
 msgid "Search a member"
 msgstr "crwdns1835:0crwdne1835:0"
 
+#: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
+msgid "Search a type"
+msgstr "crwdns5255:0crwdne5255:0"
+
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Search an index..."
 msgstr "crwdns629:0crwdne629:0"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx
 msgid "Search fields"
 msgstr "crwdns631:0crwdne631:0"
@@ -1770,10 +2365,18 @@ msgstr "crwdns631:0crwdne631:0"
 msgid "Search for an object..."
 msgstr "crwdns633:0crwdne633:0"
 
+#: src/modules/ui/input/components/IconPicker.tsx
+msgid "Search icon"
+msgstr "crwdns5257:0crwdne5257:0"
+
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search records"
 msgstr "crwdns635:0crwdne635:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Secret"
+msgstr "crwdns5259:0crwdne5259:0"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -1805,6 +2408,10 @@ msgstr "crwdns643:0crwdne643:0"
 msgid "See versions history"
 msgstr "crwdns645:0crwdne645:0"
 
+#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+msgid "Select the default value for this boolean field"
+msgstr "crwdns5261:0crwdne5261:0"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Select the events you wish to send to this endpoint"
 msgstr "crwdns647:0crwdne647:0"
@@ -1816,6 +2423,14 @@ msgstr "crwdns649:0crwdne649:0"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "crwdns651:0crwdne651:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "Sent"
+msgstr "crwdns5263:0crwdne5263:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "Sent and Received"
+msgstr "crwdns5265:0crwdne5265:0"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
@@ -1834,6 +2449,10 @@ msgstr "crwdns653:0crwdne653:0"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
 msgstr "crwdns4955:0crwdne4955:0"
+
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Set as default"
+msgstr "crwdns5267:0crwdne5267:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
@@ -1876,6 +2495,11 @@ msgstr "crwdns665:0crwdne665:0"
 msgid "Should changing an object's label also change the API?"
 msgstr "crwdns4007:0crwdne4007:0"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+msgid "Side Panel"
+msgstr "crwdns5269:0crwdne5269:0"
+
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "crwdns667:0crwdne667:0"
@@ -1888,12 +2512,17 @@ msgstr "crwdns669:0crwdne669:0"
 msgid "Single sign-on (SSO)"
 msgstr "crwdns671:0crwdne671:0"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Singular"
+msgstr "crwdns5271:0crwdne5271:0"
+
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
 msgstr "crwdns673:0crwdne673:0"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Sort"
 msgstr "crwdns675:0crwdne675:0"
 
@@ -1904,6 +2533,14 @@ msgstr "crwdns677:0crwdne677:0"
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "SSO"
 msgstr "crwdns679:0crwdne679:0"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Stages"
+msgstr "crwdns5273:0crwdne5273:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Status"
+msgstr "crwdns5275:0crwdne5275:0"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Subdomain"
@@ -1921,6 +2558,19 @@ msgstr "crwdns685:0crwdne685:0"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "crwdns687:0crwdne687:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Subject and metadata"
+msgstr "crwdns5277:0crwdne5277:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+msgid "Subject and metadata will be shared with your team."
+msgstr "crwdns5279:0crwdne5279:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+msgid "Subject, body and attachments will be shared with your team."
+msgstr "crwdns5281:0crwdne5281:0"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Subscription has been switched {to}"
@@ -1951,6 +2601,14 @@ msgstr "crwdns697:0{to}crwdne697:0"
 msgid "Switch billing {to}"
 msgstr "crwdns699:0{to}crwdne699:0"
 
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+msgid "Sync failed"
+msgstr "crwdns5283:0crwdne5283:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+msgid "Synced"
+msgstr "crwdns5285:0crwdne5285:0"
+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Synchronize Field Label and API Name"
 msgstr "crwdns701:0crwdne701:0"
@@ -1960,6 +2618,8 @@ msgid "Synchronize Objects Labels and API Names"
 msgstr "crwdns4009:0crwdne4009:0"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "System settings"
 msgstr "crwdns4011:0crwdne4011:0"
 
@@ -1970,6 +2630,10 @@ msgstr "crwdns703:0{systemDateFormatLabel}crwdne703:0"
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr "crwdns705:0{systemTimeFormatLabel}crwdne705:0"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Table"
+msgstr "crwdns5287:0crwdne5287:0"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -1988,6 +2652,14 @@ msgstr "crwdns711:0crwdne711:0"
 msgid "Text copied to clipboard"
 msgstr "crwdns4957:0crwdne4957:0"
 
+#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
+msgid "The default country code for new phone numbers."
+msgstr "crwdns5289:0crwdne5289:0"
+
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "The default country for new addresses"
+msgstr "crwdns5291:0crwdne5291:0"
+
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
@@ -2001,6 +2673,14 @@ msgstr "crwdns715:0crwdne715:0"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The name and icon of this field"
 msgstr "crwdns717:0crwdne717:0"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+msgid "The name of your connection"
+msgstr "crwdns5293:0crwdne5293:0"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "The name of your Domain"
+msgstr "crwdns5295:0crwdne5295:0"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
@@ -2018,6 +2698,10 @@ msgstr "crwdns723:0crwdne723:0"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field must be unique"
 msgstr "crwdns725:0crwdne725:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "The whole event details will be shared with your team."
+msgstr "crwdns5297:0crwdne5297:0"
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
@@ -2057,6 +2741,14 @@ msgstr "crwdns1843:0crwdne1843:0"
 msgid "Time format"
 msgstr "crwdns739:0crwdne739:0"
 
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
+msgid "Time zone"
+msgstr "crwdns5299:0crwdne5299:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+msgid "Timestamp and participants will be shared with your team."
+msgstr "crwdns5301:0crwdne5301:0"
+
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to monthly"
 msgstr "crwdns741:0crwdne741:0"
@@ -2064,6 +2756,10 @@ msgstr "crwdns741:0crwdne741:0"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to yearly"
 msgstr "crwdns743:0crwdne743:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Total Users"
+msgstr "crwdns5303:0crwdne5303:0"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 msgid "Trigger Type"
@@ -2073,6 +2769,10 @@ msgstr "crwdns745:0crwdne745:0"
 msgid "Trigger type should be Manual - when no record(s) are selected"
 msgstr "crwdns747:0crwdne747:0"
 
+#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+msgid "True"
+msgstr "crwdns5305:0crwdne5305:0"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "crwdns1845:0crwdne1845:0"
@@ -2080,6 +2780,7 @@ msgstr "crwdns1845:0crwdne1845:0"
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Type"
 msgstr "crwdns749:0crwdne749:0"
 
@@ -2103,6 +2804,10 @@ msgstr "crwdns755:0crwdne755:0"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "crwdns757:0crwdne757:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Updated"
+msgstr "crwdns5307:0crwdne5307:0"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -2139,13 +2844,38 @@ msgstr "crwdns767:0{objectLabel}crwdne767:0"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "crwdns769:0crwdne769:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User Email"
+msgstr "crwdns5309:0crwdne5309:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User ID"
+msgstr "crwdns5311:0crwdne5311:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User Impersonation"
+msgstr "crwdns5313:0crwdne5313:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User Info"
+msgstr "crwdns5315:0crwdne5315:0"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
 msgstr "crwdns771:0crwdne771:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User Name"
+msgstr "crwdns5317:0crwdne5317:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Users"
+msgstr "crwdns5319:0crwdne5319:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2153,9 +2883,17 @@ msgstr "crwdns771:0crwdne771:0"
 msgid "Values"
 msgstr "crwdns773:0crwdne773:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Version of the application"
+msgstr "crwdns5321:0crwdne5321:0"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Vietnamese"
 msgstr "crwdns1849:0crwdne1849:0"
+
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+msgid "View"
+msgstr "crwdns5323:0crwdne5323:0"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
@@ -2164,6 +2902,27 @@ msgstr "crwdns775:0crwdne775:0"
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
 msgstr "crwdns4963:0crwdne4963:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "View settings"
+msgstr "crwdns5325:0crwdne5325:0"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "View type"
+msgstr "crwdns5327:0crwdne5327:0"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Visibility"
+msgstr "crwdns5329:0crwdne5329:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+msgid "Visible"
+msgstr "crwdns5331:0crwdne5331:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+msgid "Visible groups"
+msgstr "crwdns5333:0crwdne5333:0"
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
@@ -2176,6 +2935,10 @@ msgstr "crwdns779:0crwdne779:0"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "crwdns781:0crwdne781:0"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "We will send your a link to verify domain ownership"
+msgstr "crwdns5335:0crwdne5335:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Webhook"
@@ -2216,7 +2979,6 @@ msgstr "crwdns4969:0crwdne4969:0"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
-#: src/pages/settings/Releases.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2231,6 +2993,7 @@ msgstr "crwdns4969:0crwdne4969:0"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2250,11 +3013,28 @@ msgstr "crwdns799:0crwdne799:0"
 msgid "Workspace name"
 msgstr "crwdns801:0crwdne801:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Name"
+msgstr "crwdns5337:0crwdne5337:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Workspaces"
+msgstr "crwdns5339:0crwdne5339:0"
+
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "Wrap on record pages"
+msgstr "crwdns5341:0crwdne5341:0"
+
 #: src/pages/settings/roles/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
 msgstr "crwdns803:0crwdne803:0"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Write a secret"
+msgstr "crwdns5343:0crwdne5343:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2272,6 +3052,14 @@ msgstr "crwdns807:0crwdne807:0"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr "crwdns809:0crwdne809:0"
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your email subjects and meeting titles will be shared with your team."
+msgstr "crwdns5345:0crwdne5345:0"
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your emails and events content will be shared with your team."
+msgstr "crwdns5347:0crwdne5347:0"
 
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"

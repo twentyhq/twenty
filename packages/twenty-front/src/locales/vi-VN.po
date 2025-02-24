@@ -20,31 +20,31 @@ msgstr ""
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
-msgstr ""
+msgstr ": Trống"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Future"
-msgstr ""
+msgstr ": Tương lai"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Not"
-msgstr ""
+msgstr ": Không"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotEmpty"
-msgstr ""
+msgstr ": Không rỗng"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotNull"
-msgstr ""
+msgstr ": Không null"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Past"
-msgstr ""
+msgstr ": Quá khứ"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
-msgstr ""
+msgstr ": Hôm nay"
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -69,12 +69,12 @@ msgstr "1.000 lượt thực thi nút công việc"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
-msgstr ""
+msgstr "1. Chọn một loại trường"
 
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "1. Type"
-msgstr ""
+msgstr "1. Loại"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
@@ -83,7 +83,7 @@ msgstr "12h ({hour12Label})"
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "2. Configure"
-msgstr ""
+msgstr "2. Cấu hình"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
@@ -160,7 +160,7 @@ msgstr "Thêm"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
-msgstr ""
+msgstr "Thêm tài khoản"
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
@@ -172,11 +172,11 @@ msgstr "Thêm Trường"
 
 #: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
 msgid "Add filter"
-msgstr ""
+msgstr "Thêm bộ lọc"
 
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
-msgstr ""
+msgstr "Thêm mới"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -184,7 +184,7 @@ msgstr "Thêm đối tượng"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
-msgstr ""
+msgstr "Thêm tùy chọn"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
@@ -197,7 +197,7 @@ msgstr "Thêm vào danh sách chặn"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Add to Favorite"
-msgstr ""
+msgstr "Thêm vào mục yêu thích"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
@@ -215,7 +215,7 @@ msgstr "Thêm vào mục yêu thích"
 
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
-msgstr ""
+msgstr "Thêm chế độ xem"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
@@ -227,7 +227,7 @@ msgstr "Đã thêm vào {beautifiedCreatedAt}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
-msgstr ""
+msgstr "Đã thêm vào danh sách chặn"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -247,19 +247,19 @@ msgstr "Tất cả ({relationRecordsCount})"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "All Actions"
-msgstr ""
+msgstr "Tất cả hành động"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account will be deleted"
-msgstr ""
+msgstr "Tất cả email và sự kiện liên kết với tài khoản này sẽ bị xóa"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "All lines"
-msgstr ""
+msgstr "Tất cả dòng"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "All Objects"
-msgstr ""
+msgstr "Tất cả đối tượng"
 
 #: src/pages/settings/roles/SettingsRoles.tsx
 msgid "All roles"
@@ -329,7 +329,7 @@ msgstr "Tên API (Số ít)"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "API values"
-msgstr ""
+msgstr "Giá trị API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -402,27 +402,27 @@ msgstr "Ủy quyền"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URI"
-msgstr ""
+msgstr "URI được ủy quyền"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
-msgstr ""
+msgstr "URL được ủy quyền đã được sao chép vào bảng tạm"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Auto-creation"
-msgstr ""
+msgstr "Tự động tạo"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
-msgstr ""
+msgstr "Tự động tạo liên hệ cho những người bạn đã tham gia một sự kiện cùng."
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people."
-msgstr ""
+msgstr "Tự động tạo liên hệ cho mọi người."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
-msgstr ""
+msgstr "Tự động tạo bản ghi Người khi nhận hoặc gửi email"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -461,7 +461,7 @@ msgstr "Lịch"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Calendar settings"
-msgstr ""
+msgstr "Cài đặt lịch"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -516,11 +516,11 @@ msgstr "Chọn một đối tượng"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
-msgstr ""
+msgstr "Chọn giữa giao thức OIDC và SAML"
 
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
-msgstr ""
+msgstr "Chọn loại tiền tệ mặc định sẽ áp dụng"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Choose the fields that will identify your records"
@@ -536,15 +536,15 @@ msgstr "Chọn Gói dùng thử của bạn"
 
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
 msgid "Clear"
-msgstr ""
+msgstr "Xóa"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
-msgstr ""
+msgstr "ID khách hàng"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Secret"
-msgstr ""
+msgstr "Bí mật khách hàng"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
@@ -560,11 +560,11 @@ msgstr "Đóng menu lệnh"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
-msgstr ""
+msgstr "Mã màu"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Compact view"
-msgstr ""
+msgstr "Chế độ xem gọn"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -580,7 +580,7 @@ msgstr "Cấu hình cách hiển thị ngày tháng trong ứng dụng"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
-msgstr ""
+msgstr "Định cấu hình cách chúng tôi nên hiển thị sự kiện của bạn trong lịch của bạn"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -609,11 +609,11 @@ msgstr "Tài khoản đã kết nối"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Contact auto-creation"
-msgstr ""
+msgstr "Chính sách tự động tạo liên hệ"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
-msgstr ""
+msgstr "Chứa"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Context"
@@ -690,7 +690,7 @@ msgstr "Số lượng giá trị duy nhất"
 
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create"
-msgstr ""
+msgstr "Tạo"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
@@ -715,12 +715,12 @@ msgstr "Tạo Vai trò"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Create select field"
-msgstr ""
+msgstr "Tạo trường chọn"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Create view"
-msgstr ""
+msgstr "Tạo chế độ xem"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Create Webhook"
@@ -732,7 +732,7 @@ msgstr "Tạo không gian làm việc của bạn"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Created"
-msgstr ""
+msgstr "Đã tạo"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -752,7 +752,7 @@ msgstr "Tùy chỉnh Domain"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 msgid "Customize fields"
-msgstr ""
+msgstr "Tùy chỉnh trường"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
@@ -781,7 +781,7 @@ msgstr "Giao diện tối"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Data deletion"
-msgstr ""
+msgstr "Xóa dữ liệu"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -806,7 +806,7 @@ msgstr "Ngày và giờ"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "Date format"
-msgstr ""
+msgstr "Định dạng ngày"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
@@ -835,20 +835,20 @@ msgstr "Hủy kích hoạt Quy trình làm việc"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Deactivated"
-msgstr ""
+msgstr "Đã hủy kích hoạt"
 
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Default Country"
-msgstr ""
+msgstr "Quốc gia mặc định"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
-msgstr ""
+msgstr "Mã quốc gia mặc định"
 
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Default Value"
-msgstr ""
+msgstr "Giá trị mặc định"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -857,7 +857,7 @@ msgstr "Xác định tên và mô tả của đối tượng của bạn"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
-msgstr ""
+msgstr "Định nghĩa những gì sẽ được hiển thị cho người dùng khác trong không gian làm việc của bạn"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -933,11 +933,11 @@ msgstr "Xóa toàn bộ không gian làm việc của bạn"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Deleted"
-msgstr ""
+msgstr "Đã xóa"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Deleted {objectNamePlural}"
-msgstr ""
+msgstr "Đã xóa {objectNamePlural}"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -974,11 +974,11 @@ msgstr "Bỏ dự thảo"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
-msgstr ""
+msgstr "Hiển thị"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Display as a plain number or a percentage"
-msgstr ""
+msgstr "Hiển thị dưới dạng một số đơn giản hoặc phần trăm"
 
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
@@ -986,11 +986,11 @@ msgstr "Hiển thị dưới dạng ngày tương đối"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Display text on multiple lines"
-msgstr ""
+msgstr "Hiển thị văn bản trên nhiều dòng"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
-msgstr ""
+msgstr "Không chứa"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -1005,15 +1005,15 @@ msgstr "Đã thêm miền thành công."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
-msgstr ""
+msgstr "Không tự động tạo liên hệ."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr ""
+msgstr "Không tạo liên hệ từ/đến email Gmail, Outlook"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr ""
+msgstr "Không đồng bộ email từ team@ support@ noreply@..."
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -1039,7 +1039,7 @@ msgstr "Ngày sớm nhất"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "Edit"
-msgstr ""
+msgstr "Chỉnh sửa"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
@@ -1047,11 +1047,11 @@ msgstr "Chỉnh sửa khoảng thời gian thanh toán"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
-msgstr ""
+msgstr "Chỉnh sửa giá trị trường"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
-msgstr ""
+msgstr "Chỉnh sửa trường"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -1083,7 +1083,7 @@ msgstr "Email hoặc tên miền đã nằm trong danh sách chặn"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
-msgstr ""
+msgstr "Xác minh email"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
@@ -1099,7 +1099,7 @@ msgstr "Email đã được xác minh."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
-msgstr ""
+msgstr "Email/Tên miền"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -1110,7 +1110,7 @@ msgstr "Thư điện tử"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
-msgstr ""
+msgstr "Cài đặt email"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -1148,7 +1148,7 @@ msgstr "Nhập thông tin để thiết lập kết nối"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
-msgstr ""
+msgstr "Nhập ID người dùng hoặc địa chỉ email"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
@@ -1160,7 +1160,7 @@ msgstr "Đã sao chép ID thực thể vào bảng tạm"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Env Variables"
-msgstr ""
+msgstr "Biến môi trường"
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
@@ -1200,25 +1200,25 @@ msgstr "Thiết lập điểm cuối Webhooks để nhận thông báo về các
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Event visibility"
-msgstr ""
+msgstr "Hiển thị sự kiện"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Events you participated in are displayed in red."
-msgstr ""
+msgstr "Sự kiện bạn đã tham gia được hiển thị bằng màu đỏ."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Everything"
-msgstr ""
+msgstr "Mọi thứ"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Exclude group emails"
-msgstr ""
+msgstr "Loại trừ email nhóm"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
-msgstr ""
+msgstr "Loại trừ email không chuyên nghiệp"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
@@ -1304,7 +1304,7 @@ msgstr "\"Xuất Workflows\""
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
-msgstr ""
+msgstr "Sai"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
@@ -1312,15 +1312,15 @@ msgstr "\"Ưa thích\""
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Feature Flag"
-msgstr ""
+msgstr "Dấu hiệu đặc trưng"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
-msgstr ""
+msgstr "Dấu hiệu đặc trưng & Mạo danh"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field name"
-msgstr ""
+msgstr "Tên trường"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -1355,15 +1355,15 @@ msgstr "Tiếng Phần Lan"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 10 lines"
-msgstr ""
+msgstr "10 dòng đầu tiên"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 2 lines"
-msgstr ""
+msgstr "2 dòng đầu tiên"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 5 lines"
-msgstr ""
+msgstr "5 dòng đầu tiên"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -1420,7 +1420,7 @@ msgstr "\\"
 
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Go to Settings"
-msgstr ""
+msgstr "Đi tới cài đặt"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
@@ -1428,7 +1428,7 @@ msgstr "Cấp quyền truy cập tạm thời cho bộ phận hỗ trợ Twenty 
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
-msgstr ""
+msgstr "Lớn hơn"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Greek"
@@ -1437,7 +1437,7 @@ msgstr "Tiếng Hy Lạp"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Group by"
-msgstr ""
+msgstr "Nhóm theo"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
@@ -1450,12 +1450,12 @@ msgstr "Tiếng Do Thái"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Hidden"
-msgstr ""
+msgstr "Ẩn"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Hidden Fields"
-msgstr ""
+msgstr "Trường ẩn"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
@@ -1463,7 +1463,7 @@ msgstr "\\"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
-msgstr ""
+msgstr "Ẩn nhóm trống"
 
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -1475,7 +1475,7 @@ msgstr "Tiếng Hungary"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Icon"
-msgstr ""
+msgstr "Biểu tượng"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -1500,15 +1500,15 @@ msgstr "Nếu bạn đã mất khóa này, bạn có thể tạo lại, nhưng h
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
-msgstr ""
+msgstr "Mạo danh"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Import"
-msgstr ""
+msgstr "Nhập khẩu"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
-msgstr ""
+msgstr "Đang nhập"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1596,51 +1596,51 @@ msgstr "Mời đội của bạn"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
-msgstr ""
+msgstr "Là"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after"
-msgstr ""
+msgstr "Là sau"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is before"
-msgstr ""
+msgstr "Là trước"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is empty"
-msgstr ""
+msgstr "Là trống"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in future"
-msgstr ""
+msgstr "Là trong tương lai"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in past"
-msgstr ""
+msgstr "Là trong quá khứ"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not"
-msgstr ""
+msgstr "Không phải"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not empty"
-msgstr ""
+msgstr "Không trống"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not null"
-msgstr ""
+msgstr "Không phải là null"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is relative"
-msgstr ""
+msgstr "Là tương đối"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today"
-msgstr ""
+msgstr "Là hôm nay"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Issuer URI"
-msgstr ""
+msgstr "URI của nhà phát hành"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
@@ -1652,7 +1652,7 @@ msgstr "Tiếng Nhật"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Kanban"
-msgstr ""
+msgstr "Kanban"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Korean"
@@ -1683,7 +1683,7 @@ msgstr "Ngày mới nhất"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
-msgstr ""
+msgstr "Ít hơn"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Light"
@@ -1708,16 +1708,16 @@ msgstr "Đăng xuất"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users and manage their workspace feature flags or impersonate them."
-msgstr ""
+msgstr "Tìm kiếm người dùng và quản lý cờ đặc trưng trong không gian làm việc của họ hoặc mạo danh họ."
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users to impersonate them."
-msgstr ""
+msgstr "Tìm kiếm người dùng để mạo danh họ."
 
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Manage favorite"
-msgstr ""
+msgstr "Quản lý mục yêu thích"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
@@ -1755,7 +1755,7 @@ msgstr "Thành viên"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Metadata"
-msgstr ""
+msgstr "Siêu dữ liệu"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
@@ -1893,7 +1893,7 @@ msgstr "Bản ghi mới"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO Configuration"
-msgstr ""
+msgstr "Cấu hình SSO mới"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
@@ -1909,7 +1909,7 @@ msgstr "Không có tài khoản kết nối"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
-msgstr ""
+msgstr "Không có quốc gia"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members assigned to this role yet"
@@ -1945,7 +1945,7 @@ msgstr "Không có kết quả"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
-msgstr ""
+msgstr "Không có trường chọn"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
@@ -1959,7 +1959,7 @@ msgstr "Chưa có phiên bản workflows nào"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "None"
-msgstr ""
+msgstr "Không có"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Norwegian"
@@ -1968,7 +1968,7 @@ msgstr "Tiếng Na Uy"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"
-msgstr ""
+msgstr "Không có sẵn trên Chế độ Xem Mặc định"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -1976,19 +1976,19 @@ msgstr "Không trống"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
-msgstr ""
+msgstr "Chưa đồng bộ hóa"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
-msgstr ""
+msgstr "Số"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
-msgstr ""
+msgstr "Số lượng chữ số thập phân"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number type"
-msgstr ""
+msgstr "Loại số"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -1996,7 +1996,7 @@ msgstr "Đối tượng"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
-msgstr ""
+msgstr "Điểm đến đối tượng"
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -2014,11 +2014,11 @@ msgstr "Lạc lối"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
-msgstr ""
+msgstr "Chỉ ngày và người tham gia sẽ được chia sẻ với nhóm của bạn."
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Only the timestamp & participants will be shared with your team."
-msgstr ""
+msgstr "Chỉ dấu thời gian và người tham gia sẽ được chia sẻ với nhóm của bạn."
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
@@ -2035,7 +2035,7 @@ msgstr "Đã mở"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
-msgstr ""
+msgstr "Tùy chọn: Xác định một chuỗi bí mật mà chúng tôi sẽ bao gồm trong mỗi webhook. Sử dụng điều này để xác thực và xác minh webhook sau khi nhận."
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2074,11 +2074,11 @@ msgstr "Đường dẫn đặt lại mật khẩu đã được gửi đến ema
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
-msgstr ""
+msgstr "Những người tôi đã gửi email và nhận được email từ."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to."
-msgstr ""
+msgstr "Những người tôi đã gửi email đến."
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -2096,7 +2096,7 @@ msgstr "Phần trăm không trống"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Percentage"
-msgstr ""
+msgstr "Phần trăm"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2201,20 +2201,20 @@ msgstr "Nhận email chứa đường link cập nhật mật khẩu"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
-msgstr ""
+msgstr "Kết nối lại"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record image"
-msgstr ""
+msgstr "Ảnh hồ sơ"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
-msgstr ""
+msgstr "Nhãn hồ sơ"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Record Page"
-msgstr ""
+msgstr "Trang hồ sơ"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
@@ -2243,7 +2243,7 @@ msgstr "Tái Tạo Khóa"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
-msgstr ""
+msgstr "Loại quan hệ"
 
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/Releases.tsx
@@ -2263,11 +2263,11 @@ msgstr "Loại bỏ {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
-msgstr ""
+msgstr "Xóa tài khoản"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
-msgstr ""
+msgstr "Xóa mặc định"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2283,11 +2283,11 @@ msgstr "Loại bỏ khỏi mục yêu thích"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
-msgstr ""
+msgstr "Xóa tùy chọn"
 
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
-msgstr ""
+msgstr "Đặt lại"
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "Reset Password"
@@ -2321,11 +2321,11 @@ msgstr "Tiếng Nga"
 
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 msgid "Save"
-msgstr ""
+msgstr "Lưu"
 
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
-msgstr ""
+msgstr "Lưu dưới dạng chế độ xem mới"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2349,7 +2349,7 @@ msgstr "Tìm kiếm một thành viên"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Search a type"
-msgstr ""
+msgstr "Tìm kiếm một loại"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Search an index..."
@@ -2367,7 +2367,7 @@ msgstr "Tìm kiếm một đối tượng..."
 
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
-msgstr ""
+msgstr "Biểu tượng tìm kiếm"
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
@@ -2376,7 +2376,7 @@ msgstr "Tìm kiếm hồ sơ"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Secret"
-msgstr ""
+msgstr "Bí mật"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2410,7 +2410,7 @@ msgstr "Xem lịch sử phiên bản"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
-msgstr ""
+msgstr "Chọn giá trị mặc định cho trường boolean này"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Select the events you wish to send to this endpoint"
@@ -2426,11 +2426,11 @@ msgstr "Gửi email mời đến đội của bạn"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Sent"
-msgstr ""
+msgstr "Đã gửi"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Sent and Received"
-msgstr ""
+msgstr "Đã gửi và Nhận"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
@@ -2452,7 +2452,7 @@ msgstr "Chi tiết Nhà Cung Cấp Dịch Vụ"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
-msgstr ""
+msgstr "Đặt làm mặc định"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
@@ -2498,7 +2498,7 @@ msgstr "Thay đổi nhãn của đối tượng có nên thay đổi API không?
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Side Panel"
-msgstr ""
+msgstr "Bảng điều khiển bên"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Sign in"
@@ -2514,7 +2514,7 @@ msgstr "Đăng nhập một lần (SSO)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Singular"
-msgstr ""
+msgstr "Số ít"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
@@ -2536,11 +2536,11 @@ msgstr "Đăng nhập một lần"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Stages"
-msgstr ""
+msgstr "Giai đoạn"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
-msgstr ""
+msgstr "Trạng thái"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Subdomain"
@@ -2562,15 +2562,15 @@ msgstr "Tên miền phụ không được ngắn hơn 3 ký tự"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Subject and metadata"
-msgstr ""
+msgstr "Chủ đề và siêu dữ liệu"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject and metadata will be shared with your team."
-msgstr ""
+msgstr "Chủ đề và siêu dữ liệu sẽ được chia sẻ với nhóm của bạn."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
-msgstr ""
+msgstr "Chủ đề, nội dung và tệp đính kèm sẽ được chia sẻ với nhóm của bạn."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Subscription has been switched {to}"
@@ -2603,11 +2603,11 @@ msgstr "Chuyển đổi thanh toán {to}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync failed"
-msgstr ""
+msgstr "Đồng bộ hóa thất bại"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Synced"
-msgstr ""
+msgstr "Đã đồng bộ"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Synchronize Field Label and API Name"
@@ -2633,7 +2633,7 @@ msgstr "Cài đặt hệ thống - {systemTimeFormatLabel}"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Table"
-msgstr ""
+msgstr "Bảng"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -2654,11 +2654,11 @@ msgstr "Đã sao chép văn bản vào bảng tạm"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
-msgstr ""
+msgstr "Mã quốc gia mặc định cho số điện thoại mới."
 
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
-msgstr ""
+msgstr "Quốc gia mặc định cho địa chỉ mới"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -2676,11 +2676,11 @@ msgstr "Tên và biểu tượng của trường này"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "The name of your connection"
-msgstr ""
+msgstr "Tên kết nối của bạn"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "The name of your Domain"
-msgstr ""
+msgstr "Tên miền của bạn"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
@@ -2701,7 +2701,7 @@ msgstr "Giá trị của trường này phải là duy nhất"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
-msgstr ""
+msgstr "Toàn bộ chi tiết sự kiện sẽ được chia sẻ với nhóm của bạn."
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
@@ -2743,11 +2743,11 @@ msgstr "Định dạng thời gian"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "Time zone"
-msgstr ""
+msgstr "Múi giờ"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Timestamp and participants will be shared with your team."
-msgstr ""
+msgstr "Dấu thời gian và người tham gia sẽ được chia sẻ với nhóm của bạn."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to monthly"
@@ -2759,7 +2759,7 @@ msgstr "thành hàng năm"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
-msgstr ""
+msgstr "Tổng số người dùng"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 msgid "Trigger Type"
@@ -2771,7 +2771,7 @@ msgstr "Kiểu kích hoạt phải là Manual - khi không có bản ghi nào (<
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
-msgstr ""
+msgstr "Đúng"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -2807,7 +2807,7 @@ msgstr "Liên hệ không giới hạn"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Updated"
-msgstr ""
+msgstr "Cập nhật"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -2850,19 +2850,19 @@ msgstr "Người dùng"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Email"
-msgstr ""
+msgstr "Email người dùng"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User ID"
-msgstr ""
+msgstr "ID người dùng"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
-msgstr ""
+msgstr "Mạo danh người dùng"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Info"
-msgstr ""
+msgstr "Thông tin người dùng"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -2871,11 +2871,11 @@ msgstr "Người dùng không đăng nhập"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Name"
-msgstr ""
+msgstr "Tên người dùng"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Users"
-msgstr ""
+msgstr "Người dùng"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2885,7 +2885,7 @@ msgstr "Giá trị"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
-msgstr ""
+msgstr "Phiên bản của ứng dụng"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Vietnamese"
@@ -2893,7 +2893,7 @@ msgstr "Tiếng Việt"
 
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
-msgstr ""
+msgstr "Xem"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
@@ -2906,23 +2906,23 @@ msgstr "Xem chi tiết thực thi"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "View settings"
-msgstr ""
+msgstr "Cài đặt chế độ xem"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
-msgstr ""
+msgstr "Loại xem"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Visibility"
-msgstr ""
+msgstr "Tính khả dụng"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Visible"
-msgstr ""
+msgstr "Có thể nhìn thấy"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Visible groups"
-msgstr ""
+msgstr "Nhóm hiển thị"
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
@@ -2938,7 +2938,7 @@ msgstr "Chúng tôi sẽ gửi yêu cầu POST đến điểm cuối này cho m�
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "We will send your a link to verify domain ownership"
-msgstr ""
+msgstr "Chúng tôi sẽ gửi cho bạn một liên kết để xác minh quyền sở hữu tên miền"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Webhook"
@@ -3015,15 +3015,15 @@ msgstr "Tên Workspace"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Name"
-msgstr ""
+msgstr "Tên không gian làm việc"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
-msgstr ""
+msgstr "Không gian làm việc"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Wrap on record pages"
-msgstr ""
+msgstr "Quấn trên trang hồ sơ"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -3034,7 +3034,7 @@ msgstr "Viết mô tả"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Write a secret"
-msgstr ""
+msgstr "Viết một bí mật"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -3055,11 +3055,11 @@ msgstr "Số dư tín dụng của bạn sẽ được sử dụng để thanh t
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Your email subjects and meeting titles will be shared with your team."
-msgstr ""
+msgstr "Chủ đề email của bạn và tiêu đề cuộc họp sẽ được chia sẻ với nhóm của bạn."
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Your emails and events content will be shared with your team."
-msgstr ""
+msgstr "Nội dung email và sự kiện của bạn sẽ được chia sẻ với nhóm của bạn."
 
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"

@@ -20,31 +20,31 @@ msgstr ""
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
-msgstr ""
+msgstr ": Buit"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Future"
-msgstr ""
+msgstr ": Futur"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Not"
-msgstr ""
+msgstr ": No"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotEmpty"
-msgstr ""
+msgstr ": NoBuit"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotNull"
-msgstr ""
+msgstr ": NoNul"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Past"
-msgstr ""
+msgstr ": Passat"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
-msgstr ""
+msgstr ": Avui"
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -69,12 +69,12 @@ msgstr "1 000 execucions de nusos de flujos de treball"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
-msgstr ""
+msgstr "1. Selecciona un tipus de camp"
 
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "1. Type"
-msgstr ""
+msgstr "1. Tipus"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
@@ -83,7 +83,7 @@ msgstr "12h ({hour12Label})"
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "2. Configure"
-msgstr ""
+msgstr "2. Configura"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
@@ -160,7 +160,7 @@ msgstr "Afegeix"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
-msgstr ""
+msgstr "Afegeix compte"
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
@@ -172,11 +172,11 @@ msgstr "Afegeix camp"
 
 #: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
 msgid "Add filter"
-msgstr ""
+msgstr "Afegeix filtre"
 
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
-msgstr ""
+msgstr "Afegeix nou"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -184,7 +184,7 @@ msgstr "Afegeix objecte"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
-msgstr ""
+msgstr "Afegeix opció"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
@@ -197,7 +197,7 @@ msgstr "Afegeix a la llista de bloqueig"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Add to Favorite"
-msgstr ""
+msgstr "Afegeix a les preferides"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
@@ -215,7 +215,7 @@ msgstr "Afegeix a les preferides"
 
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
-msgstr ""
+msgstr "Afegeix vista"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
@@ -227,7 +227,7 @@ msgstr "Afegit {beautifiedCreatedAt}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
-msgstr ""
+msgstr "Afegit a la llista de bloqueig"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -247,19 +247,19 @@ msgstr "Tots ({relationRecordsCount})"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "All Actions"
-msgstr ""
+msgstr "Totes les accions"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account will be deleted"
-msgstr ""
+msgstr "Tots els correus electrònics i esdeveniments vinculats a aquest compte seran eliminats"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "All lines"
-msgstr ""
+msgstr "Totes les línies"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "All Objects"
-msgstr ""
+msgstr "Tots els objectes"
 
 #: src/pages/settings/roles/SettingsRoles.tsx
 msgid "All roles"
@@ -329,7 +329,7 @@ msgstr "Nom de l'API (Singular)"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "API values"
-msgstr ""
+msgstr "Valors de l'API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -402,27 +402,27 @@ msgstr "Autoritzar"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URI"
-msgstr ""
+msgstr "URI autoritzat"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
-msgstr ""
+msgstr "URL autoritzat copiat al porta-retalls"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Auto-creation"
-msgstr ""
+msgstr "Creació automàtica"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
-msgstr ""
+msgstr "Crea automàticament contactes per a persones amb qui has participat en un esdeveniment."
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people."
-msgstr ""
+msgstr "Crea automàticament contactes per a persones."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
-msgstr ""
+msgstr "Crear automàticament registres de Persones quan es reben o s'envien correus electrònics"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -461,7 +461,7 @@ msgstr "Calendari"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Calendar settings"
-msgstr ""
+msgstr "Configuració del calendari"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -516,11 +516,11 @@ msgstr "Trieu un objecte"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
-msgstr ""
+msgstr "Tria entre protocols OIDC i SAML"
 
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
-msgstr ""
+msgstr "Tria la moneda predeterminada que s'aplicarà"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Choose the fields that will identify your records"
@@ -536,15 +536,15 @@ msgstr "Trieu la vostra prova"
 
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
 msgid "Clear"
-msgstr ""
+msgstr "Esborra"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
-msgstr ""
+msgstr "ID del client"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Secret"
-msgstr ""
+msgstr "Secret del client"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
@@ -560,11 +560,11 @@ msgstr "Tanca el menú de comandament"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
-msgstr ""
+msgstr "Codi de colors"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Compact view"
-msgstr ""
+msgstr "Vista compacta"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -580,7 +580,7 @@ msgstr "Configureu com es mostren les dates a tota l'aplicació"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
-msgstr ""
+msgstr "Configura com hauríem de mostrar els teus esdeveniments al teu calendari"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -609,11 +609,11 @@ msgstr "Comptes connectats"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Contact auto-creation"
-msgstr ""
+msgstr "Auto-creació de contactes"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
-msgstr ""
+msgstr "Conté"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Context"
@@ -690,7 +690,7 @@ msgstr "Compta valors únics"
 
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create"
-msgstr ""
+msgstr "Crea"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
@@ -715,12 +715,12 @@ msgstr "Crea Rol"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Create select field"
-msgstr ""
+msgstr "Crea camp de selecció"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Create view"
-msgstr ""
+msgstr "Crea vista"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Create Webhook"
@@ -732,7 +732,7 @@ msgstr "Crea el teu espai de treball"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Created"
-msgstr ""
+msgstr "Creat"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -752,7 +752,7 @@ msgstr "Personalitza el Domini"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 msgid "Customize fields"
-msgstr ""
+msgstr "Personalitza camps"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
@@ -781,7 +781,7 @@ msgstr "Fosc"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Data deletion"
-msgstr ""
+msgstr "Eliminació de dades"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -806,7 +806,7 @@ msgstr "Data i hora"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "Date format"
-msgstr ""
+msgstr "Format de data"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
@@ -835,20 +835,20 @@ msgstr "Desactiva el Flux de treball"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Deactivated"
-msgstr ""
+msgstr "Desactivat"
 
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Default Country"
-msgstr ""
+msgstr "País predeterminat"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
-msgstr ""
+msgstr "Codi de país predeterminat"
 
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Default Value"
-msgstr ""
+msgstr "Valor predeterminat"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -857,7 +857,7 @@ msgstr "Defineix el nom i la descripció del teu objecte"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
-msgstr ""
+msgstr "Defineix què serà visible per a altres usuaris al teu espai de treball"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -933,11 +933,11 @@ msgstr "Esborrar tot l'espai de treball"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Deleted"
-msgstr ""
+msgstr "Eliminat"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Deleted {objectNamePlural}"
-msgstr ""
+msgstr "{objectNamePlural} eliminats"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -974,11 +974,11 @@ msgstr "Descartar esborrany"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
-msgstr ""
+msgstr "Mostra"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Display as a plain number or a percentage"
-msgstr ""
+msgstr "Mostra com un nombre simple o un percentatge"
 
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
@@ -986,11 +986,11 @@ msgstr "Mostrar com a data relativa"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Display text on multiple lines"
-msgstr ""
+msgstr "Mostra text en múltiples línies"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
-msgstr ""
+msgstr "No conté"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -1005,15 +1005,15 @@ msgstr "Domini afegit correctament."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
-msgstr ""
+msgstr "No auto-crear contactes."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr ""
+msgstr "No crear contactes de/cap a correus electrònics de Gmail, Outlook"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr ""
+msgstr "No sincronitzar correus de team@ support@ noreply@..."
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -1039,7 +1039,7 @@ msgstr "Data més aviat possible"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "Edit"
-msgstr ""
+msgstr "Edita"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
@@ -1047,11 +1047,11 @@ msgstr "Editar interval de facturació"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
-msgstr ""
+msgstr "Edita valors dels camps"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
-msgstr ""
+msgstr "Edita camps"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -1083,7 +1083,7 @@ msgstr "El correu electrònic o domini ja està en la llista de bloqueig"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
-msgstr ""
+msgstr "Verificació de correu electrònic"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
@@ -1099,7 +1099,7 @@ msgstr "Correu electrònic verificat."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
-msgstr ""
+msgstr "Correu electrònic/Domini"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -1110,7 +1110,7 @@ msgstr "Correus electrònics"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
-msgstr ""
+msgstr "Configuració de correus electrònics"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -1148,7 +1148,7 @@ msgstr "Introdueix la informació per establir la connexió"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
-msgstr ""
+msgstr "Introdueix ID d'usuari o adreça de correu electrònic"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
@@ -1160,7 +1160,7 @@ msgstr "Identificador d'entitat copiat al porta-retalls"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Env Variables"
-msgstr ""
+msgstr "Variables d'entorn"
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
@@ -1200,25 +1200,25 @@ msgstr "Estableix els endpoints de webhook per a les notificacions sobre esdeven
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Event visibility"
-msgstr ""
+msgstr "Visibilitat de l'esdeveniment"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Events you participated in are displayed in red."
-msgstr ""
+msgstr "Els esdeveniments en què has participat es mostren en vermell."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Everything"
-msgstr ""
+msgstr "Tot"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Exclude group emails"
-msgstr ""
+msgstr "Excloure els correus electrònics de grup"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
-msgstr ""
+msgstr "Excloure els correus electrònics no professionals"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
@@ -1304,7 +1304,7 @@ msgstr "Exportar workflows"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
-msgstr ""
+msgstr "Fals"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
@@ -1312,15 +1312,15 @@ msgstr "Preferits"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Feature Flag"
-msgstr ""
+msgstr "Funcionalitat de bandera"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
-msgstr ""
+msgstr "Funcionalitats i usurpació d'identitat"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field name"
-msgstr ""
+msgstr "Nom del camp"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -1355,15 +1355,15 @@ msgstr "Finès"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 10 lines"
-msgstr ""
+msgstr "Primeres 10 línies"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 2 lines"
-msgstr ""
+msgstr "Primeres 2 línies"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 5 lines"
-msgstr ""
+msgstr "Primeres 5 línies"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -1420,7 +1420,7 @@ msgstr "Global"
 
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Go to Settings"
-msgstr ""
+msgstr "Anar a Configuració"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
@@ -1428,7 +1428,7 @@ msgstr "Concedeix a l'equip de suport de Twenty accés temporal al teu espai de 
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
-msgstr ""
+msgstr "Major que"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Greek"
@@ -1437,7 +1437,7 @@ msgstr "Grec"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Group by"
-msgstr ""
+msgstr "Agrupa per"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
@@ -1450,12 +1450,12 @@ msgstr "Hebreu"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Hidden"
-msgstr ""
+msgstr "Ocult"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Hidden Fields"
-msgstr ""
+msgstr "Camps ocults"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
@@ -1463,7 +1463,7 @@ msgstr "Amagar"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
-msgstr ""
+msgstr "Amaga grups buits"
 
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -1475,7 +1475,7 @@ msgstr "Hongarès"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Icon"
-msgstr ""
+msgstr "Icona"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -1500,15 +1500,15 @@ msgstr "Si has perdut aquesta clau, pots regenerar-la, però tingues en compte q
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
-msgstr ""
+msgstr "Usurpa"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Import"
-msgstr ""
+msgstr "Importa"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
-msgstr ""
+msgstr "Important"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1596,51 +1596,51 @@ msgstr "Convida al teu equip"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
-msgstr ""
+msgstr "És"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after"
-msgstr ""
+msgstr "És posterior"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is before"
-msgstr ""
+msgstr "És anterior"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is empty"
-msgstr ""
+msgstr "És buit"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in future"
-msgstr ""
+msgstr "És en futur"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in past"
-msgstr ""
+msgstr "És en passat"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not"
-msgstr ""
+msgstr "No és"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not empty"
-msgstr ""
+msgstr "No és buit"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not null"
-msgstr ""
+msgstr "No és nul"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is relative"
-msgstr ""
+msgstr "És relatiu"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today"
-msgstr ""
+msgstr "És avui"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Issuer URI"
-msgstr ""
+msgstr "URI d'emissor"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
@@ -1652,7 +1652,7 @@ msgstr "Japonès"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Kanban"
-msgstr ""
+msgstr "Kanban"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Korean"
@@ -1683,7 +1683,7 @@ msgstr "Data més recent"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
-msgstr ""
+msgstr "Menor que"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Light"
@@ -1708,16 +1708,16 @@ msgstr "Tancar sessió"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users and manage their workspace feature flags or impersonate them."
-msgstr ""
+msgstr "Cerqueu usuaris i gestioneu les seves funcionalitats d'espai de treball o usurpeu-los."
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users to impersonate them."
-msgstr ""
+msgstr "Cerqueu usuaris per usurpar-los."
 
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Manage favorite"
-msgstr ""
+msgstr "Gestiona preferides"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
@@ -1755,7 +1755,7 @@ msgstr "Membres"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Metadata"
-msgstr ""
+msgstr "Metadades"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
@@ -1893,7 +1893,7 @@ msgstr "Nou registre"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO Configuration"
-msgstr ""
+msgstr "Nova configuració SSO"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
@@ -1909,7 +1909,7 @@ msgstr "Cap compte connectat"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
-msgstr ""
+msgstr "Sense país"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members assigned to this role yet"
@@ -1945,7 +1945,7 @@ msgstr "Cap resultat"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
-msgstr ""
+msgstr "Sense camp de selecció"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
@@ -1959,7 +1959,7 @@ msgstr "Encara no hi ha versions de workflows"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "None"
-msgstr ""
+msgstr "Cap"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Norwegian"
@@ -1968,7 +1968,7 @@ msgstr "Noruec"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"
-msgstr ""
+msgstr "No disponible a la vista predeterminada"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -1976,19 +1976,19 @@ msgstr "No buit"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
-msgstr ""
+msgstr "No sincronitzat"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
-msgstr ""
+msgstr "Número de decimals"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number type"
-msgstr ""
+msgstr "Tipus de número"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -1996,7 +1996,7 @@ msgstr "Objecte"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
-msgstr ""
+msgstr "Destinació de l'objecte"
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -2014,11 +2014,11 @@ msgstr "Fora del camí conegut"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
-msgstr ""
+msgstr "Només la data i els participants seran compartits amb el teu equip."
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Only the timestamp & participants will be shared with your team."
-msgstr ""
+msgstr "Només la marca de temps i els participants seran compartits amb el teu equip."
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
@@ -2035,7 +2035,7 @@ msgstr "Obert"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
-msgstr ""
+msgstr "Opcional: Defineix una cadena secreta que inclourem en cada webhook. Utilitza això per autenticar i verificar el webhook un cop rebut."
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2074,11 +2074,11 @@ msgstr "S'ha enviat l'enllaç de restabliment de la contrasenya al correu electr
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
-msgstr ""
+msgstr "Persones a qui he enviat correus electrònics i de qui n'he rebut."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to."
-msgstr ""
+msgstr "Persones a qui he enviat correus electrònics."
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -2096,7 +2096,7 @@ msgstr "Percentatge no buit"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Percentage"
-msgstr ""
+msgstr "Percentatge"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2201,20 +2201,20 @@ msgstr "Rep un correu que conté l'enllaç per actualitzar la contrasenya"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
-msgstr ""
+msgstr "Reconnecta"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record image"
-msgstr ""
+msgstr "Imatge de registre"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
-msgstr ""
+msgstr "Etiqueta de registre"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Record Page"
-msgstr ""
+msgstr "Pàgina de registre"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
@@ -2243,7 +2243,7 @@ msgstr "Regenera la clau"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
-msgstr ""
+msgstr "Tipus de relació"
 
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/Releases.tsx
@@ -2263,11 +2263,11 @@ msgstr "Eliminar {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
-msgstr ""
+msgstr "Elimina compte"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
-msgstr ""
+msgstr "Elimina com a predeterminat"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2283,11 +2283,11 @@ msgstr "Elimina dels preferits"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
-msgstr ""
+msgstr "Elimina opció"
 
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
-msgstr ""
+msgstr "Restableix"
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "Reset Password"
@@ -2321,11 +2321,11 @@ msgstr "Rus"
 
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 msgid "Save"
-msgstr ""
+msgstr "Desa"
 
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
-msgstr ""
+msgstr "Desa com a nova vista"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2349,7 +2349,7 @@ msgstr "Buscar un membre"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Search a type"
-msgstr ""
+msgstr "Cerca un tipus"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Search an index..."
@@ -2367,7 +2367,7 @@ msgstr "Cerca un objecte..."
 
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
-msgstr ""
+msgstr "Icona de cerca"
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
@@ -2376,7 +2376,7 @@ msgstr "Cerca enregistraments"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Secret"
-msgstr ""
+msgstr "Secret"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2410,7 +2410,7 @@ msgstr "Veure l'historial de versions"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
-msgstr ""
+msgstr "Selecciona el valor predeterminat per a aquest camp booleà"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Select the events you wish to send to this endpoint"
@@ -2426,11 +2426,11 @@ msgstr "Envia un correu d'invitació al teu equip"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Sent"
-msgstr ""
+msgstr "Enviat"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Sent and Received"
-msgstr ""
+msgstr "Enviat i rebut"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
@@ -2452,7 +2452,7 @@ msgstr "Detalls del Proveïdor de Serveis"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
-msgstr ""
+msgstr "Estableix com a predeterminat"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
@@ -2498,7 +2498,7 @@ msgstr "¿Canviar l'etiqueta d'un objecte hauria de canviar també l'API?"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Side Panel"
-msgstr ""
+msgstr "Panell lateral"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Sign in"
@@ -2514,7 +2514,7 @@ msgstr "Autenticació única (SSO)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Singular"
-msgstr ""
+msgstr "Singular"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
@@ -2536,11 +2536,11 @@ msgstr "SSO"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Stages"
-msgstr ""
+msgstr "Etapes"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
-msgstr ""
+msgstr "Estat"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Subdomain"
@@ -2562,15 +2562,15 @@ msgstr "El subdomini no pot tenir menys de 3 caràcters"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Subject and metadata"
-msgstr ""
+msgstr "Assignatura i metadades"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject and metadata will be shared with your team."
-msgstr ""
+msgstr "Assignatura i metadades seran compartides amb el teu equip."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
-msgstr ""
+msgstr "Assignatura, cos i adjunts seran compartits amb el teu equip."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Subscription has been switched {to}"
@@ -2603,11 +2603,11 @@ msgstr "Canviar facturació {to}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync failed"
-msgstr ""
+msgstr "Error de sincronització"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Synced"
-msgstr ""
+msgstr "Sincronitzat"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Synchronize Field Label and API Name"
@@ -2633,7 +2633,7 @@ msgstr "Configuració del Sistema - {systemTimeFormatLabel}"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Table"
-msgstr ""
+msgstr "Taula"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -2654,11 +2654,11 @@ msgstr "Text copiat al porta-retalls"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
-msgstr ""
+msgstr "El codi de país predeterminat per a nous números de telèfon."
 
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
-msgstr ""
+msgstr "El país predeterminat per a noves adreces"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -2676,11 +2676,11 @@ msgstr "El nom i la icona d'aquest camp"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "The name of your connection"
-msgstr ""
+msgstr "El nom de la teva connexió"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "The name of your Domain"
-msgstr ""
+msgstr "El nom del teu domini"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
@@ -2701,7 +2701,7 @@ msgstr "Els valors d'aquest camp han de ser únics"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
-msgstr ""
+msgstr "Els detalls complets de l'esdeveniment seran compartits amb el teu equip."
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
@@ -2743,11 +2743,11 @@ msgstr "Format d'hora"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "Time zone"
-msgstr ""
+msgstr "Zona horària"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Timestamp and participants will be shared with your team."
-msgstr ""
+msgstr "La marca de temps i els participants seran compartits amb el teu equip."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to monthly"
@@ -2759,7 +2759,7 @@ msgstr "a anual"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
-msgstr ""
+msgstr "Usuaris totals"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 msgid "Trigger Type"
@@ -2771,7 +2771,7 @@ msgstr "El tipus de desencadenador hauria de ser Manual - quan cap registre(s) e
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
-msgstr ""
+msgstr "Cert"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -2807,7 +2807,7 @@ msgstr "Contactes il·limitats"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Updated"
-msgstr ""
+msgstr "Actualitzat"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -2850,19 +2850,19 @@ msgstr "Usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Email"
-msgstr ""
+msgstr "Correu electrònic de l'usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User ID"
-msgstr ""
+msgstr "ID d'usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
-msgstr ""
+msgstr "Usurpació d'identitat d'usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Info"
-msgstr ""
+msgstr "Informació de l'usuari"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -2871,11 +2871,11 @@ msgstr "L'usuari no està logat"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Name"
-msgstr ""
+msgstr "Nom d'usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Users"
-msgstr ""
+msgstr "Usuaris"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2885,7 +2885,7 @@ msgstr "Valors"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
-msgstr ""
+msgstr "Versió de l'aplicació"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Vietnamese"
@@ -2893,7 +2893,7 @@ msgstr "Vietnamita"
 
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
-msgstr ""
+msgstr "Vista"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
@@ -2906,23 +2906,23 @@ msgstr "Veure detall d'execució"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "View settings"
-msgstr ""
+msgstr "Configuració de vista"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
-msgstr ""
+msgstr "Tipus de vista"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Visibility"
-msgstr ""
+msgstr "Visibilitat"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Visible"
-msgstr ""
+msgstr "Visible"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Visible groups"
-msgstr ""
+msgstr "Grups visibles"
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
@@ -2938,7 +2938,7 @@ msgstr "Enviarem sol·licituds POST a aquest endpoint per a cada nou esdevenimen
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "We will send your a link to verify domain ownership"
-msgstr ""
+msgstr "Et enviarem un enllaç per verificar la propietat del domini"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Webhook"
@@ -3015,15 +3015,15 @@ msgstr "Nom de l'espai de treball"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Name"
-msgstr ""
+msgstr "Nom de l'espai de treball"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
-msgstr ""
+msgstr "Espais de treball"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Wrap on record pages"
-msgstr ""
+msgstr "Embolcalla a les pàgines de registre"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -3034,7 +3034,7 @@ msgstr "Escriviu una descripció"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Write a secret"
-msgstr ""
+msgstr "Escriu un secret"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -3055,11 +3055,11 @@ msgstr "El vostre saldo de crèdit serà utilitzat per pagar les factures mensua
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Your email subjects and meeting titles will be shared with your team."
-msgstr ""
+msgstr "Els teus assumptes de correus electrònics i títols de reunions seran compartits amb el teu equip."
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Your emails and events content will be shared with your team."
-msgstr ""
+msgstr "El contingut dels teus correus electrònics i esdeveniments seran compartits amb el teu equip."
 
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"

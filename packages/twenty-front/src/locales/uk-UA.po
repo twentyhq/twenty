@@ -20,31 +20,31 @@ msgstr ""
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
-msgstr ""
+msgstr ": Порожньо"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Future"
-msgstr ""
+msgstr ": Майбутнє"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Not"
-msgstr ""
+msgstr "Не"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotEmpty"
-msgstr ""
+msgstr ": Не порожньо"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotNull"
-msgstr ""
+msgstr ": Не Null"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Past"
-msgstr ""
+msgstr ": Минуле"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
-msgstr ""
+msgstr "Сьогодні"
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -69,12 +69,12 @@ msgstr "1 000 виконань вузлів робочого процесу"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
-msgstr ""
+msgstr "1. Виберіть тип поля"
 
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "1. Type"
-msgstr ""
+msgstr "1. Тип"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
@@ -83,7 +83,7 @@ msgstr "12 год ({hour12Label})"
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "2. Configure"
-msgstr ""
+msgstr "2. Налаштуйте"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
@@ -160,7 +160,7 @@ msgstr "Додати"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
-msgstr ""
+msgstr "Додати обліковий запис"
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
@@ -172,11 +172,11 @@ msgstr "Додати поле"
 
 #: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
 msgid "Add filter"
-msgstr ""
+msgstr "Додати фільтр"
 
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
-msgstr ""
+msgstr "Додати новий"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -184,7 +184,7 @@ msgstr "Додати об'єкт"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
-msgstr ""
+msgstr "Додати опцію"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
@@ -197,7 +197,7 @@ msgstr "Додати до чорного списку"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Add to Favorite"
-msgstr ""
+msgstr "Додати до обраних"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
@@ -215,7 +215,7 @@ msgstr "Додати до обраних"
 
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
-msgstr ""
+msgstr "Додати перегляд"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
@@ -227,7 +227,7 @@ msgstr "Додано {beautifiedCreatedAt}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
-msgstr ""
+msgstr "Додано до чорного списку"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -247,19 +247,19 @@ msgstr "Всі ({relationRecordsCount})"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "All Actions"
-msgstr ""
+msgstr "Всі дії"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account will be deleted"
-msgstr ""
+msgstr "Всі електронні листи та події, пов'язані з цим обліковим записом, будуть видалені"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "All lines"
-msgstr ""
+msgstr "Всі рядки"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "All Objects"
-msgstr ""
+msgstr "Всі об'єкти"
 
 #: src/pages/settings/roles/SettingsRoles.tsx
 msgid "All roles"
@@ -329,7 +329,7 @@ msgstr "Назва API (однина)"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "API values"
-msgstr ""
+msgstr "Значення API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -402,27 +402,27 @@ msgstr "Авторизувати"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URI"
-msgstr ""
+msgstr "Авторизований URI"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
-msgstr ""
+msgstr "Авторизований URL скопійовано в буфер обміну"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Auto-creation"
-msgstr ""
+msgstr "Авто-створення"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
-msgstr ""
+msgstr "Автоматично створювати контакти для людей, з якими ви брали участь в події."
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people."
-msgstr ""
+msgstr "Автоматично створювати контакти для людей."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
-msgstr ""
+msgstr "Автоматично створювати записи Людей при отриманні або відправленні електронної пошти"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -461,7 +461,7 @@ msgstr "Календар"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Calendar settings"
-msgstr ""
+msgstr "Налаштування календаря"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -516,11 +516,11 @@ msgstr "Виберіть об'єкт"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
-msgstr ""
+msgstr "Виберіть між протоколами OIDC та SAML"
 
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
-msgstr ""
+msgstr "Виберіть валюту за замовчуванням, яку буде застосовано"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Choose the fields that will identify your records"
@@ -536,15 +536,15 @@ msgstr "Виберіть вашу пробну версію"
 
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
 msgid "Clear"
-msgstr ""
+msgstr "Очистити"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
-msgstr ""
+msgstr "Клієнт ID"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Secret"
-msgstr ""
+msgstr "Клієнтський секрет"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
@@ -560,11 +560,11 @@ msgstr "Закрити командне меню"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
-msgstr ""
+msgstr "Код кольору"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Compact view"
-msgstr ""
+msgstr "Компактний вигляд"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -580,7 +580,7 @@ msgstr "Налаштуйте відображення дат у додатку"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
-msgstr ""
+msgstr "Налаштуйте, як ми повинні відображати ваші події у вашому календарі"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -609,11 +609,11 @@ msgstr "Під'єднані облікові записи"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Contact auto-creation"
-msgstr ""
+msgstr "Автоматичне створення контактів"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
-msgstr ""
+msgstr "Містить"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Context"
@@ -690,7 +690,7 @@ msgstr "Підрахунок унікальних значень"
 
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create"
-msgstr ""
+msgstr "Створити"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
@@ -715,12 +715,12 @@ msgstr "Створити роль"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Create select field"
-msgstr ""
+msgstr "Створити обране поле"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Create view"
-msgstr ""
+msgstr "Створити перегляд"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Create Webhook"
@@ -732,7 +732,7 @@ msgstr "Створіть свій робочий простір"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Created"
-msgstr ""
+msgstr "Створено"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -752,7 +752,7 @@ msgstr "Налаштувати домен"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 msgid "Customize fields"
-msgstr ""
+msgstr "Налаштувати поля"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
@@ -781,7 +781,7 @@ msgstr "Темна"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Data deletion"
-msgstr ""
+msgstr "Видалення даних"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -806,7 +806,7 @@ msgstr "Дата та час"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "Date format"
-msgstr ""
+msgstr "Формат дати"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
@@ -835,20 +835,20 @@ msgstr "Деактивувати процес"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Deactivated"
-msgstr ""
+msgstr "Деактивовано"
 
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Default Country"
-msgstr ""
+msgstr "Країна за замовчуванням"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
-msgstr ""
+msgstr "Код країни за замовчуванням"
 
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Default Value"
-msgstr ""
+msgstr "Значення за замовчуванням"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -857,7 +857,7 @@ msgstr "Визначте назву та опис вашого об'єкта"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
-msgstr ""
+msgstr "Визначте, що буде видно іншим користувачам у вашому робочому просторі"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -902,24 +902,21 @@ msgstr "Видалити запис"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Delete records"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити записи"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити цю інтеграцію"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Delete webhook"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити вебхук"
 
@@ -934,31 +931,28 @@ msgstr "Видалити workflows "
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete workspace"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити робочу область"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete your whole workspace"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити всю вашу робочу область"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Deleted"
-msgstr ""
+msgstr "Видалено"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Deleted {objectNamePlural}"
-msgstr ""
+msgstr "Видалено {objectNamePlural}"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              По спадаючій"
 
@@ -966,8 +960,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Description"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Опис"
 
@@ -976,8 +969,7 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Destroy"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Знищити"
 
@@ -988,8 +980,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Розробники"
 
@@ -997,41 +988,38 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Відмінити чернетку"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
-msgstr ""
+msgstr "Відображати"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Display as a plain number or a percentage"
-msgstr ""
+msgstr "Відображати як звичайне число або відсоток"
 
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Показувати як відносну дату"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Display text on multiple lines"
-msgstr ""
+msgstr "Відображати текст на кількох рядках"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
-msgstr ""
+msgstr "Не містить"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Домен"
 
@@ -1041,15 +1029,15 @@ msgstr "Домен успішно додано."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
-msgstr ""
+msgstr "Не автосворювати контакти."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr ""
+msgstr "Не створювати контакти з/до листів Gmail, Outlook"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr ""
+msgstr "Не синхронізувати електронні листи з team@, support@, noreply@..."
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -1062,44 +1050,40 @@ msgstr "Голландська"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "E.g. backoffice integration"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Наприклад, інтеграція з бекофісом"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Найраніше"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Earliest date"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Найраніша дата"
 
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "Edit"
-msgstr ""
+msgstr "Редагувати"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Редагувати інтервал білінгу"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
-msgstr ""
+msgstr "Редагувати значення полів"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
-msgstr ""
+msgstr "Редагувати поля"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -1115,8 +1099,7 @@ msgstr "Редагуйте назву вашого субдомену або в�
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
 msgid "Email"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Електронна адреса"
 
@@ -1134,7 +1117,7 @@ msgstr "Електронна пошта або домен вже знаходя�
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
-msgstr ""
+msgstr "Підтвердження електронної пошти"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
@@ -1150,7 +1133,7 @@ msgstr "Електронну пошту верифіковано."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
-msgstr ""
+msgstr "Електронна пошта/Домен"
 
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -1161,7 +1144,7 @@ msgstr "Електронні листи"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
-msgstr ""
+msgstr "Налаштування електронної пошти"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -1169,8 +1152,7 @@ msgstr "співробітники"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Employees"
-msgstr ""
-"\n"
+msgstr "\n"
 "Співробітники"
 
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
@@ -1181,8 +1163,7 @@ msgstr "Порожньо"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              URL-адреса ендпоінту"
 
@@ -1204,7 +1185,7 @@ msgstr "Введіть інформацію для налаштування з'�
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
-msgstr ""
+msgstr "Введіть ID користувача або електронну адресу"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
@@ -1216,7 +1197,7 @@ msgstr "Ідентифікатор об'єкта скопійовано в бу�
 
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Env Variables"
-msgstr ""
+msgstr "Змінні середовища"
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
@@ -1256,25 +1237,25 @@ msgstr "Встановіть ендпоінти вебхука для отрим
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Event visibility"
-msgstr ""
+msgstr "Видимість подій"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Events you participated in are displayed in red."
-msgstr ""
+msgstr "Події, у яких ви брали участь, відображаються червоним."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Everything"
-msgstr ""
+msgstr "Усе"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Exclude group emails"
-msgstr ""
+msgstr "Не враховувати групові електронні адреси"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
-msgstr ""
+msgstr "Виключити непрофесійні електронні листи"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
@@ -1360,7 +1341,7 @@ msgstr "Експортувати Workflows"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
-msgstr ""
+msgstr "Хибно"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
@@ -1368,15 +1349,15 @@ msgstr "Обрані"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Feature Flag"
-msgstr ""
+msgstr "Прапор функцій"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
-msgstr ""
+msgstr "Прапори функцій та персонуфікація"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field name"
-msgstr ""
+msgstr "Назва поля"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -1411,15 +1392,15 @@ msgstr "Фінська"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 10 lines"
-msgstr ""
+msgstr "Перші 10 рядків"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 2 lines"
-msgstr ""
+msgstr "Перші 2 рядки"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 5 lines"
-msgstr ""
+msgstr "Перші 5 рядків"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -1476,7 +1457,7 @@ msgstr "Глобальні"
 
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Go to Settings"
-msgstr ""
+msgstr "Перейти до налаштувань"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
@@ -1484,7 +1465,7 @@ msgstr "Надайте службі підтримки Twenty тимчасови
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
-msgstr ""
+msgstr "Більше, ніж"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Greek"
@@ -1493,7 +1474,7 @@ msgstr "Грецька"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Group by"
-msgstr ""
+msgstr "Групувати за"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
@@ -1506,12 +1487,12 @@ msgstr "Іврит"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Hidden"
-msgstr ""
+msgstr "Приховано"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Hidden Fields"
-msgstr ""
+msgstr "Приховані поля"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
@@ -1519,7 +1500,7 @@ msgstr "Сховати"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
-msgstr ""
+msgstr "Приховати порожні групи"
 
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -1531,7 +1512,7 @@ msgstr "Угорська"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Icon"
-msgstr ""
+msgstr "Іконка"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -1556,15 +1537,15 @@ msgstr "Якщо ви втратили цей ключ, ви можете йог
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
-msgstr ""
+msgstr "Персонуфікація"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Import"
-msgstr ""
+msgstr "Імпорт"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
-msgstr ""
+msgstr "Імпортовано"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1652,51 +1633,51 @@ msgstr "Запросіть свою команду"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
-msgstr ""
+msgstr "Є"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after"
-msgstr ""
+msgstr "Є після"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is before"
-msgstr ""
+msgstr "Є до"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is empty"
-msgstr ""
+msgstr "Порожньо"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in future"
-msgstr ""
+msgstr "Є в майбутньому"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in past"
-msgstr ""
+msgstr "Є в минулому"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not"
-msgstr ""
+msgstr "Не є"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not empty"
-msgstr ""
+msgstr "Не є пустим"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not null"
-msgstr ""
+msgstr "Не є null"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is relative"
-msgstr ""
+msgstr "Є відносним"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today"
-msgstr ""
+msgstr "Є сьогодні"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Issuer URI"
-msgstr ""
+msgstr "Видавець URI"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
@@ -1708,7 +1689,7 @@ msgstr "Японська"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Kanban"
-msgstr ""
+msgstr "Канбан"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Korean"
@@ -1739,7 +1720,7 @@ msgstr "Остання дата"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
-msgstr ""
+msgstr "Менше ніж"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Light"
@@ -1764,16 +1745,16 @@ msgstr "Вийти"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users and manage their workspace feature flags or impersonate them."
-msgstr ""
+msgstr "Шукати користувачів та керувати їх прапорами функцій робочого простору або персонуфікувати їх."
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users to impersonate them."
-msgstr ""
+msgstr "Шукати користувачів для їх персонуфікації."
 
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Manage favorite"
-msgstr ""
+msgstr "Керувати обраними"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
@@ -1811,7 +1792,7 @@ msgstr "Члени"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Metadata"
-msgstr ""
+msgstr "Метадані"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
@@ -1949,7 +1930,7 @@ msgstr "Новий запис"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO Configuration"
-msgstr ""
+msgstr "Нова конфігурація SSO"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
@@ -1965,7 +1946,7 @@ msgstr "Немає підключеного акаунту"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
-msgstr ""
+msgstr "Немає країни"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members assigned to this role yet"
@@ -2001,7 +1982,7 @@ msgstr "Немає результатів"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
-msgstr ""
+msgstr "Немає поля вибору"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
@@ -2015,7 +1996,7 @@ msgstr "Версій Workflow поки що немає"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "None"
-msgstr ""
+msgstr "Немає"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Norwegian"
@@ -2024,7 +2005,7 @@ msgstr "Норвезька"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"
-msgstr ""
+msgstr "Недоступно в загальному вигляді"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -2032,19 +2013,19 @@ msgstr "Не пустий"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
-msgstr ""
+msgstr "Не синхронізовано"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
-msgstr ""
+msgstr "Число"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
-msgstr ""
+msgstr "Кількість десяткових розрядів"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number type"
-msgstr ""
+msgstr "Тип числа"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -2052,7 +2033,7 @@ msgstr "Об'єкт"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
-msgstr ""
+msgstr "Об'єкт призначення"
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -2070,11 +2051,11 @@ msgstr "Не по традиційному шляху"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
-msgstr ""
+msgstr "Лише дата та учасники будуть поділені з вашою командою."
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Only the timestamp & participants will be shared with your team."
-msgstr ""
+msgstr "Лише відмітка часу та учасники будуть поділені з вашою командою."
 
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
@@ -2091,7 +2072,7 @@ msgstr "Відкрився"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
-msgstr ""
+msgstr "Необов'язково: визначте секретний рядок, який включимо у всі вебхуки. Використовуйте це для автентифікації та перевірки вебхука при отриманні."
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2130,11 +2111,11 @@ msgstr "Посилання для скидання пароля було від�
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
-msgstr ""
+msgstr "Люди, яким я відправляв листи, і від яких отримував листи."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to."
-msgstr ""
+msgstr "Люди, яким я відправляв листи."
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -2152,7 +2133,7 @@ msgstr "Відсоток не пустого"
 
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Percentage"
-msgstr ""
+msgstr "Відсоток"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2257,20 +2238,20 @@ msgstr "Отримати лист з посиланням для оновлен�
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
-msgstr ""
+msgstr "Перепідключити"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record image"
-msgstr ""
+msgstr "Зображення запису"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
-msgstr ""
+msgstr "Мітка запису"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Record Page"
-msgstr ""
+msgstr "Сторінка запису"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
@@ -2299,7 +2280,7 @@ msgstr "Перегенерувати ключ"
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
-msgstr ""
+msgstr "Тип відносин"
 
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/Releases.tsx
@@ -2319,11 +2300,11 @@ msgstr "Видалити {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
-msgstr ""
+msgstr "Видалити обліковий запис"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
-msgstr ""
+msgstr "Видалити як за замовчуванням"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2339,11 +2320,11 @@ msgstr "Вилучити з обраного"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
-msgstr ""
+msgstr "Видалити опцію"
 
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
-msgstr ""
+msgstr "Скинути"
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "Reset Password"
@@ -2377,11 +2358,11 @@ msgstr "Російська"
 
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 msgid "Save"
-msgstr ""
+msgstr "Зберегти"
 
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
-msgstr ""
+msgstr "Зберегти як новий перегляд"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2405,7 +2386,7 @@ msgstr "Пошук члена"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Search a type"
-msgstr ""
+msgstr "Пошук типу"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Search an index..."
@@ -2423,7 +2404,7 @@ msgstr "Пошук об'єкта..."
 
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
-msgstr ""
+msgstr "Іконка пошуку"
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
@@ -2432,7 +2413,7 @@ msgstr "Пошук записів"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Secret"
-msgstr ""
+msgstr "Секрет"
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2466,7 +2447,7 @@ msgstr "Переглянути історію версій"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
-msgstr ""
+msgstr "Виберіть значення за замовчуванням для цього логічного поля"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Select the events you wish to send to this endpoint"
@@ -2482,11 +2463,11 @@ msgstr "Надішліть запрошення на електронну адр
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Sent"
-msgstr ""
+msgstr "Відправлено"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Sent and Received"
-msgstr ""
+msgstr "Відправлено та отримано"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
@@ -2508,7 +2489,7 @@ msgstr "Деталі постачальника послуг"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
-msgstr ""
+msgstr "Встановити як за замовчуванням"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
@@ -2554,7 +2535,7 @@ msgstr "Чи повинна зміна мітки об'єкта також зм�
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Side Panel"
-msgstr ""
+msgstr "Бічна панель"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Sign in"
@@ -2570,7 +2551,7 @@ msgstr "Єдиний вхід (SSO)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Singular"
-msgstr ""
+msgstr "Одиничне число"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
@@ -2592,11 +2573,11 @@ msgstr "Єдиний вхід"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Stages"
-msgstr ""
+msgstr "Стадії"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
-msgstr ""
+msgstr "Статус"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Subdomain"
@@ -2618,15 +2599,15 @@ msgstr "Субдомен не може бути коротшим за 3 симв
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Subject and metadata"
-msgstr ""
+msgstr "Тема та метадані"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject and metadata will be shared with your team."
-msgstr ""
+msgstr "Тема та метадані будуть поділені з вашою командою."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
-msgstr ""
+msgstr "Тема, тіло та вкладення будуть поділені з вашою командою."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Subscription has been switched {to}"
@@ -2659,11 +2640,11 @@ msgstr "Змінити біллінг {to}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync failed"
-msgstr ""
+msgstr "Синхронізація не вдалася"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Synced"
-msgstr ""
+msgstr "Синхронізовано"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Synchronize Field Label and API Name"
@@ -2689,7 +2670,7 @@ msgstr "Системні налаштування - {systemTimeFormatLabel}"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Table"
-msgstr ""
+msgstr "Таблиця"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -2710,11 +2691,11 @@ msgstr "Текст скопійовано в буфер обміну"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
-msgstr ""
+msgstr "Код країни за замовчуванням для нових телефонних номерів."
 
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
-msgstr ""
+msgstr "Країна за замовчуванням для нових адрес"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -2732,11 +2713,11 @@ msgstr "Ім'я та іконка цього поля"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "The name of your connection"
-msgstr ""
+msgstr "Назва вашого з'єднання"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "The name of your Domain"
-msgstr ""
+msgstr "Назва вашого домену"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
@@ -2757,7 +2738,7 @@ msgstr "Значення цього поля повинні бути уніка�
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
-msgstr ""
+msgstr "Всі подробиці подій будуть поділені з вашою командою."
 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
@@ -2799,11 +2780,11 @@ msgstr "Формат часу"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "Time zone"
-msgstr ""
+msgstr "Часовий пояс"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Timestamp and participants will be shared with your team."
-msgstr ""
+msgstr "Відмітка часу та учасники будуть поділені з вашою командою."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to monthly"
@@ -2815,7 +2796,7 @@ msgstr "на річний"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
-msgstr ""
+msgstr "Всього користувачів"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 msgid "Trigger Type"
@@ -2827,7 +2808,7 @@ msgstr "Тип тригера повинен бути Ручний - коли н
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
-msgstr ""
+msgstr "Істинно"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -2863,7 +2844,7 @@ msgstr "Необмежена кількість контактів"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Updated"
-msgstr ""
+msgstr "Оновлено"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -2906,19 +2887,19 @@ msgstr "Користувач"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Email"
-msgstr ""
+msgstr "Електронна адреса користувача"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User ID"
-msgstr ""
+msgstr "Ідентифікатор користувача"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
-msgstr ""
+msgstr "Імітація користувача"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Info"
-msgstr ""
+msgstr "Інформація користувача"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -2927,11 +2908,11 @@ msgstr "Користувач не увійшов в систему"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Name"
-msgstr ""
+msgstr "Ім'я користувача"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Users"
-msgstr ""
+msgstr "Користувачі"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2941,7 +2922,7 @@ msgstr "Значення"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
-msgstr ""
+msgstr "Версія програми"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Vietnamese"
@@ -2949,7 +2930,7 @@ msgstr "В'єтнамська"
 
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
-msgstr ""
+msgstr "Перегляд"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
@@ -2962,23 +2943,23 @@ msgstr "Переглянути деталі виконання"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "View settings"
-msgstr ""
+msgstr "Налаштування перегляду"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
-msgstr ""
+msgstr "Тип перегляду"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Visibility"
-msgstr ""
+msgstr "Видимість"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Visible"
-msgstr ""
+msgstr "Видимий"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Visible groups"
-msgstr ""
+msgstr "Видимі групи"
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
@@ -2994,7 +2975,7 @@ msgstr "Ми будемо надсилати POST запити на цей кі�
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "We will send your a link to verify domain ownership"
-msgstr ""
+msgstr "Ми надішлемо вам посилання для перевірки права власності на домен"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Webhook"
@@ -3071,15 +3052,15 @@ msgstr "Назва працевлаштування"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Name"
-msgstr ""
+msgstr "Назва робочого простору"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
-msgstr ""
+msgstr "Робочі простори"
 
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Wrap on record pages"
-msgstr ""
+msgstr "Обернути на сторінках записів"
 
 #: src/pages/settings/roles/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -3090,7 +3071,7 @@ msgstr "Написати опис"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Write a secret"
-msgstr ""
+msgstr "Написати секрет"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -3111,11 +3092,11 @@ msgstr "Ваш залишок кредитів буде використано �
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Your email subjects and meeting titles will be shared with your team."
-msgstr ""
+msgstr "Ваші теми листів та назви зустрічей будуть поділені з вашою командою."
 
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Your emails and events content will be shared with your team."
-msgstr ""
+msgstr "Ваш вміст електронних листів та подій буде поділено з вашою командою."
 
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"
