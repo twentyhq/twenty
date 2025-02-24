@@ -4,7 +4,7 @@ import {
   userGetAvatarChipsBuilder,
 } from '@ui/display/chip/hooks/useGetAvatarChipBuilder';
 
-export type LinkAvatarChipProps = AvatarChipsCommonProps & { to?: string };
+export type LinkAvatarChipProps = AvatarChipsCommonProps & { to: string };
 
 export const LinkAvatarChip = ({ to, ...commonProps }: LinkAvatarChipProps) => {
   const { getLeftComponent, variant } = userGetAvatarChipsBuilder(commonProps);

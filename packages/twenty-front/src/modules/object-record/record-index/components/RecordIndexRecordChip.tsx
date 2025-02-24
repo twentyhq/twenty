@@ -9,7 +9,7 @@ export type RecordIdentifierChipProps = {
   record: ObjectRecord;
   variant?: AvatarChipVariant;
   size?: ChipSize;
-  to?: string;
+  to: string;
   maxWidth?: number;
   onClick?: () => void;
 };

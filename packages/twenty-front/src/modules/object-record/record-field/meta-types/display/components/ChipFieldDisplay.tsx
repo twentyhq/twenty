@@ -5,6 +5,7 @@ import { RecordIdentifierChip } from '@/object-record/record-index/components/Re
 import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { ChipSize } from 'twenty-ui';
 
 export const ChipFieldDisplay = () => {
@@ -21,11 +22,11 @@ export const ChipFieldDisplay = () => {
 
   const { openRecordInCommandMenu } = useCommandMenu();
 
-  if (!recordValue) {
+  if (!isDefined(recordValue)) {
     return null;
   }
 
-  return isLabelIdentifier ? (
+  return isLabelIdentifier && isDefined(labelIdentifierLink) ? (
     <RecordIdentifierChip
       objectNameSingular={objectNameSingular}
       record={recordValue}
