@@ -1815,7 +1815,7 @@ export enum SettingsPermissions {
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   WORKSPACE = 'WORKSPACE',
-  WORKSPACE_USERS = 'WORKSPACE_USERS'
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
 
 export type SetupOidcSsoInput = {
@@ -2058,6 +2058,7 @@ export type UpdateWorkspaceInput = {
 export type User = {
   __typename?: 'User';
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
+  canAccessFullAdminPanel: Scalars['Boolean']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   currentUserWorkspace?: Maybe<UserWorkspace>;
@@ -2211,6 +2212,7 @@ export type Workspace = {
   metadataVersion: Scalars['Float']['output'];
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  version?: Maybe<Scalars['String']['output']>;
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
   workspaceUrls: WorkspaceUrls;
 };
