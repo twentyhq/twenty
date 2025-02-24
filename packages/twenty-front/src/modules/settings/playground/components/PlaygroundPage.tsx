@@ -1,5 +1,8 @@
 import { SettingsPath } from '@/types/SettingsPath';
-import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import {
+  PAGE_BAR_MIN_HEIGHT,
+  PageHeader,
+} from '@/ui/layout/page/components/PageHeader';
 import {
   Breadcrumb,
   BreadcrumbProps,
@@ -20,11 +23,13 @@ const StyledPage = styled.div`
   flex-direction: column;
   width: 100dvw;
   height: 100dvh;
+  background: ${({ theme }) => theme.background.noisy};
 `;
 
-const StyledMainContainer = styled.div`
-  flex: 1 1 auto;
-  overflow-y: scroll;
+const StyledMainContainer = styled.div<{ pageBarHeight: number }>`
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  height: calc(100vh - ${({ pageBarHeight }) => `${pageBarHeight}px`});
   width: 100vw;
 `;
 
@@ -50,7 +55,9 @@ export const PlaygroundPage = ({ children, links }: PlaygroundPageProps) => {
           ariaLabel={t`Close playground`}
         />
       </PageHeader>
-      <StyledMainContainer>{children}</StyledMainContainer>
+      <StyledMainContainer pageBarHeight={PAGE_BAR_MIN_HEIGHT}>
+        {children}
+      </StyledMainContainer>
     </StyledPage>
   );
 };
