@@ -15,6 +15,7 @@ describe('isValidUrl', () => {
     expect(isValidUrl('http://localhost:3000')).toBe(true);
     expect(isValidUrl('example.com')).toBe(true);
     expect(isValidUrl('www.subdomain.example.com')).toBe(true);
+    expect(isValidUrl('192.168.2.0')).toBe(true);
 
     // Falsy
     expect(isValidUrl('?o')).toBe(false);

@@ -1,8 +1,7 @@
-export const isValidUrl = (url: string) => {
-  const urlRegex =
-    /^(https?:\/\/)?((([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(localhost))(:\d+)?(\/[^\s]*)?(\?[^\s]*)?$/;
+import { absoluteUrlSchema } from 'src/utils/url/absoluteUrlSchema';
 
-  const urlPattern = new RegExp(urlRegex, 'i');
+export const isValidUrl = (url: string): boolean => {
+  const result = absoluteUrlSchema.safeParse(url);
 
-  return !!urlPattern.test(url);
+  return result.success;
 };

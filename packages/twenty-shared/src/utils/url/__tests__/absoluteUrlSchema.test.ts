@@ -27,8 +27,8 @@ describe('absoluteUrlSchema', () => {
   });
 
   it('fails for invalid urls', () => {
+    expect(absoluteUrlSchema.safeParse('https://2').success).toBe(false);
     expect(absoluteUrlSchema.safeParse('?o').success).toBe(false);
     expect(absoluteUrlSchema.safeParse('\\').success).toBe(false);
-    expect(absoluteUrlSchema.safeParse('https://2')).toBe(false);
   });
 });

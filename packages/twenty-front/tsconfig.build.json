@@ -18,5 +18,5 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx"
-, "../twenty-shared/src/utils/url/absoluteUrlSchema.ts", "../twenty-shared/src/utils/url/is-domain.ts"  ]
+, "../twenty-shared/src/utils/url/urlSchema.ts"../twenty-shared/src/utils/url/absoluteUrlSchema.ts", "../twenty-shared/src/utils/url/is-domain.ts", "../twenty-shared/src/utils/url/getUrlHostname.ts", "../twenty-shared/src/utils/url/isValidUrl.ts"  ]
 }

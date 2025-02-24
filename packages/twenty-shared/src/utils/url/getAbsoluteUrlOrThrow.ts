@@ -1,9 +1,9 @@
 import { absoluteUrlSchema } from 'src/utils/url/absoluteUrlSchema';
 
-export const getAbsoluteUrl = (url: string) => {
+export const getAbsoluteUrlOrThrow = (url: string): string => {
   try {
     return absoluteUrlSchema.parse(url);
   } catch {
-    return '';
+    throw new Error('Invalid URL');
   }
 };

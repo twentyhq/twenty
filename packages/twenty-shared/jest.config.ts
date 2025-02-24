@@ -4,6 +4,7 @@ import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 const tsConfig = require('./tsconfig.json');
 
 const jestConfig: JestConfigWithTsJest = {
+  silent: false,
   displayName: 'twenty-ui',
   preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
