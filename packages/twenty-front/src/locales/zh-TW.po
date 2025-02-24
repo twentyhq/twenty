@@ -1544,7 +1544,7 @@ msgstr "無效的身份驗證提供者"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr ""
+msgstr "無效的自定義域名。請至少包含一個子域名（例如，sub.example.com）。"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -1909,7 +1909,7 @@ msgstr "新的 SSO 提供者"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
-msgstr ""
+msgstr "未檢測到變更"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"

@@ -1544,7 +1544,7 @@ msgstr "Neplatný poskytovatel ověřování"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr ""
+msgstr "Neplatná vlastní doména. Uveďte prosím alespoň jednu subdoménu (např. sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -1909,7 +1909,7 @@ msgstr "Nový poskytovatel SSO"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
-msgstr ""
+msgstr "Žádná změna nebyla zjištěna"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"

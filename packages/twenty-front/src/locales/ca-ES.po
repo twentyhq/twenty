@@ -1544,7 +1544,7 @@ msgstr "Proveïdor d'autenticació no vàlid"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr ""
+msgstr "Domini personalitzat no vàlid. Si us plau, inclogueu almenys un subdomini (p. ex., sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -1909,7 +1909,7 @@ msgstr "Nou proveïdor SSO"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
-msgstr ""
+msgstr "No s'ha detectat cap canvi"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"

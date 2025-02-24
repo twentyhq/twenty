@@ -1544,7 +1544,7 @@ msgstr "Virheellinen autentikointipalvelu"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr ""
+msgstr "Virheellinen mukautettu verkkotunnus. Ole hyvä ja sisällytä vähintään yksi aliverkkotunnus (esim., alaesimerkki.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -1909,7 +1909,7 @@ msgstr "Uusi SSO-tarjoaja"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
-msgstr ""
+msgstr "Ei muutoksia havaittu"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"

@@ -1544,7 +1544,7 @@ msgstr "無効な認証プロバイダー"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr ""
+msgstr "無効なカスタムドメインです。少なくとも1つのサブドメインを含めてください（例：sub.example.com）。"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -1909,7 +1909,7 @@ msgstr "新しいSSOプロバイダー"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
-msgstr ""
+msgstr "変更なし"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
