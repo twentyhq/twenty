@@ -98,20 +98,15 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('useMoveSoftFocusToCurrentCellOnHover', () => {
   it('should work as expected', () => {
     const { result } = renderHook(
-      () => {
-        return {
-          moveSoftFocusToCurrentCellOnHover:
-            useMoveSoftFocusToCurrentCellOnHover('scopeId'),
-        };
-      },
+      () => useMoveSoftFocusToCurrentCellOnHover('scopeId'),
       { wrapper: Wrapper },
     );
 
     act(() => {
-      // result.current.moveSoftFocusToCurrentCellOnHover({
-      //   column: 1,
-      //   row: 0,
-      // });
+      result.current.moveSoftFocusToCurrentCell({
+        column: 1,
+        row: 0,
+      });
     });
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
