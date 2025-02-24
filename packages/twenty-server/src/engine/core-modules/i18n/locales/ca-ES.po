@@ -2286,4 +2286,3 @@ msgstr "La teva contrasenya s'ha canviat amb èxit"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "El teu membre de l'equip responsable de la gestió del compte de l'empresa"
-

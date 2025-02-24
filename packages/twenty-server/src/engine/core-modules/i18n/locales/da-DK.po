@@ -1561,7 +1561,8 @@ msgstr "Køringer"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Scopes"
-msgstr "R\n"
+msgstr ""
+"R\n"
 "ettigheder"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
@@ -2287,4 +2288,3 @@ msgstr "Din adgangskode er blevet ændret med succes"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Dit teammedlem ansvarlig for at forvalte virksomhedens konto"
-

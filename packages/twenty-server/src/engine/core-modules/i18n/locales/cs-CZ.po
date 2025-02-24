@@ -2286,4 +2286,3 @@ msgstr "Vaše heslo bylo úspěšně změněno"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Člen vašeho týmu odpovědný za správu firemního účtu"
-

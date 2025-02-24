@@ -2286,4 +2286,3 @@ msgstr "パスワードが正常に変更されました"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "会社のアカウントを管理する責任のあるチームメンバー"
-
