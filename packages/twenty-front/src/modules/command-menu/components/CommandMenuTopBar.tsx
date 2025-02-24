@@ -15,6 +15,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -153,15 +154,22 @@ export const CommandMenuTopBar = () => {
       <StyledContentContainer>
         {isCommandMenuV2Enabled && (
           <>
-            {commandMenuPage !== CommandMenuPages.Root && (
-              <CommandMenuContextChip
-                Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-                onClick={() => {
-                  goBackFromCommandMenu();
-                }}
-                testId="command-menu-go-back-button"
-              />
-            )}
+            <AnimatePresence>
+              {commandMenuPage !== CommandMenuPages.Root && (
+                <motion.div
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: theme.animation.duration.instant }}
+                >
+                  <CommandMenuContextChip
+                    Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+                    onClick={() => {
+                      goBackFromCommandMenu();
+                    }}
+                    testId="command-menu-go-back-button"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
             {isDefined(contextStoreCurrentObjectMetadataItem) &&
             commandMenuPage !== CommandMenuPages.SearchRecords ? (
               <CommandMenuContextChipGroupsWithRecordSelection
