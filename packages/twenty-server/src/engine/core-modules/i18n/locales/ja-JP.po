@@ -2263,7 +2263,7 @@ msgstr "ワークスペースメンバーの名前"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "ワークスペースメンバーの位置"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
@@ -2286,3 +2286,4 @@ msgstr "パスワードが正常に変更されました"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "会社のアカウントを管理する責任のあるチームメンバー"
+

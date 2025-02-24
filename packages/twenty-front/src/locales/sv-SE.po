@@ -3084,3 +3084,4 @@ msgstr "Din arbetsyta"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Din arbetsyta kommer att bli inaktiverad"
+

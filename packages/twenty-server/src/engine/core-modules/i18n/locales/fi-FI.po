@@ -2263,7 +2263,7 @@ msgstr "Työtilan jäsenen nimi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Työtilan jäsenen asema"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
@@ -2286,3 +2286,4 @@ msgstr "Salasanasi on vaihdettu onnistuneesti"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Tiimin jäsen vastuussa yritystilin hallinnasta"
+

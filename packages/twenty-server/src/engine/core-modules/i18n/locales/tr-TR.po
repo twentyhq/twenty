@@ -2263,7 +2263,7 @@ msgstr "Çalışma alanı üyesi ismi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Çalışma alanı üyesi pozisyonu"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
@@ -2286,3 +2286,4 @@ msgstr "Şifreniz Başarıyla Değiştirildi"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Şirket hesabını yönetmekten sorumlu ekip üyeniz"
+
