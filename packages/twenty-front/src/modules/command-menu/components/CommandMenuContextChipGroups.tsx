@@ -50,7 +50,7 @@ export const CommandMenuContextChipGroups = ({
             <DropdownMenuItemsContainer>
               {firstChips.map((chip) => (
                 <MenuItem
-                  //LeftIcon={chip.Icons?.[0]}
+                  LeftComponent={chip.Icons}
                   text={chip.text}
                   onClick={chip.onClick}
                 />
