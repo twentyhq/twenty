@@ -46,9 +46,12 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
             totalCount,
           ),
           Icons: Avatars,
-          onClick: () => {
-            openRootCommandMenu();
-          },
+          onClick:
+            contextChips.length > 0
+              ? () => {
+                  openRootCommandMenu();
+                }
+              : undefined,
         }
       : undefined;
 
