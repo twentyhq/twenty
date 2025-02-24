@@ -1,12 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import {
-  capitalize,
-  isObjectRecordUnderObjectRecordsPermissions,
-  PermissionsOnAllObjectRecords,
-  SettingsPermissions,
-} from 'twenty-shared';
+import { capitalize, PermissionsOnAllObjectRecords } from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -35,6 +30,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -103,12 +99,9 @@ export abstract class GraphqlQueryBaseResolverService<
 
       if (
         featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
-        isObjectRecordUnderObjectRecordsPermissions({
-          isCustom: objectMetadataItemWithFieldMaps.isCustom,
-          nameSingular: objectMetadataItemWithFieldMaps.nameSingular,
-        })
+        !objectMetadataItemWithFieldMaps.isSystem
       ) {
-        await this.validateCustomObjectPermissionsOrThrow({
+        await this.validateObjectRecordPermissionsOrThrow({
           operationName,
           options,
         });
@@ -230,7 +223,7 @@ export abstract class GraphqlQueryBaseResolverService<
     }
   }
 
-  private async validateCustomObjectPermissionsOrThrow({
+  private async validateObjectRecordPermissionsOrThrow({
     operationName,
     options,
   }: {

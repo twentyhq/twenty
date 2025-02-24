@@ -1,4 +1,6 @@
 import styled from '@emotion/styled';
+import { MessageDescriptor } from '@lingui/core';
+import { Trans } from '@lingui/react';
 import { ReactNode } from 'react';
 
 import { Card, CardContent, Radio } from 'twenty-ui';
@@ -40,8 +42,8 @@ const StyledRadio = styled(Radio)`
 export const SettingsAccountsRadioSettingsCard = <
   Option extends {
     cardMedia: ReactNode;
-    description: string;
-    title: string;
+    description: MessageDescriptor;
+    title: MessageDescriptor;
     value: string;
   },
 >({
@@ -59,8 +61,12 @@ export const SettingsAccountsRadioSettingsCard = <
       >
         {option.cardMedia}
         <div>
-          <StyledTitle>{option.title}</StyledTitle>
-          <StyledDescription>{option.description}</StyledDescription>
+          <StyledTitle>
+            <Trans id={option.title.id} />
+          </StyledTitle>
+          <StyledDescription>
+            <Trans id={option.description.id} />
+          </StyledDescription>
         </div>
         <StyledRadio
           name={name}

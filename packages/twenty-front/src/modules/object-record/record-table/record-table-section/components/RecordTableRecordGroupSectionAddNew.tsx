@@ -6,6 +6,7 @@ import { RecordTableActionRow } from '@/object-record/record-table/record-table-
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { IconPlus } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
   const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
@@ -36,7 +37,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
       draggableId={`add-new-record-${currentRecordGroupId}`}
       draggableIndex={recordIds.length + 2}
       LeftIcon={IconPlus}
-      text="Add new"
+      text={t`Add new`}
       onClick={handleAddNewRecord}
     />
   );

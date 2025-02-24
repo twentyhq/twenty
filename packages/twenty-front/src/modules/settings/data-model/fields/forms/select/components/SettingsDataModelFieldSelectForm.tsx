@@ -32,6 +32,7 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useRecoilValue } from 'recoil';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
+import { t } from '@lingui/core/macro';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),
@@ -259,13 +260,13 @@ export const SettingsDataModelFieldSelectForm = ({
                         fill={MAIN_COLORS.yellow}
                       />
                     </StyledIconContainer>
-                    <StyledApiKey>API values</StyledApiKey>
+                    <StyledApiKey>{t`API values`}</StyledApiKey>
                   </StyledApiKeyContainer>
                 </AdvancedSettingsWrapper>
                 <StyledOptionsLabel
                   isAdvancedModeEnabled={isAdvancedModeEnabled}
                 >
-                  Options
+                  {t`Options`}
                 </StyledOptionsLabel>
               </StyledLabelContainer>
               <DraggableList
@@ -331,7 +332,7 @@ export const SettingsDataModelFieldSelectForm = ({
             </StyledContainer>
             <StyledFooter>
               <StyledButton
-                title="Add option"
+                title={t`Add option`}
                 Icon={IconPlus}
                 onClick={handleAddOption}
               />

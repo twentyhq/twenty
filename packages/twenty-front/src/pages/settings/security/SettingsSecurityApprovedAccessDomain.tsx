@@ -108,7 +108,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Domain" description="The name of your Domain" />
+          <H2Title title={t`Domain`} description={t`The name of your Domain`} />
           <Controller
             name="domain"
             control={formConfig.control}
@@ -128,8 +128,8 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         </Section>
         <Section>
           <H2Title
-            title="Email verification"
-            description="We will send your a link to verify domain ownership"
+            title={t`Email verification`}
+            description={t`We will send your a link to verify domain ownership`}
           />
           <Controller
             name="email"

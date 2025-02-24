@@ -8,7 +8,8 @@ import {
   IconTrashX,
   Section,
 } from 'twenty-ui';
-import { Role, SettingsPermissions } from '~/generated-metadata/graphql';
+import { Role } from '~/generated-metadata/graphql';
+import { SettingsPermissions } from '~/generated/graphql';
 import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/components/RolePermissionsObjectsTableHeader';
 import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/components/RolePermissionsSettingsTableHeader';
 import { RolePermissionsSettingsTableRow } from '~/pages/settings/roles/components/RolePermissionsSettingsTableRow';
@@ -81,7 +82,7 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
       value: role.canUpdateAllSettings,
     },
     {
-      key: SettingsPermissions.WORKSPACE_USERS,
+      key: SettingsPermissions.WORKSPACE_MEMBERS,
       label: 'Workspace Users',
       type: 'Members',
       value: role.canUpdateAllSettings,

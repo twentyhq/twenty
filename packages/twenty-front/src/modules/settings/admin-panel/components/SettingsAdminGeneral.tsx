@@ -9,6 +9,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -25,6 +26,7 @@ import {
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import packageJson from '../../../../../package.json';
 
 const StyledContainer = styled.div`
@@ -52,6 +54,11 @@ const StyledContentContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)} 0;
 `;
 
+const StyledErrorMessage = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueSnackBar } = useSnackBar();
@@ -65,6 +72,10 @@ export const SettingsAdminGeneral = () => {
   const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 
   const [userLookup] = useUserLookupAdminPanelMutation();
+
+  const currentUser = useRecoilValue(currentUserState);
+
+  const canImpersonate = currentUser?.canImpersonate;
 
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
@@ -120,7 +131,7 @@ export const SettingsAdminGeneral = () => {
   return (
     <>
       <Section>
-        <H2Title title="About" description="Version of the application" />
+        <H2Title title={t`About`} description={t`Version of the application`} />
         <GithubVersionLink version={packageJson.version} />
       </Section>
 
@@ -128,13 +139,13 @@ export const SettingsAdminGeneral = () => {
         <H2Title
           title={
             canManageFeatureFlags
-              ? 'Feature Flags & Impersonation'
-              : 'User Impersonation'
+              ? t`Feature Flags & Impersonation`
+              : t`User Impersonation`
           }
           description={
             canManageFeatureFlags
-              ? 'Look up users and manage their workspace feature flags or impersonate them.'
-              : 'Look up users to impersonate them.'
+              ? t`Look up users and manage their workspace feature flags or impersonate them.`
+              : t`Look up users to impersonate them.`
           }
         />
 
@@ -143,7 +154,7 @@ export const SettingsAdminGeneral = () => {
             value={userIdentifier}
             onChange={setUserIdentifier}
             onInputEnter={handleSearch}
-            placeholder="Enter user ID or email address"
+            placeholder={t`Enter user ID or email address`}
             fullWidth
             disabled={isUserLookupLoading}
           />
@@ -151,26 +162,39 @@ export const SettingsAdminGeneral = () => {
             Icon={IconSearch}
             variant="primary"
             accent="blue"
-            title="Search"
+            title={t`Search`}
             onClick={handleSearch}
-            disabled={!userIdentifier.trim() || isUserLookupLoading}
+            disabled={
+              !userIdentifier.trim() || isUserLookupLoading || !canImpersonate
+            }
           />
         </StyledContainer>
+        {!canImpersonate && (
+          <StyledErrorMessage>
+            {t`You do not have access to impersonate users.`}
+          </StyledErrorMessage>
+        )}
       </Section>
 
       {isDefined(userLookupResult) && (
         <Section>
           <StyledUserInfo>
-            <H1Title title="User Info" fontColor={H1TitleFontColor.Primary} />
-            <H2Title title={userFullName} description="User Name" />
+            <H1Title
+              title={t`User Info`}
+              fontColor={H1TitleFontColor.Primary}
+            />
+            <H2Title title={userFullName} description={t`User Name`} />
             <H2Title
               title={userLookupResult.user.email}
-              description="User Email"
+              description={t`User Email`}
             />
-            <H2Title title={userLookupResult.user.id} description="User ID" />
+            <H2Title
+              title={userLookupResult.user.id}
+              description={t`User ID`}
+            />
           </StyledUserInfo>
 
-          <H1Title title="Workspaces" fontColor={H1TitleFontColor.Primary} />
+          <H1Title title={t`Workspaces`} fontColor={H1TitleFontColor.Primary} />
           <StyledTabListContainer>
             <TabList
               tabs={tabs}
