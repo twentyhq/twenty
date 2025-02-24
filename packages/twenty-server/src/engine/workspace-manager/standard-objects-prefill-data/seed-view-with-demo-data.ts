@@ -14,6 +14,8 @@ import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { chargesAllView } from './views/charges-all-views';
+import { integrationsAllView } from './views/integrations-all-views';
 
 export const seedViewWithDemoData = async (
   entityManager: EntityManager,
@@ -23,6 +25,8 @@ export const seedViewWithDemoData = async (
   const viewDefinitions = [
     seedCompaniesAllView(objectMetadataStandardIdToIdMap),
     peopleAllView(objectMetadataStandardIdToIdMap),
+    chargesAllView(objectMetadataStandardIdToIdMap),
+    integrationsAllView(objectMetadataStandardIdToIdMap),
     opportunitiesAllView(objectMetadataStandardIdToIdMap),
     opportunitiesByStageView(objectMetadataStandardIdToIdMap),
     notesAllView(objectMetadataStandardIdToIdMap),

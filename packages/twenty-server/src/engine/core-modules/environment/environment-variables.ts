@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsDefined,
   IsEnum,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -1038,6 +1039,14 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_ATTACHMENT_PREVIEW_ENABLED = true;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'Secret key for stripe custom integration',
+  })
+  @IsNotEmpty()
+  @IsString()
+  WEBHOOK_STRIPE_SECRETKEY: string;
 }
 
 export const validate = (

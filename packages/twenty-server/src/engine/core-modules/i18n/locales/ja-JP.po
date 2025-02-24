@@ -42,6 +42,10 @@ msgstr "(システム) ビューソート"
 msgid "(System) Views"
 msgstr "(システム) ビュー"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "A charge"
+msgstr ""
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
 msgstr "会社"
@@ -61,6 +65,10 @@ msgstr "お気に入りフォルダ"
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "関連するメッセージのグループ（例：メールスレッド、チャットスレッド）"
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "A integration"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
@@ -144,6 +152,10 @@ msgstr "会社の住所"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "会社の住所 - 新しい住所フィールドに取って代わられ、非推奨"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Agent Id"
+msgstr ""
+
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Aggregate operation"
@@ -214,8 +226,20 @@ msgid "Assignee"
 msgstr "担当者"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated Agent Id"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated User Document"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "関連ユーザーID"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated User Phone"
+msgstr ""
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment"
@@ -226,12 +250,20 @@ msgid "Attachment author"
 msgstr "添付ファイル作成者"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment charge"
+msgstr ""
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "添付ファイルの会社"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
 msgstr "添付ファイルのフルパス"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment integration"
+msgstr ""
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment name"
@@ -261,7 +293,9 @@ msgstr "添付ファイルの種類"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
@@ -271,6 +305,10 @@ msgstr "添付ファイル"
 msgid "Attachments created by the workspace member"
 msgstr "ワークスペースメンバーが作成した添付ファイル"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Attachments linked to the charge"
+msgstr ""
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Attachments linked to the company"
 msgstr "会社に関連する添付ファイル"
@@ -278,6 +316,10 @@ msgstr "会社に関連する添付ファイル"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "連絡先に関連する添付ファイル"
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Attachments linked to the integration"
+msgstr ""
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
@@ -423,6 +465,43 @@ msgstr "チャンネルID"
 msgid "Channel Type"
 msgstr "チャンネルタイプ"
 
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Charge"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge discount"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge price"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge product"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge quantity"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge record position"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge recurrence"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charges"
+msgstr ""
+
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "City"
 msgstr "市"
@@ -455,6 +534,11 @@ msgid "Company"
 msgstr "会社"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Company linked to the charge"
+msgstr ""
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
 msgstr "会社レコードの位置"
 
@@ -479,6 +563,10 @@ msgstr "接続アカウント"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
 msgstr "接続アカウント"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Contact"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -552,6 +640,10 @@ msgstr "作成日"
 msgid "Creation DateTime"
 msgstr "作成日時"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Customer"
+msgstr ""
+
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
 msgstr "日付形式"
@@ -578,6 +670,10 @@ msgstr "説明"
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "方向"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Discount"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -616,6 +712,10 @@ msgid "End Date"
 msgstr "終了日"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event charge"
+msgstr ""
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "イベント会社"
 
@@ -641,6 +741,10 @@ msgstr "イベント外部ID"
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event ID"
 msgstr "イベントID"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event integration"
+msgstr ""
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Event Listeners"
@@ -699,8 +803,18 @@ msgstr "イベントワークスペースメンバー"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Events"
 msgstr "イベント"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Events linked to the charge"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Events linked to the integration"
+msgstr ""
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
@@ -940,6 +1054,29 @@ msgstr "理想的な顧客プロフィール：会社が最も適切で価値の
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "If the event is related to a particular object"
 msgstr "このイベントが特定のオブジェクトに関連しているかどうか"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Integration"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Integration linked to the charge"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integration name"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integration record position"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integrations"
+msgstr ""
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1214,6 +1351,7 @@ msgstr "メッセージングプロバイダーのリフレッシュトークン
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1414,6 +1552,10 @@ msgstr "\"親ビューフィルタグループ\""
 msgid "Parent View Filter Group Id"
 msgstr "\"親ビューフィルタグループID\""
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Payment Gateway"
+msgstr ""
+
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
@@ -1435,6 +1577,11 @@ msgstr "会社に紐づいた人々。"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Person"
 msgstr "\"人物\""
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Person linked to the charge"
+msgstr ""
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
@@ -1462,9 +1609,11 @@ msgstr "\"担当者\""
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
@@ -1491,13 +1640,25 @@ msgstr "\"好みのカラースキーム\""
 msgid "Preferred language"
 msgstr "\"好みの言語\""
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Price"
+msgstr ""
+
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
 msgstr "\"確率\""
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Product"
+msgstr ""
+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "\"プロバイダ\""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Quantity"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
@@ -1507,6 +1668,10 @@ msgstr "\"受信日時\""
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Record id"
 msgstr "\"レコードID\""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Recurrence"
+msgstr ""
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -1881,12 +2046,20 @@ msgid "Update DateTime"
 msgstr "更新日時"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User Document"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Email"
 msgstr "ユーザーのメールアドレス"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "ユーザーID"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User phone"
+msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"

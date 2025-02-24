@@ -42,6 +42,10 @@ msgstr "(System) Sortowania widoku"
 msgid "(System) Views"
 msgstr "(System) Widoki"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "A charge"
+msgstr ""
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
 msgstr "Firma"
@@ -61,6 +65,10 @@ msgstr "Folder ulubionych"
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "Grupa powiązanych wiadomości (np. wątek e-mail, wątek czatu)"
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "A integration"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
@@ -144,6 +152,10 @@ msgstr "Adres firmy"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Adres firmy - przestarzały, w miejsce tego nowe pole adresowe"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Agent Id"
+msgstr ""
+
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Aggregate operation"
@@ -214,8 +226,20 @@ msgid "Assignee"
 msgstr "Przydzielony"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated Agent Id"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated User Document"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Identyfikator powiązanego użytkownika"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated User Phone"
+msgstr ""
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment"
@@ -226,12 +250,20 @@ msgid "Attachment author"
 msgstr "Autor załącznika"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment charge"
+msgstr ""
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "Firma załącznika"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
 msgstr "Pełna ścieżka załącznika"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment integration"
+msgstr ""
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment name"
@@ -261,7 +293,9 @@ msgstr "Typ załącznika"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
@@ -271,6 +305,10 @@ msgstr "Załączniki"
 msgid "Attachments created by the workspace member"
 msgstr "Załączniki utworzone przez członka przestrzeni roboczej"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Attachments linked to the charge"
+msgstr ""
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Attachments linked to the company"
 msgstr "Załączniki powiązane z firmą"
@@ -278,6 +316,10 @@ msgstr "Załączniki powiązane z firmą"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "Załączniki powiązane z kontaktem."
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Attachments linked to the integration"
+msgstr ""
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
@@ -423,6 +465,43 @@ msgstr "ID Kanału"
 msgid "Channel Type"
 msgstr "Typ Kanału"
 
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Charge"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge discount"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge price"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge product"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge quantity"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge record position"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge recurrence"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charges"
+msgstr ""
+
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "City"
 msgstr "Miasto"
@@ -455,6 +534,11 @@ msgid "Company"
 msgstr "Firma"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Company linked to the charge"
+msgstr ""
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
 msgstr "Pozycja w rekordzie firmy"
 
@@ -479,6 +563,10 @@ msgstr "Powiązane konta"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
 msgstr "Powiązane Konta"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Contact"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -552,6 +640,10 @@ msgstr "Data utworzenia"
 msgid "Creation DateTime"
 msgstr "Data i Czas Utworzenia"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Customer"
+msgstr ""
+
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
 msgstr "Format daty"
@@ -578,6 +670,10 @@ msgstr "Opis"
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "Kierunek"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Discount"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -616,6 +712,10 @@ msgid "End Date"
 msgstr "Data zakończenia"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event charge"
+msgstr ""
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "Firma zdarzenia"
 
@@ -641,6 +741,10 @@ msgstr "Zewnętrzne ID zdarzenia"
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event ID"
 msgstr "ID zdarzenia"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event integration"
+msgstr ""
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Event Listeners"
@@ -699,8 +803,18 @@ msgstr "Członek obszaru roboczego zdarzenia"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Events"
 msgstr "Wydarzenia"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Events linked to the charge"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Events linked to the integration"
+msgstr ""
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
@@ -940,6 +1054,29 @@ msgstr "Idealny Profil Klienta: Wskazuje, czy firma jest najbardziej odpowiednim
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "If the event is related to a particular object"
 msgstr "Jeśli wydarzenie jest powiązane z konkretnym obiektem"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Integration"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Integration linked to the charge"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integration name"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integration record position"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integrations"
+msgstr ""
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1214,6 +1351,7 @@ msgstr "Token odświeżania dostawcy usług wiadomości"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1414,6 +1552,10 @@ msgstr "Nadrzędna grupa filtrów widoku"
 msgid "Parent View Filter Group Id"
 msgstr "Identyfikator nadrzędnej grupy filtrów widoku"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Payment Gateway"
+msgstr ""
+
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
@@ -1435,6 +1577,11 @@ msgstr "Osoby powiązane ze spółką."
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Person"
 msgstr "Osoba"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Person linked to the charge"
+msgstr ""
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
@@ -1462,9 +1609,11 @@ msgstr "Osoba kontaktowa"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
@@ -1491,13 +1640,25 @@ msgstr "Preferowany schemat kolorów"
 msgid "Preferred language"
 msgstr "Preferowany język"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Price"
+msgstr ""
+
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
 msgstr "Prawdopodobieństwo"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Product"
+msgstr ""
+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "dostawca"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Quantity"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
@@ -1507,6 +1668,10 @@ msgstr "Odebrano"
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Record id"
 msgstr "Identyfikator rekordu"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Recurrence"
+msgstr ""
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -1881,12 +2046,20 @@ msgid "Update DateTime"
 msgstr "Data i czas aktualizacji"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User Document"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Email"
 msgstr "Email użytkownika"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "Identyfikator użytkownika"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User phone"
+msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"

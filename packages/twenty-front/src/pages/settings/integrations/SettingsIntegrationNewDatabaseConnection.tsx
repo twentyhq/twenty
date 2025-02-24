@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsIntegrationDatabaseConnectionForm,
@@ -20,11 +21,17 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { H2Title, Section } from 'twenty-ui';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import SripeLoginButton from './stripe/components/SripeLoginButton';
+import {
+  StripeContext,
+  StripeIntegrationContextType,
+} from './stripe/context/StripeContext';
 
 const createRemoteServerInputPostgresSchema =
   settingsIntegrationPostgreSQLConnectionFormSchema.transform<CreateRemoteServerInput>(
@@ -79,6 +86,10 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   const { createOneDatabaseConnection } = useCreateOneDatabaseConnection();
   const { enqueueSnackBar } = useSnackBar();
+
+  const { stripeLogin } = useContext(
+    StripeContext,
+  ) as StripeIntegrationContextType;
 
   const isIntegrationEnabled = useIsSettingsIntegrationEnabled(databaseKey);
 
@@ -136,6 +147,24 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
     }
   };
 
+  const title =
+    databaseKey === 'messenger'
+      ? 'Messenger Inbox'
+      : databaseKey === 'whatsapp'
+        ? 'WhatsApp Inbox'
+        : databaseKey === 'stripe'
+          ? 'Stripe Connection'
+          : "Stripe Connection";
+
+  const description =
+    databaseKey === 'messenger'
+      ? 'Start supporting your customers via Facebook Messenger'
+      : databaseKey === 'whatsapp'
+        ? 'Start supporting your customers via WhatsApp'
+        : databaseKey === 'stripe'
+          ? 'Add new stripe connection'
+          : "Add new connection";
+
   return (
     <SubMenuTopBarContainer
       title="New"
@@ -171,14 +200,40 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...formConfig}
         >
+          <SettingsHeaderContainer>
+            <Breadcrumb
+              links={[
+                {
+                  children: 'Integrations',
+                  href: settingsIntegrationsPagePath,
+                },
+                {
+                  children: integration.text,
+                  href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+                },
+                { children: 'New' },
+              ]}
+            />
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() =>
+                navigate(SettingsPath.IntegrationDatabase, {
+                  databaseKey,
+                })
+              }
+              onSave={handleSave}
+            />
+          </SettingsHeaderContainer>
           <Section>
-            <H2Title
-              title="Connect a new database"
-              description="Provide the information to connect your database"
-            />
-            <SettingsIntegrationDatabaseConnectionForm
-              databaseKey={databaseKey}
-            />
+            <H2Title title={title} description={description} />
+            {databaseKey === 'whatsapp' && (
+              <SettingsIntegrationDatabaseConnectionForm
+                databaseKey={databaseKey}
+              />
+            )}
+            {databaseKey === 'stripe' && (
+              <SripeLoginButton onClick={stripeLogin} />
+            )}
           </Section>
         </FormProvider>
       </SettingsPageContainer>

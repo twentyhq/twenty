@@ -45,3 +45,5 @@ dist-ssr
 
 # eslint-plugin-project-structure
 projectStructure.cache.json
+
+/src/pages/settings/integrations/stripe/key/*

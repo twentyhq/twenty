@@ -42,6 +42,10 @@ msgstr "(Sistema) Ordenaciones de Vista"
 msgid "(System) Views"
 msgstr "(Sistema) Vistas"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "A charge"
+msgstr ""
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
 msgstr "Una empresa"
@@ -61,6 +65,10 @@ msgstr "Una carpeta de favoritos"
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "Un grupo de mensajes relacionados (p. ej., hilo de correo electrónico, hilo de chat)"
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "A integration"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
@@ -144,6 +152,10 @@ msgstr "Dirección de la empresa"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Dirección de la empresa - obsoleta en favor del nuevo campo de dirección"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Agent Id"
+msgstr ""
+
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Aggregate operation"
@@ -214,8 +226,20 @@ msgid "Assignee"
 msgstr "Asignado"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated Agent Id"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated User Document"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "ID de usuario asociado"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated User Phone"
+msgstr ""
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment"
@@ -226,12 +250,20 @@ msgid "Attachment author"
 msgstr "Autor del adjunto"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment charge"
+msgstr ""
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "Empresa del adjunto"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
 msgstr "Ruta completa del adjunto"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment integration"
+msgstr ""
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment name"
@@ -261,7 +293,9 @@ msgstr "Tipo de adjunto"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
@@ -271,6 +305,10 @@ msgstr "Adjuntos"
 msgid "Attachments created by the workspace member"
 msgstr "Adjuntos creados por el miembro del espacio de trabajo"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Attachments linked to the charge"
+msgstr ""
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Attachments linked to the company"
 msgstr "Adjuntos vinculados a la empresa"
@@ -278,6 +316,10 @@ msgstr "Adjuntos vinculados a la empresa"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "Adjuntos vinculados al contacto."
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Attachments linked to the integration"
+msgstr ""
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
@@ -423,6 +465,43 @@ msgstr "ID del canal"
 msgid "Channel Type"
 msgstr "Tipo de canal"
 
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Charge"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge discount"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge price"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge product"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge quantity"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge record position"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charge recurrence"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Charges"
+msgstr ""
+
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "City"
 msgstr "Ciudad"
@@ -455,6 +534,11 @@ msgid "Company"
 msgstr "Empresa"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Company linked to the charge"
+msgstr ""
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
 msgstr "Posición del registro de la empresa"
 
@@ -479,6 +563,10 @@ msgstr "Cuentas conectadas"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
 msgstr "Cuentas conectadas"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Contact"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -552,6 +640,10 @@ msgstr "Fecha de creación"
 msgid "Creation DateTime"
 msgstr "Fecha y hora de creación"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Customer"
+msgstr ""
+
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
 msgstr "Formato de fecha"
@@ -578,6 +670,10 @@ msgstr "Descripción"
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "Dirección"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Discount"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -616,6 +712,10 @@ msgid "End Date"
 msgstr "Fecha de finalización"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event charge"
+msgstr ""
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "Empresa del evento"
 
@@ -641,6 +741,10 @@ msgstr "ID externo del evento"
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event ID"
 msgstr "ID del evento"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event integration"
+msgstr ""
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Event Listeners"
@@ -699,8 +803,18 @@ msgstr "Miembro del espacio de trabajo del evento"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Events"
 msgstr "Eventos"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Events linked to the charge"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Events linked to the integration"
+msgstr ""
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
@@ -940,6 +1054,29 @@ msgstr "Perfil de Cliente Ideal: Indica si la empresa es el cliente más adecuad
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "If the event is related to a particular object"
 msgstr "Si el evento está relacionado con un objeto en particular"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Integration"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Integration linked to the charge"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integration name"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integration record position"
+msgstr ""
+
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
+msgid "Integrations"
+msgstr ""
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1214,6 +1351,7 @@ msgstr "Token de actualización del proveedor de mensajería"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1414,6 +1552,10 @@ msgstr "Grupo de filtros de vista principal"
 msgid "Parent View Filter Group Id"
 msgstr "ID del grupo de filtros de vista principal"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Payment Gateway"
+msgstr ""
+
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
@@ -1435,6 +1577,11 @@ msgstr "Personas vinculadas a la empresa."
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Person"
 msgstr "Persona"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Person linked to the charge"
+msgstr ""
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
@@ -1462,9 +1609,11 @@ msgstr "Punto de contacto"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/integrations/standard-objects/integration.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
@@ -1491,13 +1640,25 @@ msgstr "Esquema de colores preferido"
 msgid "Preferred language"
 msgstr "Idioma preferido"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Price"
+msgstr ""
+
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
 msgstr "Probabilidad"
 
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Product"
+msgstr ""
+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "proveedor"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Quantity"
+msgstr ""
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
@@ -1507,6 +1668,10 @@ msgstr "Recibido en"
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Record id"
 msgstr "ID del registro"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Recurrence"
+msgstr ""
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -1881,12 +2046,20 @@ msgid "Update DateTime"
 msgstr "Actualizar fecha y hora"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User Document"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Email"
 msgstr "Correo electrónico del usuario"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "ID del usuario"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User phone"
+msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
