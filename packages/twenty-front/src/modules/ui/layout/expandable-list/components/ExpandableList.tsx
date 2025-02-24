@@ -153,6 +153,7 @@ export const ExpandableList = ({
           <StyledChipCount
             label={`+${hiddenChildrenCount}`}
             variant={ChipVariant.Highlighted}
+            // TODO prastoin determine context
             onClick={handleChipCountClick}
           />
         </AnimatedContainer>

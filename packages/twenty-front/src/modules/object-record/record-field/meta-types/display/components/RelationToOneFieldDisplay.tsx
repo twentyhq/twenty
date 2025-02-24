@@ -14,6 +14,7 @@ export const RelationToOneFieldDisplay = () => {
     return null;
   }
 
+  // TODO later handle isWorkspaceMemberFieldMetadataRelation
   const isWorkspaceMemberFieldMetadataRelation =
     fieldDefinition.metadata.relationObjectMetadataNameSingular !==
     CoreObjectNameSingular.WorkspaceMember;
@@ -24,7 +25,6 @@ export const RelationToOneFieldDisplay = () => {
       key={recordChipData.recordId}
       objectNameSingular={recordChipData.objectNameSingular}
       record={fieldValue}
-      navigateToShowPageOnClick={!isWorkspaceMemberFieldMetadataRelation}
     />
   );
 };
