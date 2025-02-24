@@ -14,7 +14,8 @@ export type LightButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-} & React.ComponentProps<'button'>;
+  type?: React.ComponentProps<'button'>['type'];
+};
 
 const StyledButton = styled.button<
   Pick<LightButtonProps, 'accent' | 'active' | 'focus'>
