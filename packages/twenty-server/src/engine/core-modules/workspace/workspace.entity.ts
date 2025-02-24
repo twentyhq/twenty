@@ -146,6 +146,7 @@ export class Workspace {
   @Field()
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
+
   @Field(() => [StripeIntegration])
   @OneToMany(
     () => StripeIntegration,

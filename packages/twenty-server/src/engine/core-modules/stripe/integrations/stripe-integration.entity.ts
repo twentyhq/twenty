@@ -4,6 +4,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -27,5 +28,6 @@ export class StripeIntegration {
   @ManyToOne(() => Workspace, (workspace) => workspace.stripeIntegrations, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn()
   workspace: Relation<Workspace>;
 }
