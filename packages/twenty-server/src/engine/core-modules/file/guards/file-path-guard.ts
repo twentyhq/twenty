@@ -21,19 +21,18 @@ export class FilePathGuard implements CanActivate {
     }
 
     // Only verify workspace token if the file folder is not public.
-    if (!isFileFolderPublic) {
-      try {
-        const payload = await this.jwtWrapperService.verifyWorkspaceToken(
-          query['token'],
-          'FILE',
-        );
+    try {
+      const payload = await this.jwtWrapperService.verifyWorkspaceToken(
+        query['token'],
+        'FILE',
+        isFileFolderPublic ? { ignoreExpiration: true } : {},
+      );
 
-        if (!payload.workspaceId) {
-          return false;
-        }
-      } catch (error) {
+      if (!payload.workspaceId) {
         return false;
       }
+    } catch (error) {
+      return false;
     }
 
     const decodedPayload = await this.jwtWrapperService.decode(query['token'], {
