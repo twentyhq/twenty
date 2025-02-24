@@ -36,7 +36,7 @@ msgstr "连接 Twenty"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
-msgstr ""
+msgstr "创建新的工作区"
 
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
@@ -48,11 +48,11 @@ msgstr "亲爱的 {userName}"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Dear {userName},"
-msgstr ""
+msgstr "亲爱的 {userName},"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Deleted Workspace"
-msgstr ""
+msgstr "删除的工作区"
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -64,7 +64,7 @@ msgstr "您好"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Hello,"
-msgstr ""
+msgstr "您好,"
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -92,7 +92,7 @@ msgstr "密码已更新"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "请验证此域，以允许使用 <0>@{domain}</0> 邮件地址的用户在不需要邀请的情况下加入您的工作区。"
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
@@ -104,7 +104,7 @@ msgstr "重置您的密码 🗝"
 
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace "
-msgstr ""
+msgstr "暂停的工作空间 "
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -137,7 +137,7 @@ msgstr "更新您的订阅"
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
-msgstr ""
+msgstr "验证域名"
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"

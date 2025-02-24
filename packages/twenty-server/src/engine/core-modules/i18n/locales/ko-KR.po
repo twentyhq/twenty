@@ -130,11 +130,11 @@ msgstr "기업용 계정 소유자"
 
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Action needed to prevent workspace deletion"
-msgstr ""
+msgstr "작업 공간 삭제를 방지하기 위해 조치가 필요합니다"
 
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
-msgstr ""
+msgstr "비밀번호 재설정을 위한 조치가 필요합니다"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -596,7 +596,7 @@ msgstr "표시 이름"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
-msgstr ""
+msgstr "레코드를 측면 패널 또는 레코드 페이지에 표시합니다"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
@@ -984,7 +984,7 @@ msgstr "직책"
 
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Join your team on Twenty"
-msgstr ""
+msgstr "Twenty에서 팀에 합류하세요"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
@@ -1345,7 +1345,7 @@ msgstr "객체 이름"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
-msgstr ""
+msgstr "다음에서 레코드 열기"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -2129,7 +2129,7 @@ msgstr "Webhooks"
 
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr ""
+msgstr "Twenty에 오신 것을 환영합니다: 이메일을 확인해 주세요"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2276,7 +2276,7 @@ msgstr "X"
 
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
-msgstr ""
+msgstr "비밀번호가 성공적으로 변경되었습니다"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

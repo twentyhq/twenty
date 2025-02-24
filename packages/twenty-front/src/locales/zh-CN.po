@@ -164,7 +164,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
-msgstr ""
+msgstr "添加批准的访问域"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
@@ -295,7 +295,7 @@ msgstr "和"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
-msgstr ""
+msgstr "拥有这些域中的电子邮件地址的任何人都可以注册此工作空间。"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -309,7 +309,7 @@ msgstr "API 密钥"
 
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "API Key copied to clipboard"
-msgstr ""
+msgstr "API 密钥已复制到剪贴板"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "API keys"
@@ -337,7 +337,7 @@ msgstr "外观"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Email Domain"
-msgstr ""
+msgstr "批准的电子邮件域"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -394,7 +394,7 @@ msgstr "身份验证"
 
 #: src/modules/auth/hooks/useVerifyLogin.ts
 msgid "Authentication failed"
-msgstr ""
+msgstr "身份验证失败"
 
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -548,7 +548,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
-msgstr ""
+msgstr "客户端设置"
 
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
@@ -641,7 +641,7 @@ msgstr "继续使用 Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
 msgid "Copied to clipboard!"
-msgstr ""
+msgstr "已复制到剪贴板！"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Copilot"
@@ -652,7 +652,7 @@ msgstr "副驾驶"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "Copy"
-msgstr ""
+msgstr "复制"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -1001,7 +1001,7 @@ msgstr "域"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain added successfully."
-msgstr ""
+msgstr "域名添加成功。"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -1017,7 +1017,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
-msgstr ""
+msgstr "下载文件"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
@@ -1071,7 +1071,7 @@ msgstr "电子邮件"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email can not be empty"
-msgstr ""
+msgstr "电子邮件不能为空"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1087,15 +1087,15 @@ msgstr ""
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
-msgstr ""
+msgstr "电子邮件验证失败。"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Email verification link resent!"
-msgstr ""
+msgstr "电子邮件验证链接已重发！"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verified."
-msgstr ""
+msgstr "电子邮件已验证。"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
@@ -1140,11 +1140,11 @@ msgstr "享受 {withCreditCardTrialPeriodDuration} 天的免费试用期"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
-msgstr ""
+msgstr "输入凭据以设置连接"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
-msgstr ""
+msgstr "输入信息以设置连接"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
@@ -1156,7 +1156,7 @@ msgstr "企业"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID copied to clipboard"
-msgstr ""
+msgstr "实体 ID 已复制到剪贴板"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Env Variables"
@@ -1164,7 +1164,7 @@ msgstr ""
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
-msgstr ""
+msgstr "复制到剪贴板时出错"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key: {err}"
@@ -1172,15 +1172,15 @@ msgstr "删除 API 密钥时出错： {err}"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
-msgstr ""
+msgstr "删除邀请时出错"
 
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error deleting SSO Identity Provider"
-msgstr ""
+msgstr "删除 SSO 身份提供商时出错"
 
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error editing SSO Identity Provider"
-msgstr ""
+msgstr "编辑 SSO 身份提供商时出错"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
@@ -1188,7 +1188,7 @@ msgstr "重新生成 API 密钥时出错： {err}"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
-msgstr ""
+msgstr "重新发送邀请时出错"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
@@ -1257,7 +1257,7 @@ msgstr "到期日期"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expired"
-msgstr ""
+msgstr "已过期"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
@@ -1488,11 +1488,11 @@ msgstr "标识符"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Identity Provider"
-msgstr ""
+msgstr "身份提供商"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
-msgstr ""
+msgstr "身份提供商元数据 XML"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
@@ -1540,12 +1540,12 @@ msgstr "无效的身份验证提供商"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-#~ msgstr "无效的自定义域名。自定义域名的长度必须少于256个字符，不能是IP地址，不能包含空格，不能包含任何特殊字符，如 _~`!@#$%^*()=+{}[]|\\;:'\",<>/?，并且不能以'-'字符开头或结尾。"
+#~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
+msgstr "无效的域名。域名长度必须少于 256 个字符，不能是 IP 地址，不能包含空格，不能包含任何特殊字符，如 _~`!@#$%^*()=+{}[]|\\;:'\",<>/?，并且不能以 '-' 字符开头或结尾。"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -1560,11 +1560,11 @@ msgstr "无效的电子邮件或域"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Invalid email verification link."
-msgstr ""
+msgstr "无效的电子邮件验证链接。"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
-msgstr ""
+msgstr "无效的文件"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
@@ -1759,7 +1759,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
-msgstr ""
+msgstr "元数据文件生成失败"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -1858,7 +1858,7 @@ msgstr "新账户"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
-msgstr ""
+msgstr "新批准访问域"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -1897,7 +1897,7 @@ msgstr ""
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
-msgstr ""
+msgstr "新 SSO 提供商"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
 #~ msgid "New Webhook"
@@ -1933,7 +1933,7 @@ msgstr "没有更多成员可分配"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "No records found"
-msgstr ""
+msgstr "未找到记录"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No Result"
@@ -2027,7 +2027,7 @@ msgstr "打开命令菜单"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Open in"
-msgstr ""
+msgstr "在以下中打开"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
@@ -2117,7 +2117,7 @@ msgstr "权限"
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
-msgstr ""
+msgstr "电话号码已复制到剪贴板"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -2130,7 +2130,7 @@ msgstr "请输入有效的 URL"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
-msgstr ""
+msgstr "请先搜索用户"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
@@ -2185,7 +2185,7 @@ msgstr "个人资料"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
-msgstr ""
+msgstr "提供您的 OIDC 提供商详情"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
@@ -2222,11 +2222,11 @@ msgstr "记录选择"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirect Url copied to clipboard"
-msgstr ""
+msgstr "重定向 URL 已复制到剪贴板"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirection URI"
-msgstr ""
+msgstr "重定向 URI"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2448,7 +2448,7 @@ msgstr "服务器管理面板"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
-msgstr ""
+msgstr "服务提供商详情"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2650,7 +2650,7 @@ msgstr "测试工作流"
 
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
-msgstr ""
+msgstr "文本已复制到剪贴板"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -2815,11 +2815,11 @@ msgstr "上传"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload file"
-msgstr ""
+msgstr "上传文件"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
-msgstr ""
+msgstr "上传包含连接信息的 XML 文件"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "URL"
@@ -2901,7 +2901,7 @@ msgstr "查看账单详情"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
-msgstr ""
+msgstr "查看执行详情"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -2970,11 +2970,11 @@ msgstr "无法测试工作流"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
-msgstr ""
+msgstr "工作流正在运行……"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow run failed"
-msgstr ""
+msgstr "工作流运行失败"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -3043,7 +3043,7 @@ msgstr "是"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
-msgstr ""
+msgstr "您无权在此对象中创建记录"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

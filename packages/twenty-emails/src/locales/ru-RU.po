@@ -36,7 +36,7 @@ msgstr "Подключиться к Twenty"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
-msgstr ""
+msgstr "Создать новое рабочее пространство"
 
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
@@ -48,11 +48,11 @@ msgstr "Уважаемый {userName}"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Dear {userName},"
-msgstr ""
+msgstr "Уважаемый {userName},"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Deleted Workspace"
-msgstr ""
+msgstr "Удаленное рабочее пространство"
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -64,7 +64,7 @@ msgstr "Здравствуйте"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Hello,"
-msgstr ""
+msgstr "Здравствуйте,"
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -92,7 +92,7 @@ msgstr "Пароль обновлен"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "Пожалуйста, проверьте этот домен, чтобы пользователи с <0>@{domain}</0> адресами электронной почты могли присоединяться к вашему рабочему пространству без приглашения."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
@@ -104,7 +104,7 @@ msgstr "Сбросьте ваш пароль 🗝"
 
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace "
-msgstr ""
+msgstr "Приостановленная рабочая область "
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -137,7 +137,7 @@ msgstr "Обновите вашу подписку"
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
-msgstr ""
+msgstr "Проверить домен"
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"

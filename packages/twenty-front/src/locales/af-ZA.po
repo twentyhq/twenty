@@ -164,7 +164,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
-msgstr ""
+msgstr "Voeg Goedgekeurde Toegangsdomein by"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
@@ -295,7 +295,7 @@ msgstr "en"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
-msgstr ""
+msgstr "Enigeen met 'n e-posadres by hierdie domeine mag vir hierdie werkruimte inskryf."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -309,7 +309,7 @@ msgstr "API-sleutel"
 
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "API Key copied to clipboard"
-msgstr ""
+msgstr "API-sleutel is na knipbord gekopieer"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "API keys"
@@ -337,7 +337,7 @@ msgstr "Voorkoms"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Email Domain"
-msgstr ""
+msgstr "Goedgekeurde E-pos Domein"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -394,7 +394,7 @@ msgstr "Magtiging"
 
 #: src/modules/auth/hooks/useVerifyLogin.ts
 msgid "Authentication failed"
-msgstr ""
+msgstr "Magtiging het misluk"
 
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -548,7 +548,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
-msgstr ""
+msgstr "Kliëntinstellings"
 
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
@@ -641,7 +641,7 @@ msgstr "Gaan voort met Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
 msgid "Copied to clipboard!"
-msgstr ""
+msgstr "Gekopieer na knipbord!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Copilot"
@@ -652,7 +652,7 @@ msgstr "Medevlieënier"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "Copy"
-msgstr ""
+msgstr "Kopieer"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -1001,7 +1001,7 @@ msgstr "Domein"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain added successfully."
-msgstr ""
+msgstr "Domein suksesvol bygevoeg."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -1017,7 +1017,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
-msgstr ""
+msgstr "Laai lêer af"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
@@ -1071,7 +1071,7 @@ msgstr "E-pos"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email can not be empty"
-msgstr ""
+msgstr "E-pos kan nie leeg wees nie"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1087,15 +1087,15 @@ msgstr ""
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
-msgstr ""
+msgstr "E-posverifikasie het misluk."
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Email verification link resent!"
-msgstr ""
+msgstr "E-pos verifikasieskakel weer gestuur!"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verified."
-msgstr ""
+msgstr "E-pos geverifieer."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
@@ -1140,11 +1140,11 @@ msgstr "Geniet 'n {withCreditCardTrialPeriodDuration}-dae gratis proeftydperk"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
-msgstr ""
+msgstr "Voer die geloofsbriewe in om die verbinding te stel"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
-msgstr ""
+msgstr "Voer die inligting in om die verbinding te stel"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
@@ -1156,7 +1156,7 @@ msgstr "Onderneming"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID copied to clipboard"
-msgstr ""
+msgstr "Entiteit-ID na knipbord gekopieer"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Env Variables"
@@ -1164,7 +1164,7 @@ msgstr ""
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
-msgstr ""
+msgstr "Fout met kopieer na knipbord"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key: {err}"
@@ -1172,15 +1172,15 @@ msgstr "Fout met die verwydering van API-sleutel: {err}"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
-msgstr ""
+msgstr "Fout met die verwydering van uitnodiging"
 
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error deleting SSO Identity Provider"
-msgstr ""
+msgstr "Fout met die verwydering van SSO Identiteitsverskaffer"
 
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error editing SSO Identity Provider"
-msgstr ""
+msgstr "Fout met die redigering van SSO Identiteitsverskaffer"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
@@ -1188,7 +1188,7 @@ msgstr "Fout met die hergenerering van API-sleutel: {err}"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
-msgstr ""
+msgstr "Fout met die herstuur van uitnodiging"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
@@ -1257,7 +1257,7 @@ msgstr "Vervaldatum"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expired"
-msgstr ""
+msgstr "Vervaldatum bereik"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
@@ -1488,11 +1488,11 @@ msgstr "Identifiseerder"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Identity Provider"
-msgstr ""
+msgstr "Identiteitsverskaffer"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
-msgstr ""
+msgstr "Identiteitsverskaffer Metadata XML"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
@@ -1540,12 +1540,12 @@ msgstr "Ongeldig outentiekasieverskaffer"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-#~ msgstr "Ongeldige persoonlike domein. Persoonlike domeine moet korter as 256 karakters wees, kan nie IP-adresse wees nie, mag geen spasies hê nie, mag nie enige spesiale karakters soos _~`!@#$%^*()=+{}[]|\\;:'\",<>/? bevat nie en mag nie begin of eindig met 'n '-' karakter nie."
+#~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
+msgstr "Ongeldige domein. Domeine moet korter as 256 karakters wees, kan nie IP-adresse wees nie, mag geen spasies hê nie, mag nie enige spesiale karakters soos _~`!@#$%^*()=+{}[]|\\;:'\",<>/? bevat nie en mag nie begin of eindig met 'n '-' karakter nie."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -1560,11 +1560,11 @@ msgstr "Ongeldige e-pos of domein"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Invalid email verification link."
-msgstr ""
+msgstr "Ongeldige e-pos verifikasie skakel."
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
-msgstr ""
+msgstr "Ongeldige lêer"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
@@ -1759,7 +1759,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
-msgstr ""
+msgstr "Metadataleêr generasie het misluk"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -1858,7 +1858,7 @@ msgstr "Nuwe rekening"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
-msgstr ""
+msgstr "Nuwe Goedgekeurde Toegangsdomein"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -1897,7 +1897,7 @@ msgstr ""
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
-msgstr ""
+msgstr "Nuwe SSO Verskaffer"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
 #~ msgid "New Webhook"
@@ -1933,7 +1933,7 @@ msgstr "Geen meer lede om toe te wys nie"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "No records found"
-msgstr ""
+msgstr "Geen rekords gevind nie"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No Result"
@@ -2027,7 +2027,7 @@ msgstr "Maak opdragkieslys oop"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Open in"
-msgstr ""
+msgstr "Maak oop in"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
@@ -2117,7 +2117,7 @@ msgstr "Permissies"
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
-msgstr ""
+msgstr "Selfoonnommer na knipbord gekopieer"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -2130,7 +2130,7 @@ msgstr "Voer 'n geldige URL in"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
-msgstr ""
+msgstr "Soek asseblief eers vir 'n gebruiker"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
@@ -2185,7 +2185,7 @@ msgstr "Profiel"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
-msgstr ""
+msgstr "Verskaf jou OIDC verskafferdetaljes"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
@@ -2222,11 +2222,11 @@ msgstr "Rekord Seleksie"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirect Url copied to clipboard"
-msgstr ""
+msgstr "Herlei ookal gekopieer na knipbord"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirection URI"
-msgstr ""
+msgstr "Herleidings URI"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2448,7 +2448,7 @@ msgstr "Bediener Admin Paneel"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
-msgstr ""
+msgstr "Diensverskaffer Besonderhede"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2650,7 +2650,7 @@ msgstr "Toets Werkvloei"
 
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
-msgstr ""
+msgstr "Teks na knipbord gekopieer"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -2815,11 +2815,11 @@ msgstr "Laai op"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload file"
-msgstr ""
+msgstr "Laai lêer op"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
-msgstr ""
+msgstr "Laai die XML-lêer op met jou konneksie-inligting"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "URL"
@@ -2901,7 +2901,7 @@ msgstr "Sien faktuurbesonderhede"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
-msgstr ""
+msgstr "Sien uitvoeringsbesonderhede"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -2970,11 +2970,11 @@ msgstr "Werksvloei kan nie getoets word nie"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
-msgstr ""
+msgstr "Werksvloei loop..."
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow run failed"
-msgstr ""
+msgstr "Werksvloeilopie het misluk"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -3043,7 +3043,7 @@ msgstr "ja"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
-msgstr ""
+msgstr "Jy mag nie rekords in hierdie voorwerp skep nie"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

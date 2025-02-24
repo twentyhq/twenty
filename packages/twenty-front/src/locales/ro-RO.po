@@ -164,7 +164,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
-msgstr ""
+msgstr "Adaugă Domeniu de Acces Aprobat"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
@@ -295,7 +295,7 @@ msgstr "și"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
-msgstr ""
+msgstr "Oricine are o adresă de email la aceste domenii este permis să se înscrie pentru acest spațiu de lucru."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -309,7 +309,7 @@ msgstr "Cheie API"
 
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "API Key copied to clipboard"
-msgstr ""
+msgstr "Cheia API copiată în clipboard"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "API keys"
@@ -337,7 +337,7 @@ msgstr "Aspect"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Email Domain"
-msgstr ""
+msgstr "Domeniu de Email Aprobat"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -394,7 +394,7 @@ msgstr "Autentificare"
 
 #: src/modules/auth/hooks/useVerifyLogin.ts
 msgid "Authentication failed"
-msgstr ""
+msgstr "Autentificare eșuată"
 
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -548,7 +548,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
-msgstr ""
+msgstr "Setări Client"
 
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
@@ -641,7 +641,7 @@ msgstr "Continuați cu Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
 msgid "Copied to clipboard!"
-msgstr ""
+msgstr "Copiat în clipboard!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Copilot"
@@ -652,7 +652,7 @@ msgstr "Copilot"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "Copy"
-msgstr ""
+msgstr "Copiază"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -1001,7 +1001,7 @@ msgstr "Domeniu"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain added successfully."
-msgstr ""
+msgstr "Domeniul a fost adăugat cu succes."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -1017,7 +1017,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
-msgstr ""
+msgstr "Descarcă fișierul"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
@@ -1071,7 +1071,7 @@ msgstr "E-mail"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email can not be empty"
-msgstr ""
+msgstr "Emailul nu poate fi gol"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1087,15 +1087,15 @@ msgstr ""
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
-msgstr ""
+msgstr "Verificarea emailului a eșuat."
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Email verification link resent!"
-msgstr ""
+msgstr "Link de verificare a emailului retrimis!"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verified."
-msgstr ""
+msgstr "Email verificat."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
@@ -1140,11 +1140,11 @@ msgstr "Bucură-te de un proces gratuit de {withCreditCardTrialPeriodDuration} d
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
-msgstr ""
+msgstr "Introduceți acreditările pentru a stabili conexiunea"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
-msgstr ""
+msgstr "Introduceți informațiile pentru a stabili conexiunea"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
@@ -1156,7 +1156,7 @@ msgstr "Întreprindere"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID copied to clipboard"
-msgstr ""
+msgstr "ID-ul Entității copiat în clipboard"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Env Variables"
@@ -1164,7 +1164,7 @@ msgstr ""
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
-msgstr ""
+msgstr "Eroare la copierea în clipboard"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key: {err}"
@@ -1172,15 +1172,15 @@ msgstr "Eroare la ștergerea cheii API: {err}"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
-msgstr ""
+msgstr "Eroare la ștergerea invitației"
 
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error deleting SSO Identity Provider"
-msgstr ""
+msgstr "Eroare la ștergerea Furnizorului de Identitate SSO"
 
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error editing SSO Identity Provider"
-msgstr ""
+msgstr "Eroare la editarea Furnizorului de Identitate SSO"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
@@ -1188,7 +1188,7 @@ msgstr "Eroare la regenerarea cheii API: {err}"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
-msgstr ""
+msgstr "Eroare la retrimiterea invitației"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
@@ -1257,7 +1257,7 @@ msgstr "Data expirării"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expired"
-msgstr ""
+msgstr "Expirat"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
@@ -1488,11 +1488,11 @@ msgstr "Identificator"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Identity Provider"
-msgstr ""
+msgstr "Furnizor de Identitate"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
-msgstr ""
+msgstr "XML-ul de Metadate al Furnizorului de Identitate"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
@@ -1540,12 +1540,12 @@ msgstr "Furnizor de autentificare invalid"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-#~ msgstr "Domeniu personalizat invalid. Domeniile personalizate trebuie să fie mai scurte de 256 de caractere, nu pot fi adrese IP, nu pot conține spații, nu pot conține caractere speciale precum _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? și nu trebuie să înceapă sau să se termine cu caracterul '-'."
+#~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
+msgstr "Domeniu invalid. Domeniile trebuie să fie mai mici de 256 de caractere, nu pot fi adrese IP, nu pot conține spații, nu pot conține caractere speciale precum _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? și nu trebuie să înceapă sau să se termine cu caracterul '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -1560,11 +1560,11 @@ msgstr "Email sau domeniu invalid"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Invalid email verification link."
-msgstr ""
+msgstr "Link de verificare a emailului invalid."
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
-msgstr ""
+msgstr "Fișier Invalid"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
@@ -1759,7 +1759,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
-msgstr ""
+msgstr "Generarea fișierului de metadate a eșuat"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -1858,7 +1858,7 @@ msgstr "Cont nou"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
-msgstr ""
+msgstr "Nou Domeniu de Acces Aprobat"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -1897,7 +1897,7 @@ msgstr ""
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
-msgstr ""
+msgstr "Nou furnizor SSO"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
 #~ msgid "New Webhook"
@@ -1933,7 +1933,7 @@ msgstr "Nu mai sunt membri de atribuit"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "No records found"
-msgstr ""
+msgstr "Nu s-au găsit înregistrări"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No Result"
@@ -2027,7 +2027,7 @@ msgstr "Deschide meniul de comandă"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Open in"
-msgstr ""
+msgstr "Deschide în"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
@@ -2117,7 +2117,7 @@ msgstr "Permisiuni"
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
-msgstr ""
+msgstr "Număr de telefon copiat în clipboard"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -2130,7 +2130,7 @@ msgstr "Vă rugăm să introduceți un URL valid"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
-msgstr ""
+msgstr "Vă rugăm să căutați mai întâi un utilizator"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
@@ -2185,7 +2185,7 @@ msgstr "Profil"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
-msgstr ""
+msgstr "Furnizați detaliile furnizorului OIDC"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
@@ -2222,11 +2222,11 @@ msgstr "Selecția înregistrărilor"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirect Url copied to clipboard"
-msgstr ""
+msgstr "URL de redirecționare copiat în clipboard"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirection URI"
-msgstr ""
+msgstr "URI Redirecționare"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2448,7 +2448,7 @@ msgstr "Panoul de administrare a serverului"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
-msgstr ""
+msgstr "Detalii Furnizor de Servicii"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2650,7 +2650,7 @@ msgstr "Test Workflows"
 
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
-msgstr ""
+msgstr "Text copiat în clipboard"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -2815,11 +2815,11 @@ msgstr "Încarcă"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload file"
-msgstr ""
+msgstr "Încărcați fișierul"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
-msgstr ""
+msgstr "Încărcați fișierul XML cu informațiile conexiunii"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "URL"
@@ -2901,7 +2901,7 @@ msgstr "Vizualizează detalii despre facturare"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
-msgstr ""
+msgstr "Vizualizați detaliile execuției"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -2970,11 +2970,11 @@ msgstr "Workflow-ul nu poate fi testat"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
-msgstr ""
+msgstr "Workflow-ul rulează..."
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow run failed"
-msgstr ""
+msgstr "Execuția workflow-ului a eșuat"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -3043,7 +3043,7 @@ msgstr "da"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
-msgstr ""
+msgstr "Nu aveți permisiunea de a crea înregistrări în acest obiect"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

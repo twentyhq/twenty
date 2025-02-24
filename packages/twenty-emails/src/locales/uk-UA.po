@@ -36,7 +36,7 @@ msgstr "Підключитися до Twenty"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
-msgstr ""
+msgstr "Створіть новий робочий простір"
 
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
@@ -48,11 +48,11 @@ msgstr "Шановний {userName}"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Dear {userName},"
-msgstr ""
+msgstr "Шановний {userName},"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Deleted Workspace"
-msgstr ""
+msgstr "Видалена робоча область"
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -64,7 +64,7 @@ msgstr "Привіт"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Hello,"
-msgstr ""
+msgstr "Привіт,"
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -92,7 +92,7 @@ msgstr "Пароль оновлено"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "Будь ласка, перевірте цей домен, щоб дозволити користувачам з електронними адресами <0>@{domain}</0> приєднатися до вашого робочого простору без запрошення."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
@@ -104,7 +104,7 @@ msgstr "Скинути ваш пароль 🗝"
 
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace "
-msgstr ""
+msgstr "Призупинена робоча область "
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -137,7 +137,7 @@ msgstr "Оновіть свою підписку"
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
-msgstr ""
+msgstr "Перевірити домен"
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"

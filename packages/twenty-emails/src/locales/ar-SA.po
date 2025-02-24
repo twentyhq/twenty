@@ -36,7 +36,7 @@ msgstr "الاتصال بـ Twenty"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
-msgstr ""
+msgstr "إنشاء مساحة عمل جديدة"
 
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
@@ -48,11 +48,11 @@ msgstr "عزيزي {userName}"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Dear {userName},"
-msgstr ""
+msgstr "عزيزي {userName},"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Deleted Workspace"
-msgstr ""
+msgstr "مساحة العمل المحذوفة"
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -64,7 +64,7 @@ msgstr "مرحبًا"
 
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Hello,"
-msgstr ""
+msgstr "مرحبًا,"
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -92,7 +92,7 @@ msgstr "تم تحديث كلمة المرور"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "يرجى التحقق من هذا النطاق للسماح للمستخدمين الذين لديهم عناوين بريد إلكتروني <0>@{domain}</0> بالانضمام إلى مساحة العمل الخاصة بك دون الحاجة إلى دعوة."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
@@ -104,7 +104,7 @@ msgstr "إعادة تعيين كلمة مرورك 🗝"
 
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace "
-msgstr ""
+msgstr "فاعِل مساحة العمل المعلّقة "
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -137,7 +137,7 @@ msgstr "تحديث الاشتراك"
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
-msgstr ""
+msgstr "تحقق من النطاق"
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"

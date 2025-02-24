@@ -164,7 +164,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
-msgstr ""
+msgstr "Додати затверджений домен доступу"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
@@ -295,7 +295,7 @@ msgstr "та"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
-msgstr ""
+msgstr "Будь-хто з електронною адресою в цих доменах може зареєструватися для цього робочого простору."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -309,7 +309,7 @@ msgstr "API-ключ"
 
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "API Key copied to clipboard"
-msgstr ""
+msgstr "API-ключ скопійовано в буфер обміну"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "API keys"
@@ -337,7 +337,7 @@ msgstr "Зовнішній вигляд"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Email Domain"
-msgstr ""
+msgstr "Затверджений домен електронної пошти"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -394,7 +394,7 @@ msgstr "Аутентифікація"
 
 #: src/modules/auth/hooks/useVerifyLogin.ts
 msgid "Authentication failed"
-msgstr ""
+msgstr "Не вдалося пройти аутентифікацію"
 
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
@@ -548,7 +548,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
-msgstr ""
+msgstr "Налаштування клієнта"
 
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
@@ -641,7 +641,7 @@ msgstr "Продовжити з Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
 msgid "Copied to clipboard!"
-msgstr ""
+msgstr "Скопійовано в буфер обміну!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Copilot"
@@ -652,7 +652,7 @@ msgstr "Штурман"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "Copy"
-msgstr ""
+msgstr "Копіювати"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -1037,7 +1037,7 @@ msgstr ""
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain added successfully."
-msgstr ""
+msgstr "Домен успішно додано."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -1053,7 +1053,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
-msgstr ""
+msgstr "Завантажити файл"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
@@ -1122,7 +1122,7 @@ msgstr ""
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email can not be empty"
-msgstr ""
+msgstr "Електронна пошта не може бути порожньою"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1138,15 +1138,15 @@ msgstr ""
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
-msgstr ""
+msgstr "Верифікація електронної пошти не вдалася."
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Email verification link resent!"
-msgstr ""
+msgstr "Посилання для верифікації електронної пошти надіслано повторно!"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verified."
-msgstr ""
+msgstr "Електронну пошту верифіковано."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
@@ -1196,11 +1196,11 @@ msgstr "Насолоджуйтеся {withCreditCardTrialPeriodDuration}-ден�
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
-msgstr ""
+msgstr "Введіть облікові дані для налаштування з'єднання"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
-msgstr ""
+msgstr "Введіть інформацію для налаштування з'єднання"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
@@ -1212,7 +1212,7 @@ msgstr "Підприємство"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID copied to clipboard"
-msgstr ""
+msgstr "Ідентифікатор об'єкта скопійовано в буфер обміну"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Env Variables"
@@ -1220,7 +1220,7 @@ msgstr ""
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
-msgstr ""
+msgstr "Помилка копіювання в буфер обміну"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key: {err}"
@@ -1228,15 +1228,15 @@ msgstr "Помилка видалення API-ключа: {err}"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
-msgstr ""
+msgstr "Помилка видалення запрошення"
 
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error deleting SSO Identity Provider"
-msgstr ""
+msgstr "Помилка видалення провайдера єдиної системи входу"
 
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error editing SSO Identity Provider"
-msgstr ""
+msgstr "Помилка редагування провайдера єдиної системи входу"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
@@ -1244,7 +1244,7 @@ msgstr "Помилка регенерації API-ключа: {err}"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
-msgstr ""
+msgstr "Помилка повторного надсилання запрошення"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
@@ -1313,7 +1313,7 @@ msgstr "Дата закінчення терміну дії"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expired"
-msgstr ""
+msgstr "Термін дії закінчився"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
@@ -1544,11 +1544,11 @@ msgstr "Ідентифікатор"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Identity Provider"
-msgstr ""
+msgstr "Постачальник ідентифікації"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
-msgstr ""
+msgstr "XML метадані постачальника ідентифікації"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
@@ -1596,12 +1596,12 @@ msgstr "Недійсний провайдер авторизації"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-#~ msgstr "Недійсний власний домен. Власні домени повинні бути коротшими за 256 символів, не можуть бути IP-адресами, не можуть містити пробіли, не можуть містити спеціальні символи такі як _~`!@#$%^*()=+{}[]|\\;:'\",<>/? та не можуть починатися або закінчуватися символом '-'."
+#~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr ""
+msgstr "Недійсний домен. Домен має бути коротшим за 256 символів, не може бути IP-адресою, не може містити пробіли, не може містити спеціальні символи такі як _~`!@#$%^*()=+{}[]|\\;:'\",<>/? та не може починатися або закінчуватися символом '-'."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -1616,11 +1616,11 @@ msgstr "Недійсна електронна адреса або домен"
 
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Invalid email verification link."
-msgstr ""
+msgstr "Недійсне посилання для верифікації електронної пошти."
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
-msgstr ""
+msgstr "Недійсний файл"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
@@ -1815,7 +1815,7 @@ msgstr ""
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
-msgstr ""
+msgstr "Не вдалося згенерувати файл метаданих"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -1914,7 +1914,7 @@ msgstr "Новий акаунт"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
-msgstr ""
+msgstr "Новий затверджений домен доступу"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -1953,7 +1953,7 @@ msgstr ""
 
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
-msgstr ""
+msgstr "Новий провайдер єдиної системи входу"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
 #~ msgid "New Webhook"
@@ -1989,7 +1989,7 @@ msgstr "Більше немає учасників для призначення
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "No records found"
-msgstr ""
+msgstr "Записів не знайдено"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No Result"
@@ -2083,7 +2083,7 @@ msgstr "Відкрити командне меню"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 msgid "Open in"
-msgstr ""
+msgstr "Відкрити в"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
@@ -2173,7 +2173,7 @@ msgstr "Дозволи"
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
-msgstr ""
+msgstr "Номер телефону скопійовано в буфер обміну"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -2186,7 +2186,7 @@ msgstr "Будь ласка, введіть дійсний URL"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
-msgstr ""
+msgstr "Спочатку знайдіть користувача"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
@@ -2241,7 +2241,7 @@ msgstr "Профіль"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
-msgstr ""
+msgstr "Надайте деталі вашого OIDC провайдера"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
@@ -2278,11 +2278,11 @@ msgstr "Вибір запису"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirect Url copied to clipboard"
-msgstr ""
+msgstr "URL перенаправлення скопійовано в буфер обміну"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirection URI"
-msgstr ""
+msgstr "URI переадресації"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2504,7 +2504,7 @@ msgstr "Панель адміністратора сервера"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
-msgstr ""
+msgstr "Деталі постачальника послуг"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2706,7 +2706,7 @@ msgstr "Тестування Workflows"
 
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
-msgstr ""
+msgstr "Текст скопійовано в буфер обміну"
 
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -2871,11 +2871,11 @@ msgstr "Завантажити"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload file"
-msgstr ""
+msgstr "Завантажити файл"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
-msgstr ""
+msgstr "Завантажте XML файл з інформацією вашого з'єднання"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "URL"
@@ -2957,7 +2957,7 @@ msgstr "Переглянути деталі оплати"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
-msgstr ""
+msgstr "Переглянути деталі виконання"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -3026,11 +3026,11 @@ msgstr "Неможливо протестувати процес роботи"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
-msgstr ""
+msgstr "Робочий процес виконується..."
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow run failed"
-msgstr ""
+msgstr "Виконання робочого процесу не вдалося"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -3099,7 +3099,7 @@ msgstr "так"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
-msgstr ""
+msgstr "Ви не маєте права створювати записи в цьому об'єкті"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
