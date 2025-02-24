@@ -16,6 +16,7 @@ describe('isValidUrl', () => {
     expect(isValidUrl('example.com')).toBe(true);
     expect(isValidUrl('www.subdomain.example.com')).toBe(true);
     expect(isValidUrl('192.168.2.0')).toBe(true);
+    expect(isValidUrl('3.com')).toBe(true);
 
     // Falsy
     expect(isValidUrl('?o')).toBe(false);
@@ -23,5 +24,6 @@ describe('isValidUrl', () => {
     expect(isValidUrl('\\')).toBe(false);
     expect(isValidUrl('wwwexamplecom')).toBe(false);
     expect(isValidUrl('2/toto')).toBe(false);
+    expect(isValidUrl('2')).toBe(false);
   });
 });

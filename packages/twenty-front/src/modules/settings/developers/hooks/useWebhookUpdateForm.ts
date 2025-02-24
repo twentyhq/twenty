@@ -6,7 +6,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useState } from 'react';
-import { getUrlHostname, isDefined, isValidUrl } from 'twenty-shared';
+import { getUrlHostnameOrThrow, isDefined, isValidUrl } from 'twenty-shared';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
@@ -104,9 +104,7 @@ export const useWebhookUpdateForm = ({
       const isTargetUrlValid = isValidUrl(trimmedUrl);
       setIsTargetUrlValid(isTargetUrlValid);
       if (isTargetUrlValid) {
-        setTitle(
-          getUrlHostname(trimmedUrl, { keepPath: true }) || 'New Webhook',
-        );
+        setTitle(getUrlHostnameOrThrow(trimmedUrl) || 'New Webhook');
       }
     }
   };
@@ -175,9 +173,7 @@ export const useWebhookUpdateForm = ({
         operations,
         secret: data.secret,
       });
-      setTitle(
-        getUrlHostname(data.targetUrl, { keepPath: true }) || 'New Webhook',
-      );
+      setTitle(getUrlHostnameOrThrow(data.targetUrl) || 'New Webhook');
       setLoading(false);
     },
   });
