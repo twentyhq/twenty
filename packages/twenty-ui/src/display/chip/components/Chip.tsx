@@ -1,6 +1,6 @@
 import { Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
-import { MouseEvent, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 
@@ -32,7 +32,6 @@ export type ChipProps = {
   leftComponent?: (() => ReactNode) | null;
   rightComponent?: (() => ReactNode) | null;
   className?: string;
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
 const StyledContainer = withTheme(styled.div<
@@ -131,7 +130,6 @@ export const Chip = ({
   leftComponent = null,
   rightComponent = null,
   accent = ChipAccent.TextPrimary,
-  onClick,
   className,
   maxWidth,
 }: ChipProps) => {
@@ -143,7 +141,6 @@ export const Chip = ({
       disabled={disabled}
       size={size}
       variant={variant}
-      onClick={onClick}
       className={className}
       maxWidth={maxWidth}
     >

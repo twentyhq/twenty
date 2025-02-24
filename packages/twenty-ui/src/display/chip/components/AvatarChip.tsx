@@ -3,16 +3,12 @@ import {
   AvatarChipsCommonProps,
   userGetAvatarChipsBuilder,
 } from '@ui/display/chip/hooks/useGetAvatarChipBuilder';
-import { MouseEvent } from 'react';
 
-export type AvatarChipProps = AvatarChipsCommonProps & {
-  onClick?: (event: MouseEvent) => void;
-};
+export type AvatarChipProps = AvatarChipsCommonProps;
+export const AvatarChip = (props: AvatarChipProps) => {
+  const { getLeftComponent, variant } = userGetAvatarChipsBuilder(props);
+  const { size, clickable, className, maxWidth, name } = props;
 
-export const AvatarChip = ({ onClick, ...commonProps }: AvatarChipProps) => {
-  const { getLeftComponent, variant } = userGetAvatarChipsBuilder(commonProps);
-
-  const { size, clickable, className, maxWidth, name } = commonProps;
   return (
     <Chip
       label={name}
@@ -20,7 +16,6 @@ export const AvatarChip = ({ onClick, ...commonProps }: AvatarChipProps) => {
       size={size}
       leftComponent={getLeftComponent}
       clickable={clickable}
-      onClick={onClick}
       className={className}
       maxWidth={maxWidth}
     />

@@ -6,8 +6,12 @@ import {
   ChipVariant,
 } from '@ui/display/chip/components/Chip';
 import { UndecoratedLink } from '@ui/navigation';
+import { isDefined } from 'twenty-shared';
 
-type LinkChipProps = Omit<ChipProps, 'onClick'> & { to: string };
+type LinkChipProps = Omit<ChipProps, 'onClick'> & {
+  to: string;
+  onClick?: () => void;
+};
 
 export const LinkChip = ({
   to,
@@ -21,11 +25,19 @@ export const LinkChip = ({
   accent = ChipAccent.TextPrimary,
   className,
   maxWidth,
+  onClick,
 }: LinkChipProps) => {
   return (
-    // TODO test prevent default here ?
-    // Circular dep ?
-    <UndecoratedLink to={to} onClick={(e) => e.stopPropagation()}>
+    <UndecoratedLink
+      to={to}
+      onClick={(e) => {
+        if (isDefined(onClick)) {
+          // Or preventDefault ?
+          e.stopPropagation();
+          onClick();
+        }
+      }}
+    >
       <Chip
         size={size}
         label={label}
