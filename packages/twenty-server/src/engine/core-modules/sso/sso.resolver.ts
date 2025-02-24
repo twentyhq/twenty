@@ -3,8 +3,6 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { SettingsPermissions } from 'twenty-shared';
-
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
 import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.output';
@@ -22,6 +20,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()

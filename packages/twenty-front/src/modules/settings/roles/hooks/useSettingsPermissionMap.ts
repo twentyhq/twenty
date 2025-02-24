@@ -1,8 +1,8 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { SettingsPermissions } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { SettingsPermissions } from '~/generated/graphql';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 export const useSettingsPermissionMap = (): Record<

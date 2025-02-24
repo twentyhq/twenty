@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  PermissionsOnAllObjectRecords,
-  SettingsPermissions,
-} from 'twenty-shared';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
