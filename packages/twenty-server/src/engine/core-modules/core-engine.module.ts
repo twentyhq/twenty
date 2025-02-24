@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
@@ -21,6 +23,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { fileStorageModuleFactory } from 'src/engine/core-modules/file-storage/file-storage.module-factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { GlobalSearchModule } from 'src/engine/core-modules/global-search/global-search.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
@@ -119,6 +122,9 @@ import { FileModule } from './file/file.module';
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
       inject: [EnvironmentService, FileStorageService],
+    }),
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [GlobalSearchModule],
     }),
   ],
   exports: [

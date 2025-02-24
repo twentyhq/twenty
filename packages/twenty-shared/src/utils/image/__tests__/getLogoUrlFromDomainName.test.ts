@@ -1,4 +1,7 @@
-import { getLogoUrlFromDomainName, sanitizeURL } from '..';
+import {
+  getLogoUrlFromDomainName,
+  sanitizeURL,
+} from '../getLogoUrlFromDomainName';
 
 describe('sanitizeURL', () => {
   test('should sanitize the URL correctly', () => {
