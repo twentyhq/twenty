@@ -16,6 +16,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useLingui } from '@lingui/react/macro';
 import { UnwrapRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
@@ -36,6 +37,8 @@ export const SettingsSecuritySSORowDropdownMenu = ({
   const { deleteSSOIdentityProvider } = useDeleteSSOIdentityProvider();
   const { updateSSOIdentityProvider } = useUpdateSSOIdentityProvider();
 
+  const { t } = useLingui();
+
   const handleDeleteSSOIdentityProvider = async (
     identityProviderId: string,
   ) => {
@@ -43,7 +46,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
       identityProviderId,
     });
     if (isDefined(result.errors)) {
-      enqueueSnackBar('Error deleting SSO Identity Provider', {
+      enqueueSnackBar(t`Error deleting SSO Identity Provider`, {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
@@ -61,7 +64,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
           : SsoIdentityProviderStatus.Active,
     });
     if (isDefined(result.errors)) {
-      enqueueSnackBar('Error editing SSO Identity Provider', {
+      enqueueSnackBar(t`Error editing SSO Identity Provider`, {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
@@ -82,7 +85,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
           <MenuItem
             accent="default"
             LeftIcon={IconArchive}
-            text={SSOIdp.status === 'Active' ? 'Deactivate' : 'Activate'}
+            text={SSOIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
             onClick={() => {
               toggleSSOIdentityProviderStatus(SSOIdp.id);
               closeDropdown();
@@ -91,7 +94,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
           <MenuItem
             accent="danger"
             LeftIcon={IconTrash}
-            text="Delete"
+            text={t`Delete`}
             onClick={() => {
               handleDeleteSSOIdentityProvider(SSOIdp.id);
               closeDropdown();

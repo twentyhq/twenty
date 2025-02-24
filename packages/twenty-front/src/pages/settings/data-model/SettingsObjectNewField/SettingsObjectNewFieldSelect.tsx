@@ -18,6 +18,7 @@ import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { t } from '@lingui/core/macro';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
@@ -68,10 +69,10 @@ export const SettingsObjectNewFieldSelect = () => {
         {...formMethods}
       >
         <SubMenuTopBarContainer
-          title="1. Select a field type"
+          title={t`1. Select a field type`}
           links={[
-            { children: 'Workspace', href: '/settings/workspace' },
-            { children: 'Objects', href: '/settings/objects' },
+            { children: t`Workspace`, href: '/settings/workspace' },
+            { children: t`Objects`, href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
               href: getSettingsPath(SettingsPath.ObjectDetail, {

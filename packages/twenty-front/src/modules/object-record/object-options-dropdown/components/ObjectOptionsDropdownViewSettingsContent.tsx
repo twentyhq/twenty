@@ -18,8 +18,10 @@ import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownViewSettingsContent = () => {
+  const { t } = useLingui();
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const {
@@ -46,7 +48,7 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        View settings
+        {t`View settings`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {isCommandMenuV2Enabled && (
@@ -57,11 +59,11 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
                 ? IconLayoutSidebarRight
                 : IconLayoutNavbar
             }
-            text="Open in"
+            text={t`Open in`}
             contextualText={
               recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-                ? 'Side Panel'
-                : 'Record Page'
+                ? t`Side Panel`
+                : t`Record Page`
             }
             hasSubMenu
           />
@@ -76,7 +78,7 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
               )
             }
             toggled={isCompactModeActive}
-            text="Compact view"
+            text={t`Compact view`}
             toggleSize="small"
           />
         )}

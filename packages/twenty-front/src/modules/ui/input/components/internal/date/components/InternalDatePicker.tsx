@@ -21,6 +21,7 @@ import {
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import { t } from '@lingui/core/macro';
 
 export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
@@ -490,7 +491,7 @@ export const DateTimePicker = ({
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear}>
-          <StyledButton LeftIcon={IconCalendarX} text="Clear" />
+          <StyledButton LeftIcon={IconCalendarX} text={t`Clear`} />
         </StyledButtonContainer>
       )}
     </StyledContainer>

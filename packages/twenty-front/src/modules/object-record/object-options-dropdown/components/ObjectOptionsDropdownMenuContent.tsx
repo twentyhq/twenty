@@ -35,8 +35,10 @@ import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownMenuContent = () => {
+  const { t } = useLingui();
   const {
     recordIndexId,
     objectMetadataItem,
@@ -117,7 +119,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             <MenuItem
               onClick={() => onContentChange('viewSettings')}
               LeftIcon={IconLayout}
-              text="View settings"
+              text={t`View settings`}
               hasSubMenu
             />
           </DropdownMenuItemsContainer>
@@ -129,7 +131,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
         <MenuItem
           onClick={() => onContentChange('fields')}
           LeftIcon={IconTag}
-          text="Fields"
+          text={t`Fields`}
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
@@ -142,10 +144,10 @@ export const ObjectOptionsDropdownMenuContent = () => {
                 : onContentChange('recordGroupFields')
             }
             LeftIcon={IconLayoutList}
-            text="Group by"
+            text={t`Group by`}
             contextualText={
               !isGroupByEnabled
-                ? 'Not available on Default View'
+                ? t`Not available on Default View`
                 : recordGroupFieldMetadata?.label
             }
             hasSubMenu
@@ -155,7 +157,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
         {!isGroupByEnabled && (
           <AppTooltip
             anchorSelect={`#group-by-menu-item`}
-            content="Not available on Default View"
+            content={t`Not available on Default View`}
             noArrow
             place="bottom"
             width="100%"
@@ -177,7 +179,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
                 openObjectRecordsSpreasheetImportDialog();
               }}
               LeftIcon={IconFileImport}
-              text="Import"
+              text={t`Import`}
             />
           </>
         )}
@@ -188,7 +190,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             closeDropdown();
           }}
           LeftIcon={IconRotate2}
-          text={`Deleted ${objectNamePlural}`}
+          text={t`Deleted ${objectNamePlural}`}
         />
       </DropdownMenuItemsContainer>
     </>

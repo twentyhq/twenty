@@ -16,6 +16,7 @@ import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { t } from '@lingui/core/macro';
 
 export const SettingsSecuritySSOIdentifyProvider = () => {
   const navigate = useNavigateSettings();
@@ -55,7 +56,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="New SSO Configuration"
+      title={t`New SSO Configuration`}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!formConfig.formState.isValid}
