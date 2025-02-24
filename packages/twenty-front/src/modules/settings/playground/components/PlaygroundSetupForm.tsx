@@ -4,6 +4,7 @@ import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { openAPIReferenceState } from '@/settings/playground/states/openAPIReference';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
+import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -46,6 +47,14 @@ const StyledForm = styled.form`
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+`;
+
+const StyledSelect = styled(Select)`
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledButton = styled(Button)`
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const PlaygroundSetupForm = () => {
@@ -106,15 +115,12 @@ export const PlaygroundSetupForm = () => {
         control={control}
         defaultValue={options[0].value}
         render={({ field: { onChange, value } }) => (
-          <Select
-            dropdownId="apiKey"
-            label={t`API Key`}
-            options={options}
+          <TextInput
+            label={'API Key'}
+            placeholder={'Listing'}
             value={value}
-            onChange={onChange}
-            callToActionButton={{
-              text: t`Create API Key`,
-              onClick: () => navigateSettings(SettingsPath.DevelopersNewApiKey),
+            onChange={(value) => {
+              onChange(value);
             }}
           />
         )}
@@ -124,7 +130,7 @@ export const PlaygroundSetupForm = () => {
         control={control}
         defaultValue={PlaygroundSchemas.CORE}
         render={({ field: { onChange, value } }) => (
-          <Select
+          <StyledSelect
             dropdownId="schema"
             label={t`Schema`}
             options={[
@@ -149,7 +155,7 @@ export const PlaygroundSetupForm = () => {
         control={control}
         defaultValue={PlaygroundTypes.REST}
         render={({ field: { onChange, value } }) => (
-          <Select
+          <StyledSelect
             dropdownId="apiPlaygroundType"
             label={t`API`}
             options={[
@@ -169,7 +175,12 @@ export const PlaygroundSetupForm = () => {
           />
         )}
       />
-      <Button title={t`Launch`} variant="primary" accent="blue" type="submit" />
+      <StyledButton
+        title={t`Launch`}
+        variant="primary"
+        accent="blue"
+        type="submit"
+      />
     </StyledForm>
   );
 };
