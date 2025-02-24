@@ -122,10 +122,6 @@ export const RecordBoardCardHeader = ({
     recordIndexOpenRecordInSelector,
   );
 
-  if (!isDefined(record)) {
-    return null;
-  }
-
   const getCardHeading = () => {
     if (isCreating && position !== undefined) {
       return (
@@ -160,7 +156,7 @@ export const RecordBoardCardHeader = ({
       return (
         <FieldContext.Provider
           value={{
-            recordId: record.id,
+            recordId,
             maxWidth: 156,
             recoilScopeId:
               (isCreating ? 'new' : recordId) +
@@ -186,6 +182,10 @@ export const RecordBoardCardHeader = ({
           <RecordInlineCell />
         </FieldContext.Provider>
       );
+    }
+
+    if (!isDefined(record)) {
+      return null;
     }
 
     return (
