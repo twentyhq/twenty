@@ -33,7 +33,7 @@ export const RecordTableBodyDragDropContextProvider = ({
 
   const viewSorts = currentViewWithCombinedFiltersAndSorts?.viewSorts || [];
 
-  const setIsRemoveSortingModalOpenState = useSetRecoilState(
+  const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
   );
 
@@ -41,7 +41,7 @@ export const RecordTableBodyDragDropContextProvider = ({
     ({ snapshot }) =>
       (result: DropResult) => {
         if (viewSorts.length > 0) {
-          setIsRemoveSortingModalOpenState(true);
+          setIsRemoveSortingModalOpen(true);
           return;
         }
 
@@ -101,7 +101,7 @@ export const RecordTableBodyDragDropContextProvider = ({
       },
     [
       recordIndexAllRecordIdsSelector,
-      setIsRemoveSortingModalOpenState,
+      setIsRemoveSortingModalOpen,
       updateOneRow,
       viewSorts.length,
     ],

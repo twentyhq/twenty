@@ -8,7 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { isDefined, SettingsFeatures } from 'twenty-shared';
+import { isDefined, SettingsPermissions } from 'twenty-shared';
 
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
@@ -22,7 +22,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
-@UseGuards(SettingsPermissionsGuard(SettingsFeatures.ROLES))
+@UseGuards(SettingsPermissionsGuard(SettingsPermissions.ROLES))
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class RoleResolver {
   constructor(
@@ -38,13 +38,17 @@ export class RoleResolver {
     return roles.map((role) => ({
       id: role.id,
       label: role.label,
-      canUpdateAllSettings: role.canUpdateAllSettings,
       description: role.description,
       workspaceId: role.workspaceId,
       createdAt: role.createdAt,
       updatedAt: role.updatedAt,
       isEditable: role.isEditable,
       userWorkspaceRoles: role.userWorkspaceRoles,
+      canUpdateAllSettings: role.canUpdateAllSettings,
+      canReadAllObjectRecords: role.canReadAllObjectRecords,
+      canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
+      canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
+      canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
     }));
   }
 
@@ -81,7 +85,10 @@ export class RoleResolver {
     }
 
     const roles = await this.userRoleService
-      .getRolesByUserWorkspaces([userWorkspace.id])
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspace.id],
+        workspaceId: workspace.id,
+      })
       .then(
         (rolesByUserWorkspaces) =>
           rolesByUserWorkspaces?.get(userWorkspace.id) ?? [],

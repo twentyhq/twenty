@@ -1,13 +1,12 @@
-import { ConnectedAccountProvider } from 'twenty-shared';
 import { ThemeColor } from 'twenty-ui';
 
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
-
+import { ConnectedAccountProvider } from 'twenty-shared';
+import * as z from 'zod';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
-
 export type FieldUuidMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -279,14 +278,30 @@ export type FieldRichTextV2Value = {
 
 export type FieldRichTextValue = null | string;
 
-export type FieldActorValue = {
-  source: string;
-  workspaceMemberId?: string;
-  name: string;
-  context?: {
-    provider?: ConnectedAccountProvider;
-  };
-};
+const FieldActorSourceSchema = z.union([
+  z.literal('API'),
+  z.literal('IMPORT'),
+  z.literal('EMAIL'),
+  z.literal('CALENDAR'),
+  z.literal('MANUAL'),
+  z.literal('SYSTEM'),
+  z.literal('WORKFLOW'),
+]);
+
+export const FieldActorValueSchema = z.object({
+  source: FieldActorSourceSchema,
+  workspaceMemberId: z.string().nullable(),
+  name: z.string(),
+  context: z.object({
+    provider: z.nativeEnum(ConnectedAccountProvider).optional(),
+  }),
+});
+export type FieldActorValue = z.infer<typeof FieldActorValueSchema>;
+
+export type FieldActorForInputValue = Pick<
+  FieldActorValue,
+  'context' | 'source'
+>;
 
 export type FieldArrayValue = string[];
 

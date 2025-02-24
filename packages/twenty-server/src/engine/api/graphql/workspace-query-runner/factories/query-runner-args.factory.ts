@@ -21,6 +21,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
@@ -105,18 +106,14 @@ export class QueryRunnerArgsFactory {
             (args as UpdateManyResolverArgs).filter,
             fieldMetadataMapByNameByName,
           ),
-          data: await Promise.all(
-            (args as UpdateManyResolverArgs).data?.map((arg, index) =>
-              this.overrideDataByFieldMetadata(
-                arg,
-                options,
-                fieldMetadataMapByNameByName,
-                {
-                  argIndex: index,
-                  shouldBackfillPosition: false,
-                },
-              ),
-            ) ?? [],
+          data: await this.overrideDataByFieldMetadata(
+            (args as UpdateManyResolverArgs).data,
+            options,
+            fieldMetadataMapByNameByName,
+            {
+              argIndex: 0,
+              shouldBackfillPosition: false,
+            },
           ),
         } satisfies UpdateManyResolverArgs;
       case ResolverArgsType.FindOne:
@@ -177,6 +174,7 @@ export class QueryRunnerArgsFactory {
       return Promise.resolve({});
     }
 
+    const workspaceId = options.authContext.workspace.id;
     let isFieldPositionPresent = false;
 
     const createArgByArgKeyPromises: Promise<[string, any]>[] = Object.entries(
@@ -192,21 +190,21 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.POSITION: {
           isFieldPositionPresent = true;
 
-          const newValue = await this.recordPositionFactory.create(
+          const newValue = await this.recordPositionFactory.create({
             value,
-            {
+            workspaceId,
+            objectMetadata: {
               isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
               nameSingular:
                 options.objectMetadataItemWithFieldMaps.nameSingular,
             },
-            options.authContext.workspace.id,
-            argPositionBackfillInput.argIndex,
-          );
+            index: argPositionBackfillInput.argIndex,
+          });
 
           return [key, newValue];
         }
         case FieldMetadataType.NUMBER:
-          return [key, Number(value)] as const;
+          return [key, value === null ? null : Number(value)];
         case FieldMetadataType.RICH_TEXT_V2: {
           const richTextV2Value = richTextV2ValueSchema.parse(value);
 
@@ -233,6 +231,63 @@ export class QueryRunnerArgsFactory {
 
           return [key, valueInBothFormats];
         }
+        case FieldMetadataType.LINKS: {
+          const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
+
+          let secondaryLinks = value?.secondaryLinks;
+
+          if (secondaryLinks) {
+            try {
+              const secondaryLinksArray = JSON.parse(secondaryLinks);
+
+              secondaryLinks = JSON.stringify(
+                secondaryLinksArray.map((link) => {
+                  return {
+                    ...link,
+                    url: lowercaseDomain(link.url),
+                  };
+                }),
+              );
+            } catch {
+              /* empty */
+            }
+          }
+
+          return [
+            key,
+            {
+              ...value,
+              primaryLinkUrl: newPrimaryLinkUrl,
+              secondaryLinks,
+            },
+          ];
+        }
+        case FieldMetadataType.EMAILS: {
+          let additionalEmails = value?.additionalEmails;
+          const primaryEmail = value?.primaryEmail
+            ? value.primaryEmail.toLowerCase()
+            : '';
+
+          if (additionalEmails) {
+            try {
+              const emailArray = JSON.parse(additionalEmails) as string[];
+
+              additionalEmails = JSON.stringify(
+                emailArray.map((email) => email.toLowerCase()),
+              );
+            } catch {
+              /* empty */
+            }
+          }
+
+          return [
+            key,
+            {
+              primaryEmail,
+              additionalEmails,
+            },
+          ];
+        }
         default:
           return [key, value];
       }
@@ -248,16 +303,16 @@ export class QueryRunnerArgsFactory {
         ...newArgEntries,
         [
           'position',
-          await this.recordPositionFactory.create(
-            'first',
-            {
+          await this.recordPositionFactory.create({
+            value: 'first',
+            workspaceId,
+            objectMetadata: {
               isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
               nameSingular:
                 options.objectMetadataItemWithFieldMaps.nameSingular,
             },
-            options.authContext.workspace.id,
-            argPositionBackfillInput.argIndex,
-          ),
+            index: argPositionBackfillInput.argIndex,
+          }),
         ],
       ]);
     }

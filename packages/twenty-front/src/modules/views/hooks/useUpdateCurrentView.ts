@@ -1,16 +1,15 @@
 import { useRecoilCallback } from 'recoil';
 
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDefined } from 'twenty-shared';
 
-export const useUpdateCurrentView = (viewBarComponentId?: string) => {
+export const useUpdateCurrentView = () => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
-    currentViewIdComponentState,
-    viewBarComponentId,
+    contextStoreCurrentViewIdComponentState,
   );
 
   const { updateOneRecord } = useUpdateOneRecord({

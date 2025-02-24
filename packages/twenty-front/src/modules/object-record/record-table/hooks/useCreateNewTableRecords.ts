@@ -1,18 +1,19 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
-import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
+import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { shouldRedirectToShowPageOnCreation } from '@/object-record/utils/shouldRedirectToShowPageOnCreation';
 import { AppPath } from '@/types/AppPath';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -60,33 +61,38 @@ export const useCreateNewTableRecord = ({
 
   const navigate = useNavigateApp();
 
+  const { openRecordTitleCell } = useRecordTitleCell();
+
   const createNewTableRecord = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot }) =>
       async () => {
         const recordId = v4();
 
         if (isCommandMenuV2Enabled) {
-          // TODO: Generalize this behaviour, there will be a view setting to specify
-          // if the new record should be displayed in the side panel or on the record page
-          if (
-            shouldRedirectToShowPageOnCreation(objectMetadataItem.nameSingular)
-          ) {
-            await createOneRecord({
-              id: recordId,
-              name: 'Untitled',
+          const recordIndexOpenRecordIn = snapshot
+            .getLoadable(recordIndexOpenRecordInState)
+            .getValue();
+
+          await createOneRecord({ id: recordId });
+
+          if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+            openRecordInCommandMenu({
+              recordId,
+              objectNameSingular: objectMetadataItem.nameSingular,
+              isNewRecord: true,
             });
 
+            openRecordTitleCell({
+              recordId,
+              fieldMetadataId:
+                objectMetadataItem.labelIdentifierFieldMetadataId,
+            });
+          } else {
             navigate(AppPath.RecordShowPage, {
               objectNameSingular: objectMetadataItem.nameSingular,
               objectRecordId: recordId,
             });
-
-            set(isUpdatingRecordEditableNameState, true);
-            return;
           }
-
-          await createOneRecord({ id: recordId });
-          openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
 
           return;
         }
@@ -115,13 +121,13 @@ export const useCreateNewTableRecord = ({
       objectMetadataItem.labelIdentifierFieldMetadataId,
       objectMetadataItem.nameSingular,
       openRecordInCommandMenu,
+      openRecordTitleCell,
       setActiveDropdownFocusIdAndMemorizePrevious,
       setHotkeyScope,
       setPendingRecordId,
       setSelectedTableCellEditMode,
     ],
   );
-
   const createNewTableRecordInGroup = useRecoilCallback(
     ({ set }) =>
       (recordGroupId: string) => {

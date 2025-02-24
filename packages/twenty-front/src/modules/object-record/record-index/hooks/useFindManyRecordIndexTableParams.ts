@@ -5,9 +5,10 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
-import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
 import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
@@ -28,10 +29,12 @@ export const useFindManyRecordIndexTableParams = (
     recordTableId,
   );
 
-  const tableSorts = useRecoilComponentValueV2(
-    tableSortsComponentState,
-    recordTableId,
-  );
+  const { currentViewWithCombinedFiltersAndSorts } =
+    useGetCurrentView(recordTableId);
+
+  const viewSorts = currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [];
+
+  const sorts = mapViewSortsToSorts(viewSorts);
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
@@ -46,7 +49,7 @@ export const useFindManyRecordIndexTableParams = (
     tableViewFilterGroups,
   );
 
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);
+  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, sorts);
 
   return {
     objectNameSingular,

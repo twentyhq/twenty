@@ -1,10 +1,11 @@
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/components/DocumentViewer';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -14,6 +15,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
@@ -43,10 +45,17 @@ const StyledCalendarIconContainer = styled.div`
 
 const StyledLink = styled.a`
   align-items: center;
+  appearance: none;
+  background: none;
+  border: none;
   color: ${({ theme }) => theme.font.color.primary};
+  cursor: pointer;
   display: flex;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  text-align: left;
   text-decoration: none;
-
   width: 100%;
 
   :hover {
@@ -59,12 +68,24 @@ const StyledLinkContainer = styled.div`
   width: 100%;
 `;
 
-export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
+type AttachmentRowProps = {
+  attachment: Attachment;
+  onPreview?: (attachment: Attachment) => void;
+};
+
+export const AttachmentRow = ({
+  attachment,
+  onPreview,
+}: AttachmentRowProps) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
 
   const { name: originalFileName, extension: attachmentFileExtension } =
     getFileNameAndExtension(attachment.name);
+
+  const fileExtension =
+    attachmentFileExtension?.toLowerCase().replace('.', '') ?? '';
+  const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
 
   const [attachmentFileName, setAttachmentFileName] =
     useState(originalFileName);
@@ -74,12 +95,12 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     [attachment?.id],
   );
 
-  const { deleteOneRecord: deleteOneAttachment } = useDeleteOneRecord({
+  const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
 
   const handleDelete = () => {
-    deleteOneAttachment(attachment.id);
+    destroyOneAttachment(attachment.id);
   };
 
   const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
@@ -122,6 +143,19 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     );
   };
 
+  const handleOpenDocument = (e: React.MouseEvent) => {
+    // Cmd/Ctrl+click opens new tab, right click opens context menu
+    if (e.metaKey || e.ctrlKey || e.button === 2) {
+      return;
+    }
+
+    // Only prevent default and use preview if onPreview is provided
+    if (isDefined(onPreview)) {
+      e.preventDefault();
+      onPreview(attachment);
+    }
+  };
+
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <ActivityRow disabled>
@@ -137,13 +171,22 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             />
           ) : (
             <StyledLinkContainer>
-              <StyledLink
-                href={attachment.fullPath}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <OverflowingTextWithTooltip text={attachment.name} />
-              </StyledLink>
+              {isPreviewable ? (
+                <StyledLink
+                  onClick={handleOpenDocument}
+                  href={attachment.fullPath}
+                >
+                  <OverflowingTextWithTooltip text={attachment.name} />
+                </StyledLink>
+              ) : (
+                <StyledLink
+                  href={attachment.fullPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <OverflowingTextWithTooltip text={attachment.name} />
+                </StyledLink>
+              )}
             </StyledLinkContainer>
           )}
         </StyledLeftContent>

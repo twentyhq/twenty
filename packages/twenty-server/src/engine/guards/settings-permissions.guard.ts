@@ -7,18 +7,19 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 export const SettingsPermissionsGuard = (
-  requiredPermission: SettingsFeatures,
+  requiredPermission: SettingsPermissions,
 ): Type<CanActivate> => {
   @Injectable()
   class SettingsPermissionsMixin implements CanActivate {
@@ -46,6 +47,7 @@ export const SettingsPermissionsGuard = (
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           _setting: requiredPermission,
+          workspaceId,
         });
 
       if (hasPermission === true) {
@@ -53,7 +55,7 @@ export const SettingsPermissionsGuard = (
       }
 
       throw new PermissionsException(
-        'User is not authorized to perform this action',
+        PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }

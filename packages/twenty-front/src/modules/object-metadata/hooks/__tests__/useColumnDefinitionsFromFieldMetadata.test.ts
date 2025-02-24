@@ -8,7 +8,7 @@ import {
   SubscriptionStatus,
   WorkspaceActivationStatus,
 } from '~/generated/graphql';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -63,9 +63,8 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
       },
     );
 
-    const { columnDefinitions, sortDefinitions } = result.current;
+    const { columnDefinitions } = result.current;
 
     expect(columnDefinitions.length).toBe(21);
-    expect(sortDefinitions.length).toBe(14);
   });
 });

@@ -21,6 +21,7 @@ import {
   MenuItemSelectColor,
 } from 'twenty-ui';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
+import { t } from '@lingui/core/macro';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -168,7 +169,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
               {isDefault ? (
                 <MenuItem
                   LeftIcon={IconX}
-                  text="Remove as default"
+                  text={t`Remove as default`}
                   onClick={() => {
                     onRemoveAsDefault?.();
                     closeActionsDropdown();
@@ -177,7 +178,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
               ) : (
                 <MenuItem
                   LeftIcon={IconCheck}
-                  text="Set as default"
+                  text={t`Set as default`}
                   onClick={() => {
                     onSetAsDefault?.();
                     closeActionsDropdown();
@@ -188,7 +189,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                 <MenuItem
                   accent="danger"
                   LeftIcon={IconTrash}
-                  text="Remove option"
+                  text={t`Remove option`}
                   onClick={() => {
                     onRemove();
                     closeActionsDropdown();

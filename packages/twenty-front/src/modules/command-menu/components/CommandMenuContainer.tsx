@@ -9,19 +9,21 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -46,7 +48,11 @@ export const CommandMenuContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+  const {
+    toggleCommandMenu,
+    closeCommandMenu,
+    onCommandMenuCloseAnimationComplete,
+  } = useCommandMenu();
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
@@ -64,6 +70,7 @@ export const CommandMenuContainer = ({
     callback: closeCommandMenu,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
+    excludeClassNames: ['page-header-command-menu-button'],
   });
 
   const isMobile = useIsMobile();
@@ -78,52 +85,69 @@ export const CommandMenuContainer = ({
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
+  const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
+
   return (
     <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
     >
-      <ContextStoreComponentInstanceContext.Provider
+      <RecordSortsComponentInstanceContext.Provider
         value={{ instanceId: 'command-menu' }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <ContextStoreComponentInstanceContext.Provider
           value={{ instanceId: 'command-menu' }}
         >
-          <ActionMenuContext.Provider
-            value={{
-              isInRightDrawer: false,
-              onActionExecutedCallback: ({ key }) => {
-                if (
-                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
-                  key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
-                ) {
-                  toggleCommandMenu();
-                }
-              },
-            }}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'command-menu' }}
           >
-            <RecordActionMenuEntriesSetter />
-            <RecordAgnosticActionMenuEntriesSetter />
-            {isWorkflowEnabled && (
-              <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
-            )}
-            <ActionMenuConfirmationModals />
-            {isCommandMenuOpened && (
-              <StyledCommandMenu
-                data-testid="command-menu"
-                ref={commandMenuRef}
-                className="command-menu"
-                animate={targetVariantForAnimation}
-                initial="closed"
-                exit="closed"
-                variants={COMMAND_MENU_ANIMATION_VARIANTS}
-                transition={{ duration: theme.animation.duration.normal }}
+            <ActionMenuContext.Provider
+              value={{
+                isInRightDrawer: true,
+                onActionExecutedCallback: ({ key }) => {
+                  if (
+                    key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
+                    key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
+                    key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
+                  ) {
+                    toggleCommandMenu();
+                  }
+                  if (
+                    key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK
+                  ) {
+                    setCommandMenuSearch('');
+                  }
+                },
+              }}
+            >
+              <RecordActionMenuEntriesSetter />
+              <RecordAgnosticActionMenuEntriesSetter />
+              {isWorkflowEnabled && (
+                <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+              )}
+              <ActionMenuConfirmationModals />
+              <AnimatePresence
+                mode="wait"
+                onExitComplete={onCommandMenuCloseAnimationComplete}
               >
-                {children}
-              </StyledCommandMenu>
-            )}
-          </ActionMenuContext.Provider>
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+                {isCommandMenuOpened && (
+                  <StyledCommandMenu
+                    data-testid="command-menu"
+                    ref={commandMenuRef}
+                    className="command-menu"
+                    animate={targetVariantForAnimation}
+                    initial="closed"
+                    exit="closed"
+                    variants={COMMAND_MENU_ANIMATION_VARIANTS}
+                    transition={{ duration: theme.animation.duration.normal }}
+                  >
+                    {children}
+                  </StyledCommandMenu>
+                )}
+              </AnimatePresence>
+            </ActionMenuContext.Provider>
+          </ActionMenuComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </RecordSortsComponentInstanceContext.Provider>
     </RecordFiltersComponentInstanceContext.Provider>
   );
 };

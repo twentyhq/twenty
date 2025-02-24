@@ -20,6 +20,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -28,6 +29,7 @@ registerEnumType(WorkspaceActivationStatus, {
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType()
 export class Workspace {
+  // Fields
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -56,6 +58,15 @@ export class Workspace {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @Field()
+  @Column({ default: true })
+  allowImpersonation: boolean;
+
+  @Field()
+  @Column({ default: true })
+  isPublicInviteLinkEnabled: boolean;
+
+  // Relations
   @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
     cascade: true,
   })
@@ -71,16 +82,14 @@ export class Workspace {
   })
   workspaceUsers: Relation<UserWorkspace[]>;
 
-  @Field()
-  @Column({ default: true })
-  allowImpersonation: boolean;
-
-  @Field()
-  @Column({ default: true })
-  isPublicInviteLinkEnabled: boolean;
-
   @OneToMany(() => FeatureFlag, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlag[]>;
+
+  @OneToMany(
+    () => ApprovedAccessDomain,
+    (approvedAccessDomain) => approvedAccessDomain.workspace,
+  )
+  approvedAccessDomains: Relation<ApprovedAccessDomain[]>;
 
   @Field({ nullable: true })
   workspaceMembersCount: number;
@@ -122,9 +131,9 @@ export class Workspace {
   @Column({ unique: true })
   subdomain: string;
 
-  @Field({ nullable: true })
-  @Column({ unique: true, nullable: true })
-  customDomain?: string;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  customDomain: string | null;
 
   @Field()
   @Column({ default: true })
@@ -137,4 +146,8 @@ export class Workspace {
   @Field()
   @Column({ default: true })
   isMicrosoftAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: false })
+  isCustomDomainEnabled: boolean;
 }

@@ -16,14 +16,17 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { isDefined } from 'twenty-shared';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
 export const ViewPickerListContent = () => {
+  const { t } = useLingui();
   const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
     useGetCurrentView();
+
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
     viewPickerReferenceViewIdComponentState,
   );
@@ -100,7 +103,7 @@ export const ViewPickerListContent = () => {
         <MenuItem
           onClick={handleAddViewButtonClick}
           LeftIcon={IconPlus}
-          text="Add view"
+          text={t`Add view`}
         />
       </StyledBoldDropdownMenuItemsContainer>
     </>

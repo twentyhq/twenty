@@ -1,7 +1,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -21,7 +21,7 @@ export class RelationMetadataResolver {
     private readonly relationMetadataService: RelationMetadataService,
   ) {}
 
-  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
   @Mutation(() => RelationMetadataDTO)
   async deleteOneRelation(
     @Args('input') input: DeleteOneRelationInput,

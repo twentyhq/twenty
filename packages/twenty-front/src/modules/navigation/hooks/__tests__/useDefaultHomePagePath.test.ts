@@ -4,40 +4,55 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewType } from '@/views/types/ViewType';
+import { getCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedUserData } from '~/testing/mock-data/users';
 
-jest.mock('@/prefetch/hooks/usePrefetchedData');
-const setupMockPrefetchedData = (viewId?: string) => {
-  const companyObjectMetadata = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'company',
-  );
-
-  jest.mocked(usePrefetchedData).mockReturnValue({
-    isDataPrefetched: true,
-    records: viewId
-      ? [
-          {
-            id: viewId,
-            __typename: 'object',
-            objectMetadataId: companyObjectMetadata?.id,
-          },
-        ]
-      : [],
-  });
-};
-
-const renderHooks = (withCurrentUser: boolean) => {
+const renderHooks = ({
+  withCurrentUser,
+  withExistingView,
+}: {
+  withCurrentUser: boolean;
+  withExistingView: boolean;
+}) => {
   const { result } = renderHook(
     () => {
       const setCurrentUser = useSetRecoilState(currentUserState);
       const setObjectMetadataItems = useSetRecoilState(
         objectMetadataItemsState,
       );
+      const setPrefetchViews = useSetRecoilState(prefetchViewsState);
 
       setObjectMetadataItems(generatedMockObjectMetadataItems);
+
+      if (withExistingView) {
+        setPrefetchViews([
+          {
+            id: 'viewId',
+            name: 'Test View',
+            objectMetadataId: getCompanyObjectMetadataItem().id,
+            type: ViewType.Table,
+            key: null,
+            isCompact: false,
+            openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
+            viewFields: [],
+            viewGroups: [],
+            viewSorts: [],
+            kanbanFieldMetadataId: '',
+            kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+            icon: '',
+            kanbanAggregateOperationFieldMetadataId: '',
+            position: 0,
+            viewFilters: [],
+            __typename: 'View',
+          },
+        ]);
+      }
 
       if (withCurrentUser) {
         setCurrentUser(mockedUserData);
@@ -52,23 +67,31 @@ const renderHooks = (withCurrentUser: boolean) => {
 };
 describe('useDefaultHomePagePath', () => {
   it('should return proper path when no currentUser', () => {
-    setupMockPrefetchedData();
-    const { result } = renderHooks(false);
+    const { result } = renderHooks({
+      withCurrentUser: false,
+      withExistingView: false,
+    });
     expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
   });
   it('should return proper path when no currentUser and existing view', () => {
-    setupMockPrefetchedData('viewId');
-    const { result } = renderHooks(false);
+    const { result } = renderHooks({
+      withCurrentUser: false,
+      withExistingView: true,
+    });
     expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
   });
   it('should return proper path when currentUser is defined', () => {
-    setupMockPrefetchedData();
-    const { result } = renderHooks(true);
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+    });
     expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
   });
   it('should return proper path when currentUser is defined and view exists', () => {
-    setupMockPrefetchedData('viewId');
-    const { result } = renderHooks(true);
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: true,
+    });
     expect(result.current.defaultHomePagePath).toEqual(
       '/objects/companies?viewId=viewId',
     );

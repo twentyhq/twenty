@@ -3,30 +3,35 @@ import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
+import { APP_LOCALES } from 'twenty-shared';
 
 type CleanSuspendedWorkspaceEmailProps = {
-  inactiveDaysBeforeDelete: number;
+  daysSinceInactive: number;
   userName: string;
   workspaceDisplayName: string | undefined;
+  locale: keyof typeof APP_LOCALES;
 };
 
 export const CleanSuspendedWorkspaceEmail = ({
-  inactiveDaysBeforeDelete,
+  daysSinceInactive,
   userName,
   workspaceDisplayName,
+  locale,
 }: CleanSuspendedWorkspaceEmailProps) => {
-  const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
-
   return (
-    <BaseEmail width={333} locale="en">
-      <Title value="Deleted Workspace 🥺" />
+    <BaseEmail width={333} locale={locale}>
+      <Title value={<Trans>Deleted Workspace</Trans>} />
       <MainText>
-        {helloString},
+        {userName?.length > 1 ? (
+          <Trans>Dear {userName},</Trans>
+        ) : (
+          <Trans>Hello,</Trans>
+        )}
         <br />
         <br />
         <Trans>
           Your workspace <b>{workspaceDisplayName}</b> has been deleted as your
-          subscription expired {inactiveDaysBeforeDelete} days ago.
+          subscription expired {daysSinceInactive} days ago.
         </Trans>
         <br />
         <br />
@@ -39,7 +44,7 @@ export const CleanSuspendedWorkspaceEmail = ({
       </MainText>
       <CallToAction
         href="https://app.twenty.com/"
-        value="Create a new workspace"
+        value={<Trans>Create a new workspace</Trans>}
       />
     </BaseEmail>
   );

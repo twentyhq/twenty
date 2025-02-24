@@ -52,14 +52,8 @@ describe('computeContextStoreFilters', () => {
         displayValue: 'John',
         displayAvatarUrl: undefined,
         operand: ViewFilterOperand.Contains,
-        definition: {
-          fieldMetadataId: personObjectMetadataItem.fields.find(
-            (field) => field.name === 'name',
-          )!.id,
-          label: 'Name',
-          iconName: 'person',
-          type: 'TEXT',
-        },
+        type: 'TEXT',
+        label: 'Name',
       },
     ];
 

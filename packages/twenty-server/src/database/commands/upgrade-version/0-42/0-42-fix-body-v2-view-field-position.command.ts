@@ -26,10 +26,10 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
     protected readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   async executeActiveWorkspacesCommand(
@@ -154,7 +154,7 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
             (field) => field.name === 'bodyV2',
           )?.id;
 
-          await viewFieldRepository.create({
+          const viewFieldToCreate = viewFieldRepository.create({
             fieldMetadataId: bodyV2FieldMetadataId,
             viewId: view.id,
             position: bodyViewField.position,
@@ -162,6 +162,8 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
             size: bodyViewField.size,
             aggregateOperation: bodyViewField.aggregateOperation,
           });
+
+          await viewFieldRepository.save(viewFieldToCreate);
 
           await viewFieldRepository.update(
             { id: bodyViewField.id },
@@ -183,5 +185,9 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
     } catch (error) {
       this.logger.log(chalk.red(`Error in workspace ${workspaceId}`));
     }
+
+    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+      workspaceId,
+    );
   }
 }

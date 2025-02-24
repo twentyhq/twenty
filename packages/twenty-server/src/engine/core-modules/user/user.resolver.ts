@@ -13,7 +13,10 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { SettingsFeatures } from 'twenty-shared';
+import {
+  PermissionsOnAllObjectRecords,
+  SettingsPermissions,
+} from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
@@ -113,16 +116,23 @@ export class UserResolver {
       if (!currentUserWorkspace) {
         throw new Error('Current user workspace not found');
       }
-      const permissions =
-        await this.permissionsService.getUserWorkspaceSettingsPermissions({
+      const { settingsPermissions, objectRecordsPermissions } =
+        await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId: currentUserWorkspace.id,
+          workspaceId: workspace.id,
         });
 
-      const permittedFeatures: SettingsFeatures[] = (
-        Object.keys(permissions) as SettingsFeatures[]
-      ).filter((feature) => permissions[feature] === true);
+      const grantedSettingsPermissions: SettingsPermissions[] = (
+        Object.keys(settingsPermissions) as SettingsPermissions[]
+      ).filter((feature) => settingsPermissions[feature] === true);
 
-      currentUserWorkspace.settingsPermissions = permittedFeatures;
+      const grantedObjectRecordsPermissions = (
+        Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
+      ).filter((permission) => objectRecordsPermissions[permission] === true);
+
+      currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
+      currentUserWorkspace.objectRecordsPermissions =
+        grantedObjectRecordsPermissions;
       user.currentUserWorkspace = currentUserWorkspace;
     }
 
@@ -216,9 +226,12 @@ export class UserResolver {
       );
 
       rolesByUserWorkspaces =
-        await this.userRoleService.getRolesByUserWorkspaces(
-          userWorkspaces.map((userWorkspace) => userWorkspace.id),
-        );
+        await this.userRoleService.getRolesByUserWorkspaces({
+          userWorkspaceIds: userWorkspaces.map(
+            (userWorkspace) => userWorkspace.id,
+          ),
+          workspaceId: workspace.id,
+        });
     }
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
@@ -254,6 +267,11 @@ export class UserResolver {
             description: roleEntity.description,
             isEditable: roleEntity.isEditable,
             userWorkspaceRoles: roleEntity.userWorkspaceRoles,
+            canReadAllObjectRecords: roleEntity.canReadAllObjectRecords,
+            canUpdateAllObjectRecords: roleEntity.canUpdateAllObjectRecords,
+            canSoftDeleteAllObjectRecords:
+              roleEntity.canSoftDeleteAllObjectRecords,
+            canDestroyAllObjectRecords: roleEntity.canDestroyAllObjectRecords,
           };
         });
 

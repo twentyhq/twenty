@@ -1,3 +1,4 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
@@ -16,7 +17,7 @@ import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWor
 import { isCreateStepNode } from '@/workflow/workflow-diagram/utils/isCreateStepNode';
 import { useLingui } from '@lingui/react/macro';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { IconBolt, useIcons } from 'twenty-ui';
@@ -37,12 +38,16 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
     commandMenuNavigationStackState,
   );
 
+  const { isInRightDrawer } = useContext(ActionMenuContext);
+
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
       const selectedNode = nodes[0] as WorkflowDiagramNode;
       const isClosingStep = isDefined(selectedNode) === false;
 
-      setCommandMenuNavigationStack([]);
+      if (!isInRightDrawer) {
+        setCommandMenuNavigationStack([]);
+      }
 
       if (isClosingStep) {
         closeRightDrawer();
@@ -76,11 +81,12 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       });
     },
     [
-      setCommandMenuNavigationStack,
+      isInRightDrawer,
       setWorkflowSelectedNode,
       setHotkeyScope,
       openRightDrawer,
       getIcon,
+      setCommandMenuNavigationStack,
       closeRightDrawer,
       closeCommandMenu,
       t,

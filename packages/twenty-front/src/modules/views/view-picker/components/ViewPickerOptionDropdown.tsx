@@ -17,6 +17,7 @@ import {
   MenuItem,
   useIcons,
 } from 'twenty-ui';
+import { useLingui } from '@lingui/react/macro';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -31,6 +32,7 @@ export const ViewPickerOptionDropdown = ({
   view,
   handleViewSelect,
 }: ViewPickerOptionDropdownProps) => {
+  const { t } = useLingui();
   const { closeDropdown } = useDropdown(`view-picker-options-${view.id}`);
   const { getIcon } = useIcons();
   const [isHovered, setIsHovered] = useState(false);
@@ -83,20 +85,20 @@ export const ViewPickerOptionDropdown = ({
             {isIndexView ? (
               <MenuItem
                 LeftIcon={IconHeart}
-                text={isFavorite ? 'Manage favorite' : 'Add to Favorite'}
+                text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
                 onClick={handleAddToFavorites}
               />
             ) : (
               <>
                 <MenuItem
                   LeftIcon={IconHeart}
-                  text={isFavorite ? 'Manage favorite' : 'Add to Favorite'}
+                  text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
                   onClick={handleAddToFavorites}
                 />
 
                 <MenuItem
                   LeftIcon={IconPencil}
-                  text="Edit"
+                  text={t`Edit`}
                   onClick={(event) => {
                     onEdit(event, view.id);
                     closeDropdown();
@@ -104,7 +106,7 @@ export const ViewPickerOptionDropdown = ({
                 />
                 <MenuItem
                   LeftIcon={IconTrash}
-                  text="Delete"
+                  text={t`Delete`}
                   onClick={handleDelete}
                   accent="danger"
                 />

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { Brackets } from 'typeorm';
 import { isDefined } from 'twenty-shared';
+import { Brackets } from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -18,6 +18,7 @@ import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-bu
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -28,14 +29,10 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<SearchResolverArgs>,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<IConnection<ObjectRecord>> {
     const { authContext, objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
-
-    const featureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-        authContext.workspace.id,
-      );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(
@@ -137,6 +134,8 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
         limit,
         authContext,
         dataSource: executionArgs.dataSource,
+        isNewRelationEnabled:
+          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       });
     }
 

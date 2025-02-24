@@ -1,18 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import isEmpty from 'lodash.isempty';
 import { Repository } from 'typeorm';
 
+import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
+import {
+  SEED_ACME_WORKSPACE_ID,
+  SEED_APPLE_WORKSPACE_ID,
+} from 'src/database/typeorm-seeds/core/workspaces';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -30,6 +32,8 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 @Injectable()
 export class WorkspaceManagerService {
+  private readonly logger = new Logger(WorkspaceManagerService.name);
+
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -46,6 +50,7 @@ export class WorkspaceManagerService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   /**
@@ -53,12 +58,26 @@ export class WorkspaceManagerService {
    * @param workspaceId
    * @returns Promise<void>
    */
-  public async init(workspaceId: string): Promise<void> {
+  public async init({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }): Promise<void> {
+    const schemaCreationStart = performance.now();
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
       );
 
+    const schemaCreationEnd = performance.now();
+
+    this.logger.log(
+      `Schema creation took ${schemaCreationEnd - schemaCreationStart}ms`,
+    );
+
+    const dataSourceMetadataCreationStart = performance.now();
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
@@ -70,16 +89,37 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
+    const dataSourceMetadataCreationEnd = performance.now();
+
+    this.logger.log(
+      `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
+    );
+
+    const permissionsEnabledStart = performance.now();
     const permissionsEnabled =
       await this.permissionsService.isPermissionsEnabled();
 
     if (permissionsEnabled === true) {
-      await this.initPermissions(workspaceId);
+      await this.initPermissions({ workspaceId, userId });
     }
+
+    const permissionsEnabledEnd = performance.now();
+
+    this.logger.log(
+      `Permissions enabled took ${permissionsEnabledEnd - permissionsEnabledStart}ms`,
+    );
+
+    const prefillStandardObjectsStart = performance.now();
 
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
       workspaceId,
+    );
+
+    const prefillStandardObjectsEnd = performance.now();
+
+    this.logger.log(
+      `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
     );
   }
 
@@ -129,7 +169,7 @@ export class WorkspaceManagerService {
       await this.permissionsService.isPermissionsEnabled();
 
     if (permissionsEnabled === true) {
-      await this.initPermissions(workspaceId);
+      await this.initPermissionsDev(workspaceId);
     }
   }
 
@@ -229,29 +269,78 @@ export class WorkspaceManagerService {
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
   }
 
-  private async initPermissions(workspaceId: string) {
+  private async initPermissions({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }) {
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
 
-    const userWorkspaces = await this.userWorkspaceRepository.find({
+    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
       where: {
         workspaceId,
+        userId,
       },
     });
 
-    if (isEmpty(userWorkspaces)) {
-      throw new PermissionsException(
-        'User workspace not found',
-        PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
+    await this.userRoleService.assignRoleToUserWorkspace({
+      workspaceId,
+      userWorkspaceId: userWorkspace.id,
+      roleId: adminRole.id,
+    });
+  }
 
-    for (const userWorkspace of userWorkspaces) {
+  private async initPermissionsDev(workspaceId: string) {
+    await this.featureFlagService.enableFeatureFlags(
+      [FeatureFlagKey.IsPermissionsEnabled],
+      workspaceId,
+    );
+    const adminRole = await this.roleService.createAdminRole({
+      workspaceId,
+    });
+
+    let adminUserWorkspaceId: string | undefined;
+    let memberUserWorkspaceId: string | undefined;
+
+    if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+      adminUserWorkspaceId = DEV_SEED_USER_WORKSPACE_IDS.TIM;
+      memberUserWorkspaceId = DEV_SEED_USER_WORKSPACE_IDS.JONY;
+
+      // Create guest role only in this workspace
+      const guestRole = await this.roleService.createGuestRole({
+        workspaceId,
+      });
+
       await this.userRoleService.assignRoleToUserWorkspace({
         workspaceId,
-        userWorkspaceId: userWorkspace.id,
+        userWorkspaceId: DEV_SEED_USER_WORKSPACE_IDS.PHIL,
+        roleId: guestRole.id,
+      });
+    } else if (workspaceId === SEED_ACME_WORKSPACE_ID) {
+      adminUserWorkspaceId = DEV_SEED_USER_WORKSPACE_IDS.TIM_ACME;
+    }
+
+    if (adminUserWorkspaceId) {
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId,
+        userWorkspaceId: adminUserWorkspaceId,
         roleId: adminRole.id,
+      });
+    }
+
+    const memberRole = await this.roleService.createMemberRole({
+      workspaceId,
+    });
+
+    if (memberUserWorkspaceId) {
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId,
+        userWorkspaceId: memberUserWorkspaceId,
+        roleId: memberRole.id,
       });
     }
   }

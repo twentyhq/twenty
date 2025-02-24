@@ -5,7 +5,7 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { SettingsFeatures } from 'twenty-shared';
+import { SettingsPermissions } from 'twenty-shared';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
@@ -57,7 +57,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           pagingStrategy: PagingStrategies.CURSOR,
           create: {
             many: { disabled: true },
-            guards: [SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL)],
+            guards: [SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL)],
           },
           update: { disabled: true },
           delete: { disabled: true },

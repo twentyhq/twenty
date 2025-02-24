@@ -19,8 +19,8 @@ export const RoleWorkspaceMemberPickerDropdownContent = ({
     return null;
   }
 
-  if (!filteredWorkspaceMembers?.length && searchFilter?.length > 0) {
-    return <MenuItem disabled text={t`No Result`} />;
+  if (!filteredWorkspaceMembers.length && searchFilter.length > 0) {
+    return <MenuItem disabled text={t`No Results`} />;
   }
 
   return (

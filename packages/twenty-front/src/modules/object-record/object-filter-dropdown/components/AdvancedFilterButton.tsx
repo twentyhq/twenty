@@ -1,9 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import {
-  formatFieldMetadataItemAsFilterDefinition,
-  getFilterTypeFromFieldType,
-} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
@@ -110,10 +107,6 @@ export const AdvancedFilterButton = () => {
         throw new Error('Missing default filter definition');
       }
 
-      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
-        field: defaultFieldMetadataItem,
-      });
-
       const filterType = getFilterTypeFromFieldType(
         defaultFieldMetadataItem.type,
       );
@@ -126,10 +119,11 @@ export const AdvancedFilterButton = () => {
         id: v4(),
         fieldMetadataId: defaultFieldMetadataItem.id,
         operand: firstOperand,
-        definition: filterDefinition,
         value: '',
         displayValue: '',
         viewFilterGroupId: newViewFilterGroup.id,
+        type: getFilterTypeFromFieldType(defaultFieldMetadataItem.type),
+        label: defaultFieldMetadataItem.label,
       });
     }
 

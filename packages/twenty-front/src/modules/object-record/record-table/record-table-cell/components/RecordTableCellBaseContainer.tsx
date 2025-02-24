@@ -4,6 +4,7 @@ import { BORDER_COMMON, ThemeContext } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -15,11 +16,13 @@ import {
 const StyledBaseContainer = styled.div<{
   hasSoftFocus: boolean;
   fontColorExtraLight: string;
+  fontColorMedium: string;
   backgroundColorTransparentSecondary: string;
+  isReadOnly: boolean;
 }>`
   align-items: center;
   box-sizing: border-box;
-  cursor: pointer;
+  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
   height: 32px;
   position: relative;
@@ -28,11 +31,20 @@ const StyledBaseContainer = styled.div<{
   background: ${({ hasSoftFocus, backgroundColorTransparentSecondary }) =>
     hasSoftFocus ? backgroundColorTransparentSecondary : 'none'};
 
-  border-radius: ${({ hasSoftFocus }) =>
-    hasSoftFocus ? BORDER_COMMON.radius.sm : 'none'};
+  border-radius: ${({ hasSoftFocus, isReadOnly }) =>
+    hasSoftFocus && !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
 
-  outline: ${({ hasSoftFocus, fontColorExtraLight }) =>
-    hasSoftFocus ? `1px solid ${fontColorExtraLight}` : 'none'};
+  outline: ${({
+    hasSoftFocus,
+    fontColorExtraLight,
+    fontColorMedium,
+    isReadOnly,
+  }) =>
+    hasSoftFocus
+      ? isReadOnly
+        ? `1px solid ${fontColorMedium}`
+        : `1px solid ${fontColorExtraLight}`
+      : 'none'};
 `;
 
 export const RecordTableCellBaseContainer = ({
@@ -44,6 +56,7 @@ export const RecordTableCellBaseContainer = ({
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
 
+  const isReadOnly = useIsFieldValueReadOnly();
   const { hasSoftFocus, cellPosition } = useContext(RecordTableCellContext);
 
   const { onMoveSoftFocusToCell, onCellMouseEnter } =
@@ -83,7 +96,9 @@ export const RecordTableCellBaseContainer = ({
           theme.background.transparent.secondary
         }
         fontColorExtraLight={theme.font.color.extraLight}
+        fontColorMedium={theme.border.color.medium}
         hasSoftFocus={hasSoftFocus}
+        isReadOnly={isReadOnly}
       >
         {children}
       </StyledBaseContainer>

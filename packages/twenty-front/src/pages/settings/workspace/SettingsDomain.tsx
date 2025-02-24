@@ -45,7 +45,7 @@ export const SettingsDomain = () => {
         .regex(
           /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
           {
-            message: t`Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+            message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
           },
         )
         .max(256)
@@ -74,7 +74,7 @@ export const SettingsDomain = () => {
     delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
-      customDomain: currentWorkspace?.customDomain ?? null,
+      customDomain: currentWorkspace?.customDomain ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
@@ -83,7 +83,7 @@ export const SettingsDomain = () => {
   const customDomainValue = form.watch('customDomain');
 
   const updateCustomDomain = (
-    customDomain: string | null | undefined,
+    customDomain: string | null,
     currentWorkspace: CurrentWorkspace,
   ) => {
     updateWorkspace({
@@ -98,7 +98,8 @@ export const SettingsDomain = () => {
       onCompleted: () => {
         setCurrentWorkspace({
           ...currentWorkspace,
-          customDomain,
+          customDomain:
+            customDomain && customDomain.length > 0 ? customDomain : null,
         });
       },
       onError: (error) => {
@@ -209,9 +210,7 @@ export const SettingsDomain = () => {
       <SettingsPageContainer>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
-          {(!currentWorkspace?.customDomain || !isCustomDomainEnabled) && (
-            <SettingsSubdomain />
-          )}
+          <SettingsSubdomain />
           {isCustomDomainEnabled && (
             <>
               <SettingsCustomDomainEffect />

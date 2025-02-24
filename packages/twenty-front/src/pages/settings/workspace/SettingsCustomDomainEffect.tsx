@@ -1,20 +1,37 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useEffect, useCallback } from 'react';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { useGetCustomDomainDetailsQuery } from '~/generated/graphql';
+import { useCheckCustomDomainValidRecordsMutation } from '~/generated/graphql';
+import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 
 export const SettingsCustomDomainEffect = () => {
-  const { refetch } = useGetCustomDomainDetailsQuery();
+  const [checkCustomDomainValidRecords, { data: customDomainRecords }] =
+    useCheckCustomDomainValidRecordsMutation();
+
+  const setCustomDomainRecords = useSetRecoilState(customDomainRecordsState);
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const initInterval = useCallback(() => {
+    return setInterval(async () => {
+      await checkCustomDomainValidRecords();
+      if (isDefined(customDomainRecords?.checkCustomDomainValidRecords)) {
+        setCustomDomainRecords(
+          customDomainRecords.checkCustomDomainValidRecords,
+        );
+      }
+    }, 3000);
+  }, [
+    checkCustomDomainValidRecords,
+    customDomainRecords,
+    setCustomDomainRecords,
+  ]);
 
   useEffect(() => {
     let pollIntervalFn: null | ReturnType<typeof setInterval> = null;
     if (isDefined(currentWorkspace?.customDomain)) {
-      pollIntervalFn = setInterval(async () => {
-        refetch();
-      }, 3000);
+      pollIntervalFn = initInterval();
     }
 
     return () => {
@@ -22,7 +39,7 @@ export const SettingsCustomDomainEffect = () => {
         clearInterval(pollIntervalFn);
       }
     };
-  }, [currentWorkspace?.customDomain, refetch]);
+  }, [currentWorkspace?.customDomain, initInterval]);
 
   return <></>;
 };
