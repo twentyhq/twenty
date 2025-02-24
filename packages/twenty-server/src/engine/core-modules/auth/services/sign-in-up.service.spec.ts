@@ -18,6 +18,7 @@ import {
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -26,6 +27,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 jest.mock('src/utils/image', () => {
   return {
@@ -42,6 +44,8 @@ describe('SignInUpService', () => {
   let userWorkspaceService: UserWorkspaceService;
   let environmentService: EnvironmentService;
   let domainManagerService: DomainManagerService;
+  let userRoleService: UserRoleService;
+  let featureFlagService: FeatureFlagService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -117,6 +121,18 @@ describe('SignInUpService', () => {
             generateSubdomain: jest.fn(),
           },
         },
+        {
+          provide: UserRoleService,
+          useValue: {
+            assignRoleToUserWorkspace: jest.fn(),
+          },
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: {
+            isFeatureEnabled: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -132,6 +148,8 @@ describe('SignInUpService', () => {
     environmentService = module.get<EnvironmentService>(EnvironmentService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
+    userRoleService = module.get<UserRoleService>(UserRoleService);
+    featureFlagService = module.get<FeatureFlagService>(FeatureFlagService);
   });
 
   it('should handle signInUp with valid personal invitation', async () => {
@@ -314,5 +332,39 @@ describe('SignInUpService', () => {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
+  });
+
+  it('should assign default role when permissions are enabled', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      workspace: {
+        id: 'workspaceId',
+        defaultRoleId: 'defaultRoleId',
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as Workspace,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'existingUser',
+        existingUser: { email: 'test@example.com' } as User,
+      },
+    };
+
+    const mockUserWorkspace = { id: 'userWorkspaceId' };
+
+    jest.spyOn(featureFlagService, 'isFeatureEnabled').mockResolvedValue(true);
+    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
+      user: {} as User,
+      userWorkspace: mockUserWorkspace as UserWorkspace,
+    });
+
+    await service.signInUp(params);
+
+    expect(params.workspace).toBeDefined();
+    expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith({
+      workspaceId: params.workspace!.id,
+      userWorkspaceId: mockUserWorkspace.id,
+      roleId: params.workspace!.defaultRoleId,
+    });
   });
 });
