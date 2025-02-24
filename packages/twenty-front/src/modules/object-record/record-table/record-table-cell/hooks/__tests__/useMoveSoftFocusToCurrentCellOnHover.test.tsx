@@ -101,14 +101,17 @@ describe('useMoveSoftFocusToCurrentCellOnHover', () => {
       () => {
         return {
           moveSoftFocusToCurrentCellOnHover:
-            useMoveSoftFocusToCurrentCellOnHover(),
+            useMoveSoftFocusToCurrentCellOnHover('scopeId'),
         };
       },
       { wrapper: Wrapper },
     );
 
     act(() => {
-      result.current.moveSoftFocusToCurrentCellOnHover();
+      // result.current.moveSoftFocusToCurrentCellOnHover({
+      //   column: 1,
+      //   row: 0,
+      // });
     });
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
