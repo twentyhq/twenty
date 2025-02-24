@@ -17,7 +17,6 @@ export const absoluteUrlSchema = z.string().transform((value, ctx) => {
     .replace('https://', '')
     .replace('http://', '');
 
-  console.log('valueWithoutProtocol', valueWithoutProtocol);
   if (/^\d+(?:\/[a-zA-Z]*)?$/.test(valueWithoutProtocol)) {
     // if the hostname is a number, it's not a valid url
     // if we let URL() parse it, it will throw cast an IP address and we lose the information
@@ -29,16 +28,12 @@ export const absoluteUrlSchema = z.string().transform((value, ctx) => {
     return z.NEVER;
   }
 
-  console.log('absoluteUrl', absoluteUrl);
-
   try {
     const url = new URL(absoluteUrl);
 
     if (isValidHostname(url.hostname)) {
       return absoluteUrl;
     }
-
-    console.log('url', url);
 
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
