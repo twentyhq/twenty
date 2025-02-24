@@ -2,11 +2,11 @@ import { Chip } from '@ui/display/chip/components/Chip';
 import {
   AvatarChipsCommonProps,
   userGetAvatarChipsBuilder,
-} from '@ui/display/chip/hooks/getAvatarChipBuilder';
+} from '@ui/display/chip/hooks/useGetAvatarChipBuilder';
 import { MouseEvent } from 'react';
 
 export type AvatarChipProps = AvatarChipsCommonProps & {
-  onClick: (event: MouseEvent) => void;
+  onClick?: (event: MouseEvent) => void;
 };
 
 export const AvatarChip = ({ onClick, ...commonProps }: AvatarChipProps) => {

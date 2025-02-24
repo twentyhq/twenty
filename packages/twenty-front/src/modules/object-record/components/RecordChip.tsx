@@ -54,7 +54,7 @@ export const RecordChip = ({
         avatarUrl={recordChipData.avatarUrl ?? ''}
         className={className}
         variant={variant}
-        onClick={handleClick}
+        // onClick={handleClick} // TODO might be required
         /*
         TODO handle this new logic from conflicts with bosi
              to={
@@ -79,7 +79,10 @@ export const RecordChip = ({
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
       variant={variant}
-      onClick={handleClick}
+      // Really required ?
+      onClick={(e: MouseEvent<Element>) => {
+        e.stopPropagation();
+      }}
     />
   );
 };

@@ -7,7 +7,7 @@ import {
 } from '@ui/display/chip/components/Chip';
 import { UndecoratedLink } from '@ui/navigation';
 
-type LinkChipProps = Omit<ChipProps, 'onClick'> & { to: string };
+type LinkChipProps = Omit<ChipProps, 'onClick'> & { to?: string };
 
 export const LinkChip = ({
   to,
