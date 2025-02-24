@@ -13,7 +13,7 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { PermissionsOnAllObjectRecords, SettingsFeatures } from 'twenty-shared';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
@@ -48,6 +48,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -119,17 +120,17 @@ export class UserResolver {
           workspaceId: workspace.id,
         });
 
-      const permittedFeatures: SettingsFeatures[] = (
-        Object.keys(settingsPermissions) as SettingsFeatures[]
+      const grantedSettingsPermissions: SettingsPermissions[] = (
+        Object.keys(settingsPermissions) as SettingsPermissions[]
       ).filter((feature) => settingsPermissions[feature] === true);
 
-      const permittedObjectRecordsPermissions = (
+      const grantedObjectRecordsPermissions = (
         Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
       ).filter((permission) => objectRecordsPermissions[permission] === true);
 
-      currentUserWorkspace.settingsPermissions = permittedFeatures;
+      currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
       currentUserWorkspace.objectRecordsPermissions =
-        permittedObjectRecordsPermissions;
+        grantedObjectRecordsPermissions;
       user.currentUserWorkspace = currentUserWorkspace;
     }
 

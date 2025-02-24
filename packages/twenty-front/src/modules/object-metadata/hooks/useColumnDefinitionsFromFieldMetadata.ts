@@ -4,9 +4,9 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { useRecoilValue } from 'recoil';
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
-import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldMetadataItemsAsSortDefinitions';
 
 export const useColumnDefinitionsFromFieldMetadata = (
   objectMetadataItem: ObjectMetadataItem,
@@ -21,9 +21,11 @@ export const useColumnDefinitionsFromFieldMetadata = (
     }),
   );
 
-  const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-    fields: activeFieldMetadataItems,
-  });
+  const sortableFieldMetadataItems = useRecoilValue(
+    availableFieldMetadataItemsForSortFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
 
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
     activeFieldMetadataItems
@@ -40,8 +42,10 @@ export const useColumnDefinitionsFromFieldMetadata = (
           (fieldMetadataItem) =>
             fieldMetadataItem.id === column.fieldMetadataId,
         );
-        const existsInSortDefinitions = sortDefinitions.some(
-          (sort) => sort.fieldMetadataId === column.fieldMetadataId,
+
+        const existsInSortDefinitions = sortableFieldMetadataItems.some(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id === column.fieldMetadataId,
         );
         return {
           ...column,
@@ -52,6 +56,5 @@ export const useColumnDefinitionsFromFieldMetadata = (
 
   return {
     columnDefinitions,
-    sortDefinitions,
   };
 };

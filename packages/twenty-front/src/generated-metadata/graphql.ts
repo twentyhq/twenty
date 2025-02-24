@@ -51,7 +51,10 @@ export type ActivateWorkspaceInput = {
 
 export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
+  description: Scalars['String']['output'];
   details?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
   status: AdminPanelHealthServiceStatus;
 };
@@ -70,8 +73,9 @@ export enum AdminPanelIndicatorHealthStatusInputEnum {
 
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
+  id: Scalars['String']['output'];
   metrics: WorkerQueueMetrics;
-  name: Scalars['String']['output'];
+  queueName: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
   workers: Scalars['Float']['output'];
 };
@@ -117,6 +121,14 @@ export type AppTokenEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the AppToken */
   node: AppToken;
+};
+
+export type ApprovedAccessDomain = {
+  __typename?: 'ApprovedAccessDomain';
+  createdAt: Scalars['DateTime']['output'];
+  domain: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  isValidated: Scalars['Boolean']['output'];
 };
 
 export type AuthProviders = {
@@ -334,6 +346,11 @@ export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime']['input'];
 };
 
+export type CreateApprovedAccessDomainInput = {
+  domain: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['String']['input'];
@@ -474,6 +491,10 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
+export type DeleteApprovedAccessDomainInput = {
+  id: Scalars['String']['input'];
+};
+
 export type DeleteOneFieldInput = {
   /** The id of the field to delete. */
   id: Scalars['UUID']['input'];
@@ -596,6 +617,7 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
@@ -739,6 +761,13 @@ export type GetServerlessFunctionSourceCodeInput = {
   /** The version of the function */
   version?: Scalars['String']['input'];
 };
+
+export enum HealthIndicatorId {
+  connectedAccount = 'connectedAccount',
+  database = 'database',
+  redis = 'redis',
+  worker = 'worker',
+}
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -982,6 +1011,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
+  validateApprovedAccessDomain: ApprovedAccessDomain;
 };
 
 export type MutationActivateWorkflowVersionArgs = {
@@ -1011,6 +1041,10 @@ export type MutationComputeStepOutputSchemaArgs = {
 
 export type MutationCreateAgentArgs = {
   createInput: CreateAgentInput;
+};
+
+export type MutationCreateApprovedAccessDomainArgs = {
+  input: CreateApprovedAccessDomainInput;
 };
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
@@ -1067,6 +1101,10 @@ export type MutationDeactivateWorkflowVersionArgs = {
 
 export type MutationDeleteAgentArgs = {
   agentId: Scalars['String']['input'];
+};
+
+export type MutationDeleteApprovedAccessDomainArgs = {
+  input: DeleteApprovedAccessDomainInput;
 };
 
 export type MutationDeleteOneFieldArgs = {
@@ -1307,6 +1345,10 @@ export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String']['input'];
 };
 
+export type MutationValidateApprovedAccessDomainArgs = {
+  input: ValidateApprovedAccessDomainInput;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime']['output'];
@@ -1473,6 +1515,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -1559,7 +1602,7 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 export type QueryGetIndicatorHealthStatusArgs = {
-  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
+  indicatorId: HealthIndicatorId;
 };
 
 export type QueryGetProductPricesArgs = {
@@ -1902,7 +1945,7 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY',
 }
 
-export enum SettingsFeatures {
+export enum SettingsPermissions {
   ADMIN_PANEL = 'ADMIN_PANEL',
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
@@ -1969,10 +2012,14 @@ export type Support = {
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
-  database: AdminPanelHealthServiceData;
-  messageSync: AdminPanelHealthServiceData;
-  redis: AdminPanelHealthServiceData;
-  worker: AdminPanelHealthServiceData;
+  services: Array<SystemHealthService>;
+};
+
+export type SystemHealthService = {
+  __typename?: 'SystemHealthService';
+  id: HealthIndicatorId;
+  label: Scalars['String']['output'];
+  status: AdminPanelHealthServiceStatus;
 };
 
 export type TimelineCalendarEvent = {
@@ -2245,12 +2292,17 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
-  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
+  settingsPermissions?: Maybe<Array<SettingsPermissions>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];
   workspace?: Maybe<Workspace>;
   workspaceId: Scalars['String']['output'];
+};
+
+export type ValidateApprovedAccessDomainInput = {
+  approvedAccessDomainId: Scalars['String']['input'];
+  validationToken: Scalars['String']['input'];
 };
 
 export type ValidatePasswordResetToken = {

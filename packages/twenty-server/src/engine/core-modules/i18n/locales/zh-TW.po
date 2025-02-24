@@ -136,6 +136,14 @@ msgstr "公司帳戶所有者"
 msgid "Account Owner For Companies"
 msgstr "公司帳戶所有者"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "需要採取行動以防止工作區刪除"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "需要採取行動以重設密碼"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "地址"
@@ -684,7 +692,7 @@ msgstr "顯示名稱"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
-msgstr ""
+msgstr "在側面板或記錄頁面中顯示記錄"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
@@ -1111,6 +1119,10 @@ msgstr "是否啟用同步"
 msgid "Job Title"
 msgstr "職稱"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "加入您的團隊，使用 Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1471,7 +1483,7 @@ msgstr "對象名稱"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
-msgstr ""
+msgstr "在此打開記錄"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -1599,6 +1611,7 @@ msgstr "電話"
 msgid "Point of Contact"
 msgstr "聯絡人"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2288,6 +2301,10 @@ msgstr "Webhook 目標網址"
 msgid "Webhooks"
 msgstr "Webhook"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "歡迎來到 Twenty：請確認您的電子郵件"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2418,6 +2435,10 @@ msgid "Workspace member name"
 msgstr "工作區成員名稱"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "工作區成員"
 
@@ -2430,6 +2451,10 @@ msgstr "工作區成員"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "您的密碼已成功更改"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

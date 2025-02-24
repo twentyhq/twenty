@@ -8,6 +8,7 @@ const StyledChip = styled.button<{
   onClick?: () => void;
 }>`
   align-items: center;
+  justify-content: center;
   background: ${({ theme }) => theme.background.transparent.light};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};

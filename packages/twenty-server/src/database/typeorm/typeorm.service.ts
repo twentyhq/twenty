@@ -27,6 +27,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -55,6 +56,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingEntitlement,
         PostgresCredentials,
         WorkspaceSSOIdentityProvider,
+        ApprovedAccessDomain,
         TwoFactorMethod,
         WhatsappIntegration,
         Sector,

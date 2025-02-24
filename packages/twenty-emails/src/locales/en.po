@@ -29,6 +29,10 @@ msgstr "Confirm your email address"
 msgid "Connect to Twenty"
 msgstr "Connect to Twenty"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr "Create a new workspace"
+
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr "Dear"
@@ -37,6 +41,14 @@ msgstr "Connect to Twenty"
 msgid "Dear {userName}"
 msgstr "Dear {userName}"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Dear {userName},"
+msgstr "Dear {userName},"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr "Deleted Workspace"
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "has invited you to join a workspace called "
@@ -44,6 +56,10 @@ msgstr "has invited you to join a workspace called "
 #: src/emails/password-update-notify.email.tsx
 msgid "Hello"
 msgstr "Hello"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr "Hello,"
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -69,6 +85,10 @@ msgstr "Join your team on Twenty"
 msgid "Password updated"
 msgstr "Password updated"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+msgstr "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "Reset"
@@ -76,6 +96,10 @@ msgstr "Reset"
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Reset your password 🗝"
+
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Suspended Workspace "
+msgstr "Suspended Workspace "
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -104,6 +128,11 @@ msgstr "This link is only valid for the next {duration}. If the link does not wo
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
 msgstr "Update your subscription"
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Validate domain"
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"

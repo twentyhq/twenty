@@ -6,6 +6,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { CustomDomainValidRecords } from '~/generated/graphql';
@@ -28,7 +29,7 @@ const StyledButton = styled(Button)`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  height: ${({ theme }) => theme.spacing(7)};
+  height: ${({ theme }) => theme.spacing(6)};
   overflow: hidden;
   user-select: text;
   width: 100%;
@@ -41,9 +42,11 @@ export const SettingsCustomDomainRecords = ({
 }) => {
   const { enqueueSnackBar } = useSnackBar();
 
+  const { t } = useLingui();
+
   const copyToClipboard = (value: string) => {
     navigator.clipboard.writeText(value);
-    enqueueSnackBar('Copied to clipboard!', {
+    enqueueSnackBar(t`Copied to clipboard!`, {
       variant: SnackBarVariant.Success,
     });
   };
@@ -58,32 +61,30 @@ export const SettingsCustomDomainRecords = ({
         <TableHeader>Value</TableHeader>
       </TableRow>
       <TableBody>
-        {records.map((record) => {
-          return (
-            <TableRow gridAutoColumns="30% 16% auto" key={record.key}>
-              <StyledTableCell>
-                <StyledButton
-                  title={record.key}
-                  onClick={() => copyToClipboardDebounced(record.key)}
-                />
-              </StyledTableCell>
-              <StyledTableCell>
-                <StyledButton
-                  title={record.type.toUpperCase()}
-                  onClick={() =>
-                    copyToClipboardDebounced(record.type.toUpperCase())
-                  }
-                />
-              </StyledTableCell>
-              <StyledTableCell>
-                <StyledButton
-                  title={record.value}
-                  onClick={() => copyToClipboardDebounced(record.value)}
-                />
-              </StyledTableCell>
-            </TableRow>
-          );
-        })}
+        {records.map((record) => (
+          <TableRow gridAutoColumns="30% 16% auto" key={record.key}>
+            <StyledTableCell>
+              <StyledButton
+                title={record.key}
+                onClick={() => copyToClipboardDebounced(record.key)}
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <StyledButton
+                title={record.type.toUpperCase()}
+                onClick={() =>
+                  copyToClipboardDebounced(record.type.toUpperCase())
+                }
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <StyledButton
+                title={record.value}
+                onClick={() => copyToClipboardDebounced(record.value)}
+              />
+            </StyledTableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </StyledTable>
   );

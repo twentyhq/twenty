@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined, SettingsFeatures } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -46,6 +46,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -123,7 +124,7 @@ export class WorkspaceResolver {
   @Mutation(() => String)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
   )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
@@ -167,7 +168,7 @@ export class WorkspaceResolver {
   @Mutation(() => Workspace)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);

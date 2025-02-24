@@ -11,6 +11,7 @@ import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsDataModelFieldPhonesFormProps = {
   disabled?: boolean;
@@ -35,10 +36,11 @@ export const SettingsDataModelFieldPhonesForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldPhonesFormProps) => {
+  const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
 
   const countries = [
-    { label: 'No country', value: '', Icon: IconCircleOff },
+    { label: t`No country`, value: '', Icon: IconCircleOff },
     ...useCountries()
       .sort((a, b) => a.countryName.localeCompare(b.countryName))
       .map((country) => ({
@@ -68,8 +70,8 @@ export const SettingsDataModelFieldPhonesForm = ({
         return (
           <SettingsOptionCardContentSelect
             Icon={IconMap}
-            title="Default Country Code"
-            description="The default country code for new phone numbers."
+            title={t`Default Country Code`}
+            description={t`The default country code for new phone numbers.`}
           >
             <Select<string>
               dropdownWidth={'auto'}

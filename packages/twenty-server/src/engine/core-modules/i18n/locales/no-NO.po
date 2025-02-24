@@ -136,6 +136,14 @@ msgstr "Kontoansvarlig for firmaer"
 msgid "Account Owner For Companies"
 msgstr "Kontoansvarlig for firmaer"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Tiltak nødvendig for å forhindre sletting av arbeidsområde"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Tiltak nødvendig for å tilbakestille passord"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Adresse"
@@ -684,7 +692,7 @@ msgstr "Visningsnavn"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
-msgstr ""
+msgstr "Vis postene i et sidepanel eller på en postside"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
@@ -1111,6 +1119,10 @@ msgstr "Er synkronisering aktivert"
 msgid "Job Title"
 msgstr "Stillingstittel"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Bli med teamet ditt på Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1471,7 +1483,7 @@ msgstr "Objektnavn"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
-msgstr ""
+msgstr "Åpne post i"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -1599,6 +1611,7 @@ msgstr "Telefoner"
 msgid "Point of Contact"
 msgstr "Kontaktpunkt"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2288,6 +2301,10 @@ msgstr "Måladresse for webhook"
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Velkommen til Twenty: Vennligst bekreft din e-post"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2418,6 +2435,10 @@ msgid "Workspace member name"
 msgstr "Arbeidsplass medlem navn"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Arbeidsplass Medlemmer"
 
@@ -2430,6 +2451,10 @@ msgstr "ArbeidsplassMedlem"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Ditt passord har blitt endret med hell"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

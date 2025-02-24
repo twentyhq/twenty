@@ -8,8 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
-
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -26,6 +24,7 @@ import {
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -73,7 +72,7 @@ export class ObjectMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
@@ -89,7 +88,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,

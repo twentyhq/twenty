@@ -34,10 +34,6 @@ export const RightDrawerRecord = () => {
     throw new Error(`Object name is not defined`);
   }
 
-  if (!viewableRecordId && !isNewViewableRecordLoading) {
-    throw new Error(`Record id is not defined`);
-  }
-
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
     viewableRecordNameSingular ?? '',
     viewableRecordId ?? '',

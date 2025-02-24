@@ -136,6 +136,14 @@ msgstr "בעלים של חשבון עבור חברות"
 msgid "Account Owner For Companies"
 msgstr "בעלים של חשבון עבור חברות"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "יש צורך בפעולה כדי למנוע מחיקת סביבת העבודה"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "יש צורך בפעולה כדי לאפס סיסמה"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "כתובת"
@@ -684,7 +692,7 @@ msgstr "שם תצוגה"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
-msgstr ""
+msgstr "הצג את הרשומות בפאנל צד או בדף רשומה"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
@@ -1111,6 +1119,10 @@ msgstr "סנכרון מופעל"
 msgid "Job Title"
 msgstr "תיאור משרה"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "הצטרף לצוות שלך ב-Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1471,7 +1483,7 @@ msgstr "שם האובייקט"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
-msgstr ""
+msgstr "פתח רשומה ב"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -1599,6 +1611,7 @@ msgstr "טלפונים"
 msgid "Point of Contact"
 msgstr "איש קשר"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2288,6 +2301,10 @@ msgstr "כתובת יעד של Webhook"
 msgid "Webhooks"
 msgstr "וובהוקים"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "ברוך הבא ל-Twenty: נא לאשר את האימייל שלך"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2418,6 +2435,10 @@ msgid "Workspace member name"
 msgstr "שם חבר סביבת עבודה"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "חברי סביבת עבודה"
 
@@ -2430,6 +2451,10 @@ msgstr "חבר בסדנה"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "הסיסמה שלך שונתה בהצלחה"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

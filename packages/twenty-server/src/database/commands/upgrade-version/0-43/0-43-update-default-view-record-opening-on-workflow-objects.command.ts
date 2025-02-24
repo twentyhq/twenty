@@ -29,9 +29,9 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   async executeActiveWorkspacesCommand(
@@ -43,9 +43,12 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
       'Running command to update default view record opening on workflow objects to record page',
     );
 
-    for (const [index, workspaceId] of workspaceIds.entries()) {
-      await this.processWorkspace(workspaceId, index, workspaceIds.length);
-    }
+    this.processEachWorkspaceWithWorkspaceDataSource(
+      workspaceIds,
+      async ({ workspaceId, index, total }) => {
+        await this.processWorkspace(workspaceId, index, total);
+      },
+    );
 
     this.logger.log(chalk.green('Command completed!'));
   }
@@ -84,14 +87,6 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
 
       await this.updateDefaultViewsRecordOpening(
         workflowObjectsMetadata.map((metadata) => metadata.id),
-        workspaceId,
-      );
-
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        workspaceId,
-      );
-
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
 
