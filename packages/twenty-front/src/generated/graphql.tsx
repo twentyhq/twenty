@@ -772,6 +772,19 @@ export enum MessageChannelVisibility {
   SUBJECT = 'SUBJECT'
 }
 
+export type MetricsDataPoint = {
+  __typename?: 'MetricsDataPoint';
+  x: Scalars['String'];
+  y: Scalars['Float'];
+};
+
+export type MetricsSeries = {
+  __typename?: 'MetricsSeries';
+  color: Scalars['String'];
+  data: Array<MetricsDataPoint>;
+  id: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean'];
@@ -1293,6 +1306,7 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getQueueMetrics: Array<WorkerMetricsData>;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
@@ -1353,6 +1367,12 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
+};
+
+
+export type QueryGetQueueMetricsArgs = {
+  queueName?: InputMaybe<Scalars['String']>;
+  timeRange?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1935,13 +1955,21 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String'];
 };
 
+export type WorkerMetricsData = {
+  __typename?: 'WorkerMetricsData';
+  data: Array<MetricsSeries>;
+  details: Scalars['String'];
+  queueName: Scalars['String'];
+  timeRange: Scalars['String'];
+};
+
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float'];
   completed: Scalars['Float'];
   delayed: Scalars['Float'];
   failed: Scalars['Float'];
-  prioritized: Scalars['Float'];
+  failureRate: Scalars['Float'];
   waiting: Scalars['Float'];
 };
 
@@ -2346,7 +2374,15 @@ export type GetIndicatorHealthStatusQueryVariables = Exact<{
 }>;
 
 
-export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: string, label: string, description: string, status: AdminPanelHealthServiceStatus, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus, workers: number, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null } };
+export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: string, label: string, description: string, status: AdminPanelHealthServiceStatus, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus, workers: number, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, failureRate: number } }> | null } };
+
+export type GetQueueMetricsQueryVariables = Exact<{
+  queueName?: InputMaybe<Scalars['String']>;
+  timeRange?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: Array<{ __typename?: 'WorkerMetricsData', queueName: string, timeRange: string, details: string, data: Array<{ __typename?: 'MetricsSeries', id: string, color: string, data: Array<{ __typename?: 'MetricsDataPoint', x: string, y: number }> }> }> };
 
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4112,7 +4148,7 @@ export const GetIndicatorHealthStatusDocument = gql`
         waiting
         active
         delayed
-        prioritized
+        failureRate
       }
     }
   }
@@ -4146,6 +4182,52 @@ export function useGetIndicatorHealthStatusLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetIndicatorHealthStatusQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusQuery>;
 export type GetIndicatorHealthStatusLazyQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusLazyQuery>;
 export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicatorHealthStatusQuery, GetIndicatorHealthStatusQueryVariables>;
+export const GetQueueMetricsDocument = gql`
+    query GetQueueMetrics($queueName: String, $timeRange: String) {
+  getQueueMetrics(queueName: $queueName, timeRange: $timeRange) {
+    queueName
+    timeRange
+    details
+    data {
+      id
+      color
+      data {
+        x
+        y
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetQueueMetricsQuery__
+ *
+ * To run a query within a React component, call `useGetQueueMetricsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetQueueMetricsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQueueMetricsQuery({
+ *   variables: {
+ *      queueName: // value for 'queueName'
+ *      timeRange: // value for 'timeRange'
+ *   },
+ * });
+ */
+export function useGetQueueMetricsQuery(baseOptions?: Apollo.QueryHookOptions<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>(GetQueueMetricsDocument, options);
+      }
+export function useGetQueueMetricsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>(GetQueueMetricsDocument, options);
+        }
+export type GetQueueMetricsQueryHookResult = ReturnType<typeof useGetQueueMetricsQuery>;
+export type GetQueueMetricsLazyQueryHookResult = ReturnType<typeof useGetQueueMetricsLazyQuery>;
+export type GetQueueMetricsQueryResult = Apollo.QueryResult<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>;
 export const GetSystemHealthStatusDocument = gql`
     query GetSystemHealthStatus {
   getSystemHealthStatus {

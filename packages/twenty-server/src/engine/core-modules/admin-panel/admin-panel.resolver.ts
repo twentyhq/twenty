@@ -12,6 +12,9 @@ import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
+import { WorkerMetricsData } from 'src/engine/core-modules/health/types/worker-metrics-data.types';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -24,6 +27,7 @@ export class AdminPanelResolver {
   constructor(
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
+    private workerHealthIndicator: WorkerHealthIndicator,
   ) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
@@ -76,5 +80,28 @@ export class AdminPanelResolver {
     indicatorId: HealthIndicatorId,
   ): Promise<AdminPanelHealthServiceData> {
     return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
+  }
+
+  @Query(() => [WorkerMetricsData])
+  async getQueueMetrics(
+    @Args('queueName', { nullable: true, type: () => String })
+    queueName?: string,
+    @Args('timeRange', {
+      nullable: true,
+      defaultValue: '1D',
+      type: () => String,
+    })
+    timeRange: '7D' | '1D' | '12H' | '4H' = '1D',
+  ): Promise<WorkerMetricsData[]> {
+    if (queueName) {
+      const result = await this.workerHealthIndicator.getQueueMetricsOverTime(
+        queueName as MessageQueue,
+        timeRange,
+      );
+
+      return [result];
+    }
+
+    return this.workerHealthIndicator.getAllQueuesMetricsOverTime(timeRange);
   }
 }

@@ -19,7 +19,7 @@ export const GET_INDICATOR_HEALTH_STATUS = gql`
           waiting
           active
           delayed
-          prioritized
+          failureRate
         }
       }
     }

@@ -18,5 +18,5 @@ export class WorkerQueueMetrics {
   delayed: number;
 
   @Field(() => Number)
-  prioritized: number;
+  failureRate: number;
 }

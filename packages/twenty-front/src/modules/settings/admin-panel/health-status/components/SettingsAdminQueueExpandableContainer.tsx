@@ -1,13 +1,11 @@
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { AnimatedExpandableContainer, Status } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
   AdminPanelWorkerQueueHealth,
 } from '~/generated/graphql';
+import { WorkerMetricsGraph } from './WorkerMetricsGraph';
 
 const StyledExpandedContent = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -21,10 +19,6 @@ const StyledExpandedContent = styled.div`
 const StyledContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
   margin-top: ${({ theme }) => theme.spacing(5)};
-`;
-
-const StyledTableRow = styled(TableRow)`
-  height: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledQueueMetricsTitle = styled.div`
@@ -79,24 +73,12 @@ export const SettingsAdminQueueExpandableContainer = ({
               )}
             />
           </StyledContainer>
-          <StyledQueueMetricsTitle> Metrics:</StyledQueueMetricsTitle>
+
+          <StyledQueueMetricsTitle>
+            Performance Over Time:
+          </StyledQueueMetricsTitle>
           <StyledExpandedContent>
-            <Table>
-              <StyledTableRow>
-                <TableCell align="left">Workers</TableCell>
-                <TableCell align="right">{selectedQueueData.workers}</TableCell>
-              </StyledTableRow>
-              {Object.entries(selectedQueueData.metrics)
-                .filter(([key]) => key !== '__typename')
-                .map(([key, value]) => (
-                  <StyledTableRow key={key}>
-                    <TableCell align="left">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </TableCell>
-                    <TableCell align="right">{value}</TableCell>
-                  </StyledTableRow>
-                ))}
-            </Table>
+            <WorkerMetricsGraph queueName={selectedQueueData.queueName} />
           </StyledExpandedContent>
         </>
       )}
