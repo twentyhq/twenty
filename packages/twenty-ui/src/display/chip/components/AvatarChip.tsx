@@ -1,12 +1,13 @@
 import { Chip } from '@ui/display/chip/components/Chip';
 import {
   AvatarChipsCommonProps,
-  useGetAvatarChipsBuilder,
-} from '@ui/display/chip/hooks/useGetAvatarChipBuilder';
+  useGetAvatarLeftComponentAndVariant,
+} from '@ui/display/chip/hooks/useGetAvatarLeftComponentAndVariant';
 
 export type AvatarChipProps = AvatarChipsCommonProps;
 export const AvatarChip = (props: AvatarChipProps) => {
-  const { getLeftComponent, variant } = useGetAvatarChipsBuilder(props);
+  const { getLeftComponent, variant } =
+    useGetAvatarLeftComponentAndVariant(props);
   const { size, clickable, className, maxWidth, name } = props;
 
   return (

@@ -129,7 +129,7 @@ export const RecordBoardCardHeader = ({
     return null;
   }
 
-  const toRename = () => {
+  const getCardHeading = () => {
     if (isCreating && position !== undefined) {
       return (
         <RecordInlineCellEditMode>
@@ -208,7 +208,7 @@ export const RecordBoardCardHeader = ({
 
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
-      <StopPropagationContainer>{toRename()}</StopPropagationContainer>
+      <StopPropagationContainer>{getCardHeading()}</StopPropagationContainer>
 
       {!isCreating && (
         <>
