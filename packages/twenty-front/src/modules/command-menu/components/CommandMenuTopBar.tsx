@@ -149,6 +149,9 @@ export const CommandMenuTopBar = () => {
     !location.pathname.startsWith('/objects/') &&
     !location.pathname.startsWith('/object/');
 
+  const backButtonAnimationDuration =
+    contextChips.length > 1 ? theme.animation.duration.instant : 0;
+
   return (
     <StyledInputContainer>
       <StyledContentContainer>
@@ -158,7 +161,9 @@ export const CommandMenuTopBar = () => {
               {commandMenuPage !== CommandMenuPages.Root && (
                 <motion.div
                   exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: theme.animation.duration.instant }}
+                  transition={{
+                    duration: backButtonAnimationDuration,
+                  }}
                 >
                   <CommandMenuContextChip
                     Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
