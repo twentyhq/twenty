@@ -205,7 +205,7 @@ export const RecordBoardCardHeader = ({
     return (
       <AvatarChip
         placeholderColorSeed={record.id}
-        name={record.name}
+        name={record.title}
         avatarType={record.avatarType}
         avatarUrl={record.avatarUrl ?? ''}
         maxWidth={150}
