@@ -1544,7 +1544,7 @@ msgstr "Μη έγκυρος πάροχος εξουσιοδότησης"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr ""
+msgstr "Μη έγκυρο προσαρμοσμένο domain. Παρακαλώ περιλάβετε τουλάχιστον ένα υποτομέα (π.χ., sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -1909,7 +1909,7 @@ msgstr "Νέος πάροχος SSO"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
-msgstr ""
+msgstr "Δεν ανιχνεύθηκε καμία αλλαγή"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
