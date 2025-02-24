@@ -30,6 +30,7 @@ export const STANDARD_OBJECT_IDS = {
   messageThread: '20202020-849a-4c3e-84f5-a25a7d802271',
   messageThreadSubscriber: '20202020-4b3b-4b3b-8b3b-3b3b3b3b3b3a',
   message: '20202020-3f6b-4425-80ab-e468899ab4b2',
+  lead: '20202020-5431-445f-9145-f6a8693d0c77',
   note: '20202020-0b00-45cd-b6f6-6cd806fc6804',
   noteTarget: '20202020-fff0-4b44-be82-bda313884400',
   opportunity: '20202020-9549-49dd-b2b2-883999db8938',

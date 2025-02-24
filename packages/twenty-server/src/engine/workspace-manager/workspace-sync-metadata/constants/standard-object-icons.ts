@@ -21,6 +21,7 @@ export const STANDARD_OBJECT_ICONS = {
   messageThread: 'IconMessage',
   messageThreadSubscriber: 'IconPerson',
   message: 'IconMessage',
+  lead: 'IconUserStar',
   note: 'IconNotes',
   noteTarget: 'IconCheckbox',
   opportunity: 'IconTargetArrow',
