@@ -16,10 +16,10 @@ export class GlobalSearchRecordDTO {
 
   @Field(() => String)
   @IsString()
+  @IsNotEmpty()
   label: string;
 
   @Field(() => String, { nullable: true })
-  @IsString()
   avatarUrl: string;
 
   @Field(() => Number)

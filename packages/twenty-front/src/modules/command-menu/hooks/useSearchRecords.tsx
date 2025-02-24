@@ -53,7 +53,11 @@ export const useSearchRecords = () => {
           />
         ),
       };
-      if (['task', 'note'].includes(searchRecord.objectSingularName)) {
+      if (
+        [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note].includes(
+          searchRecord.objectSingularName as CoreObjectNameSingular,
+        )
+      ) {
         return {
           ...command,
           to: '',
