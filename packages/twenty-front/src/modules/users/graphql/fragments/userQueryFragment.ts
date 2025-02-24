@@ -7,6 +7,7 @@ export const USER_QUERY_FRAGMENT = gql`
     firstName
     lastName
     email
+    canAccessFullAdminPanel
     canImpersonate
     supportUserHash
     analyticsTinybirdJwts {
