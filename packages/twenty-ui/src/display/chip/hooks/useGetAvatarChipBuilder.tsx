@@ -36,7 +36,7 @@ const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 
-export const userGetAvatarChipsBuilder = ({
+export const useGetAvatarChipsBuilder = ({
   name,
   clickable,
   LeftIcon,
@@ -101,6 +101,6 @@ export const userGetAvatarChipsBuilder = ({
 
   return {
     getLeftComponent,
-    variant: getVariant()
-  }
+    variant: getVariant(),
+  };
 };
