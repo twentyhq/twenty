@@ -22,8 +22,10 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
+  const { t } = useLingui();
   const {
     viewType,
     currentContentId,
@@ -98,7 +100,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
         }}
       >
         <DropdownMenuItemsContainer>
-          <MenuItem LeftIcon={IconSettings} text="Edit field values" />
+          <MenuItem LeftIcon={IconSettings} text={t`Edit field values`} />
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
     </>

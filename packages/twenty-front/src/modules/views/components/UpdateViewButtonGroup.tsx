@@ -23,6 +23,7 @@ import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentV
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { t } from '@lingui/core/macro';
 
 const StyledContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -122,7 +123,7 @@ export const UpdateViewButtonGroup = ({
                 <MenuItem
                   onClick={handleCreateViewClick}
                   LeftIcon={IconPlus}
-                  text="Create view"
+                  text={t`Create view`}
                 />
               </DropdownMenuItemsContainer>
             }
@@ -130,7 +131,7 @@ export const UpdateViewButtonGroup = ({
         </ButtonGroup>
       ) : (
         <Button
-          title="Save as new view"
+          title={t`Save as new view`}
           onClick={handleSaveAsNewViewClick}
           accent="blue"
           size="small"

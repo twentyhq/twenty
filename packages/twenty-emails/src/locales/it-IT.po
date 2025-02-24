@@ -34,6 +34,10 @@ msgstr "Conferma il tuo indirizzo e-mail"
 msgid "Connect to Twenty"
 msgstr "Accedi a Twenty"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr ""
+
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr "Dear"
@@ -42,6 +46,14 @@ msgstr "Accedi a Twenty"
 msgid "Dear {userName}"
 msgstr "Gentile {userName}"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Dear {userName},"
+msgstr ""
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "ti ha invitato a unirti a uno spazio di lavoro chiamato "
@@ -49,6 +61,10 @@ msgstr "ti ha invitato a unirti a uno spazio di lavoro chiamato "
 #: src/emails/password-update-notify.email.tsx
 msgid "Hello"
 msgstr "Salve"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr ""
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -74,6 +90,10 @@ msgstr "Unisciti al tuo team su Twenty"
 msgid "Password updated"
 msgstr "Password aggiornata"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "Reimposta"
@@ -81,6 +101,10 @@ msgstr "Reimposta"
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Reimposta la tua password 🗝"
+
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Suspended Workspace "
+msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -109,6 +133,11 @@ msgstr "Questo link è valido solo per i prossimi {duration}. Se il link non fun
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
 msgstr "Aggiorna il tuo abbonamento"
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"

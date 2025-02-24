@@ -34,6 +34,10 @@ msgstr "Επιβεβαιώστε τη διεύθυνση email σας"
 msgid "Connect to Twenty"
 msgstr "Συνδεθείτε στο Twenty"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr ""
+
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr "Dear"
@@ -42,6 +46,14 @@ msgstr "Συνδεθείτε στο Twenty"
 msgid "Dear {userName}"
 msgstr "Αγαπητέ/ή {userName}"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Dear {userName},"
+msgstr ""
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "σας έχει προσκαλέσει να συμμετάσχετε σε έναν χώρο εργασίας με την ονομασία "
@@ -49,6 +61,10 @@ msgstr "σας έχει προσκαλέσει να συμμετάσχετε σ�
 #: src/emails/password-update-notify.email.tsx
 msgid "Hello"
 msgstr "Γεια σας"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr ""
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -74,6 +90,10 @@ msgstr "Συμμετέχετε στην ομάδα σας στο Twenty"
 msgid "Password updated"
 msgstr "Ο κωδικός έχει ενημερωθεί"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "Επαναφορά"
@@ -81,6 +101,10 @@ msgstr "Επαναφορά"
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Επαναφέρετε τον κωδικό σας 🗝"
+
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Suspended Workspace "
+msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -109,6 +133,11 @@ msgstr "Αυτός ο σύνδεσμος ισχύει μόνο για τις ε�
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
 msgstr "Ενημερώστε τη συνδρομή σας"
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
