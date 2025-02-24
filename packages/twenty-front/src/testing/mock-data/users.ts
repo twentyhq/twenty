@@ -129,7 +129,7 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    settingsPermissions: [SettingsPermissions.WORKSPACE_USERS],
+    settingsPermissions: [SettingsPermissions.WORKSPACE_MEMBERS],
   },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],

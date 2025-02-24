@@ -5,7 +5,6 @@ import {
   capitalize,
   isObjectRecordUnderObjectRecordsPermissions,
   PermissionsOnAllObjectRecords,
-  SettingsPermissions,
 } from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
 
@@ -35,6 +34,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,

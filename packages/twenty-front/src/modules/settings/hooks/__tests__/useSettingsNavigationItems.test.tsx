@@ -4,8 +4,12 @@ import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
-import { SettingsPermissions } from 'twenty-shared';
-import { Billing, FeatureFlagKey, OnboardingStatus } from '~/generated/graphql';
+import {
+  Billing,
+  FeatureFlagKey,
+  OnboardingStatus,
+  SettingsPermissions,
+} from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
@@ -57,7 +61,7 @@ describe('useSettingsNavigationItems', () => {
   it('should hide workspace settings when no permissions', () => {
     (useSettingsPermissionMap as jest.Mock).mockImplementation(() => ({
       [SettingsPermissions.WORKSPACE]: false,
-      [SettingsPermissions.WORKSPACE_USERS]: false,
+      [SettingsPermissions.WORKSPACE_MEMBERS]: false,
       [SettingsPermissions.DATA_MODEL]: false,
       [SettingsPermissions.API_KEYS_AND_WEBHOOKS]: false,
       [SettingsPermissions.ROLES]: false,
@@ -78,7 +82,7 @@ describe('useSettingsNavigationItems', () => {
   it('should show workspace settings when has permissions', () => {
     (useSettingsPermissionMap as jest.Mock).mockImplementation(() => ({
       [SettingsPermissions.WORKSPACE]: true,
-      [SettingsPermissions.WORKSPACE_USERS]: true,
+      [SettingsPermissions.WORKSPACE_MEMBERS]: true,
       [SettingsPermissions.DATA_MODEL]: true,
       [SettingsPermissions.API_KEYS_AND_WEBHOOKS]: true,
       [SettingsPermissions.ROLES]: true,
