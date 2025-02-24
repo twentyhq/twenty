@@ -1,10 +1,7 @@
-import { createContext, FC, ReactNode, useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { stripePublishableKey } from '~/pages/settings/integrations/stripe/key/stripeKeys';
-
-const stripePromise = loadStripe(stripePublishableKey());
+import { createContext, FC, ReactNode, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { useStripePromise } from '~/pages/settings/integrations/stripe/hooks/useStripePromise';
 
 export type StripeIntegrationContextType = {
   stripeLogin: () => void;
@@ -16,6 +13,8 @@ export const StripeContext = createContext<StripeIntegrationContextType | null>(
 );
 
 const StripeProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { stripePromise } = useStripePromise();
+
   const [accountCreatePending, SetAccountCreatePending] =
     useState<boolean>(false);
   const [accountId, setAccountId] = useState(null);
