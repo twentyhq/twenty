@@ -19,9 +19,9 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { t } from '@lingui/core/macro';
 
 export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
@@ -244,7 +244,11 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
 
   & .react-datepicker__day--selected {
     background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.grayScale.gray0};
+    color: ${({ theme }) => theme.background.primary};
+
+    &.react-datepicker__day:hover {
+      color: ${({ theme }) => theme.background.primary};
+    }
   }
 
   & .react-datepicker__day--outside-month {
@@ -261,8 +265,9 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
 `;
 
 const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
-  height: ${({ theme }) => theme.spacing(4)};
-  margin: ${({ theme }) => theme.spacing(2)};
+  box-sizing: border-box;
+  height: 32px;
+  margin: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)};
   width: auto;
 `;
