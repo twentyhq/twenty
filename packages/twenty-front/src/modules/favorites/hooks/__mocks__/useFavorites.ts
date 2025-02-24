@@ -176,6 +176,26 @@ mutation UpdateOneFavorite(
       updatedAt
     }
     favoriteFolderId
+    forWorkspaceMember {
+      __typename
+      avatarUrl
+      colorScheme
+      createdAt
+      dateFormat
+      deletedAt
+      id
+      locale
+      name {
+        firstName
+        lastName
+      }
+      timeFormat
+      timeZone
+      updatedAt
+      userEmail
+      userId
+    }
+    forWorkspaceMemberId
     id
     note {
       __typename
@@ -446,26 +466,6 @@ mutation UpdateOneFavorite(
       workflowId
     }
     workflowVersionId
-    forWorkspaceMember {
-      __typename
-      avatarUrl
-      colorScheme
-      createdAt
-      dateFormat
-      deletedAt
-      id
-      locale
-      name {
-        firstName
-        lastName
-      }
-      timeFormat
-      timeZone
-      updatedAt
-      userEmail
-      userId
-    }
-    forWorkspaceMemberId
   }
 }
 `;
@@ -545,6 +545,26 @@ export const mocks = [
               updatedAt
             }
             favoriteFolderId
+            forWorkspaceMember {
+              __typename
+              avatarUrl
+              colorScheme
+              createdAt
+              dateFormat
+              deletedAt
+              id
+              locale
+              name {
+                firstName
+                lastName
+              }
+              timeFormat
+              timeZone
+              updatedAt
+              userEmail
+              userId
+            }
+            forWorkspaceMemberId
             id
             note {
               __typename
@@ -815,26 +835,6 @@ export const mocks = [
               workflowId
             }
             workflowVersionId
-            forWorkspaceMember {
-              __typename
-              avatarUrl
-              colorScheme
-              createdAt
-              dateFormat
-              deletedAt
-              id
-              locale
-              name {
-                firstName
-                lastName
-              }
-              timeFormat
-              timeZone
-              updatedAt
-              userEmail
-              userId
-            }
-            forWorkspaceMemberId
           }
         }
       `,
