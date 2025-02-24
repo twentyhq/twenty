@@ -731,7 +731,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "d16b41f8-0aea-4f23-baf4-716913a41d52",
               type: "UUID",
-              name: "forWorkspaceMemberId",
+              name: "workspaceMemberId",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -752,7 +752,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "6f5a9d78-2e2c-43a3-abe1-c4159784f6fe",
               type: "RELATION",
-              name: "forWorkspaceMember",
+              name: "workspaceMember",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -780,7 +780,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceFieldMetadata: {
                   __typename: "Field",
                   id: "6f5a9d78-2e2c-43a3-abe1-c4159784f6fe",
-                  name: "forWorkspaceMember"
+                  name: "workspaceMember"
                 },
                 targetObjectMetadata: {
                   __typename: "Object",
@@ -2560,7 +2560,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "88e27009-0c31-436a-87ca-4e5b86df2746",
               type: "UUID",
-              name: "forWorkspaceMemberId",
+              name: "workspaceMemberId",
               icon: "IconUser",
               isCustom: false,
               isActive: true,
@@ -2581,7 +2581,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "94edc854-576d-4568-81a8-50fcba749840",
               type: "RELATION",
-              name: "forWorkspaceMember",
+              name: "workspaceMember",
               icon: "IconUser",
               isCustom: false,
               isActive: true,
@@ -2609,7 +2609,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceFieldMetadata: {
                   __typename: "Field",
                   id: "94edc854-576d-4568-81a8-50fcba749840",
-                  name: "forWorkspaceMember"
+                  name: "workspaceMember"
                 },
                 targetObjectMetadata: {
                   __typename: "Object",
@@ -15512,7 +15512,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "009e6914-a1b8-4f4e-9c36-b7a041998d77",
               type: "UUID",
-              name: "forWorkspaceMemberId",
+              name: "workspaceMemberId",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -15533,7 +15533,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "eff8454d-8225-4237-bdc2-22e0117719db",
               type: "RELATION",
-              name: "forWorkspaceMember",
+              name: "workspaceMember",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -15561,7 +15561,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceFieldMetadata: {
                   __typename: "Field",
                   id: "eff8454d-8225-4237-bdc2-22e0117719db",
-                  name: "forWorkspaceMember"
+                  name: "workspaceMember"
                 },
                 targetObjectMetadata: {
                   __typename: "Object",
@@ -16918,7 +16918,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "fc71229f-395d-420f-b256-8a27d19f2513",
               type: "UUID",
-              name: "forWorkspaceMemberId",
+              name: "workspaceMemberId",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -16939,7 +16939,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "e9336814-40bf-49d2-9c7e-dae6af9d077b",
               type: "RELATION",
-              name: "forWorkspaceMember",
+              name: "workspaceMember",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -16967,7 +16967,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceFieldMetadata: {
                   __typename: "Field",
                   id: "e9336814-40bf-49d2-9c7e-dae6af9d077b",
-                  name: "forWorkspaceMember"
+                  name: "workspaceMember"
                 },
                 targetObjectMetadata: {
                   __typename: "Object",
