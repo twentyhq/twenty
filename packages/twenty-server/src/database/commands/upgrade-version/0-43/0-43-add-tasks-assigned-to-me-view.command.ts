@@ -1,15 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import {
-  ActiveWorkspacesCommandOptions,
-  ActiveWorkspacesCommandRunner,
-} from 'src/database/commands/active-workspaces.command';
+import { ActiveWorkspacesCommandOptions } from 'src/database/commands/active-workspaces.command';
 import { isCommandLogger } from 'src/database/commands/logger';
+import { ActiveWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -24,11 +22,12 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
-@Command({
-  name: 'upgrade-0.43:add-tasks-assigned-to-me-view',
+@MigrationCommand({
+  name: 'add-tasks-assigned-to-me-view',
   description: 'Add tasks assigned to me view',
+  version: '0.43',
 })
-export class AddTasksAssignedToMeViewCommand extends ActiveWorkspacesCommandRunner {
+export class AddTasksAssignedToMeViewCommand extends ActiveWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -42,7 +41,7 @@ export class AddTasksAssignedToMeViewCommand extends ActiveWorkspacesCommandRunn
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async executeActiveWorkspacesCommand(
+  async executeActiveWorkspacesMigrationCommand(
     _passedParam: string[],
     options: ActiveWorkspacesCommandOptions,
     workspaceIds: string[],

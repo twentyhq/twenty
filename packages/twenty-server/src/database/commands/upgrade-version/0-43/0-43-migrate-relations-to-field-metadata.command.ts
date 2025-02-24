@@ -1,17 +1,15 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import {
-  ActiveWorkspacesCommandOptions,
-  ActiveWorkspacesCommandRunner,
-} from 'src/database/commands/active-workspaces.command';
+import { ActiveWorkspacesCommandOptions } from 'src/database/commands/active-workspaces.command';
 import { isCommandLogger } from 'src/database/commands/logger';
+import { ActiveWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -21,11 +19,12 @@ import {
 } from 'src/engine/utils/deduce-relation-direction.util';
 import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-@Command({
-  name: 'upgrade-0.43:migrate-relations-to-field-metadata',
+@MigrationCommand({
+  name: 'migrate-relations-to-field-metadata',
   description: 'Migrate relations to field metadata',
+  version: '0.43',
 })
-export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesCommandRunner {
+export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -36,7 +35,7 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesComm
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async executeActiveWorkspacesCommand(
+  async executeActiveWorkspacesMigrationCommand(
     _passedParam: string[],
     options: ActiveWorkspacesCommandOptions,
     workspaceIds: string[],

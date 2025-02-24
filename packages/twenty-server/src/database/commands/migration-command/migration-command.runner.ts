@@ -5,15 +5,16 @@ import { CommandRunner, Option } from 'nest-commander';
 
 import { MigrationCommandInterface } from 'src/database/commands/migration-command/interfaces/migration-command.interface';
 
-import { CommandLogger } from './logger';
+import { BaseCommandOptions } from 'src/database/commands/base.command';
+import { CommandLogger } from 'src/database/commands/logger';
 
-export type BaseCommandOptions = {
+export type MigrationCommandOptions = {
   workspaceId?: string;
   dryRun?: boolean;
   verbose?: boolean;
 };
 
-export abstract class BaseCommandRunner
+export abstract class MigrationCommandRunner
   extends CommandRunner
   implements MigrationCommandInterface
 {
