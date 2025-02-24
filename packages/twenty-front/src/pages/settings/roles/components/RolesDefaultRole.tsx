@@ -61,6 +61,7 @@ export const RolesDefaultRole = ({ roles }: { roles: Role[] }) => {
           description={t`Set a default role for this workspace`}
         >
           <Select
+            selectSizeVariant="small"
             withSearchInput
             dropdownId="default-role-select"
             options={roles.map((role) => ({
