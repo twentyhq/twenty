@@ -43,7 +43,7 @@ export const useGetAvatarChipsBuilder = ({
   LeftIconColor,
   avatarType,
   avatarUrl,
-  isIconInverted,
+  isIconInverted = false,
   placeholderColorSeed,
   variant: propsVariant,
 }: AvatarChipsCommonProps) => {
