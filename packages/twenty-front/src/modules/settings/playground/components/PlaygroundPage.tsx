@@ -28,7 +28,7 @@ const StyledPage = styled.div`
 
 const StyledMainContainer = styled.div<{ pageBarHeight: number }>`
   padding-bottom: ${({ theme }) => theme.spacing(3)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
   height: calc(100vh - ${({ pageBarHeight }) => `${pageBarHeight}px`});
   width: 100vw;
 `;

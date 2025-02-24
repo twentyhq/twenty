@@ -16,7 +16,7 @@ const StyledNestedContainer = styled.div<{ pageBarHeight: number }>`
   height: 100%;
   width: 100%;
 
-  > * {
+  [data-v-app] {
     max-height: ${({ theme, pageBarHeight }) =>
       `calc(
         100dvh 
