@@ -25,7 +25,7 @@ export const LinkChip = ({
   return (
     // TODO test prevent default here ?
     // Circular dep ?
-    <UndecoratedLink to={to} onClick={(e) => e.preventDefault()}>
+    <UndecoratedLink to={to} onClick={(e) => e.stopPropagation()}>
       <Chip
         size={size}
         label={label}

@@ -26,28 +26,39 @@ export const ChipFieldDisplay = () => {
     return null;
   }
 
-  return isLabelIdentifier && isDefined(labelIdentifierLink) ? (
-    <RecordIdentifierChip
-      objectNameSingular={objectNameSingular}
-      record={recordValue}
-      size={ChipSize.Small}
-      to={
-        recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-          ? labelIdentifierLink
-          : undefined
-      }
-      onClick={
-        recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-          ? () => {
-              openRecordInCommandMenu({
-                recordId: recordValue.id,
-                objectNameSingular,
-              });
-            }
-          : undefined
-      }
-    />
-  ) : (
-    <RecordChip objectNameSingular={objectNameSingular} record={recordValue} />
-  );
+  switch (recordIndexOpenRecordIn) {
+    case ViewOpenRecordInType.RECORD_PAGE: {
+      return (
+        <RecordIdentifierChip
+          objectNameSingular={objectNameSingular}
+          record={recordValue}
+          size={ChipSize.Small}
+          to={labelIdentifierLink}
+        />
+      );
+    }
+    case ViewOpenRecordInType.SIDE_PANEL: {
+      return (
+        <RecordIdentifierChip
+          objectNameSingular={objectNameSingular}
+          record={recordValue}
+          size={ChipSize.Small}
+          onClick={() => {
+            openRecordInCommandMenu({
+              recordId: recordValue.id,
+              objectNameSingular,
+            });
+          }}
+        />
+      );
+    }
+    default: {
+      return (
+        <RecordChip
+          objectNameSingular={objectNameSingular}
+          record={recordValue}
+        />
+      );
+    }
+  }
 };

@@ -2,26 +2,37 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isNonEmptyString } from '@sniptt/guards';
-import { AvatarChipVariant, ChipSize, LinkAvatarChip } from 'twenty-ui';
+import {
+  AvatarChip,
+  AvatarChipVariant,
+  ChipSize,
+  LinkAvatarChip,
+} from 'twenty-ui';
 
-export type RecordIdentifierChipProps = {
+type RecordIdentifierChipCommonsProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   variant?: AvatarChipVariant;
   size?: ChipSize;
-  to: string;
   maxWidth?: number;
-  onClick?: () => void;
 };
+
+type RecordIdentifierChipLinkProps = { to: string };
+type RecordIdentifierChipRegularProps = { onClick: () => void };
+type RecordIdentifierChipProps = RecordIdentifierChipCommonsProps &
+  (RecordIdentifierChipRegularProps | RecordIdentifierChipLinkProps);
+
+const isLinkChip = (
+  props: RecordIdentifierChipRegularProps | RecordIdentifierChipLinkProps,
+): props is RecordIdentifierChipLinkProps => Object.hasOwn(props, 'to');
 
 export const RecordIdentifierChip = ({
   objectNameSingular,
   record,
   variant,
   size,
-  onClick,
-  to,
   maxWidth,
+  ...props
 }: RecordIdentifierChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -35,14 +46,30 @@ export const RecordIdentifierChip = ({
     return null;
   }
 
+  if (isLinkChip(props)) {
+    return (
+      <LinkAvatarChip
+        placeholderColorSeed={record.id}
+        name={recordChipData.name}
+        avatarType={recordChipData.avatarType}
+        avatarUrl={recordChipData.avatarUrl ?? ''}
+        to={props.to}
+        variant={variant}
+        LeftIcon={LeftIcon}
+        LeftIconColor={LeftIconColor}
+        size={size}
+        maxWidth={maxWidth}
+      />
+    );
+  }
+
   return (
-    <LinkAvatarChip
+    <AvatarChip
       placeholderColorSeed={record.id}
       name={recordChipData.name}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
-      to={to}
-      onClick={onClick}
+      onClick={props.onClick}
       variant={variant}
       LeftIcon={LeftIcon}
       LeftIconColor={LeftIconColor}

@@ -29,7 +29,6 @@ export type ChipProps = {
   maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
-  // Could be a function or ReactNode ?
   leftComponent?: (() => ReactNode) | null;
   rightComponent?: (() => ReactNode) | null;
   className?: string;
