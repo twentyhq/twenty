@@ -65,13 +65,11 @@ export const RecordChip = ({
   const isSidePanelViewOpenRecordInType =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
   const onClick = isSidePanelViewOpenRecordInType
-    ? () => {
-        console.log('RECORD CHIP ONCLICK');
+    ? () =>
         openRecordInCommandMenu({
           recordId: record.id,
           objectNameSingular,
-        });
-      }
+        })
     : undefined;
 
   return (
