@@ -33,7 +33,6 @@ import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
-  AvatarChip,
   AvatarChipVariant,
   Checkbox,
   CheckboxVariant,
@@ -192,24 +191,17 @@ export const RecordBoardCardHeader = ({
       );
     }
 
-    if (recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE) {
+    return (
       <RecordIdentifierChip
         objectNameSingular={objectMetadataItem.nameSingular}
         record={record}
         variant={AvatarChipVariant.Transparent}
         maxWidth={150}
-        to={indexIdentifierUrl(recordId)}
-      />;
-    }
-
-    return (
-      <AvatarChip
-        placeholderColorSeed={record.id}
-        name={record.title}
-        avatarType={record.avatarType}
-        avatarUrl={record.avatarUrl ?? ''}
-        maxWidth={150}
-        variant={AvatarChipVariant.Transparent}
+        to={
+          recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
+            ? indexIdentifierUrl(recordId)
+            : undefined
+        }
       />
     );
   };

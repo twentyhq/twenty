@@ -6,16 +6,30 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { AvatarChipVariant, ChipSize, LinkAvatarChip } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import {
+  AvatarChip,
+  AvatarChipVariant,
+  ChipSize,
+  LinkAvatarChip,
+} from 'twenty-ui';
 
+type RecordIdentifierChipLinkProps = {
+  to: string;
+  onClick?: () => void;
+};
 type RecordIdentifierChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   variant?: AvatarChipVariant;
   size?: ChipSize;
   maxWidth?: number;
-  to: string;
-};
+} & (RecordIdentifierChipLinkProps | { to: undefined });
+
+const isRecordIdentifierLinkChip = (
+  props: RecordIdentifierChipLinkProps | { to: undefined },
+): props is RecordIdentifierChipLinkProps =>
+  Object.hasOwn(props, 'to') && isDefined(props['to']);
 
 // TODO not the same as file ?
 export const RecordIdentifierChip = ({
@@ -39,6 +53,22 @@ export const RecordIdentifierChip = ({
 
   if (!isNonEmptyString(recordChipData.name.trim())) {
     return null;
+  }
+
+  if (!isRecordIdentifierLinkChip(props)) {
+    return (
+      <AvatarChip
+        placeholderColorSeed={record.id}
+        name={recordChipData.name}
+        avatarType={recordChipData.avatarType}
+        avatarUrl={recordChipData.avatarUrl ?? ''}
+        variant={variant}
+        LeftIcon={LeftIcon}
+        LeftIconColor={LeftIconColor}
+        size={size}
+        maxWidth={maxWidth}
+      />
+    );
   }
 
   const onClick =
