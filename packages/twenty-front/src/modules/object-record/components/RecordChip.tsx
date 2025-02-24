@@ -1,4 +1,9 @@
-import { AvatarChip, AvatarChipVariant, LinkAvatarChip } from 'twenty-ui';
+import {
+  AvatarChip,
+  AvatarChipVariant,
+  ChipSize,
+  LinkAvatarChip,
+} from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
@@ -14,6 +19,9 @@ export type RecordChipProps = {
   className?: string;
   variant?: AvatarChipVariant;
   forceDisableClick?: boolean;
+  maxWidth?: number;
+  to?: string | undefined;
+  size?: ChipSize;
 };
 
 export const RecordChip = ({
@@ -21,7 +29,10 @@ export const RecordChip = ({
   record,
   className,
   variant,
-  forceDisableClick = false,
+  maxWidth,
+  to,
+  size,
+  forceDisableClick,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -34,9 +45,12 @@ export const RecordChip = ({
     recordIndexOpenRecordInSelector,
   );
 
+  // TODO temporary until we create a record show page for Workspaces members
   if (forceDisableClick) {
     return (
       <AvatarChip
+        size={size}
+        maxWidth={maxWidth}
         placeholderColorSeed={record.id}
         name={recordChipData.name}
         avatarType={recordChipData.avatarType}
@@ -58,13 +72,15 @@ export const RecordChip = ({
 
   return (
     <LinkAvatarChip
+      size={size}
+      maxWidth={maxWidth}
       placeholderColorSeed={record.id}
       name={recordChipData.name}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
       variant={variant}
-      to={getLinkToShowPage(objectNameSingular, record)}
+      to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={onClick}
     />
   );

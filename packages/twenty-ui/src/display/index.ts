@@ -11,7 +11,7 @@ export * from './chip/components/AvatarChip';
 export * from './chip/components/Chip';
 export * from './chip/components/LinkAvatarChip';
 export * from './chip/components/LinkChip';
-export * from './chip/hooks/useGetAvatarLeftComponentAndVariant';
+export * from './chip/hooks/useGetAvatarChipLeftComponentAndVariant';
 export * from './color/components/ColorSample';
 export * from './icon/components/IconAddressBook';
 export * from './icon/components/IconGmail';

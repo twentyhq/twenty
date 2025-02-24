@@ -36,7 +36,7 @@ const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 
-export const useGetAvatarLeftComponentAndVariant = ({
+export const useGetAvatarChipLeftComponentAndVariant = ({
   name,
   clickable,
   LeftIcon,
@@ -53,14 +53,11 @@ export const useGetAvatarLeftComponentAndVariant = ({
     if (!clickable) {
       return ChipVariant.Transparent;
     }
-    /// Hard to understand
     if (propsVariant === AvatarChipVariant.Regular) {
-      //Regular but Highlighted -> missleading
       return ChipVariant.Highlighted;
     }
 
     return ChipVariant.Regular;
-    ///
   };
 
   const getLeftComponent = (): ReactNode => {

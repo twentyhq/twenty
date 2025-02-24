@@ -156,8 +156,8 @@ export const ExpandableList = ({
         <AnimatedContainer>
           <StyledUnShrinkableContainer onClick={handleChipCountClick}>
             <OverflowingTextWithTooltip
-              size={ChipSize.Small}
               text={`+${hiddenChildrenCount}`}
+              size={ChipSize.Small}
             />
           </StyledUnShrinkableContainer>
         </AnimatedContainer>

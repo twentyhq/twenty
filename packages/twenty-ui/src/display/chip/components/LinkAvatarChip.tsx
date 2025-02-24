@@ -1,8 +1,8 @@
 import { LinkChip } from '@ui/display/chip/components/LinkChip';
 import {
   AvatarChipsCommonProps,
-  useGetAvatarLeftComponentAndVariant,
-} from '@ui/display/chip/hooks/useGetAvatarLeftComponentAndVariant';
+  useGetAvatarChipLeftComponentAndVariant,
+} from '@ui/display/chip/hooks/useGetAvatarChipLeftComponentAndVariant';
 
 export type LinkAvatarChipProps = AvatarChipsCommonProps & {
   to: string;
@@ -15,7 +15,7 @@ export const LinkAvatarChip = ({
   ...commonProps
 }: LinkAvatarChipProps) => {
   const { getLeftComponent, variant } =
-    useGetAvatarLeftComponentAndVariant(commonProps);
+    useGetAvatarChipLeftComponentAndVariant(commonProps);
 
   const { size, clickable, className, maxWidth, name } = commonProps;
   return (

@@ -1,3 +1,4 @@
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeaderContainer';
@@ -15,7 +16,6 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
-import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -192,7 +192,7 @@ export const RecordBoardCardHeader = ({
     }
 
     return (
-      <RecordIdentifierChip
+      <RecordChip
         objectNameSingular={objectMetadataItem.nameSingular}
         record={record}
         variant={AvatarChipVariant.Transparent}
