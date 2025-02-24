@@ -86,7 +86,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
-    description: msg`Company record position`,
+    description: msg`Workspace member position`,
     icon: 'IconHierarchy2',
     defaultValue: 0,
   })
