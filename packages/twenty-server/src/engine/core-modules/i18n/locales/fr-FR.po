@@ -130,11 +130,11 @@ msgstr "Propriétaire du compte pour les entreprises"
 
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Action needed to prevent workspace deletion"
-msgstr ""
+msgstr "Action nécessaire pour empêcher la suppression de l'espace de travail"
 
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
-msgstr ""
+msgstr "Action nécessaire pour réinitialiser le mot de passe"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -596,7 +596,7 @@ msgstr "Nom d'affichage"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
-msgstr ""
+msgstr "Afficher les enregistrements dans un panneau latéral ou dans une page d'enregistrement"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
@@ -984,7 +984,7 @@ msgstr "Titre du poste"
 
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Join your team on Twenty"
-msgstr ""
+msgstr "Rejoignez votre équipe sur Twenty"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
@@ -1345,7 +1345,7 @@ msgstr "Nom de l'objet"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
-msgstr ""
+msgstr "Ouvrir l'enregistrement dans"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -2129,7 +2129,7 @@ msgstr "Webhooks"
 
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr ""
+msgstr "Bienvenue chez Twenty : Veuillez confirmer votre email"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2276,7 +2276,7 @@ msgstr "X"
 
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
-msgstr ""
+msgstr "Votre mot de passe a été modifié avec succès"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

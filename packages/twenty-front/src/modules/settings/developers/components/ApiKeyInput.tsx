@@ -5,6 +5,7 @@ import { Button, IconCopy } from 'twenty-ui';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
+
 import { useLingui } from '@lingui/react/macro';
 const StyledContainer = styled.div`
   display: flex;
@@ -30,7 +31,7 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
       </StyledLinkContainer>
       <Button
         Icon={IconCopy}
-        title="Copy"
+        title={t`Copy`}
         onClick={() => {
           enqueueSnackBar(t`API Key copied to clipboard`, {
             variant: SnackBarVariant.Success,

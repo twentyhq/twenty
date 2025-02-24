@@ -11,6 +11,7 @@ import { ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconComponent, IconKey, Section } from 'twenty-ui';
 import { IdentityProviderType } from '~/generated/graphql';
+import { t } from '@lingui/core/macro';
 
 const StyledInputsContainer = styled.div`
   display: grid;
@@ -79,7 +80,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
   return (
     <SettingsPageContainer>
       <Section>
-        <H2Title title="Name" description="The name of your connection" />
+        <H2Title title={t`Name`} description={t`The name of your connection`} />
         <StyledInputsContainer>
           <Controller
             name="name"
@@ -87,7 +88,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 autoComplete="off"
-                label="Name"
+                label={t`Name`}
                 value={value}
                 onChange={onChange}
                 fullWidth
@@ -99,8 +100,8 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
       </Section>
       <Section>
         <H2Title
-          title="Type"
-          description="Choose between OIDC and SAML protocols"
+          title={t`Type`}
+          description={t`Choose between OIDC and SAML protocols`}
         />
         <StyledInputsContainer>
           <Controller

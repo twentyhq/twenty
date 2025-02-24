@@ -29,8 +29,10 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
 
   const {
@@ -116,13 +118,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <StyledInput
         autoFocus
         value={recordGroupFieldSearchInput}
-        placeholder="Search fields"
+        placeholder={t`Search fields`}
         onChange={(event) => setRecordGroupFieldSearchInput(event.target.value)}
       />
       <DropdownMenuItemsContainer>
         {viewType === ViewType.Table && (
           <MenuItemSelect
-            text="None"
+            text={t`None`}
             selected={!isDefined(recordGroupFieldMetadata)}
             onClick={handleResetRecordGroupField}
           />
@@ -146,7 +148,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             closeDropdown();
           }}
         >
-          <MenuItem LeftIcon={IconSettings} text="Create select field" />
+          <MenuItem LeftIcon={IconSettings} text={t`Create select field`} />
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </>

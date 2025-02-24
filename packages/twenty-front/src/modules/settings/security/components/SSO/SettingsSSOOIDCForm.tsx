@@ -53,7 +53,7 @@ export const SettingsSSOOIDCForm = () => {
             <StyledLinkContainer>
               <TextInput
                 readOnly={true}
-                label="Authorized URI"
+                label={t`Authorized URI`}
                 value={authorizedUrl}
                 fullWidth
               />
@@ -63,7 +63,7 @@ export const SettingsSSOOIDCForm = () => {
                 Icon={IconCopy}
                 title={t`Copy`}
                 onClick={() => {
-                  enqueueSnackBar('Authorized Url copied to clipboard', {
+                  enqueueSnackBar(t`Authorized URL copied to clipboard`, {
                     variant: SnackBarVariant.Success,
                     icon: <IconCopy size={theme.icon.size.md} />,
                     duration: 2000,
@@ -111,7 +111,7 @@ export const SettingsSSOOIDCForm = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 autoComplete="off"
-                label="Client ID"
+                label={t`Client ID`}
                 value={value}
                 onChange={onChange}
                 fullWidth
@@ -126,7 +126,7 @@ export const SettingsSSOOIDCForm = () => {
               <TextInput
                 autoComplete="off"
                 type="password"
-                label="Client Secret"
+                label={t`Client Secret`}
                 value={value}
                 onChange={onChange}
                 fullWidth
@@ -140,7 +140,7 @@ export const SettingsSSOOIDCForm = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 autoComplete="off"
-                label="Issuer URI"
+                label={t`Issuer URI`}
                 value={value}
                 onChange={onChange}
                 fullWidth
