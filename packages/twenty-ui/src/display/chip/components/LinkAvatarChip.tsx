@@ -1,4 +1,7 @@
-import { LinkChip } from '@ui/display/chip/components/LinkChip';
+import {
+  LinkChip,
+  LinkChipOnClick,
+} from '@ui/display/chip/components/LinkChip';
 import {
   AvatarChipsCommonProps,
   useGetAvatarChipLeftComponentAndVariant,
@@ -6,7 +9,7 @@ import {
 
 export type LinkAvatarChipProps = AvatarChipsCommonProps & {
   to: string;
-  onClick?: () => void;
+  onClick?: LinkChipOnClick;
 };
 
 export const LinkAvatarChip = ({

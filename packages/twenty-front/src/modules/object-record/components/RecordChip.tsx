@@ -3,6 +3,7 @@ import {
   AvatarChipVariant,
   ChipSize,
   LinkAvatarChip,
+  isModifiedEvent,
 } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -12,7 +13,6 @@ import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/st
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
-
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
@@ -50,6 +50,7 @@ export const RecordChip = ({
     return (
       <AvatarChip
         size={size}
+        clickable={false}
         maxWidth={maxWidth}
         placeholderColorSeed={record.id}
         name={recordChipData.name}
@@ -61,19 +62,23 @@ export const RecordChip = ({
     );
   }
 
-  const onClick =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-      ? () =>
-          openRecordInCommandMenu({
-            recordId: record.id,
-            objectNameSingular,
-          })
-      : undefined;
+  const isSidePanelViewOpenRecordInType =
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+  const onClick = isSidePanelViewOpenRecordInType
+    ? () => {
+        console.log('RECORD CHIP ONCLICK');
+        openRecordInCommandMenu({
+          recordId: record.id,
+          objectNameSingular,
+        });
+      }
+    : undefined;
 
   return (
     <LinkAvatarChip
       size={size}
       maxWidth={maxWidth}
+      clickable={true}
       placeholderColorSeed={record.id}
       name={recordChipData.name}
       avatarType={recordChipData.avatarType}
@@ -81,7 +86,16 @@ export const RecordChip = ({
       className={className}
       variant={variant}
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
-      onClick={onClick}
+      onClick={(clickEvent) => {
+        // TODO refactor wrapper event listener to avoid colliding events
+        clickEvent.stopPropagation();
+
+        const isModifiedEventResult = isModifiedEvent(clickEvent);
+        if (isSidePanelViewOpenRecordInType && !isModifiedEventResult) {
+          clickEvent.preventDefault();
+          onClick?.();
+        }
+      }}
     />
   );
 };

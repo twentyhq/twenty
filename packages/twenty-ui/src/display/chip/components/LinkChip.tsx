@@ -6,11 +6,13 @@ import {
   ChipSize,
   ChipVariant,
 } from '@ui/display/chip/components/Chip';
+import { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
+export type LinkChipOnClick = (event: MouseEvent<HTMLAnchorElement>) => void;
 type LinkChipProps = Omit<ChipProps, 'onClick'> & {
   to: string;
-  onClick?: () => void;
+  onClick?: LinkChipOnClick;
 };
 
 // Ideally we would use the UndecoratedLink component from @ui/navigation
@@ -34,13 +36,7 @@ export const LinkChip = ({
   onClick,
 }: LinkChipProps) => {
   return (
-    <StyledLink
-      to={to}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick?.();
-      }}
-    >
+    <StyledLink to={to} onClick={onClick}>
       <Chip
         size={size}
         label={label}
