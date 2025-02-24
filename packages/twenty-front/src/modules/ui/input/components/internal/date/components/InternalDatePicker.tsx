@@ -18,9 +18,9 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { t } from '@lingui/core/macro';
 
 export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
@@ -375,7 +375,7 @@ export const DateTimePicker = ({
 
   const openToDate = DateTime.now()
     .set({
-      day: dateParsed.get('day'),
+      day: 1,
       month: datePickerMonth + 1,
       year: datePickerYear,
       hour: 23,

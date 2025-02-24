@@ -22,8 +22,8 @@ const StyledCustomDatePickerHeader = styled.div`
 `;
 
 const years = Array.from(
-  { length: 200 },
-  (_, i) => new Date().getFullYear() + 5 - i,
+  { length: 201 },
+  (_, i) => new Date().getFullYear() + 75 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
 
 type AbsoluteDatePickerHeaderProps = {
