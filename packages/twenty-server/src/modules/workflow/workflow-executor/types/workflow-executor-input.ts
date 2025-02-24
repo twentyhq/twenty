@@ -4,6 +4,6 @@ export type WorkflowExecutorInput = {
   currentStepIndex: number;
   steps: WorkflowAction[];
   context: Record<string, unknown>;
-  attemptCount?: number;
   workflowRunId: string;
+  attemptCount?: number;
 };

@@ -10,11 +10,18 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
+import { isWorkflowDeleteRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-delete-record-action.guard';
 import { WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
@@ -27,9 +34,25 @@ export class DeleteRecordWorkflowAction implements WorkflowExecutor {
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
-  async execute(
-    workflowActionInput: WorkflowDeleteRecordActionInput,
-  ): Promise<WorkflowExecutorOutput> {
+  async execute({
+    currentStepIndex,
+    steps,
+    context,
+  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+    const step = steps[currentStepIndex];
+
+    if (!isWorkflowDeleteRecordAction(step)) {
+      throw new WorkflowStepExecutorException(
+        'Step is not a delete record action',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
+    const workflowActionInput = resolveInput(
+      step.settings.input,
+      context,
+    ) as WorkflowDeleteRecordActionInput;
+
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
     );

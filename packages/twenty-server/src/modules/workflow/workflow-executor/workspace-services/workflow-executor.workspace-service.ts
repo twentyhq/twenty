@@ -11,10 +11,9 @@ import {
   WorkflowRunOutput,
   WorkflowRunStatus,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { WorkflowExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-executor.factory';
+import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_RETRIES_ON_FAILURE = 3;
@@ -27,7 +26,7 @@ export type WorkflowExecutorState = {
 @Injectable()
 export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
   constructor(
-    private readonly workflowActionFactory: WorkflowActionFactory,
+    private readonly workflowExecutorFactory: WorkflowExecutorFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -39,27 +38,25 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     context,
     attemptCount = 1,
     workflowRunId,
-  }: {
-    currentStepIndex: number;
-    steps: WorkflowAction[];
-    context: Record<string, unknown>;
-    attemptCount?: number;
-    workflowRunId: string;
-  }): Promise<WorkflowExecutorOutput> {
+  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
     if (currentStepIndex >= steps.length) {
       return {};
     }
 
     const step = steps[currentStepIndex];
 
-    const workflowAction = this.workflowActionFactory.get(step.type);
-
-    const actionPayload = resolveInput(step.settings.input, context);
+    const workflowExecutor = this.workflowExecutorFactory.get(step.type);
 
     let actionOutput: WorkflowExecutorOutput;
 
     try {
-      actionOutput = await workflowAction.execute(actionPayload);
+      actionOutput = await workflowExecutor.execute({
+        currentStepIndex,
+        steps,
+        context,
+        attemptCount,
+        workflowRunId,
+      });
     } catch (error) {
       actionOutput = {
         error: error.message ?? 'Execution result error, no data or error',

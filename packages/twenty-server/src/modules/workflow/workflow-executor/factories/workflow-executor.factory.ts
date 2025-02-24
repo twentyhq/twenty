@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
+import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import {
   WorkflowStepExecutorException,
@@ -15,7 +15,7 @@ import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
-export class WorkflowActionFactory {
+export class WorkflowExecutorFactory {
   constructor(
     private readonly codeWorkflowAction: CodeWorkflowAction,
     private readonly sendEmailWorkflowAction: SendEmailWorkflowAction,
@@ -25,7 +25,7 @@ export class WorkflowActionFactory {
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
   ) {}
 
-  get(stepType: WorkflowActionType): WorkflowAction {
+  get(stepType: WorkflowActionType): WorkflowExecutor {
     switch (stepType) {
       case WorkflowActionType.CODE:
         return this.codeWorkflowAction;

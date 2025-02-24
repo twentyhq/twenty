@@ -15,11 +15,14 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import {
   SendEmailActionException,
   SendEmailActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/exceptions/send-email-action.exception';
+import { isWorkflowSendEmailAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/guards/is-workflow-send-email-action.guard';
 import { WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 
 export type WorkflowSendEmailStepOutputSchema = {
@@ -79,12 +82,29 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
     }
   }
 
-  async execute(
-    workflowActionInput: WorkflowSendEmailActionInput,
-  ): Promise<WorkflowExecutorOutput> {
+  async execute({
+    currentStepIndex,
+    steps,
+    context,
+  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+    const step = steps[currentStepIndex];
+
+    if (!isWorkflowSendEmailAction(step)) {
+      throw new WorkflowStepExecutorException(
+        'Step is not a send email action',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
     const emailProvider = await this.getEmailClient(
-      workflowActionInput.connectedAccountId,
+      step.settings.input.connectedAccountId,
     );
+
+    const workflowActionInput = resolveInput(
+      step.settings.input,
+      context,
+    ) as WorkflowSendEmailActionInput;
+
     const { email, body, subject } = workflowActionInput;
 
     const emailSchema = z.string().trim().email('Invalid email');
