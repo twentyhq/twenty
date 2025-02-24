@@ -140,7 +140,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.integration,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: msg`PaymentGateway`,
+    label: msg`Payment Gateway`,
     description: msg`Integration linked to the charge`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => IntegrationWorkspaceEntity,
@@ -176,7 +176,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CHARGE_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
     label: msg`Events`,
-    description: msg`Events linked to the person`,
+    description: msg`Events linked to the charge`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -189,7 +189,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CHARGE_STANDARD_FIELD_IDS.attachments,
     type: RelationMetadataType.ONE_TO_MANY,
     label: msg`Attachments`,
-    description: msg`Attachments linked to the opportunity`,
+    description: msg`Attachments linked to the charge`,
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -211,5 +211,5 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }
