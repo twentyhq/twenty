@@ -45,7 +45,7 @@ export const RecordTableDecorator: Decorator = (Story) => {
             onOpenTableCell: () => {},
             onActionMenuDropdownOpened: () => {},
             onMoveFocus: () => {},
-            onMoveSoftFocusToCell: () => {},
+            onMoveSoftFocusToCurrentCell: () => {},
             onUpsertRecord: () => {},
           }}
         >

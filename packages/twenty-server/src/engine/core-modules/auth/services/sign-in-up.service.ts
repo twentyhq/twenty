@@ -207,6 +207,7 @@ export class SignInUpService {
     const userToCreate = this.userRepository.create({
       ...newUser,
       defaultAvatarUrl: imagePath,
+      canAccessFullAdminPanel: false,
       canImpersonate: false,
     } as Partial<User>);
 
@@ -289,6 +290,7 @@ export class SignInUpService {
     const user: PartialUserWithPicture = {
       ...partialUserWithPicture,
       canImpersonate: false,
+      canAccessFullAdminPanel: false,
     };
 
     if (!user.email) {
@@ -303,6 +305,7 @@ export class SignInUpService {
 
       // if the workspace doesn't exist it means it's the first user of the workspace
       user.canImpersonate = true;
+      user.canAccessFullAdminPanel = true;
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {

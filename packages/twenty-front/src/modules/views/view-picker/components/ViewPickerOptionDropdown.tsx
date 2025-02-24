@@ -8,6 +8,7 @@ import { View } from '@/views/types/View';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import {
   IconHeart,
@@ -17,7 +18,6 @@ import {
   MenuItem,
   useIcons,
 } from 'twenty-ui';
-import { useLingui } from '@lingui/react/macro';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -46,7 +46,8 @@ export const ViewPickerOptionDropdown = ({
   const { createFavorite } = useCreateFavorite();
 
   const isFavorite = favorites.some(
-    (favorite) => favorite.recordId === view.id && favorite.workspaceMemberId,
+    (favorite) =>
+      favorite.recordId === view.id && favorite.forWorkspaceMemberId,
   );
 
   const handleDelete = () => {
