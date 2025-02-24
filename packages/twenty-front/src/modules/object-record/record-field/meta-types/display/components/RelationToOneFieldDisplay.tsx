@@ -24,7 +24,7 @@ export const RelationToOneFieldDisplay = () => {
       key={recordChipData.recordId}
       objectNameSingular={recordChipData.objectNameSingular}
       record={fieldValue}
-      forceNoopOnClick={isWorkspaceMemberFieldMetadataRelation}
+      forceDisableClick={isWorkspaceMemberFieldMetadataRelation}
     />
   );
 };

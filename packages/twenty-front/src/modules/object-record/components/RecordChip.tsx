@@ -13,7 +13,7 @@ export type RecordChipProps = {
   record: ObjectRecord;
   className?: string;
   variant?: AvatarChipVariant;
-  forceNoopOnClick?: boolean;
+  forceDisableClick?: boolean;
 };
 
 export const RecordChip = ({
@@ -21,7 +21,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
-  forceNoopOnClick = false,
+  forceDisableClick = false,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -34,10 +34,7 @@ export const RecordChip = ({
     recordIndexOpenRecordInSelector,
   );
 
-  if (
-    forceNoopOnClick ||
-    recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-  ) {
+  if (forceDisableClick) {
     return (
       <AvatarChip
         placeholderColorSeed={record.id}
