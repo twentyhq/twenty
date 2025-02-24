@@ -43,6 +43,12 @@ export const SettingsDomain = () => {
       customDomain: z
         .string()
         .regex(
+          /^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$/,
+          {
+            message: t`Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com).`,
+          },
+        )
+        .regex(
           /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
           {
             message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
@@ -70,7 +76,7 @@ export const SettingsDomain = () => {
     subdomain: string;
     customDomain: string | null;
   }>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
@@ -170,6 +176,15 @@ export const SettingsDomain = () => {
     }
 
     if (
+      subdomainValue === currentWorkspace?.subdomain &&
+      customDomainValue === currentWorkspace?.customDomain
+    ) {
+      return enqueueSnackBar(t`No change detected`, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+
+    if (
       isDefined(values.subdomain) &&
       values.subdomain !== currentWorkspace.subdomain
     ) {
@@ -197,24 +212,19 @@ export const SettingsDomain = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={
-            !form.formState.isValid ||
-            (subdomainValue === currentWorkspace?.subdomain &&
-              customDomainValue === currentWorkspace?.customDomain)
-          }
           onCancel={() => navigate(SettingsPath.Workspace)}
-          onSave={handleSave}
+          onSave={form.handleSubmit(handleSave)}
         />
       }
     >
       <SettingsPageContainer>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
-          <SettingsSubdomain />
+          <SettingsSubdomain handleSave={handleSave} />
           {isCustomDomainEnabled && (
             <>
               <SettingsCustomDomainEffect />
-              <SettingsCustomDomain />
+              <SettingsCustomDomain handleSave={handleSave} />
             </>
           )}
         </FormProvider>
