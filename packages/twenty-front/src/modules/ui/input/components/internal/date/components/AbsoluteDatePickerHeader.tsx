@@ -35,8 +35,6 @@ type AbsoluteDatePickerHeaderProps = {
   onChangeYear: (year: number) => void;
   onAddMonth: () => void;
   onSubtractMonth: () => void;
-  prevMonthButtonDisabled: boolean;
-  nextMonthButtonDisabled: boolean;
   isDateTimeInput?: boolean;
   timeZone: string;
   hideInput?: boolean;
@@ -51,49 +49,52 @@ export const AbsoluteDatePickerHeader = ({
   onChangeYear,
   onAddMonth,
   onSubtractMonth,
-  prevMonthButtonDisabled,
-  nextMonthButtonDisabled,
   isDateTimeInput,
   timeZone,
   hideInput = false,
-}: AbsoluteDatePickerHeaderProps) => (
-  <>
-    {!hideInput && (
-      <DateTimeInput
-        date={date}
-        isDateTimeInput={isDateTimeInput}
-        onChange={onChange}
-        userTimezone={timeZone}
-      />
-    )}
+}: AbsoluteDatePickerHeaderProps) => {
+  const prevMonthButtonDisabled =
+    month === 0 && year === years[years.length - 1].value;
+  const nextMonthButtonDisabled = month === 11 && year === years[0].value;
+  return (
+    <>
+      {!hideInput && (
+        <DateTimeInput
+          date={date}
+          isDateTimeInput={isDateTimeInput}
+          onChange={onChange}
+          userTimezone={timeZone}
+        />
+      )}
 
-    <StyledCustomDatePickerHeader>
-      <Select
-        dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-        options={getMonthSelectOptions()}
-        onChange={onChangeMonth}
-        value={month}
-        fullWidth
-      />
-      <Select
-        dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
-        onChange={onChangeYear}
-        value={year}
-        options={years}
-        fullWidth
-      />
-      <LightIconButton
-        Icon={IconChevronLeft}
-        onClick={onSubtractMonth}
-        size="medium"
-        disabled={prevMonthButtonDisabled}
-      />
-      <LightIconButton
-        Icon={IconChevronRight}
-        onClick={onAddMonth}
-        size="medium"
-        disabled={nextMonthButtonDisabled}
-      />
-    </StyledCustomDatePickerHeader>
-  </>
-);
+      <StyledCustomDatePickerHeader>
+        <Select
+          dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
+          options={getMonthSelectOptions()}
+          onChange={onChangeMonth}
+          value={month}
+          fullWidth
+        />
+        <Select
+          dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+          onChange={onChangeYear}
+          value={year}
+          options={years}
+          fullWidth
+        />
+        <LightIconButton
+          Icon={IconChevronLeft}
+          onClick={onSubtractMonth}
+          size="medium"
+          disabled={prevMonthButtonDisabled}
+        />
+        <LightIconButton
+          Icon={IconChevronRight}
+          onClick={onAddMonth}
+          size="medium"
+          disabled={nextMonthButtonDisabled}
+        />
+      </StyledCustomDatePickerHeader>
+    </>
+  );
+};

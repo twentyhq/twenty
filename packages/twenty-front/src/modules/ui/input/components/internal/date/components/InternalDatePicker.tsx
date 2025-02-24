@@ -490,10 +490,7 @@ export const DateTimePicker = ({
               userTimezone={timeZone}
             />
           }
-          renderCustomHeader={({
-            prevMonthButtonDisabled,
-            nextMonthButtonDisabled,
-          }) =>
+          renderCustomHeader={() =>
             isRelative ? (
               <RelativeDatePickerHeader
                 direction={relativeDate?.direction ?? 'PAST'}
@@ -511,8 +508,6 @@ export const DateTimePicker = ({
                 onChangeYear={handleChangeYear}
                 onAddMonth={handleAddMonth}
                 onSubtractMonth={handleSubtractMonth}
-                prevMonthButtonDisabled={prevMonthButtonDisabled}
-                nextMonthButtonDisabled={nextMonthButtonDisabled}
                 isDateTimeInput={isDateTimeInput}
                 timeZone={timeZone}
                 hideInput={hideHeaderInput}
