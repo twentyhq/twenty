@@ -19,7 +19,7 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionsGuard(SettingsPermissions.WORKSPACE_USERS),
+  SettingsPermissionsGuard(SettingsPermissions.WORKSPACE_MEMBERS),
 )
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 @Resolver()
