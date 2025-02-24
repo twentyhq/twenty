@@ -1,4 +1,5 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import { CallbackInterface, RecoilRoot } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
@@ -104,8 +105,8 @@ describe('useMoveSoftFocusToCurrentCellOnHover', () => {
 
     act(() => {
       result.current.moveSoftFocusToCurrentCell({
-        column: 1,
-        row: 0,
+        column: 3,
+        row: 2,
       });
     });
 
