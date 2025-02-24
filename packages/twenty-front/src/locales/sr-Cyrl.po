@@ -1543,6 +1543,10 @@ msgstr "Невалидан провајдер аутентификације"
 #~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Неважећи домен. Домене морају бити краће од 256 карактера, не могу бити ИП адресе, не могу садржати размаке, не могу садржати било какве посебне карактере као што су _~`!@#$%^*()=+{}[]|\\;:'\",<>/? и не могу почети ни завршавати са '-' карактером."
@@ -1902,6 +1906,10 @@ msgstr "Нови провајдер за SSO"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
 #~ msgid "New Webhook"
 #~ msgstr "New Webhook"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "No change detected"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
