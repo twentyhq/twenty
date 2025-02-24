@@ -13,5 +13,5 @@
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
     "vite.config.ts"
-, "src/utils/url/__tests__/getAbsoluteUrlOrThrow.ts"  ]
+  ]
 }
