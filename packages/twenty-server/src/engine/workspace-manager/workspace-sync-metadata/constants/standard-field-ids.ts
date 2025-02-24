@@ -206,7 +206,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
-  workspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
+  forWorkspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
   person: '20202020-c428-4f40-b6f3-86091511c41c',
   company: '20202020-cff5-4682-8bf9-069169e08279',
   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
@@ -498,6 +498,7 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
+  position: '20202020-1810-4591-a93c-d0df97dca843',
   name: '20202020-e914-43a6-9c26-3603c59065f4',
   colorScheme: '20202020-66bc-47f2-adac-f2ef7c598b63',
   locale: '20202020-402e-4695-b169-794fa015afbe',
