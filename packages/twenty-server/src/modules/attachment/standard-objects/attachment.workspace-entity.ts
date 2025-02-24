@@ -17,14 +17,14 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
-import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
@@ -142,8 +142,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.charge,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Charge',
-    description: 'Attachment charge',
+    label: msg`Charge`,
+    description: msg`Attachment charge`,
     icon: 'IconPhone',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
@@ -157,8 +157,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.integration,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Integration',
-    description: 'Attachment integration',
+    label: msg`Integration`,
+    description: msg`Attachment integration`,
     icon: 'IconPhone',
     inverseSideTarget: () => IntegrationWorkspaceEntity,
     inverseSideFieldKey: 'attachments',

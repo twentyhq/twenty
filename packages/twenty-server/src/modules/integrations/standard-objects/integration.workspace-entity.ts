@@ -1,26 +1,30 @@
 import { OneToMany, Relation } from 'typeorm';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { msg } from '@lingui/core/macro';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { INTEGRATION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { FieldTypeAndNameMetadata, getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { FieldMetadataType } from 'twenty-shared';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -31,9 +35,9 @@ export const SEARCH_FIELDS_FOR_INTEGRATION: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.integration,
   namePlural: 'integrations',
-  labelSingular: 'Integration',
-  labelPlural: 'Integrations',
-  description: 'A integration',
+  labelSingular: msg`Integration`,
+  labelPlural: msg`Integrations`,
+  description: msg`A integration`,
   icon: 'IconFileImport',
   labelIdentifierStandardId: INTEGRATION_STANDARD_FIELD_IDS.name,
 })
@@ -42,8 +46,8 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INTEGRATION_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'Integration name',
+    label: msg`Name`,
+    description: msg`Integration name`,
     icon: 'IconFileUpload',
   })
   @WorkspaceIsNullable()
@@ -52,8 +56,8 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: INTEGRATION_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Integration record position',
+    label: msg`Position`,
+    description: msg`Integration record position`,
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -63,8 +67,8 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: INTEGRATION_STANDARD_FIELD_IDS.charge,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Charge',
-    description: 'Integration linked to the charge',
+    label: msg`Charge`,
+    description: msg`Integration linked to the charge`,
     icon: 'IconPhone',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -78,8 +82,8 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: INTEGRATION_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Events',
-    description: 'Events linked to the integration',
+    label: msg`Events`,
+    description: msg`Events linked to the integration`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -91,8 +95,8 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: INTEGRATION_STANDARD_FIELD_IDS.attachments,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Attachments',
-    description: 'Attachments linked to the integration',
+    label: msg`Attachments`,
+    description: msg`Attachments linked to the integration`,
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -108,7 +112,7 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields(
-        SEARCH_FIELDS_FOR_INTEGRATION
+      SEARCH_FIELDS_FOR_INTEGRATION,
     ),
   })
   @WorkspaceIsNullable()
