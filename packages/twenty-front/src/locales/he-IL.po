@@ -231,7 +231,7 @@ msgstr "הוסף לרשימת החסימה"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
-msgstr ""
+msgstr "התאם את ההגדרות הקשורות לתפקיד"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -744,7 +744,7 @@ msgstr "דומיין מותאם אישית"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Custom domain updated"
-msgstr ""
+msgstr "הדומיין המותאם עודכן"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -2469,7 +2469,7 @@ msgstr "פרטי ספק השירות"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
-msgstr ""
+msgstr "קבע תפקיד ברירת מחדל למרחב העבודה הזה"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2582,7 +2582,7 @@ msgstr "תת-דומיין לא יכול להיות קצר מ-<b>3</b> תווים
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain updated"
-msgstr ""
+msgstr "תת-דומיין עודכן"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3072,7 +3072,7 @@ msgstr "אין לך הרשאה ליצור רשומות באובייקט זה"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."
-msgstr ""
+msgstr "אין לך גישה להתחזות למשתמשים."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

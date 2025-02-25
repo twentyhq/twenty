@@ -231,7 +231,7 @@ msgstr "Đã thêm vào danh sách chặn"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
-msgstr ""
+msgstr "Điều chỉnh các cài đặt liên quan đến vai trò"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -744,7 +744,7 @@ msgstr "Tên miền tùy chỉnh"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Custom domain updated"
-msgstr ""
+msgstr "Tên miền tùy chỉnh đã được cập nhật"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -2469,7 +2469,7 @@ msgstr "Chi tiết Nhà Cung Cấp Dịch Vụ"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
-msgstr ""
+msgstr "Đặt một vai trò mặc định cho không gian làm việc này"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2582,7 +2582,7 @@ msgstr "Tên miền phụ không được ngắn hơn 3 ký tự"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain updated"
-msgstr ""
+msgstr "Tên miền phụ đã được cập nhật"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3072,7 +3072,7 @@ msgstr "Bạn không được phép tạo bản ghi trong đối tượng này"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."
-msgstr ""
+msgstr "Bạn không có quyền truy cập để giả lập người dùng khác."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
