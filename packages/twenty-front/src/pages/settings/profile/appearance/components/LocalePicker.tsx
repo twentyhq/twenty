@@ -74,6 +74,10 @@ export const LocalePicker = () => {
       value: APP_LOCALES['ar-SA'],
     },
     {
+      label: t`Persian`,
+      value: APP_LOCALES['fa-IR'],
+    },
+    {
       label: t`Catalan`,
       value: APP_LOCALES['ca-ES'],
     },
