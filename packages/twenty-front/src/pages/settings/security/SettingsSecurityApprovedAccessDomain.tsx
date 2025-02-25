@@ -31,14 +31,14 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           domain: z
             .string()
             .regex(
-              /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+              /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])\.[a-zA-Z]{2,}$/,
               {
-                message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+                message: t`Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters.`,
               },
             )
             .max(256),
           email: z.string().min(1, {
-            message: t`Email can not be empty`,
+            message: t`Email cannot be empty`,
           }),
         })
         .strict(),
@@ -53,9 +53,6 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const handleSave = async () => {
     try {
-      if (!form.formState.isValid || !form.formState.isSubmitting) {
-        return;
-      }
       createApprovedAccessDomain({
         variables: {
           input: {
@@ -126,7 +123,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                   fullWidth
                   placeholder="yourdomain.com"
                   error={error?.message}
-                  startAdornment="https://"
+                  leftAdornment="https://"
                 />
               )}
             />
@@ -149,7 +146,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                   onChange={onChange}
                   fullWidth
                   error={error?.message}
-                  endAdornment={`@${domain.length !== 0 ? domain : 'your-domain.com'}`}
+                  rightAdornment={`@${domain.length !== 0 ? domain : 'your-domain.com'}`}
                 />
               )}
             />

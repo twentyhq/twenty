@@ -38,45 +38,31 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
-const StyledStartAdornmentContainer = styled.div<{
+const StyledAdornmentContainer = styled.div<{
   sizeVariant: TextInputV2Size;
+  position: 'left' | 'right';
 }>`
-  height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.light};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm} 0 0
-    ${({ theme }) => theme.border.radius.sm};
-  border-right: none;
+  border-radius: ${({ theme, position }) =>
+    position === 'left'
+      ? `${theme.border.radius.sm} 0 0 ${theme.border.radius.sm}`
+      : `0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0`};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledEndAdornmentContainer = styled.div<{
-  sizeVariant: TextInputV2Size;
-}>`
-  height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
-  align-items: center;
-  box-sizing: border-box;
-  background-color: ${({ theme }) => theme.background.transparent.light};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-left: none;
-  border-radius: 0 ${({ theme }) => theme.border.radius.sm}
-    ${({ theme }) => theme.border.radius.sm} 0;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   justify-content: center;
+  min-width: fit-content;
   padding: ${({ theme }) => theme.spacing(2)};
   width: auto;
-  min-width: fit-content;
+
+  ${({ position }) =>
+    position === 'left' ? 'border-right: none;' : 'border-left: none;'}
 `;
 
 const StyledInput = styled.input<
@@ -88,15 +74,15 @@ const StyledInput = styled.input<
     | 'width'
     | 'inheritFontStyles'
     | 'autoGrow'
-    | 'endAdornment'
-    | 'startAdornment'
+    | 'rightAdornment'
+    | 'leftAdornment'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme, startAdornment, endAdornment }) =>
-    startAdornment
+  border-radius: ${({ theme, leftAdornment, rightAdornment }) =>
+    leftAdornment
       ? `0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0`
-      : endAdornment
+      : rightAdornment
         ? `${theme.border.radius.sm} 0 0 ${theme.border.radius.sm}`
         : theme.border.radius.sm};
 
@@ -215,8 +201,8 @@ export type TextInputV2ComponentProps = Omit<
   sizeVariant?: TextInputV2Size;
   inheritFontStyles?: boolean;
   loading?: boolean;
-  endAdornment?: string;
-  startAdornment?: string;
+  rightAdornment?: string;
+  leftAdornment?: string;
 };
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
@@ -253,8 +239,8 @@ const TextInputV2Component = forwardRef<
       dataTestId,
       autoGrow = false,
       loading = false,
-      endAdornment,
-      startAdornment,
+      rightAdornment,
+      leftAdornment,
     },
     ref,
   ) => {
@@ -289,10 +275,10 @@ const TextInputV2Component = forwardRef<
           </InputLabel>
         )}
         <StyledInputContainer>
-          {startAdornment && (
-            <StyledStartAdornmentContainer sizeVariant={sizeVariant}>
-              {startAdornment}
-            </StyledStartAdornmentContainer>
+          {leftAdornment && (
+            <StyledAdornmentContainer sizeVariant={sizeVariant} position="left">
+              {leftAdornment}
+            </StyledAdornmentContainer>
           )}
 
           {!!LeftIcon && (
@@ -331,14 +317,17 @@ const TextInputV2Component = forwardRef<
               sizeVariant,
               inheritFontStyles,
               autoGrow,
-              startAdornment,
-              endAdornment,
+              leftAdornment,
+              rightAdornment,
             }}
           />
-          {endAdornment && (
-            <StyledEndAdornmentContainer sizeVariant={sizeVariant}>
-              {endAdornment}
-            </StyledEndAdornmentContainer>
+          {rightAdornment && (
+            <StyledAdornmentContainer
+              sizeVariant={sizeVariant}
+              position="right"
+            >
+              {rightAdornment}
+            </StyledAdornmentContainer>
           )}
           <StyledTrailingIconContainer {...{ error }}>
             {!error && type === INPUT_TYPE_PASSWORD && (
