@@ -19,7 +19,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export enum PlaygroundTypes {
-  GRAPH_QL = 'graphql',
+  GRAPHQL = 'graphql',
   REST = 'rest',
 }
 
@@ -145,7 +145,7 @@ export const PlaygroundSetupForm = () => {
                 Icon: IconApi,
               },
               {
-                value: PlaygroundTypes.GRAPH_QL,
+                value: PlaygroundTypes.GRAPHQL,
                 label: t`GraphQL`,
                 Icon: IconBrandGraphql,
               },

@@ -12,7 +12,7 @@ export const PlaygroundRouter = () => {
     type: PlaygroundTypes;
   }>();
 
-  if (type === PlaygroundTypes.GRAPH_QL) {
+  if (type === PlaygroundTypes.GRAPHQL) {
     return <GraphQLPlayground schema={schema as PlaygroundSchemas} />;
   }
 
