@@ -5,7 +5,9 @@ import {
   PartialComputedFieldMetadata,
   PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   createForeignKeyDeterministicUuid,
@@ -13,6 +15,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 export const computeStandardFields = (
+  context: WorkspaceSyncContext,
   standardFieldMetadataCollection: (
     | PartialFieldMetadata
     | PartialComputedFieldMetadata
@@ -21,6 +24,9 @@ export const computeStandardFields = (
   customObjectMetadataCollection: ObjectMetadataEntity[] = [],
 ): ComputedPartialFieldMetadata[] => {
   const fields: ComputedPartialFieldMetadata[] = [];
+
+  const isNewRelationEnabled =
+    context.featureFlags[FeatureFlagKey.IsNewRelationEnabled];
 
   for (const partialFieldMetadata of standardFieldMetadataCollection) {
     // Relation from standard object to custom object
@@ -52,18 +58,22 @@ export const computeStandardFields = (
           defaultValue: null,
         });
 
-        // Foreign key
-        fields.push({
-          ...rest,
-          standardId: foreignKeyStandardId,
-          name: joinColumn,
-          type: FieldMetadataType.UUID,
-          label: `${data.label} ID (foreign key)`,
-          description: `${data.description} id foreign key`,
-          defaultValue: null,
-          icon: undefined,
-          isSystem: true,
-        });
+        // Only add foreign key if new relation is disabled
+        // As new relation will no longer create the field metadata related to foreign key
+        if (!isNewRelationEnabled) {
+          // Foreign key
+          fields.push({
+            ...rest,
+            standardId: foreignKeyStandardId,
+            name: joinColumn,
+            type: FieldMetadataType.UUID,
+            label: `${data.label} ID (foreign key)`,
+            description: `${data.description} id foreign key`,
+            defaultValue: null,
+            icon: undefined,
+            isSystem: true,
+          });
+        }
       }
     } else {
       // Relation from standard object to standard object

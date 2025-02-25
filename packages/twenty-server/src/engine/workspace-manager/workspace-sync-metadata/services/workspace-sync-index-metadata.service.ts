@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { Any, EntityManager } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -33,7 +32,6 @@ export class WorkspaceSyncIndexMetadataService {
     context: WorkspaceSyncContext,
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     this.logger.log('Syncing index metadata');
 
@@ -89,7 +87,6 @@ export class WorkspaceSyncIndexMetadataService {
       context,
       originalStandardObjectMetadataMap,
       originalCustomObjectMetadataMap,
-      workspaceFeatureFlagsMap,
     );
 
     const indexComparatorResults = this.workspaceIndexComparator.compare(

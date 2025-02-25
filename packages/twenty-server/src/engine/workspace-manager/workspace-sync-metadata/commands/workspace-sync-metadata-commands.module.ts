@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -20,6 +21,7 @@ import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.ser
     WorkspaceModule,
     DataSourceModule,
     WorkspaceDataSourceModule,
+    FeatureFlagModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
   ],
   providers: [

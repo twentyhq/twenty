@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
@@ -20,7 +19,6 @@ export class StandardIndexFactory {
     context: WorkspaceSyncContext,
     originalStandardObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     originalCustomObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const standardIndexOnStandardObjects =
       standardObjectMetadataDefinitions.flatMap((standardObjectMetadata) =>
@@ -28,7 +26,6 @@ export class StandardIndexFactory {
           standardObjectMetadata,
           context,
           originalStandardObjectMetadataMap,
-          workspaceFeatureFlagsMap,
         ),
       );
 
@@ -36,7 +33,6 @@ export class StandardIndexFactory {
       this.createStandardIndexMetadataForCustomObject(
         context,
         originalCustomObjectMetadataMap,
-        workspaceFeatureFlagsMap,
       );
 
     return [
@@ -49,7 +45,6 @@ export class StandardIndexFactory {
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     originalStandardObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const workspaceEntity = metadataArgsStorage.filterEntities(target);
 
@@ -59,7 +54,7 @@ export class StandardIndexFactory {
       );
     }
 
-    if (isGatedAndNotEnabled(workspaceEntity?.gate, workspaceFeatureFlagsMap)) {
+    if (isGatedAndNotEnabled(workspaceEntity?.gate, context.featureFlags)) {
       return [];
     }
 
@@ -68,7 +63,7 @@ export class StandardIndexFactory {
       .filter((workspaceIndexMetadataArgs) => {
         return !isGatedAndNotEnabled(
           workspaceIndexMetadataArgs.gate,
-          workspaceFeatureFlagsMap,
+          context.featureFlags,
         );
       });
 
@@ -102,7 +97,6 @@ export class StandardIndexFactory {
   private createStandardIndexMetadataForCustomObject(
     context: WorkspaceSyncContext,
     originalCustomObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const target = CustomWorkspaceEntity;
     const workspaceEntity = metadataArgsStorage.filterExtendedEntities(target);
@@ -118,7 +112,7 @@ export class StandardIndexFactory {
       .filter((workspaceIndexMetadataArgs) => {
         return !isGatedAndNotEnabled(
           workspaceIndexMetadataArgs.gate,
-          workspaceFeatureFlagsMap,
+          context.featureFlags,
         );
       });
 
