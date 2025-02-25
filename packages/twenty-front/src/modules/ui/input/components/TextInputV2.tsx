@@ -60,6 +60,8 @@ const StyledAdornmentContainer = styled.div<{
   min-width: fit-content;
   padding: ${({ theme }) => theme.spacing(2)};
   width: auto;
+  line-height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
 
   ${({ position }) =>
     position === 'left' ? 'border-right: none;' : 'border-left: none;'}
