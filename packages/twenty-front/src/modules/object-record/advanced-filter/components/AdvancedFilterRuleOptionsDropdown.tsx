@@ -1,11 +1,14 @@
 import { AdvancedFilterRuleOptionsDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdownButton';
-import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
+
 import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
-import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { isDefined } from 'twenty-shared';
 import { MenuItem } from 'twenty-ui';
 
@@ -25,7 +28,7 @@ export const AdvancedFilterRuleOptionsDropdown = ({
 }: AdvancedFilterRuleOptionsDropdownProps) => {
   const dropdownId = `advanced-filter-rule-options-${viewFilterId ?? viewFilterGroupId}`;
 
-  const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
+  const { removeRecordFilter } = useRemoveRecordFilter();
   const { deleteCombinedViewFilterGroup } = useDeleteCombinedViewFilterGroup();
 
   const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
@@ -33,32 +36,37 @@ export const AdvancedFilterRuleOptionsDropdown = ({
       viewFilterGroupId,
     });
 
-  const currentViewFilter = useCurrentViewFilter({
-    viewFilterId,
-  });
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
+
+  const currentRecordFilter = currentRecordFilters.find(
+    (recordFilter) => recordFilter.id === viewFilterId,
+  );
 
   const handleRemove = async () => {
     if (isDefined(viewFilterId)) {
-      deleteCombinedViewFilter(viewFilterId);
+      removeRecordFilter(viewFilterId);
 
       const isOnlyViewFilterInGroup =
         childViewFiltersAndViewFilterGroups.length === 1;
 
       if (
         isOnlyViewFilterInGroup &&
-        isDefined(currentViewFilter?.viewFilterGroupId)
+        isDefined(currentRecordFilter?.viewFilterGroupId)
       ) {
-        deleteCombinedViewFilterGroup(currentViewFilter.viewFilterGroupId);
+        deleteCombinedViewFilterGroup(currentRecordFilter.viewFilterGroupId);
       }
     } else if (isDefined(currentViewFilterGroup)) {
       deleteCombinedViewFilterGroup(currentViewFilterGroup.id);
 
+      // TODO: This is a temporary fix view filter group will be removed soon.
       const childViewFilters = childViewFiltersAndViewFilterGroups.filter(
-        (child) => child.__typename === 'ViewFilter',
+        (child) => (child as any).__typename === 'ViewFilter',
       );
 
       for (const childViewFilter of childViewFilters) {
-        await deleteCombinedViewFilter(childViewFilter.id);
+        removeRecordFilter(childViewFilter.id);
       }
     } else {
       throw new Error('No view filter or view filter group to remove');

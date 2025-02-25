@@ -3,7 +3,7 @@ import { viewFieldAggregateOperationState } from '@/object-record/record-table/r
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -11,12 +11,11 @@ export const useViewFieldAggregateOperation = () => {
   const { fieldMetadataId } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );
-  const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
-  const currentViewField =
-    currentViewWithSavedFiltersAndSorts?.viewFields?.find(
-      (viewField) => viewField.fieldMetadataId === fieldMetadataId,
-    );
+  const currentViewField = currentView?.viewFields?.find(
+    (viewField) => viewField.fieldMetadataId === fieldMetadataId,
+  );
   const { updateViewFieldRecords } = usePersistViewFieldRecords();
   const updateViewFieldAggregateOperation = (
     aggregateOperation: ExtendedAggregateOperations | null,
