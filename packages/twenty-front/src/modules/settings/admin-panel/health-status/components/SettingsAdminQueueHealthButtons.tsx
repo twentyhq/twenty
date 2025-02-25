@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from 'twenty-ui';
 import {
@@ -22,17 +23,14 @@ const StyledQueueHealthButton = styled(Button)<{
         ? theme.tag.background.green
         : theme.tag.background.red};
   }
+
   ${({ isSelected, theme, status }) =>
     isSelected &&
-    `
-    background-color: ${
-      status === AdminPanelHealthServiceStatus.OPERATIONAL
+    css`
+      background-color: ${status === AdminPanelHealthServiceStatus.OPERATIONAL
         ? theme.tag.background.green
-        : theme.tag.background.red
-    }
-
-  
-  `}
+        : theme.tag.background.red};
+    `}
 `;
 export const SettingsAdminQueueHealthButtons = ({
   queues,

@@ -304,9 +304,16 @@ describe('AdminPanelHealthService', () => {
       environmentService.get.mockReturnValue(60);
     });
 
-    it('should return metrics data for a queue', async () => {
-      const mockCompletedMetrics = { data: [10, 20, 30] };
-      const mockFailedMetrics = { data: [1, 2, 3] };
+    it('should return metrics data for a queue with correct data transformation', async () => {
+      const mockPoints = Array(48)
+        .fill(0)
+        .map((_, i) => (i === 47 ? 30 : i));
+      const mockFailedPoints = Array(48)
+        .fill(0)
+        .map((_, i) => (i === 47 ? 3 : i * 0.1));
+
+      const mockCompletedMetrics = { data: mockPoints };
+      const mockFailedMetrics = { data: mockFailedPoints };
 
       mockQueue.getMetrics
         .mockResolvedValueOnce(mockCompletedMetrics)
@@ -334,16 +341,51 @@ describe('AdminPanelHealthService', () => {
       expect(result).toMatchObject({
         queueName: MessageQueue.messagingQueue,
         timeRange: '4H',
-        data: expect.arrayContaining([
-          expect.objectContaining({
-            id: 'Completed Jobs',
-            data: expect.any(Array),
-          }),
-          expect.objectContaining({
-            id: 'Failed Jobs',
-            data: expect.any(Array),
-          }),
-        ]),
+        details: expect.any(String),
+      });
+
+      expect(result.data).toHaveLength(2);
+
+      const completedSeries = result.data.find(
+        (series) => series.id === 'Completed Jobs',
+      );
+
+      expect(completedSeries).toBeDefined();
+      expect(completedSeries?.data).toHaveLength(48); // Based on 4H timeRange
+      expect(completedSeries?.data[0]).toMatchObject({
+        x: expect.any(String),
+        y: expect.any(Number),
+      });
+      expect(completedSeries?.data[0].y).toBe(30); // Latest value
+
+      // Verify Failed Jobs series
+      const failedSeries = result.data.find(
+        (series) => series.id === 'Failed Jobs',
+      );
+
+      expect(failedSeries).toBeDefined();
+      expect(failedSeries?.data).toHaveLength(48); // Based on 4H timeRange
+      expect(failedSeries?.data[0]).toMatchObject({
+        x: expect.any(String),
+        y: expect.any(Number),
+      });
+      expect(failedSeries?.data[0].y).toBe(3); // Latest value
+
+      // Verify details JSON structure
+      const details = JSON.parse(result.details);
+
+      expect(details).toMatchObject({
+        queueName: 'test-queue',
+        workers: 1,
+        status: 'up',
+        metrics: {
+          active: 1,
+          completed: 30,
+          failed: 3,
+          waiting: 0,
+          delayed: 0,
+          failureRate: 9.1,
+        },
       });
     });
 

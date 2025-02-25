@@ -88,17 +88,10 @@ export class WorkerHealthIndicator {
         const failureRate =
           totalJobs > 0 ? (failedMetrics.count / totalJobs) * 100 : 0;
 
-        await queue.close();
-
         return {
           queueName: queueName,
           workers: workers.length,
-          status:
-            workers.length > 0
-              ? failureRate > METRICS_FAILURE_RATE_THRESHOLD
-                ? 'down'
-                : 'up'
-              : 'down',
+          status: failureRate > METRICS_FAILURE_RATE_THRESHOLD ? 'down' : 'up',
           metrics: {
             failed: failedMetrics.count,
             completed: completedMetrics.count,
@@ -110,15 +103,14 @@ export class WorkerHealthIndicator {
         };
       }
 
-      await queue.close();
-
       return null;
     } catch (error) {
       this.logger.error(
         `Error getting queue details for ${queueName}: ${error.message}`,
       );
-      await queue.close();
       throw error;
+    } finally {
+      await queue.close();
     }
   }
 

@@ -66,7 +66,6 @@ export const SettingsAdminIndicatorHealthStatus = () => {
               details: data?.getIndicatorHealthStatus?.details,
               queues: data?.getIndicatorHealthStatus?.queues,
             },
-            loading: loadingIndicatorHealthStatus,
           }}
         >
           <Section>
