@@ -1,4 +1,3 @@
-import { SettingsPath } from '@/types/SettingsPath';
 import {
   PAGE_BAR_MIN_HEIGHT,
   PageHeader,
@@ -11,14 +10,14 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import '@scalar/api-reference-react/style.css';
 import { Button, IconX, useIsMobile } from 'twenty-ui';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-type PlaygroundPageProps = {
+type FullScreenContainerProps = {
   children: JSX.Element | JSX.Element[];
   links: BreadcrumbProps['links'];
+  exitFullScreen(): void;
 };
 
-const StyledPage = styled.div`
+const StyledFullScreen = styled.div`
   display: flex;
   flex-direction: column;
   width: 100dvw;
@@ -33,17 +32,20 @@ const StyledMainContainer = styled.div<{ pageBarHeight: number }>`
   width: 100vw;
 `;
 
-export const PlaygroundPage = ({ children, links }: PlaygroundPageProps) => {
+export const FullScreenContainer = ({
+  children,
+  links,
+  exitFullScreen,
+}: FullScreenContainerProps) => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
-  const navigateSettings = useNavigateSettings();
 
-  const closePlayground = () => {
-    navigateSettings(SettingsPath.APIs);
+  const handleExitFullScreen = () => {
+    exitFullScreen();
   };
 
   return (
-    <StyledPage>
+    <StyledFullScreen>
       <PageHeader title={<Breadcrumb links={links} />}>
         <Button
           Icon={IconX}
@@ -51,13 +53,13 @@ export const PlaygroundPage = ({ children, links }: PlaygroundPageProps) => {
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          onClick={closePlayground}
-          ariaLabel={t`Close playground`}
+          onClick={handleExitFullScreen}
+          ariaLabel={t`Exit Full Screen`}
         />
       </PageHeader>
       <StyledMainContainer pageBarHeight={PAGE_BAR_MIN_HEIGHT}>
         {children}
       </StyledMainContainer>
-    </StyledPage>
+    </StyledFullScreen>
   );
 };
