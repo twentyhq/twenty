@@ -47,7 +47,7 @@ export const useSearchRecords = () => {
                 ? 'squared'
                 : 'rounded'
             }
-            avatarUrl={searchRecord.avatarUrl}
+            avatarUrl={searchRecord.imageUrl}
             placeholderColorSeed={searchRecord.recordId}
             placeholder={searchRecord.label}
           />

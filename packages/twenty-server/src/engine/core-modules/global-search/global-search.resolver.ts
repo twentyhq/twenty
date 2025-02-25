@@ -1,20 +1,23 @@
+import { UseFilters } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 
-import { formatSearchTerms } from 'src/engine/api/graphql/graphql-query-runner/utils/format-search-terms';
 import { GlobalSearchArgs } from 'src/engine/core-modules/global-search/dtos/global-search-args';
 import { GlobalSearchRecordDTO } from 'src/engine/core-modules/global-search/dtos/global-search-record-dto';
 import {
   GlobalSearchException,
   GlobalSearchExceptionCode,
 } from 'src/engine/core-modules/global-search/exceptions/global-search.exception';
+import { GlobalSearchApiExceptionFilter } from 'src/engine/core-modules/global-search/filters/global-search-api-exception.filter';
 import { GlobalSearchService } from 'src/engine/core-modules/global-search/services/global-search.service';
 import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/global-search/types/records-with-object-metadata-item';
+import { formatSearchTerms } from 'src/engine/core-modules/global-search/utils/format-search-terms';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Resolver(() => [GlobalSearchRecordDTO])
+@UseFilters(GlobalSearchApiExceptionFilter)
 export class GlobalSearchResolver {
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,

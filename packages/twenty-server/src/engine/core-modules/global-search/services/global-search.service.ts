@@ -50,11 +50,11 @@ export class GlobalSearchService {
   ) {
     const queryBuilder = entityManager.createQueryBuilder();
     const imageIdentifierField =
-      this.getImageIdentifierField(objectMetadataItem);
+      this.getImageIdentifierColumn(objectMetadataItem);
 
     const fieldsToSelect = [
       'id',
-      ...this.getLabelIdentifierFields(objectMetadataItem),
+      ...this.getLabelIdentifierColumns(objectMetadataItem),
       ...(imageIdentifierField ? [imageIdentifierField] : []),
     ].map((field) => `"${field}"`);
 
@@ -105,7 +105,7 @@ export class GlobalSearchService {
     return await searchQuery.getRawMany();
   }
 
-  getLabelIdentifierFields(
+  getLabelIdentifierColumns(
     objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ) {
     if (!objectMetadataItem.labelIdentifierFieldMetadataId) {
@@ -134,17 +134,19 @@ export class GlobalSearchService {
     ];
   }
 
-  getLabelIdentifierFieldValue(
+  getLabelIdentifierValue(
     record: ObjectRecord,
     objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ): string {
     const labelIdentifierFields =
-      this.getLabelIdentifierFields(objectMetadataItem);
+      this.getLabelIdentifierColumns(objectMetadataItem);
 
     return labelIdentifierFields.map((field) => record[field]).join(' ');
   }
 
-  getImageIdentifierField(objectMetadataItem: ObjectMetadataItemWithFieldMaps) {
+  getImageIdentifierColumn(
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps,
+  ) {
     if (objectMetadataItem.nameSingular === 'company') {
       return 'domainNamePrimaryLinkUrl';
     }
@@ -158,12 +160,12 @@ export class GlobalSearchService {
     ].name;
   }
 
-  getImageIdentifierFieldValue(
+  getImageIdentifierValue(
     record: ObjectRecord,
     objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ): string {
     const imageIdentifierField =
-      this.getImageIdentifierField(objectMetadataItem);
+      this.getImageIdentifierColumn(objectMetadataItem);
 
     if (objectMetadataItem.nameSingular === 'company') {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
@@ -183,14 +185,8 @@ export class GlobalSearchService {
             recordId: record.id,
             objectMetadataId: objectMetadataItem.id,
             objectSingularName: objectMetadataItem.nameSingular,
-            label: this.getLabelIdentifierFieldValue(
-              record,
-              objectMetadataItem,
-            ),
-            avatarUrl: this.getImageIdentifierFieldValue(
-              record,
-              objectMetadataItem,
-            ),
+            label: this.getLabelIdentifierValue(record, objectMetadataItem),
+            imageUrl: this.getImageIdentifierValue(record, objectMetadataItem),
             tsRankCD: record.tsRankCD,
             tsRank: record.tsRank,
           };

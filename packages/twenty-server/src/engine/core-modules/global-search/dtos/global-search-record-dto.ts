@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-@ObjectType()
+@ObjectType('GlobalSearchRecord')
 export class GlobalSearchRecordDTO {
   @Field(() => String)
   @IsString()
@@ -20,7 +20,7 @@ export class GlobalSearchRecordDTO {
   label: string;
 
   @Field(() => String, { nullable: true })
-  avatarUrl: string;
+  imageUrl: string;
 
   @Field(() => Number)
   @IsNumber()

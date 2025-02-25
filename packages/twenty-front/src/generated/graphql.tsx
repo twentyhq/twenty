@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -629,21 +629,22 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String'];
 };
 
-export enum HealthIndicatorId {
-  connectedAccount = 'connectedAccount',
-  database = 'database',
-  redis = 'redis',
-  worker = 'worker'
-}
-export type GlobalSearchRecordDto = {
-  __typename?: 'GlobalSearchRecordDTO';
-  avatarUrl?: Maybe<Scalars['String']>;
+export type GlobalSearchRecord = {
+  __typename?: 'GlobalSearchRecord';
+  imageUrl?: Maybe<Scalars['String']>;
   label: Scalars['String'];
   objectSingularName: Scalars['String'];
   recordId: Scalars['String'];
   tsRank: Scalars['Float'];
   tsRankCD: Scalars['Float'];
 };
+
+export enum HealthIndicatorId {
+  connectedAccount = 'connectedAccount',
+  database = 'database',
+  redis = 'redis',
+  worker = 'worker'
+}
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -1310,7 +1311,7 @@ export type Query = {
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
-  globalSearch: Array<GlobalSearchRecordDto>;
+  globalSearch: Array<GlobalSearchRecord>;
   index: Index;
   indexMetadatas: IndexConnection;
   object: Object;
@@ -2343,7 +2344,7 @@ export type GlobalSearchQueryVariables = Exact<{
 }>;
 
 
-export type GlobalSearchQuery = { __typename?: 'Query', globalSearch: Array<{ __typename?: 'GlobalSearchRecordDTO', recordId: string, objectSingularName: string, label: string, avatarUrl?: string | null, tsRankCD: number, tsRank: number }> };
+export type GlobalSearchQuery = { __typename?: 'Query', globalSearch: Array<{ __typename?: 'GlobalSearchRecord', recordId: string, objectSingularName: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number }> };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3970,7 +3971,7 @@ export const GlobalSearchDocument = gql`
     recordId
     objectSingularName
     label
-    avatarUrl
+    imageUrl
     tsRankCD
     tsRank
   }

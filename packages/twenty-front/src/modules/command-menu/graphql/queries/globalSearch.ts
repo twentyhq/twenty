@@ -14,7 +14,7 @@ export const globalSearch = gql`
       recordId
       objectSingularName
       label
-      avatarUrl
+      imageUrl
       tsRankCD
       tsRank
     }
