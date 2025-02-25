@@ -59,7 +59,7 @@ msgstr "{apiKeyName} API kulcs"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} a következő szerepkörből lesz kivezetve:"
 
@@ -97,7 +97,7 @@ msgstr "24 óra ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Egy megosztott környezet, ahol csapatoddal együtt kezelheted az ügyfélkapcsolatokat."
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Képesség minden objektummal való interakcióra"
 
@@ -127,9 +127,9 @@ msgstr "Fiók törlése"
 msgid "Accounts"
 msgstr "Fiókok"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Műveletek"
 
@@ -224,6 +224,10 @@ msgstr "Add meg az első {objectLabel} előfordulást"
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Hozzáadva {beautifiedCreatedAt}"
+
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr "Hozzáadva {beautifyPastDateRelative}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Megjelenés"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Jóváhagyott email tartomány"
+msgid "Approved Domains"
+msgstr "Jóváhagyott tartományok"
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -353,14 +361,14 @@ msgstr "Biztosan meg akarja változtatni a számlázási intervallumát?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "Biztosan hozzárendeli ezt a szerepkört?"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Ascending"
 msgstr "Növekvő"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Hozzárendelje {workspaceMemberName}-t?"
 
@@ -368,11 +376,11 @@ msgstr "Hozzárendelje {workspaceMemberName}-t?"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Szerepkörök hozzárendelésével adhat meg minden tag hozzáférési jogosultságait"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Hozzárendelés taghoz"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Hozzárendelt tagok"
 
@@ -590,7 +598,7 @@ msgstr "Konfigurálja, hogyan jelenítsük meg az eseményeket a naptárában"
 msgid "Configure your emails and calendar settings."
 msgstr "Állítsa be az e-mail és naptár beállításokat."
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Megerősítés"
 
@@ -1011,6 +1019,10 @@ msgstr "Domain"
 msgid "Domain added successfully."
 msgstr "Tartomány sikeresen hozzáadva."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr "A tartományoknak 256 karakternél rövidebbeknek kell lenniük, nem tartalmazhatnak szóközöket és speciális karaktereket."
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Kapcsolattartók automatikus létrehozása nincs."
@@ -1072,13 +1084,17 @@ msgstr "Szerkeszd az aldomain nev\\u00e9t vagy \\u00e1ll\\u00edts be egyedi doma
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
 msgid "Email"
 msgstr "Email"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
+#~ msgid "Email can not be empty"
+#~ msgstr "Email can not be empty"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
 msgstr "Az email nem lehet üres"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Érvénytelen egyéni domain. Kérjük, tartalmazzon legalább egy aldomaint (pl. sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Érvénytelen tartomány. A tartományoknak 256 karakternél rövidebbnek kell lenniük, nem lehetnek IP címek, nem tartalmazhatnak szóközöket, nem tartalmazhatnak semmilyen speciális karaktereket, mint például _~`!@#$%^*()=+{}[]|\\;:'\",<>/? és nem kezdődhetnek vagy végződhetnek '-' karakterrel."
 
@@ -1796,10 +1811,10 @@ msgstr "Mozgatás jobbra"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/settings/roles/components/RolesTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1943,7 +1958,7 @@ msgstr "Nincs ország"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Nincs több hozzárendelhető tag"
 
@@ -1955,7 +1970,7 @@ msgstr "Nincs találat"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Nincs találat"
 
@@ -2014,7 +2029,7 @@ msgstr "Objektum"
 msgid "Object destination"
 msgstr "Objektum cél"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -2274,7 +2289,7 @@ msgstr "Eltávolítás"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "Eltávolítja {workspaceMemberName}-t?"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2358,7 +2373,7 @@ msgstr "Keresés a következővel: ''{commandMenuSearch}''..."
 msgid "Search a field..."
 msgstr "Mező keresése..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "Tag keresése"
 
@@ -2490,7 +2505,7 @@ msgid "Set the name of your subdomain"
 msgstr "Adja meg az aldomain nevét"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -2498,7 +2513,7 @@ msgstr "Adja meg az aldomain nevét"
 msgid "Settings"
 msgstr "Beállítások"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Beállítási jogosultságok"
 
@@ -2746,7 +2761,7 @@ msgstr "Ez a művelet nem visszavonható. Ez véglegesen törli az egész munkat
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
-#~ msgstr "Ez a tag ebből a szerepkörből lesz kivezetve."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -2756,7 +2771,7 @@ msgstr "Ez a művelet nem visszavonható. Ez véglegesen törli az egész munkat
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Ezt a szerepkört ezek a munkatér tagok kapták meg."
 
@@ -2800,7 +2815,7 @@ msgstr "Igaz"
 msgid "Turkish"
 msgstr "Török"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -3048,7 +3063,7 @@ msgstr "Munkaterületek"
 msgid "Wrap on record pages"
 msgstr "Becsomagolás a rekordoldalakon"
 
-#: src/pages/settings/roles/components/RoleSettings.tsx
+#: src/pages/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
@@ -3065,8 +3080,12 @@ msgid "yes"
 msgstr "igen"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
-msgid "You are not allowed to create records in this object"
-msgstr "Nincs jogosultság rekord létrehozására ebben az objektumban"
+msgid "You are not allowed to create records for this object"
+msgstr ""
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#~ msgid "You are not allowed to create records in this object"
+#~ msgstr "Nincs jogosultság rekord létrehozására ebben az objektumban"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."

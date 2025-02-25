@@ -59,7 +59,7 @@ msgstr "{apiKeyName} API-nøkkel"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} vil ikke lengre være tilordnet følgende rolle:"
 
@@ -97,7 +97,7 @@ msgstr "24t ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Et delt miljø hvor du vil kunne håndtere dine kundeforhold med teamet ditt."
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Mulighet til å interagere med hvert objekt"
 
@@ -127,9 +127,9 @@ msgstr "Kontosletting"
 msgid "Accounts"
 msgstr "Kontoer"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -224,6 +224,10 @@ msgstr "Legg til din første {objectLabel}"
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Lagt til {beautifiedCreatedAt}"
+
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr "Lagt til {beautifyPastDateRelative}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Utseende"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Godkjent e-postdomene"
+msgid "Approved Domains"
+msgstr "Godkjente domener"
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -353,14 +361,14 @@ msgstr "Er du sikker på at du vil endre din faktureringsintervall?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "Er du sikker på at du vil tilordne denne rollen?"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Ascending"
 msgstr "Stigende"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Tilordne {workspaceMemberName}?"
 
@@ -368,11 +376,11 @@ msgstr "Tilordne {workspaceMemberName}?"
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Tilordne roller for å spesifisere hvert medlems tilgangsrettigheter"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Tilordne til medlem"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Tilordnede medlemmer"
 
@@ -590,7 +598,7 @@ msgstr "Konfigurer hvordan vi skal vise dine hendelser i kalenderen din"
 msgid "Configure your emails and calendar settings."
 msgstr "Konfigurer dine e-post- og kalenderinnstillinger."
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Bekreft"
 
@@ -1011,6 +1019,10 @@ msgstr "Domene"
 msgid "Domain added successfully."
 msgstr "Domene lagt til vellykket."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr "Domener må være mindre enn 256 tegn, kan ikke inneholde mellomrom og kan ikke inneholde spesialtegn."
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Ikke opprett kontakter automatisk."
@@ -1072,13 +1084,17 @@ msgstr "Rediger din underdomenenavn eller sett et tilpasset domene."
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
 msgid "Email"
 msgstr "E-post"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
+#~ msgid "Email can not be empty"
+#~ msgstr "Email can not be empty"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
 msgstr "E-post kan ikke være tom"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Ugyldig egendefinert domene. Vennligst inkludér minst ett underdomene (f.eks., sub.eksempel.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Ugyldig domene. Domener må være mindre enn 256 tegn i lengde, kan ikke være IP-adresser, kan ikke inneholde mellomrom, kan ikke inneholde spesialtegn som _~`!@#$%^*()=+{}[]|\\;:'\",<>/? og kan ikke starte eller slutte med en '-' tegn."
 
@@ -1796,10 +1811,10 @@ msgstr "Flytt til h\\u00f8yre"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/settings/roles/components/RolesTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1943,7 +1958,7 @@ msgstr "Intet land"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Ingen flere medlemmer å tildele"
 
@@ -1955,7 +1970,7 @@ msgstr "Ingen poster funnet"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Ingen resultater"
 
@@ -2014,7 +2029,7 @@ msgstr "Objekt"
 msgid "Object destination"
 msgstr "Objektmål"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -2274,7 +2289,7 @@ msgstr "Fjern"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "Fjerne {workspaceMemberName}?"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2358,7 +2373,7 @@ msgstr "Søk ''{commandMenuSearch}'' med..."
 msgid "Search a field..."
 msgstr "Søk i et felt..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "Søke etter et medlem"
 
@@ -2490,7 +2505,7 @@ msgid "Set the name of your subdomain"
 msgstr "Angi navnet på underdomenet ditt"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -2498,7 +2513,7 @@ msgstr "Angi navnet på underdomenet ditt"
 msgid "Settings"
 msgstr "Innstillinger"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Innstillingsrettigheter"
 
@@ -2746,7 +2761,7 @@ msgstr "Denne handlingen kan ikke angres. Dette vil permanent slette hele arbeid
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
-#~ msgstr "Dette medlemmet vil ikke lenger være tilordnet denne rollen."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -2756,7 +2771,7 @@ msgstr "Denne handlingen kan ikke angres. Dette vil permanent slette hele arbeid
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Denne rollen er tilordnet disse arbeidsområdemedlemmene."
 
@@ -2800,7 +2815,7 @@ msgstr "Sant"
 msgid "Turkish"
 msgstr "Tyrkisk"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -3048,7 +3063,7 @@ msgstr "Arbeidsområder"
 msgid "Wrap on record pages"
 msgstr "Pakk om opptaksider"
 
-#: src/pages/settings/roles/components/RoleSettings.tsx
+#: src/pages/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
@@ -3065,8 +3080,12 @@ msgid "yes"
 msgstr "ja"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
-msgid "You are not allowed to create records in this object"
-msgstr "Du har ikke tillatelse til å opprette poster i dette objektet"
+msgid "You are not allowed to create records for this object"
+msgstr ""
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#~ msgid "You are not allowed to create records in this object"
+#~ msgstr "Du har ikke tillatelse til å opprette poster i dette objektet"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."

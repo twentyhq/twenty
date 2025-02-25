@@ -17,10 +17,10 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useGetRolesQuery } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RolePermissions } from '~/pages/settings/roles/components/RolePermissions';
-import { RoleSettings } from '~/pages/settings/roles/components/RoleSettings';
+import { RolePermissions } from '~/pages/settings/roles/role-permissions/components/RolePermissions';
+import { RoleSettings } from '~/pages/settings/roles/role-settings/components/RoleSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { RoleAssignment } from './components/RoleAssignment';
+import { RoleAssignment } from './role-assignment/components/RoleAssignment';
 
 const StyledContentContainer = styled.div`
   flex: 1;
