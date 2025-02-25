@@ -26,7 +26,7 @@ test('The workflow run visualizer shows the executed draft version without the l
 
   await workflowVisualizer.closeSidePanel();
 
-  const launchTestButton = page.getByRole('button', { name: 'Test' });
+  const launchTestButton = page.getByLabel('Test Workflow');
 
   await launchTestButton.click();
 
