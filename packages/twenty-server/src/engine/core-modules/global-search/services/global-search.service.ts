@@ -183,7 +183,6 @@ export class GlobalSearchService {
         return records.map((record) => {
           return {
             recordId: record.id,
-            objectMetadataId: objectMetadataItem.id,
             objectSingularName: objectMetadataItem.nameSingular,
             label: this.getLabelIdentifierValue(record, objectMetadataItem),
             imageUrl: this.getImageIdentifierValue(record, objectMetadataItem),
