@@ -1,4 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -6,9 +5,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ChangeEvent, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
-import { RoleAssignmentWorkspaceMemberPickerDropdownContent } from './RoleAssignmentWorkspaceMemberPickerDropdownContent';
+import { RoleAssignmentWorkspaceMemberPickerDropdownContent } from '~/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent';
 
 type RoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
@@ -20,7 +18,6 @@ export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
   onSelect,
 }: RoleAssignmentWorkspaceMemberPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { loading, records: workspaceMembers } = useSearchRecords({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -29,8 +26,7 @@ export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
 
   const filteredWorkspaceMembers = (workspaceMembers?.filter(
     (workspaceMember) =>
-      !excludedWorkspaceMemberIds.includes(workspaceMember.id) &&
-      workspaceMember.id !== currentWorkspaceMember?.id,
+      !excludedWorkspaceMemberIds.includes(workspaceMember.id),
   ) ?? []) as WorkspaceMember[];
 
   const handleSearchFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
