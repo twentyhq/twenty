@@ -225,6 +225,10 @@ msgstr "最初の{objectLabel}を追加"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "{beautifiedCreatedAt}に追加"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "ブロックリストに追加済み"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "外観"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "承認されたメールドメイン"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "承認されたメールドメイン"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "ドメイン"
 msgid "Domain added successfully."
 msgstr "ドメインが正常に追加されました。"
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "連絡先を自動で作成しない。"
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "メール"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "メールを空にすることはできません"
+#~ msgid "Email can not be empty"
+#~ msgstr "メールを空にすることはできません"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "無効なカスタムドメインです。少なくとも1つのサブドメインを含めてください（例：sub.example.com）。"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "無効なドメインです。ドメインは256文字以下で、IPアドレスであってはならず、スペースや _~`!@#$%^*()=+{}[]|\\;:'\",<>/? のような特殊文字を含むことはできず、'-'文字で始まったり終わったりすることはできません。"
 

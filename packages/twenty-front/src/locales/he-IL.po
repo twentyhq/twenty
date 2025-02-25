@@ -225,6 +225,10 @@ msgstr "Add your first {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "נוסף ב-{beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "הוסף לרשימת החסימה"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "מראה"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "דומיין דוא\"ל מאושר"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "דומיין דוא\"ל מאושר"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "תחום"
 msgid "Domain added successfully."
 msgstr "דומיין נוסף בהצלחה."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "אל תיצור אנשי קשר אוטומטיים."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "דוא\"ל"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "דוא\"ל לא יכול להיות ריק"
+#~ msgid "Email can not be empty"
+#~ msgstr "דוא\"ל לא יכול להיות ריק"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "דומיין מותאם אינו חוקי. יש לכלול לפחות תחום משנה אחד (לדוגמה, sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "דומיין לא תקין. הדומיינים צריכים להיות קטנים מ-256 תווים, לא יכולים להיות כתובות IP, לא יכולים להכיל רווחים, לא יכולים להכיל תווים מיוחדים כגון _~`!@#$%^*()=+{}[]|\\;:'\",<>/? ולא יכולים להתחיל או להיגמר בתו '-'."
 

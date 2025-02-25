@@ -225,6 +225,10 @@ msgstr "Προσθέστε το πρώτο σας {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Προστέθηκε {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Προστέθηκε στη λίστα αποκλεισμού"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Εμφάνιση"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Εγκεκριμένος Τομέας Email"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Εγκεκριμένος Τομέας Email"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "Τομέας"
 msgid "Domain added successfully."
 msgstr "Ο τομέας προστέθηκε με επιτυχία."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Μην δημιουργείτε αυτόματα επαφές."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "Ηλεκτρονικό ταχυδρομείο"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "Το email δεν μπορεί να είναι κενό"
+#~ msgid "Email can not be empty"
+#~ msgstr "Το email δεν μπορεί να είναι κενό"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Μη έγκυρο προσαρμοσμένο domain. Παρακαλώ περιλάβετε τουλάχιστον ένα υποτομέα (π.χ., sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Άκυρος τομέας. Οι τομείς πρέπει να είναι μικρότεροι από 256 χαρακτήρες σε μήκος, δεν μπορούν να είναι διευθύνσεις IP, δεν μπορούν να περιέχουν κενά, δεν μπορούν να περιέχουν ειδικούς χαρακτήρες όπως _~`!@#$%^*()=+{}[]|\\;:'\",<>/? και δεν μπορούν να αρχίζουν ή να τελειώνουν με τον χαρακτήρα '-'."
 

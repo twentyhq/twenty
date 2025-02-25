@@ -225,6 +225,10 @@ msgstr "Додајте свој први {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Додато {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Додато на црну листу"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Изглед"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Одобрени имејл домен"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Одобрени имејл домен"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "Домен"
 msgid "Domain added successfully."
 msgstr "Домен успешно додат."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Не аутоматски креирајте контакте."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "Имејл"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "Имејл не може бити празан"
+#~ msgid "Email can not be empty"
+#~ msgstr "Имејл не може бити празан"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Неправилан прилагођен домен. Молимо вас да укључите барем један поддомен (нпр. sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Неважећи домен. Домене морају бити краће од 256 карактера, не могу бити ИП адресе, не могу садржати размаке, не могу садржати било какве посебне карактере као што су _~`!@#$%^*()=+{}[]|\\;:'\",<>/? и не могу почети ни завршавати са '-' карактером."
 

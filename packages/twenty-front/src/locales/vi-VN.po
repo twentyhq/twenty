@@ -225,6 +225,10 @@ msgstr "Thêm {objectLabel} đầu tiên của bạn"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Đã thêm vào {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Đã thêm vào danh sách chặn"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Giao diện"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Miền Email Đã Được Phê Duyệt"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Miền Email Đã Được Phê Duyệt"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "Tên miền"
 msgid "Domain added successfully."
 msgstr "Đã thêm miền thành công."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Không tự động tạo liên hệ."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "Thư điện tử"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "Email không thể để trống"
+#~ msgid "Email can not be empty"
+#~ msgstr "Email không thể để trống"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Tên miền tùy chỉnh không hợp lệ. Vui lòng bao gồm ít nhất một tên miền phụ (ví dụ: sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Tên miền không hợp lệ. Tên miền phải ngắn hơn 256 ký tự, không được là địa chỉ IP, không được chứa khoảng trắng, không chứa các ký tự đặc biệt như _~`!@#$%^*()=+{}[]|\\;:'\",<>/? và không được bắt đầu hoặc kết thúc bằng ký tự '-'."
 
