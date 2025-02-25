@@ -1,5 +1,6 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
@@ -50,51 +51,55 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
 
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
-      <RecordFiltersComponentInstanceContext.Provider
-        value={{
-          instanceId: componentInstanceId,
-        }}
+      <RecordFilterGroupsComponentInstanceContext.Provider
+        value={{ instanceId: componentInstanceId }}
       >
-        <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: componentInstanceId }}
+        <RecordFiltersComponentInstanceContext.Provider
+          value={{
+            instanceId: componentInstanceId,
+          }}
         >
-          <ContextStoreComponentInstanceContext.Provider
+          <RecordSortsComponentInstanceContext.Provider
             value={{ instanceId: componentInstanceId }}
           >
-            <ActionMenuComponentInstanceContext.Provider
-              value={{
-                instanceId: componentInstanceId,
-              }}
+            <ContextStoreComponentInstanceContext.Provider
+              value={{ instanceId: componentInstanceId }}
             >
-              <RecordIndexContextProvider
+              <ActionMenuComponentInstanceContext.Provider
                 value={{
-                  indexIdentifierUrl: () => 'indexIdentifierUrl',
-                  onIndexRecordsLoaded: () => {},
-                  objectNamePlural: mockObjectMetadataItem.namePlural,
-                  objectNameSingular: mockObjectMetadataItem.nameSingular,
-                  objectMetadataItem: mockObjectMetadataItem,
-                  recordIndexId: 'recordIndexId',
+                  instanceId: componentInstanceId,
                 }}
               >
-                <JestContextStoreSetter
-                  contextStoreFilters={contextStoreFilters}
-                  contextStoreTargetedRecordsRule={
-                    contextStoreTargetedRecordsRule
-                  }
-                  contextStoreNumberOfSelectedRecords={
-                    contextStoreNumberOfSelectedRecords
-                  }
-                  contextStoreCurrentObjectMetadataNameSingular={
-                    contextStoreCurrentObjectMetadataNameSingular
-                  }
+                <RecordIndexContextProvider
+                  value={{
+                    indexIdentifierUrl: () => 'indexIdentifierUrl',
+                    onIndexRecordsLoaded: () => {},
+                    objectNamePlural: mockObjectMetadataItem.namePlural,
+                    objectNameSingular: mockObjectMetadataItem.nameSingular,
+                    objectMetadataItem: mockObjectMetadataItem,
+                    recordIndexId: 'recordIndexId',
+                  }}
                 >
-                  {children}
-                </JestContextStoreSetter>
-              </RecordIndexContextProvider>
-            </ActionMenuComponentInstanceContext.Provider>
-          </ContextStoreComponentInstanceContext.Provider>
-        </RecordSortsComponentInstanceContext.Provider>
-      </RecordFiltersComponentInstanceContext.Provider>
+                  <JestContextStoreSetter
+                    contextStoreFilters={contextStoreFilters}
+                    contextStoreTargetedRecordsRule={
+                      contextStoreTargetedRecordsRule
+                    }
+                    contextStoreNumberOfSelectedRecords={
+                      contextStoreNumberOfSelectedRecords
+                    }
+                    contextStoreCurrentObjectMetadataNameSingular={
+                      contextStoreCurrentObjectMetadataNameSingular
+                    }
+                  >
+                    {children}
+                  </JestContextStoreSetter>
+                </RecordIndexContextProvider>
+              </ActionMenuComponentInstanceContext.Provider>
+            </ContextStoreComponentInstanceContext.Provider>
+          </RecordSortsComponentInstanceContext.Provider>
+        </RecordFiltersComponentInstanceContext.Provider>
+      </RecordFilterGroupsComponentInstanceContext.Provider>
     </Wrapper>
   );
 };
