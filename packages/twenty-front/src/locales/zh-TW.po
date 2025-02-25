@@ -231,7 +231,7 @@ msgstr "已添加到阻止列表"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
-msgstr ""
+msgstr "調整角色相關的設定"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -744,7 +744,7 @@ msgstr "自定義域名"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Custom domain updated"
-msgstr ""
+msgstr "自訂網域已更新"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -2469,7 +2469,7 @@ msgstr "服務提供者詳細信息"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
-msgstr ""
+msgstr "設定此工作區的預設角色"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2582,7 +2582,7 @@ msgstr "子域名不能少於 3 個字符"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain updated"
-msgstr ""
+msgstr "子域已更新"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3072,7 +3072,7 @@ msgstr "您無權在此對象中創建記錄"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."
-msgstr ""
+msgstr "您無權限模擬使用者。"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

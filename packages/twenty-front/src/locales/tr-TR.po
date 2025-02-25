@@ -231,7 +231,7 @@ msgstr "Kara Listeye Eklendi"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
-msgstr ""
+msgstr "Rol ile ilgili ayarları ayarla"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -744,7 +744,7 @@ msgstr "Özel Alan Adı"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Custom domain updated"
-msgstr ""
+msgstr "Özel alan adı güncellendi"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -2469,7 +2469,7 @@ msgstr "Hizmet Sağlayıcı Bilgileri"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
-msgstr ""
+msgstr "Bu çalışma alanı için varsayılan bir rol ayarlayın"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2582,7 +2582,7 @@ msgstr "Alt alan adı 3 karakterden kısa olamaz"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain updated"
-msgstr ""
+msgstr "Alt alan adı güncellendi"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3072,7 +3072,7 @@ msgstr "Bu nesnede kayıt oluşturmanıza izin verilmiyor"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."
-msgstr ""
+msgstr "Kullanıcıların kimliğine bürünme yetkiniz yok."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

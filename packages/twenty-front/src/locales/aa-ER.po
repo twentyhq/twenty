@@ -229,6 +229,10 @@ msgstr "crwdns93:0{beautifiedCreatedAt}crwdne93:0"
 msgid "Added to blocklist"
 msgstr "crwdns5017:0crwdne5017:0"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "crwdns5355:0crwdne5355:0"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "crwdns3979:0crwdne3979:0"
@@ -261,7 +265,7 @@ msgstr "crwdns5023:0crwdne5023:0"
 msgid "All Objects"
 msgstr "crwdns5025:0crwdne5025:0"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "crwdns99:0crwdne99:0"
 
@@ -360,7 +364,7 @@ msgstr "crwdns127:0crwdne127:0"
 msgid "Assign {workspaceMemberName}?"
 msgstr "crwdns1793:0{workspaceMemberName}crwdne1793:0"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "crwdns129:0crwdne129:0"
 
@@ -372,7 +376,7 @@ msgstr "crwdns1795:0crwdne1795:0"
 msgid "Assigned members"
 msgstr "crwdns131:0crwdne131:0"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "crwdns133:0crwdne133:0"
 
@@ -709,7 +713,7 @@ msgstr "crwdns233:0crwdne233:0"
 msgid "Create profile"
 msgstr "crwdns235:0crwdne235:0"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "crwdns237:0crwdne237:0"
 
@@ -737,6 +741,10 @@ msgstr "crwdns5069:0crwdne5069:0"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "crwdns4847:0crwdne4847:0"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "crwdns5361:0crwdne5361:0"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1788,7 +1796,7 @@ msgstr "crwdns493:0crwdne493:0"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2053,7 @@ msgstr "crwdns545:0crwdne545:0"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "crwdns5225:0crwdne5225:0"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2458,6 +2467,10 @@ msgstr "crwdns653:0crwdne653:0"
 msgid "Service Provider Details"
 msgstr "crwdns4955:0crwdne4955:0"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "crwdns5357:0crwdne5357:0"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "crwdns5267:0crwdne5267:0"
@@ -2566,6 +2579,10 @@ msgstr "crwdns685:0crwdne685:0"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "crwdns687:0crwdne687:0"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "crwdns5363:0crwdne5363:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3052,6 +3069,10 @@ msgstr "crwdns805:0crwdne805:0"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "crwdns4973:0crwdne4973:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "crwdns5359:0crwdne5359:0"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

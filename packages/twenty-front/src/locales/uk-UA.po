@@ -231,7 +231,7 @@ msgstr "Додано до чорного списку"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
-msgstr ""
+msgstr "Налаштувати параметри, пов'язані з роллю"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -744,7 +744,7 @@ msgstr "Домашній домен"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Custom domain updated"
-msgstr ""
+msgstr "Користувацький домен оновлено"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -910,24 +910,21 @@ msgstr "Видалити запис"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Delete records"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити записи"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити цю інтеграцію"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Delete webhook"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити вебхук"
 
@@ -942,15 +939,13 @@ msgstr "Видалити workflows "
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete workspace"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити робочу область"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete your whole workspace"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити всю вашу робочу область"
 
@@ -965,8 +960,7 @@ msgstr "Видалено {objectNamePlural}"
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              По спадаючій"
 
@@ -974,8 +968,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Description"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Опис"
 
@@ -984,8 +977,7 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Destroy"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Знищити"
 
@@ -996,8 +988,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Розробники"
 
@@ -1005,8 +996,7 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Відмінити чернетку"
 
@@ -1020,8 +1010,7 @@ msgstr "Відображати як звичайне число або відс�
 
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Показувати як відносну дату"
 
@@ -1038,8 +1027,7 @@ msgstr "Не містить"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Домен"
 
@@ -1070,22 +1058,19 @@ msgstr "Голландська"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "E.g. backoffice integration"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Наприклад, інтеграція з бекофісом"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Найраніше"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Earliest date"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Найраніша дата"
 
@@ -1096,8 +1081,7 @@ msgstr "Редагувати"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Редагувати інтервал білінгу"
 
@@ -1123,8 +1107,7 @@ msgstr "Редагуйте назву вашого субдомену або в�
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
 msgid "Email"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Електронна адреса"
 
@@ -1177,8 +1160,7 @@ msgstr "співробітники"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Employees"
-msgstr ""
-"\n"
+msgstr "\n"
 "Співробітники"
 
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
@@ -1189,8 +1171,7 @@ msgstr "Порожньо"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              URL-адреса ендпоінту"
 
@@ -2525,7 +2506,7 @@ msgstr "Деталі постачальника послуг"
 
 #: src/pages/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
-msgstr ""
+msgstr "Встановіть роль за замовчуванням для цього робочого простору"
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -2638,7 +2619,7 @@ msgstr "Субдомен не може бути коротшим за 3 симв
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain updated"
-msgstr ""
+msgstr "Піддомен оновлено"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3128,7 +3109,7 @@ msgstr "Ви не маєте права створювати записи в ц�
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."
-msgstr ""
+msgstr "Ви не маєте доступу для наслідування користувачів."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
