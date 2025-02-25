@@ -21,8 +21,8 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsPermissions } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { SettingsPermissions } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
@@ -57,7 +57,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isFunctionSettingsEnabled = false;
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const currentUser = useRecoilValue(currentUserState);
-  const isAdminEnabled = currentUser?.canImpersonate ?? false;
+  const isAdminEnabled =
+    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
+    false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
   const featureFlags = useFeatureFlagsMap();
@@ -112,7 +114,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Members`,
           path: SettingsPath.WorkspaceMembersPage,
           Icon: IconUsers,
-          isHidden: !permissionMap[SettingsPermissions.WORKSPACE_USERS],
+          isHidden: !permissionMap[SettingsPermissions.WORKSPACE_MEMBERS],
         },
         {
           label: t`Billing`,

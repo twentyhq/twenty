@@ -27,6 +27,7 @@ import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStat
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared';
+import { t } from '@lingui/core/macro';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -178,8 +179,8 @@ export const ViewBarDetails = ({
 
   const shouldExpandViewBar =
     viewFiltersAreDifferentFromRecordFilters ||
-    ((currentViewWithCombinedFiltersAndSorts?.viewSorts?.length ||
-      currentRecordFilters?.length) &&
+    viewSortsAreDifferentFromRecordSorts ||
+    ((currentRecordSorts?.length || currentRecordFilters?.length) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
@@ -250,7 +251,7 @@ export const ViewBarDetails = ({
           data-testid="cancel-button"
           onClick={handleCancelClick}
         >
-          Reset
+          {t`Reset`}
         </StyledCancelButton>
       )}
       {rightComponent}

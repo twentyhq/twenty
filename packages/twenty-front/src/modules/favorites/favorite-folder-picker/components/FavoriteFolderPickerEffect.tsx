@@ -72,7 +72,7 @@ export const FavoriteFolderPickerEffect = ({
     const checkedFolderIds = favorites
       .filter(
         (favorite) =>
-          favorite.recordId === targetId && favorite.workspaceMemberId,
+          favorite.recordId === targetId && favorite.forWorkspaceMemberId,
       )
       .map((favorite) => favorite.favoriteFolderId || 'no-folder');
     setCheckedState(checkedFolderIds);

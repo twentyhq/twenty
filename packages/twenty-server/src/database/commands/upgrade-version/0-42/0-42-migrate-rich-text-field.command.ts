@@ -2,13 +2,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
-import { Command, Option } from 'nest-commander';
+import { Option } from 'nest-commander';
 import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { isCommandLogger } from 'src/database/commands/logger';
-import { Upgrade042CommandOptions } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.command';
+import {
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -55,12 +58,19 @@ type ProcessRichTextFieldsArgs = {
   workspaceId: string;
 };
 
-@Command({
-  name: 'upgrade-0.42:migrate-rich-text-field',
+type MigrateRichTextFieldCommandOptions =
+  ActiveWorkspacesMigrationCommandOptions & {
+    force?: boolean;
+  };
+
+@MigrationCommand({
+  name: 'migrate-rich-text-field',
   description: 'Migrate RICH_TEXT fields to new composite structure',
+  version: '0.42',
 })
-export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
-  private options: Upgrade042CommandOptions;
+export class MigrateRichTextFieldCommand extends ActiveWorkspacesMigrationCommandRunner<MigrateRichTextFieldCommandOptions> {
+  private options: MigrateRichTextFieldCommandOptions;
+
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -89,9 +99,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     return val ?? false;
   }
 
-  async executeActiveWorkspacesCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: Upgrade042CommandOptions,
+    options: MigrateRichTextFieldCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
@@ -343,7 +353,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       });
 
       richTextFieldsWithHasCreatedColumns.push({
-        hasCreatedColumns,
+        hasCreatedColumns: hasCreatedColumns ?? false,
         richTextField,
         objectMetadata,
       });

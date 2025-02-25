@@ -128,6 +128,7 @@ export const queries = {
       firstName
       lastName
       email
+      canAccessFullAdminPanel
       canImpersonate
       supportUserHash
       analyticsTinybirdJwts {
@@ -284,6 +285,7 @@ export const responseData = {
       firstName: 'Test',
       lastName: 'User',
       email: 'test@example.com',
+      canAccessFullAdminPanel: false,
       canImpersonate: false,
       supportUserHash: null,
       analyticsTinybirdJwts: {
@@ -340,6 +342,17 @@ export const responseData = {
         metadataVersion: 1,
         currentBillingSubscription: null,
         workspaceMembersCount: 1,
+        defaultRole:  {
+          id: 'default-role-id',
+          label: 'Default Role',
+          description: 'Default Role Description',
+          canUpdateAllSettings: true,
+          isEditable: true,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+        }
       },
       currentBillingSubscription: null,
       billingSubscriptions: [],

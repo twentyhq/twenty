@@ -147,7 +147,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       toObjectMetadata,
       [
         foreignKeyFieldMetadata,
-        deletedAtFieldMetadata as FieldMetadataEntity<'default'>,
+        deletedAtFieldMetadata as FieldMetadataEntity<FieldMetadataType>,
       ],
       false,
       false,
@@ -451,7 +451,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       relationMetadata.toObjectMetadata,
       [
         foreignKeyFieldMetadata,
-        deletedAtFieldMetadata as FieldMetadataEntity<'default'>,
+        deletedAtFieldMetadata as FieldMetadataEntity<FieldMetadataType>,
       ],
     );
 
@@ -570,7 +570,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   }
 
   private throwIfDeletedAtFieldMetadataNotFound(
-    deletedAtFieldMetadata?: FieldMetadataEntity<'default'> | null,
+    deletedAtFieldMetadata?: FieldMetadataEntity<FieldMetadataType> | null,
   ) {
     if (!isDefined(deletedAtFieldMetadata)) {
       throw new RelationMetadataException(

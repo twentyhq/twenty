@@ -9,6 +9,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { t } from '@lingui/core/macro';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
   objectMetadataItemSchema.pick({
@@ -68,13 +69,13 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     <StyledContainer>
       {[
         {
-          label: 'Record label',
+          label: t`Record label`,
           fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
           options: labelIdentifierFieldOptions,
           defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId,
         },
         {
-          label: 'Record image',
+          label: t`Record image`,
           fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
           options: imageIdentifierFieldOptions,
           defaultValue: null,

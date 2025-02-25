@@ -29,6 +29,10 @@ msgstr ""
 msgid "Connect to Twenty"
 msgstr ""
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr ""
+
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr ""
@@ -37,12 +41,24 @@ msgstr ""
 msgid "Dear {userName}"
 msgstr ""
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Dear {userName},"
+msgstr ""
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr ""
 
 #: src/emails/password-update-notify.email.tsx
 msgid "Hello"
+msgstr ""
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Hello,"
 msgstr ""
 
 #: src/emails/password-update-notify.email.tsx
@@ -69,12 +85,20 @@ msgstr ""
 msgid "Password updated"
 msgstr ""
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr ""
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
+msgstr ""
+
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Suspended Workspace "
 msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx
@@ -103,6 +127,11 @@ msgstr ""
 
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
 msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx
