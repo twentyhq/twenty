@@ -352,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Ви впевнені, що хочете змінити періодичність розрахунків?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Ви впевнені, що хочете призначити цю роль?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Ви впевнені, що хочете призначити цю роль?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2324,15 +2324,13 @@ msgstr "Тип відносин"
 msgid "Releases"
 msgstr "Релізи"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Видалити"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Видалити {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Видалити {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2803,8 +2801,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Цю дію не можна відмінити. Це назавжди видалить весь ваш робочий простір. <0/> Будь ласка, введіть свою електронну адресу для підтвердження."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Цей член буде позбавлений цієї ролі."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Цей член буде позбавлений цієї ролі."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."

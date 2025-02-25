@@ -352,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Is jy seker dat jy jou faktureringsinterval wil verander?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Is jy seker jy wil hierdie rol toeken?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Is jy seker jy wil hierdie rol toeken?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2268,15 +2268,13 @@ msgstr "Verhouding tipe"
 msgid "Releases"
 msgstr "Vrystellings"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Verwyder"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Verwyder {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Verwyder {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2747,8 +2745,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Hierdie aksie kan nie ongedaan gemaak word nie. Dit sal jou hele werkruimte permanent uitvee. <0/> Tik asseblief jou e-pos in om te bevestig."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Hierdie lid sal ontkoppel word van hierdie rol."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Hierdie lid sal ontkoppel word van hierdie rol."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."

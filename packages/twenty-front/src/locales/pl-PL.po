@@ -352,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Czy na pewno chcesz zmienić okres rozliczeniowy?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Czy na pewno chcesz przypisać tę rolę?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Czy na pewno chcesz przypisać tę rolę?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2268,15 +2268,13 @@ msgstr "Typ relacji"
 msgid "Releases"
 msgstr "Wersje"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Usuń"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Usunąć {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Usunąć {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2747,8 +2745,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Tej czynności nie można cofnąć. Spowoduje to trwałe usunięcie całej przestrzeni roboczej. <0/> Wpisz swój email, aby potwierdzić."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Ten członek zostanie odłączony od tej roli."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Ten członek zostanie odłączony od tej roli."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."

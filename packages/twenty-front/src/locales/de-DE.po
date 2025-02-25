@@ -352,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Sind Sie sicher, dass Sie Ihr Abrechnungsintervall ändern möchten?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Sind Sie sicher, dass Sie diese Rolle zuweisen m\\u00f6chten?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Sind Sie sicher, dass Sie diese Rolle zuweisen m\\u00f6chten?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2268,15 +2268,13 @@ msgstr "Beziehungstyp"
 msgid "Releases"
 msgstr "Veröffentlichungen"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Entfernen"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "{workspaceMemberName} entfernen?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "{workspaceMemberName} entfernen?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2747,8 +2745,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch wird Ihr gesamter Arbeitsbereich dauerhaft gelöscht. <0/> Bitte geben Sie zur Bestätigung Ihre E-Mail ein."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Dieses Mitglied wird von dieser Rolle abgezogen."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Dieses Mitglied wird von dieser Rolle abgezogen."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
