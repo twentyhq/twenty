@@ -23,13 +23,13 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export enum PlaygroundTypes {
-  GRAPH_QL = 'GraphQl',
-  REST = 'Rest',
+  GRAPH_QL = 'graphql',
+  REST = 'rest',
 }
 
 export enum PlaygroundSchemas {
-  METADATA = 'Metadata',
-  CORE = 'Core',
+  METADATA = 'metadata',
+  CORE = 'core',
 }
 
 export const playgroundSetupFormSchema = z.object({
@@ -135,12 +135,12 @@ export const PlaygroundSetupForm = () => {
             options={[
               {
                 value: PlaygroundSchemas.CORE,
-                label: PlaygroundSchemas.CORE,
+                label: t`Core`,
                 Icon: IconFolderRoot,
               },
               {
                 value: PlaygroundSchemas.METADATA,
-                label: PlaygroundSchemas.METADATA,
+                label: t`Metadata`,
                 Icon: IconBracketsAngle,
               },
             ]}
@@ -160,12 +160,12 @@ export const PlaygroundSetupForm = () => {
             options={[
               {
                 value: PlaygroundTypes.REST,
-                label: PlaygroundTypes.REST,
+                label: t`REST`,
                 Icon: IconApi,
               },
               {
                 value: PlaygroundTypes.GRAPH_QL,
-                label: PlaygroundTypes.GRAPH_QL,
+                label: t`GraphQL`,
                 Icon: IconBrandGraphql,
               },
             ]}

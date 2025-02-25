@@ -13,8 +13,8 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const SchemaToPath = {
-  [PlaygroundSchemas.CORE.toLocaleLowerCase()]: 'graphql',
-  [PlaygroundSchemas.METADATA.toLocaleLowerCase()]: 'metadata',
+  [PlaygroundSchemas.CORE]: 'graphql',
+  [PlaygroundSchemas.METADATA]: 'metadata',
 };
 
 const GraphQlComponent = ({ apiKey, baseUrl, path }: any) => {
