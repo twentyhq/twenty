@@ -62,8 +62,9 @@ describe('AdminPanelHealthService', () => {
                 delayed: 4,
                 failed: 3,
                 waiting: 0,
-                prioritized: 0,
+                failureRate: 0.3,
               },
+              status: 'up',
             },
           ],
         },
@@ -209,13 +210,14 @@ describe('AdminPanelHealthService', () => {
         {
           queueName: 'queue1',
           workers: 2,
+          status: 'up',
           metrics: {
             active: 1,
             completed: 10,
             delayed: 0,
             failed: 2,
             waiting: 5,
-            prioritized: 1,
+            failureRate: 0.3,
           },
         },
         {
@@ -227,8 +229,9 @@ describe('AdminPanelHealthService', () => {
             delayed: 0,
             failed: 1,
             waiting: 2,
-            prioritized: 0,
+            failureRate: 0.3,
           },
+          status: 'up',
         },
       ];
 

@@ -38,6 +38,40 @@ const StyledNoDataMessage = styled.div`
   justify-content: center;
 `;
 
+// Custom tooltip styles
+const StyledTooltipContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: ${({ theme }) => theme.spacing(2)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+const StyledTooltipTitle = styled.div`
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${({ theme }) => theme.font.color.primary};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledTooltipItem = styled.div<{ color: string }>`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  padding: ${({ theme }) => theme.spacing(0.5)} 0;
+`;
+
+const StyledTooltipColorSquare = styled.div<{ color: string }>`
+  width: 12px;
+  height: 12px;
+  background-color: ${({ color }) => color};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledTooltipValue = styled.span`
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
 type WorkerMetricsGraphProps = {
   queueName: string;
 };
@@ -67,6 +101,19 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
     metricsData.some((series) => series.data.length > 0);
 
   const details = JSON.parse(data?.getQueueMetrics?.[0]?.details || '{}');
+
+  // Dynamically set axis bottom format based on time range
+  const getAxisBottomFormat = () => {
+    switch (timeRange) {
+      case '7D':
+        return '%b %d';
+      case '1D':
+      case '12H':
+      case '4H':
+      default:
+        return '%H:%M';
+    }
+  };
 
   return (
     <>
@@ -142,7 +189,7 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
               stacked: false,
             }}
             axisBottom={{
-              format: '%H:%M',
+              format: getAxisBottomFormat(),
               tickValues: 5,
               tickPadding: 5,
               tickSize: 6,
@@ -162,6 +209,31 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
             gridYValues={4}
             pointSize={0}
             enableSlices="x"
+            sliceTooltip={({ slice }) => {
+              return (
+                <StyledTooltipContainer>
+                  <StyledTooltipTitle>
+                    {new Date(slice.points[0].data.x).toLocaleTimeString([], {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </StyledTooltipTitle>
+                  {slice.points.map((point) => (
+                    <StyledTooltipItem key={point.id} color={point.serieColor}>
+                      <StyledTooltipColorSquare color={point.serieColor} />
+                      <span>
+                        {point.serieId}:{' '}
+                        <StyledTooltipValue>
+                          {String(point.data.y)}
+                        </StyledTooltipValue>
+                      </span>
+                    </StyledTooltipItem>
+                  ))}
+                </StyledTooltipContainer>
+              );
+            }}
             useMesh={true}
             legends={[
               {
