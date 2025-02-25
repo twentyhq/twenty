@@ -76,7 +76,6 @@ export const RecordChip = ({
     <LinkAvatarChip
       size={size}
       maxWidth={maxWidth}
-      clickable={true}
       placeholderColorSeed={record.id}
       name={recordChipData.name}
       avatarType={recordChipData.avatarType}
