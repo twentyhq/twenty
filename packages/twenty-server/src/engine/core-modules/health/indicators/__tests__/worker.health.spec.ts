@@ -1,6 +1,7 @@
 import { HealthIndicatorService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { Queue } from 'bullmq';
 import { Redis } from 'ioredis';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
@@ -18,6 +19,7 @@ const mockQueueInstance = {
   getActiveCount: jest.fn().mockResolvedValue(0),
   getDelayedCount: jest.fn().mockResolvedValue(0),
   getPrioritizedCount: jest.fn().mockResolvedValue(0),
+  getMetrics: jest.fn().mockResolvedValue({}),
 };
 
 jest.mock('bullmq', () => ({
@@ -28,6 +30,7 @@ describe('WorkerHealthIndicator', () => {
   let service: WorkerHealthIndicator;
   let mockRedis: jest.Mocked<Pick<Redis, 'ping'>>;
   let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
+  let loggerSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     mockRedis = {
@@ -64,11 +67,17 @@ describe('WorkerHealthIndicator', () => {
     }).compile();
 
     service = module.get<WorkerHealthIndicator>(WorkerHealthIndicator);
+
+    // Add logger spy
+    loggerSpy = jest
+      .spyOn(service['logger'], 'error')
+      .mockImplementation(() => {});
     jest.useFakeTimers();
   });
 
   afterEach(() => {
     jest.useRealTimers();
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -132,5 +141,122 @@ describe('WorkerHealthIndicator', () => {
     expect(mockQueueInstance.close).toHaveBeenCalledTimes(
       Object.keys(MessageQueue).length,
     );
+  });
+
+  it('should return down status when failure rate exceeds threshold', async () => {
+    mockQueueInstance.getWorkers.mockResolvedValue([{ id: 'worker1' }]);
+    mockQueueInstance.getMetrics.mockImplementation((type) => {
+      if (type === 'failed') {
+        return Promise.resolve({ count: 600 });
+      }
+      if (type === 'completed') {
+        return Promise.resolve({ count: 400 });
+      }
+
+      return Promise.resolve({ count: 0 });
+    });
+    mockQueueInstance.getWaitingCount.mockResolvedValue(0);
+    mockQueueInstance.getActiveCount.mockResolvedValue(0);
+    mockQueueInstance.getDelayedCount.mockResolvedValue(0);
+
+    (Queue as jest.MockedClass<typeof Queue>).mockClear();
+    mockQueueInstance.getWorkers.mockClear();
+    mockQueueInstance.getMetrics.mockClear();
+
+    const result = await service.isHealthy();
+
+    expect(Queue).toHaveBeenCalledTimes(Object.keys(MessageQueue).length);
+
+    // Overall worker status should be 'up' because workers are active
+    expect(result.worker.status).toBe('up');
+    expect('queues' in result.worker).toBe(true);
+    if ('queues' in result.worker) {
+      // Individual queue should be 'down' due to high failure rate
+      expect(result.worker.queues[0].status).toBe('down');
+      expect(result.worker.queues[0].metrics).toEqual({
+        failed: 600,
+        completed: 400,
+        waiting: 0,
+        active: 0,
+        delayed: 0,
+        failureRate: 60, // (600 / (600 + 400)) * 100
+      });
+    }
+
+    expect(mockQueueInstance.getMetrics).toHaveBeenCalledWith(
+      'failed',
+      0,
+      undefined,
+    );
+    expect(mockQueueInstance.getMetrics).toHaveBeenCalledWith(
+      'completed',
+      0,
+      undefined,
+    );
+  });
+
+  it('should return complete metrics for active workers', async () => {
+    mockQueueInstance.getWorkers.mockResolvedValue([{ id: 'worker1' }]);
+    mockQueueInstance.getMetrics.mockImplementation((type) => {
+      if (type === 'failed') {
+        return Promise.resolve({ count: 10 });
+      }
+      if (type === 'completed') {
+        return Promise.resolve({ count: 90 });
+      }
+
+      return Promise.resolve({ count: 0 });
+    });
+    mockQueueInstance.getWaitingCount.mockResolvedValue(5);
+    mockQueueInstance.getActiveCount.mockResolvedValue(2);
+    mockQueueInstance.getDelayedCount.mockResolvedValue(1);
+
+    const result = await service.isHealthy();
+
+    expect(result.worker.status).toBe('up');
+    expect('queues' in result.worker).toBe(true);
+    if ('queues' in result.worker) {
+      expect(result.worker.queues[0].metrics).toEqual({
+        failed: 10,
+        completed: 90,
+        waiting: 5,
+        active: 2,
+        delayed: 1,
+        failureRate: 10, // (10 / (10 + 90)) * 100
+      });
+    }
+  });
+
+  it('should handle queue errors gracefully', async () => {
+    mockQueueInstance.getWorkers.mockRejectedValue(new Error('Queue error'));
+    mockQueueInstance.getMetrics.mockRejectedValue(new Error('Queue error'));
+    mockQueueInstance.getWaitingCount.mockRejectedValue(
+      new Error('Queue error'),
+    );
+    mockQueueInstance.getActiveCount.mockRejectedValue(
+      new Error('Queue error'),
+    );
+    mockQueueInstance.getDelayedCount.mockRejectedValue(
+      new Error('Queue error'),
+    );
+
+    const result = await service.isHealthy();
+
+    expect(result.worker.status).toBe('down');
+    expect('error' in result.worker).toBe(true);
+    if ('error' in result.worker) {
+      expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS);
+    }
+
+    // Verify that errors were logged for each queue
+    expect(loggerSpy).toHaveBeenCalled();
+    Object.values(MessageQueue).forEach((queueName) => {
+      expect(loggerSpy).toHaveBeenCalledWith(
+        `Error getting queue details for ${queueName}: Queue error`,
+      );
+      expect(loggerSpy).toHaveBeenCalledWith(
+        `Error checking worker for queue ${queueName}: Queue error`,
+      );
+    });
   });
 });

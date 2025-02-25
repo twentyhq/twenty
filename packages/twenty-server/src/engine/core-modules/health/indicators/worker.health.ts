@@ -50,6 +50,10 @@ export class WorkerHealthIndicator {
 
   async getQueueDetails(
     queueName: MessageQueue,
+    options?: {
+      timeRange?: '7D' | '1D' | '12H' | '4H';
+      pointsNeeded?: number;
+    },
   ): Promise<WorkerQueueHealth | null> {
     const redis = this.redisClient.getClient();
     const queue = new Queue(queueName, { connection: redis });
@@ -65,8 +69,16 @@ export class WorkerHealthIndicator {
           activeCount,
           delayedCount,
         ] = await Promise.all([
-          queue.getMetrics('failed'),
-          queue.getMetrics('completed'),
+          queue.getMetrics(
+            'failed',
+            0,
+            options?.pointsNeeded ? options.pointsNeeded - 1 : undefined,
+          ),
+          queue.getMetrics(
+            'completed',
+            0,
+            options?.pointsNeeded ? options.pointsNeeded - 1 : undefined,
+          ),
           queue.getWaitingCount(),
           queue.getActiveCount(),
           queue.getDelayedCount(),

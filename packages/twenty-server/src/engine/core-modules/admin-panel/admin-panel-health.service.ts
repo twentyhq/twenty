@@ -163,9 +163,13 @@ export class AdminPanelHealthService {
     const queue = new Queue(queueName, { connection: redis });
 
     try {
-      const queueDetails = await this.workerHealth.getQueueDetails(queueName);
       const { pointsNeeded, intervalMinutes } =
         this.getMetricsParameters(timeRange);
+
+      const queueDetails = await this.workerHealth.getQueueDetails(queueName, {
+        timeRange,
+        pointsNeeded,
+      });
 
       const [completedMetricsObj, failedMetricsObj] = await Promise.all([
         queue.getMetrics('completed', 0, pointsNeeded - 1),
