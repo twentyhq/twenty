@@ -13,7 +13,7 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: hexagone/twenty
+    image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - ${TWENTY_FRONT_SRC}:/app/packages/twenty-front
@@ -67,7 +67,7 @@ services:
           memory: 1gb
 
   worker:
-    image: hexagone/twenty
+    image: twentycrm/twenty:${TAG:-latest}
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
@@ -97,7 +97,7 @@ services:
           memory: 1gb
 
   db:
-    image: hexagone/twenty-postgres-spilo
+    image: twentycrm/twenty-postgres-spilo:${TAG:-latest}
     volumes:
       - db-data:/home/postgres/pgdata
     ports:
