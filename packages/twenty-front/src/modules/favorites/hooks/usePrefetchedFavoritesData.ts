@@ -15,11 +15,11 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
   const prefetchFavorites = useRecoilValue(prefetchFavoritesState);
 
   const favorites = prefetchFavorites.filter(
-    (favorite) => favorite.workspaceMemberId === currentWorkspaceMemberId,
+    (favorite) => favorite.forWorkspaceMemberId === currentWorkspaceMemberId,
   );
 
   const workspaceFavorites = prefetchFavorites.filter(
-    (favorite) => favorite.workspaceMemberId === null,
+    (favorite) => favorite.forWorkspaceMemberId === null,
   );
 
   return {

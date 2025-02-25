@@ -71,7 +71,7 @@ export class WorkerHealthIndicator {
           ]);
 
           queueStatuses.push({
-            name: queueName,
+            queueName: queueName,
             workers: workers.length,
             metrics: {
               failed: failedCount,

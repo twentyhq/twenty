@@ -17,6 +17,7 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { isDefined } from 'twenty-shared';
 
 const StyledAttachmentsContainer = styled.div`
@@ -45,6 +46,8 @@ export const Attachments = ({
   const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) onUploadFile?.(e.target.files[0]);
@@ -91,12 +94,14 @@ export const Attachments = ({
               onChange={handleFileChange}
               type="file"
             />
-            <Button
-              Icon={IconPlus}
-              title="Add file"
-              variant="secondary"
-              onClick={handleUploadFileClick}
-            />
+            {!hasObjectReadOnlyPermission && (
+              <Button
+                Icon={IconPlus}
+                title="Add file"
+                variant="secondary"
+                onClick={handleUploadFileClick}
+              />
+            )}
           </AnimatedPlaceholderEmptyContainer>
         )}
       </StyledDropZoneContainer>
@@ -115,13 +120,15 @@ export const Attachments = ({
         title="All"
         attachments={attachments ?? []}
         button={
-          <Button
-            Icon={IconPlus}
-            size="small"
-            variant="secondary"
-            title="Add file"
-            onClick={handleUploadFileClick}
-          ></Button>
+          !hasObjectReadOnlyPermission && (
+            <Button
+              Icon={IconPlus}
+              size="small"
+              variant="secondary"
+              title="Add file"
+              onClick={handleUploadFileClick}
+            ></Button>
+          )
         }
       />
     </StyledAttachmentsContainer>

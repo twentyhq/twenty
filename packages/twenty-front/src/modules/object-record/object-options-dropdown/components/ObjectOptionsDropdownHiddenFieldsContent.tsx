@@ -20,8 +20,10 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
+  const { t } = useLingui();
   const {
     viewType,
     recordIndexId,
@@ -67,11 +69,11 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
         StartIcon={IconChevronLeft}
         onClick={() => onContentChange('fields')}
       >
-        Hidden Fields
+        {t`Hidden Fields`}
       </DropdownMenuHeader>
       {hiddenRecordFields.length > 0 && (
         <ViewFieldsVisibilityDropdownSection
-          title="Hidden"
+          title={t`Hidden`}
           fields={hiddenRecordFields}
           isDraggable={false}
           onVisibilityChange={handleChangeFieldVisibility}
@@ -88,7 +90,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
         }}
       >
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
+          <MenuItem LeftIcon={IconSettings} text={t`Edit Fields`} />
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
     </>

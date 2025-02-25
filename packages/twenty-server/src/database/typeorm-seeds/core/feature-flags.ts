@@ -51,6 +51,11 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
+        key: FeatureFlagKey.IsApprovedAccessDomainsEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IsBillingPlansEnabled,
         workspaceId: workspaceId,
         value: true,

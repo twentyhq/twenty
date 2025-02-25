@@ -128,6 +128,14 @@ msgstr "Propietari de compte per a companyies"
 msgid "Account Owner For Companies"
 msgstr "Propietari del Compte Per a les Companyies"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Acció necessària per evitar l'eliminació de l'espai de treball"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Acció necessària per restablir la contrasenya"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Adreça"
@@ -586,6 +594,10 @@ msgstr "Direcció"
 msgid "Display Name"
 msgstr "Nom Visible"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr "Mostra els registres en un panell lateral o en una pàgina de registre"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Valor Visible"
@@ -970,6 +982,10 @@ msgstr "Està habilitada la Sincronització"
 msgid "Job Title"
 msgstr "Títol Laboral"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Uneix-te al teu equip a Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1327,6 +1343,10 @@ msgstr "Id de Metadades de l'Objecte"
 msgid "Object name"
 msgstr "Nom de l'objecte"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr "Obrir registre en"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operador"
@@ -1444,6 +1464,7 @@ msgstr "Telèfons"
 msgid "Point of Contact"
 msgstr "Punt de contacte"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2107,6 +2128,10 @@ msgstr "URL objectiu del ganxo web"
 msgid "Webhooks"
 msgstr "Ganxos web"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Benvingut a Twenty: si us plau, confirma el teu correu electrònic"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2237,6 +2262,10 @@ msgid "Workspace member name"
 msgstr "Nom del membre de l'Espai de Treball"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Posició del membre de l'Espai de Treball"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Membres de l'Espai de Treball"
 
@@ -2249,6 +2278,10 @@ msgstr "Membre de l'Espai de Treball"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr ""
+
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "La teva contrasenya s'ha canviat amb èxit"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

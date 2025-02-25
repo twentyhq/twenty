@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared';
 
-type CacheKey = `${string}-${string}`;
+import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
 
@@ -52,6 +52,9 @@ export class CacheManager<T> {
       await onDelete?.(cachedValue);
       this.cache.delete(cacheKey);
     }
+    // TODO: remove this once we have debug on prod
+    // eslint-disable-next-line no-console
+    console.log('Datasource cache size: ', this.cache.size);
   }
 
   async clear(onDelete?: (value: T) => Promise<void> | void): Promise<void> {

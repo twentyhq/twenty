@@ -128,6 +128,14 @@ msgstr "Власник налога за компаније"
 msgid "Account Owner For Companies"
 msgstr "Власник Налога за Компаније"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Неопходна акција да се спречи брисање радног простора"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Неопходна акција да се ресетује лозинка"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Адреса"
@@ -586,6 +594,10 @@ msgstr "Смер"
 msgid "Display Name"
 msgstr "Приказно име"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr "Приказивање записа у бочном панелу или на страници записа"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Приказна вредност"
@@ -970,6 +982,10 @@ msgstr "Омогућена синхронизација"
 msgid "Job Title"
 msgstr "Звање"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Придружите се свом тиму на Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1327,6 +1343,10 @@ msgstr "Идентификатор метаподатака објекта"
 msgid "Object name"
 msgstr "Назив објекта"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr "Отвори запис у"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Операнд"
@@ -1444,6 +1464,7 @@ msgstr "Телефони"
 msgid "Point of Contact"
 msgstr "Контакт особа"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2107,6 +2128,10 @@ msgstr "Циљни URL вебхукa"
 msgid "Webhooks"
 msgstr "Вебхукс"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Добродошли у Twenty: Молимо потврдите ваш имејл"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2237,6 +2262,10 @@ msgid "Workspace member name"
 msgstr "Име члана простора за рад"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Позиција члана простора за рад"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Чланови простора за рад"
 
@@ -2249,6 +2278,10 @@ msgstr "ЧланПростораЗаРад"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "Х"
+
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Ваша лозинка је успешно промењена"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

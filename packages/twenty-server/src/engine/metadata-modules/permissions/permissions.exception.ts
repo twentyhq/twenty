@@ -18,6 +18,7 @@ export enum PermissionsExceptionCode {
   CANNOT_UNASSIGN_LAST_ADMIN = 'CANNOT_UNASSIGN_LAST_ADMIN',
   UNKNOWN_OPERATION_NAME = 'UNKNOWN_OPERATION_NAME',
   UNKNOWN_REQUIRED_PERMISSION = 'UNKNOWN_REQUIRED_PERMISSION',
+  CANNOT_UPDATE_SELF_ROLE = 'CANNOT_UPDATE_SELF_ROLE',
 }
 
 export enum PermissionsExceptionMessage {
@@ -29,7 +30,8 @@ export enum PermissionsExceptionMessage {
   USER_WORKSPACE_ALREADY_HAS_ROLE = 'User workspace already has role',
   WORKSPACE_MEMBER_NOT_FOUND = 'Workspace member not found',
   ROLE_NOT_FOUND = 'Role not found',
-  CANNOT_UNASSIGN_LAST_ADMIN = 'Cannot unassign last admin',
+  CANNOT_UNASSIGN_LAST_ADMIN = 'Cannot unassign admin role from last admin of the workspace',
   UNKNOWN_OPERATION_NAME = 'Unknown operation name, cannot determine required permission',
   UNKNOWN_REQUIRED_PERMISSION = 'Unknown required permission',
+  CANNOT_UPDATE_SELF_ROLE = 'Cannot update self role',
 }

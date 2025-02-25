@@ -3,26 +3,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import {
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
 
-// TODO: implement dry-run
-interface RunWorkspaceMigrationsOptions {
-  dryRun?: boolean;
+interface RunWorkspaceMigrationsOptions
+  extends ActiveWorkspacesMigrationCommandOptions {
   force?: boolean;
-  workspaceId?: string;
 }
 
 @Command({
   name: 'workspace:sync-metadata',
   description: 'Sync metadata',
 })
-export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesCommandRunner {
+export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -30,11 +32,12 @@ export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesCommandRunner 
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async executeActiveWorkspacesCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
     options: RunWorkspaceMigrationsOptions,
     workspaceIds: string[],
@@ -129,15 +132,6 @@ export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesCommandRunner 
           : ''
       }`,
     );
-  }
-
-  @Option({
-    flags: '-d, --dry-run',
-    description: 'Dry run without applying changes',
-    required: false,
-  })
-  dryRun(): boolean {
-    return true;
   }
 
   @Option({

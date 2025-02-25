@@ -21,7 +21,7 @@ export const CommandMenuContextRecordChip = ({
       instanceId,
     });
 
-  if (loading || !totalCount) {
+  if (loading || !totalCount || records.length === 0) {
     return null;
   }
 

@@ -24,7 +24,6 @@ import {
   useUpdateWorkspaceMemberRoleMutation,
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RoleAssignmentConfirmationModalMode } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalMode';
 import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import { RoleAssignmentConfirmationModal } from './RoleAssignmentConfirmationModal';
 import { RoleAssignmentTableHeader } from './RoleAssignmentTableHeader';
@@ -73,8 +72,8 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     refetchQueries: [GetRolesDocument],
   });
 
-  const [modalMode, setModalMode] =
-    useState<RoleAssignmentConfirmationModalMode | null>(null);
+  const [confirmationModalIsOpen, setConfirmationModalIsOpen] =
+    useState<boolean>(false);
   const [selectedWorkspaceMember, setSelectedWorkspaceMember] =
     useState<RoleAssignmentConfirmationModalSelectedWorkspaceMember | null>(
       null,
@@ -110,7 +109,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
       });
 
   const handleModalClose = () => {
-    setModalMode(null);
+    setConfirmationModalIsOpen(false);
     setSelectedWorkspaceMember(null);
   };
 
@@ -122,26 +121,17 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
       name: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       role: existingRole,
     });
-    setModalMode('assign');
+    setConfirmationModalIsOpen(true);
     closeDropdown();
   };
 
-  const handleRemoveClick = (workspaceMember: WorkspaceMember) => {
-    setSelectedWorkspaceMember({
-      id: workspaceMember.id,
-      name: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
-      role: workspaceMemberRoleMap.get(workspaceMember.id),
-    });
-    setModalMode('remove');
-  };
-
   const handleConfirm = async () => {
-    if (!selectedWorkspaceMember || !modalMode) return;
+    if (!selectedWorkspaceMember || !confirmationModalIsOpen) return;
 
     await updateWorkspaceMemberRole({
       variables: {
         workspaceMemberId: selectedWorkspaceMember.id,
-        roleId: modalMode === 'assign' ? role.id : null,
+        roleId: role.id,
       },
     });
 
@@ -183,7 +173,6 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
             <RoleAssignmentTableRow
               key={workspaceMember.id}
               workspaceMember={workspaceMember}
-              onRemove={() => handleRemoveClick(workspaceMember)}
             />
           ))}
         </Table>
@@ -222,9 +211,8 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
         />
       </StyledBottomSection>
 
-      {modalMode && selectedWorkspaceMember && (
+      {confirmationModalIsOpen && selectedWorkspaceMember && (
         <RoleAssignmentConfirmationModal
-          mode={modalMode}
           selectedWorkspaceMember={selectedWorkspaceMember}
           isOpen={true}
           onClose={handleModalClose}

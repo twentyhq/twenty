@@ -20,6 +20,7 @@ import { H2Title, IconSearch, UndecoratedLink } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { t } from '@lingui/core/macro';
 
 type SettingsObjectNewFieldSelectorProps = {
   className?: string;
@@ -107,7 +108,7 @@ export const SettingsObjectNewFieldSelector = ({
       <Section>
         <StyledSearchInput
           LeftIcon={IconSearch}
-          placeholder="Search a type"
+          placeholder={t`Search a type`}
           value={searchQuery}
           onChange={setSearchQuery}
         />

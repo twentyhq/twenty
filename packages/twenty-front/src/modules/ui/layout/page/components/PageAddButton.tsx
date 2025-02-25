@@ -1,3 +1,4 @@
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { Button, IconButton, IconPlus, useIsMobile } from 'twenty-ui';
@@ -11,9 +12,16 @@ export const PageAddButton = ({ onClick }: PageAddButtonProps) => {
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   const isMobile = useIsMobile();
 
   const { t } = useLingui();
+
+  if (hasObjectReadOnlyPermission) {
+    return null;
+  }
 
   return (
     <>

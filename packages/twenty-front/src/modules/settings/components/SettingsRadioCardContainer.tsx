@@ -25,16 +25,18 @@ export const SettingsRadioCardContainer = ({
   onChange,
 }: SettingsRadioCardContainerProps) => {
   return (
-    <StyledRadioCardContainer>
+    <StyledRadioCardContainer role="radiogroup">
       {options.map((option) => (
         <SettingsRadioCard
           key={option.value}
+          role="radio"
           value={option.value}
           isSelected={value === option.value}
-          handleClick={onChange}
+          handleSelect={onChange}
           title={option.title}
           description={option.description}
           Icon={option.Icon}
+          ariaChecked={value === option.value}
         />
       ))}
     </StyledRadioCardContainer>

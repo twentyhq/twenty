@@ -51,16 +51,20 @@ export const MessageThreadSubscribersChip = ({
     <Chip
       label={label}
       variant={ChipVariant.Highlighted}
-      leftComponent={
-        isOnlyOneSubscriber ? (
-          <Avatar
-            avatarUrl={firstAvatarUrl}
-            placeholderColorSeed={firstAvatarColorSeed}
-            placeholder={firstAvatarPlaceholder}
-            size="md"
-            type={'rounded'}
-          />
-        ) : (
+      leftComponent={() => {
+        if (isOnlyOneSubscriber) {
+          return (
+            <Avatar
+              avatarUrl={firstAvatarUrl}
+              placeholderColorSeed={firstAvatarColorSeed}
+              placeholder={firstAvatarPlaceholder}
+              size="md"
+              type={'rounded'}
+            />
+          );
+        }
+
+        return (
           <AvatarGroup
             avatars={subscriberNames.map((name, index) => (
               <Avatar
@@ -71,9 +75,9 @@ export const MessageThreadSubscribersChip = ({
               />
             ))}
           />
-        )
-      }
-      rightComponent={<IconChevronDown size={theme.icon.size.sm} />}
+        );
+      }}
+      rightComponent={() => <IconChevronDown size={theme.icon.size.sm} />}
       clickable
     />
   );

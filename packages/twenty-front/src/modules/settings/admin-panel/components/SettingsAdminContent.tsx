@@ -4,6 +4,7 @@ import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/Setting
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import styled from '@emotion/styled';
 import { IconHeart, IconSettings2, IconVariable } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
 
 const StyledTabListContainer = styled.div`
   align-items: center;
@@ -17,17 +18,17 @@ export const SettingsAdminContent = () => {
   const tabs = [
     {
       id: SETTINGS_ADMIN_TABS.GENERAL,
-      title: 'General',
+      title: t`General`,
       Icon: IconSettings2,
     },
     {
       id: SETTINGS_ADMIN_TABS.ENV_VARIABLES,
-      title: 'Env Variables',
+      title: t`Env Variables`,
       Icon: IconVariable,
     },
     {
       id: SETTINGS_ADMIN_TABS.HEALTH_STATUS,
-      title: 'Health Status',
+      title: t`Health Status`,
       Icon: IconHeart,
     },
   ];

@@ -5,6 +5,7 @@ import {
   WORKFLOW_VERSION_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 export const workflowVersionsAllView = (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
@@ -17,6 +18,7 @@ export const workflowVersionsAllView = (
     key: 'INDEX',
     position: 0,
     icon: 'IconVersions',
+    openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

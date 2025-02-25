@@ -113,13 +113,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   }
 
   async addUserToWorkspace(user: User, workspace: Workspace) {
-    const userWorkspaceExists = await this.checkUserWorkspaceExists(
+    let userWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,
     );
 
-    if (!userWorkspaceExists) {
-      await this.create(user.id, workspace.id);
+    if (!userWorkspace) {
+      userWorkspace = await this.create(user.id, workspace.id);
 
       await this.createWorkspaceMember(workspace.id, user);
     }
@@ -129,7 +129,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       user.email,
     );
 
-    return user;
+    return {
+      user,
+      userWorkspace,
+    };
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {

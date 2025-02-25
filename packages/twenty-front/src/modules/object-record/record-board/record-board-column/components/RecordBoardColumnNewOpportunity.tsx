@@ -2,11 +2,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
+import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
+import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
-import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -70,7 +70,7 @@ export const RecordBoardColumnNewOpportunity = ({
           <RecordPickerComponentInstanceContext.Provider
             value={{ instanceId: RelationPickerHotkeyScope.RelationPicker }}
           >
-            <SingleRecordSelect
+            <SingleRecordPicker
               onCancel={() => handleCreateSuccess(position, columnId, false)}
               onRecordSelected={(company) =>
                 company ? handleEntitySelect(position, company) : null

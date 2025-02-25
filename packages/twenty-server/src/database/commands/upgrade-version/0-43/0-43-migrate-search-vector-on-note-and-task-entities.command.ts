@@ -1,31 +1,34 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-  ActiveWorkspacesCommandOptions,
-  ActiveWorkspacesCommandRunner,
-} from 'src/database/commands/active-workspaces.command';
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { SEARCH_FIELDS_FOR_NOTES } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { SEARCH_FIELDS_FOR_TASKS } from 'src/modules/task/standard-objects/task.workspace-entity';
 
-@Command({
-  name: 'upgrade-0.43:migrate-search-vector-on-note-and-task-entities',
+@MigrationCommand({
+  name: 'migrate-search-vector-on-note-and-task-entities',
   description: 'Migrate search vector on note and task entities',
+  version: '0.43',
 })
-export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorkspacesCommandRunner {
+export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FeatureFlag, 'core')
     protected readonly featureFlagRepository: Repository<FeatureFlag>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -34,12 +37,12 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorks
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async executeActiveWorkspacesCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(

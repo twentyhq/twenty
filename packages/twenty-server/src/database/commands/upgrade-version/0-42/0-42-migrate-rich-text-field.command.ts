@@ -2,13 +2,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
-import { Command, Option } from 'nest-commander';
+import { Option } from 'nest-commander';
 import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { isCommandLogger } from 'src/database/commands/logger';
-import { Upgrade042CommandOptions } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.command';
+import {
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -54,15 +57,24 @@ type ProcessRichTextFieldsArgs = {
   richTextFields: FieldMetadataEntity[];
   workspaceId: string;
 };
-@Command({
-  name: 'upgrade-0.42:migrate-rich-text-field',
+
+type MigrateRichTextFieldCommandOptions =
+  ActiveWorkspacesMigrationCommandOptions & {
+    force?: boolean;
+  };
+
+@MigrationCommand({
+  name: 'migrate-rich-text-field',
   description: 'Migrate RICH_TEXT fields to new composite structure',
+  version: '0.42',
 })
-export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
-  private options: Upgrade042CommandOptions;
+export class MigrateRichTextFieldCommand extends ActiveWorkspacesMigrationCommandRunner<MigrateRichTextFieldCommandOptions> {
+  private options: MigrateRichTextFieldCommandOptions;
+
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -70,12 +82,11 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     @InjectRepository(FeatureFlag, 'core')
     protected readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   @Option({
@@ -88,9 +99,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     return val ?? false;
   }
 
-  async executeActiveWorkspacesCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: Upgrade042CommandOptions,
+    options: MigrateRichTextFieldCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
@@ -104,19 +115,25 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       this.logger.setVerbose(options.verbose ?? false);
     }
 
-    try {
-      for (const [index, workspaceId] of workspaceIds.entries()) {
+    for (const [index, workspaceId] of workspaceIds.entries()) {
+      try {
         await this.processWorkspace({
           workspaceId,
           index,
           total: workspaceIds.length,
         });
+      } catch (error) {
+        this.logger.log(
+          chalk.red(`Error in workspace ${workspaceId}: ${error}`),
+        );
       }
 
-      this.logger.log(chalk.green('Command completed!'));
-    } catch (error) {
-      this.logger.log(chalk.red('Error in workspace'));
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
     }
+
+    this.logger.log(chalk.green('Command completed!'));
   }
 
   private async processWorkspace({
@@ -165,9 +182,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         );
       }
 
-      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-        workspaceId,
-      );
       this.logger.log(
         chalk.green(`Command completed for workspace ${workspaceId}`),
       );
@@ -339,7 +353,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       });
 
       richTextFieldsWithHasCreatedColumns.push({
-        hasCreatedColumns,
+        hasCreatedColumns: hasCreatedColumns ?? false,
         richTextField,
         objectMetadata,
       });
@@ -398,9 +412,19 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
       return null;
     }
 
-    return await serverBlockNoteEditor.blocksToMarkdownLossy(
-      jsonParsedblocknoteFieldValue,
-    );
+    let markdown: string | null = null;
+
+    try {
+      markdown = await serverBlockNoteEditor.blocksToMarkdownLossy(
+        jsonParsedblocknoteFieldValue,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Error converting blocknote to markdown for ${blocknoteFieldValue}`,
+      );
+    }
+
+    return markdown;
   }
 
   private async migrateToNewRichTextFieldsColumn({

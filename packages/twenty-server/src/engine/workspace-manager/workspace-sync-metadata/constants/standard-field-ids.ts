@@ -206,7 +206,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
-  workspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
+  forWorkspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
   person: '20202020-c428-4f40-b6f3-86091511c41c',
   company: '20202020-cff5-4682-8bf9-069169e08279',
   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
@@ -435,6 +435,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
     '20202020-b1b3-4bf3-85e4-dc7d58aa9b02',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
+  openRecordIn: '20202020-086d-4eef-9f03-56c6392eacb8',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
   viewGroups: '20202020-e1a1-419f-ac81-1986a5ea59a8',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',
@@ -497,6 +498,7 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
+  position: '20202020-1810-4591-a93c-d0df97dca843',
   name: '20202020-e914-43a6-9c26-3603c59065f4',
   colorScheme: '20202020-66bc-47f2-adac-f2ef7c598b63',
   locale: '20202020-402e-4695-b169-794fa015afbe',
