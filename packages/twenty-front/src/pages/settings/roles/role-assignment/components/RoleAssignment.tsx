@@ -148,7 +148,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
   };
 
   const allWorkspaceMembersHaveThisRole =
-    role.workspaceMembers.length === currentWorkspaceMembers.length;
+    role.workspaceMembers.length + 1 === currentWorkspaceMembers.length;
 
   return (
     <>
