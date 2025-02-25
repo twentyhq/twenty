@@ -13,7 +13,6 @@ import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { CodeEditor, useIcons } from 'twenty-ui';
 
@@ -32,10 +31,6 @@ type WorkflowReadonlyActionFormServerlessFunctionProps = {
   action: WorkflowCodeAction;
 };
 
-type ServerlessFunctionInputFormData = {
-  [field: string]: string | ServerlessFunctionInputFormData;
-};
-
 export const WorkflowReadonlyActionFormServerlessFunction = ({
   action,
 }: WorkflowReadonlyActionFormServerlessFunctionProps) => {
@@ -48,11 +43,6 @@ export const WorkflowReadonlyActionFormServerlessFunction = ({
   const { availablePackages } = useGetAvailablePackages({
     id: serverlessFunctionId,
   });
-
-  const [functionInput, setFunctionInput] =
-    useState<ServerlessFunctionInputFormData>(
-      action.settings.input.serverlessFunctionInput,
-    );
 
   const { formValues, loading } = useServerlessFunctionUpdateFormState({
     serverlessFunctionId,
@@ -71,10 +61,6 @@ export const WorkflowReadonlyActionFormServerlessFunction = ({
       debounceDuration: 0,
     });
   };
-
-  useEffect(() => {
-    setFunctionInput(action.settings.input.serverlessFunctionInput);
-  }, [action]);
 
   const headerTitle = isDefined(action.name)
     ? action.name
@@ -96,7 +82,7 @@ export const WorkflowReadonlyActionFormServerlessFunction = ({
       />
       <WorkflowStepBody>
         <WorkflowEditActionFormServerlessFunctionFields
-          functionInput={functionInput}
+          functionInput={action.settings.input.serverlessFunctionInput}
           readonly
         />
         <StyledCodeEditorContainer>
