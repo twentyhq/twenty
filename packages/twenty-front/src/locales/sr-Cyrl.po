@@ -229,6 +229,10 @@ msgstr "Додато {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "Додато на црну листу"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "Прилагодите подешавања повезана са улогом"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Напредни филтер"
@@ -261,7 +265,7 @@ msgstr "Све линије"
 msgid "All Objects"
 msgstr "Сви објекти"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Све улоге"
 
@@ -348,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Да ли сте сигурни да желите да промените интервал наплате?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Да ли сте сигурни да желите да доделите ову улогу?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Да ли сте сигурни да желите да доделите ову улогу?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -360,7 +364,7 @@ msgstr "Растуће"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Доделите {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Доделите улоге да бисте одредили овлашћења за приступ члановима"
 
@@ -372,7 +376,7 @@ msgstr "Доделите члану"
 msgid "Assigned members"
 msgstr "Додељени чланови"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Додељено"
 
@@ -709,7 +713,7 @@ msgstr "Креирај нови запис"
 msgid "Create profile"
 msgstr "Креирај профил"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Креирај улогу"
 
@@ -737,6 +741,10 @@ msgstr "Креирано"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Кориснички домен"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "Прилагођени домен ажуриран"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1788,7 +1796,7 @@ msgstr "Помери удесно"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2053,7 @@ msgstr "Отворено"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Опционално: Дефинишите тајни низ који ћемо укључити у сваки вебхук. Користите ово за аутентификацију и проверу вебхука по пријему."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2259,15 +2268,13 @@ msgstr "Тип релације"
 msgid "Releases"
 msgstr "Издања"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Уклони"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Уклонити {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Уклонити {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2458,6 +2465,10 @@ msgstr "Админ панел сервера"
 msgid "Service Provider Details"
 msgstr "Детаљи добављача услуга"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "Подесите подразумевану улогу за овај радни простор"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Постави као подразумевано"
@@ -2566,6 +2577,10 @@ msgstr "Поддомен не може бити дужи од 30 каракте�
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Поддомен не може бити краћи од 3 карактера"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "Поддомен ажуриран"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2730,8 +2745,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Ова акција се не може опозвати. Ово ће трајно обрисати ваш радни простор. <0/> Молимо вас да унесете ваш имејл да потврдите."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Овом члану ће бити укинута ова улога."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Овом члану ће бити укинута ова улога."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -3052,6 +3067,10 @@ msgstr "да"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "Није дозвољено креирање записа у овом објекту"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "Немате приступ за имитирање корисника."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

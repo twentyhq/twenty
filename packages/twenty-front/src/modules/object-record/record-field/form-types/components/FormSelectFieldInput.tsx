@@ -3,8 +3,8 @@ import { FormFieldInputInputContainer } from '@/object-record/record-field/form-
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { SINGLE_RECORD_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleRecordSelectBaseList';
 import { SelectOption } from '@/spreadsheet-import/types';
 import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
@@ -141,7 +141,7 @@ export const FormSelectFieldInput = ({
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
   const { resetSelectedItem } = useSelectableList(
-    SINGLE_RECORD_SELECT_BASE_LIST,
+    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID,
   );
 
   const clearField = () => {
@@ -295,7 +295,9 @@ export const FormSelectFieldInput = ({
             draftValue.editingMode === 'edit' && (
               <OverlayContainer>
                 <SelectInput
-                  selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
+                  selectableListComponentInstanceId={
+                    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
+                  }
                   selectableItemIdArray={optionIds}
                   hotkeyScope={hotkeyScope}
                   onEnter={handleSelectEnter}

@@ -229,6 +229,10 @@ msgstr "Hozzáadva {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "Hozzáadva a tiltólistához"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "Állítsa be a szerepkörhöz kapcsolódó beállításokat"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Speciális szűrő"
@@ -261,7 +265,7 @@ msgstr "Minden sor"
 msgid "All Objects"
 msgstr "Összes Objektum"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Minden szerepkör"
 
@@ -348,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Biztosan meg akarja változtatni a számlázási intervallumát?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Biztosan hozzárendeli ezt a szerepkört?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Biztosan hozzárendeli ezt a szerepkört?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -360,7 +364,7 @@ msgstr "Növekvő"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Hozzárendelje {workspaceMemberName}-t?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Szerepkörök hozzárendelésével adhat meg minden tag hozzáférési jogosultságait"
 
@@ -372,7 +376,7 @@ msgstr "Hozzárendelés taghoz"
 msgid "Assigned members"
 msgstr "Hozzárendelt tagok"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Hozzárendelve"
 
@@ -709,7 +713,7 @@ msgstr "Új rekord létrehozása"
 msgid "Create profile"
 msgstr "Profil létrehozása"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Szerepkör létrehozása"
 
@@ -737,6 +741,10 @@ msgstr "Létrehozva"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Egyéni Domain"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "Egyéni domain frissítve"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1788,7 +1796,7 @@ msgstr "Mozgatás jobbra"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2053,7 @@ msgstr "Megnyitva"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Opcionális: Határozzon meg egy titkos karakterláncot, amelyet minden webhooks-ba belefoglalunk. Használja ezt a webhooks hitelesítésére és ellenőrzésére átvételkor."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2259,15 +2268,13 @@ msgstr "Kapcsolati típus"
 msgid "Releases"
 msgstr "Kiadások"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Eltávolítás"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Eltávolítja {workspaceMemberName}-t?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Eltávolítja {workspaceMemberName}-t?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2458,6 +2465,10 @@ msgstr "Szerver Adminisztrációs Panel"
 msgid "Service Provider Details"
 msgstr "Szolgáltatói adatok"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "Állítson be egy alapértelmezett szerepkört ehhez a munkaterülethez"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Beállítás alapértelmezettként"
@@ -2566,6 +2577,10 @@ msgstr "Az aldomén nem lehet hosszabb 30 karakternél"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Az aldomén nem lehet rövidebb 3 karakternél"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "A tartomány frissítve"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2730,8 +2745,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Ez a művelet nem visszavonható. Ez véglegesen törli az egész munkaterületet. <0/> Kérjük, írja be az e-mail címét a megerősítéshez."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Ez a tag ebből a szerepkörből lesz kivezetve."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Ez a tag ebből a szerepkörből lesz kivezetve."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -3052,6 +3067,10 @@ msgstr "igen"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "Nincs jogosultság rekord létrehozására ebben az objektumban"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "Nincs hozzáférése a felhasználók megszemélyesítéséhez."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

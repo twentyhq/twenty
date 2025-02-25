@@ -229,6 +229,10 @@ msgstr "Bygevoeg {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "By swartlys gevoeg"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "Stel die rolverwante instellings aan"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Gevorderde filter"
@@ -261,7 +265,7 @@ msgstr "Alle lyne"
 msgid "All Objects"
 msgstr "Alle objekte"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Alle rolle"
 
@@ -348,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Is jy seker dat jy jou faktureringsinterval wil verander?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Is jy seker jy wil hierdie rol toeken?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Is jy seker jy wil hierdie rol toeken?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -360,7 +364,7 @@ msgstr "Oplopend"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Ken {workspaceMemberName} toe?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Ken rolle toe om elke lid se toegangsregte te spesifiseer"
 
@@ -372,7 +376,7 @@ msgstr "Ken aan lid toe"
 msgid "Assigned members"
 msgstr "Toegewysde lede"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Toegewys aan"
 
@@ -709,7 +713,7 @@ msgstr "Skep nuwe rekord"
 msgid "Create profile"
 msgstr "Skep profiel"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Skep Rol"
 
@@ -737,6 +741,10 @@ msgstr "Geskep"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Pasgemaakte Domein"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "Pasgemaakte domein opgedateer"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1788,7 +1796,7 @@ msgstr "Skuif regs"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2053,7 @@ msgstr "Oopgemaak"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Opsioneel: Definieer 'n geheime string wat ons in elke webhook sal insluit. Gebruik dit om die webhook te verifieer en te outentiseer wanneer dit ontvang word."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2259,15 +2268,13 @@ msgstr "Verhouding tipe"
 msgid "Releases"
 msgstr "Vrystellings"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Verwyder"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Verwyder {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Verwyder {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2458,6 +2465,10 @@ msgstr "Bediener Admin Paneel"
 msgid "Service Provider Details"
 msgstr "Diensverskaffer Besonderhede"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "Stel  27n verstekrol vir hierdie werksruimte in"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Stel as verstek"
@@ -2566,6 +2577,10 @@ msgstr "Subdomein kan nie langer as 30 karakters wees nie"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdomein kan nie korter as 3 karakters wees nie"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "Subdomein opgedateer"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2730,8 +2745,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Hierdie aksie kan nie ongedaan gemaak word nie. Dit sal jou hele werkruimte permanent uitvee. <0/> Tik asseblief jou e-pos in om te bevestig."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Hierdie lid sal ontkoppel word van hierdie rol."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Hierdie lid sal ontkoppel word van hierdie rol."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -3052,6 +3067,10 @@ msgstr "ja"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "Jy mag nie rekords in hierdie voorwerp skep nie"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "Jy het nie toegang om gebruikers na te boots nie."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

@@ -7,8 +7,8 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
-import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/object-record/relation-picker/hooks/useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap';
+import { useMultiObjectSearch } from '@/object-record/record-picker/hooks/useMultiObjectSearch';
+import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/object-record/record-picker/hooks/useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';

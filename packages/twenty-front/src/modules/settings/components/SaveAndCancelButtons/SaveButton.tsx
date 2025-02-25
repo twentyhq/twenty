@@ -15,6 +15,7 @@ export const SaveButton = ({ onSave, disabled }: SaveButtonProps) => {
       accent="blue"
       disabled={disabled}
       onClick={onSave}
+      type="submit"
       Icon={IconDeviceFloppy}
     />
   );

@@ -2045,6 +2045,7 @@ export type UpdateWorkflowVersionStepInput = {
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
   customDomain?: InputMaybe<Scalars['String']['input']>;
+  defaultRoleId?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2197,6 +2198,7 @@ export type Workspace = {
   customDomain?: Maybe<Scalars['String']['output']>;
   databaseSchema: Scalars['String']['output'];
   databaseUrl: Scalars['String']['output'];
+  defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   featureFlags?: Maybe<Array<FeatureFlag>>;
