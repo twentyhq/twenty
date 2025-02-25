@@ -704,6 +704,16 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String']['input'];
 };
 
+export type GlobalSearchRecord = {
+  __typename?: 'GlobalSearchRecord';
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  label: Scalars['String']['output'];
+  objectSingularName: Scalars['String']['output'];
+  recordId: Scalars['String']['output'];
+  tsRank: Scalars['Float']['output'];
+  tsRankCD: Scalars['Float']['output'];
+};
+
 export enum HealthIndicatorId {
   connectedAccount = 'connectedAccount',
   database = 'database',
@@ -1437,6 +1447,7 @@ export type Query = {
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  globalSearch: Array<GlobalSearchRecord>;
   index: Index;
   indexMetadatas: IndexConnection;
   object: Object;
@@ -1549,6 +1560,13 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   personId: Scalars['UUID']['input'];
+};
+
+
+export type QueryGlobalSearchArgs = {
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  limit: Scalars['Int']['input'];
+  searchInput: Scalars['String']['input'];
 };
 
 

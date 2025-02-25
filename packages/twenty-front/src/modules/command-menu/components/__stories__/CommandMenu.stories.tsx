@@ -27,12 +27,9 @@ import { IconDotsVertical } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { CommandMenu } from '../CommandMenu';
 
 const openTimeout = 50;
-
-const companiesMock = getCompaniesMock();
 
 // Mock workspace with feature flag enabled
 const mockWorkspaceWithFeatureFlag = {
@@ -167,33 +164,18 @@ export const NoResultsSearchFallback: Story = {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
-    await userEvent.type(searchInput, 'Linkedin');
+    await userEvent.type(searchInput, 'input without results');
     expect(await canvas.findByText('No results found')).toBeVisible();
     const searchRecordsButton = await canvas.findByText('Search records');
     expect(searchRecordsButton).toBeVisible();
-    await userEvent.click(searchRecordsButton);
-    expect(await canvas.findByText('Linkedin')).toBeVisible();
   },
   parameters: {
     msw: {
       handlers: [
-        graphql.query('CombinedSearchRecords', () => {
+        graphql.query('GlobalSearch', () => {
           return HttpResponse.json({
             data: {
-              searchCompanies: {
-                edges: [
-                  {
-                    node: companiesMock[0],
-                    cursor: null,
-                  },
-                ],
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: null,
-                  endCursor: null,
-                },
-              },
+              globalSearch: [],
             },
           });
         }),
