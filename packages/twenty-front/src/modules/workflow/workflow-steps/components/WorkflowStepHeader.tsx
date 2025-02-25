@@ -64,14 +64,15 @@ export const WorkflowStepHeader = ({
   iconColor,
   initialTitle,
   headerType,
-  ...props
+  disabled,
+  onTitleChange,
 }: WorkflowStepHeaderProps) => {
   const theme = useTheme();
 
   const [title, setTitle] = useState(initialTitle);
 
   const debouncedOnTitleChange = useDebouncedCallback((newTitle: string) => {
-    props.onTitleChange?.(newTitle);
+    onTitleChange?.(newTitle);
   }, 100);
 
   const handleChange = (newTitle: string) => {
@@ -91,12 +92,12 @@ export const WorkflowStepHeader = ({
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TextInput
-            disabled={props.disabled}
+            disabled={disabled}
             value={title}
             copyButton={false}
             hotkeyScope="workflow-step-title"
-            onEnter={props.onTitleChange}
-            onEscape={props.onTitleChange}
+            onEnter={onTitleChange}
+            onEscape={onTitleChange}
             onChange={handleChange}
             shouldTrim={false}
           />
