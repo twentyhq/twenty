@@ -227,7 +227,7 @@ msgstr "已添加 {beautifiedCreatedAt}"
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
-msgstr ""
+msgstr "已添加 {beautifyPastDateRelative}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -345,11 +345,11 @@ msgstr "外觀"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Domains"
-msgstr ""
+msgstr "已批准的網域"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 #~ msgid "Approved Email Domain"
-#~ msgstr "已批准的電子郵件域"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -361,7 +361,7 @@ msgstr "您確定要更改計費間隔嗎？"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "您確定要指派這個角色嗎？"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1021,7 +1021,7 @@ msgstr "域名添加成功。"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
-msgstr ""
+msgstr "網域必須小於 256 個字符，不能包含空格，也不能包含任何特殊字符。"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -1091,11 +1091,11 @@ msgstr "電子郵件"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
-#~ msgstr "電子郵件不能為空"
+#~ msgstr "Email can not be empty"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
-msgstr ""
+msgstr "電子郵件不能為空"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -2289,7 +2289,7 @@ msgstr "移除"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "移除 {workspaceMemberName}？"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2761,7 +2761,7 @@ msgstr "此操作無法撤銷。這將永久刪除您的整個工作區。 <0/> 
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
-#~ msgstr "這個成員將不再被指派此角色。"
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."

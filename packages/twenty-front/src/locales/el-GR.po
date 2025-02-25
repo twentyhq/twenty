@@ -227,7 +227,7 @@ msgstr "Προστέθηκε {beautifiedCreatedAt}"
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
-msgstr ""
+msgstr "Προστέθηκε {beautifyPastDateRelative}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -345,11 +345,11 @@ msgstr "Εμφάνιση"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Domains"
-msgstr ""
+msgstr "Εγκεκριμένοι Τομείς"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 #~ msgid "Approved Email Domain"
-#~ msgstr "Εγκεκριμένος Τομέας Email"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -361,7 +361,7 @@ msgstr "Είστε βέβαιοι ότι θέλετε να αλλάξετε το
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "Είστε σίγουροι ότι θέλετε να αναθέσετε αυτόν τον ρόλο;"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1021,7 +1021,7 @@ msgstr "Ο τομέας προστέθηκε με επιτυχία."
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
-msgstr ""
+msgstr "Οι τομείς πρέπει να είναι μικρότεροι από 256 χαρακτήρες, χωρίς κενά και χωρίς ειδικούς χαρακτήρες."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -1091,11 +1091,11 @@ msgstr "Ηλεκτρονικό ταχυδρομείο"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
-#~ msgstr "Το email δεν μπορεί να είναι κενό"
+#~ msgstr "Email can not be empty"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
-msgstr ""
+msgstr "Το email δεν μπορεί να είναι κενό"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -2289,7 +2289,7 @@ msgstr "Αφαίρεση"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "Αφαίρεση του χρήστη {workspaceMemberName};"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2761,7 +2761,7 @@ msgstr "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
-#~ msgstr "Αυτό το μέλος θα αποδεσμευτεί από αυτόν τον ρόλο."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."

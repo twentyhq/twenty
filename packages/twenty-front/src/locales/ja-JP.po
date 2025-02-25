@@ -227,7 +227,7 @@ msgstr "{beautifiedCreatedAt}に追加"
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
-msgstr ""
+msgstr "{beautifyPastDateRelative}に追加"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -345,11 +345,11 @@ msgstr "外観"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Domains"
-msgstr ""
+msgstr "承認されたドメイン"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 #~ msgid "Approved Email Domain"
-#~ msgstr "承認されたメールドメイン"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -361,7 +361,7 @@ msgstr "請求間隔を変更してもよろしいですか？"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "この役割を割り当ててもよろしいですか？"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1021,7 +1021,7 @@ msgstr "ドメインが正常に追加されました。"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
-msgstr ""
+msgstr "ドメインは<b>256</b>文字未満でなければならず、スペースや特殊文字を含めることはできません。"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -1091,11 +1091,11 @@ msgstr "メール"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
-#~ msgstr "メールを空にすることはできません"
+#~ msgstr "Email can not be empty"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
-msgstr ""
+msgstr "メールアドレスは空にできません"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -2289,7 +2289,7 @@ msgstr "削除"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "{workspaceMemberName}を削除しますか？"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2761,7 +2761,7 @@ msgstr "この操作は取り消せません。ワークスペース全体が永
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
-#~ msgstr "このメンバーはこの役割から割り当て解除されます。"
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."

@@ -227,7 +227,7 @@ msgstr "Adăugat {beautifiedCreatedAt}"
 
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
-msgstr ""
+msgstr "Adăugat {beautifyPastDateRelative}"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -345,11 +345,11 @@ msgstr "Aspect"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Domains"
-msgstr ""
+msgstr "Domenii Aprobate"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 #~ msgid "Approved Email Domain"
-#~ msgstr "Domeniu de Email Aprobat"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -361,7 +361,7 @@ msgstr "Sunteți sigur că doriți să schimbați intervalul de facturare?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "Sunteți sigur că doriți să atribuiți acest rol?"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1021,7 +1021,7 @@ msgstr "Domeniul a fost adăugat cu succes."
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
-msgstr ""
+msgstr "Domeniile trebuie să fie mai mici de 256 de caractere, să nu conțină spații și să nu conțină caractere speciale."
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
@@ -1091,11 +1091,11 @@ msgstr "E-mail"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
-#~ msgstr "Emailul nu poate fi gol"
+#~ msgstr "Email can not be empty"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
-msgstr ""
+msgstr "Emailul nu poate fi gol"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -2289,7 +2289,7 @@ msgstr "Elimină"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "Eliminați {workspaceMemberName}?"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2761,7 +2761,7 @@ msgstr "Această acțiune nu poate fi anulată. Acest lucru va șterge definitiv
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
-#~ msgstr "Acest membru va fi retras din acest rol."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
