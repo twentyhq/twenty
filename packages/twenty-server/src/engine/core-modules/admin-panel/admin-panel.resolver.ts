@@ -10,10 +10,10 @@ import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-he
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
+import { WorkerMetricsData } from 'src/engine/core-modules/admin-panel/dtos/worker-metrics-data.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
-import { WorkerMetricsData } from 'src/engine/core-modules/health/types/worker-metrics-data.types';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -72,6 +72,7 @@ export class AdminPanelResolver {
     return this.adminPanelHealthService.getSystemHealthStatus();
   }
 
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
   @Query(() => AdminPanelHealthServiceData)
   async getIndicatorHealthStatus(
     @Args('indicatorId', {
@@ -82,10 +83,11 @@ export class AdminPanelResolver {
     return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
   }
 
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
   @Query(() => [WorkerMetricsData])
   async getQueueMetrics(
-    @Args('queueName', { nullable: true, type: () => String })
-    queueName?: string,
+    @Args('queueName', { type: () => String })
+    queueName: string,
     @Args('timeRange', {
       nullable: true,
       defaultValue: '1D',
@@ -93,15 +95,11 @@ export class AdminPanelResolver {
     })
     timeRange: '7D' | '1D' | '12H' | '4H' = '1D',
   ): Promise<WorkerMetricsData[]> {
-    if (queueName) {
-      const result = await this.workerHealthIndicator.getQueueMetricsOverTime(
-        queueName as MessageQueue,
-        timeRange,
-      );
+    const result = await this.adminPanelHealthService.getQueueMetricsOverTime(
+      queueName as MessageQueue,
+      timeRange,
+    );
 
-      return [result];
-    }
-
-    return this.workerHealthIndicator.getAllQueuesMetricsOverTime(timeRange);
+    return [result];
   }
 }

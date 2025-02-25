@@ -1370,7 +1370,7 @@ export type QueryGetProductPricesArgs = {
 
 
 export type QueryGetQueueMetricsArgs = {
-  queueName?: InputMaybe<Scalars['String']>;
+  queueName: Scalars['String'];
   timeRange?: InputMaybe<Scalars['String']>;
 };
 
@@ -2373,10 +2373,10 @@ export type GetIndicatorHealthStatusQueryVariables = Exact<{
 }>;
 
 
-export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: string, label: string, description: string, status: AdminPanelHealthServiceStatus, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus, workers: number, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, failureRate: number } }> | null } };
+export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: string, label: string, description: string, status: AdminPanelHealthServiceStatus, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus }> | null } };
 
 export type GetQueueMetricsQueryVariables = Exact<{
-  queueName?: InputMaybe<Scalars['String']>;
+  queueName: Scalars['String'];
   timeRange?: InputMaybe<Scalars['String']>;
 }>;
 
@@ -4140,15 +4140,6 @@ export const GetIndicatorHealthStatusDocument = gql`
       id
       queueName
       status
-      workers
-      metrics {
-        failed
-        completed
-        waiting
-        active
-        delayed
-        failureRate
-      }
     }
   }
 }
@@ -4182,7 +4173,7 @@ export type GetIndicatorHealthStatusQueryHookResult = ReturnType<typeof useGetIn
 export type GetIndicatorHealthStatusLazyQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusLazyQuery>;
 export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicatorHealthStatusQuery, GetIndicatorHealthStatusQueryVariables>;
 export const GetQueueMetricsDocument = gql`
-    query GetQueueMetrics($queueName: String, $timeRange: String) {
+    query GetQueueMetrics($queueName: String!, $timeRange: String) {
   getQueueMetrics(queueName: $queueName, timeRange: $timeRange) {
     queueName
     timeRange
@@ -4215,7 +4206,7 @@ export const GetQueueMetricsDocument = gql`
  *   },
  * });
  */
-export function useGetQueueMetricsQuery(baseOptions?: Apollo.QueryHookOptions<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>) {
+export function useGetQueueMetricsQuery(baseOptions: Apollo.QueryHookOptions<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>(GetQueueMetricsDocument, options);
       }

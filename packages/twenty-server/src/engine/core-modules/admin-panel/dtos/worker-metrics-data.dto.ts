@@ -1,21 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class MetricsDataPoint {
-  @Field()
-  x: string;
-
-  @Field()
-  y: number;
-}
-
-@ObjectType()
-export class MetricsSeries {
-  @Field()
-  id: string;
-  @Field(() => [MetricsDataPoint])
-  data: MetricsDataPoint[];
-}
+import { MetricsSeries } from 'src/engine/core-modules/admin-panel/dtos/metrics-series.dto';
 
 @ObjectType()
 export class WorkerMetricsData {

@@ -146,23 +146,23 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
               axis: {
                 domain: {
                   line: {
-                    stroke: theme.border.color.light,
+                    stroke: theme.border.color.strong,
                   },
                 },
                 ticks: {
                   line: {
-                    stroke: theme.border.color.light,
+                    stroke: theme.border.color.strong,
                   },
                 },
               },
               grid: {
                 line: {
-                  stroke: theme.border.color.light,
+                  stroke: theme.border.color.medium,
                 },
               },
               crosshair: {
                 line: {
-                  stroke: theme.font.color.light,
+                  stroke: theme.font.color.primary,
                   strokeDasharray: '2 2',
                 },
               },
@@ -239,7 +239,7 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
                 itemWidth: 100,
                 itemHeight: 20,
                 symbolSize: 12,
-                symbolShape: 'circle',
+                symbolShape: 'square',
               },
             ]}
           />
