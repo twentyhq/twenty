@@ -1,3 +1,4 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -5,19 +6,21 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ChangeEvent, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
-import { RoleWorkspaceMemberPickerDropdownContent } from './RoleWorkspaceMemberPickerDropdownContent';
+import { RoleAssignmentWorkspaceMemberPickerDropdownContent } from './RoleAssignmentWorkspaceMemberPickerDropdownContent';
 
-type RoleWorkspaceMemberPickerDropdownProps = {
+type RoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
   onSelect: (workspaceMember: WorkspaceMember) => void;
 };
 
-export const RoleWorkspaceMemberPickerDropdown = ({
+export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
   excludedWorkspaceMemberIds,
   onSelect,
-}: RoleWorkspaceMemberPickerDropdownProps) => {
+}: RoleAssignmentWorkspaceMemberPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { loading, records: workspaceMembers } = useSearchRecords({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -26,7 +29,8 @@ export const RoleWorkspaceMemberPickerDropdown = ({
 
   const filteredWorkspaceMembers = (workspaceMembers?.filter(
     (workspaceMember) =>
-      !excludedWorkspaceMemberIds.includes(workspaceMember.id),
+      !excludedWorkspaceMemberIds.includes(workspaceMember.id) &&
+      workspaceMember.id !== currentWorkspaceMember?.id,
   ) ?? []) as WorkspaceMember[];
 
   const handleSearchFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +46,7 @@ export const RoleWorkspaceMemberPickerDropdown = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <RoleWorkspaceMemberPickerDropdownContent
+        <RoleAssignmentWorkspaceMemberPickerDropdownContent
           loading={loading}
           searchFilter={searchFilter}
           filteredWorkspaceMembers={filteredWorkspaceMembers}

@@ -8,14 +8,8 @@ const StyledTableHeaderRow = styled(Table)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-type RoleAssignmentTableHeaderProps = {
-  className?: string;
-};
-
-export const RoleAssignmentTableHeader = ({
-  className,
-}: RoleAssignmentTableHeaderProps) => (
-  <StyledTableHeaderRow className={className}>
+export const RoleAssignmentTableHeader = () => (
+  <StyledTableHeaderRow>
     <TableRow gridAutoColumns="150px 1fr 1fr">
       <TableHeader>{t`Name`}</TableHeader>
       <TableHeader>{t`Email`}</TableHeader>

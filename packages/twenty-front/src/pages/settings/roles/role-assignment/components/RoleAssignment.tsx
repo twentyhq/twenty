@@ -24,11 +24,11 @@ import {
   useUpdateWorkspaceMemberRoleMutation,
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { RoleAssignmentTableHeader } from '~/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader';
+import { RoleAssignmentWorkspaceMemberPickerDropdown } from '~/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown';
+import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import { RoleAssignmentConfirmationModal } from './RoleAssignmentConfirmationModal';
-import { RoleAssignmentTableHeader } from './RoleAssignmentTableHeader';
 import { RoleAssignmentTableRow } from './RoleAssignmentTableRow';
-import { RoleWorkspaceMemberPickerDropdown } from './RoleWorkspaceMemberPickerDropdown';
 
 const StyledBottomSection = styled(Section)<{ hasRows: boolean }>`
   ${({ hasRows, theme }) =>
@@ -201,7 +201,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
             </>
           }
           dropdownComponents={
-            <RoleWorkspaceMemberPickerDropdown
+            <RoleAssignmentWorkspaceMemberPickerDropdown
               excludedWorkspaceMemberIds={role.workspaceMembers.map(
                 (workspaceMember) => workspaceMember.id,
               )}

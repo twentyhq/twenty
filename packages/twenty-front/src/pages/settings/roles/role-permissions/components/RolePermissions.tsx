@@ -10,9 +10,9 @@ import {
 } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
-import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/components/RolePermissionsObjectsTableHeader';
-import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/components/RolePermissionsSettingsTableHeader';
-import { RolePermissionsSettingsTableRow } from '~/pages/settings/roles/components/RolePermissionsSettingsTableRow';
+import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader';
+import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader';
+import { RolePermissionsSettingsTableRow } from '~/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableRow';
 import { RolePermissionsObjectPermission } from '~/pages/settings/roles/types/RolePermissionsObjectPermission';
 import { RolePermissionsObjectsTableRow } from './RolePermissionsObjectsTableRow';
 
