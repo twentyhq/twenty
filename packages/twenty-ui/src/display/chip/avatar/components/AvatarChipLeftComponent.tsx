@@ -34,7 +34,7 @@ export const AvatarChipsLeftComponent: React.FC<
   avatarType,
   avatarUrl,
   name,
-  isIconInverted,
+  isIconInverted = false,
   LeftIconColor,
 }) => {
   const theme = useTheme();
