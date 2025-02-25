@@ -8,5 +8,9 @@ export const isModifiedEvent = ({
   ctrlKey,
   shiftKey,
   metaKey,
-}: LimitedMouseEvent) =>
-  [altKey, ctrlKey, shiftKey, metaKey].some((key) => key);
+  button,
+}: LimitedMouseEvent) => {
+  const pressedKey = [altKey, ctrlKey, shiftKey, metaKey].some((key) => key);
+  const isLeftClick = button === 0;
+  return pressedKey || !isLeftClick;
+};
