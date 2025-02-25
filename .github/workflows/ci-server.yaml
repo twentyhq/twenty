@@ -108,15 +108,14 @@ jobs:
       - name: GraphQL / Check for Pending Generation
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          GRAPHQL_GENERATE_OUTPUT=$(npx nx run twenty-front:graphql:generate || true)
-          GRAPHQL_METADATA_OUTPUT=$(npx nx run twenty-front:graphql:generate --configuration=metadata || true)
-          if [[ $GRAPHQL_GENERATE_OUTPUT == *"No changes detected"* && $GRAPHQL_METADATA_OUTPUT == *"No changes detected"* ]]; then
-            echo "GraphQL generation check passed."
-          else
-            echo "::error::Unexpected GraphQL changes detected. Please run the required commands and commit the changes."
-            echo "$GRAPHQL_GENERATE_OUTPUT"
-            echo "$GRAPHQL_METADATA_OUTPUT"
-            exit 1    
+          # Run GraphQL generation commands
+          npx nx run twenty-front:graphql:generate
+          npx nx run twenty-front:graphql:generate --configuration=metadata
+
+          # Check if any files were modified
+          if ! git diff --quiet; then
+            echo "::error::GraphQL schema changes detected. Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
+            exit 1
           fi
       - name: Save server setup
         uses: ./.github/workflows/actions/save-cache

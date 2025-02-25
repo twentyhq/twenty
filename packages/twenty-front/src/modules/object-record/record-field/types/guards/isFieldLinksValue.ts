@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
-
+import { absoluteUrlSchema } from 'twenty-shared';
 import { FieldLinksValue } from '../FieldMetadata';
 
 export const linksSchema = z.object({
