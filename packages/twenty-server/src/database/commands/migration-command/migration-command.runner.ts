@@ -3,14 +3,22 @@ import { Logger } from '@nestjs/common';
 import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 
-import { CommandLogger } from './logger';
-export type BaseCommandOptions = {
+import { MigrationCommandInterface } from 'src/database/commands/migration-command/interfaces/migration-command.interface';
+
+import { CommandLogger } from 'src/database/commands/logger';
+
+export type MigrationCommandOptions = {
   workspaceId?: string;
   dryRun?: boolean;
   verbose?: boolean;
 };
 
-export abstract class BaseCommandRunner extends CommandRunner {
+export abstract class MigrationCommandRunner<
+    Options extends MigrationCommandOptions = MigrationCommandOptions,
+  >
+  extends CommandRunner
+  implements MigrationCommandInterface<Options>
+{
   protected logger: CommandLogger | Logger;
   constructor() {
     super();
@@ -38,10 +46,7 @@ export abstract class BaseCommandRunner extends CommandRunner {
     return true;
   }
 
-  override async run(
-    passedParams: string[],
-    options: BaseCommandOptions,
-  ): Promise<void> {
+  override async run(passedParams: string[], options: Options): Promise<void> {
     if (options.verbose) {
       this.logger = new CommandLogger({
         verbose: true,
@@ -50,7 +55,7 @@ export abstract class BaseCommandRunner extends CommandRunner {
     }
 
     try {
-      await this.executeBaseCommand(passedParams, options);
+      await this.runMigrationCommand(passedParams, options);
     } catch (error) {
       this.logger.error(chalk.red(`Command failed`));
       throw error;
@@ -59,8 +64,8 @@ export abstract class BaseCommandRunner extends CommandRunner {
     }
   }
 
-  protected abstract executeBaseCommand(
+  abstract runMigrationCommand(
     passedParams: string[],
-    options: BaseCommandOptions,
+    options: Options,
   ): Promise<void>;
 }

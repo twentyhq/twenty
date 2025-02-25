@@ -23,11 +23,7 @@ const StyledRecordsWrapper = styled.div`
   }
 `;
 
-export const SettingsCustomDomain = ({
-  handleSave,
-}: {
-  handleSave: () => void;
-}) => {
+export const SettingsCustomDomain = () => {
   const { customDomainRecords, loading } = useRecoilValue(
     customDomainRecordsState,
   );
@@ -36,7 +32,7 @@ export const SettingsCustomDomain = ({
 
   const { t } = useLingui();
 
-  const { control, handleSubmit } = useFormContext<{
+  const { control } = useFormContext<{
     customDomain: string;
   }>();
 
@@ -57,11 +53,6 @@ export const SettingsCustomDomain = ({
               onChange={onChange}
               placeholder="crm.yourdomain.com"
               error={error?.message}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSubmit(handleSave);
-                }
-              }}
               loading={!!loading}
               fullWidth
             />

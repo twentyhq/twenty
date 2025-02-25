@@ -1,7 +1,9 @@
+import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
 export const USER_QUERY_FRAGMENT = gql`
+  ${ROLE_FRAGMENT}
   fragment UserQueryFragment on User {
     id
     firstName
@@ -64,6 +66,9 @@ export const USER_QUERY_FRAGMENT = gql`
         status
       }
       workspaceMembersCount
+      defaultRole {
+        ...RoleFragment
+      }
     }
     workspaces {
       workspace {

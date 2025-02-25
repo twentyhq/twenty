@@ -5,6 +5,7 @@ import {
   IsNotIn,
   IsOptional,
   IsString,
+  IsUUID,
   Matches,
 } from 'class-validator';
 
@@ -184,4 +185,9 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   isPasswordAuthEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsUUID()
+  @IsOptional()
+  defaultRoleId?: string;
 }
