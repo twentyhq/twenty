@@ -48,6 +48,8 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -70,6 +72,7 @@ export class WorkspaceResolver {
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly roleService: RoleService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
@@ -189,6 +192,20 @@ export class WorkspaceResolver {
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @ResolveField(() => RoleDTO, { nullable: true })
+  async defaultRole(@Parent() workspace: Workspace): Promise<RoleDTO | null> {
+    if (!workspace.defaultRoleId) {
+      return null;
+    }
+
+    const role = await this.roleService.getRoleById(
+      workspace.defaultRoleId,
+      workspace.id,
+    );
+
+    return role;
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })
