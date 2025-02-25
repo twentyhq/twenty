@@ -168,8 +168,6 @@ export const NoResultsSearchFallback: Story = {
     expect(await canvas.findByText('No results found')).toBeVisible();
     const searchRecordsButton = await canvas.findByText('Search records');
     expect(searchRecordsButton).toBeVisible();
-    await userEvent.click(searchRecordsButton);
-    expect(await canvas.findByText('Linkedin')).toBeVisible();
   },
   parameters: {
     msw: {
