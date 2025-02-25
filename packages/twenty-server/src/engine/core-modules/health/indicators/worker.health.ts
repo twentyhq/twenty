@@ -105,8 +105,7 @@ export class WorkerHealthIndicator {
         `Error getting queue details for ${queueName}: ${error.message}`,
       );
       await queue.close();
-
-      return null;
+      throw error;
     }
   }
 
@@ -115,10 +114,16 @@ export class WorkerHealthIndicator {
     const queueStatuses: WorkerQueueHealth[] = [];
 
     for (const queueName of queues) {
-      const queueDetails = await this.getQueueDetails(queueName);
+      try {
+        const queueDetails = await this.getQueueDetails(queueName);
 
-      if (queueDetails) {
-        queueStatuses.push(queueDetails);
+        if (queueDetails) {
+          queueStatuses.push(queueDetails);
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error checking worker for queue ${queueName}: ${error.message}`,
+        );
       }
     }
 
@@ -142,7 +147,6 @@ export class WorkerHealthIndicator {
 
     try {
       const queueDetails = await this.getQueueDetails(queueName);
-
       const { pointsNeeded, intervalMinutes } =
         this.getMetricsParameters(timeRange);
 
@@ -173,38 +177,7 @@ export class WorkerHealthIndicator {
       this.logger.error(
         `Error getting metrics for ${queueName}: ${error.message}`,
       );
-
-      // Return empty data structure to avoid breaking the UI
-      // this is repeated multiple times, may be find a better way to handle this
-      return {
-        queueName,
-        timeRange,
-        details: JSON.stringify({
-          queueName,
-          workers: 0,
-          status: 'unknown',
-          metrics: {
-            failed: 0,
-            completed: 0,
-            waiting: 0,
-            active: 0,
-            delayed: 0,
-            failureRate: 0,
-          },
-        }),
-        data: [
-          {
-            id: 'Completed Jobs',
-            data: [],
-            color: '#4caf50',
-          },
-          {
-            id: 'Failed Jobs',
-            data: [],
-            color: '#f44336',
-          },
-        ],
-      };
+      throw error;
     } finally {
       await queue.close();
     }
@@ -214,46 +187,25 @@ export class WorkerHealthIndicator {
     timeRange: '7D' | '1D' | '12H' | '4H',
   ): Promise<WorkerMetricsData[]> {
     const queues = Object.values(MessageQueue);
-    const metricsPromises = queues.map((queueName) =>
-      this.getQueueMetricsOverTime(queueName, timeRange).catch((error) => {
+    const results: WorkerMetricsData[] = [];
+
+    // Process queues sequentially to avoid overwhelming Redis
+    for (const queueName of queues) {
+      try {
+        const metrics = await this.getQueueMetricsOverTime(
+          queueName,
+          timeRange,
+        );
+
+        results.push(metrics);
+      } catch (error) {
         this.logger.error(
           `Error getting metrics for ${queueName}: ${error.message}`,
         );
+      }
+    }
 
-        // Return empty data structure to avoid breaking the UI
-        return {
-          queueName,
-          timeRange,
-          details: JSON.stringify({
-            queueName,
-            workers: 0,
-            status: 'unknown',
-            metrics: {
-              failed: 0,
-              completed: 0,
-              waiting: 0,
-              active: 0,
-              delayed: 0,
-              failureRate: 0,
-            },
-          }),
-          data: [
-            {
-              id: 'Completed Jobs',
-              data: [],
-              color: '#4caf50',
-            },
-            {
-              id: 'Failed Jobs',
-              data: [],
-              color: '#f44336',
-            },
-          ],
-        };
-      }),
-    );
-
-    return Promise.all(metricsPromises);
+    return results;
   }
 
   private getMetricsParameters(timeRange: '7D' | '1D' | '12H' | '4H'): {
@@ -280,38 +232,35 @@ export class WorkerHealthIndicator {
     maxPoints: number,
   ): { timestamp: number; count: number }[] {
     if (!metrics || !metrics.data || !Array.isArray(metrics.data)) {
-      return [];
+      return this.generateEmptyTimeSeriesPoints(intervalMinutes, maxPoints);
     }
 
     try {
       const now = Date.now();
-
       const totalTimeSpanMs = intervalMinutes * maxPoints * 60 * 1000;
-
       const availablePoints = metrics.data.length;
 
-      const actualPoints = Math.min(availablePoints, maxPoints);
-
-      const result: { timestamp: number; count: number }[] = [];
-
-      // Handle edge case: if we only have one point, avoid division by zero
-      if (actualPoints <= 1) {
-        const count =
-          availablePoints > 0
+      if (availablePoints <= 1) {
+        const singlePointValue =
+          availablePoints === 1
             ? typeof metrics.data[0] === 'number'
               ? metrics.data[0]
               : parseInt(metrics.data[0] as unknown as string, 10) || 0
             : 0;
 
-        result.push({ timestamp: now, count });
-
-        return result;
+        return this.generateEmptyTimeSeriesPoints(
+          intervalMinutes,
+          maxPoints,
+          singlePointValue,
+        );
       }
+
+      const actualPoints = Math.min(availablePoints, maxPoints);
+      const result: { timestamp: number; count: number }[] = [];
 
       for (let i = 0; i < actualPoints; i++) {
         const timeOffset = (i / (actualPoints - 1)) * totalTimeSpanMs;
         const timestamp = now - timeOffset;
-
         const dataIndex = Math.min(i, availablePoints - 1);
 
         let count = 0;
@@ -333,9 +282,29 @@ export class WorkerHealthIndicator {
       return result;
     } catch (error) {
       this.logger.error(`Error extracting BullMQ metrics: ${error.message}`);
-
-      return [];
+      throw error;
     }
+  }
+
+  private generateEmptyTimeSeriesPoints(
+    intervalMinutes: number,
+    numPoints: number,
+    currentPointValue = 0,
+  ): { timestamp: number; count: number }[] {
+    const now = Date.now();
+    const totalTimeSpanMs = intervalMinutes * numPoints * 60 * 1000;
+    const result: { timestamp: number; count: number }[] = [];
+
+    for (let i = 0; i < numPoints; i++) {
+      const timeOffset = i === 0 ? 0 : (i / (numPoints - 1)) * totalTimeSpanMs;
+      const timestamp = now - timeOffset;
+
+      const count = i === 0 ? currentPointValue : 0;
+
+      result.push({ timestamp, count });
+    }
+
+    return result;
   }
 
   private transformMetricsForGraph(
@@ -379,42 +348,26 @@ export class WorkerHealthIndicator {
         (a, b) => a.timestamp - b.timestamp,
       );
 
-      const defaultDetails = {
-        queueName,
-        workers: 0,
-        status: 'unknown',
-        metrics: {
-          failed: 0,
-          completed: 0,
-          waiting: 0,
-          active: 0,
-          delayed: 0,
-          failureRate: 0,
-        },
-      };
-
       const formatForNivo = (timestamp: number): string => {
         try {
           const date = new Date(timestamp);
 
           if (isNaN(date.getTime())) {
             this.logger.warn(`Invalid timestamp: ${timestamp}`);
-
-            return format(new Date(), 'yyyy-MM-dd HH:mm:ss');
+            throw new Error(`Invalid timestamp: ${timestamp}`);
           }
 
           return format(date, 'yyyy-MM-dd HH:mm:ss');
         } catch (error) {
           this.logger.error(`Error formatting date: ${error.message}`);
-
-          return format(new Date(), 'yyyy-MM-dd HH:mm:ss');
+          throw error;
         }
       };
 
       return {
         queueName,
         timeRange,
-        details: JSON.stringify(queueDetails || defaultDetails),
+        details: JSON.stringify(queueDetails),
         data: [
           {
             id: 'Completed Jobs',
@@ -438,37 +391,7 @@ export class WorkerHealthIndicator {
       this.logger.error(
         `Error transforming metrics for graph: ${error.message}`,
       );
-
-      // Return a valid empty data structure to avoid breaking the UI
-      return {
-        queueName,
-        timeRange,
-        details: JSON.stringify({
-          queueName,
-          workers: 0,
-          status: 'unknown',
-          metrics: {
-            failed: 0,
-            completed: 0,
-            waiting: 0,
-            active: 0,
-            delayed: 0,
-            failureRate: 0,
-          },
-        }),
-        data: [
-          {
-            id: 'Completed Jobs',
-            data: [],
-            color: '#4caf50',
-          },
-          {
-            id: 'Failed Jobs',
-            data: [],
-            color: '#f44336',
-          },
-        ],
-      };
+      throw error;
     }
   }
 }
