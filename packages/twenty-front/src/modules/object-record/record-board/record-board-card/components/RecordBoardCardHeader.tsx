@@ -122,90 +122,78 @@ export const RecordBoardCardHeader = ({
     recordIndexOpenRecordInSelector,
   );
 
-  const getCardHeading = () => {
-    if (isCreating && position !== undefined) {
-      return (
-        <RecordInlineCellEditMode>
-          <StyledTextInput
-            autoFocus
-            value={newLabelValue}
-            onInputEnter={() =>
-              handleInputEnter(
-                identifierFieldDefinition.label ?? '',
-                newLabelValue,
-                position,
-                onCreateSuccess,
-              )
-            }
-            onBlur={() =>
-              handleBlur(
-                identifierFieldDefinition.label ?? '',
-                newLabelValue,
-                position,
-                onCreateSuccess,
-              )
-            }
-            onChange={(text: string) => setNewLabelValue(text)}
-            placeholder={identifierFieldDefinition.label}
-          />
-        </RecordInlineCellEditMode>
-      );
-    }
-
-    if (isIdentifierEmpty) {
-      return (
-        <FieldContext.Provider
-          value={{
-            recordId,
-            maxWidth: 156,
-            recoilScopeId:
-              (isCreating ? 'new' : recordId) +
-              identifierFieldDefinition.fieldMetadataId,
-            isLabelIdentifier: true,
-            fieldDefinition: {
-              disableTooltip: false,
-              fieldMetadataId: identifierFieldDefinition.fieldMetadataId,
-              label: `Set ${identifierFieldDefinition.label}`,
-              iconName: identifierFieldDefinition.iconName,
-              type: identifierFieldDefinition.type,
-              metadata: identifierFieldDefinition.metadata,
-              defaultValue: identifierFieldDefinition.defaultValue,
-              editButtonIcon: getFieldButtonIcon({
-                metadata: identifierFieldDefinition.metadata,
-                type: identifierFieldDefinition.type,
-              }),
-            },
-            useUpdateRecord: useUpdateOneRecordHook,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
-          }}
-        >
-          <RecordInlineCell />
-        </FieldContext.Provider>
-      );
-    }
-
-    if (!isDefined(record)) {
-      return null;
-    }
-
-    return (
-      <RecordChip
-        objectNameSingular={objectMetadataItem.nameSingular}
-        record={record}
-        variant={AvatarChipVariant.Transparent}
-        maxWidth={150}
-        to={
-          recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-            ? indexIdentifierUrl(recordId)
-            : undefined
-        }
-      />
-    );
-  };
-
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
-      <StopPropagationContainer>{getCardHeading()}</StopPropagationContainer>
+      <StopPropagationContainer>
+        {isCreating && position !== undefined ? (
+          <RecordInlineCellEditMode>
+            <StyledTextInput
+              autoFocus
+              value={newLabelValue}
+              onInputEnter={() =>
+                handleInputEnter(
+                  identifierFieldDefinition.label ?? '',
+                  newLabelValue,
+                  position,
+                  onCreateSuccess,
+                )
+              }
+              onBlur={() =>
+                handleBlur(
+                  identifierFieldDefinition.label ?? '',
+                  newLabelValue,
+                  position,
+                  onCreateSuccess,
+                )
+              }
+              onChange={(text: string) => setNewLabelValue(text)}
+              placeholder={identifierFieldDefinition.label}
+            />
+          </RecordInlineCellEditMode>
+        ) : isIdentifierEmpty ? (
+          <FieldContext.Provider
+            value={{
+              recordId,
+              maxWidth: 156,
+              recoilScopeId:
+                (isCreating ? 'new' : recordId) +
+                identifierFieldDefinition.fieldMetadataId,
+              isLabelIdentifier: true,
+              fieldDefinition: {
+                disableTooltip: false,
+                fieldMetadataId: identifierFieldDefinition.fieldMetadataId,
+                label: `Set ${identifierFieldDefinition.label}`,
+                iconName: identifierFieldDefinition.iconName,
+                type: identifierFieldDefinition.type,
+                metadata: identifierFieldDefinition.metadata,
+                defaultValue: identifierFieldDefinition.defaultValue,
+                editButtonIcon: getFieldButtonIcon({
+                  metadata: identifierFieldDefinition.metadata,
+                  type: identifierFieldDefinition.type,
+                }),
+              },
+              useUpdateRecord: useUpdateOneRecordHook,
+              hotkeyScope: InlineCellHotkeyScope.InlineCell,
+            }}
+          >
+            <RecordInlineCell />
+          </FieldContext.Provider>
+        ) : (
+          isDefined(record) && (
+            <RecordChip
+              objectNameSingular={objectMetadataItem.nameSingular}
+              record={record}
+              variant={AvatarChipVariant.Transparent}
+              maxWidth={150}
+              to={
+                recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
+                  ? indexIdentifierUrl(recordId)
+                  : undefined
+              }
+            />
+          )
+        )}
+      </StopPropagationContainer>
 
       {!isCreating && (
         <>
