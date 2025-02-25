@@ -15,6 +15,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -99,7 +100,11 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
+  const {
+    closeCommandMenu,
+    goBackFromCommandMenu,
+    navigateCommandMenuHistory,
+  } = useCommandMenu();
 
   const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemComponentState,
@@ -118,35 +123,56 @@ export const CommandMenuTopBar = () => {
   );
 
   const contextChips = useMemo(() => {
-    return commandMenuNavigationStack
-      .filter((page) => page.page !== CommandMenuPages.Root)
-      .map((page) => {
-        return {
-          Icons: [<page.pageIcon size={theme.icon.size.sm} />],
-          text: page.pageTitle,
-        };
-      });
-  }, [commandMenuNavigationStack, theme.icon.size.sm]);
+    const filteredCommandMenuNavigationStack =
+      commandMenuNavigationStack.filter(
+        (page) => page.page !== CommandMenuPages.Root,
+      );
+
+    return filteredCommandMenuNavigationStack.map((page, index) => ({
+      Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+      text: page.pageTitle,
+      onClick:
+        index === filteredCommandMenuNavigationStack.length - 1
+          ? undefined
+          : () => {
+              navigateCommandMenuHistory(index);
+            },
+    }));
+  }, [
+    commandMenuNavigationStack,
+    navigateCommandMenuHistory,
+    theme.icon.size.sm,
+  ]);
 
   const location = useLocation();
   const isButtonVisible =
     !location.pathname.startsWith('/objects/') &&
     !location.pathname.startsWith('/object/');
 
+  const backButtonAnimationDuration =
+    contextChips.length > 0 ? theme.animation.duration.instant : 0;
+
   return (
     <StyledInputContainer>
       <StyledContentContainer>
         {isCommandMenuV2Enabled && (
           <>
-            {commandMenuPage !== CommandMenuPages.Root && (
-              <CommandMenuContextChip
-                Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-                onClick={() => {
-                  goBackFromCommandMenu();
-                }}
-                testId="command-menu-go-back-button"
-              />
-            )}
+            <AnimatePresence>
+              {commandMenuPage !== CommandMenuPages.Root && (
+                <motion.div
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{
+                    duration: backButtonAnimationDuration,
+                  }}
+                >
+                  <CommandMenuContextChip
+                    Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+                    onClick={goBackFromCommandMenu}
+                    testId="command-menu-go-back-button"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
             {isDefined(contextStoreCurrentObjectMetadataItem) &&
             commandMenuPage !== CommandMenuPages.SearchRecords ? (
               <CommandMenuContextChipGroupsWithRecordSelection
