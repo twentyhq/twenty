@@ -117,7 +117,6 @@ export const PlaygroundSetupForm = () => {
         render={({ field: { onChange, value } }) => (
           <TextInput
             label={'API Key'}
-            placeholder={'Listing'}
             value={value}
             onChange={(value) => {
               onChange(value);
