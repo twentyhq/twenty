@@ -8,13 +8,14 @@ import { SendEmailActionModule } from 'src/modules/workflow/workflow-executor/wo
 import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
-
+import { FormActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form-action.module';
 @Module({
   imports: [
     WorkflowCommonModule,
     CodeActionModule,
     SendEmailActionModule,
     RecordCRUDActionModule,
+    FormActionModule,
     WorkflowRunModule,
   ],
   providers: [
