@@ -82,7 +82,7 @@ export const PlaygroundSetupForm = () => {
 
     const openAPIReference = await response.json();
     if (!openAPIReference.tags) {
-      throw new Error('Invalid Token');
+      throw new Error(t`Invalid API Key`);
     }
 
     setOpenAPIReference(openAPIReference);
