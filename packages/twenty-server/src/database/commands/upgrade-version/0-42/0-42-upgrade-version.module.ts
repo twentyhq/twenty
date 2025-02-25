@@ -6,7 +6,6 @@ import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade
 import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
 import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -27,7 +26,6 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
           [ObjectMetadataEntity, FieldMetadataEntity],
           'metadata',
         ),
-        TypeORMModule,
         WorkspaceSyncMetadataCommandsModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMigrationModule,
