@@ -1,5 +1,5 @@
-import { AvatarChipsCommonProps } from '@ui/display/chip/avatar/types/AvatarChipsCommonProps.type';
-import { AvatarChipVariant } from '@ui/display/chip/avatar/types/AvatarChipsVariant.type';
+import { AvatarChipsCommonProps } from '@ui/display/avatar-chip/types/AvatarChipsCommonProps.type';
+import { AvatarChipVariant } from '@ui/display/avatar-chip/types/AvatarChipsVariant.type';
 import { ChipVariant } from '@ui/display/chip/components/Chip';
 
 type GetAvatarChipsVariantArgs = Pick<

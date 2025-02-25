@@ -1,6 +1,6 @@
-import { AvatarChipsLeftComponent } from '@ui/display/chip/avatar/components/AvatarChipLeftComponent';
-import { AvatarChipsCommonProps } from '@ui/display/chip/avatar/types/AvatarChipsCommonProps.type';
-import { getAvatarChipsVariant } from '@ui/display/chip/avatar/utils/getAvatarChipsVariant.util';
+import { AvatarChipsLeftComponent } from '@ui/display/avatar-chip/components/AvatarChipLeftComponent';
+import { AvatarChipsCommonProps } from '@ui/display/avatar-chip/types/AvatarChipsCommonProps.type';
+import { getAvatarChipsVariant } from '@ui/display/avatar-chip/utils/getAvatarChipsVariant.util';
 import { LinkChip, LinkChipProps } from '@ui/display/chip/components/LinkChip';
 
 export type LinkAvatarChipProps = Omit<AvatarChipsCommonProps, 'clickable'> & {
