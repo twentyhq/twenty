@@ -8,11 +8,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { z } from 'zod';
 import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
@@ -31,14 +31,14 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           domain: z
             .string()
             .regex(
-              /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+              /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])\.[a-zA-Z]{2,}$/,
               {
-                message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+                message: t`Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters.`,
               },
             )
             .max(256),
           email: z.string().min(1, {
-            message: t`Email can not be empty`,
+            message: t`Email cannot be empty`,
           }),
         })
         .strict(),
@@ -53,9 +53,6 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const handleSave = async () => {
     try {
-      if (!form.formState.isValid || !form.formState.isSubmitting) {
-        return;
-      }
       createApprovedAccessDomain({
         variables: {
           input: {
@@ -117,7 +114,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInput
+                <TextInputV2
                   autoComplete="off"
                   value={value}
                   onChange={(domain: string) => {
@@ -126,6 +123,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                   fullWidth
                   placeholder="yourdomain.com"
                   error={error?.message}
+                  leftAdornment="https://"
                 />
               )}
             />
@@ -142,16 +140,16 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInput
+                <TextInputV2
                   autoComplete="off"
                   value={value.split('@')[0]}
                   onChange={onChange}
                   fullWidth
                   error={error?.message}
+                  rightAdornment={`@${domain.length !== 0 ? domain : 'your-domain.com'}`}
                 />
               )}
             />
-            {domain}
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
