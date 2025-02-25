@@ -1,6 +1,3 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { openAPIReferenceState } from '@/settings/playground/states/openAPIReference';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
@@ -8,7 +5,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import {
@@ -67,11 +63,6 @@ export const PlaygroundSetupForm = () => {
     resolver: zodResolver(playgroundSetupFormSchema),
   });
 
-  const { records: apiKeys } = useFindManyRecords<ApiKey>({
-    objectNameSingular: CoreObjectNameSingular.ApiKey,
-    filter: { revokedAt: { is: 'NULL' } },
-  });
-
   const getOpenAPIConfig = async (values: PlaygroundSetupFormValues) => {
     const response = await fetch(
       REACT_APP_SERVER_BASE_URL + '/open-api/' + values.schema,
@@ -99,21 +90,11 @@ export const PlaygroundSetupForm = () => {
     });
   };
 
-  const options = useMemo(() => {
-    return apiKeys.length > 0
-      ? apiKeys.map((apiKey) => ({
-          value: apiKey.id,
-          label: apiKey.name,
-        }))
-      : [{ value: '', label: 'No API Key' }];
-  }, [apiKeys]);
-
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name={'apiKey'}
         control={control}
-        defaultValue={options[0].value}
         render={({ field: { onChange, value } }) => (
           <TextInput
             label={'API Key'}
