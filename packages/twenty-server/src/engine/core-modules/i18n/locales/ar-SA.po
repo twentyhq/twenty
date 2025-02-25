@@ -1605,7 +1605,7 @@ msgstr "مؤشر التزامن"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr "\n"
+msgstr "مؤشر المزامنة. يستخدم لمزامنة الأحداث من موفر التقويم"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
