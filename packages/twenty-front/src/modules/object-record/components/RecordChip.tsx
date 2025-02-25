@@ -50,14 +50,12 @@ export const RecordChip = ({
     return (
       <AvatarChip
         size={size}
-        clickable={false}
         maxWidth={maxWidth}
         placeholderColorSeed={record.id}
         name={recordChipData.name}
         avatarType={recordChipData.avatarType}
         avatarUrl={recordChipData.avatarUrl ?? ''}
         className={className}
-        variant={variant}
       />
     );
   }

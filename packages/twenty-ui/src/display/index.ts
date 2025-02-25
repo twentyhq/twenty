@@ -3,7 +3,6 @@ export * from './avatar-chip/components/AvatarChipLeftComponent';
 export * from './avatar-chip/components/LinkAvatarChip';
 export * from './avatar-chip/types/AvatarChipsCommonProps.type';
 export * from './avatar-chip/types/AvatarChipsVariant.type';
-export * from './avatar-chip/utils/getAvatarChipsVariant.util';
 export * from './avatar/components/Avatar';
 export * from './avatar/components/AvatarGroup';
 export * from './avatar/components/states/isInvalidAvatarUrlState';

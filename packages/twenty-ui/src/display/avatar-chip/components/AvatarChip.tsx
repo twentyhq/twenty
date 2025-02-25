@@ -1,7 +1,6 @@
 import { AvatarChipsLeftComponent } from '@ui/display/avatar-chip/components/AvatarChipLeftComponent';
 import { AvatarChipsCommonProps } from '@ui/display/avatar-chip/types/AvatarChipsCommonProps.type';
-import { getAvatarChipsVariant } from '@ui/display/avatar-chip/utils/getAvatarChipsVariant.util';
-import { Chip } from '@ui/display/chip/components/Chip';
+import { Chip, ChipVariant } from '@ui/display/chip/components/Chip';
 
 export type AvatarChipProps = AvatarChipsCommonProps;
 export const AvatarChip = ({
@@ -15,15 +14,10 @@ export const AvatarChip = ({
   maxWidth,
   placeholderColorSeed,
   size,
-  clickable,
-  variant,
 }: AvatarChipProps) => (
   <Chip
     label={name}
-    variant={getAvatarChipsVariant({
-      variant,
-      clickable,
-    })}
+    variant={ChipVariant.Transparent}
     size={size}
     leftComponent={() => (
       <AvatarChipsLeftComponent
@@ -36,7 +30,7 @@ export const AvatarChip = ({
         placeholderColorSeed={placeholderColorSeed}
       />
     )}
-    clickable={clickable}
+    clickable={false}
     className={className}
     maxWidth={maxWidth}
   />

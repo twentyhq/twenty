@@ -1,11 +1,13 @@
 import { AvatarChipsLeftComponent } from '@ui/display/avatar-chip/components/AvatarChipLeftComponent';
 import { AvatarChipsCommonProps } from '@ui/display/avatar-chip/types/AvatarChipsCommonProps.type';
-import { getAvatarChipsVariant } from '@ui/display/avatar-chip/utils/getAvatarChipsVariant.util';
+import { AvatarChipVariant } from '@ui/display/avatar-chip/types/AvatarChipsVariant.type';
+import { ChipVariant } from '@ui/display/chip/components/Chip';
 import { LinkChip, LinkChipProps } from '@ui/display/chip/components/LinkChip';
 
 export type LinkAvatarChipProps = Omit<AvatarChipsCommonProps, 'clickable'> & {
   to: string;
   onClick?: LinkChipProps['onClick'];
+  variant?: AvatarChipVariant;
 };
 
 export const LinkAvatarChip = ({
@@ -27,10 +29,12 @@ export const LinkAvatarChip = ({
     to={to}
     onClick={onClick}
     label={name}
-    variant={getAvatarChipsVariant({
-      variant,
-      clickable: true,
-    })}
+    variant={
+      //Regular but Highlighted -> missleading
+      variant === AvatarChipVariant.Regular
+        ? ChipVariant.Highlighted
+        : ChipVariant.Regular
+    }
     size={size}
     leftComponent={() => (
       <AvatarChipsLeftComponent
