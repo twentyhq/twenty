@@ -1,18 +1,16 @@
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useState } from 'react';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { useDebouncedCallback } from 'use-debounce';
-import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
-import { isDefined } from 'twenty-shared';
-import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { SettingsPath } from '@/types/SettingsPath';
+import { useState } from 'react';
+import { getUrlHostnameOrThrow, isDefined, isValidUrl } from 'twenty-shared';
+import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isValidUrl } from '~/utils/url/isValidUrl';
-import { getUrlHostname } from '~/utils/url/getUrlHostname';
+import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
+import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
 type WebhookFormData = {
   targetUrl: string;
@@ -106,9 +104,7 @@ export const useWebhookUpdateForm = ({
       const isTargetUrlValid = isValidUrl(trimmedUrl);
       setIsTargetUrlValid(isTargetUrlValid);
       if (isTargetUrlValid) {
-        setTitle(
-          getUrlHostname(trimmedUrl, { keepPath: true }) || 'New Webhook',
-        );
+        setTitle(getUrlHostnameOrThrow(trimmedUrl) || 'New Webhook');
       }
     }
   };
@@ -177,9 +173,7 @@ export const useWebhookUpdateForm = ({
         operations,
         secret: data.secret,
       });
-      setTitle(
-        getUrlHostname(data.targetUrl, { keepPath: true }) || 'New Webhook',
-      );
+      setTitle(getUrlHostnameOrThrow(data.targetUrl) || 'New Webhook');
       setLoading(false);
     },
   });

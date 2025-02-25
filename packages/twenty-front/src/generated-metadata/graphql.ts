@@ -1815,7 +1815,7 @@ export enum SettingsPermissions {
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   WORKSPACE = 'WORKSPACE',
-  WORKSPACE_USERS = 'WORKSPACE_USERS'
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
 
 export type SetupOidcSsoInput = {
@@ -2045,6 +2045,7 @@ export type UpdateWorkflowVersionStepInput = {
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
   customDomain?: InputMaybe<Scalars['String']['input']>;
+  defaultRoleId?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2058,6 +2059,7 @@ export type UpdateWorkspaceInput = {
 export type User = {
   __typename?: 'User';
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
+  canAccessFullAdminPanel: Scalars['Boolean']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   currentUserWorkspace?: Maybe<UserWorkspace>;
@@ -2196,6 +2198,7 @@ export type Workspace = {
   customDomain?: Maybe<Scalars['String']['output']>;
   databaseSchema: Scalars['String']['output'];
   databaseUrl: Scalars['String']['output'];
+  defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   featureFlags?: Maybe<Array<FeatureFlag>>;
@@ -2211,6 +2214,7 @@ export type Workspace = {
   metadataVersion: Scalars['Float']['output'];
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  version?: Maybe<Scalars['String']['output']>;
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
   workspaceUrls: WorkspaceUrls;
 };

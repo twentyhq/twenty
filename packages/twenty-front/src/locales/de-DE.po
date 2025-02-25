@@ -229,6 +229,10 @@ msgstr "Hinzugefügt am {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "Zur Blockliste hinzugefügt"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "Passen Sie die rollenspezifischen Einstellungen an"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Erweiterter Filter"
@@ -261,7 +265,7 @@ msgstr "Alle Zeilen"
 msgid "All Objects"
 msgstr "Alle Objekte"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Alle Rollen"
 
@@ -360,7 +364,7 @@ msgstr "Aufsteigend"
 msgid "Assign {workspaceMemberName}?"
 msgstr "{workspaceMemberName} zuweisen?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Rollen zuweisen, um die Zugriffsrechte der Mitglieder festzulegen"
 
@@ -372,7 +376,7 @@ msgstr "Mitglied zuweisen"
 msgid "Assigned members"
 msgstr "Zugewiesene Mitglieder"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Zugewiesen an"
 
@@ -709,7 +713,7 @@ msgstr "Neuen Datensatz erstellen"
 msgid "Create profile"
 msgstr "Profil erstellen"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Rolle erstellen"
 
@@ -737,6 +741,10 @@ msgstr "Erstellt"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Benutzerdefinierte Domäne"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "Benutzerdefinierte Domain aktualisiert"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1788,7 +1796,7 @@ msgstr "Nach rechts verschieben"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2053,7 @@ msgstr "Geöffnet"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Optional: Definieren Sie einen geheimen String, den wir in jedem Webhook enthalten. Verwenden Sie dies zur Authentifizierung und Überprüfung des Webhooks bei Erhalt."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2458,6 +2467,10 @@ msgstr "Server-Admin-Bereich"
 msgid "Service Provider Details"
 msgstr "Details des Dienstanbieters"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "Legen Sie eine Standardrolle für diesen Arbeitsbereich fest"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Als Standard festlegen"
@@ -2566,6 +2579,10 @@ msgstr "Die Subdomain darf nicht länger als 30 Zeichen sein"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Die Subdomain darf nicht kürzer als 3 Zeichen sein"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "Subdomain aktualisiert"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3052,6 +3069,10 @@ msgstr "ja"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "Sie dürfen keine Datensätze in diesem Objekt erstellen"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "Sie haben keinen Zugriff, um Benutzer zu imitieren."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

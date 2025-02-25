@@ -1464,6 +1464,7 @@ msgstr "Telefoner"
 msgid "Point of Contact"
 msgstr "Kontaktperson"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1501,8 +1502,7 @@ msgstr "F\"or\"aldrade f\"argschema"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred language"
-msgstr ""
-"F\"or\"aldrat spr\n"
+msgstr "F\"or\"aldrat spr\n"
 "k"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1606,8 +1606,7 @@ msgstr "Synkkurs"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr ""
-"Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
+msgstr "Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
 "n kalenderleverant\"oren"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2263,6 +2262,10 @@ msgstr "Arbetsytemedlemavatar"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member name"
 msgstr "Arbetsytemedlemsnamn"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Arbetsplatsmedlems position"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
