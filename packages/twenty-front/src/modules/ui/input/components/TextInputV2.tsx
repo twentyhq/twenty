@@ -31,10 +31,52 @@ const StyledContainer = styled.div<
 `;
 
 const StyledInputContainer = styled.div`
+  align-items: center;
   background-color: inherit;
   display: flex;
   flex-direction: row;
   position: relative;
+`;
+
+const StyledStartAdornmentContainer = styled.div<{
+  sizeVariant: TextInputV2Size;
+}>`
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.transparent.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm} 0 0
+    ${({ theme }) => theme.border.radius.sm};
+  border-right: none;
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledEndAdornmentContainer = styled.div<{
+  sizeVariant: TextInputV2Size;
+}>`
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+  align-items: center;
+  box-sizing: border-box;
+  background-color: ${({ theme }) => theme.background.transparent.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-left: none;
+  border-radius: 0 ${({ theme }) => theme.border.radius.sm}
+    ${({ theme }) => theme.border.radius.sm} 0;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: auto;
+  min-width: fit-content;
 `;
 
 const StyledInput = styled.input<
@@ -46,13 +88,21 @@ const StyledInput = styled.input<
     | 'width'
     | 'inheritFontStyles'
     | 'autoGrow'
+    | 'endAdornment'
+    | 'startAdornment'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border-radius: ${({ theme, startAdornment, endAdornment }) =>
+    startAdornment
+      ? `0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0`
+      : endAdornment
+        ? `${theme.border.radius.sm} 0 0 ${theme.border.radius.sm}`
+        : theme.border.radius.sm};
+
   border: 1px solid
     ${({ theme, error }) =>
       error ? theme.border.color.danger : theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
@@ -165,6 +215,8 @@ export type TextInputV2ComponentProps = Omit<
   sizeVariant?: TextInputV2Size;
   inheritFontStyles?: boolean;
   loading?: boolean;
+  endAdornment?: string;
+  startAdornment?: string;
 };
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
@@ -201,6 +253,8 @@ const TextInputV2Component = forwardRef<
       dataTestId,
       autoGrow = false,
       loading = false,
+      endAdornment,
+      startAdornment,
     },
     ref,
   ) => {
@@ -235,6 +289,12 @@ const TextInputV2Component = forwardRef<
           </InputLabel>
         )}
         <StyledInputContainer>
+          {startAdornment && (
+            <StyledStartAdornmentContainer sizeVariant={sizeVariant}>
+              {startAdornment}
+            </StyledStartAdornmentContainer>
+          )}
+
           {!!LeftIcon && (
             <StyledLeftIconContainer sizeVariant={sizeVariant}>
               <StyledTrailingIcon isFocused={isFocused}>
@@ -271,9 +331,15 @@ const TextInputV2Component = forwardRef<
               sizeVariant,
               inheritFontStyles,
               autoGrow,
+              startAdornment,
+              endAdornment,
             }}
           />
-
+          {endAdornment && (
+            <StyledEndAdornmentContainer sizeVariant={sizeVariant}>
+              {endAdornment}
+            </StyledEndAdornmentContainer>
+          )}
           <StyledTrailingIconContainer {...{ error }}>
             {!error && type === INPUT_TYPE_PASSWORD && (
               <StyledTrailingIcon

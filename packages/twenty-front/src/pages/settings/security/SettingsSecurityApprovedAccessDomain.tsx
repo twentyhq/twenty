@@ -8,11 +8,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { z } from 'zod';
 import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
@@ -113,7 +113,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
             name="domain"
             control={formConfig.control}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <TextInput
+              <TextInputV2
                 autoComplete="off"
                 value={value}
                 onChange={(domain: string) => {
@@ -122,6 +122,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 fullWidth
                 placeholder="yourdomain.com"
                 error={error?.message}
+                startAdornment="https://"
               />
             )}
           />
@@ -135,16 +136,16 @@ export const SettingsSecurityApprovedAccessDomain = () => {
             name="email"
             control={formConfig.control}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <TextInput
+              <TextInputV2
                 autoComplete="off"
                 value={value.split('@')[0]}
                 onChange={onChange}
                 fullWidth
                 error={error?.message}
+                endAdornment={`@${domain.length !== 0 ? domain : 'your-domain.com'}`}
               />
             )}
           />
-          {domain}
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
