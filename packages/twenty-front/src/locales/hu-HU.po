@@ -742,6 +742,10 @@ msgstr "Létrehozva"
 msgid "Custom Domain"
 msgstr "Egyéni Domain"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Egyéni objektumok"
@@ -2575,6 +2579,10 @@ msgstr "Az aldomén nem lehet hosszabb 30 karakternél"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Az aldomén nem lehet rövidebb 3 karakternél"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

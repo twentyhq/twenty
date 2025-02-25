@@ -737,6 +737,10 @@ msgstr ""
 msgid "Custom Domain"
 msgstr ""
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr ""
@@ -2569,6 +2573,10 @@ msgstr ""
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
 msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx

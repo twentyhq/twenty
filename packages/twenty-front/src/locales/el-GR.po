@@ -742,6 +742,10 @@ msgstr "Δημιουργήθηκε"
 msgid "Custom Domain"
 msgstr "Προσαρμοσμένο Όνομα Τομέα"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Προσαρμοσμένα αντικείμενα"
@@ -2575,6 +2579,10 @@ msgstr "Ο υποτομέας δεν μπορεί να είναι μεγαλύτ
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Ο υποτομέας δεν μπορεί να είναι μικρότερος από 3 χαρακτήρες"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

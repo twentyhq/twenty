@@ -744,6 +744,10 @@ msgstr "생성됨"
 msgid "Custom Domain"
 msgstr "사용자 지정 도메인"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "사용자 지정 개체"
@@ -2577,6 +2581,10 @@ msgstr "하위 도메인은 30자를 초과할 수 없습니다"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "하위 도메인은 3자보다 짧을 수 없습니다"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

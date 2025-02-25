@@ -742,6 +742,10 @@ msgstr "Đã tạo"
 msgid "Custom Domain"
 msgstr "Tên miền tùy chỉnh"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Đối tượng tùy chỉnh"
@@ -2575,6 +2579,10 @@ msgstr "Tên miền phụ không được dài quá 30 ký tự"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Tên miền phụ không được ngắn hơn 3 ký tự"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

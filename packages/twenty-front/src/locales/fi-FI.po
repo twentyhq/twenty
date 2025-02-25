@@ -742,6 +742,10 @@ msgstr "Luotu"
 msgid "Custom Domain"
 msgstr "Mukauta toimialuetta"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Mukautetut objektit"
@@ -2575,6 +2579,10 @@ msgstr "Alidomain ei voi olla yli 30 merkkiä pitkä"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Alidomain ei voi olla lyhyempi kuin 3 merkkiä"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

@@ -742,6 +742,10 @@ msgstr "Створено"
 msgid "Custom Domain"
 msgstr "Домашній домен"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Користувацькі об'єкти"
@@ -2631,6 +2635,10 @@ msgstr "Субдомен не може бути довшим за 30 симво�
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Субдомен не може бути коротшим за 3 символи"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

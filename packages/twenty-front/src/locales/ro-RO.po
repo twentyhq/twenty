@@ -742,6 +742,10 @@ msgstr "Creat"
 msgid "Custom Domain"
 msgstr "Domeniu Personalizat"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Obiecte personalizate"
@@ -2575,6 +2579,10 @@ msgstr "Subdomeniul nu poate fi mai lung de 30 de caractere"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdomeniul nu poate fi mai scurt de 3 caractere"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

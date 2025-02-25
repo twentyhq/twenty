@@ -742,6 +742,10 @@ msgstr "נוצר"
 msgid "Custom Domain"
 msgstr "דומיין מותאם אישית"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "עצמים מותאמים אישית"
@@ -2575,6 +2579,10 @@ msgstr "תת-דומיין לא יכול להיות ארוך מ-<b>30</b> תוו�
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "תת-דומיין לא יכול להיות קצר מ-<b>3</b> תווים"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

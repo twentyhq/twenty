@@ -742,6 +742,10 @@ msgstr "أنشئ"
 msgid "Custom Domain"
 msgstr "نطاق مخصص"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "كائنات مخصصة"
@@ -2575,6 +2579,10 @@ msgstr "لا يمكن أن يكون طول النطاق الفرعي أطول م
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "لا يمكن أن يقل طول النطاق الفرعي عن 3 أحرف"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
