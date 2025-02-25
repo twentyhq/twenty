@@ -3,6 +3,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { WorkflowRunStepDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepDetail';
+import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -31,8 +32,9 @@ export const RightDrawerWorkflowRunViewStep = () => {
     );
   }
 
-  const tabListId = `${'workflow-run-right-drawer'}`;
-  const { activeTabId } = useTabList<TabId>(tabListId);
+  const { activeTabId } = useTabList<TabId>(
+    WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+  );
 
   const tabs: SingleTabProps<TabId>[] = [
     { id: 'node', title: 'Node', Icon: IconStepInto },
@@ -44,7 +46,7 @@ export const RightDrawerWorkflowRunViewStep = () => {
     <>
       <StyledTabListContainer>
         <TabList
-          tabListInstanceId={tabListId}
+          tabListInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
           tabs={tabs}
           behaveAsLinks={false}
         />
