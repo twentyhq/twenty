@@ -1,8 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { CardContent, IconComponent, Radio } from 'twenty-ui';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Key } from 'ts-key-enum';
 
 const StyledRadioCardContent = styled(CardContent)`
   display: flex;
@@ -54,16 +52,6 @@ export const SettingsRadioCard = ({
   Icon,
 }: SettingsRadioCardProps) => {
   const theme = useTheme();
-  console.log('>>>>>>>>>>>>>>', value);
-  useScopedHotkeys(
-    [Key.Enter, ' '],
-    (event) => {
-      console.log('>>>>>>>>>>>>>>', event, value);
-      handleSelect(value);
-    },
-    'custom',
-    [handleSelect, value],
-  );
 
   const onClick = () => handleSelect(value);
 
