@@ -4,7 +4,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
-import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormMultiSelectFieldInputHotkeyScope';
+import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormMultiSelectFieldInputHotKeyScope';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
