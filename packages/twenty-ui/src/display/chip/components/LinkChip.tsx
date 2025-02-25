@@ -9,10 +9,12 @@ import {
 import { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
-export type LinkChipOnClick = (event: MouseEvent<HTMLAnchorElement>) => void;
-type LinkChipProps = Omit<ChipProps, 'onClick'> & {
+export type LinkChipProps = Omit<
+  ChipProps,
+  'onClick' | 'disabled' | 'clickable'
+> & {
   to: string;
-  onClick?: LinkChipOnClick;
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
 // Ideally we would use the UndecoratedLink component from @ui/navigation
@@ -25,8 +27,6 @@ export const LinkChip = ({
   to,
   size = ChipSize.Small,
   label,
-  disabled = false,
-  clickable = true,
   variant = ChipVariant.Regular,
   leftComponent = null,
   rightComponent = null,
@@ -40,8 +40,7 @@ export const LinkChip = ({
       <Chip
         size={size}
         label={label}
-        disabled={disabled}
-        clickable={clickable}
+        clickable={true}
         variant={variant}
         leftComponent={leftComponent}
         rightComponent={rightComponent}
