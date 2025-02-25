@@ -26,7 +26,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Webhooks', undefined, {
+    await canvas.findAllByText('Webhooks', undefined, {
       timeout: 3000,
     });
   },
