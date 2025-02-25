@@ -2286,4 +2286,3 @@ msgstr "Mật khẩu của bạn đã được thay đổi thành công"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Thành viên trong nhóm của bạn phụ trách quản lý tài khoản công ty"
-

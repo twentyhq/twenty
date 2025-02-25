@@ -229,6 +229,10 @@ msgstr "Tilføjet {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "Tilføjet til blokeringsliste"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Avanceret filter"
@@ -261,7 +265,7 @@ msgstr "Alle linjer"
 msgid "All Objects"
 msgstr "Alle objekter"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Alle roller"
 
@@ -360,7 +364,7 @@ msgstr "Stigende"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Tildele {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Tildel roller for at specificere hver medlems adgangstilladelser"
 
@@ -372,7 +376,7 @@ msgstr "Tildel til medlem"
 msgid "Assigned members"
 msgstr "Tildelte medlemmer"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Tildelt til"
 
@@ -709,7 +713,7 @@ msgstr "Opret ny post"
 msgid "Create profile"
 msgstr "Opret profil"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Opret Rolle"
 
@@ -737,6 +741,10 @@ msgstr "Oprettet"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Brugerdefineret domæne"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1788,7 +1796,7 @@ msgstr "Flyt til højre"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2053,7 @@ msgstr "Åbnet"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Valgfrit: Definér en hemmelig streng, som vi vil inkludere i hver webhook. Brug dette til at autentificere og verificere webhooken ved modtagelse."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2458,6 +2467,10 @@ msgstr "Serveradministratorpanel"
 msgid "Service Provider Details"
 msgstr "Tjenesteudbyderoplysninger"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr ""
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Indstil som standard"
@@ -2566,6 +2579,10 @@ msgstr "Underdomænet må ikke være længere end 30 tegn"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Underdomænet må ikke være kortere end 3 tegn"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3053,6 +3070,10 @@ msgstr "ja"
 msgid "You are not allowed to create records in this object"
 msgstr "Du har ikke tilladelse til at oprette poster i dette objekt"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr ""
+
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
 msgstr "Du vil blive opkrævet straks for hele året."
@@ -3084,4 +3105,3 @@ msgstr "Dit arbejdsområde"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Dit arbejdsområde vil blive deaktiveret"
-

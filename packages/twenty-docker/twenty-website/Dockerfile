@@ -26,4 +26,9 @@ WORKDIR /app/packages/twenty-website
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the website."
 
+RUN chown -R 1000 /app
+
+# Use non root user with uid 1000
+USER 1000
+
 CMD ["/bin/sh", "-c", "npx nx start"]

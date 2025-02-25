@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MigrationCommandModule } from 'src/database/commands/migration-command/miration-command.module';
 import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-42/0-42-fix-body-v2-view-field-position.command';
 import { LimitAmountOfViewFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-limit-amount-of-view-field';
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
 import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
-import { UpgradeTo0_42Command } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.command';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -19,24 +19,27 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
-    TypeOrmModule.forFeature(
-      [ObjectMetadataEntity, FieldMetadataEntity],
-      'metadata',
-    ),
-    WorkspaceSyncMetadataCommandsModule,
-    WorkspaceMigrationRunnerModule,
-    WorkspaceMigrationModule,
-    WorkspaceMetadataVersionModule,
-    WorkspaceDataSourceModule,
-    FeatureFlagModule,
-  ],
-  providers: [
-    UpgradeTo0_42Command,
-    MigrateRichTextFieldCommand,
-    FixBodyV2ViewFieldPositionCommand,
-    LimitAmountOfViewFieldCommand,
-    StandardizationOfActorCompositeContextTypeCommand,
+    MigrationCommandModule.register('0.42', {
+      imports: [
+        TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
+        TypeOrmModule.forFeature(
+          [ObjectMetadataEntity, FieldMetadataEntity],
+          'metadata',
+        ),
+        WorkspaceSyncMetadataCommandsModule,
+        WorkspaceMigrationRunnerModule,
+        WorkspaceMigrationModule,
+        WorkspaceMetadataVersionModule,
+        WorkspaceDataSourceModule,
+        FeatureFlagModule,
+      ],
+      providers: [
+        MigrateRichTextFieldCommand,
+        FixBodyV2ViewFieldPositionCommand,
+        LimitAmountOfViewFieldCommand,
+        StandardizationOfActorCompositeContextTypeCommand,
+      ],
+    }),
   ],
 })
 export class UpgradeTo0_42CommandModule {}

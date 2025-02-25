@@ -95,7 +95,8 @@ msgstr "24시간 ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr "\\\n"
+msgstr ""
+"\\\n"
 "팀과 함께 고객 관계를 관리할 수 있는 공유 환경입니다."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
@@ -230,6 +231,10 @@ msgstr "{beautifiedCreatedAt} 추가"
 msgid "Added to blocklist"
 msgstr "차단 목록에 추가됨"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "고급 필터"
@@ -262,7 +267,7 @@ msgstr "모든 줄"
 msgid "All Objects"
 msgstr "모든 개체"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "모든 역할"
 
@@ -361,7 +366,7 @@ msgstr "오름차순"
 msgid "Assign {workspaceMemberName}?"
 msgstr "{workspaceMemberName}님에게 할당하시겠습니까?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "각 구성원의 접근 권한을 지정하려면 역할을 할당하세요"
 
@@ -373,7 +378,7 @@ msgstr "멤버에게 할당"
 msgid "Assigned members"
 msgstr "할당된 멤버"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "할당됨"
 
@@ -710,7 +715,7 @@ msgstr "새 레코드 생성"
 msgid "Create profile"
 msgstr "프로필 생성"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "역할 생성"
 
@@ -738,6 +743,10 @@ msgstr "생성됨"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "사용자 지정 도메인"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1789,7 +1798,7 @@ msgstr "오른쪽으로 이동"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2046,6 +2055,7 @@ msgstr "열림"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "선택 사항: 모든 Webhook에 포함시킬 비밀 문자열을 정의하십시오. 이를 사용하여 Webhook 수신 시 인증하고 검증하십시오."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2459,6 +2469,10 @@ msgstr "서버 관리자 패널"
 msgid "Service Provider Details"
 msgstr "서비스 공급자 세부 정보"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr ""
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "기본값으로 설정"
@@ -2567,6 +2581,10 @@ msgstr "하위 도메인은 30자를 초과할 수 없습니다"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "하위 도메인은 3자보다 짧을 수 없습니다"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -3054,6 +3072,10 @@ msgstr "예"
 msgid "You are not allowed to create records in this object"
 msgstr "이 개체에 기록을 생성할 수 있는 권한이 없습니다"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr ""
+
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
 msgstr "1년 요금이 즉시 청구됩니다."
@@ -3085,4 +3107,3 @@ msgstr "귀하의 워크스페이스"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "워크스페이스가 비활성화됩니다"
-
