@@ -29,9 +29,9 @@ export enum PlaygroundSchemas {
 }
 
 export const playgroundSetupFormSchema = z.object({
-  apiKey: z.string(),
+  apiKeyForPlayground: z.string(),
   schema: z.nativeEnum(PlaygroundSchemas),
-  apiPlayground: z.nativeEnum(PlaygroundTypes),
+  playgroundType: z.nativeEnum(PlaygroundTypes),
 });
 
 type PlaygroundSetupFormValues = z.infer<typeof playgroundSetupFormSchema>;
@@ -67,7 +67,7 @@ export const PlaygroundSetupForm = () => {
     const response = await fetch(
       REACT_APP_SERVER_BASE_URL + '/open-api/' + values.schema,
       {
-        headers: { Authorization: `Bearer ${values.apiKey}` },
+        headers: { Authorization: `Bearer ${values.apiKeyForPlayground}` },
       },
     );
 
@@ -80,20 +80,20 @@ export const PlaygroundSetupForm = () => {
   };
 
   const onSubmit = async (values: PlaygroundSetupFormValues) => {
-    sessionStorage.setItem('apiKey', values.apiKey);
+    sessionStorage.setItem('apiKeyForPlayground', values.apiKeyForPlayground);
 
     await getOpenAPIConfig(values);
 
     navigateSettings(SettingsPath.PlaygroundRouter, {
       schema: values.schema.toLowerCase(),
-      type: values.apiPlayground.toLowerCase(),
+      type: values.playgroundType,
     });
   };
 
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name={'apiKey'}
+        name={'apiKeyForPlayground'}
         control={control}
         render={({ field: { onChange, value } }) => (
           <TextInput
@@ -131,7 +131,7 @@ export const PlaygroundSetupForm = () => {
         )}
       />
       <Controller
-        name={'apiPlayground'}
+        name={'playgroundType'}
         control={control}
         defaultValue={PlaygroundTypes.REST}
         render={({ field: { onChange, value } }) => (
