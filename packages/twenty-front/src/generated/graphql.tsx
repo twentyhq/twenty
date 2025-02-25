@@ -43,10 +43,8 @@ export enum AdminPanelHealthServiceStatus {
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
   id: Scalars['String'];
-  metrics: WorkerQueueMetrics;
   queueName: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
-  workers: Scalars['Float'];
 };
 
 export type Analytics = {
@@ -1962,16 +1960,6 @@ export type WorkerMetricsData = {
   details: Scalars['String'];
   queueName: Scalars['String'];
   timeRange: Scalars['String'];
-};
-
-export type WorkerQueueMetrics = {
-  __typename?: 'WorkerQueueMetrics';
-  active: Scalars['Float'];
-  completed: Scalars['Float'];
-  delayed: Scalars['Float'];
-  failed: Scalars['Float'];
-  failureRate: Scalars['Float'];
-  waiting: Scalars['Float'];
 };
 
 export type WorkflowAction = {
