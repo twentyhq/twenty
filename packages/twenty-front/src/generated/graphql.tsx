@@ -780,7 +780,6 @@ export type MetricsDataPoint = {
 
 export type MetricsSeries = {
   __typename?: 'MetricsSeries';
-  color: Scalars['String'];
   data: Array<MetricsDataPoint>;
   id: Scalars['String'];
 };
@@ -2382,7 +2381,7 @@ export type GetQueueMetricsQueryVariables = Exact<{
 }>;
 
 
-export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: Array<{ __typename?: 'WorkerMetricsData', queueName: string, timeRange: string, details: string, data: Array<{ __typename?: 'MetricsSeries', id: string, color: string, data: Array<{ __typename?: 'MetricsDataPoint', x: string, y: number }> }> }> };
+export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: Array<{ __typename?: 'WorkerMetricsData', queueName: string, timeRange: string, details: string, data: Array<{ __typename?: 'MetricsSeries', id: string, data: Array<{ __typename?: 'MetricsDataPoint', x: string, y: number }> }> }> };
 
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4190,7 +4189,6 @@ export const GetQueueMetricsDocument = gql`
     details
     data {
       id
-      color
       data {
         x
         y

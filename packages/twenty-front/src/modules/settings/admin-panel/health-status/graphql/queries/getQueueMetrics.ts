@@ -8,7 +8,6 @@ export const GET_QUEUE_METRICS = gql`
       details
       data {
         id
-        color
         data {
           x
           y

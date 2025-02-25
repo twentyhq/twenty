@@ -124,6 +124,7 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
           onChange={(value) => {
             setTimeRange(value);
           }}
+          needIconCheck
         />
       </StyledGraphControls>
 
