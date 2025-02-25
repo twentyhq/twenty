@@ -151,14 +151,6 @@ export class WorkerHealthIndicator {
         queue.getMetrics('failed', 0, pointsNeeded - 1),
       ]);
 
-      console.log('--------------------------------');
-      console.log('queueName', queueName);
-      console.log('timeRange', timeRange);
-      console.log('pointsNeeded -1', pointsNeeded - 1);
-      console.log('completedMetricsObj', completedMetricsObj);
-      console.log('failedMetricsObj', failedMetricsObj);
-      console.log('--------------------------------');
-
       const completedMetrics = this.extractBullMQMetrics(
         completedMetricsObj,
         intervalMinutes,
@@ -183,6 +175,7 @@ export class WorkerHealthIndicator {
       );
 
       // Return empty data structure to avoid breaking the UI
+      // this is repeated multiple times, may be find a better way to handle this
       return {
         queueName,
         timeRange,
