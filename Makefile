@@ -20,7 +20,7 @@ redis-on-docker:
 	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
 
 build-server:
-	docker build --progress=plain --no-cache -f ./packages/twenty-docker/twenty/Dockerfile --tag hexagone/twenty .
+	docker build --progress=plain -f ./packages/twenty-docker/twenty/Dockerfile --tag hexagone/twenty .
 
 build-db:
 	docker build -f ./packages/twenty-docker/twenty-postgres-spilo/Dockerfile --tag hexagone/twenty-postgres-spilo .

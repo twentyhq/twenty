@@ -1,8 +1,8 @@
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
-  SignInUpStep,
-  signInUpStepState,
+    SignInUpStep,
+    signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';

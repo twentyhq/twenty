@@ -12,6 +12,7 @@ import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { ActionLink, HorizontalSeparator } from 'twenty-ui';
+import { SignInUpWithAuth0 } from './SignInUpWithAuth0';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -38,10 +39,13 @@ export const SignInUpWorkspaceScopeForm = () => {
 
         {workspaceAuthProviders.microsoft && <SignInUpWithMicrosoft />}
 
+        {workspaceAuthProviders.auth0 && <SignInUpWithAuth0 />}
+
         {workspaceAuthProviders.sso.length > 0 && <SignInUpWithSSO />}
 
         {(workspaceAuthProviders.google ||
           workspaceAuthProviders.microsoft ||
+          workspaceAuthProviders.auth0 ||
           workspaceAuthProviders.sso.length > 0) &&
         workspaceAuthProviders.password ? (
           <HorizontalSeparator />
