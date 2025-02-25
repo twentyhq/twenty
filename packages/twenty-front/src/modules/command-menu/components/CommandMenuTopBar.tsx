@@ -167,9 +167,7 @@ export const CommandMenuTopBar = () => {
                 >
                   <CommandMenuContextChip
                     Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-                    onClick={() => {
-                      goBackFromCommandMenu();
-                    }}
+                    onClick={goBackFromCommandMenu}
                     testId="command-menu-go-back-button"
                   />
                 </motion.div>

@@ -25,7 +25,7 @@ export type MenuItemProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
-  LeftComponent?: ReactNode | null;
+  LeftComponent?: ReactNode;
   RightIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
