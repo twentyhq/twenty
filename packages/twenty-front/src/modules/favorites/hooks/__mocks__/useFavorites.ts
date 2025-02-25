@@ -25,7 +25,7 @@ export const initialFavorites: Favorite[] = [
     recordId: '1',
     person: { id: '1', name: 'John Doe' },
     company: { id: '2', name: 'ABC Corp' },
-    workspaceMemberId: '1',
+    forWorkspaceMemberId: '1',
     favoriteFolderId: '1',
   },
   {
@@ -40,7 +40,7 @@ export const initialFavorites: Favorite[] = [
     recordId: '1',
     person: { id: '3', name: 'Jane Doe' },
     company: { id: '4', name: 'Company Test' },
-    workspaceMemberId: '1',
+    forWorkspaceMemberId: '1',
     favoriteFolderId: '1',
 
   },
@@ -54,7 +54,7 @@ export const initialFavorites: Favorite[] = [
     avatarType: 'squared' as AvatarType,
     link: 'example.com',
     recordId: '1',
-    workspaceMemberId: '1',
+    forWorkspaceMemberId: '1',
     favoriteFolderId: '1',
   },
 ];
@@ -69,7 +69,7 @@ export const sortedFavorites = [
     labelIdentifier: ' ',
     link: '/object/person/1',
     objectNameSingular: 'person',
-    workspaceMemberId: '1',
+    forWorkspaceMemberId: '1',
     favoriteFolderId: '1',
     __typename: 'Favorite',
   },
@@ -82,7 +82,7 @@ export const sortedFavorites = [
     labelIdentifier: ' ',
     link: '/object/person/3',
     objectNameSingular: 'person',
-    workspaceMemberId: '1',
+    forWorkspaceMemberId: '1',
     favoriteFolderId: '1',
     __typename: 'Favorite',
   },
@@ -96,7 +96,7 @@ export const sortedFavorites = [
     recordId: '1',
     avatarType: 'squared',
     favoriteFolderId: '1',
-    workspaceMemberId: '1',
+    forWorkspaceMemberId: '1',
     __typename: 'Favorite',
   },
 ];
@@ -176,6 +176,26 @@ mutation UpdateOneFavorite(
       updatedAt
     }
     favoriteFolderId
+    forWorkspaceMember {
+      __typename
+      avatarUrl
+      colorScheme
+      createdAt
+      dateFormat
+      deletedAt
+      id
+      locale
+      name {
+        firstName
+        lastName
+      }
+      timeFormat
+      timeZone
+      updatedAt
+      userEmail
+      userId
+    }
+    forWorkspaceMemberId
     id
     note {
       __typename
@@ -446,26 +466,6 @@ mutation UpdateOneFavorite(
       workflowId
     }
     workflowVersionId
-    workspaceMember {
-      __typename
-      avatarUrl
-      colorScheme
-      createdAt
-      dateFormat
-      deletedAt
-      id
-      locale
-      name {
-        firstName
-        lastName
-      }
-      timeFormat
-      timeZone
-      updatedAt
-      userEmail
-      userId
-    }
-    workspaceMemberId
   }
 }
 `;
@@ -545,6 +545,26 @@ export const mocks = [
               updatedAt
             }
             favoriteFolderId
+            forWorkspaceMember {
+              __typename
+              avatarUrl
+              colorScheme
+              createdAt
+              dateFormat
+              deletedAt
+              id
+              locale
+              name {
+                firstName
+                lastName
+              }
+              timeFormat
+              timeZone
+              updatedAt
+              userEmail
+              userId
+            }
+            forWorkspaceMemberId
             id
             note {
               __typename
@@ -815,26 +835,6 @@ export const mocks = [
               workflowId
             }
             workflowVersionId
-            workspaceMember {
-              __typename
-              avatarUrl
-              colorScheme
-              createdAt
-              dateFormat
-              deletedAt
-              id
-              locale
-              name {
-                firstName
-                lastName
-              }
-              timeFormat
-              timeZone
-              updatedAt
-              userEmail
-              userId
-            }
-            workspaceMemberId
           }
         }
       `,
@@ -842,7 +842,7 @@ export const mocks = [
         input: {
           personId: favoriteTargetObjectId,
           position: 1,
-          workspaceMemberId: '1',
+          forWorkspaceMemberId: '1',
           favoriteFolderId: undefined,
           id: mockId,
         },

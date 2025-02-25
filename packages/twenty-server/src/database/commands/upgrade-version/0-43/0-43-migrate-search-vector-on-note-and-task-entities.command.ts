@@ -1,13 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-  ActiveWorkspacesCommandOptions,
-  ActiveWorkspacesCommandRunner,
-} from 'src/database/commands/active-workspaces.command';
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -19,11 +19,12 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 import { SEARCH_FIELDS_FOR_NOTES } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { SEARCH_FIELDS_FOR_TASKS } from 'src/modules/task/standard-objects/task.workspace-entity';
 
-@Command({
-  name: 'upgrade-0.43:migrate-search-vector-on-note-and-task-entities',
+@MigrationCommand({
+  name: 'migrate-search-vector-on-note-and-task-entities',
   description: 'Migrate search vector on note and task entities',
+  version: '0.43',
 })
-export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorkspacesCommandRunner {
+export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -39,9 +40,9 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorks
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async executeActiveWorkspacesCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(

@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { t } from '@lingui/core/macro';
 import { useResendEmailVerificationTokenMutation } from '~/generated/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
@@ -13,7 +14,7 @@ export const useHandleResendEmailVerificationToken = () => {
     (email: string | null) => {
       return async () => {
         if (!email) {
-          enqueueSnackBar('Invalid email', {
+          enqueueSnackBar(t`Invalid email`, {
             variant: SnackBarVariant.Error,
           });
           return;
@@ -25,11 +26,11 @@ export const useHandleResendEmailVerificationToken = () => {
           });
 
           if (data?.resendEmailVerificationToken?.success === true) {
-            enqueueSnackBar('Email verification link resent!', {
+            enqueueSnackBar(t`Email verification link resent!`, {
               variant: SnackBarVariant.Success,
             });
           } else {
-            enqueueSnackBar('There was some issue', {
+            enqueueSnackBar(t`There was an issue`, {
               variant: SnackBarVariant.Error,
             });
           }

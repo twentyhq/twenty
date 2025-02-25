@@ -264,6 +264,7 @@ export {
   IconUpload,
   IconUser,
   IconUserCircle,
+  IconUserPin,
   IconUserPlus,
   IconUsers,
   IconVariable,
