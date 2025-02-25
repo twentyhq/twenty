@@ -36,18 +36,6 @@ export const CommandMenu = () => {
     commandMenuSearch,
   });
 
-  const selectableItems: Command[] = copilotCommands
-    .concat(
-      matchingStandardActionRecordSelectionCommands,
-      matchingStandardActionObjectCommands,
-      matchingWorkflowRunRecordSelectionCommands,
-      matchingStandardActionGlobalCommands,
-      matchingWorkflowRunGlobalCommands,
-      matchingNavigateCommands,
-      fallbackCommands,
-    )
-    .filter(isDefined);
-
   const previousContextStoreCurrentObjectMetadataItem =
     useRecoilComponentValueV2(
       contextStoreCurrentObjectMetadataItemComponentState,
@@ -57,12 +45,6 @@ export const CommandMenu = () => {
   const currentObjectMetadataItem = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemComponentState,
   );
-
-  const selectableItemIds = selectableItems.map((item) => item.id);
-
-  if (isDefined(previousContextStoreCurrentObjectMetadataItem)) {
-    selectableItemIds.unshift(RESET_CONTEXT_TO_SELECTION);
-  }
 
   const commandGroups: CommandGroupConfig[] = [
     {
@@ -90,6 +72,16 @@ export const CommandMenu = () => {
       items: fallbackCommands,
     },
   ];
+
+  const selectableItems: Command[] = commandGroups.flatMap(
+    (group) => group.items ?? [],
+  );
+
+  const selectableItemIds = selectableItems.map((item) => item.id);
+
+  if (isDefined(previousContextStoreCurrentObjectMetadataItem)) {
+    selectableItemIds.unshift(RESET_CONTEXT_TO_SELECTION);
+  }
 
   return (
     <CommandMenuList

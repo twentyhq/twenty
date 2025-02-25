@@ -1,7 +1,6 @@
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
-import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -59,14 +58,8 @@ export const ViewBarRecordSortEffect = () => {
         return;
       }
 
-      const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-        fields: sortableFieldMetadataItems,
-      });
-
       if (isDefined(currentView)) {
-        setCurrentRecordSorts(
-          mapViewSortsToSorts(currentView.viewSorts, sortDefinitions),
-        );
+        setCurrentRecordSorts(mapViewSortsToSorts(currentView.viewSorts));
         setHasInitializedCurrentRecordSorts(true);
       }
     }

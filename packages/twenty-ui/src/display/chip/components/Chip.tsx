@@ -1,6 +1,6 @@
 import { Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
-import { MouseEvent, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 
@@ -21,7 +21,7 @@ export enum ChipVariant {
   Rounded = 'rounded',
 }
 
-type ChipProps = {
+export type ChipProps = {
   size?: ChipSize;
   disabled?: boolean;
   clickable?: boolean;
@@ -29,10 +29,9 @@ type ChipProps = {
   maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
-  leftComponent?: ReactNode;
-  rightComponent?: ReactNode;
+  leftComponent?: (() => ReactNode) | null;
+  rightComponent?: (() => ReactNode) | null;
   className?: string;
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
 const StyledContainer = withTheme(styled.div<
@@ -128,10 +127,9 @@ export const Chip = ({
   disabled = false,
   clickable = true,
   variant = ChipVariant.Regular,
-  leftComponent,
-  rightComponent,
+  leftComponent = null,
+  rightComponent = null,
   accent = ChipAccent.TextPrimary,
-  onClick,
   className,
   maxWidth,
 }: ChipProps) => {
@@ -143,13 +141,12 @@ export const Chip = ({
       disabled={disabled}
       size={size}
       variant={variant}
-      onClick={onClick}
       className={className}
       maxWidth={maxWidth}
     >
-      {leftComponent}
+      {leftComponent?.()}
       <OverflowingTextWithTooltip size={size} text={label} />
-      {rightComponent}
+      {rightComponent?.()}
     </StyledContainer>
   );
 };

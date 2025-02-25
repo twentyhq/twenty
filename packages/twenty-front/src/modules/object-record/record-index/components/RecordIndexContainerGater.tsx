@@ -6,6 +6,7 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
@@ -70,30 +71,34 @@ export const RecordIndexContainerGater = () => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <RecordFiltersComponentInstanceContext.Provider
+          <RecordFilterGroupsComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
           >
-            <RecordSortsComponentInstanceContext.Provider
+            <RecordFiltersComponentInstanceContext.Provider
               value={{ instanceId: recordIndexId }}
             >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{
-                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                }}
+              <RecordSortsComponentInstanceContext.Provider
+                value={{ instanceId: recordIndexId }}
               >
-                <PageTitle
-                  title={`${capitalize(objectMetadataItem.namePlural)}`}
-                />
-                <RecordIndexPageHeader />
-                <PageBody>
-                  <StyledIndexContainer>
-                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                    <RecordIndexContainer />
-                  </StyledIndexContainer>
-                </PageBody>
-              </ActionMenuComponentInstanceContext.Provider>
-            </RecordSortsComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
+                <ActionMenuComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                  }}
+                >
+                  <PageTitle
+                    title={`${capitalize(objectMetadataItem.namePlural)}`}
+                  />
+                  <RecordIndexPageHeader />
+                  <PageBody>
+                    <StyledIndexContainer>
+                      <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                      <RecordIndexContainer />
+                    </StyledIndexContainer>
+                  </PageBody>
+                </ActionMenuComponentInstanceContext.Provider>
+              </RecordSortsComponentInstanceContext.Provider>
+            </RecordFiltersComponentInstanceContext.Provider>
+          </RecordFilterGroupsComponentInstanceContext.Provider>
           <RecordIndexLoadBaseOnContextStoreEffect />
         </ViewComponentInstanceContext.Provider>
       </RecordIndexContextProvider>

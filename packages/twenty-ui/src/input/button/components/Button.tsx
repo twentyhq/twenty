@@ -411,17 +411,20 @@ export const Button = ({
   soon = false,
   disabled = false,
   justify = 'flex-start',
-  focus = false,
+  focus: propFocus = false,
   onClick,
   to,
   target,
   dataTestId,
   hotkeys,
   ariaLabel,
+  type,
 }: ButtonProps) => {
   const theme = useTheme();
 
   const isMobile = useIsMobile();
+
+  const [isFocused, setIsFocused] = React.useState(propFocus);
 
   return (
     <StyledButton
@@ -431,7 +434,7 @@ export const Button = ({
       size={size}
       position={position}
       disabled={soon || disabled}
-      focus={focus}
+      focus={isFocused}
       justify={justify}
       accent={accent}
       className={className}
@@ -441,6 +444,9 @@ export const Button = ({
       target={target}
       data-testid={dataTestId}
       aria-label={ariaLabel}
+      type={type}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
     >
       {Icon && IconPosition === 'left' && <Icon size={theme.icon.size.sm} />}
       {title}

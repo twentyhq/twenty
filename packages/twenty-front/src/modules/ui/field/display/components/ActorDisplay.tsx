@@ -4,7 +4,6 @@ import { ConnectedAccountProvider } from 'twenty-shared';
 import { useMemo } from 'react';
 import {
   AvatarChip,
-  AvatarChipVariant,
   IconApi,
   IconCalendar,
   IconCsv,
@@ -71,7 +70,6 @@ export const ActorDisplay = ({
       LeftIcon={LeftIcon}
       avatarUrl={avatarUrl ?? undefined}
       isIconInverted={isIconInverted}
-      variant={AvatarChipVariant.Transparent}
     />
   );
 };

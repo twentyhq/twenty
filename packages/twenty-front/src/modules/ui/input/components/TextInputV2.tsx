@@ -11,7 +11,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import { AutogrowWrapper, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
+import {
+  AutogrowWrapper,
+  IconComponent,
+  IconEye,
+  IconEyeOff,
+  Loader,
+} from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -25,10 +31,40 @@ const StyledContainer = styled.div<
 `;
 
 const StyledInputContainer = styled.div`
+  align-items: center;
   background-color: inherit;
   display: flex;
   flex-direction: row;
   position: relative;
+`;
+
+const StyledAdornmentContainer = styled.div<{
+  sizeVariant: TextInputV2Size;
+  position: 'left' | 'right';
+}>`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.transparent.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme, position }) =>
+    position === 'left'
+      ? `${theme.border.radius.sm} 0 0 ${theme.border.radius.sm}`
+      : `0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0`};
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+  justify-content: center;
+  min-width: fit-content;
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: auto;
+  line-height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+
+  ${({ position }) =>
+    position === 'left' ? 'border-right: none;' : 'border-left: none;'}
 `;
 
 const StyledInput = styled.input<
@@ -40,13 +76,21 @@ const StyledInput = styled.input<
     | 'width'
     | 'inheritFontStyles'
     | 'autoGrow'
+    | 'rightAdornment'
+    | 'leftAdornment'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border-radius: ${({ theme, leftAdornment, rightAdornment }) =>
+    leftAdornment
+      ? `0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0`
+      : rightAdornment
+        ? `${theme.border.radius.sm} 0 0 ${theme.border.radius.sm}`
+        : theme.border.radius.sm};
+
   border: 1px solid
     ${({ theme, error }) =>
       error ? theme.border.color.danger : theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
@@ -158,6 +202,9 @@ export type TextInputV2ComponentProps = Omit<
   dataTestId?: string;
   sizeVariant?: TextInputV2Size;
   inheritFontStyles?: boolean;
+  loading?: boolean;
+  rightAdornment?: string;
+  leftAdornment?: string;
 };
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
@@ -193,6 +240,9 @@ const TextInputV2Component = forwardRef<
       inheritFontStyles = false,
       dataTestId,
       autoGrow = false,
+      loading = false,
+      rightAdornment,
+      leftAdornment,
     },
     ref,
   ) => {
@@ -227,6 +277,12 @@ const TextInputV2Component = forwardRef<
           </InputLabel>
         )}
         <StyledInputContainer>
+          {leftAdornment && (
+            <StyledAdornmentContainer sizeVariant={sizeVariant} position="left">
+              {leftAdornment}
+            </StyledAdornmentContainer>
+          )}
+
           {!!LeftIcon && (
             <StyledLeftIconContainer sizeVariant={sizeVariant}>
               <StyledTrailingIcon isFocused={isFocused}>
@@ -263,9 +319,18 @@ const TextInputV2Component = forwardRef<
               sizeVariant,
               inheritFontStyles,
               autoGrow,
+              leftAdornment,
+              rightAdornment,
             }}
           />
-
+          {rightAdornment && (
+            <StyledAdornmentContainer
+              sizeVariant={sizeVariant}
+              position="right"
+            >
+              {rightAdornment}
+            </StyledAdornmentContainer>
+          )}
           <StyledTrailingIconContainer {...{ error }}>
             {!error && type === INPUT_TYPE_PASSWORD && (
               <StyledTrailingIcon
@@ -282,6 +347,12 @@ const TextInputV2Component = forwardRef<
             {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
               <StyledTrailingIcon>
                 <RightIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            )}
+
+            {!error && type !== INPUT_TYPE_PASSWORD && !!loading && (
+              <StyledTrailingIcon>
+                <Loader color={'gray'} />
               </StyledTrailingIcon>
             )}
           </StyledTrailingIconContainer>

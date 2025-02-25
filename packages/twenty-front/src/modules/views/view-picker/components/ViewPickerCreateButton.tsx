@@ -8,8 +8,10 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { Button } from 'twenty-ui';
+import { useLingui } from '@lingui/react/macro';
 
 export const ViewPickerCreateButton = () => {
+  const { t } = useLingui();
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
 
@@ -34,7 +36,7 @@ export const ViewPickerCreateButton = () => {
   if (viewPickerMode === 'edit') {
     return (
       <Button
-        title="Delete"
+        title={t`Delete`}
         onClick={deleteViewFromCurrentState}
         accent="danger"
         fullWidth
@@ -53,7 +55,7 @@ export const ViewPickerCreateButton = () => {
   ) {
     return (
       <Button
-        title="Go to Settings"
+        title={t`Go to Settings`}
         onClick={navigateToSelectSettings}
         size="small"
         accent="blue"
@@ -69,7 +71,7 @@ export const ViewPickerCreateButton = () => {
   ) {
     return (
       <Button
-        title="Create"
+        title={t`Create`}
         onClick={handleCreateButtonClick}
         accent="blue"
         fullWidth

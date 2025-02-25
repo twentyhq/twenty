@@ -12,8 +12,9 @@ import { ViewType } from '@/views/types/ViewType';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { isDefined, SettingsFeatures } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 import { IconEyeOff, IconSettings } from 'twenty-ui';
+import { SettingsPermissions } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type UseRecordGroupActionsParams = {
@@ -71,7 +72,7 @@ export const useRecordGroupActions = ({
   ]);
 
   const hasAccessToDataModelSettings = useHasSettingsPermission(
-    SettingsFeatures.DATA_MODEL,
+    SettingsPermissions.DATA_MODEL,
   );
 
   const recordGroupActions: RecordGroupAction[] = [];
