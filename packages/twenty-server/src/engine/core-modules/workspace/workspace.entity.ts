@@ -157,4 +157,8 @@ export class Workspace {
 
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  version: string | null;
 }

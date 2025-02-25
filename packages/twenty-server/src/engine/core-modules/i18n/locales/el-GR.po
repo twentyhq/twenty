@@ -2263,7 +2263,7 @@ msgstr "Όνομα μέλους χώρου εργασίας"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Θέση μέλους χώρου εργασίας"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"

@@ -2263,7 +2263,7 @@ msgstr "Çalışma alanı üyesi ismi"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Çalışma alanı üyesi pozisyonu"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"

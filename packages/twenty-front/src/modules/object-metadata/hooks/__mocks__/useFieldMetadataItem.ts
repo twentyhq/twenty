@@ -128,6 +128,7 @@ export const queries = {
       firstName
       lastName
       email
+      canAccessFullAdminPanel
       canImpersonate
       supportUserHash
       analyticsTinybirdJwts {
@@ -284,6 +285,7 @@ export const responseData = {
       firstName: 'Test',
       lastName: 'User',
       email: 'test@example.com',
+      canAccessFullAdminPanel: false,
       canImpersonate: false,
       supportUserHash: null,
       analyticsTinybirdJwts: {

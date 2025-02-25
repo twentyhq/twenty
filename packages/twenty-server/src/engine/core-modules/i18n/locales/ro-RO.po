@@ -2263,7 +2263,7 @@ msgstr "Numele membrului spațiului de lucru"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Funcția membrului spațiului de lucru"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
