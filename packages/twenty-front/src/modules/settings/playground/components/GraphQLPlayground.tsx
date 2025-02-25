@@ -1,6 +1,6 @@
-import { PlaygroundPage } from '@/settings/playground/components/PlaygroundPage';
 import { PlaygroundSchemas } from '@/settings/playground/components/PlaygroundSetupForm';
 import { SettingsPath } from '@/types/SettingsPath';
+import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
@@ -10,6 +10,7 @@ import 'graphiql/graphiql.css';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const SchemaToPath = {
@@ -49,9 +50,15 @@ export const GraphQLPlayground = ({
 }) => {
   const apiKey = sessionStorage.getItem('apiKey');
   const baseUrl = REACT_APP_SERVER_BASE_URL;
+  const navigateSettings = useNavigateSettings();
+
+  const handleExitFullScreen = () => {
+    navigateSettings(SettingsPath.APIs);
+  };
 
   return (
-    <PlaygroundPage
+    <FullScreenContainer
+      exitFullScreen={handleExitFullScreen}
       links={[
         {
           children: <Trans>Workspace</Trans>,
@@ -69,6 +76,6 @@ export const GraphQLPlayground = ({
         baseUrl={baseUrl}
         path={SchemaToPath[schema]}
       />
-    </PlaygroundPage>
+    </FullScreenContainer>
   );
 };

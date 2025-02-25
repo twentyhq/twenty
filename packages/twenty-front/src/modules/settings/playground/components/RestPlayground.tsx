@@ -1,6 +1,6 @@
-import { PlaygroundPage } from '@/settings/playground/components/PlaygroundPage';
 import { openAPIReferenceState } from '@/settings/playground/states/openAPIReference';
 import { SettingsPath } from '@/types/SettingsPath';
+import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/components/PageHeader';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
@@ -10,6 +10,7 @@ import '@scalar/api-reference-react/style.css';
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 import { ThemeContext } from 'twenty-ui';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledNestedContainer = styled.div<{ pageBarHeight: number }>`
@@ -29,9 +30,15 @@ const StyledNestedContainer = styled.div<{ pageBarHeight: number }>`
 export const RestPlayground = () => {
   const [openAPIReference] = useRecoilState(openAPIReferenceState);
   const { theme } = useContext(ThemeContext);
+  const navigateSettings = useNavigateSettings();
+
+  const handleExitFullScreen = () => {
+    navigateSettings(SettingsPath.APIs);
+  };
 
   return (
-    <PlaygroundPage
+    <FullScreenContainer
+      exitFullScreen={handleExitFullScreen}
       links={[
         {
           children: <Trans>Workspace</Trans>,
@@ -59,6 +66,6 @@ export const RestPlayground = () => {
           />
         </StyledNestedContainer>
       </ScrollWrapper>
-    </PlaygroundPage>
+    </FullScreenContainer>
   );
 };
