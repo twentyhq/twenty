@@ -229,6 +229,10 @@ msgstr "{beautifiedCreatedAt}に追加"
 msgid "Added to blocklist"
 msgstr "ブロックリストに追加済み"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "\\\\u9ad8\\\\u5ea6\\\\u306a\\\\u30d5\\\\u30a3\\\\u30eb\\\\u30bf\\\\u30fc"
@@ -261,7 +265,7 @@ msgstr "すべての行"
 msgid "All Objects"
 msgstr "すべてのオブジェクト"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "すべてのロール"
 
@@ -360,7 +364,7 @@ msgstr "昇順"
 msgid "Assign {workspaceMemberName}?"
 msgstr "{workspaceMemberName}に割り当てますか？"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "各メンバーのアクセス権限を指定するロールを割り当てる"
 
@@ -372,7 +376,7 @@ msgstr "メンバーへの割り当て"
 msgid "Assigned members"
 msgstr "割り当てられたメンバー"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "担当"
 
@@ -709,7 +713,7 @@ msgstr "新しいレコードを作成"
 msgid "Create profile"
 msgstr "プロフィールの作成"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "ロールの作成"
 
@@ -1788,7 +1792,7 @@ msgstr "右に移動"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2049,7 @@ msgstr "開いた"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "オプション: すべてのWebhookに含める秘密の文字列を定義します。これを使用して受信時にWebhookを認証および確認します。"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2457,6 +2462,10 @@ msgstr "サーバー管理パネル"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
 msgstr "サービスプロバイダーの詳細"
+
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr ""
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -3052,6 +3061,10 @@ msgstr "はい"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "このオブジェクトでレコードを作成することは許可されていません"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

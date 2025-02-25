@@ -229,6 +229,10 @@ msgstr "Adicionado {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "Adicionado à Lista de Bloqueio"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Filtro avançado"
@@ -261,7 +265,7 @@ msgstr "Todas as linhas"
 msgid "All Objects"
 msgstr "Todos os Objetos"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Todas as Funções"
 
@@ -360,7 +364,7 @@ msgstr "Ascendente"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Atribuir a {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Atribuir funções para especificar as permissões de acesso de cada membro"
 
@@ -372,7 +376,7 @@ msgstr "Atribuir ao membro"
 msgid "Assigned members"
 msgstr "Membros Designados"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Atribuído a"
 
@@ -709,7 +713,7 @@ msgstr "Criar novo registro"
 msgid "Create profile"
 msgstr "Criar perfil"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Criar Fun\\u00e7\\u00e3o"
 
@@ -1788,7 +1792,7 @@ msgstr "Mover para a direita"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2049,7 @@ msgstr "Aberto"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Opcional: Defina uma string secreta que incluiremos em cada webhook. Use isso para autenticar e verificar o webhook ao recebê-lo."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2457,6 +2462,10 @@ msgstr "Painel de Administração do Servidor"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
 msgstr "Detalhes do Provedor de Serviço"
+
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr ""
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -3057,6 +3066,10 @@ msgstr "sim"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "Você não está autorizado a criar registros neste objeto"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

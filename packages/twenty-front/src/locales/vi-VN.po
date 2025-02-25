@@ -229,6 +229,10 @@ msgstr "Đã thêm vào {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "Đã thêm vào danh sách chặn"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Bộ lọc nâng cao"
@@ -261,7 +265,7 @@ msgstr "Tất cả dòng"
 msgid "All Objects"
 msgstr "Tất cả đối tượng"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Tất cả vai trò"
 
@@ -360,7 +364,7 @@ msgstr "Tăng dần"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Phân công cho {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Gán vai trò để xác định quyền truy cập của từng thành viên"
 
@@ -372,7 +376,7 @@ msgstr "Phân công cho thành viên"
 msgid "Assigned members"
 msgstr "Thành viên được gán"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Được gán cho"
 
@@ -709,7 +713,7 @@ msgstr "Tạo bản ghi mới"
 msgid "Create profile"
 msgstr "Tạo hồ sơ"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Tạo Vai trò"
 
@@ -1788,7 +1792,7 @@ msgstr "Di chuyển sang phải"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2049,7 @@ msgstr "Đã mở"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Tùy chọn: Xác định một chuỗi bí mật mà chúng tôi sẽ bao gồm trong mỗi webhook. Sử dụng điều này để xác thực và xác minh webhook sau khi nhận."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2457,6 +2462,10 @@ msgstr "Bảng Điều Khiển Admin Máy chủ"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
 msgstr "Chi tiết Nhà Cung Cấp Dịch Vụ"
+
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr ""
 
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
@@ -3052,6 +3061,10 @@ msgstr "có"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "Bạn không được phép tạo bản ghi trong đối tượng này"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
