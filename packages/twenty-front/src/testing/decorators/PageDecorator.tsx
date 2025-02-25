@@ -89,32 +89,30 @@ const Providers = () => {
                   <ObjectMetadataItemsProvider>
                     <FullHeightStorybookLayout>
                       <HelmetProvider>
-                        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                          <IconsProvider>
-                            <PrefetchDataProvider>
-                              <RecordFilterGroupsComponentInstanceContext.Provider
+                        <IconsProvider>
+                          <PrefetchDataProvider>
+                            <RecordFilterGroupsComponentInstanceContext.Provider
+                              value={{
+                                instanceId:
+                                  'storybook-test-record-filter-groups',
+                              }}
+                            >
+                              <RecordFiltersComponentInstanceContext.Provider
                                 value={{
-                                  instanceId:
-                                    'storybook-test-record-filter-groups',
+                                  instanceId: 'storybook-test-record-filters',
                                 }}
                               >
-                                <RecordFiltersComponentInstanceContext.Provider
+                                <RecordSortsComponentInstanceContext.Provider
                                   value={{
-                                    instanceId: 'storybook-test-record-filters',
+                                    instanceId: 'storybook-test-record-sorts',
                                   }}
                                 >
-                                  <RecordSortsComponentInstanceContext.Provider
-                                    value={{
-                                      instanceId: 'storybook-test-record-sorts',
-                                    }}
-                                  >
-                                    <Outlet />
-                                  </RecordSortsComponentInstanceContext.Provider>
-                                </RecordFiltersComponentInstanceContext.Provider>
-                              </RecordFilterGroupsComponentInstanceContext.Provider>
-                            </PrefetchDataProvider>
-                          </IconsProvider>
-                        </SnackBarProviderScope>
+                                  <Outlet />
+                                </RecordSortsComponentInstanceContext.Provider>
+                              </RecordFiltersComponentInstanceContext.Provider>
+                            </RecordFilterGroupsComponentInstanceContext.Provider>
+                          </PrefetchDataProvider>
+                        </IconsProvider>
                       </HelmetProvider>
                     </FullHeightStorybookLayout>
                   </ObjectMetadataItemsProvider>
