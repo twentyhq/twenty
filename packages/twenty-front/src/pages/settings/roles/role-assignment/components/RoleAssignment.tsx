@@ -1,4 +1,5 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -24,11 +25,11 @@ import {
   useUpdateWorkspaceMemberRoleMutation,
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { RoleAssignmentTableHeader } from '~/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader';
+import { RoleAssignmentWorkspaceMemberPickerDropdown } from '~/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown';
+import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import { RoleAssignmentConfirmationModal } from './RoleAssignmentConfirmationModal';
-import { RoleAssignmentTableHeader } from './RoleAssignmentTableHeader';
 import { RoleAssignmentTableRow } from './RoleAssignmentTableRow';
-import { RoleWorkspaceMemberPickerDropdown } from './RoleWorkspaceMemberPickerDropdown';
 
 const StyledBottomSection = styled(Section)<{ hasRows: boolean }>`
   ${({ hasRows, theme }) =>
@@ -82,6 +83,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
   const { closeDropdown } = useDropdown('role-member-select');
   const [searchFilter, setSearchFilter] = useState('');
   const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const workspaceMemberRoleMap = new Map<
     string,
@@ -107,6 +109,18 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
           email.includes(searchTerm)
         );
       });
+
+  const assignedWorkspaceMemberIds = role.workspaceMembers.map(
+    (workspaceMember) => workspaceMember.id,
+  );
+
+  const assignableWorkspaceMembers = currentWorkspaceMembers.filter(
+    (member) => member.id !== currentWorkspaceMember?.id,
+  );
+
+  const allWorkspaceMembersHaveThisRole = assignableWorkspaceMembers.every(
+    (member) => assignedWorkspaceMemberIds.includes(member.id),
+  );
 
   const handleModalClose = () => {
     setConfirmationModalIsOpen(false);
@@ -146,9 +160,6 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
   const handleSearchChange = (text: string) => {
     setSearchFilter(text);
   };
-
-  const allWorkspaceMembersHaveThisRole =
-    role.workspaceMembers.length === currentWorkspaceMembers.length;
 
   return (
     <>
@@ -201,10 +212,11 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
             </>
           }
           dropdownComponents={
-            <RoleWorkspaceMemberPickerDropdown
-              excludedWorkspaceMemberIds={role.workspaceMembers.map(
-                (workspaceMember) => workspaceMember.id,
-              )}
+            <RoleAssignmentWorkspaceMemberPickerDropdown
+              excludedWorkspaceMemberIds={[
+                ...assignedWorkspaceMemberIds,
+                currentWorkspaceMember?.id,
+              ]}
               onSelect={handleSelectWorkspaceMember}
             />
           }

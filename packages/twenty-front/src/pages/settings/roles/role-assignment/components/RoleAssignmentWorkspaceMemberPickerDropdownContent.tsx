@@ -2,19 +2,19 @@ import { t } from '@lingui/core/macro';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 
-type RoleWorkspaceMemberPickerDropdownContentProps = {
+type RoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
   searchFilter: string;
   filteredWorkspaceMembers: WorkspaceMember[];
   onSelect: (workspaceMember: WorkspaceMember) => void;
 };
 
-export const RoleWorkspaceMemberPickerDropdownContent = ({
+export const RoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   loading,
   searchFilter,
   filteredWorkspaceMembers,
   onSelect,
-}: RoleWorkspaceMemberPickerDropdownContentProps) => {
+}: RoleAssignmentWorkspaceMemberPickerDropdownContentProps) => {
   if (loading) {
     return null;
   }

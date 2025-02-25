@@ -6,17 +6,17 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ChangeEvent, useState } from 'react';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
-import { RoleWorkspaceMemberPickerDropdownContent } from './RoleWorkspaceMemberPickerDropdownContent';
+import { RoleAssignmentWorkspaceMemberPickerDropdownContent } from '~/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent';
 
-type RoleWorkspaceMemberPickerDropdownProps = {
+type RoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
   onSelect: (workspaceMember: WorkspaceMember) => void;
 };
 
-export const RoleWorkspaceMemberPickerDropdown = ({
+export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
   excludedWorkspaceMemberIds,
   onSelect,
-}: RoleWorkspaceMemberPickerDropdownProps) => {
+}: RoleAssignmentWorkspaceMemberPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
   const { loading, records: workspaceMembers } = useSearchRecords({
@@ -42,7 +42,7 @@ export const RoleWorkspaceMemberPickerDropdown = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <RoleWorkspaceMemberPickerDropdownContent
+        <RoleAssignmentWorkspaceMemberPickerDropdownContent
           loading={loading}
           searchFilter={searchFilter}
           filteredWorkspaceMembers={filteredWorkspaceMembers}
