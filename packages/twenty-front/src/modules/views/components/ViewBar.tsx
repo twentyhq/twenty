@@ -10,7 +10,6 @@ import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersE
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
 import { ViewBarSkeletonLoader } from '@/views/components/ViewBarSkeletonLoader';
-import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
@@ -51,9 +50,7 @@ export const ViewBar = ({
       <ViewBarRecordFilterEffect />
       <ViewBarRecordSortEffect />
       <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
-      <ViewBarSortEffect />
       <QueryParamsFiltersEffect />
-
       <ViewBarPageTitle viewBarId={viewBarId} />
       <TopBar
         className={className}

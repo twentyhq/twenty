@@ -229,6 +229,10 @@ msgstr "Додано {beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "Додано до чорного списку"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "Налаштувати параметри, пов'язані з роллю"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Розширений фільтр"
@@ -261,7 +265,7 @@ msgstr "Всі рядки"
 msgid "All Objects"
 msgstr "Всі об'єкти"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Всі ролі"
 
@@ -348,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Ви впевнені, що хочете змінити періодичність розрахунків?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Ви впевнені, що хочете призначити цю роль?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Ви впевнені, що хочете призначити цю роль?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -360,7 +364,7 @@ msgstr "За зростанням"
 msgid "Assign {workspaceMemberName}?"
 msgstr "Призначити {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Призначте ролі для визначення дозволів доступу кожного учасника"
 
@@ -372,7 +376,7 @@ msgstr "Призначити члену"
 msgid "Assigned members"
 msgstr "Призначені учасники"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Призначено"
 
@@ -709,7 +713,7 @@ msgstr "Створити новий запис"
 msgid "Create profile"
 msgstr "Створити профіль"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Створити роль"
 
@@ -737,6 +741,10 @@ msgstr "Створено"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Домашній домен"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "Користувацький домен оновлено"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1844,7 +1852,7 @@ msgstr "Перемістити вправо"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2101,6 +2109,7 @@ msgstr "Відкрився"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Необов'язково: визначте секретний рядок, який включимо у всі вебхуки. Використовуйте це для автентифікації та перевірки вебхука при отриманні."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2315,15 +2324,13 @@ msgstr "Тип відносин"
 msgid "Releases"
 msgstr "Релізи"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Видалити"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Видалити {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Видалити {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2514,6 +2521,10 @@ msgstr "Панель адміністратора сервера"
 msgid "Service Provider Details"
 msgstr "Деталі постачальника послуг"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "Встановіть роль за замовчуванням для цього робочого простору"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Встановити як за замовчуванням"
@@ -2622,6 +2633,10 @@ msgstr "Субдомен не може бути довшим за 30 симво�
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Субдомен не може бути коротшим за 3 символи"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "Піддомен оновлено"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2786,8 +2801,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Цю дію не можна відмінити. Це назавжди видалить весь ваш робочий простір. <0/> Будь ласка, введіть свою електронну адресу для підтвердження."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Цей член буде позбавлений цієї ролі."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Цей член буде позбавлений цієї ролі."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -3108,6 +3123,10 @@ msgstr "так"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "Ви не маєте права створювати записи в цьому об'єкті"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "Ви не маєте доступу для наслідування користувачів."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

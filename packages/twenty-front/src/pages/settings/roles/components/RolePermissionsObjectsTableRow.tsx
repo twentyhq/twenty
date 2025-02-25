@@ -6,8 +6,8 @@ import { RolePermissionsObjectPermission } from '~/pages/settings/roles/types/Ro
 
 const StyledIconWrapper = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.color.blue10};
-  border: 1px solid ${({ theme }) => theme.color.blue30};
+  background: ${({ theme }) => theme.adaptiveColors.blue1};
+  border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   height: ${({ theme }) => theme.spacing(4)};

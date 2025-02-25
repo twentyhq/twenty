@@ -229,6 +229,10 @@ msgstr "נוסף ב-{beautifiedCreatedAt}"
 msgid "Added to blocklist"
 msgstr "הוסף לרשימת החסימה"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "התאם את ההגדרות הקשורות לתפקיד"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "מסנן מתקדם"
@@ -261,7 +265,7 @@ msgstr "כל השורות"
 msgid "All Objects"
 msgstr "כל האובייקטים"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "כל התפקידים"
 
@@ -348,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "האם אתה בטוח שברצונך לשנות את מרווח החיוב שלך?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "האם אתה בטוח שברצונך להקצות תפקיד זה?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "האם אתה בטוח שברצונך להקצות תפקיד זה?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -360,7 +364,7 @@ msgstr "עולה"
 msgid "Assign {workspaceMemberName}?"
 msgstr "להקצות את {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "הקצה תפקידים לציון הרשאות הגישה של כל חבר"
 
@@ -372,7 +376,7 @@ msgstr "להקצות לחבר"
 msgid "Assigned members"
 msgstr "חברים שהוקצו"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "מוקצה ל"
 
@@ -709,7 +713,7 @@ msgstr "צור רשומה חדשה"
 msgid "Create profile"
 msgstr "צור פרופיל"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "צור תפקיד"
 
@@ -737,6 +741,10 @@ msgstr "נוצר"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "דומיין מותאם אישית"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "הדומיין המותאם עודכן"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1788,7 +1796,7 @@ msgstr "הזזה ימינה"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
 #: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
@@ -2045,6 +2053,7 @@ msgstr "נפתח"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "אופציונלי: הגדר מחרוזת סודית שנכלול בכל webhook. השתמש בזה לאימות ואישור של webhook עם קבלתו."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2259,15 +2268,13 @@ msgstr "סוג יחס"
 msgid "Releases"
 msgstr "\\"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "\\"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "להסיר את {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "להסיר את {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2458,6 +2465,10 @@ msgstr "\\"
 msgid "Service Provider Details"
 msgstr "פרטי ספק השירות"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "קבע תפקיד ברירת מחדל למרחב העבודה הזה"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "הגדר כברירת מחדל"
@@ -2566,6 +2577,10 @@ msgstr "תת-דומיין לא יכול להיות ארוך מ-<b>30</b> תוו�
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "תת-דומיין לא יכול להיות קצר מ-<b>3</b> תווים"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "תת-דומיין עודכן"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2730,8 +2745,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "פעולה זו אינה ניתנת לביטול. זה ימחק לצמיתות את כל מרחב העבודה שלך. <0/> אנא הזן את כתובת הדואר האלקטרוני שלך כדי לאשר."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "חבר זה יוסר מהתפקיד."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "חבר זה יוסר מהתפקיד."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -3052,6 +3067,10 @@ msgstr "כן"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records in this object"
 msgstr "אין לך הרשאה ליצור רשומות באובייקט זה"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "אין לך גישה להתחזות למשתמשים."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

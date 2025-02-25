@@ -10,9 +10,9 @@ import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks
 import { useToggleSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useToggleSortDropdown';
 import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
-import { onSortSelectComponentState } from '@/object-record/object-sort-dropdown/states/onSortSelectScopedState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import {
   RECORD_SORT_DIRECTIONS,
   RecordSortDirection,
@@ -159,12 +159,12 @@ export const ObjectSortDropdownButton = ({
 
   const { closeSortDropdown } = useCloseSortDropdown();
 
-  const onSortSelect = useRecoilComponentValueV2(onSortSelectComponentState);
+  const { upsertRecordSort } = useUpsertRecordSort();
 
   const handleAddSort = (fieldMetadataItem: FieldMetadataItem) => {
     setObjectSortDropdownSearchInput('');
     closeSortDropdown();
-    onSortSelect?.({
+    upsertRecordSort({
       id: v4(),
       fieldMetadataId: fieldMetadataItem.id,
       direction: selectedRecordSortDirection,

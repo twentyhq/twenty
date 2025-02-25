@@ -8,9 +8,7 @@ import {
   WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
-export interface WorkspaceColumnActionFactory<
-  T extends FieldMetadataType | 'default',
-> {
+export interface WorkspaceColumnActionFactory<T extends FieldMetadataType> {
   create(
     action:
       | WorkspaceMigrationColumnActionType.CREATE

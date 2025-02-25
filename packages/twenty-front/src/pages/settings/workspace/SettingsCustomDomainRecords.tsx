@@ -7,9 +7,10 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui';
+import { Button, IconCopy } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { CustomDomainValidRecords } from '~/generated/graphql';
+import { useTheme } from '@emotion/react';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -42,12 +43,15 @@ export const SettingsCustomDomainRecords = ({
 }) => {
   const { enqueueSnackBar } = useSnackBar();
 
+  const theme = useTheme();
+
   const { t } = useLingui();
 
   const copyToClipboard = (value: string) => {
     navigator.clipboard.writeText(value);
     enqueueSnackBar(t`Copied to clipboard!`, {
       variant: SnackBarVariant.Success,
+      icon: <IconCopy size={theme.icon.size.md} />,
     });
   };
 
@@ -67,6 +71,7 @@ export const SettingsCustomDomainRecords = ({
               <StyledButton
                 title={record.key}
                 onClick={() => copyToClipboardDebounced(record.key)}
+                type="button"
               />
             </StyledTableCell>
             <StyledTableCell>
@@ -75,12 +80,14 @@ export const SettingsCustomDomainRecords = ({
                 onClick={() =>
                   copyToClipboardDebounced(record.type.toUpperCase())
                 }
+                type="button"
               />
             </StyledTableCell>
             <StyledTableCell>
               <StyledButton
                 title={record.value}
                 onClick={() => copyToClipboardDebounced(record.value)}
+                type="button"
               />
             </StyledTableCell>
           </TableRow>
