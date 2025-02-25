@@ -742,6 +742,10 @@ msgstr "Vytvořeno"
 msgid "Custom Domain"
 msgstr "Vlastní doména"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Vlastní objekty"
@@ -2575,6 +2579,10 @@ msgstr "Subdoména nemůže být delší než 30 znaků"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdoména nemůže být kratší než 3 znaky"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

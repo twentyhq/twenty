@@ -742,6 +742,10 @@ msgstr "Erstellt"
 msgid "Custom Domain"
 msgstr "Benutzerdefinierte Domäne"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Benutzerdefinierte Objekte"
@@ -2575,6 +2579,10 @@ msgstr "Die Subdomain darf nicht länger als 30 Zeichen sein"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Die Subdomain darf nicht kürzer als 3 Zeichen sein"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

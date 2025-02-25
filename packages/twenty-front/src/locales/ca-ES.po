@@ -742,6 +742,10 @@ msgstr "Creat"
 msgid "Custom Domain"
 msgstr "Domini Personalitzat"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Objectes personalitzats"
@@ -2575,6 +2579,10 @@ msgstr "El subdomini no pot tenir més de 30 caràcters"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "El subdomini no pot tenir menys de 3 caràcters"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

@@ -742,6 +742,10 @@ msgstr "Oluşturulan"
 msgid "Custom Domain"
 msgstr "Özel Alan Adı"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Özel nesneler"
@@ -2575,6 +2579,10 @@ msgstr "Alt alan adı 30 karakterden uzun olamaz"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Alt alan adı 3 karakterden kısa olamaz"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx

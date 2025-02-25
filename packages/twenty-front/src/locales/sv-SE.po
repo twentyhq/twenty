@@ -742,6 +742,10 @@ msgstr "Skapad"
 msgid "Custom Domain"
 msgstr "Anpassad domän"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Anpassade objekt"
@@ -2575,6 +2579,10 @@ msgstr "Underdomänen får inte vara längre än 30 tecken"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Underdomänen får inte vara kortare än 3 tecken"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
