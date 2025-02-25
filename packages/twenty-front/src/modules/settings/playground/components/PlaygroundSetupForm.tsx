@@ -84,9 +84,13 @@ export const PlaygroundSetupForm = () => {
 
     await getOpenAPIConfig(values);
 
-    navigateSettings(SettingsPath.PlaygroundRouter, {
+    const path =
+      values.playgroundType === PlaygroundTypes.GRAPHQL
+        ? SettingsPath.GraphQLPlayground
+        : SettingsPath.RestPlayground;
+
+    navigateSettings(path, {
       schema: values.schema.toLowerCase(),
-      type: values.playgroundType,
     });
   };
 

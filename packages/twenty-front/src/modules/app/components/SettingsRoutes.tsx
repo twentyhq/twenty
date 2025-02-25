@@ -15,10 +15,18 @@ const SettingsApiKeys = lazy(() =>
   ),
 );
 
-const PlaygroundRouter = lazy(() =>
-  import('~/pages/settings/developers/playground/PlaygroundRouter').then(
+const SettingsGraphQLPlayground = lazy(() =>
+  import(
+    '~/pages/settings/developers/playground/SettingsGraphQLPlayground'
+  ).then((module) => ({
+    default: module.SettingsGraphQLPlayground,
+  })),
+);
+
+const SettingsRestPlayground = lazy(() =>
+  import('~/pages/settings/developers/playground/SettingsRestPlayground').then(
     (module) => ({
-      default: module.PlaygroundRouter,
+      default: module.SettingsRestPlayground,
     }),
   ),
 );
@@ -369,8 +377,12 @@ export const SettingsRoutes = ({
       </Route>
       <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
       <Route
-        path={SettingsPath.PlaygroundRouter}
-        element={<PlaygroundRouter />}
+        path={SettingsPath.GraphQLPlayground}
+        element={<SettingsGraphQLPlayground />}
+      />
+      <Route
+        path={SettingsPath.RestPlayground}
+        element={<SettingsRestPlayground />}
       />
       <Route
         path={SettingsPath.DevelopersNewApiKey}
