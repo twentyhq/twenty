@@ -9,6 +9,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -24,8 +25,8 @@ import {
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
-import { t } from '@lingui/core/macro';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import packageJson from '../../../../../package.json';
 
 const StyledContainer = styled.div`
@@ -53,6 +54,11 @@ const StyledContentContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)} 0;
 `;
 
+const StyledErrorMessage = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueSnackBar } = useSnackBar();
@@ -66,6 +72,10 @@ export const SettingsAdminGeneral = () => {
   const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 
   const [userLookup] = useUserLookupAdminPanelMutation();
+
+  const currentUser = useRecoilValue(currentUserState);
+
+  const canImpersonate = currentUser?.canImpersonate;
 
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
@@ -154,9 +164,16 @@ export const SettingsAdminGeneral = () => {
             accent="blue"
             title={t`Search`}
             onClick={handleSearch}
-            disabled={!userIdentifier.trim() || isUserLookupLoading}
+            disabled={
+              !userIdentifier.trim() || isUserLookupLoading || !canImpersonate
+            }
           />
         </StyledContainer>
+        {!canImpersonate && (
+          <StyledErrorMessage>
+            {t`You do not have access to impersonate users.`}
+          </StyledErrorMessage>
+        )}
       </Section>
 
       {isDefined(userLookupResult) && (
