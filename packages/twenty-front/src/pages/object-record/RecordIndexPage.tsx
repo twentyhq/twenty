@@ -22,6 +22,7 @@ export const RecordIndexPage = () => {
 
   if (!objectMetadataItem?.isActive) {
     navigateApp(AppPath.NotFound);
+    return null;
   }
 
   if (
