@@ -9,13 +9,13 @@ import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSet
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useShowPlayground } from '@/ui/layout/hooks/useShowPlayground';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import { useShowFullscreen } from 'twenty-front/src/modules/ui/layout/hooks/useShowFullscreen';
 import { useScreenSize } from 'twenty-ui';
 
 const StyledLayout = styled.div`
@@ -70,7 +70,7 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
-  const showPlayground = useShowPlayground();
+  const showPlayground = useShowFullscreen();
 
   return (
     <>

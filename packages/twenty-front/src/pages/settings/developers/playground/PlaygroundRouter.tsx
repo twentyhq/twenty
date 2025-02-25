@@ -10,7 +10,7 @@ export const PlaygroundRouter = () => {
   const { schema, type } = useParams<{
     schema: PlaygroundSchemas;
     type: PlaygroundTypes;
-  }>(); 
+  }>();
 
   if (type === PlaygroundTypes.GRAPH_QL) {
     return <GraphQLPlayground schema={schema as PlaygroundSchemas} />;

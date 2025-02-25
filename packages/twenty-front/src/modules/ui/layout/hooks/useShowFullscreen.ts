@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
-export const useShowPlayground = () => {
+export const useShowFullscreen = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
 
   return useMemo(() => {
