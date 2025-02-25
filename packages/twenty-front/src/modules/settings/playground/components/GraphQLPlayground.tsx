@@ -1,4 +1,7 @@
-import { PlaygroundSchemas } from '@/settings/playground/components/PlaygroundSetupForm';
+import {
+  PLAYGROUND_API_KEY,
+  PlaygroundSchemas,
+} from '@/settings/playground/components/PlaygroundSetupForm';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
@@ -18,7 +21,7 @@ const SchemaToPath = {
 };
 
 export const GraphQLPlayground = ({ schema }: GraphQLPlaygroundProps) => {
-  const apiKey = sessionStorage.getItem('apiKey');
+  const apiKey = sessionStorage.getItem(PLAYGROUND_API_KEY);
   const baseUrl = REACT_APP_SERVER_BASE_URL;
   const path = SchemaToPath[schema];
 

@@ -28,6 +28,8 @@ export enum PlaygroundSchemas {
   CORE = 'core',
 }
 
+export const PLAYGROUND_API_KEY = 'apiKeyForPlayground';
+
 export const playgroundSetupFormSchema = z.object({
   apiKeyForPlayground: z.string(),
   schema: z.nativeEnum(PlaygroundSchemas),
@@ -80,7 +82,7 @@ export const PlaygroundSetupForm = () => {
   };
 
   const onSubmit = async (values: PlaygroundSetupFormValues) => {
-    sessionStorage.setItem('apiKeyForPlayground', values.apiKeyForPlayground);
+    sessionStorage.setItem(PLAYGROUND_API_KEY, values.apiKeyForPlayground);
 
     await getOpenAPIConfig(values);
 
