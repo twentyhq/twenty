@@ -1,5 +1,4 @@
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
-import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
@@ -17,12 +16,13 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { Placement } from '@floating-ui/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared';
@@ -71,6 +71,7 @@ export const MultiRecordSelect = ({
     recordPickerSearchFilterComponentState,
     instanceId,
   );
+
   const recordPickerSearchFilter = useRecoilComponentValueV2(
     recordPickerSearchFilterComponentState,
     instanceId,
@@ -78,20 +79,27 @@ export const MultiRecordSelect = ({
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
-  useEffect(() => {
-    setHotkeyScope(instanceId);
-  }, [setHotkeyScope, instanceId]);
+  const handleSubmit = () => {
+    onSubmit?.();
+    goBackToPreviousHotkeyScope();
+    resetSelectedItem();
+  };
 
   useScopedHotkeys(
     Key.Escape,
     () => {
-      onSubmit?.();
-      goBackToPreviousHotkeyScope();
-      resetSelectedItem();
+      handleSubmit();
     },
     instanceId,
-    [onSubmit, goBackToPreviousHotkeyScope, resetSelectedItem],
+    [handleSubmit],
   );
+
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: handleSubmit,
+    listenerId: 'MULTI_RECORD_SELECT_LISTENER_ID',
+    hotkeyScope: instanceId,
+  });
 
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,61 +145,49 @@ export const MultiRecordSelect = ({
   );
 
   return (
-    <>
-      <MultipleObjectRecordOnClickOutsideEffect
-        containerRef={containerRef}
-        onClickOutside={() => {
-          onSubmit?.();
-        }}
+    <DropdownMenu ref={containerRef} data-select-disable width={200}>
+      {dropdownPlacement?.includes('end') && (
+        <>
+          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+            <DropdownMenuItemsContainer scrollable={false}>
+              {createNewButton}
+            </DropdownMenuItemsContainer>
+          )}
+          <DropdownMenuSeparator />
+          {objectRecordsIdsMultiSelect?.length > 0 && results}
+          {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
+            <>
+              <DropdownMenuSkeletonItem />
+              <DropdownMenuSeparator />
+            </>
+          )}
+          {objectRecordsIdsMultiSelect?.length > 0 && <DropdownMenuSeparator />}
+        </>
+      )}
+      <DropdownMenuSearchInput
+        value={recordPickerSearchFilter}
+        onChange={handleFilterChange}
+        autoFocus
       />
-      <DropdownMenu ref={containerRef} data-select-disable width={200}>
-        {dropdownPlacement?.includes('end') && (
-          <>
-            {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
-              <DropdownMenuItemsContainer scrollable={false}>
-                {createNewButton}
-              </DropdownMenuItemsContainer>
-            )}
-            <DropdownMenuSeparator />
-            {objectRecordsIdsMultiSelect?.length > 0 && results}
-            {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
-              <>
-                <DropdownMenuSkeletonItem />
-                <DropdownMenuSeparator />
-              </>
-            )}
-            {objectRecordsIdsMultiSelect?.length > 0 && (
+      {(dropdownPlacement?.includes('start') ||
+        isUndefinedOrNull(dropdownPlacement)) && (
+        <>
+          <DropdownMenuSeparator />
+          {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
+            <>
+              <DropdownMenuSkeletonItem />
               <DropdownMenuSeparator />
-            )}
-          </>
-        )}
-        <DropdownMenuSearchInput
-          value={recordPickerSearchFilter}
-          onChange={handleFilterChange}
-          autoFocus
-        />
-        {(dropdownPlacement?.includes('start') ||
-          isUndefinedOrNull(dropdownPlacement)) && (
-          <>
-            <DropdownMenuSeparator />
-            {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
-              <>
-                <DropdownMenuSkeletonItem />
-                <DropdownMenuSeparator />
-              </>
-            )}
-            {objectRecordsIdsMultiSelect?.length > 0 && results}
-            {objectRecordsIdsMultiSelect?.length > 0 && (
-              <DropdownMenuSeparator />
-            )}
-            {isDefined(onCreate) && (
-              <DropdownMenuItemsContainer scrollable={false}>
-                {createNewButton}
-              </DropdownMenuItemsContainer>
-            )}
-          </>
-        )}
-      </DropdownMenu>
-    </>
+            </>
+          )}
+          {objectRecordsIdsMultiSelect?.length > 0 && results}
+          {objectRecordsIdsMultiSelect?.length > 0 && <DropdownMenuSeparator />}
+          {isDefined(onCreate) && (
+            <DropdownMenuItemsContainer scrollable={false}>
+              {createNewButton}
+            </DropdownMenuItemsContainer>
+          )}
+        </>
+      )}
+    </DropdownMenu>
   );
 };
