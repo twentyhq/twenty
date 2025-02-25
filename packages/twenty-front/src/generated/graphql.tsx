@@ -1085,7 +1085,7 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 
 
 export type MutationUpdateWorkspaceMemberRoleArgs = {
-  roleId?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['String'];
   workspaceMemberId: Scalars['String'];
 };
 
@@ -2368,7 +2368,7 @@ export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: str
 
 export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
   workspaceMemberId: Scalars['String'];
-  roleId?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['String'];
 }>;
 
 
@@ -4229,7 +4229,7 @@ export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof use
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
 export const UpdateWorkspaceMemberRoleDocument = gql`
-    mutation UpdateWorkspaceMemberRole($workspaceMemberId: String!, $roleId: String) {
+    mutation UpdateWorkspaceMemberRole($workspaceMemberId: String!, $roleId: String!) {
   updateWorkspaceMemberRole(
     workspaceMemberId: $workspaceMemberId
     roleId: $roleId
