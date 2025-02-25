@@ -51,7 +51,7 @@ export const RecordIndexBoardContainer = ({
       }}
     >
       <RecordBoard />
-      <RecordIndexRemoveSortingModal recordIndexId={recordBoardId} />
+      <RecordIndexRemoveSortingModal />
     </RecordBoardContext.Provider>
   );
 };
