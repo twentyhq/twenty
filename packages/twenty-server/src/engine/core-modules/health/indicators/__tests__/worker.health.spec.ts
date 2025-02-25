@@ -68,7 +68,6 @@ describe('WorkerHealthIndicator', () => {
 
     service = module.get<WorkerHealthIndicator>(WorkerHealthIndicator);
 
-    // Add logger spy
     loggerSpy = jest
       .spyOn(service['logger'], 'error')
       .mockImplementation(() => {});
@@ -167,11 +166,9 @@ describe('WorkerHealthIndicator', () => {
 
     expect(Queue).toHaveBeenCalledTimes(Object.keys(MessageQueue).length);
 
-    // Overall worker status should be 'up' because workers are active
     expect(result.worker.status).toBe('up');
     expect('queues' in result.worker).toBe(true);
     if ('queues' in result.worker) {
-      // Individual queue should be 'down' due to high failure rate
       expect(result.worker.queues[0].status).toBe('down');
       expect(result.worker.queues[0].metrics).toEqual({
         failed: 600,
@@ -179,7 +176,7 @@ describe('WorkerHealthIndicator', () => {
         waiting: 0,
         active: 0,
         delayed: 0,
-        failureRate: 60, // (600 / (600 + 400)) * 100
+        failureRate: 60,
       });
     }
 
@@ -222,7 +219,7 @@ describe('WorkerHealthIndicator', () => {
         waiting: 5,
         active: 2,
         delayed: 1,
-        failureRate: 10, // (10 / (10 + 90)) * 100
+        failureRate: 10,
       });
     }
   });
@@ -248,7 +245,6 @@ describe('WorkerHealthIndicator', () => {
       expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.NO_ACTIVE_WORKERS);
     }
 
-    // Verify that errors were logged for each queue
     expect(loggerSpy).toHaveBeenCalled();
     Object.values(MessageQueue).forEach((queueName) => {
       expect(loggerSpy).toHaveBeenCalledWith(
