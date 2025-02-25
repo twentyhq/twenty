@@ -6,6 +6,7 @@ import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dro
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
@@ -41,22 +42,30 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
       }, [setObjectMetadataItems]);
 
       return (
-        <RecordFiltersComponentInstanceContext.Provider value={{ instanceId }}>
-          <RecordSortsComponentInstanceContext.Provider value={{ instanceId }}>
-            <RecordTableComponentInstanceContext.Provider
-              value={{ instanceId, onColumnsChange: () => {} }}
+        <RecordFilterGroupsComponentInstanceContext.Provider
+          value={{ instanceId }}
+        >
+          <RecordFiltersComponentInstanceContext.Provider
+            value={{ instanceId }}
+          >
+            <RecordSortsComponentInstanceContext.Provider
+              value={{ instanceId }}
             >
-              <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                <MemoryRouter
-                  initialEntries={['/one', '/two', { pathname: '/three' }]}
-                  initialIndex={1}
-                >
-                  <Story />
-                </MemoryRouter>
-              </ViewComponentInstanceContext.Provider>
-            </RecordTableComponentInstanceContext.Provider>
-          </RecordSortsComponentInstanceContext.Provider>
-        </RecordFiltersComponentInstanceContext.Provider>
+              <RecordTableComponentInstanceContext.Provider
+                value={{ instanceId, onColumnsChange: () => {} }}
+              >
+                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                  <MemoryRouter
+                    initialEntries={['/one', '/two', { pathname: '/three' }]}
+                    initialIndex={1}
+                  >
+                    <Story />
+                  </MemoryRouter>
+                </ViewComponentInstanceContext.Provider>
+              </RecordTableComponentInstanceContext.Provider>
+            </RecordSortsComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
+        </RecordFilterGroupsComponentInstanceContext.Provider>
       );
     },
     ContextStoreDecorator,
