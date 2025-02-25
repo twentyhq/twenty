@@ -9,11 +9,13 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 type EmailsFieldInputProps = {
   onCancel?: () => void;
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
+  onError?: (hasError: boolean, hasItem: boolean) => void;
 };
 
 export const EmailsFieldInput = ({
   onCancel,
   onClickOutside,
+  onError,
 }: EmailsFieldInputProps) => {
   const { persistEmailsField, hotkeyScope, fieldValue } = useEmailsField();
 
@@ -53,6 +55,7 @@ export const EmailsFieldInput = ({
       placeholder="Email"
       fieldMetadataType={FieldMetadataType.EMAILS}
       validateInput={validateInput}
+      onError={onError}
       renderItem={({
         value: email,
         index,
