@@ -4,29 +4,35 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 import { AdvancedFilterRootLevelViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootLevelViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
-import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from 'twenty-shared';
 
 export const AdvancedFilterDropdownButton = () => {
-  const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
   const { deleteCombinedViewFilterGroup } = useDeleteCombinedViewFilterGroup();
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const advancedViewFilterIds =
-    currentViewWithCombinedFiltersAndSorts?.viewFilters
-      .filter((viewFilter) => isDefined(viewFilter.viewFilterGroupId))
-      .map((viewFilter) => viewFilter.id);
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
+
+  const advancedRecordFilterIds = currentRecordFilters
+    .filter((recordFilter) => isDefined(recordFilter.viewFilterGroupId))
+    .map((recordFilter) => recordFilter.id);
+
+  const { removeRecordFilter } = useRemoveRecordFilter();
 
   const handleDropdownClickOutside = useCallback(() => {}, []);
 
   const handleDropdownClose = () => {};
 
   const removeAdvancedFilter = useCallback(async () => {
-    if (!advancedViewFilterIds) {
+    if (!advancedRecordFilterIds) {
       throw new Error('No advanced view filters to remove');
     }
 
@@ -39,12 +45,12 @@ export const AdvancedFilterDropdownButton = () => {
       await deleteCombinedViewFilterGroup(viewFilterGroupId);
     }
 
-    for (const viewFilterId of advancedViewFilterIds) {
-      await deleteCombinedViewFilter(viewFilterId);
+    for (const recordFilterId of advancedRecordFilterIds) {
+      removeRecordFilter(recordFilterId);
     }
   }, [
-    advancedViewFilterIds,
-    deleteCombinedViewFilter,
+    advancedRecordFilterIds,
+    removeRecordFilter,
     deleteCombinedViewFilterGroup,
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups,
   ]);
@@ -64,7 +70,7 @@ export const AdvancedFilterDropdownButton = () => {
       clickableComponent={
         <AdvancedFilterChip
           onRemove={removeAdvancedFilter}
-          advancedFilterCount={advancedViewFilterIds?.length}
+          advancedFilterCount={advancedRecordFilterIds?.length}
         />
       }
       dropdownComponents={
