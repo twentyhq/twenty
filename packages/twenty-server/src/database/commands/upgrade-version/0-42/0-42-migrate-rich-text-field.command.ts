@@ -8,11 +8,10 @@ import { Repository } from 'typeorm';
 
 import { isCommandLogger } from 'src/database/commands/logger';
 import {
-  ActiveWorkspacesCommandOptions,
+  ActiveWorkspacesMigrationCommandOptions,
   ActiveWorkspacesMigrationCommandRunner,
 } from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
-import { Upgrade042CommandOptions } from 'src/database/commands/upgrade-version/0-42/0-42-upgrade-version.command';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -59,13 +58,19 @@ type ProcessRichTextFieldsArgs = {
   workspaceId: string;
 };
 
+type MigrateRichTextFieldCommandOptions =
+  ActiveWorkspacesMigrationCommandOptions & {
+    force?: boolean;
+  };
+
 @MigrationCommand({
   name: 'migrate-rich-text-field',
   description: 'Migrate RICH_TEXT fields to new composite structure',
   version: '0.42',
 })
-export class MigrateRichTextFieldCommand extends ActiveWorkspacesMigrationCommandRunner {
-  private options: Upgrade042CommandOptions;
+export class MigrateRichTextFieldCommand extends ActiveWorkspacesMigrationCommandRunner<MigrateRichTextFieldCommandOptions> {
+  private options: MigrateRichTextFieldCommandOptions;
+
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -94,9 +99,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesMigrationComman
     return val ?? false;
   }
 
-  async executeActiveWorkspacesMigrationCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: MigrateRichTextFieldCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
@@ -348,7 +353,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesMigrationComman
       });
 
       richTextFieldsWithHasCreatedColumns.push({
-        hasCreatedColumns,
+        hasCreatedColumns: hasCreatedColumns ?? false,
         richTextField,
         objectMetadata,
       });

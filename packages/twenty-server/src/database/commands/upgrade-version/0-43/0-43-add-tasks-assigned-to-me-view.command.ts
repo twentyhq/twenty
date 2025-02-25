@@ -4,9 +4,11 @@ import chalk from 'chalk';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ActiveWorkspacesCommandOptions } from 'src/database/commands/active-workspaces.command';
 import { isCommandLogger } from 'src/database/commands/logger';
-import { ActiveWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import {
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
@@ -41,9 +43,9 @@ export class AddTasksAssignedToMeViewCommand extends ActiveWorkspacesMigrationCo
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async executeActiveWorkspacesMigrationCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log('Running command to create many to one relations');

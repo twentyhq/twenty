@@ -3,13 +3,11 @@ import { Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
-import { BaseCommandOptions } from 'src/database/commands/base.command';
 import {
   MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/migration-command/migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export type ActiveWorkspacesMigrationCommandOptions =
@@ -19,7 +17,10 @@ export type ActiveWorkspacesMigrationCommandOptions =
     workspaceCountLimit?: number;
   };
 
-export abstract class ActiveWorkspacesMigrationCommandRunner extends MigrationCommandRunner {
+export abstract class ActiveWorkspacesMigrationCommandRunner<
+  Options extends
+    ActiveWorkspacesMigrationCommandOptions = ActiveWorkspacesMigrationCommandOptions,
+> extends MigrationCommandRunner<Options> {
   private workspaceIds: string[] = [];
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
@@ -108,9 +109,9 @@ export abstract class ActiveWorkspacesMigrationCommandRunner extends MigrationCo
     }
   }
 
-  override async execute(
+  override async runMigrationCommand(
     passedParams: string[],
-    options: BaseCommandOptions,
+    options: Options,
   ): Promise<void> {
     const activeWorkspaceIds =
       this.workspaceIds.length > 0
@@ -123,64 +124,16 @@ export abstract class ActiveWorkspacesMigrationCommandRunner extends MigrationCo
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    await this.executeActiveWorkspacesMigrationCommand(
+    await this.runMigrationCommandOnActiveWorkspaces(
       passedParams,
       options,
       activeWorkspaceIds,
     );
   }
 
-  protected async processEachWorkspaceWithWorkspaceDataSource(
-    workspaceIds: string[],
-    callback: ({
-      workspaceId,
-      index,
-      total,
-      dataSource,
-    }: {
-      workspaceId: string;
-      index: number;
-      total: number;
-      dataSource: WorkspaceDataSource;
-    }) => Promise<void>,
-  ): Promise<void> {
-    this.logger.log(
-      chalk.green(`Running command on ${workspaceIds.length} workspaces`),
-    );
-    for (const [index, workspaceId] of workspaceIds.entries()) {
-      this.logger.log(
-        chalk.green(
-          `Processing workspace ${workspaceId} (${index + 1}/${
-            workspaceIds.length
-          })`,
-        ),
-      );
-
-      const dataSource =
-        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-          workspaceId,
-          false,
-        );
-
-      try {
-        await callback({
-          workspaceId,
-          index,
-          total: workspaceIds.length,
-          dataSource,
-        });
-      } catch (error) {
-        this.logger.error(`Error in workspace ${workspaceId}: ${error}`);
-      }
-      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-        workspaceId,
-      );
-    }
-  }
-
-  protected abstract executeActiveWorkspacesMigrationCommand(
+  protected abstract runMigrationCommandOnActiveWorkspaces(
     passedParams: string[],
-    options: BaseCommandOptions,
+    options: Options,
     activeWorkspaceIds: string[],
   ): Promise<void>;
 }

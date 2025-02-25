@@ -5,7 +5,6 @@ import { CommandRunner, Option } from 'nest-commander';
 
 import { MigrationCommandInterface } from 'src/database/commands/migration-command/interfaces/migration-command.interface';
 
-import { BaseCommandOptions } from 'src/database/commands/base.command';
 import { CommandLogger } from 'src/database/commands/logger';
 
 export type MigrationCommandOptions = {
@@ -14,9 +13,11 @@ export type MigrationCommandOptions = {
   verbose?: boolean;
 };
 
-export abstract class MigrationCommandRunner
+export abstract class MigrationCommandRunner<
+    Options extends MigrationCommandOptions = MigrationCommandOptions,
+  >
   extends CommandRunner
-  implements MigrationCommandInterface
+  implements MigrationCommandInterface<Options>
 {
   protected logger: CommandLogger | Logger;
   constructor() {
@@ -45,10 +46,7 @@ export abstract class MigrationCommandRunner
     return true;
   }
 
-  override async run(
-    passedParams: string[],
-    options: BaseCommandOptions,
-  ): Promise<void> {
+  override async run(passedParams: string[], options: Options): Promise<void> {
     if (options.verbose) {
       this.logger = new CommandLogger({
         verbose: true,
@@ -57,7 +55,7 @@ export abstract class MigrationCommandRunner
     }
 
     try {
-      await this.execute(passedParams, options);
+      await this.runMigrationCommand(passedParams, options);
     } catch (error) {
       this.logger.error(chalk.red(`Command failed`));
       throw error;
@@ -66,8 +64,8 @@ export abstract class MigrationCommandRunner
     }
   }
 
-  abstract execute(
+  abstract runMigrationCommand(
     passedParams: string[],
-    options: BaseCommandOptions,
+    options: Options,
   ): Promise<void>;
 }

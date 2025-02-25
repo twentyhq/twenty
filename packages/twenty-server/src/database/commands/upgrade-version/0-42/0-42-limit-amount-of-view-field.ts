@@ -3,9 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandOptions } from 'src/database/commands/active-workspaces.command';
 import { CommandLogger } from 'src/database/commands/logger';
-import { ActiveWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import {
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { settings } from 'src/engine/constants/settings';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -93,9 +95,9 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesMigrationComm
     }
   }
 
-  async executeActiveWorkspacesMigrationCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(`Running limit-amount-of-view-field command`);

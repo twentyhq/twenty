@@ -3,10 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { In, Repository } from 'typeorm';
 
-import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import { BatchActiveWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/batch-active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -20,7 +17,7 @@ import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.wor
     'Update default view record opening on workflow objects to record page',
   version: '0.43',
 })
-export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends BatchActiveWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -31,26 +28,7 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async executeActiveWorkspacesMigrationCommand(
-    _passedParam: string[],
-    _options: ActiveWorkspacesMigrationCommandOptions,
-    workspaceIds: string[],
-  ): Promise<void> {
-    this.logger.log(
-      'Running command to update default view record opening on workflow objects to record page',
-    );
-
-    this.processEachWorkspaceWithWorkspaceDataSource(
-      workspaceIds,
-      async ({ workspaceId, index, total }) => {
-        await this.processWorkspace(workspaceId, index, total);
-      },
-    );
-
-    this.logger.log(chalk.green('Command completed!'));
-  }
-
-  async processWorkspace(
+  async runMigrationCommandOnWorkspace(
     workspaceId: string,
     index: number,
     total: number,

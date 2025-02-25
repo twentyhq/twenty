@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { createUpgradeAllCommand } from 'src/database/commands/migration-command/create-upgrade-all-command.factory';
+import { MigrationCommandModule } from 'src/database/commands/migration-command/miration-command.module';
 import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-43/0-43-add-tasks-assigned-to-me-view.command';
 import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-relations-to-field-metadata.command';
@@ -16,27 +16,28 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
-const UpgradeTo0_43Command = createUpgradeAllCommand('0.43');
-
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
-    TypeOrmModule.forFeature(
-      [ObjectMetadataEntity, FieldMetadataEntity],
-      'metadata',
-    ),
-    SearchModule,
-    WorkspaceMigrationRunnerModule,
-    WorkspaceMigrationModule,
-    WorkspaceMetadataVersionModule,
-  ],
-  providers: [
-    UpgradeTo0_43Command,
-    AddTasksAssignedToMeViewCommand,
-    MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
-    UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
-    StandardizationOfActorCompositeContextTypeCommand,
-    MigrateRelationsToFieldMetadataCommand,
+    MigrationCommandModule.register('0.43', {
+      imports: [
+        TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
+        TypeOrmModule.forFeature(
+          [ObjectMetadataEntity, FieldMetadataEntity],
+          'metadata',
+        ),
+        SearchModule,
+        WorkspaceMigrationRunnerModule,
+        WorkspaceMigrationModule,
+        WorkspaceMetadataVersionModule,
+      ],
+      providers: [
+        AddTasksAssignedToMeViewCommand,
+        MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
+        UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
+        StandardizationOfActorCompositeContextTypeCommand,
+        MigrateRelationsToFieldMetadataCommand,
+      ],
+    }),
   ],
 })
 export class UpgradeTo0_43CommandModule {}

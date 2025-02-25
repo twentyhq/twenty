@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandOptions } from 'src/database/commands/active-workspaces.command';
-import { ActiveWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import {
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -38,9 +40,9 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorks
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async executeActiveWorkspacesMigrationCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(

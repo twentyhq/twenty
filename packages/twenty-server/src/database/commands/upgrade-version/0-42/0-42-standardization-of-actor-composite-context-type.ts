@@ -4,9 +4,11 @@ import chalk from 'chalk';
 import { FieldMetadataType } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandOptions } from 'src/database/commands/active-workspaces.command';
 import { CommandLogger } from 'src/database/commands/logger';
-import { ActiveWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import {
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -38,9 +40,9 @@ export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWor
     this.logger.setVerbose(false);
   }
 
-  async executeActiveWorkspacesMigrationCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(`Running add-context-to-actor-composite-type command`);
