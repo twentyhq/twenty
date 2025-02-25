@@ -21,6 +21,7 @@ import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/A
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -30,10 +31,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
-import { isDefined } from 'twenty-shared';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -96,21 +96,21 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const fieldTypeOptions: SelectOption<string>[] = useMemo(
     () => [
-      { value: '*', label: 'All Objects', Icon: IconNorthStar },
+      { value: '*', label: t`All Objects`, Icon: IconNorthStar },
       ...objectMetadataItems.map((item) => ({
         value: item.nameSingular,
         label: item.labelPlural,
         Icon: getIcon(item.icon),
       })),
     ],
-    [objectMetadataItems, getIcon],
+    [objectMetadataItems, getIcon, t],
   );
 
   const actionOptions: SelectOption<string>[] = [
-    { value: '*', label: 'All Actions', Icon: IconNorthStar },
-    { value: 'created', label: 'Created', Icon: IconPlus },
-    { value: 'updated', label: 'Updated', Icon: IconRefresh },
-    { value: 'deleted', label: 'Deleted', Icon: IconTrash },
+    { value: '*', label: t`All Actions`, Icon: IconNorthStar },
+    { value: 'created', label: t`Created`, Icon: IconPlus },
+    { value: 'updated', label: t`Updated`, Icon: IconRefresh },
+    { value: 'deleted', label: t`Deleted`, Icon: IconTrash },
   ];
 
   if (loading || !formData) {
@@ -214,12 +214,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
         </Section>
         <Section>
           <H2Title
-            title="Secret"
-            description="Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+            title={t`Secret`}
+            description={t`Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt.`}
           />
           <TextInput
             type="password"
-            placeholder="Write a secret"
+            placeholder={t`Write a secret`}
             value={formData.secret}
             onChange={(secret: string) => {
               updateWebhook({ secret: secret.trim() });

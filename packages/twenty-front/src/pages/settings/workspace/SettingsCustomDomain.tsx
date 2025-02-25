@@ -17,10 +17,16 @@ const StyledDomainFormWrapper = styled.div`
 
 const StyledRecordsWrapper = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
+
+  & > :not(:first-of-type) {
+    margin-top: ${({ theme }) => theme.spacing(4)};
+  }
 `;
 
 export const SettingsCustomDomain = () => {
-  const customDomainRecords = useRecoilValue(customDomainRecordsState);
+  const { customDomainRecords, loading } = useRecoilValue(
+    customDomainRecordsState,
+  );
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -45,24 +51,24 @@ export const SettingsCustomDomain = () => {
               value={value}
               type="text"
               onChange={onChange}
+              placeholder="crm.yourdomain.com"
               error={error?.message}
+              loading={!!loading}
               fullWidth
             />
           )}
         />
       </StyledDomainFormWrapper>
-      {customDomainRecords &&
-        currentWorkspace?.customDomain &&
-        currentWorkspace.customDomain === customDomainRecords?.customDomain && (
-          <StyledRecordsWrapper>
-            <SettingsCustomDomainRecordsStatus
-              records={customDomainRecords.records}
-            />
+      {currentWorkspace?.customDomain && (
+        <StyledRecordsWrapper>
+          <SettingsCustomDomainRecordsStatus />
+          {customDomainRecords && (
             <SettingsCustomDomainRecords
               records={customDomainRecords.records}
             />
-          </StyledRecordsWrapper>
-        )}
+          )}
+        </StyledRecordsWrapper>
+      )}
     </Section>
   );
 };

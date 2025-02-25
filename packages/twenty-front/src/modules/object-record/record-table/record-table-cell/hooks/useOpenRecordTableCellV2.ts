@@ -22,7 +22,7 @@ import { isDefined } from 'twenty-shared';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
@@ -121,7 +121,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           leaveTableFocus();
 
           const openRecordIn = snapshot
-            .getLoadable(recordIndexOpenRecordInState)
+            .getLoadable(recordIndexOpenRecordInSelector)
             .getValue();
 
           if (openRecordIn === ViewOpenRecordInType.RECORD_PAGE) {

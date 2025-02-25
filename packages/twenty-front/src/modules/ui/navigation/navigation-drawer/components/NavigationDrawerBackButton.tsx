@@ -6,7 +6,8 @@ import { IconX, UndecoratedLink } from 'twenty-ui';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 
 type NavigationDrawerBackButtonProps = {
   title: string;
@@ -52,7 +53,10 @@ export const NavigationDrawerBackButton = ({
     navigationDrawerExpandedMemorizedState,
   );
 
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
+
   if (isWorkspaceSuspended) {
     return <StyledContainer />;
   }

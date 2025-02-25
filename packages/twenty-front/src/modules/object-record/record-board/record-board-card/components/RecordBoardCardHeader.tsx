@@ -18,7 +18,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -119,7 +119,9 @@ export const RecordBoardCardHeader = ({
     return [updateEntity, { loading: false }];
   };
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useRecoilValue(
+    recordIndexOpenRecordInSelector,
+  );
 
   const { openRecordInCommandMenu } = useCommandMenu();
 

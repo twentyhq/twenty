@@ -15,6 +15,10 @@ export const useHasObjectReadOnlyPermission = () => {
   }
 
   if (!isDefined(currentUserWorkspace?.objectRecordsPermissions)) {
+    return false;
+  }
+
+  if (currentUserWorkspace?.objectRecordsPermissions.length === 0) {
     return true;
   }
 

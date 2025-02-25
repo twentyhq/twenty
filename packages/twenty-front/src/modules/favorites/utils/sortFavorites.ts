@@ -27,7 +27,10 @@ export const sortFavorites = (
 ) => {
   return favorites
     .map((favorite) => {
-      if (isDefined(favorite.viewId) && isDefined(favorite.workspaceMemberId)) {
+      if (
+        isDefined(favorite.viewId) &&
+        isDefined(favorite.forWorkspaceMemberId)
+      ) {
         const view = views.find((view) => view.id === favorite.viewId);
 
         if (!isDefined(view)) {
@@ -54,7 +57,7 @@ export const sortFavorites = (
             { objectNamePlural: labelPlural.toLowerCase() },
             favorite.viewId ? { viewId: favorite.viewId } : undefined,
           ),
-          workspaceMemberId: favorite.workspaceMemberId,
+          forWorkspaceMemberId: favorite.forWorkspaceMemberId,
           favoriteFolderId: favorite.favoriteFolderId,
           objectNameSingular: 'view',
           Icon: view?.icon,
@@ -86,7 +89,7 @@ export const sortFavorites = (
             link: hasLinkToShowPage
               ? objectRecordIdentifier.linkToShowPage
               : '',
-            workspaceMemberId: favorite.workspaceMemberId,
+            forWorkspaceMemberId: favorite.forWorkspaceMemberId,
             favoriteFolderId: favorite.favoriteFolderId,
             objectNameSingular: objectNameSingular,
           } as ProcessedFavorite;

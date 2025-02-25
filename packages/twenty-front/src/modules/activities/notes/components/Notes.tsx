@@ -81,17 +81,19 @@ export const Notes = ({
         title="All"
         notes={notes}
         button={
-          <Button
-            Icon={IconPlus}
-            size="small"
-            variant="secondary"
-            title="Add note"
-            onClick={() =>
-              openCreateActivity({
-                targetableObjects: [targetableObject],
-              })
-            }
-          ></Button>
+          !hasObjectReadOnlyPermission && (
+            <Button
+              Icon={IconPlus}
+              size="small"
+              variant="secondary"
+              title="Add note"
+              onClick={() =>
+                openCreateActivity({
+                  targetableObjects: [targetableObject],
+                })
+              }
+            />
+          )
         }
       />
     </StyledNotesContainer>

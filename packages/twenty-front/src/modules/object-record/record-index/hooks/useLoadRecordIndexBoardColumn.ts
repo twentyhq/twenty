@@ -14,7 +14,6 @@ import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/s
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from 'twenty-shared';
 
@@ -52,11 +51,7 @@ export const useLoadRecordIndexBoardColumn = ({
 
   const viewsorts = currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [];
 
-  const sortDefinitions = useRecoilComponentValueV2(
-    availableSortDefinitionsComponentState,
-  );
-
-  const sorts = mapViewSortsToSorts(viewsorts, sortDefinitions);
+  const sorts = mapViewSortsToSorts(viewsorts);
 
   const { filterValueDependencies } = useFilterValueDependencies();
 

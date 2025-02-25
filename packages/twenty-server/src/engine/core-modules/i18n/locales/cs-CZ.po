@@ -128,6 +128,14 @@ msgstr "Vlastník účtu pro firmy"
 msgid "Account Owner For Companies"
 msgstr "Vlastník účtu pro firmy"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Akce potřebná k zabránění odstranění pracovního prostoru"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Je třeba akce k resetování hesla"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Adresa"
@@ -588,7 +596,7 @@ msgstr "Zobrazovaný název"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
-msgstr ""
+msgstr "Zobrazte záznamy v postranním panelu nebo na stránce záznamu"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
@@ -974,6 +982,10 @@ msgstr "Je zapnuta synchronizace"
 msgid "Job Title"
 msgstr "Pracovní pozice"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Připojte se k svému týmu na Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1333,7 +1345,7 @@ msgstr "Název objektu"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
-msgstr ""
+msgstr "Otevřít záznam v"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
@@ -1452,6 +1464,7 @@ msgstr "Telefony"
 msgid "Point of Contact"
 msgstr "Kontaktní osoba"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2115,6 +2128,10 @@ msgstr "Cílová URL Webhooku"
 msgid "Webhooks"
 msgstr "Webhooky"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Vítejte v Twenty: Prosím potvrďte svůj e-mail"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2245,6 +2262,10 @@ msgid "Workspace member name"
 msgstr "Jméno člena pracovního prostoru"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Pozice člena pracovního prostoru"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Členové pracovního prostoru"
 
@@ -2257,6 +2278,10 @@ msgstr "ČlenPracovníhoProstoru"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Vaše heslo bylo úspěšně změněno"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"

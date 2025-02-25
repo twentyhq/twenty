@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -11,14 +11,21 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
+import { isWorkflowDeleteRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-delete-record-action.guard';
 import { WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
-export class DeleteRecordWorkflowAction implements WorkflowAction {
+export class DeleteRecordWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -27,9 +34,25 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
-  async execute(
-    workflowActionInput: WorkflowDeleteRecordActionInput,
-  ): Promise<WorkflowActionResult> {
+  async execute({
+    currentStepIndex,
+    steps,
+    context,
+  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+    const step = steps[currentStepIndex];
+
+    if (!isWorkflowDeleteRecordAction(step)) {
+      throw new WorkflowStepExecutorException(
+        'Step is not a delete record action',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
+    const workflowActionInput = resolveInput(
+      step.settings.input,
+      context,
+    ) as WorkflowDeleteRecordActionInput;
+
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
     );
