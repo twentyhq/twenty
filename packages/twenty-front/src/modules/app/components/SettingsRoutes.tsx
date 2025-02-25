@@ -6,9 +6,30 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
-import { SettingsApiKeys } from '~/pages/settings/developers/api-keys/SettingsApiKeys';
-import { PlaygroundRouter } from '~/pages/settings/developers/playground/PlaygroundRouter';
-import { SettingsWebhooks } from '~/pages/settings/developers/webhooks/components/SettingsWebhooks';
+
+const SettingsApiKeys = lazy(() =>
+  import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
+    (module) => ({
+      default: module.SettingsApiKeys,
+    }),
+  ),
+);
+
+const PlaygroundRouter = lazy(() =>
+  import('~/pages/settings/developers/playground/PlaygroundRouter').then(
+    (module) => ({
+      default: module.PlaygroundRouter,
+    }),
+  ),
+);
+
+const SettingsWebhooks = lazy(() =>
+  import(
+    '~/pages/settings/developers/webhooks/components/SettingsWebhooks'
+  ).then((module) => ({
+    default: module.SettingsWebhooks,
+  })),
+);
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
