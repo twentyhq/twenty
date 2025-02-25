@@ -225,6 +225,10 @@ msgstr "Aggiungi il tuo primo {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Aggiunto {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Aggiunto alla lista di blocco"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Aspetto"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Dominio email approvato"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Dominio email approvato"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "Dominio"
 msgid "Domain added successfully."
 msgstr "Dominio aggiunto con successo."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Non creare automaticamente i contatti."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "Email"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "L'email non può essere vuota"
+#~ msgid "Email can not be empty"
+#~ msgstr "L'email non può essere vuota"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Dominio personalizzato non valido. Si prega di includere almeno un sottodominio (ad esempio, sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Dominio non valido. I domini devono essere più piccoli di 256 caratteri, non possono essere indirizzi IP, non possono contenere spazi, non possono contenere caratteri speciali come _~`!@#$%^*()=+{}[]|\\;:'\",<>/? e non possono iniziare o terminare con il carattere '-'."
 

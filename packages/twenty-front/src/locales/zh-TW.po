@@ -225,6 +225,10 @@ msgstr "添加您的第一個 {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "已添加 {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "已添加到阻止列表"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "外觀"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "已批准的電子郵件域"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "已批准的電子郵件域"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "域名"
 msgid "Domain added successfully."
 msgstr "域名添加成功。"
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "不要自動創建聯繫人。"
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "電子郵件"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "電子郵件不能為空"
+#~ msgid "Email can not be empty"
+#~ msgstr "電子郵件不能為空"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "無效的自定義域名。請至少包含一個子域名（例如，sub.example.com）。"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "無效的域。域名必須小於 256 個字符，不能是 IP 地址，不能包含空格，不能包含任何特殊字符，如 _~`!@#$%^*()=+{}[]|\\;:'\",<>/? 並且不能以 '-' 字符開頭或結尾。"
 

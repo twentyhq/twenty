@@ -225,6 +225,10 @@ msgstr "Додайте ваш перший {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Додано {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Додано до чорного списку"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Зовнішній вигляд"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Затверджений домен електронної пошти"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Затверджений домен електронної пошти"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1047,6 +1055,10 @@ msgstr ""
 msgid "Domain added successfully."
 msgstr "Домен успішно додано."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Не автосворювати контакти."
@@ -1129,8 +1141,12 @@ msgstr ""
 "              Електронна адреса"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "Електронна пошта не може бути порожньою"
+#~ msgid "Email can not be empty"
+#~ msgstr "Електронна пошта не може бути порожньою"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1611,7 +1627,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Неприпустимий користувацький домен. Будь ласка, включіть принаймні один субдомен (наприклад, sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Недійсний домен. Домен має бути коротшим за 256 символів, не може бути IP-адресою, не може містити пробіли, не може містити спеціальні символи такі як _~`!@#$%^*()=+{}[]|\\;:'\",<>/? та не може починатися або закінчуватися символом '-'."
 

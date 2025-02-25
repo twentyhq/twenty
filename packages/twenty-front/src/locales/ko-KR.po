@@ -225,6 +225,10 @@ msgstr "첫 번째 {objectLabel} 추가"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "{beautifiedCreatedAt} 추가"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "차단 목록에 추가됨"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "외관"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "승인된 이메일 도메인"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "승인된 이메일 도메인"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "도메인"
 msgid "Domain added successfully."
 msgstr "도메인이 성공적으로 추가되었습니다."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "연락처를 자동 생성하지 않음."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "이메일"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "이메일은 비워 둘 수 없습니다"
+#~ msgid "Email can not be empty"
+#~ msgstr "이메일은 비워 둘 수 없습니다"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "유효하지 않은 사용자 정의 도메인입니다. 적어도 하나의 하위 도메인을 포함해야 합니다 (예: sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "잘못된 도메인입니다. 도메인은 길이가 256자를 넘을 수 없고, IP 주소가 될 수 없으며, 공백이 포함될 수 없고, _~`!@#$%^*()=+{}[]|\\;:'\",<>/?와 같은 특수 문자를 포함할 수 없으며, '-' 문자로 시작하거나 끝나선 안 됩니다."
 

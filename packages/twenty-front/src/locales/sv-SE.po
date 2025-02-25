@@ -225,6 +225,10 @@ msgstr "L\\u00e4gg till din f\\u00f6rsta {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Tillagd {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Tillagd i blocklistan"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Utseende"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Godkänd e-postdomän"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Godkänd e-postdomän"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "Domän"
 msgid "Domain added successfully."
 msgstr "Domän tillagd framgångsrikt."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Skapa inte automatiskt kontakter."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "E-post"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "E-post får inte vara tomt"
+#~ msgid "Email can not be empty"
+#~ msgstr "E-post får inte vara tomt"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Ogiltig anpassad domän. Vänligen inkludera minst en subdomän (t.ex., sub.exempel.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Ogiltig domän. Domäner måste vara kortare än 256 tecken, får inte vara IP-adresser, får inte innehålla mellanslag, får inte innehålla några specialtecken som _~`!@#$%^*()=+{}[]|\\;:'\",<>/? och får inte börja eller sluta med tecknet '-'."
 

@@ -225,6 +225,10 @@ msgstr "Add meg az első {objectLabel} előfordulást"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Hozzáadva {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Hozzáadva a tiltólistához"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Megjelenés"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Jóváhagyott email tartomány"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Jóváhagyott email tartomány"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "Domain"
 msgid "Domain added successfully."
 msgstr "Tartomány sikeresen hozzáadva."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Kapcsolattartók automatikus létrehozása nincs."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "Email"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "Az email nem lehet üres"
+#~ msgid "Email can not be empty"
+#~ msgstr "Az email nem lehet üres"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Érvénytelen egyéni domain. Kérjük, tartalmazzon legalább egy aldomaint (pl. sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Érvénytelen tartomány. A tartományoknak 256 karakternél rövidebbnek kell lenniük, nem lehetnek IP címek, nem tartalmazhatnak szóközöket, nem tartalmazhatnak semmilyen speciális karaktereket, mint például _~`!@#$%^*()=+{}[]|\\;:'\",<>/? és nem kezdődhetnek vagy végződhetnek '-' karakterrel."
 

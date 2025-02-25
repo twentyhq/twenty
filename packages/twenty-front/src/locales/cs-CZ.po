@@ -225,6 +225,10 @@ msgstr "Přidejte svůj první {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Přidáno {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Přidáno do blokovaného seznamu"
@@ -340,8 +344,12 @@ msgid "Appearance"
 msgstr "Vzhled"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Schválená e-mailová doména"
+msgid "Approved Domains"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Schválená e-mailová doména"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -1011,6 +1019,10 @@ msgstr "Doména"
 msgid "Domain added successfully."
 msgstr "Doména úspěšně přidána."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Nevytvářet automaticky kontakty."
@@ -1078,8 +1090,12 @@ msgid "Email"
 msgstr "E-mail"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
-msgstr "Email nesmí být prázdný"
+#~ msgid "Email can not be empty"
+#~ msgstr "Email nesmí být prázdný"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -1555,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Neplatná vlastní doména. Uveďte prosím alespoň jednu subdoménu (např. sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Neplatná doména. Domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat žádné speciální znaky jako _~`!@#$%^*()=+{}[]|\\;:'\",<>/? a nesmí začínat ani končit znakem '-'."
 
