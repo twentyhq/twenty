@@ -1,12 +1,10 @@
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowRunStepDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepDetail';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
 
 const StyledTabListContainer = styled.div`
@@ -24,13 +22,7 @@ type TabId = 'node' | 'input' | 'output';
 
 export const RightDrawerWorkflowRunViewStep = () => {
   const flow = useFlowOrThrow();
-
-  const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
-  if (!isDefined(workflowSelectedNode)) {
-    throw new Error(
-      'Expected a node to be selected. Selecting a node is mandatory to edit it.',
-    );
-  }
+  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
 
   const { activeTabId } = useTabList<TabId>(
     WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,

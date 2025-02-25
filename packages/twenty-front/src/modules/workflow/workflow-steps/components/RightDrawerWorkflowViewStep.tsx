@@ -1,18 +1,10 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 
 export const RightDrawerWorkflowViewStep = () => {
   const flow = useFlowOrThrow();
-
-  const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
-  if (!isDefined(workflowSelectedNode)) {
-    throw new Error(
-      'Expected a node to be selected. Selecting a node is mandatory to view its details.',
-    );
-  }
+  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
 
   return (
     <WorkflowStepDetail
