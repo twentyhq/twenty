@@ -17,7 +17,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 export class GlobalSearchService {
-  selectableObjectMetadataItems(
+  filterObjectMetadataItems(
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps[],
     excludedObjectNameSingulars: string[] | undefined,
   ) {

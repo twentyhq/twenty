@@ -1,6 +1,8 @@
 import { UseFilters } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 
+import chunk from 'lodash.chunk';
+
 import { GlobalSearchArgs } from 'src/engine/core-modules/global-search/dtos/global-search-args';
 import { GlobalSearchRecordDTO } from 'src/engine/core-modules/global-search/dtos/global-search-record-dto';
 import {
@@ -15,6 +17,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+
+const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
 
 @Resolver(() => [GlobalSearchRecordDTO])
 @UseFilters(GlobalSearchApiExceptionFilter)
@@ -58,35 +62,48 @@ export class GlobalSearchResolver {
       objectMetadataMaps.byId,
     );
 
-    const selectableObjectMetadataItems =
-      this.globalSearchService.selectableObjectMetadataItems(
+    const filteredObjectMetadataItems =
+      this.globalSearchService.filterObjectMetadataItems(
         objectMetadataItemWithFieldMaps,
         excludedObjectNameSingulars,
       );
 
-    const recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[] = [];
+    const allRecordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[] =
+      [];
 
-    for (const objectMetadataItem of selectableObjectMetadataItems) {
-      const repository = await this.twentyORMManager.getRepository(
-        objectMetadataItem.nameSingular,
+    const filteredObjectMetadataItemsChunks = chunk(
+      filteredObjectMetadataItems,
+      OBJECT_METADATA_ITEMS_CHUNK_SIZE,
+    );
+
+    for (const objectMetadataItemChunk of filteredObjectMetadataItemsChunks) {
+      const recordsWithObjectMetadataItems = await Promise.all(
+        objectMetadataItemChunk.map(async (objectMetadataItem) => {
+          const repository = await this.twentyORMManager.getRepository(
+            objectMetadataItem.nameSingular,
+          );
+
+          repository.createQueryBuilder();
+
+          return {
+            objectMetadataItem,
+            records:
+              await this.globalSearchService.buildSearchQueryAndGetRecords(
+                repository,
+                objectMetadataItem,
+                formatSearchTerms(searchInput, 'and'),
+                formatSearchTerms(searchInput, 'or'),
+                limit,
+              ),
+          };
+        }),
       );
 
-      repository.createQueryBuilder();
-
-      recordsWithObjectMetadataItems.push({
-        objectMetadataItem,
-        records: await this.globalSearchService.buildSearchQueryAndGetRecords(
-          repository,
-          objectMetadataItem,
-          formatSearchTerms(searchInput, 'and'),
-          formatSearchTerms(searchInput, 'or'),
-          limit,
-        ),
-      });
+      allRecordsWithObjectMetadataItems.push(...recordsWithObjectMetadataItems);
     }
 
     return this.globalSearchService.computeSearchObjectResults(
-      recordsWithObjectMetadataItems,
+      allRecordsWithObjectMetadataItems,
       limit,
     );
   }
