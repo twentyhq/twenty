@@ -375,7 +375,6 @@ export class WorkerHealthIndicator {
               x: formatForNivo(point.timestamp),
               y: point.completed,
             })),
-            color: '#4caf50',
           },
           {
             id: 'Failed Jobs',
@@ -383,7 +382,6 @@ export class WorkerHealthIndicator {
               x: formatForNivo(point.timestamp),
               y: point.failed,
             })),
-            color: '#f44336',
           },
         ],
       };

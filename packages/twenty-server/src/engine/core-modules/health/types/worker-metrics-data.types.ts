@@ -15,8 +15,6 @@ export class MetricsSeries {
   id: string;
   @Field(() => [MetricsDataPoint])
   data: MetricsDataPoint[];
-  @Field()
-  color: string;
 }
 
 @ObjectType()

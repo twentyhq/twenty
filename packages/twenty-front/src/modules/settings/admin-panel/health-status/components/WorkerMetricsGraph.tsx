@@ -18,16 +18,12 @@ const StyledGraphContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTitleContainer = styled.div`
-  align-items: flex-start;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledGraphControls = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: flex-end;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledNoDataMessage = styled.div`
@@ -38,7 +34,6 @@ const StyledNoDataMessage = styled.div`
   justify-content: center;
 `;
 
-// Custom tooltip styles
 const StyledTooltipContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -102,7 +97,6 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
 
   const details = JSON.parse(data?.getQueueMetrics?.[0]?.details || '{}');
 
-  // Dynamically set axis bottom format based on time range
   const getAxisBottomFormat = () => {
     switch (timeRange) {
       case '7D':
@@ -117,24 +111,21 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
 
   return (
     <>
-      <StyledTitleContainer>
-        <>Queue Performance Metrics</>
-        <StyledGraphControls>
-          <Select
-            dropdownId={`timerange-${queueName}`}
-            value={timeRange}
-            options={[
-              { value: '7D', label: 'This week' },
-              { value: '1D', label: 'Today' },
-              { value: '12H', label: 'Last 12 hours' },
-              { value: '4H', label: 'Last 4 hours' },
-            ]}
-            onChange={(value) => {
-              setTimeRange(value);
-            }}
-          />
-        </StyledGraphControls>
-      </StyledTitleContainer>
+      <StyledGraphControls>
+        <Select
+          dropdownId={`timerange-${queueName}`}
+          value={timeRange}
+          options={[
+            { value: '7D', label: 'This week' },
+            { value: '1D', label: 'Today' },
+            { value: '12H', label: 'Last 12 hours' },
+            { value: '4H', label: 'Last 4 hours' },
+          ]}
+          onChange={(value) => {
+            setTimeRange(value);
+          }}
+        />
+      </StyledGraphControls>
 
       <StyledGraphContainer>
         {loading ? (
@@ -144,7 +135,7 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
             data={metricsData}
             curve="monotoneX"
             enableArea={true}
-            colors={(series) => series.color || theme.color.blue}
+            colors={[theme.color.green, theme.color.red]}
             theme={{
               text: {
                 fill: theme.font.color.light,
@@ -175,7 +166,7 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
                 },
               },
             }}
-            margin={{ top: 20, right: 30, bottom: 40, left: 50 }}
+            margin={{ top: 40, right: 30, bottom: 40, left: 50 }}
             xFormat="time:%Y-%m-%d %H:%M"
             xScale={{
               type: 'time',
@@ -241,7 +232,7 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
                 direction: 'row',
                 justify: false,
                 translateX: 0,
-                translateY: -20,
+                translateY: -40,
                 itemsSpacing: 10,
                 itemDirection: 'left-to-right',
                 itemWidth: 100,
