@@ -2286,4 +2286,3 @@ msgstr "Ο κωδικός πρόσβασης άλλαξε με επιτυχία"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Το μέλος της ομάδας σας υπεύθυνο για τη διαχείριση του λογαριασμού της εταιρείας"
-

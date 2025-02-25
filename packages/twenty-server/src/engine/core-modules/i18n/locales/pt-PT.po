@@ -2286,4 +2286,3 @@ msgstr "Sua senha foi alterada com sucesso"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "O membro da sua equipa responsável pela gestão da conta da empresa"
-

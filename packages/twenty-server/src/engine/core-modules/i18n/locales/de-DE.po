@@ -2286,4 +2286,3 @@ msgstr "Ihr Passwort wurde erfolgreich geändert"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Ihr Teammitglied, das für die Verwaltung des Unternehmenskontos verantwortlich ist"
-
