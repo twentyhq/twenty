@@ -36,6 +36,7 @@ const StyledButton = styled.button`
 type SettingsListCardProps<ListItem extends { id: string }> = {
   items: ListItem[];
   getItemLabel: (item: ListItem) => string;
+  getItemDescription?: (item: ListItem) => string;
   hasFooter?: boolean;
   isLoading?: boolean;
   onRowClick?: (item: ListItem) => void;
@@ -54,6 +55,7 @@ export const SettingsListCard = <
 >({
   items,
   getItemLabel,
+  getItemDescription,
   hasFooter,
   isLoading,
   onRowClick,
@@ -75,6 +77,7 @@ export const SettingsListCard = <
           key={item.id}
           LeftIcon={RowIconFn ? RowIconFn(item) : RowIcon}
           label={getItemLabel(item)}
+          description={getItemDescription?.(item)}
           rightComponent={<RowRightComponent item={item} />}
           divider={index < items.length - 1}
           onClick={() => onRowClick?.(item)}
