@@ -352,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "您确定要更改计费周期吗？"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "你确定你想分配这个角色吗？"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "你确定你想分配这个角色吗？"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2268,15 +2268,13 @@ msgstr "关系类型"
 msgid "Releases"
 msgstr "发布"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "移除"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "移除{workspaceMemberName}？"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "移除{workspaceMemberName}？"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2747,8 +2745,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "此操作无法撤销。这将永久删除您的整个工作区。 <0/> 请输入您的电子邮件以确认。"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "这名成员将不再被分配这个角色。"
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "这名成员将不再被分配这个角色。"
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."

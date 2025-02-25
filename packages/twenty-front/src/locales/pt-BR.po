@@ -352,8 +352,8 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Tem certeza de que deseja alterar o intervalo de cobrança?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Voc\\u00ea tem certeza que deseja atribuir este cargo?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Voc\\u00ea tem certeza que deseja atribuir este cargo?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2268,15 +2268,13 @@ msgstr "Tipo de relação"
 msgid "Releases"
 msgstr "Lançamentos"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Remover"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Remover {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Remover {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2752,8 +2750,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Essa ação não pode ser desfeita. Isso excluirá permanentemente todo o seu workspace. <0/> Digite seu e-mail para confirmar."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Este membro ser\\u00e1 desvinculado deste cargo."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "Este membro ser\\u00e1 desvinculado deste cargo."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
