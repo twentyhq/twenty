@@ -1,25 +1,26 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
 
-import {
-  ActiveWorkspacesCommandOptions,
-  ActiveWorkspacesCommandRunner,
-} from 'src/database/commands/active-workspaces.command';
 import { CommandLogger } from 'src/database/commands/logger';
+import {
+  ActiveWorkspacesMigrationCommandOptions,
+  ActiveWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-@Command({
-  name: 'upgrade-0.42:standardization-of-actor-composite-context-type',
+@MigrationCommand({
+  name: 'standardization-of-actor-composite-context-type',
   description: 'Add context to actor composite type.',
+  version: '0.42',
 })
-export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWorkspacesCommandRunner {
+export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWorkspacesMigrationCommandRunner {
   protected readonly logger;
 
   constructor(
@@ -39,9 +40,9 @@ export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWor
     this.logger.setVerbose(false);
   }
 
-  async executeActiveWorkspacesCommand(
+  async runMigrationCommandOnActiveWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(`Running add-context-to-actor-composite-type command`);
@@ -52,7 +53,7 @@ export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWor
 
     for (const [index, workspaceId] of workspaceIds.entries()) {
       try {
-        await this.execute(workspaceId, options?.dryRun);
+        await this.runOnWorkspace(workspaceId, options?.dryRun);
         this.logger.verbose(
           `[${index + 1}/${workspaceIds.length}] Added for workspace: ${workspaceId}`,
         );
@@ -62,7 +63,10 @@ export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWor
     }
   }
 
-  private async execute(workspaceId: string, dryRun = false): Promise<void> {
+  private async runOnWorkspace(
+    workspaceId: string,
+    dryRun = false,
+  ): Promise<void> {
     this.logger.verbose(`Adding for workspace: ${workspaceId}`);
     const actorFields = await this.fieldMetadataRepository.find({
       where: {
