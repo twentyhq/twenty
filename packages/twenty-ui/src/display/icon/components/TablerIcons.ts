@@ -53,6 +53,8 @@ export {
   IconClockShare,
   IconCode,
   IconStepInto,
+  IconLogin2,
+  IconLogout,
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,

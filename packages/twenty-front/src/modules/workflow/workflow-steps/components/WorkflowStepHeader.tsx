@@ -43,24 +43,37 @@ const StyledHeaderIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const WorkflowStepHeader = ({
-  onTitleChange,
-  Icon,
-  iconColor,
-  initialTitle,
-  headerType,
-  disabled,
-}: {
-  onTitleChange: (newTitle: string) => void;
+type WorkflowStepHeaderProps = {
   Icon: IconComponent;
   iconColor: string;
   initialTitle: string;
   headerType: string;
-  disabled?: boolean;
-}) => {
+} & (
+  | {
+      disabled: true;
+      onTitleChange?: never;
+    }
+  | {
+      disabled?: boolean;
+      onTitleChange: (newTitle: string) => void;
+    }
+);
+
+export const WorkflowStepHeader = ({
+  Icon,
+  iconColor,
+  initialTitle,
+  headerType,
+  ...props
+}: WorkflowStepHeaderProps) => {
   const theme = useTheme();
+
   const [title, setTitle] = useState(initialTitle);
-  const debouncedOnTitleChange = useDebouncedCallback(onTitleChange, 100);
+
+  const debouncedOnTitleChange = useDebouncedCallback((newTitle: string) => {
+    props.onTitleChange?.(newTitle);
+  }, 100);
+
   const handleChange = (newTitle: string) => {
     setTitle(newTitle);
     debouncedOnTitleChange(newTitle);
@@ -78,12 +91,12 @@ export const WorkflowStepHeader = ({
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TextInput
-            disabled={disabled}
+            disabled={props.disabled}
             value={title}
             copyButton={false}
             hotkeyScope="workflow-step-title"
-            onEnter={onTitleChange}
-            onEscape={onTitleChange}
+            onEnter={props.onTitleChange}
+            onEscape={props.onTitleChange}
             onChange={handleChange}
             shouldTrim={false}
           />

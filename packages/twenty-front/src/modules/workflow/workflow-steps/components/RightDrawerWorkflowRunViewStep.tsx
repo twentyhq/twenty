@@ -2,11 +2,11 @@ import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
+import { WorkflowRunStepDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepDetail';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { IconCode, IconStepInto } from 'twenty-ui';
+import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
 
 const StyledTabListContainer = styled.div`
   align-items: center;
@@ -19,7 +19,7 @@ const StyledTabListContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
 `;
 
-type TabId = 'node' | 'other';
+type TabId = 'node' | 'input' | 'output';
 
 export const RightDrawerWorkflowRunViewStep = () => {
   const flow = useFlowOrThrow();
@@ -36,7 +36,8 @@ export const RightDrawerWorkflowRunViewStep = () => {
 
   const tabs: SingleTabProps<TabId>[] = [
     { id: 'node', title: 'Node', Icon: IconStepInto },
-    { id: 'other', title: 'Code', Icon: IconCode },
+    { id: 'input', title: 'Input', Icon: IconLogin2 },
+    { id: 'output', title: 'Output', Icon: IconLogout },
   ];
 
   return (
@@ -50,11 +51,10 @@ export const RightDrawerWorkflowRunViewStep = () => {
       </StyledTabListContainer>
 
       {activeTabId === 'node' ? (
-        <WorkflowStepDetail
+        <WorkflowRunStepDetail
           stepId={workflowSelectedNode}
           trigger={flow.trigger}
           steps={flow.steps}
-          readonly
         />
       ) : null}
     </>
