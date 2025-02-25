@@ -1,13 +1,13 @@
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import styled from '@emotion/styled';
-import { AnimatedExpandableContainer, Status } from 'twenty-ui';
+import { AnimatedExpandableContainer, H2Title, Status } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
   AdminPanelWorkerQueueHealth,
 } from '~/generated/graphql';
 import { WorkerMetricsGraph } from './WorkerMetricsGraph';
 
-const StyledExpandedContent = styled.div`
+const StyledWorkerMetricsGraphContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding-top: ${({ theme }) => theme.spacing(1)};
@@ -19,14 +19,6 @@ const StyledExpandedContent = styled.div`
 const StyledContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
   margin-top: ${({ theme }) => theme.spacing(5)};
-`;
-
-const StyledQueueMetricsTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const SettingsAdminQueueExpandableContainer = ({
@@ -74,12 +66,10 @@ export const SettingsAdminQueueExpandableContainer = ({
             />
           </StyledContainer>
 
-          <StyledQueueMetricsTitle>
-            Performance Over Time:
-          </StyledQueueMetricsTitle>
-          <StyledExpandedContent>
+          <H2Title title="Performance Over Time" />
+          <StyledWorkerMetricsGraphContainer>
             <WorkerMetricsGraph queueName={selectedQueueData.queueName} />
-          </StyledExpandedContent>
+          </StyledWorkerMetricsGraphContainer>
         </>
       )}
     </AnimatedExpandableContainer>

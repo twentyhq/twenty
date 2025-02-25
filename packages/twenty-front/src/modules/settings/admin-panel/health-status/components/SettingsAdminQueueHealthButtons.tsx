@@ -16,6 +16,12 @@ const StyledQueueHealthButton = styled(Button)<{
   isSelected?: boolean;
   status: AdminPanelHealthServiceStatus;
 }>`
+  &:hover {
+    background-color: ${({ theme, status }) =>
+      status === AdminPanelHealthServiceStatus.OPERATIONAL
+        ? theme.tag.background.green
+        : theme.tag.background.red};
+  }
   ${({ isSelected, theme, status }) =>
     isSelected &&
     `
@@ -23,7 +29,9 @@ const StyledQueueHealthButton = styled(Button)<{
       status === AdminPanelHealthServiceStatus.OPERATIONAL
         ? theme.tag.background.green
         : theme.tag.background.red
-    };
+    }
+
+  
   `}
 `;
 export const SettingsAdminQueueHealthButtons = ({
