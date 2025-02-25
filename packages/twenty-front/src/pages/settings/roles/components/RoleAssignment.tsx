@@ -141,7 +141,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     await updateWorkspaceMemberRole({
       variables: {
         workspaceMemberId: selectedWorkspaceMember.id,
-        roleId: modalMode === 'assign' ? role.id : null,
+        roleId: role.id,
       },
     });
 
@@ -183,7 +183,6 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
             <RoleAssignmentTableRow
               key={workspaceMember.id}
               workspaceMember={workspaceMember}
-              onRemove={() => handleRemoveClick(workspaceMember)}
             />
           ))}
         </Table>
