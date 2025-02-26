@@ -1,13 +1,16 @@
 import { FieldMetadataType } from 'twenty-shared';
 
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 const DEFAULT_DEPTH_VALUE = 1;
 
 // TODO: Should be properly type and based on composite type definitions
 export const mapFieldMetadataToGraphqlQuery = (
-  objectMetadataItems,
-  field,
+  objectMetadataMaps: ObjectMetadataMaps,
+  field: FieldMetadataInterface,
   maxDepthForRelations = DEFAULT_DEPTH_VALUE,
 ): string | undefined => {
   if (maxDepthForRelations < 0) {
@@ -41,19 +44,17 @@ export const mapFieldMetadataToGraphqlQuery = (
     fieldType === FieldMetadataType.RELATION &&
     field.toRelationMetadata?.relationType === RelationMetadataType.ONE_TO_MANY
   ) {
-    const relationMetadataItem = objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id ===
-        (field.toRelationMetadata as any)?.fromObjectMetadataId,
-    );
+    const fromObjectMetadataId = field.toRelationMetadata?.fromObjectMetadataId;
+
+    const relationMetadataItem = objectMetadataMaps.byId[fromObjectMetadataId];
 
     return `${field.name}
     {
       id
-      ${(relationMetadataItem?.fields ?? [])
+      ${Object.values(relationMetadataItem.fieldsById)
         .map((field) =>
           mapFieldMetadataToGraphqlQuery(
-            objectMetadataItems,
+            objectMetadataMaps,
             field,
             maxDepthForRelations - 1,
           ),
@@ -66,21 +67,19 @@ export const mapFieldMetadataToGraphqlQuery = (
     field.fromRelationMetadata?.relationType ===
       RelationMetadataType.ONE_TO_MANY
   ) {
-    const relationMetadataItem = objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id ===
-        (field.fromRelationMetadata as any)?.toObjectMetadataId,
-    );
+    const toObjectMetadataId = field.fromRelationMetadata?.toObjectMetadataId;
+
+    const relationMetadataItem = objectMetadataMaps.byId[toObjectMetadataId];
 
     return `${field.name}
       {
         edges {
           node {
             id
-            ${(relationMetadataItem?.fields ?? [])
+            ${Object.values(relationMetadataItem.fieldsById)
               .map((field) =>
                 mapFieldMetadataToGraphqlQuery(
-                  objectMetadataItems,
+                  objectMetadataMaps,
                   field,
                   maxDepthForRelations - 1,
                 ),
