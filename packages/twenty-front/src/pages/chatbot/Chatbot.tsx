@@ -7,9 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { IconRobot } from 'twenty-ui';
 
 export const Chatbot = () => {
-  
-
-  const workspace = useRecoilValue(currentWorkspaceState)
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const chatbotBaseUrl = import.meta.env.REACT_APP_CHATBOT_BASE_URL;
 
@@ -18,10 +16,10 @@ export const Chatbot = () => {
       <PageContainer>
         <PageHeader title="Bot" Icon={IconRobot} />
         <PageBody>
-          {workspace?.creatorEmail && (
+          {currentWorkspace?.creatorEmail && (
             <iframe
               title="Chatbot-iframe"
-              src={`${chatbotBaseUrl}/signin?g=${workspace?.creatorEmail}`}
+              src={`${chatbotBaseUrl}/signin?g=${currentWorkspace?.creatorEmail}`}
               style={{
                 width: '100%',
                 height: '100%',
