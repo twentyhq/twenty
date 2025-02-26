@@ -1,7 +1,7 @@
+import { RoleAssignmentConfirmationModalSubtitle } from '@/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle';
+import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { t } from '@lingui/core/macro';
-import { RoleAssignmentConfirmationModalSubtitle } from '~/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle';
-import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 
 type RoleAssignmentConfirmationModalProps = {
   selectedWorkspaceMember: RoleAssignmentConfirmationModalSelectedWorkspaceMember;

@@ -1,8 +1,8 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconUser } from 'twenty-ui';
-import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '~/pages/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 
 const StyledSettingsCardContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};

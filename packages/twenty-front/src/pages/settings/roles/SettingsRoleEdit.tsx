@@ -11,16 +11,17 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { RoleAssignment } from '@/settings/roles/role-assignment/components/RoleAssignment';
+import { RolePermissions } from '@/settings/roles/role-permissions/components/RolePermissions';
+import { RoleSettings } from '@/settings/roles/role-settings/components/RoleSettings';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { useTheme } from '@emotion/react';
 import { useGetRolesQuery } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RolePermissions } from '~/pages/settings/roles/role-permissions/components/RolePermissions';
-import { RoleSettings } from '~/pages/settings/roles/role-settings/components/RoleSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { RoleAssignment } from './role-assignment/components/RoleAssignment';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -49,6 +50,7 @@ export const SETTINGS_ROLE_DETAIL_TABS = {
 
 export const SettingsRoleEdit = () => {
   const { roleId = '' } = useParams();
+  const theme = useTheme();
   const navigateSettings = useNavigateSettings();
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
     fetchPolicy: 'network-only',
@@ -106,7 +108,7 @@ export const SettingsRoleEdit = () => {
     <SubMenuTopBarContainer
       title={
         <StyledTitleContainer>
-          <StyledIconUser size={16} />
+          <StyledIconUser size={theme.icon.size.md} />
           <H3Title title={role.label} />
         </StyledTitleContainer>
       }
