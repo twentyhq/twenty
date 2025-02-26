@@ -24,7 +24,7 @@ export class UpdateQueryFactory {
       )}($id: ID!, $data: ${capitalize(objectNameSingular)}UpdateInput!) {
         update${capitalize(objectNameSingular)}(id: $id, data: $data) {
           id
-          ${objectMetadata.objectMetadataMapItem.fields
+          ${Object.values(objectMetadata.objectMetadataMapItem.fieldsById)
             .map((field) =>
               mapFieldMetadataToGraphqlQuery(
                 objectMetadata.objectMetadataMaps,

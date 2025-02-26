@@ -46,7 +46,15 @@ export const mapFieldMetadataToGraphqlQuery = (
   ) {
     const fromObjectMetadataId = field.toRelationMetadata?.fromObjectMetadataId;
 
+    if (!fromObjectMetadataId) {
+      return '';
+    }
+
     const relationMetadataItem = objectMetadataMaps.byId[fromObjectMetadataId];
+
+    if (!relationMetadataItem) {
+      return '';
+    }
 
     return `${field.name}
     {
@@ -69,7 +77,15 @@ export const mapFieldMetadataToGraphqlQuery = (
   ) {
     const toObjectMetadataId = field.fromRelationMetadata?.toObjectMetadataId;
 
+    if (!toObjectMetadataId) {
+      return '';
+    }
+
     const relationMetadataItem = objectMetadataMaps.byId[toObjectMetadataId];
+
+    if (!relationMetadataItem) {
+      return '';
+    }
 
     return `${field.name}
       {
