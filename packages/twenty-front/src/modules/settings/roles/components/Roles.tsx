@@ -2,10 +2,10 @@ import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
+import { RolesTableHeader } from '@/settings/roles/components/RolesTableHeader';
+import { RolesTableRow } from '@/settings/roles/components/RolesTableRow';
 import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
-import { RolesTableHeader } from '~/pages/settings/roles/components/RolesTableHeader';
-import { RolesTableRow } from '~/pages/settings/roles/components/RolesTableRow';
 
 const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(0.5)};
