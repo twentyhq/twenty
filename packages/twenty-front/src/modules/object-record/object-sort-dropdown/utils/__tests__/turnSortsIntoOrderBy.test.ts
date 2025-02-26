@@ -4,8 +4,9 @@ import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordG
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { EachTestingContext } from '~/types/EachTestingContext';
 
-const objectMetadataItemWithPosition: ObjectMetadataItem = {
+const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   id: 'object1',
   fields: [
     {
@@ -46,16 +47,17 @@ const getMockFieldMetadataItem = (
   ...overrides,
 });
 
-describe('turnSortsIntoOrderBy', () => {
-  it.each<{
-    title: string;
-    fields: PartialFieldMetadaItemWithRequiredId[];
-    expected: RecordGqlOperationOrderBy;
-    sort: RecordSort[];
-    objectMetadataItemOverrides?: Partial<Omit<ObjectMetadataItem, 'fields'>>;
-  }>([
-    {
-      title: 'It should sort by recordPosition if no sorts',
+type TurnSortsIntoOrderTestContext = EachTestingContext<{
+  fields: PartialFieldMetadaItemWithRequiredId[];
+  expected: RecordGqlOperationOrderBy;
+  sort: RecordSort[];
+  objectMetadataItemOverrides?: Partial<Omit<ObjectMetadataItem, 'fields'>>;
+}>;
+
+const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
+  {
+    title: 'It should sort by recordPosition if no sorts',
+    context: {
       fields: [{ id: 'field1', name: 'field1' }],
       sort: [],
       expected: [
@@ -64,8 +66,10 @@ describe('turnSortsIntoOrderBy', () => {
         },
       ],
     },
-    {
-      title: 'It should create OrderByField with single sort',
+  },
+  {
+    title: 'It should create OrderByField with single sort',
+    context: {
       fields: [{ id: 'field1', name: 'field1' }],
       sort: [
         {
@@ -76,8 +80,10 @@ describe('turnSortsIntoOrderBy', () => {
       ],
       expected: [{ field1: 'AscNullsFirst' }, { position: 'AscNullsFirst' }],
     },
-    {
-      title: 'It should create OrderByField with multiple sorts',
+  },
+  {
+    title: 'It should create OrderByField with multiple sorts',
+    context: {
       fields: [
         { id: 'field1', name: 'field1' },
         { id: 'field2', name: 'field2' },
@@ -100,8 +106,10 @@ describe('turnSortsIntoOrderBy', () => {
         { position: 'AscNullsFirst' },
       ],
     },
-    {
-      title: 'It should ignore if field not found',
+  },
+  {
+    title: 'It should ignore if field not found',
+    context: {
       fields: [],
       sort: [
         {
@@ -112,8 +120,10 @@ describe('turnSortsIntoOrderBy', () => {
       ],
       expected: [{ position: 'AscNullsFirst' }],
     },
-    {
-      title: 'It should not return position for remotes',
+  },
+  {
+    title: 'It should not return position for remotes',
+    context: {
       fields: [],
       sort: [
         {
@@ -127,16 +137,23 @@ describe('turnSortsIntoOrderBy', () => {
         isRemote: true,
       },
     },
-  ])('.$title', ({ fields, sort, expected, objectMetadataItemOverrides }) => {
-    const newFields = fields.map(getMockFieldMetadataItem);
-    const objectMetadataItemWithNewFields = {
-      ...objectMetadataItemWithPosition,
-      ...objectMetadataItemOverrides,
-      fields: [...objectMetadataItemWithPosition.fields, ...newFields],
-    };
+  },
+];
 
-    expect(turnSortsIntoOrderBy(objectMetadataItemWithNewFields, sort)).toEqual(
-      expected,
-    );
-  });
+describe('turnSortsIntoOrderBy', () => {
+  it.each<TurnSortsIntoOrderTestContext>(turnSortsIntoOrderByTestUseCases)(
+    '.$title',
+    ({ context: { fields, sort, expected, objectMetadataItemOverrides } }) => {
+      const newFields = fields.map(getMockFieldMetadataItem);
+      const objectMetadataItemWithNewFields = {
+        ...objectMetadataItemWithPositionField,
+        ...objectMetadataItemOverrides,
+        fields: [...objectMetadataItemWithPositionField.fields, ...newFields],
+      };
+
+      expect(
+        turnSortsIntoOrderBy(objectMetadataItemWithNewFields, sort),
+      ).toEqual(expected);
+    },
+  );
 });
