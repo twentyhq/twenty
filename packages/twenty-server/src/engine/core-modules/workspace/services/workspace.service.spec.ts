@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { Repository } from 'typeorm';
+
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
@@ -10,6 +12,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -26,6 +29,11 @@ import { WorkspaceService } from './workspace.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
+  let userWorkspaceRepository: Repository<UserWorkspace>;
+  let userRepository: Repository<User>;
+  let workspaceRepository: Repository<Workspace>;
+  let workspaceCacheStorageService: WorkspaceCacheStorageService;
+  let messageQueueService: MessageQueueService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,15 +41,25 @@ describe('WorkspaceService', () => {
         WorkspaceService,
         {
           provide: getRepositoryToken(Workspace, 'core'),
-          useValue: {},
+          useValue: {
+            findOne: jest.fn(),
+            softDelete: jest.fn(),
+            delete: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(UserWorkspace, 'core'),
-          useValue: {},
+          useValue: {
+            find: jest.fn(),
+            softDelete: jest.fn(),
+            delete: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(User, 'core'),
-          useValue: {},
+          useValue: {
+            softDelete: jest.fn(),
+          },
         },
         {
           provide: WorkspaceManagerService,
@@ -101,19 +119,146 @@ describe('WorkspaceService', () => {
         },
         {
           provide: WorkspaceCacheStorageService,
-          useValue: {},
+          useValue: {
+            flush: jest.fn(),
+          },
         },
         {
           provide: getQueueToken(MessageQueue.deleteCascadeQueue),
-          useValue: {},
+          useValue: {
+            add: jest.fn(),
+          },
         },
       ],
     }).compile();
 
     service = module.get<WorkspaceService>(WorkspaceService);
+    userWorkspaceRepository = module.get<Repository<UserWorkspace>>(
+      getRepositoryToken(UserWorkspace, 'core'),
+    );
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
+    );
+    workspaceRepository = module.get<Repository<Workspace>>(
+      getRepositoryToken(Workspace, 'core'),
+    );
+    workspaceCacheStorageService = module.get<WorkspaceCacheStorageService>(
+      WorkspaceCacheStorageService,
+    );
+    messageQueueService = module.get<MessageQueueService>(
+      getQueueToken(MessageQueue.deleteCascadeQueue),
+    );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('handleRemoveWorkspaceMember', () => {
+    it('should soft delete the user workspace record', async () => {
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
+      await service.handleRemoveWorkspaceMember(
+        'workspace-id',
+        'user-id',
+        true,
+      );
+
+      expect(userWorkspaceRepository.softDelete).toHaveBeenCalledWith({
+        userId: 'user-id',
+        workspaceId: 'workspace-id',
+      });
+      expect(userWorkspaceRepository.delete).not.toHaveBeenCalled();
+      expect(userRepository.softDelete).toHaveBeenCalledWith('user-id');
+    });
+    it('should destroy the user workspace record', async () => {
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
+      await service.handleRemoveWorkspaceMember(
+        'workspace-id',
+        'user-id',
+        false,
+      );
+
+      expect(userWorkspaceRepository.delete).toHaveBeenCalledWith({
+        userId: 'user-id',
+        workspaceId: 'workspace-id',
+      });
+      expect(userWorkspaceRepository.softDelete).not.toHaveBeenCalled();
+      expect(userRepository.softDelete).toHaveBeenCalledWith('user-id');
+    });
+
+    it('should not soft delete the user record if there are other user workspace records', async () => {
+      jest
+        .spyOn(userWorkspaceRepository, 'find')
+        .mockResolvedValue([
+          { id: 'remaining-user-workspace-id' } as UserWorkspace,
+        ]);
+
+      await service.handleRemoveWorkspaceMember(
+        'workspace-id',
+        'user-id',
+        false,
+      );
+
+      expect(userWorkspaceRepository.delete).toHaveBeenCalledWith({
+        userId: 'user-id',
+        workspaceId: 'workspace-id',
+      });
+      expect(userWorkspaceRepository.softDelete).not.toHaveBeenCalled();
+      expect(userRepository.softDelete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteWorkspace', () => {
+    it('should delete the workspace', async () => {
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+      } as Workspace;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+      jest
+        .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
+        .mockResolvedValue({} as Workspace);
+
+      await service.deleteWorkspace(mockWorkspace.id, false);
+
+      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
+      expect(
+        service.deleteMetadataSchemaCacheAndUserWorkspace,
+      ).toHaveBeenCalled();
+      expect(workspaceRepository.softDelete).not.toHaveBeenCalled();
+      expect(workspaceCacheStorageService.flush).toHaveBeenCalledWith(
+        mockWorkspace.id,
+        mockWorkspace.metadataVersion,
+      );
+      expect(messageQueueService.add).toHaveBeenCalled();
+    });
+
+    it('should soft delete the workspace', async () => {
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+      } as Workspace;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+      await service.deleteWorkspace(mockWorkspace.id, true);
+
+      expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
+        id: mockWorkspace.id,
+      });
+      expect(workspaceRepository.delete).not.toHaveBeenCalled();
+    });
   });
 });
