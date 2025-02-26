@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFieldsFromRecord';
 import {
   personIds,
   personRecords,
@@ -115,7 +115,7 @@ describe('useDeleteManyRecords', () => {
           objectMetadataItem,
           objectMetadataItems,
           record,
-          recordGqlFields: generateDepthOneRecordGqlFields({
+          recordGqlFields: generateDepthOneRecordGqlFieldsFromRecord({
             objectMetadataItem,
             record,
           }),

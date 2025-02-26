@@ -9,6 +9,7 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFieldsFromRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -105,7 +106,7 @@ export const useUpdateOneRecord = <
       isDefined(cachedRecordWithConnection);
 
     if (shouldHandleOptimisticCache) {
-      const recordGqlFields = generateDepthOneRecordGqlFields({
+      const recordGqlFields = generateDepthOneRecordGqlFieldsFromRecord({
         objectMetadataItem,
         record: optimisticRecordInput,
       });
@@ -165,7 +166,7 @@ export const useUpdateOneRecord = <
         ).filter((diffKey) => !cachedRecordKeys.has(diffKey));
 
         const recordGqlFields = {
-          ...generateDepthOneRecordGqlFields({
+          ...generateDepthOneRecordGqlFieldsFromRecord({
             objectMetadataItem,
             record: cachedRecord,
           }),

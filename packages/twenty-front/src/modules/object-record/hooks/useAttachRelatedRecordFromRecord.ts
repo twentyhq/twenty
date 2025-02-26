@@ -4,7 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFieldsFromRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared';
@@ -85,7 +85,7 @@ export const useAttachRelatedRecordFromRecord = ({
         ...cachedRelatedRecord,
         [fieldOnRelatedObject]: previousRecord,
       };
-      const gqlFields = generateDepthOneRecordGqlFields({
+      const gqlFields = generateDepthOneRecordGqlFieldsFromRecord({
         objectMetadataItem: relatedObjectMetadataItem,
         record: previousRecordWithRelation,
       });

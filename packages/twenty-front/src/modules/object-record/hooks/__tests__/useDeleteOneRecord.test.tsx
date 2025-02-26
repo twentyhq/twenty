@@ -3,7 +3,7 @@ import { act } from 'react';
 
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { generateDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFieldsFromRecord';
 import {
   query,
   responseData,
@@ -169,7 +169,7 @@ describe('useDeleteOneRecord', () => {
 
   describe('B. Starting from filled cache', () => {
     beforeEach(() => {
-      const recordGqlFields = generateDepthOneRecordGqlFields({
+      const recordGqlFields = generateDepthOneRecordGqlFieldsFromRecord({
         objectMetadataItem,
         record: personRecord,
       });
