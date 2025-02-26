@@ -3081,11 +3081,11 @@ msgstr "ja"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
-msgstr ""
+msgstr "Jy mag nie rekords vir hierdie voorwerp skep nie"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #~ msgid "You are not allowed to create records in this object"
-#~ msgstr "Jy mag nie rekords in hierdie voorwerp skep nie"
+#~ msgstr "You are not allowed to create records in this object"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."

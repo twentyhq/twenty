@@ -20,6 +20,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
@@ -47,25 +48,29 @@ const mockWorkspaceWithFeatureFlag = {
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
-    <RecordFiltersComponentInstanceContext.Provider
+    <RecordFilterGroupsComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
     >
-      <RecordSortsComponentInstanceContext.Provider
+      <RecordFiltersComponentInstanceContext.Provider
         value={{ instanceId: 'command-menu' }}
       >
-        <ContextStoreComponentInstanceContext.Provider
+        <RecordSortsComponentInstanceContext.Provider
           value={{ instanceId: 'command-menu' }}
         >
-          <ActionMenuComponentInstanceContext.Provider
+          <ContextStoreComponentInstanceContext.Provider
             value={{ instanceId: 'command-menu' }}
           >
-            <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
-              <Story />
-            </JestContextStoreSetter>
-          </ActionMenuComponentInstanceContext.Provider>
-        </ContextStoreComponentInstanceContext.Provider>
-      </RecordSortsComponentInstanceContext.Provider>
-    </RecordFiltersComponentInstanceContext.Provider>
+            <ActionMenuComponentInstanceContext.Provider
+              value={{ instanceId: 'command-menu' }}
+            >
+              <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
+                <Story />
+              </JestContextStoreSetter>
+            </ActionMenuComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
+        </RecordSortsComponentInstanceContext.Provider>
+      </RecordFiltersComponentInstanceContext.Provider>
+    </RecordFilterGroupsComponentInstanceContext.Provider>
   );
 };
 

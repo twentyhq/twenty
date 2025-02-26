@@ -4,6 +4,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
@@ -50,44 +51,48 @@ export const SignInBackgroundMockContainer = () => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <RecordFiltersComponentInstanceContext.Provider
+          <RecordFilterGroupsComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
           >
-            <RecordSortsComponentInstanceContext.Provider
+            <RecordFiltersComponentInstanceContext.Provider
               value={{ instanceId: recordIndexId }}
             >
-              <ContextStoreComponentInstanceContext.Provider
-                value={{
-                  instanceId: 'main-context-store',
-                }}
+              <RecordSortsComponentInstanceContext.Provider
+                value={{ instanceId: recordIndexId }}
               >
-                <SignInBackgroundMockContainerEffect
-                  objectNamePlural={objectNamePlural}
-                  recordTableId={recordIndexId}
-                  viewId={viewBarId}
-                />
-                <ActionMenuComponentInstanceContext.Provider
-                  value={{ instanceId: recordIndexId }}
+                <ContextStoreComponentInstanceContext.Provider
+                  value={{
+                    instanceId: 'main-context-store',
+                  }}
                 >
-                  {isDefined(objectMetadataItem) && (
-                    <>
-                      <ViewBar
-                        viewBarId={viewBarId}
-                        optionsDropdownButton={<></>}
-                      />
+                  <SignInBackgroundMockContainerEffect
+                    objectNamePlural={objectNamePlural}
+                    recordTableId={recordIndexId}
+                    viewId={viewBarId}
+                  />
+                  <ActionMenuComponentInstanceContext.Provider
+                    value={{ instanceId: recordIndexId }}
+                  >
+                    {isDefined(objectMetadataItem) && (
+                      <>
+                        <ViewBar
+                          viewBarId={viewBarId}
+                          optionsDropdownButton={<></>}
+                        />
 
-                      <RecordTableWithWrappers
-                        objectNameSingular={objectNameSingular}
-                        recordTableId={recordIndexId}
-                        viewBarId={viewBarId}
-                        updateRecordMutation={() => {}}
-                      />
-                    </>
-                  )}
-                </ActionMenuComponentInstanceContext.Provider>
-              </ContextStoreComponentInstanceContext.Provider>
-            </RecordSortsComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
+                        <RecordTableWithWrappers
+                          objectNameSingular={objectNameSingular}
+                          recordTableId={recordIndexId}
+                          viewBarId={viewBarId}
+                          updateRecordMutation={() => {}}
+                        />
+                      </>
+                    )}
+                  </ActionMenuComponentInstanceContext.Provider>
+                </ContextStoreComponentInstanceContext.Provider>
+              </RecordSortsComponentInstanceContext.Provider>
+            </RecordFiltersComponentInstanceContext.Provider>
+          </RecordFilterGroupsComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
       </RecordIndexContextProvider>
     </StyledContainer>

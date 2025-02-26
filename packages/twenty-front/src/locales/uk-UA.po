@@ -3137,11 +3137,11 @@ msgstr "так"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
-msgstr ""
+msgstr "Ви не маєте права створювати записи для цього об'єкта"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #~ msgid "You are not allowed to create records in this object"
-#~ msgstr "Ви не маєте права створювати записи в цьому об'єкті"
+#~ msgstr "You are not allowed to create records in this object"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."

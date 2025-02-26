@@ -3081,11 +3081,11 @@ msgstr "ναι"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
-msgstr ""
+msgstr "Δεν επιτρέπεται να δημιουργείτε εγγραφές για αυτό το αντικείμενο"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #~ msgid "You are not allowed to create records in this object"
-#~ msgstr "Δεν επιτρέπεται να δημιουργείτε εγγραφές σε αυτό το αντικείμενο"
+#~ msgstr "You are not allowed to create records in this object"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."

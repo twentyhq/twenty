@@ -3081,11 +3081,11 @@ msgstr "是"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
-msgstr ""
+msgstr "您无权为此对象创建记录"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #~ msgid "You are not allowed to create records in this object"
-#~ msgstr "您无权在此对象中创建记录"
+#~ msgstr "You are not allowed to create records in this object"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."
