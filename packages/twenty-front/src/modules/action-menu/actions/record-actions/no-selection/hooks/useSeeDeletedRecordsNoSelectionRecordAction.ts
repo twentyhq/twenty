@@ -1,11 +1,12 @@
+import { useCallback } from 'react';
+
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
+import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const useCreateNewTableRecordNoSelectionRecordAction: ActionHookWithObjectMetadataItem =
+export const useSeeDeletedRecordsNoSelectionRecordAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
     const currentViewId = useRecoilComponentValueV2(
       contextStoreCurrentViewIdComponentState,
@@ -15,24 +16,24 @@ export const useCreateNewTableRecordNoSelectionRecordAction: ActionHookWithObjec
       throw new Error('Current view ID is not defined');
     }
 
-    const recordTableId = getRecordIndexIdFromObjectNamePluralAndViewId(
+    const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
       objectMetadataItem.namePlural,
       currentViewId,
     );
 
-    const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+    const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
+      useHandleToggleTrashColumnFilter({
+        objectNameSingular: objectMetadataItem.nameSingular,
+        viewBarId: recordIndexId,
+      });
 
-    const { createNewTableRecord } = useCreateNewTableRecord({
-      objectMetadataItem,
-      recordTableId,
-    });
-
-    const onClick = () => {
-      createNewTableRecord();
-    };
+    const onClick = useCallback(() => {
+      handleToggleTrashColumnFilter();
+      toggleSoftDeleteFilterState(true);
+    }, [handleToggleTrashColumnFilter, toggleSoftDeleteFilterState]);
 
     return {
-      shouldBeRegistered: !hasObjectReadOnlyPermission,
+      shouldBeRegistered: true,
       onClick,
     };
   };
