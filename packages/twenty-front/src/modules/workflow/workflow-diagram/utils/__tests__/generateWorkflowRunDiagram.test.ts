@@ -78,11 +78,8 @@ describe('generateWorkflowRunDiagram', () => {
     ];
     const stepsOutput: WorkflowRunOutputStepsOutput = {
       step1: {
-        id: 'step1',
-        output: {
-          result: undefined,
-          error: '',
-        },
+        result: undefined,
+        error: '',
       },
     };
 
@@ -250,25 +247,16 @@ describe('generateWorkflowRunDiagram', () => {
     ];
     const stepsOutput: WorkflowRunOutputStepsOutput = {
       step1: {
-        id: 'step1',
-        output: {
-          result: {},
-          error: undefined,
-        },
+        result: {},
+        error: undefined,
       },
       step2: {
-        id: 'step2',
-        output: {
-          result: {},
-          error: undefined,
-        },
+        result: {},
+        error: undefined,
       },
       step3: {
-        id: 'step3',
-        output: {
-          result: {},
-          error: undefined,
-        },
+        result: {},
+        error: undefined,
       },
     };
 
@@ -620,11 +608,8 @@ describe('generateWorkflowRunDiagram', () => {
     ];
     const stepsOutput: WorkflowRunOutputStepsOutput = {
       step1: {
-        id: 'step1',
-        output: {
-          result: {},
-          error: undefined,
-        },
+        result: {},
+        error: undefined,
       },
     };
 
