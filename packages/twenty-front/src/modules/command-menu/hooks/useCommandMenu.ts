@@ -286,7 +286,6 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
-          resetNavigationStack: true,
         });
       };
     },
