@@ -1,13 +1,15 @@
 import { RegisterRecordActionEffect } from '@/action-menu/actions/record-actions/components/RegisterRecordActionEffect';
-import { useFirstSelectedRecordId } from '@/action-menu/actions/record-actions/single-record/hooks/useFirstSelectedRecordId';
+import { useFirstSelectedRecordIdInContextStore } from '@/action-menu/actions/record-actions/single-record/hooks/useFirstSelectedRecordIdInContextStore';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
+import { isActionOnSelectedRecord } from '@/action-menu/actions/utils/isActionOnSelectedRecord';
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -24,7 +26,8 @@ export const RecordActionMenuEntriesSetter = () => {
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const selectedRecordId = useFirstSelectedRecordId();
+  const firstSelectedRecordIdInContextStore =
+    useFirstSelectedRecordIdInContextStore();
 
   const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
@@ -54,19 +57,35 @@ export const RecordActionMenuEntriesSetter = () => {
       )
     : [];
 
-  const shouldRegisterActions = isDefined(selectedRecordId);
+  const actionsOnSelectedRecord = actionsToRegister.filter(
+    isActionOnSelectedRecord,
+  );
+
+  const actionsWithoutSelectedRecord = actionsToRegister.filter(
+    (action) => !isActionOnSelectedRecord(action),
+  );
+
+  const shouldRegisterActionsOnSelectedRecord = isNonEmptyString(
+    firstSelectedRecordIdInContextStore,
+  );
 
   return (
     <>
-      {shouldRegisterActions &&
-        actionsToRegister.map((action) => (
+      {shouldRegisterActionsOnSelectedRecord &&
+        actionsOnSelectedRecord.map((action) => (
           <RegisterRecordActionEffect
             key={action.key}
             action={action}
             objectMetadataItem={contextStoreCurrentObjectMetadataItem}
           />
         ))}
-
+      {actionsWithoutSelectedRecord.map((action) => (
+        <RegisterRecordActionEffect
+          key={action.key}
+          action={action}
+          objectMetadataItem={contextStoreCurrentObjectMetadataItem}
+        />
+      ))}
       {isWorkflowEnabled &&
         contextStoreTargetedRecordsRule?.mode === 'selection' &&
         contextStoreTargetedRecordsRule?.selectedRecordIds.length === 1 && (
