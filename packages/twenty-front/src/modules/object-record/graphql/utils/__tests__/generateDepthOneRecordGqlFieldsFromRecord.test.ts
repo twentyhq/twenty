@@ -4,9 +4,9 @@ import {
   getPersonRecord,
 } from '~/testing/mock-data/people';
 
-describe('generateDepthOneRecordGqlFields', () => {
+describe('generateDepthOneRecordGqlFieldsFromRecord', () => {
   const objectMetadataItem = getPersonObjectMetadataItem();
-  it('Should handle basic call with both objectMetadataItem and record', () => {
+  it('Should handle basic call', () => {
     const personRecord = getPersonRecord();
     const result = generateDepthOneRecordGqlFieldsFromRecord({
       objectMetadataItem,
