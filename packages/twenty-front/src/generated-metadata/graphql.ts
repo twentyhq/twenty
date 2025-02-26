@@ -1228,7 +1228,7 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 
 
 export type MutationUpdateWorkspaceMemberRoleArgs = {
-  roleId?: InputMaybe<Scalars['String']['input']>;
+  roleId: Scalars['String']['input'];
   workspaceMemberId: Scalars['String']['input'];
 };
 
