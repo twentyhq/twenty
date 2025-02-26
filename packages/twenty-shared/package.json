@@ -1,6 +1,6 @@
 {
   "name": "twenty-shared",
-  "version": "0.42.15",
+  "version": "0.42.16",
   "license": "AGPL-3.0",
   "main": "./dist/index.js",
   "scripts": {
