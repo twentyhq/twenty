@@ -13,12 +13,16 @@ import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKey
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
@@ -89,15 +93,29 @@ export const CommandMenuContainer = ({
 
   const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
 
+  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemComponentState,
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
+
+  const currentViewId = useRecoilComponentValueV2(
+    contextStoreCurrentViewIdComponentState,
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
+
+  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+    contextStoreCurrentObjectMetadataItem?.namePlural ?? '',
+    currentViewId ?? '',
+  );
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+      value={{ instanceId: recordIndexId }}
     >
       <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+        value={{ instanceId: recordIndexId }}
       >
         <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+          value={{ instanceId: recordIndexId }}
         >
           <ContextStoreComponentInstanceContext.Provider
             value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
