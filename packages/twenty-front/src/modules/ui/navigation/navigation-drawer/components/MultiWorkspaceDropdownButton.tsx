@@ -10,15 +10,24 @@ import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/t
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Avatar,
   IconChevronDown,
+  IconUserPlus,
+  IconSunMoon,
+  IconLogout,
+  MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
+  IconSwitchHorizontal,
+  IconPlus,
 } from 'twenty-ui';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 
 const StyledContainer = styled.div<{ isNavigationDrawerExpanded: boolean }>`
   align-items: center;
@@ -62,6 +71,7 @@ export const MultiWorkspaceDropdownButton = ({
   workspaces,
 }: MultiWorkspaceDropdownButtonProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
@@ -80,6 +90,7 @@ export const MultiWorkspaceDropdownButton = ({
       dropdownHotkeyScope={{
         scope: NavigationDrawerHotKeyScope.MultiWorkspaceDropdownButton,
       }}
+      dropdownOffset={{ y: -30, x: 0 }}
       clickableComponent={
         <StyledContainer
           data-testid="workspace-dropdown"
@@ -102,27 +113,60 @@ export const MultiWorkspaceDropdownButton = ({
       }
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          {workspaces.map((workspace) => (
-            <UndecoratedLink
-              key={workspace.id}
-              to={buildWorkspaceUrl(getWorkspaceUrl(workspace.workspaceUrls))}
-              onClick={(event) => {
-                event?.preventDefault();
-                handleChange(workspace);
-              }}
-            >
-              <MenuItemSelectAvatar
-                text={workspace.displayName ?? '(No name)'}
-                avatar={
-                  <Avatar
-                    placeholder={workspace.displayName || ''}
-                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
-                  />
-                }
-                selected={currentWorkspace?.id === workspace.id}
+          <MenuItemWithOptionDropdown
+            LeftComponent={
+              <Avatar
+                placeholder={currentWorkspace?.displayName || ''}
+                avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
               />
-            </UndecoratedLink>
-          ))}
+            }
+            dropdownId="multiworkpsace-dropdown"
+            text={currentWorkspace?.displayName}
+            dropdownContent={
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  LeftIcon={IconPlus}
+                  text={t`Create Workspace`}
+                  onClick={() => console.log('create workspace')}
+                />
+              </DropdownMenuItemsContainer>
+            }
+          />
+          <DropdownMenuSeparator />
+          {workspaces
+            .filter(({ id }) => id !== currentWorkspace?.id)
+            .map((workspace) => (
+              <UndecoratedLink
+                key={workspace.id}
+                to={buildWorkspaceUrl(getWorkspaceUrl(workspace.workspaceUrls))}
+                onClick={(event) => {
+                  event?.preventDefault();
+                  handleChange(workspace);
+                }}
+              >
+                <MenuItemSelectAvatar
+                  text={workspace.displayName ?? '(No name)'}
+                  avatar={
+                    <Avatar
+                      placeholder={workspace.displayName || ''}
+                      avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                    />
+                  }
+                  selected={currentWorkspace?.id === workspace.id}
+                />
+              </UndecoratedLink>
+            ))}
+          {workspaces.length > 3 && (
+            <MenuItem
+              LeftIcon={IconSwitchHorizontal}
+              text="Other workspaces"
+              hasSubMenu={true}
+            />
+          )}
+          <DropdownMenuSeparator />
+          <MenuItem LeftIcon={IconSunMoon} text={t`Theme`} hasSubMenu={true} />
+          <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
+          <MenuItem LeftIcon={IconLogout} text={t`Log out`} />
         </DropdownMenuItemsContainer>
       }
     />

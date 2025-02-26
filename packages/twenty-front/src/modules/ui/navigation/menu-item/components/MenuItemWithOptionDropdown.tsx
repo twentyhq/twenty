@@ -29,6 +29,7 @@ export type MenuItemWithOptionDropdownProps = {
   dropdownId: string;
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
+  LeftComponent?: ReactNode;
   LeftIcon?: IconComponent | null;
   RightIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
@@ -48,6 +49,7 @@ export const MenuItemWithOptionDropdown = ({
   dropdownContent,
   dropdownId,
   LeftIcon,
+  LeftComponent,
   RightIcon,
   onClick,
   onMouseEnter,
@@ -78,7 +80,11 @@ export const MenuItemWithOptionDropdown = ({
       onMouseLeave={onMouseLeave}
     >
       <StyledMenuItemLeftContent>
-        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+        <MenuItemLeftContent
+          LeftComponent={LeftComponent}
+          LeftIcon={LeftIcon ?? undefined}
+          text={text}
+        />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         <Dropdown
