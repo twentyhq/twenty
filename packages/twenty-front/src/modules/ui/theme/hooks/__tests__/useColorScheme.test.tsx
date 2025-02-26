@@ -24,7 +24,7 @@ const workspaceMember: Omit<
     lastName: 'lastName',
   },
   locale: 'en',
-  colorScheme: 'Light',
+  colorScheme: 'System',
 };
 
 describe('useColorScheme', () => {
