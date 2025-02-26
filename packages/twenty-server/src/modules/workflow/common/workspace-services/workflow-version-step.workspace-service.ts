@@ -33,7 +33,6 @@ import {
 const TRIGGER_STEP_ID = 'trigger';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
-  input: {},
   outputSchema: {},
   errorHandlingOptions: {
     continueOnFailure: {
