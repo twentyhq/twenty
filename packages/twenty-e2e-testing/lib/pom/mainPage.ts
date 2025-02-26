@@ -4,6 +4,7 @@ export class MainPage {
   // TODO: add missing elements (advanced filters, import/export popups)
   private readonly tableViews: Locator;
   private readonly addViewButton: Locator;
+  private readonly viewIconSelect: Locator;
   private readonly viewNameInput: Locator;
   private readonly viewTypeSelect: Locator;
   private readonly createViewButton: Locator;
