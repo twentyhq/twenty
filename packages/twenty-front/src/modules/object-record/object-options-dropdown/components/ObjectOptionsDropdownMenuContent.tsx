@@ -5,14 +5,10 @@ import {
   IconLayout,
   IconLayoutList,
   IconList,
-  IconRotate2,
   IconTag,
   MenuItem,
   useIcons,
 } from 'twenty-ui';
-
-import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
-import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -48,10 +44,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   const CurrentViewIcon = currentView?.icon ? getIcon(currentView.icon) : null;
 
-  const { objectNamePlural } = useObjectNamePluralFromSingular({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
   );
@@ -67,12 +59,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
     },
     TableOptionsHotkeyScope.Dropdown,
   );
-
-  const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
-    useHandleToggleTrashColumnFilter({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      viewBarId: recordIndexId,
-    });
 
   const { visibleBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -163,15 +149,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
             text={t`Import`}
           />
         )}
-        <MenuItem
-          onClick={() => {
-            handleToggleTrashColumnFilter();
-            toggleSoftDeleteFilterState(true);
-            closeDropdown();
-          }}
-          LeftIcon={IconRotate2}
-          text={t`Deleted ${objectNamePlural}`}
-        />
       </DropdownMenuItemsContainer>
     </>
   );
