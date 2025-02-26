@@ -7,6 +7,7 @@ import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/adm
 import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constants';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
+import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
@@ -27,6 +28,7 @@ describe('AdminPanelHealthService', () => {
   let connectedAccountHealth: jest.Mocked<ConnectedAccountHealth>;
   let redisClient: jest.Mocked<RedisClientService>;
   let environmentService: jest.Mocked<EnvironmentService>;
+  let loggerSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     databaseHealth = { isHealthy: jest.fn() } as any;
@@ -57,6 +59,15 @@ describe('AdminPanelHealthService', () => {
     }).compile();
 
     service = module.get<AdminPanelHealthService>(AdminPanelHealthService);
+
+    loggerSpy = jest
+      .spyOn(service['logger'], 'error')
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    loggerSpy.mockRestore();
   });
 
   it('should be defined', () => {
@@ -290,7 +301,8 @@ describe('AdminPanelHealthService', () => {
       ).rejects.toThrow('Health indicator not found: invalid');
     });
   });
-  describe('getQueueMetricsOverTime', () => {
+
+  describe('getQueueMetrics', () => {
     const mockQueue = {
       getMetrics: jest.fn(),
       getWorkers: jest.fn(),
@@ -301,23 +313,15 @@ describe('AdminPanelHealthService', () => {
       jest.clearAllMocks();
       redisClient.getClient.mockReturnValue({} as Redis);
       (Queue as unknown as jest.Mock).mockImplementation(() => mockQueue);
-      environmentService.get.mockReturnValue(60);
     });
 
     it('should return metrics data for a queue with correct data transformation', async () => {
-      const mockPoints = Array(48)
+      const mockCompletedData = Array(240)
         .fill(0)
-        .map((_, i) => (i === 47 ? 30 : i));
-      const mockFailedPoints = Array(48)
+        .map((_, i) => i);
+      const mockFailedData = Array(240)
         .fill(0)
-        .map((_, i) => (i === 47 ? 3 : i * 0.1));
-
-      const mockCompletedMetrics = { data: mockPoints };
-      const mockFailedMetrics = { data: mockFailedPoints };
-
-      mockQueue.getMetrics
-        .mockResolvedValueOnce(mockCompletedMetrics)
-        .mockResolvedValueOnce(mockFailedMetrics);
+        .map((_, i) => i * 0.1);
 
       workerHealth.getQueueDetails.mockResolvedValue({
         queueName: 'test-queue',
@@ -330,124 +334,125 @@ describe('AdminPanelHealthService', () => {
           waiting: 0,
           delayed: 0,
           failureRate: 9.1,
+          completedData: mockCompletedData,
+          failedData: mockFailedData,
         },
       });
 
-      const result = await service.getQueueMetricsOverTime(
+      const result = await service.getQueueMetrics(
         MessageQueue.messagingQueue,
-        '4H',
+        QueueMetricsTimeRange.FourHours,
       );
 
       expect(result).toMatchObject({
         queueName: MessageQueue.messagingQueue,
-        timeRange: '4H',
-        details: expect.any(String),
-      });
-
-      expect(result.data).toHaveLength(2);
-
-      const completedSeries = result.data.find(
-        (series) => series.id === 'Completed Jobs',
-      );
-
-      expect(completedSeries).toBeDefined();
-      expect(completedSeries?.data).toHaveLength(48); // Based on 4H timeRange
-      expect(completedSeries?.data[0]).toMatchObject({
-        x: expect.any(String),
-        y: expect.any(Number),
-      });
-      expect(completedSeries?.data[0].y).toBe(30); // Latest value
-
-      // Verify Failed Jobs series
-      const failedSeries = result.data.find(
-        (series) => series.id === 'Failed Jobs',
-      );
-
-      expect(failedSeries).toBeDefined();
-      expect(failedSeries?.data).toHaveLength(48); // Based on 4H timeRange
-      expect(failedSeries?.data[0]).toMatchObject({
-        x: expect.any(String),
-        y: expect.any(Number),
-      });
-      expect(failedSeries?.data[0].y).toBe(3); // Latest value
-
-      // Verify details JSON structure
-      const details = JSON.parse(result.details);
-
-      expect(details).toMatchObject({
-        queueName: 'test-queue',
+        timeRange: QueueMetricsTimeRange.FourHours,
         workers: 1,
-        status: 'up',
-        metrics: {
-          active: 1,
-          completed: 30,
-          failed: 3,
-          waiting: 0,
-          delayed: 0,
-          failureRate: 9.1,
-        },
+        details: expect.any(Object),
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'Completed Jobs',
+            data: expect.arrayContaining([
+              expect.objectContaining({
+                x: expect.any(Number),
+                y: expect.any(Number),
+              }),
+            ]),
+          }),
+          expect.objectContaining({
+            id: 'Failed Jobs',
+            data: expect.arrayContaining([
+              expect.objectContaining({
+                x: expect.any(Number),
+                y: expect.any(Number),
+              }),
+            ]),
+          }),
+        ]),
       });
     });
 
     it('should handle empty metrics data', async () => {
-      mockQueue.getMetrics
-        .mockResolvedValueOnce({ data: [] })
-        .mockResolvedValueOnce({ data: [] });
-
       workerHealth.getQueueDetails.mockResolvedValue(null);
 
-      const result = await service.getQueueMetricsOverTime(
+      const result = await service.getQueueMetrics(
         MessageQueue.messagingQueue,
-        '4H',
+        QueueMetricsTimeRange.FourHours,
       );
 
       expect(result.data).toHaveLength(2);
-      expect(result.data[0].data).toHaveLength(48); // Default points for 4H
-      expect(result.data[1].data).toHaveLength(48);
+      expect(result.data[0].data).toHaveLength(240);
+      expect(result.data[1].data).toHaveLength(240);
     });
 
     it('should handle metrics service errors', async () => {
-      mockQueue.getMetrics.mockRejectedValue(new Error('Metrics error'));
+      workerHealth.getQueueDetails.mockRejectedValue(
+        new Error('Metrics error'),
+      );
 
       await expect(
-        service.getQueueMetricsOverTime(MessageQueue.messagingQueue, '4H'),
+        service.getQueueMetrics(
+          MessageQueue.messagingQueue,
+          QueueMetricsTimeRange.FourHours,
+        ),
       ).rejects.toThrow('Metrics error');
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Error getting metrics for messaging-queue: Metrics error',
+      );
     });
   });
 
-  describe('getMetricsParameters', () => {
+  describe('getPointsConfiguration', () => {
     const testCases = [
-      { timeRange: '4H', expected: { pointsNeeded: 48, intervalMinutes: 5 } },
-      { timeRange: '12H', expected: { pointsNeeded: 48, intervalMinutes: 15 } },
-      { timeRange: '1D', expected: { pointsNeeded: 48, intervalMinutes: 30 } },
-      { timeRange: '7D', expected: { pointsNeeded: 48, intervalMinutes: 210 } },
+      {
+        timeRange: QueueMetricsTimeRange.OneHour,
+        expected: {
+          pointsNeeded: 60,
+          samplingFactor: 1,
+          targetVisualizationPoints: 240,
+        },
+      },
+      {
+        timeRange: QueueMetricsTimeRange.FourHours,
+        expected: {
+          pointsNeeded: 240,
+          samplingFactor: 1,
+          targetVisualizationPoints: 240,
+        },
+      },
+      {
+        timeRange: QueueMetricsTimeRange.TwelveHours,
+        expected: {
+          pointsNeeded: 720,
+          samplingFactor: 3,
+          targetVisualizationPoints: 240,
+        },
+      },
+      {
+        timeRange: QueueMetricsTimeRange.OneDay,
+        expected: {
+          pointsNeeded: 1440,
+          samplingFactor: 6,
+          targetVisualizationPoints: 240,
+        },
+      },
+      {
+        timeRange: QueueMetricsTimeRange.SevenDays,
+        expected: {
+          pointsNeeded: 10080,
+          samplingFactor: 42,
+          targetVisualizationPoints: 240,
+        },
+      },
     ];
 
     testCases.forEach(({ timeRange, expected }) => {
       it(`should return correct parameters for ${timeRange}`, () => {
-        const result = service['getMetricsParameters'](timeRange as any);
+        const result = service['getPointsConfiguration'](timeRange as any);
 
         expect(result).toEqual(expected);
       });
-    });
-  });
-
-  describe('generateEmptyTimeSeriesPoints', () => {
-    it('should generate correct number of points with current value', () => {
-      const result = service['generateEmptyTimeSeriesPoints'](5, 3, 10);
-
-      expect(result).toHaveLength(3);
-      expect(result[0].count).toBe(10);
-      expect(result[1].count).toBe(0);
-      expect(result[2].count).toBe(0);
-    });
-
-    it('should generate timestamps in descending order', () => {
-      const result = service['generateEmptyTimeSeriesPoints'](5, 3);
-
-      for (let i = 1; i < result.length; i++) {
-        expect(result[i].timestamp).toBeLessThan(result[i - 1].timestamp);
-      }
     });
   });
 });

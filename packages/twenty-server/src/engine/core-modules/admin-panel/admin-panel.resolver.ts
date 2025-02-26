@@ -10,7 +10,7 @@ import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-he
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
-import { WorkerMetricsData } from 'src/engine/core-modules/admin-panel/dtos/worker-metrics-data.dto';
+import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
@@ -20,7 +20,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-data.dto';
-
+import { QueueMetricsData } from './dtos/queue-metrics-data.dto';
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AdminPanelResolver {
@@ -84,18 +84,18 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
-  @Query(() => [WorkerMetricsData])
+  @Query(() => [QueueMetricsData])
   async getQueueMetrics(
     @Args('queueName', { type: () => String })
     queueName: string,
     @Args('timeRange', {
       nullable: true,
-      defaultValue: '1D',
-      type: () => String,
+      defaultValue: QueueMetricsTimeRange.OneDay,
+      type: () => QueueMetricsTimeRange,
     })
-    timeRange: '7D' | '1D' | '12H' | '4H' = '1D',
-  ): Promise<WorkerMetricsData[]> {
-    const result = await this.adminPanelHealthService.getQueueMetricsOverTime(
+    timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneDay,
+  ): Promise<QueueMetricsData[]> {
+    const result = await this.adminPanelHealthService.getQueueMetrics(
       queueName as MessageQueue,
       timeRange,
     );

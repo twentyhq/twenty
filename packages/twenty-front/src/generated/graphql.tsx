@@ -780,18 +780,6 @@ export enum MessageChannelVisibility {
   SUBJECT = 'SUBJECT'
 }
 
-export type MetricsDataPoint = {
-  __typename?: 'MetricsDataPoint';
-  x: Scalars['String'];
-  y: Scalars['Float'];
-};
-
-export type MetricsSeries = {
-  __typename?: 'MetricsSeries';
-  data: Array<MetricsDataPoint>;
-  id: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean'];
@@ -1313,7 +1301,7 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
-  getQueueMetrics: Array<WorkerMetricsData>;
+  getQueueMetrics: Array<QueueMetricsData>;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
@@ -1380,7 +1368,7 @@ export type QueryGetProductPricesArgs = {
 
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
-  timeRange?: InputMaybe<Scalars['String']>;
+  timeRange?: InputMaybe<QueueMetricsTimeRange>;
 };
 
 
@@ -1427,6 +1415,35 @@ export type QueryGlobalSearchArgs = {
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
 };
+
+export type QueueMetricsData = {
+  __typename?: 'QueueMetricsData';
+  data: Array<QueueMetricsSeries>;
+  details: WorkerQueueMetrics;
+  queueName: Scalars['String'];
+  timeRange: QueueMetricsTimeRange;
+  workers: Scalars['Float'];
+};
+
+export type QueueMetricsDataPoint = {
+  __typename?: 'QueueMetricsDataPoint';
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type QueueMetricsSeries = {
+  __typename?: 'QueueMetricsSeries';
+  data: Array<QueueMetricsDataPoint>;
+  id: Scalars['String'];
+};
+
+export enum QueueMetricsTimeRange {
+  FourHours = 'FourHours',
+  OneDay = 'OneDay',
+  OneHour = 'OneHour',
+  SevenDays = 'SevenDays',
+  TwelveHours = 'TwelveHours'
+}
 
 export type Relation = {
   __typename?: 'Relation';
@@ -1972,12 +1989,16 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String'];
 };
 
-export type WorkerMetricsData = {
-  __typename?: 'WorkerMetricsData';
-  data: Array<MetricsSeries>;
-  details: Scalars['String'];
-  queueName: Scalars['String'];
-  timeRange: Scalars['String'];
+export type WorkerQueueMetrics = {
+  __typename?: 'WorkerQueueMetrics';
+  active: Scalars['Float'];
+  completed: Scalars['Float'];
+  completedData?: Maybe<Array<Scalars['Float']>>;
+  delayed: Scalars['Float'];
+  failed: Scalars['Float'];
+  failedData?: Maybe<Array<Scalars['Float']>>;
+  failureRate: Scalars['Float'];
+  waiting: Scalars['Float'];
 };
 
 export type WorkflowAction = {
@@ -2396,11 +2417,11 @@ export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicator
 
 export type GetQueueMetricsQueryVariables = Exact<{
   queueName: Scalars['String'];
-  timeRange?: InputMaybe<Scalars['String']>;
+  timeRange?: InputMaybe<QueueMetricsTimeRange>;
 }>;
 
 
-export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: Array<{ __typename?: 'WorkerMetricsData', queueName: string, timeRange: string, details: string, data: Array<{ __typename?: 'MetricsSeries', id: string, data: Array<{ __typename?: 'MetricsDataPoint', x: string, y: number }> }> }> };
+export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: Array<{ __typename?: 'QueueMetricsData', queueName: string, timeRange: QueueMetricsTimeRange, workers: number, details: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, failureRate: number }, data: Array<{ __typename?: 'QueueMetricsSeries', id: string, data: Array<{ __typename?: 'QueueMetricsDataPoint', x: number, y: number }> }> }> };
 
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4243,11 +4264,19 @@ export type GetIndicatorHealthStatusQueryHookResult = ReturnType<typeof useGetIn
 export type GetIndicatorHealthStatusLazyQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusLazyQuery>;
 export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicatorHealthStatusQuery, GetIndicatorHealthStatusQueryVariables>;
 export const GetQueueMetricsDocument = gql`
-    query GetQueueMetrics($queueName: String!, $timeRange: String) {
+    query GetQueueMetrics($queueName: String!, $timeRange: QueueMetricsTimeRange) {
   getQueueMetrics(queueName: $queueName, timeRange: $timeRange) {
     queueName
     timeRange
-    details
+    workers
+    details {
+      failed
+      completed
+      waiting
+      active
+      delayed
+      failureRate
+    }
     data {
       id
       data {

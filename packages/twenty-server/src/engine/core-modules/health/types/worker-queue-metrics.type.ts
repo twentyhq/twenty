@@ -19,4 +19,10 @@ export class WorkerQueueMetrics {
 
   @Field(() => Number)
   failureRate: number;
+
+  @Field(() => [Number], { nullable: true })
+  failedData?: number[];
+
+  @Field(() => [Number], { nullable: true })
+  completedData?: number[];
 }

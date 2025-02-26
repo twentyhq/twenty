@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HealthIndicatorResult, HealthIndicatorStatus } from '@nestjs/terminus';
 
-import { Metrics, Queue } from 'bullmq';
-import { format } from 'date-fns';
+import { Queue } from 'bullmq';
 
 import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constants';
 import { AdminPanelHealthServiceData } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
+import { QueueMetricsData } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data.dto';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
-import { WorkerMetricsData } from 'src/engine/core-modules/admin-panel/dtos/worker-metrics-data.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
+import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
@@ -155,36 +155,34 @@ export class AdminPanelHealthService {
     };
   }
 
-  async getQueueMetricsOverTime(
+  async getQueueMetrics(
     queueName: MessageQueue,
-    timeRange: '7D' | '1D' | '12H' | '4H',
-  ): Promise<WorkerMetricsData> {
+    timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneDay,
+  ): Promise<QueueMetricsData> {
     const redis = this.redisClient.getClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {
-      const { pointsNeeded, intervalMinutes } =
-        this.getMetricsParameters(timeRange);
+      const { pointsNeeded, samplingFactor } =
+        this.getPointsConfiguration(timeRange);
 
       const queueDetails = await this.workerHealth.getQueueDetails(queueName, {
-        timeRange,
         pointsNeeded,
       });
 
-      const [completedMetricsObj, failedMetricsObj] = await Promise.all([
-        queue.getMetrics('completed', 0, pointsNeeded - 1),
-        queue.getMetrics('failed', 0, pointsNeeded - 1),
-      ]);
+      const completedMetricsArray = queueDetails?.metrics?.completedData;
+      const failedMetricsArray = queueDetails?.metrics?.failedData;
 
-      const completedMetrics = this.extractBullMQMetrics(
-        completedMetricsObj,
-        intervalMinutes,
+      const completedMetrics = this.extractMetricsData(
+        completedMetricsArray,
         pointsNeeded,
+        samplingFactor,
       );
-      const failedMetrics = this.extractBullMQMetrics(
-        failedMetricsObj,
-        intervalMinutes,
+
+      const failedMetrics = this.extractMetricsData(
+        failedMetricsArray,
         pointsNeeded,
+        samplingFactor,
       );
 
       return this.transformMetricsForGraph(
@@ -204,179 +202,115 @@ export class AdminPanelHealthService {
     }
   }
 
-  private getMetricsParameters(timeRange: '7D' | '1D' | '12H' | '4H'): {
+  private getPointsConfiguration(timeRange: QueueMetricsTimeRange): {
     pointsNeeded: number;
-    intervalMinutes: number;
+    samplingFactor: number;
+    targetVisualizationPoints: number;
   } {
+    const targetVisualizationPoints = 240;
+
+    let pointsNeeded: number;
+
     switch (timeRange) {
+      case '1H':
+        pointsNeeded = 60; // 60 points (1 hour)
+        break;
       case '4H':
-        return { pointsNeeded: 48, intervalMinutes: 5 };
+        pointsNeeded = 4 * 60; // 240 points (4 hours)
+        break;
       case '12H':
-        return { pointsNeeded: 48, intervalMinutes: 15 };
+        pointsNeeded = 12 * 60; // 720 points (12 hours)
+        break;
       case '1D':
-        return { pointsNeeded: 48, intervalMinutes: 30 };
+        pointsNeeded = 24 * 60; // 1440 points (24 hours)
+        break;
       case '7D':
-        return { pointsNeeded: 48, intervalMinutes: 210 };
+        pointsNeeded = 7 * 24 * 60; // 10080 points (7 days)
+        break;
+
       default:
-        return { pointsNeeded: 60, intervalMinutes: 1 };
+        pointsNeeded = 24 * 60; // Default to 1 day
     }
+
+    const samplingFactor =
+      pointsNeeded <= targetVisualizationPoints
+        ? 1
+        : Math.ceil(pointsNeeded / targetVisualizationPoints);
+
+    return {
+      pointsNeeded,
+      samplingFactor,
+      targetVisualizationPoints,
+    };
   }
 
-  private extractBullMQMetrics(
-    metrics: Metrics,
-    intervalMinutes: number,
-    maxPoints: number,
-  ): { timestamp: number; count: number }[] {
-    if (!metrics || !metrics.data || !Array.isArray(metrics.data)) {
-      return this.generateEmptyTimeSeriesPoints(intervalMinutes, maxPoints);
+  private extractMetricsData(
+    metrics: number[] | undefined,
+    pointsNeeded: number,
+    samplingFactor = 1,
+  ): number[] {
+    if (!metrics || !Array.isArray(metrics)) {
+      return Array(Math.ceil(pointsNeeded / samplingFactor)).fill(0);
     }
 
     try {
-      const now = Date.now();
-      const totalTimeSpanMs = intervalMinutes * maxPoints * 60 * 1000;
-      const availablePoints = metrics.data.length;
+      const availablePoints = metrics.length;
+      const result: number[] = [];
 
-      if (availablePoints <= 1) {
-        const singlePointValue =
-          availablePoints === 1
-            ? typeof metrics.data[0] === 'number'
-              ? metrics.data[0]
-              : parseInt(metrics.data[0] as unknown as string, 10) || 0
-            : 0;
+      for (let i = 0; i < availablePoints; i += samplingFactor) {
+        let maxValueInSample = 0;
 
-        return this.generateEmptyTimeSeriesPoints(
-          intervalMinutes,
-          maxPoints,
-          singlePointValue,
-        );
-      }
+        for (let j = 0; j < samplingFactor && i + j < availablePoints; j++) {
+          const index = i + j;
+          const count = metrics[index] ?? 0;
 
-      const actualPoints = Math.min(availablePoints, maxPoints);
-      const result: { timestamp: number; count: number }[] = [];
-
-      for (let i = 0; i < actualPoints; i++) {
-        const timeOffset = (i / (actualPoints - 1)) * totalTimeSpanMs;
-        const timestamp = now - timeOffset;
-        const dataIndex = Math.min(i, availablePoints - 1);
-
-        let count = 0;
-
-        try {
-          const rawCount = metrics.data[dataIndex];
-
-          count =
-            typeof rawCount === 'number'
-              ? rawCount
-              : parseInt(rawCount as unknown as string, 10) || 0;
-        } catch (err) {
-          this.logger.warn(`Error parsing metrics count: ${err.message}`);
+          maxValueInSample = Math.max(maxValueInSample, count);
         }
 
-        result.push({ timestamp, count });
+        result.push(maxValueInSample);
       }
 
-      return result;
+      const reversedResult = result.reverse();
+
+      const targetPoints = Math.ceil(pointsNeeded / samplingFactor);
+
+      while (reversedResult.length < targetPoints) {
+        reversedResult.push(0);
+      }
+
+      return reversedResult;
     } catch (error) {
-      this.logger.error(`Error extracting BullMQ metrics: ${error.message}`);
+      this.logger.error(`Error extracting metrics data: ${error.message}`);
       throw error;
     }
   }
 
-  private generateEmptyTimeSeriesPoints(
-    intervalMinutes: number,
-    numPoints: number,
-    currentPointValue = 0,
-  ): { timestamp: number; count: number }[] {
-    const now = Date.now();
-    const totalTimeSpanMs = intervalMinutes * numPoints * 60 * 1000;
-    const result: { timestamp: number; count: number }[] = [];
-
-    for (let i = 0; i < numPoints; i++) {
-      const timeOffset = i === 0 ? 0 : (i / (numPoints - 1)) * totalTimeSpanMs;
-      const timestamp = now - timeOffset;
-
-      const count = i === 0 ? currentPointValue : 0;
-
-      result.push({ timestamp, count });
-    }
-
-    return result;
-  }
-
   private transformMetricsForGraph(
-    completedMetrics: { timestamp: number; count: number }[],
-    failedMetrics: { timestamp: number; count: number }[],
-    timeRange: '7D' | '1D' | '12H' | '4H',
+    completedMetrics: number[],
+    failedMetrics: number[],
+    timeRange: QueueMetricsTimeRange,
     queueName: MessageQueue,
     queueDetails: WorkerQueueHealth | null,
-  ): WorkerMetricsData {
+  ): QueueMetricsData {
     try {
-      const timestampMap = new Map<
-        number,
-        { timestamp: number; completed: number; failed: number }
-      >();
-
-      completedMetrics.forEach((metric) => {
-        timestampMap.set(metric.timestamp, {
-          timestamp: metric.timestamp,
-          completed: metric.count,
-          failed: 0,
-        });
-      });
-
-      failedMetrics.forEach((metric) => {
-        if (timestampMap.has(metric.timestamp)) {
-          const existing = timestampMap.get(metric.timestamp);
-
-          if (existing) {
-            existing.failed = metric.count;
-          }
-        } else {
-          timestampMap.set(metric.timestamp, {
-            timestamp: metric.timestamp,
-            completed: 0,
-            failed: metric.count,
-          });
-        }
-      });
-
-      const dataPoints = Array.from(timestampMap.values()).sort(
-        (a, b) => a.timestamp - b.timestamp,
-      );
-
-      const formatForNivo = (timestamp: number): string => {
-        try {
-          const date = new Date(timestamp);
-
-          if (isNaN(date.getTime())) {
-            this.logger.warn(`Invalid timestamp: ${timestamp}`);
-            throw new Error(`Invalid timestamp: ${timestamp}`);
-          }
-
-          return format(date, 'yyyy-MM-dd HH:mm:ss');
-        } catch (error) {
-          this.logger.error(`Error formatting date: ${error.message}`);
-          throw error;
-        }
-      };
-
       return {
         queueName,
         timeRange,
-        details: JSON.stringify(queueDetails),
+        details: queueDetails?.metrics ?? null,
+        workers: queueDetails?.workers ?? 0,
         data: [
           {
             id: 'Completed Jobs',
-            data: dataPoints.map((point) => ({
-              x: formatForNivo(point.timestamp),
-              y: point.completed,
+            data: completedMetrics.map((count, index) => ({
+              x: index,
+              y: count,
             })),
           },
           {
             id: 'Failed Jobs',
-            data: dataPoints.map((point) => ({
-              x: formatForNivo(point.timestamp),
-              y: point.failed,
+            data: failedMetrics.map((count, index) => ({
+              x: index,
+              y: count,
             })),
           },
         ],

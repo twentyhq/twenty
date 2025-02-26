@@ -1,7 +1,6 @@
 import { HealthIndicatorService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { Queue } from 'bullmq';
 import { Redis } from 'ioredis';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
@@ -13,13 +12,10 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
 const mockQueueInstance = {
   getWorkers: jest.fn().mockResolvedValue([]),
   close: jest.fn().mockResolvedValue(undefined),
-  getFailedCount: jest.fn().mockResolvedValue(0),
-  getCompletedCount: jest.fn().mockResolvedValue(0),
+  getMetrics: jest.fn().mockResolvedValue({ count: 0, data: [] }),
   getWaitingCount: jest.fn().mockResolvedValue(0),
   getActiveCount: jest.fn().mockResolvedValue(0),
   getDelayedCount: jest.fn().mockResolvedValue(0),
-  getPrioritizedCount: jest.fn().mockResolvedValue(0),
-  getMetrics: jest.fn().mockResolvedValue({}),
 };
 
 jest.mock('bullmq', () => ({
@@ -72,6 +68,13 @@ describe('WorkerHealthIndicator', () => {
       .spyOn(service['logger'], 'error')
       .mockImplementation(() => {});
     jest.useFakeTimers();
+
+    // Reset mocks to their default success state before each test
+    mockQueueInstance.getWorkers.mockResolvedValue([]);
+    mockQueueInstance.getMetrics.mockResolvedValue({ count: 0, data: [] });
+    mockQueueInstance.getWaitingCount.mockResolvedValue(0);
+    mockQueueInstance.getActiveCount.mockResolvedValue(0);
+    mockQueueInstance.getDelayedCount.mockResolvedValue(0);
   });
 
   afterEach(() => {
@@ -154,17 +157,8 @@ describe('WorkerHealthIndicator', () => {
 
       return Promise.resolve({ count: 0 });
     });
-    mockQueueInstance.getWaitingCount.mockResolvedValue(0);
-    mockQueueInstance.getActiveCount.mockResolvedValue(0);
-    mockQueueInstance.getDelayedCount.mockResolvedValue(0);
-
-    (Queue as jest.MockedClass<typeof Queue>).mockClear();
-    mockQueueInstance.getWorkers.mockClear();
-    mockQueueInstance.getMetrics.mockClear();
 
     const result = await service.isHealthy();
-
-    expect(Queue).toHaveBeenCalledTimes(Object.keys(MessageQueue).length);
 
     expect(result.worker.status).toBe('up');
     expect('queues' in result.worker).toBe(true);
@@ -179,17 +173,6 @@ describe('WorkerHealthIndicator', () => {
         failureRate: 60,
       });
     }
-
-    expect(mockQueueInstance.getMetrics).toHaveBeenCalledWith(
-      'failed',
-      0,
-      undefined,
-    );
-    expect(mockQueueInstance.getMetrics).toHaveBeenCalledWith(
-      'completed',
-      0,
-      undefined,
-    );
   });
 
   it('should return complete metrics for active workers', async () => {
@@ -252,6 +235,112 @@ describe('WorkerHealthIndicator', () => {
       );
       expect(loggerSpy).toHaveBeenCalledWith(
         `Error checking worker for queue ${queueName}: Queue error`,
+      );
+    });
+  });
+
+  describe('getQueueDetails', () => {
+    beforeEach(() => {
+      // Reset mocks to clean state before each test in this describe block
+      mockQueueInstance.getWorkers.mockResolvedValue([{ id: 'worker1' }]);
+      mockQueueInstance.getMetrics.mockResolvedValue({ count: 0, data: [] });
+    });
+
+    it('should return metrics with time series data when pointsNeeded is provided', async () => {
+      const pointsNeeded = 60;
+
+      mockQueueInstance.getMetrics.mockImplementation((type) => {
+        if (type === 'failed') {
+          return Promise.resolve({
+            count: 10,
+            data: Array(pointsNeeded).fill(10 / pointsNeeded),
+          });
+        }
+        if (type === 'completed') {
+          return Promise.resolve({
+            count: 90,
+            data: Array(pointsNeeded).fill(90 / pointsNeeded),
+          });
+        }
+
+        return Promise.resolve({ count: 0, data: [] });
+      });
+
+      const result = await service.getQueueDetails(
+        MessageQueue.messagingQueue,
+        {
+          pointsNeeded,
+        },
+      );
+
+      expect(result).toBeDefined();
+      expect(result?.metrics).toMatchObject({
+        failed: 10,
+        completed: 90,
+        failedData: expect.any(Array),
+        completedData: expect.any(Array),
+      });
+      expect(result?.metrics.failedData).toHaveLength(pointsNeeded);
+      expect(result?.metrics.completedData).toHaveLength(pointsNeeded);
+    });
+
+    it('should handle invalid metrics data gracefully', async () => {
+      const invalidData = ['invalid', null, undefined, '1', 2];
+
+      mockQueueInstance.getMetrics.mockResolvedValue({
+        count: 0,
+        data: invalidData,
+      });
+
+      const result = await service.getQueueDetails(
+        MessageQueue.messagingQueue,
+        {
+          pointsNeeded: 5,
+        },
+      );
+
+      expect(result).toBeDefined();
+      expect(result?.metrics.failedData).toEqual([NaN, 0, NaN, 1, 2]);
+      expect(result?.metrics.completedData).toEqual([NaN, 0, NaN, 1, 2]);
+    });
+
+    it('should calculate correct failure rate with time series data', async () => {
+      mockQueueInstance.getMetrics.mockImplementation((type) => {
+        if (type === 'failed') {
+          return Promise.resolve({ count: 600, data: Array(10).fill(60) });
+        }
+        if (type === 'completed') {
+          return Promise.resolve({ count: 400, data: Array(10).fill(40) });
+        }
+
+        return Promise.resolve({ count: 0, data: [] });
+      });
+
+      const result = await service.getQueueDetails(
+        MessageQueue.messagingQueue,
+        {
+          pointsNeeded: 10,
+        },
+      );
+
+      expect(result).toBeDefined();
+      expect(result?.metrics).toMatchObject({
+        failed: 600,
+        completed: 400,
+        failureRate: 60,
+      });
+    });
+
+    it('should handle queue errors gracefully', async () => {
+      mockQueueInstance.getWorkers.mockRejectedValue(new Error('Queue error'));
+      mockQueueInstance.getMetrics.mockRejectedValue(new Error('Queue error'));
+
+      await expect(
+        service.getQueueDetails(MessageQueue.messagingQueue),
+      ).rejects.toThrow('Queue error');
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        `Error getting queue details for ${MessageQueue.messagingQueue}: Queue error`,
       );
     });
   });

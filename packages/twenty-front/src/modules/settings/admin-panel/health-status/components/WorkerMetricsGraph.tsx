@@ -1,12 +1,29 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
-import { useState } from 'react';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
-import { useGetQueueMetricsQuery } from '~/generated/graphql';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import {
+    QueueMetricsTimeRange,
+    useGetQueueMetricsQuery,
+} from '~/generated/graphql';
+
+const StyledTableRow = styled(TableRow)`
+  height: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledQueueMetricsTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
+`;
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.tertiary};
@@ -16,6 +33,15 @@ const StyledGraphContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(4)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+`;
+
+const StyledQueueMetricsContainer = styled.div`
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledGraphControls = styled.div`
@@ -43,12 +69,6 @@ const StyledTooltipContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
-const StyledTooltipTitle = styled.div`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  color: ${({ theme }) => theme.font.color.primary};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledTooltipItem = styled.div<{ color: string }>`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
@@ -69,20 +89,24 @@ const StyledTooltipValue = styled.span`
 
 type WorkerMetricsGraphProps = {
   queueName: string;
+  timeRange: QueueMetricsTimeRange;
+  onTimeRangeChange: (range: QueueMetricsTimeRange) => void;
 };
 
-export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
+export const WorkerMetricsGraph = ({
+  queueName,
+  timeRange,
+  onTimeRangeChange,
+}: WorkerMetricsGraphProps) => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
-
-  const [timeRange, setTimeRange] = useState<'7D' | '1D' | '12H' | '4H'>('1D');
 
   const { loading, data } = useGetQueueMetricsQuery({
     variables: {
       queueName,
       timeRange,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'no-cache',
     onError: (error) => {
       enqueueSnackBar(`Error fetching worker metrics: ${error.message}`, {
         variant: SnackBarVariant.Error,
@@ -95,17 +119,40 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
     metricsData.length > 0 &&
     metricsData.some((series) => series.data.length > 0);
 
-  const details = JSON.parse(data?.getQueueMetrics?.[0]?.details || '{}');
+  const metricsDetails = {
+    workers: data?.getQueueMetrics?.[0]?.workers,
+    ...data?.getQueueMetrics?.[0]?.details,
+  };
 
-  const getAxisBottomFormat = () => {
+  const getMaxYValue = () => {
+    if (!hasData) return 2;
+
+    let maxValue = 0;
+    metricsData.forEach((series) => {
+      series.data.forEach((point) => {
+        if (typeof point.y === 'number' && point.y > maxValue) {
+          maxValue = point.y;
+        }
+      });
+    });
+
+    return maxValue === 0 ? 2 : maxValue * 1.1;
+  };
+
+  const getAxisLabel = () => {
     switch (timeRange) {
-      case '7D':
-        return '%b %d';
-      case '1D':
-      case '12H':
-      case '4H':
+      case QueueMetricsTimeRange.OneHour:
+        return 'Last 1 Hour (oldest → newest)';
+      case QueueMetricsTimeRange.FourHours:
+        return 'Last 4 Hours (oldest → newest)';
+      case QueueMetricsTimeRange.TwelveHours:
+        return 'Last 12 Hours (oldest → newest)';
+      case QueueMetricsTimeRange.OneDay:
+        return 'Last 24 Hours (oldest → newest)';
+      case QueueMetricsTimeRange.SevenDays:
+        return 'Last 7 Days (oldest → newest)';
       default:
-        return '%H:%M';
+        return 'Recent Events (oldest → newest)';
     }
   };
 
@@ -116,14 +163,16 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
           dropdownId={`timerange-${queueName}`}
           value={timeRange}
           options={[
-            { value: '7D', label: 'This week' },
-            { value: '1D', label: 'Today' },
-            { value: '12H', label: 'Last 12 hours' },
-            { value: '4H', label: 'Last 4 hours' },
+            { value: QueueMetricsTimeRange.SevenDays, label: 'This week' },
+            { value: QueueMetricsTimeRange.OneDay, label: 'Today' },
+            {
+              value: QueueMetricsTimeRange.TwelveHours,
+              label: 'Last 12 hours',
+            },
+            { value: QueueMetricsTimeRange.FourHours, label: 'Last 4 hours' },
+            { value: QueueMetricsTimeRange.OneHour, label: 'Last 1 hour' },
           ]}
-          onChange={(value) => {
-            setTimeRange(value);
-          }}
+          onChange={onTimeRangeChange}
           needIconCheck
         />
       </StyledGraphControls>
@@ -168,26 +217,25 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
               },
             }}
             margin={{ top: 40, right: 30, bottom: 40, left: 50 }}
-            xFormat="time:%Y-%m-%d %H:%M"
             xScale={{
-              type: 'time',
-              useUTC: false,
-              format: '%Y-%m-%d %H:%M:%S',
-              precision: 'minute',
+              type: 'linear',
+              min: 0,
+              max: 'auto',
             }}
             yScale={{
               type: 'linear',
               min: 0,
+              max: getMaxYValue(),
               stacked: false,
             }}
             axisBottom={{
-              format: getAxisBottomFormat(),
-              tickValues: 5,
-              tickPadding: 5,
-              tickSize: 6,
-              legend: 'Time',
+              legend: getAxisLabel(),
               legendOffset: 30,
               legendPosition: 'middle',
+              tickSize: 5,
+              tickPadding: 5,
+              tickValues: 5,
+              format: () => '',
             }}
             axisLeft={{
               tickSize: 6,
@@ -201,31 +249,21 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
             gridYValues={4}
             pointSize={0}
             enableSlices="x"
-            sliceTooltip={({ slice }) => {
-              return (
-                <StyledTooltipContainer>
-                  <StyledTooltipTitle>
-                    {new Date(slice.points[0].data.x).toLocaleTimeString([], {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </StyledTooltipTitle>
-                  {slice.points.map((point) => (
-                    <StyledTooltipItem key={point.id} color={point.serieColor}>
-                      <StyledTooltipColorSquare color={point.serieColor} />
-                      <span>
-                        {point.serieId}:{' '}
-                        <StyledTooltipValue>
-                          {String(point.data.y)}
-                        </StyledTooltipValue>
-                      </span>
-                    </StyledTooltipItem>
-                  ))}
-                </StyledTooltipContainer>
-              );
-            }}
+            sliceTooltip={({ slice }) => (
+              <StyledTooltipContainer>
+                {slice.points.map((point) => (
+                  <StyledTooltipItem key={point.id} color={point.serieColor}>
+                    <StyledTooltipColorSquare color={point.serieColor} />
+                    <span>
+                      {point.serieId}:{' '}
+                      <StyledTooltipValue>
+                        {String(point.data.y)}
+                      </StyledTooltipValue>
+                    </span>
+                  </StyledTooltipItem>
+                ))}
+              </StyledTooltipContainer>
+            )}
             useMesh={true}
             legends={[
               {
@@ -247,7 +285,34 @@ export const WorkerMetricsGraph = ({ queueName }: WorkerMetricsGraphProps) => {
           <StyledNoDataMessage>No metrics data available</StyledNoDataMessage>
         )}
       </StyledGraphContainer>
-      <pre>{JSON.stringify(details, null, 2)}</pre>
+      {metricsDetails && (
+        <>
+          <StyledQueueMetricsTitle>Metrics:</StyledQueueMetricsTitle>
+          <StyledQueueMetricsContainer>
+            <Table>
+              {metricsDetails &&
+                Object.entries(metricsDetails)
+                  .filter(
+                    ([key]) => key !== '__typename' && typeof key === 'string',
+                  )
+                  .map(([key, value]) => (
+                    <StyledTableRow key={key}>
+                      <TableCell align="left">
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {typeof value === 'number'
+                          ? value
+                          : Array.isArray(value)
+                            ? value.length
+                            : String(value)}
+                      </TableCell>
+                    </StyledTableRow>
+                  ))}
+            </Table>
+          </StyledQueueMetricsContainer>
+        </>
+      )}
     </>
   );
 };

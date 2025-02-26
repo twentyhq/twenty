@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class MetricsDataPoint {
+export class QueueMetricsDataPoint {
   @Field()
-  x: string;
+  x: number;
 
   @Field()
   y: number;

@@ -51,7 +51,6 @@ export class WorkerHealthIndicator {
   async getQueueDetails(
     queueName: MessageQueue,
     options?: {
-      timeRange?: '7D' | '1D' | '12H' | '4H';
       pointsNeeded?: number;
     },
   ): Promise<WorkerQueueHealth | null> {
@@ -62,6 +61,10 @@ export class WorkerHealthIndicator {
       const workers = await queue.getWorkers();
 
       if (workers.length > 0) {
+        const metricsParams = options?.pointsNeeded
+          ? [0, options.pointsNeeded - 1]
+          : [];
+
         const [
           failedMetrics,
           completedMetrics,
@@ -69,36 +72,42 @@ export class WorkerHealthIndicator {
           activeCount,
           delayedCount,
         ] = await Promise.all([
-          queue.getMetrics(
-            'failed',
-            0,
-            options?.pointsNeeded ? options.pointsNeeded - 1 : undefined,
-          ),
-          queue.getMetrics(
-            'completed',
-            0,
-            options?.pointsNeeded ? options.pointsNeeded - 1 : undefined,
-          ),
+          queue.getMetrics('failed', ...metricsParams),
+          queue.getMetrics('completed', ...metricsParams),
           queue.getWaitingCount(),
           queue.getActiveCount(),
           queue.getDelayedCount(),
         ]);
 
-        const totalJobs = failedMetrics.count + completedMetrics.count;
+        const failedCount = options?.pointsNeeded
+          ? this.calculateMetricsSum(failedMetrics.data)
+          : failedMetrics.count;
+
+        const completedCount = options?.pointsNeeded
+          ? this.calculateMetricsSum(completedMetrics.data)
+          : completedMetrics.count;
+
+        const totalJobs = failedCount + completedCount;
         const failureRate =
-          totalJobs > 0 ? (failedMetrics.count / totalJobs) * 100 : 0;
+          totalJobs > 0
+            ? Number(((failedCount / totalJobs) * 100).toFixed(1))
+            : 0;
 
         return {
-          queueName: queueName,
+          queueName,
           workers: workers.length,
           status: failureRate > METRICS_FAILURE_RATE_THRESHOLD ? 'down' : 'up',
           metrics: {
-            failed: failedMetrics.count,
-            completed: completedMetrics.count,
+            failed: failedCount,
+            completed: completedCount,
             waiting: waitingCount,
             active: activeCount,
             delayed: delayedCount,
-            failureRate: failureRate,
+            failureRate,
+            ...(options?.pointsNeeded && {
+              failedData: failedMetrics.data.map(Number),
+              completedData: completedMetrics.data.map(Number),
+            }),
           },
         };
       }
@@ -112,6 +121,16 @@ export class WorkerHealthIndicator {
     } finally {
       await queue.close();
     }
+  }
+
+  private calculateMetricsSum(data: any[]): number {
+    const sum = data.reduce((sum, value) => {
+      const numericValue = Number(value);
+
+      return sum + (isNaN(numericValue) ? 0 : numericValue);
+    }, 0);
+
+    return Math.round(sum);
   }
 
   private async checkWorkers() {
