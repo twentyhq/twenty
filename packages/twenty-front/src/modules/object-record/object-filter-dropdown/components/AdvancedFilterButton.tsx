@@ -3,6 +3,8 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
+import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 
@@ -58,6 +60,7 @@ export const AdvancedFilterButton = () => {
     useGetCurrentView();
 
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
+  const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
@@ -95,6 +98,11 @@ export const AdvancedFilterButton = () => {
       };
 
       upsertCombinedViewFilterGroup(newViewFilterGroup);
+
+      upsertRecordFilterGroup({
+        id: newViewFilterGroup.id,
+        logicalOperator: RecordFilterGroupLogicalOperator.AND,
+      });
 
       const defaultFieldMetadataItem =
         availableFieldMetadataItemsForFilter.find(
