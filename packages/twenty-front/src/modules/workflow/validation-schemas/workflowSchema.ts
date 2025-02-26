@@ -181,12 +181,9 @@ const workflowExecutorOutputSchema = z.object({
   error: z.string().optional(),
 });
 
-const stepRunOutputSchema = z.object({
-  id: z.string(),
-  output: workflowExecutorOutputSchema,
-});
-
-const workflowRunOutputStepsOutputSchema = z.record(stepRunOutputSchema);
+const workflowRunOutputStepsOutputSchema = z.record(
+  workflowExecutorOutputSchema,
+);
 
 // Final workflow run output schema
 export const workflowRunOutputSchema = z.object({
