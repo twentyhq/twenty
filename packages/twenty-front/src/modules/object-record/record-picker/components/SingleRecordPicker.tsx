@@ -4,12 +4,14 @@ import {
   SingleRecordPickerMenuItemsWithSearch,
   SingleRecordPickerMenuItemsWithSearchProps,
 } from '@/object-record/record-picker/components/SingleRecordPickerMenuItemsWithSearch';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared';
 
 export type SingleRecordPickerProps = {
   width?: number;
+  componentInstanceId: string;
 } & SingleRecordPickerMenuItemsWithSearchProps;
 
 export const SingleRecordPicker = ({
@@ -22,6 +24,7 @@ export const SingleRecordPicker = ({
   objectNameSingular,
   selectedRecordIds,
   width = 200,
+  componentInstanceId,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -42,19 +45,23 @@ export const SingleRecordPicker = ({
   });
 
   return (
-    <DropdownMenu ref={containerRef} width={width} data-select-disable>
-      <SingleRecordPickerMenuItemsWithSearch
-        {...{
-          EmptyIcon,
-          emptyLabel,
-          excludedRecordIds,
-          onCancel,
-          onCreate,
-          onRecordSelected,
-          objectNameSingular,
-          selectedRecordIds,
-        }}
-      />
-    </DropdownMenu>
+    <RecordPickerComponentInstanceContext.Provider
+      value={{ instanceId: componentInstanceId }}
+    >
+      <DropdownMenu ref={containerRef} width={width} data-select-disable>
+        <SingleRecordPickerMenuItemsWithSearch
+          {...{
+            EmptyIcon,
+            emptyLabel,
+            excludedRecordIds,
+            onCancel,
+            onCreate,
+            onRecordSelected,
+            objectNameSingular,
+            selectedRecordIds,
+          }}
+        />
+      </DropdownMenu>
+    </RecordPickerComponentInstanceContext.Provider>
   );
 };

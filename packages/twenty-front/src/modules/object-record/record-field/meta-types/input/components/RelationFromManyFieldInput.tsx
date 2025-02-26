@@ -3,12 +3,12 @@ import { useContext } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 
 type RelationFromManyFieldInputProps = {

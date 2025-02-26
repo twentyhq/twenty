@@ -3,12 +3,12 @@ import { IconForbid } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { SearchPickerInitialValueEffect } from '@/object-record/record-picker-morph-legacy/components/SearchPickerInitialValueEffect';
 import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { SearchPickerInitialValueEffect } from '@/object-record/record-picker/legacy/components/SearchPickerInitialValueEffect';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 
 export type RelationPickerProps = {
@@ -64,6 +64,7 @@ export const RelationPicker = ({
         recordPickerInstanceId={recordPickerInstanceId}
       />
       <SingleRecordPicker
+        componentInstanceId={recordPickerInstanceId}
         EmptyIcon={IconForbid}
         emptyLabel={'No ' + fieldDefinition.label}
         onCancel={onCancel}

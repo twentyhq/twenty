@@ -9,11 +9,11 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
 import { SingleRecordPickerMenuItemsWithSearch } from '@/object-record/record-picker/components/SingleRecordPickerMenuItemsWithSearch';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';

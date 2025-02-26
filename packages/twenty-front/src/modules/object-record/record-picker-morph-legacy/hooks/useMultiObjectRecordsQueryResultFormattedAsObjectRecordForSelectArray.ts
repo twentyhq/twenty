@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { objectMetadataItemsByNamePluralMapSelector } from '@/object-metadata/states/objectMetadataItemsByNamePluralMapSelector';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
-import { formatMultiObjectRecordSearchResults } from '@/object-record/record-picker/utils/formatMultiObjectRecordSearchResults';
+import { formatMultiObjectRecordSearchResults } from '@/object-record/record-picker-morph-legacy/utils/formatMultiObjectRecordSearchResults';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { isDefined } from 'twenty-shared';
 

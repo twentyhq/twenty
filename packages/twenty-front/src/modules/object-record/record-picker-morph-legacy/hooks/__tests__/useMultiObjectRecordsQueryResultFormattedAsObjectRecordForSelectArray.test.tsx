@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray } from '@/object-record/record-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray } from '@/object-record/record-picker-morph-legacy/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 

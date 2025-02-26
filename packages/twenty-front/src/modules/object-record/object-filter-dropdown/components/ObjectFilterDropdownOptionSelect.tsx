@@ -18,8 +18,9 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
+import { RecordPickerHotkeyScope } from '@/object-record/record-picker/types/RecordPickerHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -164,7 +165,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
     <SelectableList
       selectableListId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
-      hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+      hotkeyScope={RecordPickerHotkeyScope.RecordPicker}
       onEnter={(itemId) => {
         const option = optionsInDropdown.find((option) => option.id === itemId);
         if (isDefined(option)) {

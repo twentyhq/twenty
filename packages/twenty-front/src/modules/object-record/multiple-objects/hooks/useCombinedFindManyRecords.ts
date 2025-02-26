@@ -5,7 +5,7 @@ import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { useCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecordsQueryVariables';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { MultiObjectRecordQueryResult } from '@/object-record/record-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { MultiObjectRecordQueryResult } from '@/object-record/record-picker-morph-legacy/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 
 export const useCombinedFindManyRecords = ({
   operationSignatures,
