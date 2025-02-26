@@ -1,7 +1,6 @@
 import { Key } from 'ts-key-enum';
 import {
   AppTooltip,
-  IconFileExport,
   IconFileImport,
   IconLayout,
   IconLayoutList,
@@ -19,10 +18,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import {
-  displayedExportProgress,
-  useExportRecords,
-} from '@/object-record/record-index/export/hooks/useExportRecords';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -33,9 +28,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
@@ -89,14 +84,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
     useOpenObjectRecordsSpreadsheetImportDialog(
       objectMetadataItem.nameSingular,
     );
-
-  const { progress, download } = useExportRecords({
-    delayMs: 100,
-    filename: `${objectMetadataItem.nameSingular}.csv`,
-    objectMetadataItem,
-    recordIndexId,
-    viewType,
-  });
 
   // TODO: Remove this once we have implemented Rich Text v2 and removed the old rich text
   const canImportOrExport =
@@ -167,21 +154,14 @@ export const ObjectOptionsDropdownMenuContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {canImportOrExport && (
-          <>
-            <MenuItem
-              onClick={download}
-              LeftIcon={IconFileExport}
-              text={displayedExportProgress(progress)}
-            />
-            <MenuItem
-              onClick={() => {
-                closeDropdown();
-                openObjectRecordsSpreasheetImportDialog();
-              }}
-              LeftIcon={IconFileImport}
-              text={t`Import`}
-            />
-          </>
+          <MenuItem
+            onClick={() => {
+              closeDropdown();
+              openObjectRecordsSpreasheetImportDialog();
+            }}
+            LeftIcon={IconFileImport}
+            text={t`Import`}
+          />
         )}
         <MenuItem
           onClick={() => {
