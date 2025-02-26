@@ -20,15 +20,15 @@ export const RecordIndexPage = () => {
     'main-context-store',
   );
 
-  if (!objectMetadataItem?.isActive) {
-    navigateApp(AppPath.NotFound);
-    return null;
-  }
-
   if (
     isUndefined(objectMetadataItem) ||
     !isNonEmptyString(contextStoreCurrentViewId)
   ) {
+    return null;
+  }
+
+  if (!objectMetadataItem.isActive) {
+    navigateApp(AppPath.NotFound);
     return null;
   }
 
