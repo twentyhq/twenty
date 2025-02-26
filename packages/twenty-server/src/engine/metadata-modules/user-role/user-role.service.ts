@@ -140,6 +140,9 @@ export class UserRoleService {
   public async validateUserWorkspaceIsNotUniqueAdminOrThrow({
     userWorkspaceId,
     workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
   }) {
     const roleOfUserWorkspace = await this.getRolesByUserWorkspaces({
       userWorkspaceIds: [userWorkspaceId],
@@ -222,6 +225,9 @@ export class UserRoleService {
   private async validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
     adminRoleId,
     workspaceId,
+  }: {
+    adminRoleId: string;
+    workspaceId: string;
   }) {
     const workspaceMembersWithAdminRole =
       await this.getWorkspaceMembersAssignedToRole(adminRoleId, workspaceId);
