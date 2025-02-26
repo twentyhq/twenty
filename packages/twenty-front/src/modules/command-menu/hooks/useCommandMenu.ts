@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -18,11 +18,11 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
@@ -40,10 +40,6 @@ export const useCommandMenu = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
   const { getIcon } = useIcons();
-
-  const mainContextStoreComponentInstanceId = useRecoilValue(
-    mainContextStoreComponentInstanceIdState,
-  );
 
   const { copyContextStoreStates } = useCopyContextStoreStates();
   const { resetContextStoreStates } = useResetContextStoreStates();
@@ -64,18 +60,14 @@ export const useCommandMenu = () => {
         }
 
         copyContextStoreStates({
-          instanceIdToCopyFrom: mainContextStoreComponentInstanceId,
+          instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,
           instanceIdToCopyTo: 'command-menu',
         });
 
         set(isCommandMenuOpenedState, true);
         set(hasUserSelectedCommandState, false);
       },
-    [
-      copyContextStoreStates,
-      mainContextStoreComponentInstanceId,
-      setHotkeyScopeAndMemorizePreviousScope,
-    ],
+    [copyContextStoreStates, setHotkeyScopeAndMemorizePreviousScope],
   );
 
   const closeCommandMenu = useRecoilCallback(

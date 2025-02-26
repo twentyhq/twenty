@@ -1,5 +1,4 @@
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
@@ -74,7 +73,6 @@ export const MainContextStoreProvider = () => {
 
   return (
     <MainContextStoreProviderEffect
-      mainContextStoreComponentInstanceIdToSet={MAIN_CONTEXT_STORE_INSTANCE_ID}
       viewId={viewId}
       objectMetadataItem={objectMetadataItem}
       pageName={pageName}
