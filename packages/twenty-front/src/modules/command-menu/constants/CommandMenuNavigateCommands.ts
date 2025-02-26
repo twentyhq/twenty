@@ -19,7 +19,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Person,
     }),
-    label: 'Go to People',
+    label: 'رفتن به افراد',
     type: CommandType.Navigate,
     hotKeys: ['G', 'P'],
     Icon: IconUser,
@@ -30,7 +30,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Company,
     }),
-    label: 'Go to Companies',
+    label: 'رفتن به شرکت‌ها',
     type: CommandType.Navigate,
     hotKeys: ['G', 'C'],
     Icon: IconBuildingSkyscraper,
@@ -41,7 +41,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Opportunity,
     }),
-    label: 'Go to Opportunities',
+    label: 'رفتن به فرصت‌ها',
     type: CommandType.Navigate,
     hotKeys: ['G', 'O'],
     Icon: IconTargetArrow,
@@ -50,7 +50,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   settings: {
     id: 'go-to-settings',
     to: getSettingsPath(SettingsPath.ProfilePage),
-    label: 'Go to Settings',
+    label: 'رفتن به تنظیمات',
     type: CommandType.Navigate,
     hotKeys: ['G', 'S'],
     Icon: IconSettings,
@@ -61,7 +61,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Task,
     }),
-    label: 'Go to Tasks',
+    label: 'رفتن به تسک‌ها',
     type: CommandType.Navigate,
     hotKeys: ['G', 'T'],
     Icon: IconCheckbox,
