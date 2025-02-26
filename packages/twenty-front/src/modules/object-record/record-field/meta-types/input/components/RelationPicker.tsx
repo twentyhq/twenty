@@ -64,6 +64,7 @@ export const RelationPicker = ({
         recordPickerInstanceId={recordPickerInstanceId}
       />
       <SingleRecordPicker
+        componentInstanceId={recordPickerInstanceId}
         EmptyIcon={IconForbid}
         emptyLabel={'No ' + fieldDefinition.label}
         onCancel={onCancel}

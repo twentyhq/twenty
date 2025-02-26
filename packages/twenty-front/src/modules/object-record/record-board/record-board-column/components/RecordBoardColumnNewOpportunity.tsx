@@ -74,6 +74,7 @@ export const RecordBoardColumnNewOpportunity = ({
             }}
           >
             <SingleRecordPicker
+              componentInstanceId={`add-new-card-record-picker-column-${columnId}`}
               onCancel={() => handleCreateSuccess(position, columnId, false)}
               onRecordSelected={(company) =>
                 company ? handleEntitySelect(position, company) : null
