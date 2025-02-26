@@ -1,3 +1,4 @@
+import { ShowPageSubContainerTabListContainer } from '@/ui/layout/show-page/components/ShowPageSubContainerTabListContainer';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
@@ -7,14 +8,7 @@ import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/w
 import styled from '@emotion/styled';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
 
-const StyledTabListContainer = styled.div`
-  align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(10)};
+const StyledTabListContainer = styled(ShowPageSubContainerTabListContainer)`
   background-color: ${({ theme }) => theme.background.secondary};
 `;
 
