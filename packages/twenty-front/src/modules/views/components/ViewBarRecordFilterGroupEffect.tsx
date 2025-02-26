@@ -1,18 +1,17 @@
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
-import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
+import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
-export const ViewBarRecordFilterEffect = () => {
+export const ViewBarRecordFilterGroupEffect = () => {
   const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
@@ -28,25 +27,21 @@ export const ViewBarRecordFilterEffect = () => {
   );
 
   const [
-    hasInitializedCurrentRecordFilters,
-    setHasInitializedCurrentRecordFilters,
+    hasInitializedCurrentRecordFilterGroups,
+    setHasInitializedCurrentRecordFilterGroups,
   ] = useRecoilComponentFamilyStateV2(
-    hasInitializedCurrentRecordFiltersComponentFamilyState,
+    hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
     {
       viewId: currentViewId ?? undefined,
     },
   );
 
-  const setCurrentRecordFilters = useSetRecoilComponentStateV2(
-    currentRecordFiltersComponentState,
-  );
-
-  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
-    contextStoreCurrentObjectMetadataItem?.id,
+  const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
+    currentRecordFilterGroupsComponentState,
   );
 
   useEffect(() => {
-    if (isDefined(currentView) && !hasInitializedCurrentRecordFilters) {
+    if (isDefined(currentView) && !hasInitializedCurrentRecordFilterGroups) {
       if (
         currentView.objectMetadataId !==
         contextStoreCurrentObjectMetadataItem?.id
@@ -55,22 +50,20 @@ export const ViewBarRecordFilterEffect = () => {
       }
 
       if (isDefined(currentView)) {
-        setCurrentRecordFilters(
-          mapViewFiltersToFilters(
-            currentView.viewFilters,
-            filterableFieldMetadataItems,
+        setCurrentRecordFilterGroups(
+          mapViewFilterGroupsToRecordFilterGroups(
+            currentView.viewFilterGroups ?? [],
           ),
         );
 
-        setHasInitializedCurrentRecordFilters(true);
+        setHasInitializedCurrentRecordFilterGroups(true);
       }
     }
   }, [
     currentViewId,
-    setCurrentRecordFilters,
-    filterableFieldMetadataItems,
-    hasInitializedCurrentRecordFilters,
-    setHasInitializedCurrentRecordFilters,
+    setCurrentRecordFilterGroups,
+    hasInitializedCurrentRecordFilterGroups,
+    setHasInitializedCurrentRecordFilterGroups,
     contextStoreCurrentObjectMetadataItem?.id,
     currentView,
   ]);
