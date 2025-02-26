@@ -7,7 +7,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { capitalize } from 'twenty-shared';
@@ -28,7 +28,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
       objectMetadataItem,
       input: record,
     });
-    const recordGqlFields = generateDepthOneRecordGqlFields({
+    const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
       objectMetadataItem,
       record: prefilledRecord,
     });
