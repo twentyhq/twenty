@@ -11,6 +11,7 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { RoleAssignment } from '@/settings/roles/role-assignment/components/RoleAssignment';
 import { RolePermissions } from '@/settings/roles/role-permissions/components/RolePermissions';
 import { RoleSettings } from '@/settings/roles/role-settings/components/RoleSettings';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -21,7 +22,6 @@ import { useTheme } from '@emotion/react';
 import { useGetRolesQuery } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { RoleAssignment } from '../../../modules/settings/roles/role-assignment/components/RoleAssignment';
 
 const StyledContentContainer = styled.div`
   flex: 1;
