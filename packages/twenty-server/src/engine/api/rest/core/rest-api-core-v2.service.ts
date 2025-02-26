@@ -1,13 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
+
 import { capitalize } from 'twenty-shared/utils';
-import { FindOptionsWhere, ObjectLiteral } from 'typeorm';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
+import { buildQueryWithFilters } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/filter-query-builder.utils';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
-import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -24,7 +23,6 @@ export class RestApiCoreServiceV2 {
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly limitInputFactory: LimitInputFactory,
-    private readonly filterInputFactory: FilterInputFactory,
   ) {}
 
   async delete(request: Request) {
@@ -97,7 +95,7 @@ export class RestApiCoreServiceV2 {
       objectMetadataNameSingular,
       objectMetadataNamePlural,
       repository,
-      objectMetadata,
+      // objectMetadata,
     } = await this.getRepositoryAndMetadataOrFail(request);
 
     if (recordId) {
@@ -112,12 +110,16 @@ export class RestApiCoreServiceV2 {
       });
     } else {
       const limit = this.limitInputFactory.create(request);
-      const filter = this.filterInputFactory.create(request, objectMetadata);
+      const filter = request.query.filter as string;
 
-      const records = await repository.find({
-        take: limit,
-        // where: this.getWhereFilter(filter), // to use the computed filter
-      });
+      const qb = repository.createQueryBuilder(objectMetadataNameSingular);
+      const finalQuery = buildQueryWithFilters(
+        qb,
+        objectMetadataNameSingular,
+        filter,
+      );
+
+      const records = await finalQuery.take(limit).getMany();
 
       return this.formatResult({
         objectNamePlural: objectMetadataNamePlural,
@@ -184,59 +186,5 @@ export class RestApiCoreServiceV2 {
       objectMetadata,
       repository,
     };
-  }
-
-  private getWhereFilter(
-    filterObject: Record<string, FieldValue>,
-  ): FindOptionsWhere<ObjectLiteral> {
-    if (!filterObject) return {};
-
-    const processCondition = (
-      condition: Record<string, FieldValue>,
-    ): FindOptionsWhere<ObjectLiteral> => {
-      let result: FindOptionsWhere<ObjectLiteral> = {};
-
-      for (const key in condition) {
-        const value = condition[key];
-
-        if (key === 'and' && Array.isArray(value)) {
-          // Merge "and" conditions into the same object
-          result = value.reduce(
-            (acc, subCondition) => ({
-              ...acc,
-              ...processCondition(subCondition as Record<string, FieldValue>),
-            }),
-            result,
-          );
-        } else if (key === 'or' && Array.isArray(value)) {
-          // Keep OR as an array inside the "or" key
-          result['or'] = value.map((subCondition) =>
-            processCondition(subCondition as Record<string, FieldValue>),
-          );
-        } else if (
-          typeof value === 'object' &&
-          value !== null &&
-          !Array.isArray(value)
-        ) {
-          // Recursively process nested objects
-          const subCondition = processCondition(
-            value as Record<string, FieldValue>,
-          );
-
-          if ('eq' in subCondition) {
-            result[key] = (subCondition as any).eq; // Flatten { eq: value } → value
-          } else {
-            result[key] = subCondition;
-          }
-        } else {
-          // Directly assign primitive values (string, number, boolean)
-          result[key] = value;
-        }
-      }
-
-      return result;
-    };
-
-    return processCondition(filterObject);
   }
 }
