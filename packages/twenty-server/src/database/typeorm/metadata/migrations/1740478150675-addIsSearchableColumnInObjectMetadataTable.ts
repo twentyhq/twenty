@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddIsSearchableColumInObjectMetadataTable1740478150675
+export class AddIsSearchableColumnInObjectMetadataTable1740478150675
   implements MigrationInterface
 {
-  name = 'AddIsSearchableColumInObjectMetadataTable1740478150675';
+  name = 'AddIsSearchableColumnInObjectMetadataTable1740478150675';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
