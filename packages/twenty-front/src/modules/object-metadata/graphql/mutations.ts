@@ -13,6 +13,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isSearchable
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId

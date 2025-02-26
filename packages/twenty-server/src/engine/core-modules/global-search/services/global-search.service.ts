@@ -22,20 +22,9 @@ export class GlobalSearchService {
     excludedObjectNameSingulars: string[] | undefined,
   ) {
     return objectMetadataItemWithFieldMaps.filter(
-      ({ nameSingular, isSystem, isRemote, isCustom }) => {
-        if (excludedObjectNameSingulars?.includes(nameSingular)) {
-          return false;
-        }
-        //TODO - #345 issue - IsSearchable decorator
-        if (isSystem || isRemote) {
-          return false;
-        }
-
+      ({ nameSingular, isSearchable }) => {
         return (
-          isCustom ||
-          ['company', 'person', 'opportunity', 'note', 'task'].includes(
-            nameSingular,
-          )
+          !excludedObjectNameSingulars?.includes(nameSingular) && isSearchable
         );
       },
     );

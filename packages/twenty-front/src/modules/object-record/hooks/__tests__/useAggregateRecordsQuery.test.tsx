@@ -17,6 +17,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   labelSingular: 'Company',
   labelPlural: 'Companies',
   isCustom: false,
+  isSearchable: false,
   labelIdentifierFieldMetadataId: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
   isActive: true,
   createdAt: new Date().toISOString(),
