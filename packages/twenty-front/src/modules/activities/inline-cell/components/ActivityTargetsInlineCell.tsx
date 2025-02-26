@@ -99,9 +99,6 @@ export const ActivityTargetsInlineCell = ({
                     recordPickerInstanceId: `record-picker-${activity.id}`,
                   });
                 },
-                onCloseEditMode: () => {
-                  closeInlineCell();
-                },
               }}
             >
               <RecordInlineCellContainer />
