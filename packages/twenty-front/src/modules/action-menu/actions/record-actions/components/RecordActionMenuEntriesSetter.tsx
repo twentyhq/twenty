@@ -1,4 +1,5 @@
 import { RegisterRecordActionEffect } from '@/action-menu/actions/record-actions/components/RegisterRecordActionEffect';
+import { useFirstSelectedRecordId } from '@/action-menu/actions/record-actions/single-record/hooks/useFirstSelectedRecordId';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
@@ -22,6 +23,8 @@ export const RecordActionMenuEntriesSetter = () => {
   const contextStoreCurrentViewType = useRecoilComponentValueV2(
     contextStoreCurrentViewTypeComponentState,
   );
+
+  const selectedRecordId = useFirstSelectedRecordId();
 
   const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
@@ -51,15 +54,18 @@ export const RecordActionMenuEntriesSetter = () => {
       )
     : [];
 
+  const shouldRegisterActions = isDefined(selectedRecordId);
+
   return (
     <>
-      {actionsToRegister.map((action) => (
-        <RegisterRecordActionEffect
-          key={action.key}
-          action={action}
-          objectMetadataItem={contextStoreCurrentObjectMetadataItem}
-        />
-      ))}
+      {shouldRegisterActions &&
+        actionsToRegister.map((action) => (
+          <RegisterRecordActionEffect
+            key={action.key}
+            action={action}
+            objectMetadataItem={contextStoreCurrentObjectMetadataItem}
+          />
+        ))}
 
       {isWorkflowEnabled &&
         contextStoreTargetedRecordsRule?.mode === 'selection' &&
