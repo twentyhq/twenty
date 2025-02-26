@@ -198,4 +198,11 @@ export const workflowRunOutputSchema = z.object({
   error: z.string().optional(),
 });
 
+export const workflowRunSchema = z.object({
+  __typename: z.literal('WorkflowRun'),
+  id: z.string(),
+  workflowVersionId: z.string(),
+  output: workflowRunOutputSchema.nullable(),
+});
+
 export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
