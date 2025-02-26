@@ -50,19 +50,19 @@ export const RecordShowPage = () => {
   return (
     <RecordFieldValueSelectorContextProvider>
       <RecordFilterGroupsComponentInstanceContext.Provider
-        value={{ instanceId: 'main-context-store' }}
+        value={{ instanceId: `record-show-${objectRecordId}` }}
       >
         <RecordFiltersComponentInstanceContext.Provider
-          value={{ instanceId: 'main-context-store' }}
+          value={{ instanceId: `record-show-${objectRecordId}` }}
         >
           <RecordSortsComponentInstanceContext.Provider
-            value={{ instanceId: 'main-context-store' }}
+            value={{ instanceId: `record-show-${objectRecordId}` }}
           >
             <ContextStoreComponentInstanceContext.Provider
               value={{ instanceId: 'main-context-store' }}
             >
               <ActionMenuComponentInstanceContext.Provider
-                value={{ instanceId: 'main-context-store' }}
+                value={{ instanceId: `record-show-${objectRecordId}` }}
               >
                 <RecordValueSetterEffect recordId={objectRecordId} />
                 <PageContainer>
