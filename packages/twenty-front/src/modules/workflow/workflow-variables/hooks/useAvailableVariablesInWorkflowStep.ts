@@ -3,7 +3,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import {
@@ -24,10 +24,10 @@ export const useAvailableVariablesInWorkflowStep = ({
 }): StepOutputSchema[] => {
   const workflowId = useRecoilValue(workflowIdState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
-  const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
+  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const flow = useFlowOrThrow();
 
-  if (!isDefined(workflowSelectedNode) || !isDefined(workflow)) {
+  if (!isDefined(workflow)) {
     return [];
   }
 
