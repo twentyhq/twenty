@@ -286,6 +286,8 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
+          // TODO: remove this once we can store the navigation stack page states
+          resetNavigationStack: true,
         });
       };
     },
