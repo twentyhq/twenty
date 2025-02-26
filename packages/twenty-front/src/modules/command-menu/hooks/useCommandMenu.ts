@@ -17,6 +17,7 @@ import {
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -50,12 +51,61 @@ export const useCommandMenu = () => {
 
   const { closeDropdown } = useDropdownV2();
 
+  const closeCommandMenu = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(isCommandMenuOpenedState, false);
+        set(isCommandMenuClosingState, true);
+      },
+    [],
+  );
+
+  const onCommandMenuCloseAnimationComplete = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
+
+        resetContextStoreStates('command-menu');
+        resetContextStoreStates('command-menu-previous');
+
+        set(viewableRecordIdState, null);
+        set(commandMenuPageState, CommandMenuPages.Root);
+        set(commandMenuPageInfoState, {
+          title: undefined,
+          Icon: undefined,
+        });
+        set(isCommandMenuOpenedState, false);
+        set(commandMenuSearchState, '');
+        set(commandMenuNavigationStackState, []);
+        resetSelectedItem();
+        set(hasUserSelectedCommandState, false);
+        goBackToPreviousHotkeyScope();
+
+        emitRightDrawerCloseEvent();
+        set(isCommandMenuClosingState, false);
+      },
+    [
+      closeDropdown,
+      goBackToPreviousHotkeyScope,
+      resetContextStoreStates,
+      resetSelectedItem,
+    ],
+  );
+
   const openCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
         const isCommandMenuOpened = snapshot
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
+
+        const isCommandMenuClosing = snapshot
+          .getLoadable(isCommandMenuClosingState)
+          .getValue();
+
+        if (isCommandMenuClosing) {
+          onCommandMenuCloseAnimationComplete();
+        }
 
         setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
 
@@ -74,41 +124,9 @@ export const useCommandMenu = () => {
     [
       copyContextStoreStates,
       mainContextStoreComponentInstanceId,
+      onCommandMenuCloseAnimationComplete,
       setHotkeyScopeAndMemorizePreviousScope,
     ],
-  );
-
-  const closeCommandMenu = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        set(isCommandMenuOpenedState, false);
-        closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
-      },
-    [closeDropdown],
-  );
-
-  const onCommandMenuCloseAnimationComplete = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        resetContextStoreStates('command-menu');
-        resetContextStoreStates('command-menu-previous');
-
-        set(viewableRecordIdState, null);
-        set(commandMenuPageState, CommandMenuPages.Root);
-        set(commandMenuPageInfoState, {
-          title: undefined,
-          Icon: undefined,
-        });
-        set(isCommandMenuOpenedState, false);
-        set(commandMenuSearchState, '');
-        set(commandMenuNavigationStackState, []);
-        resetSelectedItem();
-        set(hasUserSelectedCommandState, false);
-        goBackToPreviousHotkeyScope();
-
-        emitRightDrawerCloseEvent();
-      },
-    [goBackToPreviousHotkeyScope, resetContextStoreStates, resetSelectedItem],
   );
 
   const navigateCommandMenu = useRecoilCallback(
@@ -121,16 +139,20 @@ export const useCommandMenu = () => {
       }: CommandMenuNavigationStackItem & {
         resetNavigationStack?: boolean;
       }) => {
-        closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
+        openCommandMenu();
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
           title: pageTitle,
           Icon: pageIcon,
         });
 
-        const currentNavigationStack = snapshot
-          .getLoadable(commandMenuNavigationStackState)
+        const isCommandMenuClosing = snapshot
+          .getLoadable(isCommandMenuClosingState)
           .getValue();
+
+        const currentNavigationStack = isCommandMenuClosing
+          ? []
+          : snapshot.getLoadable(commandMenuNavigationStackState).getValue();
 
         if (resetNavigationStack) {
           set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
@@ -140,10 +162,9 @@ export const useCommandMenu = () => {
             { page, pageTitle, pageIcon },
           ]);
         }
-        openCommandMenu();
       };
     },
-    [closeDropdown, openCommandMenu],
+    [openCommandMenu],
   );
 
   const openRootCommandMenu = useCallback(() => {

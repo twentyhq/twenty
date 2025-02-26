@@ -126,7 +126,6 @@ export const CommandMenuContainer = ({
               )}
               <ActionMenuConfirmationModals />
               <AnimatePresence
-                mode="wait"
                 onExitComplete={onCommandMenuCloseAnimationComplete}
               >
                 {isCommandMenuOpened && (
