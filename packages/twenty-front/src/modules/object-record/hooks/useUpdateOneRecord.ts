@@ -8,8 +8,8 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { generateDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFieldsFromRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -106,7 +106,7 @@ export const useUpdateOneRecord = <
       isDefined(cachedRecordWithConnection);
 
     if (shouldHandleOptimisticCache) {
-      const recordGqlFields = generateDepthOneRecordGqlFieldsFromRecord({
+      const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
         objectMetadataItem,
         record: optimisticRecordInput,
       });
@@ -166,7 +166,7 @@ export const useUpdateOneRecord = <
         ).filter((diffKey) => !cachedRecordKeys.has(diffKey));
 
         const recordGqlFields = {
-          ...generateDepthOneRecordGqlFieldsFromRecord({
+          ...computeDepthOneRecordGqlFieldsFromRecord({
             objectMetadataItem,
             record: cachedRecord,
           }),

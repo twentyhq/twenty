@@ -4,14 +4,14 @@ import {
 } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-type GenerateDepthOneRecordGqlFieldsFromRecordArgs =
+type ComputeDepthOneRecordGqlFieldsFromRecordArgs =
   GenerateDepthOneRecordGqlFields & {
     record: Partial<ObjectRecord>;
   };
-export const generateDepthOneRecordGqlFieldsFromRecord = ({
+export const computeDepthOneRecordGqlFieldsFromRecord = ({
   objectMetadataItem,
   record,
-}: GenerateDepthOneRecordGqlFieldsFromRecordArgs) => {
+}: ComputeDepthOneRecordGqlFieldsFromRecordArgs) => {
   const depthOneRecordGqlFields = generateDepthOneRecordGqlFields({
     objectMetadataItem,
   });
