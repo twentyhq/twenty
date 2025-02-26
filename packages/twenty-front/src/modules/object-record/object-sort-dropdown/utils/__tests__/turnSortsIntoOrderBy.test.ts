@@ -3,7 +3,6 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { v4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const objectMetadataItemWithPosition: ObjectMetadataItem = {
@@ -34,13 +33,14 @@ const objectMetadataItemWithPosition: ObjectMetadataItem = {
   isLabelSyncedWithName: true,
 };
 
+type PartialFieldMetadaItemWithRequiredId = Pick<FieldMetadataItem, 'id'> &
+  Partial<Omit<FieldMetadataItem, 'id'>>;
 const getMockFieldMetadataItem = (
-  overrides: Partial<FieldMetadataItem>,
+  overrides: PartialFieldMetadaItemWithRequiredId,
 ): FieldMetadataItem => ({
   name: 'name',
   updatedAt: '2021-01-01',
   createdAt: '2021-01-01',
-  id: `20202020-${v4().split('-').slice(1).join('-')}`,
   type: FieldMetadataType.TEXT,
   label: 'label',
   ...overrides,
@@ -49,7 +49,7 @@ const getMockFieldMetadataItem = (
 describe('turnSortsIntoOrderBy', () => {
   it.each<{
     title: string;
-    fields: Partial<FieldMetadataItem>[];
+    fields: PartialFieldMetadaItemWithRequiredId[];
     expected: RecordGqlOperationOrderBy;
     sort: RecordSort[];
     objectMetadataItemOverrides?: Partial<Omit<ObjectMetadataItem, 'fields'>>;
