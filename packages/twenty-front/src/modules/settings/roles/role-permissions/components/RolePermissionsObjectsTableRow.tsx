@@ -1,8 +1,8 @@
+import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePermissionsObjectPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Checkbox } from 'twenty-ui';
-import { RolePermissionsObjectPermission } from '~/pages/settings/roles/types/RolePermissionsObjectPermission';
 
 const StyledIconWrapper = styled.div`
   align-items: center;

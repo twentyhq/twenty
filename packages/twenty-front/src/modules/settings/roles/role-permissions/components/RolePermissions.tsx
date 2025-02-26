@@ -1,3 +1,7 @@
+import { RolePermissionsObjectsTableHeader } from '@/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader';
+import { RolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader';
+import { RolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableRow';
+import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePermissionsObjectPermission';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
@@ -10,10 +14,6 @@ import {
 } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
-import { RolePermissionsObjectsTableHeader } from '~/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader';
-import { RolePermissionsSettingsTableHeader } from '~/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader';
-import { RolePermissionsSettingsTableRow } from '~/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableRow';
-import { RolePermissionsObjectPermission } from '~/pages/settings/roles/types/RolePermissionsObjectPermission';
 import { RolePermissionsObjectsTableRow } from './RolePermissionsObjectsTableRow';
 
 const StyledRolePermissionsContainer = styled.div`

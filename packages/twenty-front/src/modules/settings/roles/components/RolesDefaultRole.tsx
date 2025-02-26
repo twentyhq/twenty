@@ -44,7 +44,7 @@ export const RolesDefaultRole = ({ roles }: { roles: Role[] }) => {
     });
   };
 
-  if (!currentWorkspace) {
+  if (!currentWorkspace || !defaultRole) {
     return null;
   }
 
