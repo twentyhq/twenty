@@ -3,7 +3,7 @@ import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
-import { WorkflowRunStepDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepDetail';
+import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import styled from '@emotion/styled';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
@@ -39,7 +39,8 @@ export const RightDrawerWorkflowRunViewStep = () => {
       </StyledTabListContainer>
 
       {activeTabId === 'node' ? (
-        <WorkflowRunStepDetail
+        <WorkflowStepDetail
+          readonly
           stepId={workflowSelectedNode}
           trigger={flow.trigger}
           steps={flow.steps}
