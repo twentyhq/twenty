@@ -24,9 +24,13 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   const apolloClient = useApolloClient();
 
   return (record: ObjectRecord) => {
+    const prefilledRecord = prefillRecord({
+      objectMetadataItem,
+      input: record,
+    });
     const recordGqlFields = generateDepthOneRecordGqlFields({
       objectMetadataItem,
-      record,
+      record: prefilledRecord,
     });
     const fragment = gql`
           fragment Create${capitalize(
@@ -40,11 +44,6 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
             recordGqlFields,
           })}
         `;
-
-    const prefilledRecord = prefillRecord({
-      objectMetadataItem,
-      input: record,
-    });
 
     const recordToCreateWithNestedConnections = getRecordNodeFromRecord({
       record: prefilledRecord,
