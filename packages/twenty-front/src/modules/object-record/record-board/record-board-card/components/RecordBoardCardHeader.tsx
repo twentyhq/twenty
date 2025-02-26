@@ -4,6 +4,7 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeaderContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
@@ -75,7 +76,11 @@ export const RecordBoardCardHeader = ({
 }: RecordBoardCardHeaderProps) => {
   const [newLabelValue, setNewLabelValue] = useState('');
 
-  const { handleBlur, handleInputEnter } = useAddNewCard();
+  const columnId = useContext(RecordBoardColumnContext)?.columnId;
+
+  const { handleBlur, handleInputEnter } = useAddNewCard({
+    recordPickerComponentInstanceId: `add-new-card-record-picker-column-${columnId}`,
+  });
 
   const { recordId } = useContext(RecordBoardCardContext);
 

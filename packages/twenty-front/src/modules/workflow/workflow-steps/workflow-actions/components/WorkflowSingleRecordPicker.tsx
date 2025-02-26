@@ -3,7 +3,6 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -152,24 +151,21 @@ export const WorkflowSingleRecordPicker = ({
                   />
                 }
                 dropdownComponents={
-                  <RecordPickerComponentInstanceContext.Provider
-                    value={{ instanceId: dropdownId }}
-                  >
-                    <SingleRecordPicker
-                      EmptyIcon={IconForbid}
-                      emptyLabel={'No ' + objectNameSingular}
-                      onCancel={() => closeDropdown()}
-                      onRecordSelected={handleRecordSelected}
-                      objectNameSingular={objectNameSingular}
-                      recordPickerInstanceId={dropdownId}
-                      selectedRecordIds={
-                        draftValue?.value &&
-                        !isStandaloneVariableString(draftValue.value)
-                          ? [draftValue.value]
-                          : []
-                      }
-                    />
-                  </RecordPickerComponentInstanceContext.Provider>
+                  <SingleRecordPicker
+                    componentInstanceId={dropdownId}
+                    EmptyIcon={IconForbid}
+                    emptyLabel={'No ' + objectNameSingular}
+                    onCancel={() => closeDropdown()}
+                    onRecordSelected={handleRecordSelected}
+                    objectNameSingular={objectNameSingular}
+                    recordPickerInstanceId={dropdownId}
+                    selectedRecordIds={
+                      draftValue?.value &&
+                      !isStandaloneVariableString(draftValue.value)
+                        ? [draftValue.value]
+                        : []
+                    }
+                  />
                 }
                 dropdownHotkeyScope={{ scope: dropdownId }}
               />

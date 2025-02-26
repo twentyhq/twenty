@@ -18,9 +18,7 @@ describe('useRecordSelectSearch', () => {
   it('should update searchFilter after change event', async () => {
     const { result } = renderHook(
       () => {
-        const recordSelectSearchHook = useRecordSelectSearch({
-          recordPickerInstanceId: instanceId,
-        });
+        const recordSelectSearchHook = useRecordSelectSearch(instanceId);
         const internallyStoredFilter = useRecoilComponentValueV2(
           recordPickerSearchFilterComponentState,
           instanceId,

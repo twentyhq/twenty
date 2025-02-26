@@ -3,13 +3,13 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { useLimitPerMetadataItem } from '@/object-metadata/hooks/useLimitPerMetadataItem';
+import { useOrderByFieldPerMetadataItem } from '@/object-metadata/hooks/useOrderByFieldPerMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import {
   MultiObjectRecordQueryResult,
   useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
-} from '@/object-record/record-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
-import { useOrderByFieldPerMetadataItem } from '@/object-record/record-picker/hooks/useOrderByFieldPerMetadataItem';
+} from '@/object-record/record-picker-morph-legacy/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
 import { capitalize, isDefined } from 'twenty-shared';
 

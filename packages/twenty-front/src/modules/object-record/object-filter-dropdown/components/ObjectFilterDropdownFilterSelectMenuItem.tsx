@@ -12,7 +12,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
+import { RecordPickerHotkeyScope } from '@/object-record/record-picker/types/RecordPickerHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
@@ -75,7 +75,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
     if (filterType === 'RELATION' || filterType === 'SELECT') {
-      setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+      setHotkeyScope(RecordPickerHotkeyScope.RecordPicker);
     }
 
     setSelectedOperandInDropdown(

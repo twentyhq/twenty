@@ -11,7 +11,9 @@ export const useColumnNewCardActions = (columnId: string) => {
     (field) => field.isLabelIdentifier,
   );
 
-  const { handleAddNewCardClick } = useAddNewCard();
+  const { handleAddNewCardClick } = useAddNewCard({
+    recordPickerComponentInstanceId: `add-new-card-record-picker-column-${columnId}`,
+  });
 
   const handleNewButtonClick = (
     position: 'first' | 'last',

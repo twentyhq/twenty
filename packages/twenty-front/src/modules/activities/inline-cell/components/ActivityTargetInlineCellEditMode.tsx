@@ -24,9 +24,9 @@ import {
   objectRecordMultiSelectComponentFamilyState,
 } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/record-picker-morph-legacy/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
+import { ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect } from '@/object-record/record-picker-morph-legacy/components/ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect';
 import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
-import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/record-picker/legacy/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
-import { ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect } from '@/object-record/record-picker/legacy/components/ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
