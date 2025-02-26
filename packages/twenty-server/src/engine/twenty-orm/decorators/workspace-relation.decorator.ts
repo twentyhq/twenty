@@ -1,11 +1,10 @@
 import { MessageDescriptor } from '@lingui/core';
 import { ObjectType } from 'typeorm';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -18,7 +17,7 @@ interface WorkspaceRelationOptions<TClass> {
     | MessageDescriptor
     | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
   icon?: string;
-  type: RelationMetadataType;
+  type: RelationType;
   inverseSideTarget: () => ObjectType<TClass>;
   inverseSideFieldKey?: keyof TClass;
   onDelete?: RelationOnDeleteAction;

@@ -118,10 +118,17 @@ export class WorkspaceSyncFieldMetadataService {
     customObjectMetadataCollection: ObjectMetadataEntity[],
     storage: WorkspaceSyncStorage,
   ): Promise<void> {
+    const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
+      originalObjectMetadataCollection,
+      // Relation are based on the singular name
+      (objectMetadata) => objectMetadata.nameSingular,
+    );
+
     // Create standard field metadata map
     const standardObjectStandardFieldMetadataMap =
       this.standardFieldFactory.create(
         standardObjectMetadataDefinitions,
+        originalObjectMetadataMap,
         context,
       );
 

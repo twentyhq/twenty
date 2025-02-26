@@ -17,17 +17,20 @@ export function WorkspaceIsUnique(): PropertyDecorator {
 
     const columns = [propertyKey.toString()];
 
-    metadataArgsStorage.addIndexes({
-      name: `IDX_UNIQUE_${generateDeterministicIndexName([
-        convertClassNameToObjectMetadataName(target.constructor.name),
-        ...columns,
-      ])}`,
-      columns,
-      target: target.constructor,
-      gate,
-      isUnique: true,
-      whereClause: null,
-    });
+    // TODO: Remove this when we are handling properly indexes for new relation metadata
+    if (process.env.SYNC_METADATA_INDEX_ENABLED === 'true') {
+      metadataArgsStorage.addIndexes({
+        name: `IDX_UNIQUE_${generateDeterministicIndexName([
+          convertClassNameToObjectMetadataName(target.constructor.name),
+          ...columns,
+        ])}`,
+        columns,
+        target: target.constructor,
+        gate,
+        isUnique: true,
+        whereClause: null,
+      });
+    }
 
     return TypedReflect.defineMetadata(
       'workspace:is-unique-metadata-args',
