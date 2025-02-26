@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -33,7 +34,7 @@ export const SignInBackgroundMockContainer = () => {
 
   const objectMetadataItem = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemComponentState,
-    'main-context-store',
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   return (
@@ -62,7 +63,7 @@ export const SignInBackgroundMockContainer = () => {
               >
                 <ContextStoreComponentInstanceContext.Provider
                   value={{
-                    instanceId: 'main-context-store',
+                    instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
                   }}
                 >
                   <SignInBackgroundMockContainerEffect

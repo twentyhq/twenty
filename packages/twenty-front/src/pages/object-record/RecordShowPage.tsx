@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
@@ -59,7 +60,7 @@ export const RecordShowPage = () => {
             value={{ instanceId: `record-show-${objectRecordId}` }}
           >
             <ContextStoreComponentInstanceContext.Provider
-              value={{ instanceId: `record-show-${objectRecordId}` }}
+              value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
             >
               <ActionMenuComponentInstanceContext.Provider
                 value={{ instanceId: `record-show-${objectRecordId}` }}

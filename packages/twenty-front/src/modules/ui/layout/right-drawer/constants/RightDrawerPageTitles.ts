@@ -9,4 +9,5 @@ export const RIGHT_DRAWER_PAGE_TITLES = {
   [RightDrawerPages.WorkflowStepSelectAction]: 'Workflow',
   [RightDrawerPages.WorkflowStepEdit]: 'Workflow',
   [RightDrawerPages.WorkflowStepView]: 'Workflow',
-};
+  [RightDrawerPages.WorkflowRunStepView]: 'Workflow',
+} satisfies Record<RightDrawerPages, string>;
