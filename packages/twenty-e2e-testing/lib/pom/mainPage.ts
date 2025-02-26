@@ -4,7 +4,6 @@ export class MainPage {
   // TODO: add missing elements (advanced filters, import/export popups)
   private readonly tableViews: Locator;
   private readonly addViewButton: Locator;
-  private readonly viewIconSelect: Locator;
   private readonly viewNameInput: Locator;
   private readonly viewTypeSelect: Locator;
   private readonly createViewButton: Locator;
@@ -23,7 +22,6 @@ export class MainPage {
   private readonly hiddenFieldsButton: Locator;
   private readonly editFieldsButton: Locator;
   private readonly importButton: Locator;
-  private readonly exportButton: Locator;
   private readonly deletedRecordsButton: Locator;
   private readonly createNewRecordButton: Locator;
   private readonly addToFavoritesButton: Locator;
@@ -67,16 +65,12 @@ export class MainPage {
     this.importButton = page
       .getByTestId('tooltip')
       .filter({ hasText: /^Import$/ });
-    this.exportButton = page
-      .getByTestId('tooltip')
-      .filter({ hasText: /^Export$/ });
     this.deletedRecordsButton = page
       .getByTestId('tooltip')
       .filter({ hasText: /^Deleted */ });
     this.createNewRecordButton = page.getByTestId('add-button');
     this.addToFavoritesButton = page.getByText('Add to favorites');
     this.deleteFromFavoritesButton = page.getByText('Delete from favorites');
-    this.exportBottomBarButton = page.getByText('Export');
     this.deleteRecordsButton = page.getByText('Delete');
   }
 
@@ -164,10 +158,6 @@ export class MainPage {
 
   async clickImportButton() {
     await this.importButton.click();
-  }
-
-  async clickExportButton() {
-    await this.exportButton.click();
   }
 
   async clickDeletedRecordsButton() {
