@@ -1,4 +1,4 @@
-import { MultiObjectRecordQueryResult } from '@/object-record/record-picker-morph-legacy/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { MultiObjectRecordQueryResult } from '@/object-record/multiple-objects/types/MultiObjectRecordQueryResult';
 
 export const formatMultiObjectRecordSearchResults = (
   searchResults: MultiObjectRecordQueryResult | undefined | null,

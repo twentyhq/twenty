@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
+import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/activities/inline-cell/hooks/useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/object-record/record-picker-morph-legacy/hooks/useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 

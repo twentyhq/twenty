@@ -17,12 +17,15 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 // Todo: this effect should be deprecated to use sync hooks
 export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
+  recordPickerInstanceId,
   selectedObjectRecordIds,
 }: {
+  recordPickerInstanceId: string;
   selectedObjectRecordIds: SelectedObjectRecordId[];
 }) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordPickerComponentInstanceContext,
+    recordPickerInstanceId,
   );
   const {
     objectRecordsIdsMultiSelectState,

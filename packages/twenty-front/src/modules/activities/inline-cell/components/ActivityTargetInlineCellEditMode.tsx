@@ -3,7 +3,10 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
+import { ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect';
 import { ActivityTargetObjectRecordEffect } from '@/activities/inline-cell/components/ActivityTargetObjectRecordEffect';
+import { MultipleObjectRecordOnClickOutsideEffect } from '@/activities/inline-cell/components/MultipleObjectRecordOnClickOutsideEffect';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { Note } from '@/activities/types/Note';
@@ -24,12 +27,10 @@ import {
   objectRecordMultiSelectComponentFamilyState,
 } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/record-picker-morph-legacy/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
-import { ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect } from '@/object-record/record-picker-morph-legacy/components/ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect';
 import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
+import { useRef } from 'react';
 
 type ActivityTargetInlineCellEditModeProps = {
   activity: Task | Note;
@@ -257,20 +258,31 @@ export const ActivityTargetInlineCellEditMode = ({
     ],
   );
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
     <>
-      <RecordPickerComponentInstanceContext.Provider
-        value={{ instanceId: recordPickerInstanceId }}
-      >
-        <ActivityTargetObjectRecordEffect
-          activityTargetWithTargetRecords={activityTargetWithTargetRecords}
+      <ActivityTargetObjectRecordEffect
+        activityTargetWithTargetRecords={activityTargetWithTargetRecords}
+      />
+      <ActivityTargetInlineCellEditModeMultiRecordsEffect
+        recordPickerInstanceId={recordPickerInstanceId}
+        selectedObjectRecordIds={selectedTargetObjectIds}
+      />
+      <ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect
+        recordPickerInstanceId={recordPickerInstanceId}
+      />
+      <MultipleObjectRecordOnClickOutsideEffect
+        containerRef={containerRef}
+        onClickOutside={closeEditableField}
+      />
+      <div ref={containerRef}>
+        <MultipleRecordPicker
+          onSubmit={handleSubmit}
+          onChange={handleChange}
+          componentInstanceId={recordPickerInstanceId}
         />
-        <ActivityTargetInlineCellEditModeMultiRecordsEffect
-          selectedObjectRecordIds={selectedTargetObjectIds}
-        />
-        <ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect />
-        <MultipleRecordPicker onSubmit={handleSubmit} onChange={handleChange} />
-      </RecordPickerComponentInstanceContext.Provider>
+      </div>
     </>
   );
 };

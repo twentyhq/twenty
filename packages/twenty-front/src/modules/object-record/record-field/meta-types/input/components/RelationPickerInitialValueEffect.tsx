@@ -3,7 +3,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useEffect } from 'react';
 
 // Todo: this effect should be deprecated to use sync hooks
-export const SearchPickerInitialValueEffect = ({
+export const RelationPickerInitialValueEffect = ({
   initialValueForSearchFilter,
   recordPickerInstanceId,
 }: {
