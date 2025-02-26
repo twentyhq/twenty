@@ -84,7 +84,7 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
-  @Query(() => [QueueMetricsData])
+  @Query(() => QueueMetricsData)
   async getQueueMetrics(
     @Args('queueName', { type: () => String })
     queueName: string,
@@ -94,12 +94,10 @@ export class AdminPanelResolver {
       type: () => QueueMetricsTimeRange,
     })
     timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneHour,
-  ): Promise<QueueMetricsData[]> {
-    const result = await this.adminPanelHealthService.getQueueMetrics(
+  ): Promise<QueueMetricsData> {
+    return await this.adminPanelHealthService.getQueueMetrics(
       queueName as MessageQueue,
       timeRange,
     );
-
-    return [result];
   }
 }

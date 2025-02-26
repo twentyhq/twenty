@@ -1301,7 +1301,7 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
-  getQueueMetrics: Array<QueueMetricsData>;
+  getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
@@ -1419,7 +1419,7 @@ export type QueryValidatePasswordResetTokenArgs = {
 export type QueueMetricsData = {
   __typename?: 'QueueMetricsData';
   data: Array<QueueMetricsSeries>;
-  details: WorkerQueueMetrics;
+  details?: Maybe<WorkerQueueMetrics>;
   queueName: Scalars['String'];
   timeRange: QueueMetricsTimeRange;
   workers: Scalars['Float'];
@@ -2421,7 +2421,7 @@ export type GetQueueMetricsQueryVariables = Exact<{
 }>;
 
 
-export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: Array<{ __typename?: 'QueueMetricsData', queueName: string, timeRange: QueueMetricsTimeRange, workers: number, details: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, failureRate: number }, data: Array<{ __typename?: 'QueueMetricsSeries', id: string, data: Array<{ __typename?: 'QueueMetricsDataPoint', x: number, y: number }> }> }> };
+export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: { __typename?: 'QueueMetricsData', queueName: string, timeRange: QueueMetricsTimeRange, workers: number, details?: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, failureRate: number } | null, data: Array<{ __typename?: 'QueueMetricsSeries', id: string, data: Array<{ __typename?: 'QueueMetricsDataPoint', x: number, y: number }> }> } };
 
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 

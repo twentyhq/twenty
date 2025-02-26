@@ -114,14 +114,14 @@ export const WorkerMetricsGraph = ({
     },
   });
 
-  const metricsData = data?.getQueueMetrics?.[0]?.data || [];
+  const metricsData = data?.getQueueMetrics?.data || [];
   const hasData =
     metricsData.length > 0 &&
     metricsData.some((series) => series.data.length > 0);
 
   const metricsDetails = {
-    workers: data?.getQueueMetrics?.[0]?.workers,
-    ...data?.getQueueMetrics?.[0]?.details,
+    workers: data?.getQueueMetrics?.workers,
+    ...data?.getQueueMetrics?.details,
   };
 
   const getMaxYValue = () => {
