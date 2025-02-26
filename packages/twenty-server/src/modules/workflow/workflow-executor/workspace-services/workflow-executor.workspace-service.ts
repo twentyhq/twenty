@@ -77,6 +77,16 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
       output: actionOutput,
     };
 
+    if (actionOutput.pendingEvent) {
+      await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workflowRunId,
+        stepOutput,
+        context,
+      });
+
+      return actionOutput;
+    }
+
     if (actionOutput.result) {
       const updatedContext = {
         ...context,
