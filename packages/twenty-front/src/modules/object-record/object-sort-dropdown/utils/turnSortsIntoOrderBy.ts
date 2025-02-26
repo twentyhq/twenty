@@ -35,7 +35,10 @@ export const turnSortsIntoOrderBy = (
     })
     .filter(isDefined);
 
-  if (hasObjectMetadataItemPositionField(objectMetadataItem)) {
+  if (
+    !objectMetadataItem.isRemote &&
+    hasObjectMetadataItemPositionField(objectMetadataItem)
+  ) {
     const positionOrderBy = [
       {
         position: 'AscNullsFirst',
