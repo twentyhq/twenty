@@ -15,7 +15,7 @@ export class QueueMetricsData {
   @Field(() => QueueMetricsTimeRange)
   timeRange: QueueMetricsTimeRange;
 
-  @Field(() => WorkerQueueMetrics)
+  @Field(() => WorkerQueueMetrics, { nullable: true })
   details: WorkerQueueMetrics | null;
 
   @Field(() => [QueueMetricsSeries])

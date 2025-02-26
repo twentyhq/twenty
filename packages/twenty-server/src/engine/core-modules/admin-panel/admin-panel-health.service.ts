@@ -212,19 +212,19 @@ export class AdminPanelHealthService {
     let pointsNeeded: number;
 
     switch (timeRange) {
-      case '1H':
+      case QueueMetricsTimeRange.OneHour:
         pointsNeeded = 60; // 60 points (1 hour)
         break;
-      case '4H':
+      case QueueMetricsTimeRange.FourHours:
         pointsNeeded = 4 * 60; // 240 points (4 hours)
         break;
-      case '12H':
+      case QueueMetricsTimeRange.TwelveHours:
         pointsNeeded = 12 * 60; // 720 points (12 hours)
         break;
-      case '1D':
+      case QueueMetricsTimeRange.OneDay:
         pointsNeeded = 24 * 60; // 1440 points (24 hours)
         break;
-      case '7D':
+      case QueueMetricsTimeRange.SevenDays:
         pointsNeeded = 7 * 24 * 60; // 10080 points (7 days)
         break;
 

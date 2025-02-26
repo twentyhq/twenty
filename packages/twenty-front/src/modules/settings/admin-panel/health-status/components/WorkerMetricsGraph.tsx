@@ -290,25 +290,22 @@ export const WorkerMetricsGraph = ({
           <StyledQueueMetricsTitle>Metrics:</StyledQueueMetricsTitle>
           <StyledQueueMetricsContainer>
             <Table>
-              {metricsDetails &&
-                Object.entries(metricsDetails)
-                  .filter(
-                    ([key]) => key !== '__typename' && typeof key === 'string',
-                  )
-                  .map(([key, value]) => (
-                    <StyledTableRow key={key}>
-                      <TableCell align="left">
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                      </TableCell>
-                      <TableCell align="right">
-                        {typeof value === 'number'
-                          ? value
-                          : Array.isArray(value)
-                            ? value.length
-                            : String(value)}
-                      </TableCell>
-                    </StyledTableRow>
-                  ))}
+              {Object.entries(metricsDetails)
+                .filter(([key]) => key !== '__typename')
+                .map(([key, value]) => (
+                  <StyledTableRow key={key}>
+                    <TableCell align="left">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {typeof value === 'number'
+                        ? value
+                        : Array.isArray(value)
+                          ? value.length
+                          : String(value)}
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
             </Table>
           </StyledQueueMetricsContainer>
         </>

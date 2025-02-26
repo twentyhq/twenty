@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useState } from 'react';
 import { H2Title, Section } from 'twenty-ui';
 import {
@@ -7,13 +6,6 @@ import {
 } from '~/generated/graphql';
 import { WorkerMetricsGraph } from './WorkerMetricsGraph';
 
-const StyledTitleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
 type WorkerQueueMetricsSectionProps = {
   queue: AdminPanelWorkerQueueHealth;
 };
@@ -21,13 +13,11 @@ type WorkerQueueMetricsSectionProps = {
 export const WorkerQueueMetricsSection = ({
   queue,
 }: WorkerQueueMetricsSectionProps) => {
-  const [timeRange, setTimeRange] = useState(QueueMetricsTimeRange.OneDay);
+  const [timeRange, setTimeRange] = useState(QueueMetricsTimeRange.OneHour);
 
   return (
     <Section>
-      <StyledTitleContainer>
-        <H2Title title={queue.queueName} description="Queue performance" />
-      </StyledTitleContainer>
+      <H2Title title={queue.queueName} description="Queue performance" />
       <WorkerMetricsGraph
         queueName={queue.queueName}
         timeRange={timeRange}

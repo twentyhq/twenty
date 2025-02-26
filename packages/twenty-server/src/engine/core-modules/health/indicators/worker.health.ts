@@ -123,14 +123,14 @@ export class WorkerHealthIndicator {
     }
   }
 
-  private calculateMetricsSum(data: any[]): number {
-    const sum = data.reduce((sum, value) => {
+  private calculateMetricsSum(data: string[] | number[]): number {
+    const sum = data.reduce((sum: number, value: string | number) => {
       const numericValue = Number(value);
 
       return sum + (isNaN(numericValue) ? 0 : numericValue);
     }, 0);
 
-    return Math.round(sum);
+    return Math.round(Number(sum));
   }
 
   private async checkWorkers() {

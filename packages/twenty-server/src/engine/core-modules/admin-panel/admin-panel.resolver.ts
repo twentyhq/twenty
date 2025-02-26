@@ -93,7 +93,7 @@ export class AdminPanelResolver {
       defaultValue: QueueMetricsTimeRange.OneDay,
       type: () => QueueMetricsTimeRange,
     })
-    timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneDay,
+    timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneHour,
   ): Promise<QueueMetricsData[]> {
     const result = await this.adminPanelHealthService.getQueueMetrics(
       queueName as MessageQueue,
