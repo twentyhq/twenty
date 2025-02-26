@@ -17,6 +17,7 @@ import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constant
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { Dropdown } from '../../dropdown/components/Dropdown';
@@ -38,6 +39,8 @@ export const ShowPageAddButton = ({
   const openTask = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const handleSelect = (objectNameSingular: CoreObjectNameSingular) => {
     if (objectNameSingular === CoreObjectNameSingular.Note) {
@@ -65,6 +68,10 @@ export const ShowPageAddButton = ({
     isWorkflowSubObjectMetadata(activityTargetObject.targetObjectNameSingular)
   ) {
     return;
+  }
+
+  if (hasObjectReadOnlyPermission) {
+    return null;
   }
 
   return (

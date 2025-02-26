@@ -34,16 +34,17 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
     />
   ));
 
-  const recordSelectionContextChip = totalCount
-    ? {
-        text: getSelectedRecordsContextText(
-          objectMetadataItem,
-          records,
-          totalCount,
-        ),
-        Icons: Avatars,
-      }
-    : undefined;
+  const recordSelectionContextChip =
+    totalCount && records.length > 0
+      ? {
+          text: getSelectedRecordsContextText(
+            objectMetadataItem,
+            records,
+            totalCount,
+          ),
+          Icons: Avatars,
+        }
+      : undefined;
 
   const contextChipsWithRecordSelection = [
     recordSelectionContextChip,

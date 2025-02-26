@@ -4,6 +4,7 @@ import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { recordPickerSearchFilterComponentState } from '@/object-record/relation-picker/states/recordPickerSearchFilterComponentState';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -75,6 +76,8 @@ export const MultiRecordSelect = ({
     instanceId,
   );
 
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
   useEffect(() => {
     setHotkeyScope(instanceId);
   }, [setHotkeyScope, instanceId]);
@@ -144,7 +147,7 @@ export const MultiRecordSelect = ({
       <DropdownMenu ref={containerRef} data-select-disable width={200}>
         {dropdownPlacement?.includes('end') && (
           <>
-            {isDefined(onCreate) && (
+            {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
               <DropdownMenuItemsContainer scrollable={false}>
                 {createNewButton}
               </DropdownMenuItemsContainer>

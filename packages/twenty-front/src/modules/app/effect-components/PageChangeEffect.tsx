@@ -97,6 +97,20 @@ export const PageChangeEffect = () => {
         });
         break;
       }
+      case isMatchingLocation(AppPath.ChargesPage): {
+        setHotkeyScope(PageHotkeyScope.ChargesPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
+        break;
+      }
+      case isMatchingLocation(AppPath.IntegrationsPage): {
+        setHotkeyScope(PageHotkeyScope.IntegrationsPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
+        break;
+      }
       case isMatchingLocation(AppPath.TasksPage): {
         setHotkeyScope(PageHotkeyScope.TaskPage, {
           goto: true,

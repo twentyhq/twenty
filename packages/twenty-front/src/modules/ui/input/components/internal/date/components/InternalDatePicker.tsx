@@ -19,6 +19,7 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -243,7 +244,11 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
 
   & .react-datepicker__day--selected {
     background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.grayScale.gray0};
+    color: ${({ theme }) => theme.background.primary};
+
+    &.react-datepicker__day:hover {
+      color: ${({ theme }) => theme.background.primary};
+    }
   }
 
   & .react-datepicker__day--outside-month {
@@ -260,8 +265,9 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
 `;
 
 const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
-  height: ${({ theme }) => theme.spacing(4)};
-  margin: ${({ theme }) => theme.spacing(2)};
+  box-sizing: border-box;
+  height: 32px;
+  margin: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)};
   width: auto;
 `;
@@ -490,7 +496,7 @@ export const DateTimePicker = ({
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear}>
-          <StyledButton LeftIcon={IconCalendarX} text="Clear" />
+          <StyledButton LeftIcon={IconCalendarX} text={t`Clear`} />
         </StyledButtonContainer>
       )}
     </StyledContainer>

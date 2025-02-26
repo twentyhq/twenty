@@ -74,31 +74,33 @@ export const useCommandMenu = () => {
   );
 
   const closeCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
+        set(isCommandMenuOpenedState, false);
+      },
+    [],
+  );
 
-        if (isCommandMenuOpened) {
-          resetContextStoreStates('command-menu');
-          resetContextStoreStates('command-menu-previous');
+  const onCommandMenuCloseAnimationComplete = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        resetContextStoreStates('command-menu');
+        resetContextStoreStates('command-menu-previous');
 
-          set(viewableRecordIdState, null);
-          set(commandMenuPageState, CommandMenuPages.Root);
-          set(commandMenuPageInfoState, {
-            title: undefined,
-            Icon: undefined,
-          });
-          set(isCommandMenuOpenedState, false);
-          set(commandMenuSearchState, '');
-          set(commandMenuNavigationStackState, []);
-          resetSelectedItem();
-          set(hasUserSelectedCommandState, false);
-          goBackToPreviousHotkeyScope();
+        set(viewableRecordIdState, null);
+        set(commandMenuPageState, CommandMenuPages.Root);
+        set(commandMenuPageInfoState, {
+          title: undefined,
+          Icon: undefined,
+        });
+        set(isCommandMenuOpenedState, false);
+        set(commandMenuSearchState, '');
+        set(commandMenuNavigationStackState, []);
+        resetSelectedItem();
+        set(hasUserSelectedCommandState, false);
+        goBackToPreviousHotkeyScope();
 
-          emitRightDrawerCloseEvent();
-        }
+        emitRightDrawerCloseEvent();
       },
     [goBackToPreviousHotkeyScope, resetContextStoreStates, resetSelectedItem],
   );
@@ -109,7 +111,10 @@ export const useCommandMenu = () => {
         page,
         pageTitle,
         pageIcon,
-      }: CommandMenuNavigationStackItem) => {
+        resetNavigationStack = false,
+      }: CommandMenuNavigationStackItem & {
+        resetNavigationStack?: boolean;
+      }) => {
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
           title: pageTitle,
@@ -120,10 +125,14 @@ export const useCommandMenu = () => {
           .getLoadable(commandMenuNavigationStackState)
           .getValue();
 
-        set(commandMenuNavigationStackState, [
-          ...currentNavigationStack,
-          { page, pageTitle, pageIcon },
-        ]);
+        if (resetNavigationStack) {
+          set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
+        } else {
+          set(commandMenuNavigationStackState, [
+            ...currentNavigationStack,
+            { page, pageTitle, pageIcon },
+          ]);
+        }
         openCommandMenu();
       };
     },
@@ -248,6 +257,7 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
+          resetNavigationStack: true,
         });
       };
     },
@@ -315,6 +325,7 @@ export const useCommandMenu = () => {
   return {
     openRootCommandMenu,
     closeCommandMenu,
+    onCommandMenuCloseAnimationComplete,
     navigateCommandMenu,
     navigateCommandMenuHistory,
     goBackFromCommandMenu,

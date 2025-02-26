@@ -1,8 +1,8 @@
 import { SettingsAdminEnvVariables } from '@/settings/admin-panel/components/SettingsAdminEnvVariables';
 import { SettingsAdminGeneral } from '@/settings/admin-panel/components/SettingsAdminGeneral';
-import { SettingsAdminHealthStatus } from '@/settings/admin-panel/components/SettingsAdminHealthStatus';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
+import { SettingsAdminHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatus';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 export const SettingsAdminTabContent = () => {

@@ -1,6 +1,9 @@
 /* eslint-disable */
+import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
+import { WhatsappTemplatesResponse } from '@/chat/call-center/types/WhatsappTemplate';
 import { UpdateAgentInput } from '@/settings/service-center/agents/types/UpdateAgentInput';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import { Agent } from 'http';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -48,27 +51,31 @@ export type ActivateWorkspaceInput = {
 
 export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
+  description: Scalars['String']['output'];
   details?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
   status: AdminPanelHealthServiceStatus;
 };
 
 export enum AdminPanelHealthServiceStatus {
   OPERATIONAL = 'OPERATIONAL',
-  OUTAGE = 'OUTAGE'
+  OUTAGE = 'OUTAGE',
 }
 
 export enum AdminPanelIndicatorHealthStatusInputEnum {
   DATABASE = 'DATABASE',
   MESSAGE_SYNC = 'MESSAGE_SYNC',
   REDIS = 'REDIS',
-  WORKER = 'WORKER'
+  WORKER = 'WORKER',
 }
 
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
+  id: Scalars['String']['output'];
   metrics: WorkerQueueMetrics;
-  name: Scalars['String']['output'];
+  queueName: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
   workers: Scalars['Float']['output'];
 };
@@ -114,6 +121,14 @@ export type AppTokenEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the AppToken */
   node: AppToken;
+};
+
+export type ApprovedAccessDomain = {
+  __typename?: 'ApprovedAccessDomain';
+  createdAt: Scalars['DateTime']['output'];
+  domain: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  isValidated: Scalars['Boolean']['output'];
 };
 
 export type AuthProviders = {
@@ -266,11 +281,6 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type BuildDraftServerlessFunctionInput = {
-  /** The id of the function. */
-  id: Scalars['ID']['input'];
-};
-
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
@@ -334,6 +344,11 @@ export type CreateAgentInput = {
 
 export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime']['input'];
+};
+
+export type CreateApprovedAccessDomainInput = {
+  domain: Scalars['String']['input'];
+  email: Scalars['String']['input'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -476,6 +491,10 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
+export type DeleteApprovedAccessDomainInput = {
+  id: Scalars['String']['input'];
+};
+
 export type DeleteOneFieldInput = {
   /** The id of the field to delete. */
   id: Scalars['UUID']['input'];
@@ -598,6 +617,7 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
@@ -741,6 +761,13 @@ export type GetServerlessFunctionSourceCodeInput = {
   /** The version of the function */
   version?: Scalars['String']['input'];
 };
+
+export enum HealthIndicatorId {
+  connectedAccount = 'connectedAccount',
+  database = 'database',
+  redis = 'redis',
+  worker = 'worker',
+}
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -906,7 +933,6 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
-  buildDraftServerlessFunction: ServerlessFunction;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
@@ -985,6 +1011,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
+  validateApprovedAccessDomain: ApprovedAccessDomain;
 };
 
 export type MutationActivateWorkflowVersionArgs = {
@@ -1001,10 +1028,6 @@ export type MutationAuthorizeAppArgs = {
   redirectUrl: Scalars['String']['input'];
 };
 
-export type MutationBuildDraftServerlessFunctionArgs = {
-  input: BuildDraftServerlessFunctionInput;
-};
-
 export type MutationCheckoutSessionArgs = {
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
@@ -1018,6 +1041,10 @@ export type MutationComputeStepOutputSchemaArgs = {
 
 export type MutationCreateAgentArgs = {
   createInput: CreateAgentInput;
+};
+
+export type MutationCreateApprovedAccessDomainArgs = {
+  input: CreateApprovedAccessDomainInput;
 };
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
@@ -1074,6 +1101,10 @@ export type MutationDeactivateWorkflowVersionArgs = {
 
 export type MutationDeleteAgentArgs = {
   agentId: Scalars['String']['input'];
+};
+
+export type MutationDeleteApprovedAccessDomainArgs = {
+  input: DeleteApprovedAccessDomainInput;
 };
 
 export type MutationDeleteOneFieldArgs = {
@@ -1314,6 +1345,10 @@ export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String']['input'];
 };
 
+export type MutationValidateApprovedAccessDomainArgs = {
+  input: ValidateApprovedAccessDomainInput;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime']['output'];
@@ -1424,7 +1459,7 @@ export enum PermissionsOnAllObjectRecords {
   DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
   READ_ALL_OBJECT_RECORDS = 'READ_ALL_OBJECT_RECORDS',
   SOFT_DELETE_ALL_OBJECT_RECORDS = 'SOFT_DELETE_ALL_OBJECT_RECORDS',
-  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
+  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS',
 }
 
 export type PostgresCredentials = {
@@ -1480,6 +1515,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -1565,11 +1601,9 @@ export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
 };
 
-
 export type QueryGetIndicatorHealthStatusArgs = {
-  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
+  indicatorId: HealthIndicatorId;
 };
-
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String']['input'];
@@ -1911,7 +1945,7 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY',
 }
 
-export enum SettingsFeatures {
+export enum SettingsPermissions {
   ADMIN_PANEL = 'ADMIN_PANEL',
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
@@ -1978,10 +2012,14 @@ export type Support = {
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
-  database: AdminPanelHealthServiceData;
-  messageSync: AdminPanelHealthServiceData;
-  redis: AdminPanelHealthServiceData;
-  worker: AdminPanelHealthServiceData;
+  services: Array<SystemHealthService>;
+};
+
+export type SystemHealthService = {
+  __typename?: 'SystemHealthService';
+  id: HealthIndicatorId;
+  label: Scalars['String']['output'];
+  status: AdminPanelHealthServiceStatus;
 };
 
 export type TimelineCalendarEvent = {
@@ -2254,12 +2292,17 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
-  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
+  settingsPermissions?: Maybe<Array<SettingsPermissions>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];
   workspace?: Maybe<Workspace>;
   workspaceId: Scalars['String']['output'];
+};
+
+export type ValidateApprovedAccessDomainInput = {
+  approvedAccessDomainId: Scalars['String']['input'];
+  validationToken: Scalars['String']['input'];
 };
 
 export type ValidatePasswordResetToken = {
@@ -2913,28 +2956,6 @@ export type ServerlessFunctionFieldsFragment = {
   publishedVersions: Array<string>;
   createdAt: any;
   updatedAt: any;
-};
-
-export type BuildDraftServerlessFunctionMutationVariables = Exact<{
-  input: BuildDraftServerlessFunctionInput;
-}>;
-
-export type BuildDraftServerlessFunctionMutation = {
-  __typename?: 'Mutation';
-  buildDraftServerlessFunction: {
-    __typename?: 'ServerlessFunction';
-    id: any;
-    name: string;
-    description?: string | null;
-    runtime: string;
-    timeoutSeconds: number;
-    syncStatus: ServerlessFunctionSyncStatus;
-    latestVersion?: string | null;
-    latestVersionInputSchema?: any | null;
-    publishedVersions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  };
 };
 
 export type CreateOneServerlessFunctionItemMutationVariables = Exact<{
@@ -5229,93 +5250,6 @@ export const ObjectMetadataItemsDocument = {
 } as unknown as DocumentNode<
   ObjectMetadataItemsQuery,
   ObjectMetadataItemsQueryVariables
->;
-export const BuildDraftServerlessFunctionDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'BuildDraftServerlessFunction' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: {
-                kind: 'Name',
-                value: 'BuildDraftServerlessFunctionInput',
-              },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'buildDraftServerlessFunction' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  BuildDraftServerlessFunctionMutation,
-  BuildDraftServerlessFunctionMutationVariables
 >;
 export const CreateOneServerlessFunctionItemDocument = {
   kind: 'Document',

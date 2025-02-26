@@ -14,6 +14,7 @@ describe('MetricsController', () => {
           provide: HealthCacheService,
           useValue: {
             getMessageChannelSyncJobByStatusCounter: jest.fn(),
+            getCalendarChannelSyncJobByStatusCounter: jest.fn(),
             getInvalidCaptchaCounter: jest.fn(),
           },
         },

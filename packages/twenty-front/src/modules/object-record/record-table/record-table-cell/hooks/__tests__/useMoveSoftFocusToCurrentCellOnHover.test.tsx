@@ -1,4 +1,5 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import { CallbackInterface, RecoilRoot } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
@@ -98,17 +99,15 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('useMoveSoftFocusToCurrentCellOnHover', () => {
   it('should work as expected', () => {
     const { result } = renderHook(
-      () => {
-        return {
-          moveSoftFocusToCurrentCellOnHover:
-            useMoveSoftFocusToCurrentCellOnHover(),
-        };
-      },
+      () => useMoveSoftFocusToCurrentCellOnHover('scopeId'),
       { wrapper: Wrapper },
     );
 
     act(() => {
-      result.current.moveSoftFocusToCurrentCellOnHover();
+      result.current.moveSoftFocusToCurrentCell({
+        column: 3,
+        row: 2,
+      });
     });
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(

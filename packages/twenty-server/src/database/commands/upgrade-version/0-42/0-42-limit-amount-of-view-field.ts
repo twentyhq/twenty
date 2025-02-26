@@ -25,9 +25,9 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
-    super(workspaceRepository);
+    super(workspaceRepository, twentyORMGlobalManager);
     this.logger = new CommandLogger({
       constructorName: this.constructor.name,
       verbose: false,
@@ -87,6 +87,10 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner
         error,
       );
       throw error;
+    } finally {
+      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        workspaceId,
+      );
     }
   }
 

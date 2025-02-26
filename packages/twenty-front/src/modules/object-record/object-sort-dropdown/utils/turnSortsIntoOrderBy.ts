@@ -8,12 +8,12 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { OrderBy } from '@/types/OrderBy';
-import { Sort } from '../types/Sort';
 
 export const turnSortsIntoOrderBy = (
   objectMetadataItem: ObjectMetadataItem,
-  sorts: Sort[],
+  sorts: RecordSort[],
 ): RecordGqlOperationOrderBy => {
   const fields: Pick<FieldMetadataItem, 'id' | 'name' | 'type'>[] =
     objectMetadataItem?.fields ?? [];

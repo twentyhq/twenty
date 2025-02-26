@@ -46,15 +46,18 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 
 import { AgentModule } from 'src/engine/core-modules/agent/agent.module';
 import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
 import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
+import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -73,6 +76,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
+    ApprovedAccessDomainModule,
     PostgresCredentialsModule,
     WorkflowApiModule,
     WorkspaceEventEmitterModule,
@@ -81,6 +85,7 @@ import { FileModule } from './file/file.module';
     AdminPanelModule,
     LabModule,
     RoleModule,
+    StripeModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     MetaModule,
@@ -88,6 +93,7 @@ import { FileModule } from './file/file.module';
     AgentModule,
     InboxModule,
     GoogleStorageModule,
+    TelephonyModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [EnvironmentService],
@@ -139,6 +145,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
+    StripeModule,
   ],
 })
 export class CoreEngineModule {}

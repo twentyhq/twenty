@@ -5,6 +5,7 @@ import { H2Title, Section } from 'twenty-ui';
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
+import { SettigsIntegrationStripeConnectionsListCard } from '@/settings/integrations/database-connection/components/SettigsIntegrationStripeConnectionsListCard';
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
@@ -64,10 +65,17 @@ export const SettingsIntegrationDatabase = () => {
             title={`${integration.text} database`}
             description={`Connect or access your ${integration.text} data`}
           />
-          <SettingsIntegrationDatabaseConnectionsListCard
-            integration={integration}
-            connections={connections}
-          />
+          {databaseKey === 'stripe' ? (
+            <SettigsIntegrationStripeConnectionsListCard
+              integration={integration}
+              connections={connections}
+            />
+          ) : (
+            <SettingsIntegrationDatabaseConnectionsListCard
+              integration={integration}
+              connections={connections}
+            />
+          )}
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

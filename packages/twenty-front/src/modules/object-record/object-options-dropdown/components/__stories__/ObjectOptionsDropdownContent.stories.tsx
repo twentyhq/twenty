@@ -17,6 +17,7 @@ import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -29,6 +30,7 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
     'Modules/ObjectRecord/ObjectOptionsDropdown/ObjectOptionsDropdownContent',
   component: ObjectOptionsDropdownContent,
   decorators: [
+    I18nFrontDecorator,
     (Story) => {
       const setObjectMetadataItems = useSetRecoilState(
         objectMetadataItemsState,

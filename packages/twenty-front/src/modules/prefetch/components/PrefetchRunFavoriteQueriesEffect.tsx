@@ -13,14 +13,16 @@ import { prefetchFavoriteFoldersState } from '@/prefetch/states/prefetchFavorite
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
-import { isDefined } from 'twenty-shared';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
 
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+  const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.ACTIVE,
+  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -50,14 +52,14 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
     filter: findAllFavoritesOperationSignature.variables.filter,
     recordGqlFields: findAllFavoritesOperationSignature.fields,
-    skip: !currentUser || isWorkspaceSuspended,
+    skip: !currentUser || !isWorkspaceActive,
   });
 
   const { records: favoriteFolders } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
     filter: findAllFavoriteFoldersOperationSignature.variables.filter,
     recordGqlFields: findAllFavoriteFoldersOperationSignature.fields,
-    skip: !currentUser || isWorkspaceSuspended,
+    skip: !currentUser || !isWorkspaceActive,
   });
 
   const setPrefetchFavoritesState = useRecoilCallback(
