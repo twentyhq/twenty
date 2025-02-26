@@ -2,13 +2,13 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { useCallback } from 'react';
@@ -31,7 +31,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const { currentViewId } = useGetCurrentView();
 
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
-  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
+  const { upsertRecordFilter } = useUpsertRecordFilter();
 
   const newPositionInViewFilterGroup = lastChildPosition + 1;
 
@@ -86,7 +86,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       defaultFieldMetadataItem.type,
     );
 
-    upsertCombinedViewFilter({
+    upsertRecordFilter({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItem.id,
       type: filterType,
@@ -124,7 +124,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       defaultFieldMetadataItem.type,
     );
 
-    upsertCombinedViewFilter({
+    upsertRecordFilter({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItem.id,
       type: filterType,

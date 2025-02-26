@@ -24,11 +24,11 @@ import {
   objectRecordMultiSelectComponentFamilyState,
 } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
+import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/record-picker/legacy/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
+import { ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect } from '@/object-record/record-picker/legacy/components/ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/relation-picker/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
-import { ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect } from '@/object-record/relation-picker/components/ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect';
-import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
-import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 
 type ActivityTargetInlineCellEditModeProps = {
@@ -269,7 +269,7 @@ export const ActivityTargetInlineCellEditMode = ({
           selectedObjectRecordIds={selectedTargetObjectIds}
         />
         <ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect />
-        <MultiRecordSelect onSubmit={handleSubmit} onChange={handleChange} />
+        <MultipleRecordPicker onSubmit={handleSubmit} onChange={handleChange} />
       </RecordPickerComponentInstanceContext.Provider>
     </>
   );

@@ -1464,6 +1464,7 @@ msgstr "crwdns1427:0crwdne1427:0"
 msgid "Point of Contact"
 msgstr "crwdns1429:0crwdne1429:0"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2261,6 +2262,10 @@ msgid "Workspace member name"
 msgstr "crwdns1771:0crwdne1771:0"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "crwdns5353:0crwdne5353:0"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "crwdns1773:0crwdne1773:0"
 
@@ -2281,3 +2286,4 @@ msgstr "crwdns4983:0crwdne4983:0"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "crwdns1779:0crwdne1779:0"
+

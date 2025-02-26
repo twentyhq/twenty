@@ -2436,7 +2436,7 @@ msgstr "工作区成员名称"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "工作区成员职位"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"

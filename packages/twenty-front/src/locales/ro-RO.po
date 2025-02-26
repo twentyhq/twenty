@@ -59,7 +59,7 @@ msgstr "Cheie API {apiKeyName}"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} va fi retras din următorul rol:"
 
@@ -97,7 +97,7 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Un mediu comun unde veți putea gestiona relația cu clienții împreună cu echipa dumneavoastră."
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Capacitatea de a interacționa cu fiecare obiect"
 
@@ -127,9 +127,9 @@ msgstr "Ștergerea contului"
 msgid "Accounts"
 msgstr "Conturi"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Acțiuni"
 
@@ -225,9 +225,17 @@ msgstr "Adaugă primul tău {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Adăugat {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr "Adăugat {beautifyPastDateRelative}"
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Adăugat la lista neagră"
+
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "Ajustează setările legate de rol"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -261,7 +269,7 @@ msgstr "Toate liniile"
 msgid "All Objects"
 msgstr "Toate obiectele"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Toate rolurile"
 
@@ -336,8 +344,12 @@ msgid "Appearance"
 msgstr "Aspect"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Domeniu de Email Aprobat"
+msgid "Approved Domains"
+msgstr "Domenii Aprobate"
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -348,31 +360,31 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Sunteți sigur că doriți să schimbați intervalul de facturare?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Sunteți sigur că doriți să atribuiți acest rol?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Ascending"
 msgstr "Ascendent"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Atribuiți lui {workspaceMemberName}?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Atribuiți roluri pentru a specifica permisiunile de acces ale fiecărui membru"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Atribuie membrului"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Membrii asignați"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Asignat către"
 
@@ -586,7 +598,7 @@ msgstr "Configurați modul în care ar trebui să afișăm evenimentele dvs. în
 msgid "Configure your emails and calendar settings."
 msgstr "Configurați setările de e-mail și calendar."
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Confirmă"
 
@@ -709,7 +721,7 @@ msgstr "Creează înregistrare nouă"
 msgid "Create profile"
 msgstr "Creează profil"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Creează Rol"
 
@@ -737,6 +749,10 @@ msgstr "Creat"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Domeniu Personalizat"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "Domeniu personalizat actualizat"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -1003,6 +1019,10 @@ msgstr "Domeniu"
 msgid "Domain added successfully."
 msgstr "Domeniul a fost adăugat cu succes."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr "Domeniile trebuie să fie mai mici de 256 de caractere, să nu conțină spații și să nu conțină caractere speciale."
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Nu se creează automat contacte."
@@ -1064,13 +1084,17 @@ msgstr "Editează numele subdomeniului tău sau setează un domeniu personalizat
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
 msgid "Email"
 msgstr "E-mail"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
+#~ msgid "Email can not be empty"
+#~ msgstr "Email can not be empty"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
 msgstr "Emailul nu poate fi gol"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -1547,7 +1571,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Domeniu personalizat invalid. Vă rugăm să includeți cel puțin un subdomeniu (de exemplu, sub.exemplu.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Domeniu invalid. Domeniile trebuie să fie mai mici de 256 de caractere, nu pot fi adrese IP, nu pot conține spații, nu pot conține caractere speciale precum _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? și nu trebuie să înceapă sau să se termine cu caracterul '-'."
 
@@ -1788,10 +1811,10 @@ msgstr "Mută la dreapta"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1935,7 +1958,7 @@ msgstr "Fără țară"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Nu mai sunt membri de atribuit"
 
@@ -1947,7 +1970,7 @@ msgstr "Nu s-au găsit înregistrări"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Niciun rezultat"
 
@@ -2006,7 +2029,7 @@ msgstr "Obiect"
 msgid "Object destination"
 msgstr "Destinația obiect"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -2045,6 +2068,7 @@ msgstr "Deschis"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Opțional: Definiți un șir secret pe care îl vom include în fiecare webhook. Folosiți acest lucru pentru a autentifica și verifica webhook-ul la recepție."
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2259,15 +2283,13 @@ msgstr "Tip relație"
 msgid "Releases"
 msgstr "Versiuni"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Elimină"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "Eliminați {workspaceMemberName}?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2351,7 +2373,7 @@ msgstr "Caută ''{commandMenuSearch}'' cu..."
 msgid "Search a field..."
 msgstr "Caută un câmp..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "Caută un membru"
 
@@ -2458,6 +2480,10 @@ msgstr "Panoul de administrare a serverului"
 msgid "Service Provider Details"
 msgstr "Detalii Furnizor de Servicii"
 
+#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "Setați un rol prestabilit pentru acest spațiu de lucru"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Setează ca implicită"
@@ -2479,7 +2505,7 @@ msgid "Set the name of your subdomain"
 msgstr "Stabilește numele subdomeniului tău"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -2487,7 +2513,7 @@ msgstr "Stabilește numele subdomeniului tău"
 msgid "Settings"
 msgstr "Setări"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Permisiuni pentru setări"
 
@@ -2566,6 +2592,10 @@ msgstr "Subdomeniul nu poate fi mai lung de 30 de caractere"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdomeniul nu poate fi mai scurt de 3 caractere"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "Subdomeniu actualizat"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2730,8 +2760,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Această acțiune nu poate fi anulată. Acest lucru va șterge definitiv întregul spațiu de lucru. <0/> Vă rugăm să introduceți emailul dumneavoastră pentru confirmare."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Acest membru va fi retras din acest rol."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -2741,7 +2771,7 @@ msgstr "Acest membru va fi retras din acest rol."
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Acest rol este atribuit acestor membri ai spațiului de lucru."
 
@@ -2785,7 +2815,7 @@ msgstr "Adevărat"
 msgid "Turkish"
 msgstr "Turcă"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
+#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -3033,7 +3063,7 @@ msgstr "Spații de lucru"
 msgid "Wrap on record pages"
 msgstr "Înfășurare pe paginile de înregistrare"
 
-#: src/pages/settings/roles/components/RoleSettings.tsx
+#: src/pages/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
@@ -3050,8 +3080,16 @@ msgid "yes"
 msgstr "da"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
-msgid "You are not allowed to create records in this object"
-msgstr "Nu aveți permisiunea de a crea înregistrări în acest obiect"
+msgid "You are not allowed to create records for this object"
+msgstr "Nu aveți permisiunea de a crea înregistrări pentru acest obiect"
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#~ msgid "You are not allowed to create records in this object"
+#~ msgstr "You are not allowed to create records in this object"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "Nu aveți acces pentru a impersona utilizatori."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

@@ -2436,7 +2436,7 @@ msgstr "Tên thành viên không gian làm việc"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr ""
+msgstr "Vị trí thành viên không gian làm việc"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"

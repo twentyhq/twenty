@@ -762,6 +762,16 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String']['input'];
 };
 
+export type GlobalSearchRecord = {
+  __typename?: 'GlobalSearchRecord';
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  label: Scalars['String']['output'];
+  objectSingularName: Scalars['String']['output'];
+  recordId: Scalars['String']['output'];
+  tsRank: Scalars['Float']['output'];
+  tsRankCD: Scalars['Float']['output'];
+};
+
 export enum HealthIndicatorId {
   connectedAccount = 'connectedAccount',
   database = 'database',
@@ -1645,6 +1655,12 @@ export type QueryInboxesByWorkspaceArgs = {
   workspaceId: Scalars['String']['input'];
 };
 
+export type QueryGlobalSearchArgs = {
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  limit: Scalars['Int']['input'];
+  searchInput: Scalars['String']['input'];
+};
+
 export type QueryIndexArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -2199,6 +2215,7 @@ export type UpdateWorkflowVersionStepInput = {
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
   customDomain?: InputMaybe<Scalars['String']['input']>;
+  defaultRoleId?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2212,6 +2229,7 @@ export type UpdateWorkspaceInput = {
 export type User = {
   __typename?: 'User';
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
+  canAccessFullAdminPanel: Scalars['Boolean']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   currentUserWorkspace?: Maybe<UserWorkspace>;
@@ -2351,6 +2369,7 @@ export type Workspace = {
   customDomain?: Maybe<Scalars['String']['output']>;
   databaseSchema: Scalars['String']['output'];
   databaseUrl: Scalars['String']['output'];
+  defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   featureFlags?: Maybe<Array<FeatureFlag>>;

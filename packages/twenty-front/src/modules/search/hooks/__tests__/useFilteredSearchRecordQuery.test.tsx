@@ -5,9 +5,9 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RecordsForMultipleRecordSelect } from '@/object-record/relation-picker/types/RecordsForMultipleRecordSelect';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
+import { MultipleRecordPickerRecords } from '@/object-record/record-picker/types/MultipleRecordPickerRecords';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import {
   query,
@@ -90,7 +90,7 @@ describe('useFilteredSearchRecordQuery', () => {
       { wrapper: Wrapper },
     );
 
-    const expectedResult: RecordsForMultipleRecordSelect<any> = {
+    const expectedResult: MultipleRecordPickerRecords<any> = {
       selectedRecords: [],
       filteredSelectedRecords: [],
       recordsToSelect: [],

@@ -8,7 +8,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';

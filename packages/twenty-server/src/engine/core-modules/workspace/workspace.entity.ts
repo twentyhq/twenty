@@ -21,6 +21,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { StripeIntegration } from '../stripe/integrations/stripe-integration.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
@@ -162,4 +163,14 @@ export class Workspace {
     (stripeIntegration) => stripeIntegration.workspace,
   )
   stripeIntegrations: Relation<StripeIntegration[]>;
+
+  @Column({ nullable: true, type: 'uuid' })
+  defaultRoleId: string | null;
+
+  @Field(() => RoleDTO, { nullable: true })
+  defaultRole: RoleDTO | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  version: string | null;
 }

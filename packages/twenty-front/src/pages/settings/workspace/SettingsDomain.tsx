@@ -107,6 +107,9 @@ export const SettingsDomain = () => {
           customDomain:
             customDomain && customDomain.length > 0 ? customDomain : null,
         });
+        enqueueSnackBar(t`Custom domain updated`, {
+          variant: SnackBarVariant.Success,
+        });
       },
       onError: (error) => {
         if (
@@ -161,6 +164,10 @@ export const SettingsDomain = () => {
           subdomain,
         });
 
+        enqueueSnackBar(t`Subdomain updated`, {
+          variant: SnackBarVariant.Success,
+        });
+
         redirectToWorkspaceDomain(currentUrl.toString());
       },
     });
@@ -169,17 +176,17 @@ export const SettingsDomain = () => {
   const handleSave = async () => {
     const values = form.getValues();
 
-    if (!values || !form.formState.isValid || !currentWorkspace) {
-      return enqueueSnackBar(t`Invalid form values`, {
-        variant: SnackBarVariant.Error,
-      });
-    }
-
     if (
       subdomainValue === currentWorkspace?.subdomain &&
       customDomainValue === currentWorkspace?.customDomain
     ) {
       return enqueueSnackBar(t`No change detected`, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+
+    if (!values || !currentWorkspace) {
+      return enqueueSnackBar(t`Invalid form values`, {
         variant: SnackBarVariant.Error,
       });
     }
@@ -197,38 +204,40 @@ export const SettingsDomain = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title={t`Domain`}
-      links={[
-        {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: <Trans>General</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        { children: <Trans>Domain</Trans> },
-      ]}
-      actionButton={
-        <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.Workspace)}
-          onSave={form.handleSubmit(handleSave)}
-        />
-      }
-    >
-      <SettingsPageContainer>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <FormProvider {...form}>
-          <SettingsSubdomain handleSave={handleSave} />
-          {isCustomDomainEnabled && (
-            <>
-              <SettingsCustomDomainEffect />
-              <SettingsCustomDomain handleSave={handleSave} />
-            </>
-          )}
-        </FormProvider>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    <form onSubmit={form.handleSubmit(handleSave)}>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...form}>
+        <SubMenuTopBarContainer
+          title={t`Domain`}
+          links={[
+            {
+              children: <Trans>Workspace</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            {
+              children: <Trans>General</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            { children: <Trans>Domain</Trans> },
+          ]}
+          actionButton={
+            <SaveAndCancelButtons
+              onCancel={() => navigate(SettingsPath.Workspace)}
+              isSaveDisabled={form.formState.isSubmitting}
+            />
+          }
+        >
+          <SettingsPageContainer>
+            <SettingsSubdomain />
+            {isCustomDomainEnabled && (
+              <>
+                <SettingsCustomDomainEffect />
+                <SettingsCustomDomain />
+              </>
+            )}
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
+    </form>
   );
 };
