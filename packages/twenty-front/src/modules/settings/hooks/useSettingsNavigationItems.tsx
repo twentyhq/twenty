@@ -58,7 +58,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isFunctionSettingsEnabled = false;
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const currentUser = useRecoilValue(currentUserState);
-  const isAdminEnabled = currentUser?.canImpersonate ?? false;
+  const isAdminEnabled =
+    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
+    false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
   const featureFlags = useFeatureFlagsMap();

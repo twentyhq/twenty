@@ -102,6 +102,7 @@ export const useCreateOneRecord = <
       recordInput: {
         ...baseOptimisticRecordInputCreatedBy,
         ...recordInput,
+        position: Number.NEGATIVE_INFINITY,
         id: idForCreation,
       },
     });

@@ -12,18 +12,41 @@ import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules
 import { camelCase } from 'src/utils/camel-case';
 
 const coreObjectNames = [
+  'approvedAccessDomain',
+  'approvedAccessDomains',
   'appToken',
+  'appTokens',
+  'billingCustomer',
+  'billingCustomers',
+  'billingEntitlement',
+  'billingEntitlements',
+  'billingMeter',
+  'billingMeters',
+  'billingProduct',
+  'billingProducts',
   'billingSubscription',
   'billingSubscriptions',
   'billingSubscriptionItem',
   'billingSubscriptionItems',
   'featureFlag',
+  'featureFlags',
+  'keyValuePair',
+  'keyValuePairs',
+  'postgresCredential',
+  'postgresCredentials',
+  'twoFactorMethod',
+  'twoFactorMethods',
   'user',
   'users',
   'userWorkspace',
   'userWorkspaces',
   'workspace',
   'workspaces',
+
+  'role',
+  'roles',
+  'userWorkspaceRole',
+  'userWorkspaceRoles',
 ];
 
 const reservedKeywords = [

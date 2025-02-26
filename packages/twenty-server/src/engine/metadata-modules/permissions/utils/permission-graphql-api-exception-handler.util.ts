@@ -14,6 +14,7 @@ export const permissionGraphqlApiExceptionHandler = (
   switch (error.code) {
     case PermissionsExceptionCode.PERMISSION_DENIED:
     case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
+    case PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE:
       throw new ForbiddenError(error.message);
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:

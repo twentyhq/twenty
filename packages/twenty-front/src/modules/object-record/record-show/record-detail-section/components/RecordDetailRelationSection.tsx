@@ -11,17 +11,17 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
+import { SingleRecordPickerMenuItemsWithSearch } from '@/object-record/record-picker/components/SingleRecordPickerMenuItemsWithSearch';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-picker/hooks/useAddNewRecordAndOpenRightDrawer';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
-import { SingleRecordSelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleRecordSelectMenuItemsWithSearch';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
-import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
@@ -29,6 +29,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -84,9 +85,10 @@ export const RecordDetailRelationSection = ({
   const { closeDropdown, isDropdownOpen, dropdownPlacement } =
     useDropdown(dropdownId);
 
-  const { setRecordPickerSearchFilter } = useRecordPicker({
-    recordPickerInstanceId: dropdownId,
-  });
+  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+    recordPickerSearchFilterComponentState,
+    dropdownId,
+  );
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
     setRecordPickerSearchFilter('');
@@ -98,7 +100,7 @@ export const RecordDetailRelationSection = ({
   });
 
   const handleRelationPickerEntitySelected = (
-    selectedRelationEntity?: RecordForSelect,
+    selectedRelationEntity?: SingleRecordPickerRecord,
   ) => {
     closeDropdown();
 
@@ -204,7 +206,7 @@ export const RecordDetailRelationSection = ({
                     value={{ instanceId: dropdownId }}
                   >
                     {isToOneObject ? (
-                      <SingleRecordSelectMenuItemsWithSearch
+                      <SingleRecordPickerMenuItemsWithSearch
                         EmptyIcon={IconForbid}
                         onRecordSelected={handleRelationPickerEntitySelected}
                         selectedRecordIds={relationRecordIds}
@@ -216,7 +218,7 @@ export const RecordDetailRelationSection = ({
                     ) : (
                       <>
                         <RelationFromManyFieldInputMultiRecordsEffect />
-                        <MultiRecordSelect
+                        <MultipleRecordPicker
                           onCreate={() => {
                             closeDropdown();
                             createNewRecordAndOpenRightDrawer?.();

@@ -51,6 +51,8 @@ clean-local-dev:
 	rm -rf "./packages/twenty-emails/dist";
 	rm -rf "./packages/twenty-server/.swc";
 	rm -rf "./packages/twenty-server/dist";
+	rm -rf "./packages/twenty-front/.swc";
+	rm -rf "./packages/twenty-front/build";
 	rm -rf "./packages/twenty-shared/.swc";
 	rm -rf "./packages/twenty-shared/dist";
 	rm -rf "./packages/twenty-ui/dist";

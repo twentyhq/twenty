@@ -2,14 +2,15 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
-import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
-import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
-import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
+import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { WorkflowSingleRecordFieldChip } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordFieldChip';
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
@@ -98,16 +99,17 @@ export const WorkflowSingleRecordPicker = ({
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const { setRecordPickerSearchFilter } = useRecordPicker({
-    recordPickerInstanceId: dropdownId,
-  });
+  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+    recordPickerSearchFilterComponentState,
+    dropdownId,
+  );
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
     setRecordPickerSearchFilter('');
   }, [setRecordPickerSearchFilter]);
 
   const handleRecordSelected = (
-    selectedEntity: RecordForSelect | null | undefined,
+    selectedEntity: SingleRecordPickerRecord | null | undefined,
   ) => {
     onChange?.(selectedEntity?.record?.id ?? '');
     closeDropdown();
@@ -153,7 +155,7 @@ export const WorkflowSingleRecordPicker = ({
                   <RecordPickerComponentInstanceContext.Provider
                     value={{ instanceId: dropdownId }}
                   >
-                    <SingleRecordSelect
+                    <SingleRecordPicker
                       EmptyIcon={IconForbid}
                       emptyLabel={'No ' + objectNameSingular}
                       onCancel={() => closeDropdown()}
