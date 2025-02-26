@@ -7,7 +7,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
-import { isRemoteObjectMetadataItem } from '@/object-metadata/utils/isRemoteObjectMetadataItem';
+import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { OrderBy } from '@/types/OrderBy';
 
@@ -35,7 +35,7 @@ export const turnSortsIntoOrderBy = (
     })
     .filter(isDefined);
 
-  if (isRemoteObjectMetadataItem(objectMetadataItem)) {
+  if (hasObjectMetadataItemPositionField(objectMetadataItem)) {
     const positionOrderBy = [
       {
         position: 'AscNullsFirst',
