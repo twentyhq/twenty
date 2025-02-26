@@ -3,6 +3,9 @@ FROM node:18.17.1-alpine as common-deps
 
 WORKDIR /app
 
+# Install build dependencies for canvas
+RUN apk add --no-cache build-base g++ cairo-dev jpeg-dev pango-dev giflib-dev
+
 # Copy only the necessary files for dependency resolution
 COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
 COPY ./.yarn/releases /app/.yarn/releases
@@ -59,6 +62,9 @@ RUN apk add --no-cache postgresql-client
 
 # Install ffmpeg
 RUN apk add --no-cache ffmpeg
+
+# Install runtime dependencies for canvas
+RUN apk add --no-cache cairo jpeg pango giflib
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
