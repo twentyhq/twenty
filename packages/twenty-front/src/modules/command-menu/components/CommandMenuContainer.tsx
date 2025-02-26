@@ -7,6 +7,7 @@ import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMen
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -90,19 +91,19 @@ export const CommandMenuContainer = ({
 
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: 'command-menu' }}
+      value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
     >
       <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: 'command-menu' }}
+        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
       >
         <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: 'command-menu' }}
+          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
           <ContextStoreComponentInstanceContext.Provider
-            value={{ instanceId: 'command-menu' }}
+            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
           >
             <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'command-menu' }}
+              value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
               <ActionMenuContext.Provider
                 value={{
