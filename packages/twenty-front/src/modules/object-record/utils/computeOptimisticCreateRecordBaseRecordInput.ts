@@ -5,18 +5,18 @@ import { FieldActorForInputValue } from "@/object-record/record-field/types/Fiel
 import { ObjectRecord } from "@/object-record/types/ObjectRecord";
 
 export const computeOptimisticCreateRecordBaseRecordInput = (objectMetadataItem: ObjectMetadataItem) => {
-    let accumulator: Partial<ObjectRecord> = {};
+    let baseRecordInput: Partial<ObjectRecord> = {};
   
     if (hasObjectMetadataItemFieldCreatedBy(objectMetadataItem)) {
-      accumulator.createdBy = {
+        baseRecordInput.createdBy = {
         source: 'MANUAL',
         context: {},
       } satisfies FieldActorForInputValue;
     }
   
     if (hasObjectMetadataItemPositionField(objectMetadataItem)) {
-      accumulator.position = Number.NEGATIVE_INFINITY;
+        baseRecordInput.position = Number.NEGATIVE_INFINITY;
     }
   
-    return accumulator;
+    return baseRecordInput;
   };
