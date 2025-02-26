@@ -9,8 +9,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
-    QueueMetricsTimeRange,
-    useGetQueueMetricsQuery,
+  QueueMetricsTimeRange,
+  useGetQueueMetricsQuery,
 } from '~/generated/graphql';
 
 const StyledTableRow = styled(TableRow)`

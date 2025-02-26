@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { H2Title, Section } from 'twenty-ui';
 import {
-    AdminPanelWorkerQueueHealth,
-    QueueMetricsTimeRange,
+  AdminPanelWorkerQueueHealth,
+  QueueMetricsTimeRange,
 } from '~/generated/graphql';
 import { WorkerMetricsGraph } from './WorkerMetricsGraph';
 
