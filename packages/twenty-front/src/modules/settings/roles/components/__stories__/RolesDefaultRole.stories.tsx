@@ -3,14 +3,13 @@ import { RolesDefaultRole } from '@/settings/roles/components/RolesDefaultRole';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui';
-import { Role } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const rolesMock = getRolesMock();
 
-const RolesDefaultRoleWrapper = (args: { roles: Role[] }) => {
+const RolesDefaultRoleWrapper = () => {
   return (
     <RecoilRoot
       initializeState={(snapshot) => {
@@ -20,7 +19,7 @@ const RolesDefaultRoleWrapper = (args: { roles: Role[] }) => {
         });
       }}
     >
-      <RolesDefaultRole roles={args.roles} />
+      <RolesDefaultRole roles={rolesMock} />
     </RecoilRoot>
   );
 };
