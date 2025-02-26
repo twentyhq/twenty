@@ -5,8 +5,8 @@ import {
   Leaf,
   Node,
   RecordOutputSchema,
-} from 'src/modules/workflow/workflow-builder/types/output-schema.type';
-import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/utils/should-generate-field-fake-value';
+} from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 const generateObjectRecordFields = (
