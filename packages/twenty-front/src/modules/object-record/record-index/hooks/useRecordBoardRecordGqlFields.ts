@@ -58,7 +58,9 @@ export const useRecordBoardRecordGqlFields = ({
         true,
       ]),
     ),
-    ...(hasObjectMetadataItemPositionField(objectMetadataItem) ? { position: true } : undefined),
+    ...(hasObjectMetadataItemPositionField(objectMetadataItem)
+      ? { position: true }
+      : undefined),
     ...identifierQueryFields,
     noteTargets: generateDepthOneRecordGqlFields({
       objectMetadataItem: noteTargetObjectMetadataItem,
