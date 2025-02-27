@@ -21,6 +21,14 @@ const WorkflowEditActionFormServerlessFunction = lazy(() =>
   })),
 );
 
+const WorkflowReadonlyActionFormServerlessFunction = lazy(() =>
+  import(
+    '@/workflow/workflow-steps/workflow-actions/components/WorkflowReadonlyActionFormServerlessFunction'
+  ).then((module) => ({
+    default: module.WorkflowReadonlyActionFormServerlessFunction,
+  })),
+);
+
 type WorkflowStepDetailProps = {
   stepId: string;
   trigger: WorkflowTrigger | null;
@@ -50,6 +58,7 @@ export const WorkflowStepDetail = ({
     trigger,
     steps,
   });
+
   if (!isDefined(stepDefinition) || !isDefined(stepDefinition.definition)) {
     return null;
   }
@@ -60,6 +69,7 @@ export const WorkflowStepDetail = ({
         case 'DATABASE_EVENT': {
           return (
             <WorkflowEditTriggerDatabaseEventForm
+              key={stepId}
               trigger={stepDefinition.definition}
               triggerOptions={props}
             />
@@ -68,6 +78,7 @@ export const WorkflowStepDetail = ({
         case 'MANUAL': {
           return (
             <WorkflowEditTriggerManualForm
+              key={stepId}
               trigger={stepDefinition.definition}
               triggerOptions={props}
             />
@@ -76,6 +87,7 @@ export const WorkflowStepDetail = ({
         case 'CRON': {
           return (
             <WorkflowEditTriggerCronForm
+              key={stepId}
               trigger={stepDefinition.definition}
               triggerOptions={props}
             />
@@ -93,11 +105,18 @@ export const WorkflowStepDetail = ({
         case 'CODE': {
           return (
             <Suspense fallback={<RightDrawerSkeletonLoader />}>
-              <WorkflowEditActionFormServerlessFunction
-                key={stepId}
-                action={stepDefinition.definition}
-                actionOptions={props}
-              />
+              {props.readonly ? (
+                <WorkflowReadonlyActionFormServerlessFunction
+                  key={stepId}
+                  action={stepDefinition.definition}
+                />
+              ) : (
+                <WorkflowEditActionFormServerlessFunction
+                  key={stepId}
+                  action={stepDefinition.definition}
+                  actionOptions={props}
+                />
+              )}
             </Suspense>
           );
         }
@@ -150,8 +169,6 @@ export const WorkflowStepDetail = ({
           );
         }
       }
-
-      return null;
     }
   }
 

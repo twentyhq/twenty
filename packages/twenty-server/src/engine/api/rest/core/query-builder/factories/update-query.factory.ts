@@ -3,11 +3,20 @@ import { Injectable } from '@nestjs/common';
 import { capitalize } from 'twenty-shared';
 
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class UpdateQueryFactory {
-  create(objectMetadata, depth?: number): string {
-    const objectNameSingular = objectMetadata.objectMetadataItem.nameSingular;
+  create(
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    },
+    depth?: number,
+  ): string {
+    const objectNameSingular =
+      objectMetadata.objectMetadataMapItem.nameSingular;
 
     return `
       mutation Update${capitalize(
@@ -15,10 +24,10 @@ export class UpdateQueryFactory {
       )}($id: ID!, $data: ${capitalize(objectNameSingular)}UpdateInput!) {
         update${capitalize(objectNameSingular)}(id: $id, data: $data) {
           id
-          ${objectMetadata.objectMetadataItem.fields
+          ${Object.values(objectMetadata.objectMetadataMapItem.fieldsById)
             .map((field) =>
               mapFieldMetadataToGraphqlQuery(
-                objectMetadata.objectMetadataItems,
+                objectMetadata.objectMetadataMaps,
                 field,
                 depth,
               ),

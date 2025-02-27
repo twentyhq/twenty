@@ -21,7 +21,9 @@ import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
+import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
+import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import {
   getWorkflowMock,
@@ -716,6 +718,13 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           workflowVersions: getWorkflowVersionsMock(),
+        },
+      });
+    }),
+    graphql.query(getOperationName(GET_ROLES) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          getRoles: getRolesMock(),
         },
       });
     }),

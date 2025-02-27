@@ -4,7 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { MultiObjectRecordQueryResult } from '@/object-record/record-picker-morph-legacy/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { MultiObjectRecordQueryResult } from '@/object-record/multiple-objects/types/MultiObjectRecordQueryResult';
 
 export const useCombinedGetTotalCount = ({
   objectMetadataItems,

@@ -5,11 +5,11 @@ import { FieldMetadataType } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
-import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
+import {
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -20,7 +20,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
   description: 'Add context to actor composite type.',
   version: '0.42',
 })
-export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class StandardizationOfActorCompositeContextTypeCommand extends MaintainedWorkspacesMigrationCommandRunner {
   protected readonly logger;
 
   constructor(
@@ -40,9 +40,9 @@ export class StandardizationOfActorCompositeContextTypeCommand extends ActiveWor
     this.logger.setVerbose(false);
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesMigrationCommandOptions,
+    options: MaintainedWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(`Running add-context-to-actor-composite-type command`);

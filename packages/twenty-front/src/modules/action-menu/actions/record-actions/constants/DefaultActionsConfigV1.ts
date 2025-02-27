@@ -1,6 +1,7 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -18,6 +19,7 @@ import {
   IconDatabaseExport,
   IconHeart,
   IconHeartOff,
+  IconRotate2,
   IconTrash,
 } from 'twenty-ui';
 
@@ -106,5 +108,18 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useExportMultipleRecordsAction,
+  },
+  seeDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
+    label: msg`See deleted records`,
+    shortLabel: msg`Deleted records`,
+    position: 6,
+    Icon: IconRotate2,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
 };

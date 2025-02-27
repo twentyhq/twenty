@@ -1147,6 +1147,7 @@ export type Object = {
   isCustom: Scalars['Boolean'];
   isLabelSyncedWithName: Scalars['Boolean'];
   isRemote: Scalars['Boolean'];
+  isSearchable: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural: Scalars['String'];
@@ -1199,6 +1200,7 @@ export type ObjectFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isRemote?: InputMaybe<BooleanFieldComparison>;
+  isSearchable?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
 };

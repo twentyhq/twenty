@@ -4,24 +4,25 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 export const mapRightDrawerPageToCommandMenuPage = (
   rightDrawerPage: RightDrawerPages,
 ) => {
-  switch (rightDrawerPage) {
-    case RightDrawerPages.ViewRecord:
-      return CommandMenuPages.ViewRecord;
-    case RightDrawerPages.ViewEmailThread:
-      return CommandMenuPages.ViewEmailThread;
-    case RightDrawerPages.ViewCalendarEvent:
-      return CommandMenuPages.ViewCalendarEvent;
-    case RightDrawerPages.Copilot:
-      return CommandMenuPages.Copilot;
-    case RightDrawerPages.WorkflowStepSelectTriggerType:
-      return CommandMenuPages.WorkflowStepSelectTriggerType;
-    case RightDrawerPages.WorkflowStepSelectAction:
-      return CommandMenuPages.WorkflowStepSelectAction;
-    case RightDrawerPages.WorkflowStepView:
-      return CommandMenuPages.WorkflowStepView;
-    case RightDrawerPages.WorkflowStepEdit:
-      return CommandMenuPages.WorkflowStepEdit;
-    default:
-      return CommandMenuPages.Root;
-  }
+  const rightDrawerPagesToCommandMenuPages: Record<
+    RightDrawerPages,
+    CommandMenuPages
+  > = {
+    [RightDrawerPages.ViewRecord]: CommandMenuPages.ViewRecord,
+    [RightDrawerPages.ViewEmailThread]: CommandMenuPages.ViewEmailThread,
+    [RightDrawerPages.ViewCalendarEvent]: CommandMenuPages.ViewCalendarEvent,
+    [RightDrawerPages.Copilot]: CommandMenuPages.Copilot,
+    [RightDrawerPages.WorkflowStepSelectTriggerType]:
+      CommandMenuPages.WorkflowStepSelectTriggerType,
+    [RightDrawerPages.WorkflowStepSelectAction]:
+      CommandMenuPages.WorkflowStepSelectAction,
+    [RightDrawerPages.WorkflowStepView]: CommandMenuPages.WorkflowStepView,
+    [RightDrawerPages.WorkflowRunStepView]:
+      CommandMenuPages.WorkflowRunStepView,
+    [RightDrawerPages.WorkflowStepEdit]: CommandMenuPages.WorkflowStepEdit,
+  };
+
+  return (
+    rightDrawerPagesToCommandMenuPages[rightDrawerPage] ?? CommandMenuPages.Root
+  );
 };

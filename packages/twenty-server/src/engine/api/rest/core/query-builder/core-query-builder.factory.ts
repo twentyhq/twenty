@@ -19,9 +19,12 @@ import { parseCoreBatchPath } from 'src/engine/api/rest/core/query-builder/utils
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { Query } from 'src/engine/api/rest/core/types/query.type';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNamePlural } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-plural.util';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -38,25 +41,35 @@ export class CoreQueryBuilderFactory {
     private readonly updateVariablesFactory: UpdateVariablesFactory,
     private readonly getVariablesFactory: GetVariablesFactory,
     private readonly findDuplicatesVariablesFactory: FindDuplicatesVariablesFactory,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly accessTokenService: AccessTokenService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async getObjectMetadata(
     request: Request,
     parsedObject: string,
   ): Promise<{
-    objectMetadataItems: ObjectMetadataEntity[];
-    objectMetadataItem: ObjectMetadataEntity;
+    objectMetadataMaps: ObjectMetadataMaps;
+    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
   }> {
     const { workspace } =
       await this.accessTokenService.validateTokenByRequest(request);
 
-    const objectMetadataItems =
-      await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
+    const currentCacheVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
 
-    if (!objectMetadataItems.length) {
+    if (currentCacheVersion === undefined) {
+      throw new BadRequestException('No cacheVersion');
+    }
+
+    const objectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMaps(
+        workspace.id,
+        currentCacheVersion,
+      );
+
+    if (!objectMetadataMaps) {
       throw new BadRequestException(
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.domainManagerService
           .buildWorkspaceURL({
@@ -67,19 +80,21 @@ export class CoreQueryBuilderFactory {
       );
     }
 
-    const [objectMetadata] = objectMetadataItems.filter(
-      (object) => object.namePlural === parsedObject,
+    const objectMetadataItem = getObjectMetadataMapItemByNamePlural(
+      objectMetadataMaps,
+      parsedObject,
     );
 
-    if (!objectMetadata) {
-      const [wrongObjectMetadata] = objectMetadataItems.filter(
-        (object) => object.nameSingular === parsedObject,
+    if (!objectMetadataItem) {
+      const wrongObjectMetadataItem = getObjectMetadataMapItemByNameSingular(
+        objectMetadataMaps,
+        parsedObject,
       );
 
       let hint = 'eg: companies';
 
-      if (wrongObjectMetadata) {
-        hint = `Did you mean '${wrongObjectMetadata.namePlural}'?`;
+      if (wrongObjectMetadataItem) {
+        hint = `Did you mean '${wrongObjectMetadataItem.namePlural}'?`;
       }
 
       throw new BadRequestException(
@@ -88,8 +103,8 @@ export class CoreQueryBuilderFactory {
     }
 
     return {
-      objectMetadataItems,
-      objectMetadataItem: objectMetadata,
+      objectMetadataMaps,
+      objectMetadataMapItem: objectMetadataItem,
     };
   }
 
@@ -101,12 +116,14 @@ export class CoreQueryBuilderFactory {
 
     if (!id) {
       throw new BadRequestException(
-        `delete ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+        `delete ${objectMetadata.objectMetadataMapItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataMapItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
       );
     }
 
     return {
-      query: this.deleteQueryFactory.create(objectMetadata.objectMetadataItem),
+      query: this.deleteQueryFactory.create(
+        objectMetadata.objectMetadataMapItem,
+      ),
       variables: this.deleteVariablesFactory.create(id),
     };
   }
@@ -144,7 +161,7 @@ export class CoreQueryBuilderFactory {
 
     if (!id) {
       throw new BadRequestException(
-        `update ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+        `update ${objectMetadata.objectMetadataMapItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataMapItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
       );
     }
 

@@ -14,6 +14,7 @@ import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -36,7 +37,10 @@ export const RecordIndexContainerGater = () => {
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const recordIndexId = `${objectMetadataItem.namePlural}-${contextStoreCurrentViewId}`;
+  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+    objectMetadataItem.namePlural,
+    contextStoreCurrentViewId || '',
+  );
 
   const handleIndexRecordsLoaded = useRecoilCallback(
     ({ set }) =>

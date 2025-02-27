@@ -4,11 +4,11 @@ import chalk from 'chalk';
 import { Repository } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
-import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
+import {
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { settings } from 'src/engine/constants/settings';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -20,7 +20,7 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
   description: 'Limit amount of view field.',
   version: '0.42',
 })
-export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class LimitAmountOfViewFieldCommand extends MaintainedWorkspacesMigrationCommandRunner {
   protected readonly logger: CommandLogger;
 
   constructor(
@@ -95,9 +95,9 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesMigrationComm
     }
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesMigrationCommandOptions,
+    options: MaintainedWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(`Running limit-amount-of-view-field command`);
