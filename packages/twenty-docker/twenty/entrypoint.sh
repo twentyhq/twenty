@@ -27,19 +27,27 @@ if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status
         echo "Db not found. Creating ${PGDB}..."
         PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDB}\""
         # Run setup and migration and seed scripts
-        echo "Running migrations..."
+        echo "Running database setup..."
         NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
-        yarn database:migrate:prod
-        yarn
-        yes | npx nx command-no-deps -- workspace:seed:dev
-        # Mark initialization as done
+        echo "Running migrations..."
+        
+        if ! yarn database:migrate:prod; then
+          echo "Migrations faild."
+          exit 1
+        fi
+
         touch /app/docker-data/db_status
         echo "Successfuly migrated DB!"
     else
         echo "Database ${PGDB} already exist."
         echo "Running migrations..."
         NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
-        yarn database:migrate:prod
+        
+        if ! yarn database:migrate:prod; then
+          echo "Migrations faild."
+          exit 1
+        fi
+        
         echo "Successfuly migrated DB!"
     fi
 else
