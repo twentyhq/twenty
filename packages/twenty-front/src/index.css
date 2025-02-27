@@ -22,13 +22,12 @@ form {
   visibility: hidden !important;
 }
 
-input:not([placeholder]="email") {
+html[lang="fa"] input:not([placeholder]="email") {
   direction: rtl;
 }
-
-div[contenteditable=true] {
+html[lang="fa"] div[contenteditable=true] {
   direction: rtl;
 }
-input, textarea {
+html[lang="fa"] input, html[lang="fa"] textarea {
   direction: rtl;
 }
