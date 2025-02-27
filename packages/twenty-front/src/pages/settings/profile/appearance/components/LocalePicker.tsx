@@ -51,6 +51,7 @@ export const LocalePicker = () => {
   if (!isDefined(currentWorkspaceMember)) return;
 
   const handleLocaleChange = async (value: keyof typeof APP_LOCALES) => {
+    document.documentElement.setAttribute('lang', value.split('-')[0]);
     setCurrentWorkspaceMember({
       ...currentWorkspaceMember,
       ...{ locale: value },
