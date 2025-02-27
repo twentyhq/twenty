@@ -22,7 +22,7 @@ export const SettingsIntegrationWhatsappDatabase = () => {
     if (!isIntegrationAvailable) {
       navigateApp(AppPath.NotFound);
     }
-  }, [integration, isIntegrationAvailable]);
+  }, [integration, isIntegrationAvailable, navigateApp]);
 
   if (!isIntegrationAvailable) return null;
 

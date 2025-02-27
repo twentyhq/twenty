@@ -1,47 +1,19 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { useTranslation } from 'react-i18next';
-import { useContext, useEffect, useState } from 'react';
-import {
-  StripeContext,
-  StripeIntegrationContextType,
-} from '~/pages/settings/integrations/stripe/context/StripeContext';
-import StripeAccountConnectedContainer from '~/pages/settings/integrations/stripe/components/StripeAccountConnectedContainer';
+import { useEffect, useState } from 'react';
+
+import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { IconButton } from '@ui/input/button/components/IconButton';
 import { IconTrash } from '@ui/display/icon/components/TablerIcons';
+import { IconButton } from '@ui/input/button/components/IconButton';
+import StripeAccountConnectedContainer from '~/pages/settings/integrations/stripe/components/StripeAccountConnectedContainer';
+import { useCreateCheckoutSession } from '~/pages/settings/integrations/stripe/hooks/useCreateCheckoutSession';
 import { useFindAllStripeIntegrations } from '~/pages/settings/integrations/stripe/hooks/useFindAllStripeIntegrations';
 import { useRemoveStripeIntegration } from '~/pages/settings/integrations/stripe/hooks/useRemoveStripeIntegrations';
-import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationGroup } from '../../components/SettingsIntegrationGroup';
 
-type SettigsIntegrationStripeConnectionsListCardProps = {
-  integration: SettingsIntegration;
-  connections: any[];
-};
-
-const StyledDatabaseLogoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledDatabaseLogo = styled.img`
-  height: 100%;
-`;
-
-const StyledRowRightContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const IsActiveContainer = styled.div`
+// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+const StyledIsActiveContainer = styled.div`
   width: 65%;
   height: 25px;
   border-radius: 10px;
@@ -53,7 +25,7 @@ const IsActiveContainer = styled.div`
   padding: 0 5px;
 `;
 
-const IsActiveContent = styled.div`
+const StyledIsActiveContent = styled.div`
   display: flex;
   align-items: center;
   gap: 13px;
@@ -62,13 +34,7 @@ const IsActiveContent = styled.div`
 export const SettigsIntegrationStripeConnectionsListCard = () => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const { createCheckoutSession } = useContext(
-    StripeContext,
-  ) as StripeIntegrationContextType;
-
-  const navigate = useNavigate();
-
-  const { t } = useTranslation();
+  const { createCheckoutSession } = useCreateCheckoutSession();
 
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -77,10 +43,6 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
   const { deleteStripeIntegration } = useRemoveStripeIntegration();
 
   useEffect(() => {}, [refetchStripe]);
-
-  const handleEditIntegration = (connId: string) => {
-    navigate(`./edit/${connId}`);
-  };
 
   const handleDeleteIntegration = async (id: string) => {
     try {
@@ -107,9 +69,6 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
     }
   };
 
-  console.log('stripe', stripeIntegrations);
-  console.log('ref', { refetchStripe });
-
   const integrationCategories = useSettingsIntegrationCategories();
   const stripeCategory = integrationCategories[3];
 
@@ -117,7 +76,7 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
     <>
       {stripeIntegrations.length > 0 ? (
         <StripeAccountConnectedContainer>
-          <IsActiveContent>
+          <StyledIsActiveContent>
             <img
               src="/images/integrations/stripe-logo.png"
               width={'24px'}
@@ -126,14 +85,15 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
             <span style={{ color: 'gray', fontWeight: '600' }}>
               Now you can collect payments from your customers
             </span>
-          </IsActiveContent>
+          </StyledIsActiveContent>
 
-          <IsActiveContent>
-            <IsActiveContainer>
+          <StyledIsActiveContent>
+            <StyledIsActiveContainer>
+              {/* eslint-disable-next-line @nx/workspace-no-hardcoded-colors  */}
               <span style={{ color: '#257047', fontWeight: '600' }}>
                 • Active
               </span>
-            </IsActiveContainer>
+            </StyledIsActiveContainer>
 
             <IconButton
               onClick={() =>
@@ -143,12 +103,15 @@ export const SettigsIntegrationStripeConnectionsListCard = () => {
               size="medium"
               Icon={IconTrash}
             />
-          </IsActiveContent>
+          </StyledIsActiveContent>
 
           {/* <button onClick={() => handleCheckoutSession()}>checkout</button> */}
         </StripeAccountConnectedContainer>
       ) : (
-        <SettingsIntegrationGroup key={stripeCategory.key} integrationGroup={stripeCategory} />
+        <SettingsIntegrationGroup
+          key={stripeCategory.key}
+          integrationGroup={stripeCategory}
+        />
       )}
     </>
   );

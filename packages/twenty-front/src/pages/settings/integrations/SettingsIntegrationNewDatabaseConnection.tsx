@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -28,10 +28,8 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import SripeLoginButton from './stripe/components/SripeLoginButton';
-import {
-  StripeContext,
-  StripeIntegrationContextType,
-} from './stripe/context/StripeContext';
+
+import { useStripeLogin } from '~/pages/settings/integrations/stripe/hooks/useStripeLoing';
 
 const createRemoteServerInputPostgresSchema =
   settingsIntegrationPostgreSQLConnectionFormSchema.transform<CreateRemoteServerInput>(
@@ -87,9 +85,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
   const { createOneDatabaseConnection } = useCreateOneDatabaseConnection();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { stripeLogin } = useContext(
-    StripeContext,
-  ) as StripeIntegrationContextType;
+  const { stripeLogin } = useStripeLogin();
 
   const isIntegrationEnabled = useIsSettingsIntegrationEnabled(databaseKey);
 
@@ -154,7 +150,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
         ? 'WhatsApp Inbox'
         : databaseKey === 'stripe'
           ? 'Stripe Connection'
-          : "Stripe Connection";
+          : 'Stripe Connection';
 
   const description =
     databaseKey === 'messenger'
@@ -163,7 +159,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
         ? 'Start supporting your customers via WhatsApp'
         : databaseKey === 'stripe'
           ? 'Add new stripe connection'
-          : "Add new connection";
+          : 'Add new connection';
 
   return (
     <SubMenuTopBarContainer

@@ -11,7 +11,9 @@ export const SettingsIntegrations = () => {
   const { t } = useLingui();
   const integrationCategories = useSettingsIntegrationCategories();
 
-  const filteredIntegrationCategories = integrationCategories.filter((group) => group.key !== 'stripe');
+  const filteredIntegrationCategories = integrationCategories.filter(
+    (group) => group.key !== 'stripe',
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -27,7 +29,6 @@ export const SettingsIntegrations = () => {
       <SettingsPageContainer>
         {filteredIntegrationCategories.map((group) => (
           <SettingsIntegrationGroup key={group.key} integrationGroup={group} />
-          
         ))}
 
         <SettigsIntegrationStripeConnectionsListCard />
