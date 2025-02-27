@@ -7,11 +7,11 @@ import { In, Repository } from 'typeorm';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { isCommandLogger } from 'src/database/commands/logger';
-import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
+import {
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -26,7 +26,7 @@ import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-typ
   description: 'Migrate relations to field metadata',
   version: '0.43',
 })
-export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class MigrateRelationsToFieldMetadataCommand extends MaintainedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -37,9 +37,9 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesMigr
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesMigrationCommandOptions,
+    options: MaintainedWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log('Running command to create many to one relations');

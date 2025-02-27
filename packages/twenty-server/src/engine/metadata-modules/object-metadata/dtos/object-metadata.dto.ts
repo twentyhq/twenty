@@ -69,6 +69,9 @@ export class ObjectMetadataDTO {
   @FilterableField()
   isSystem: boolean;
 
+  @FilterableField()
+  isSearchable: boolean;
+
   @HideField()
   workspaceId: string;
 

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { MigrationCommandModule } from 'src/database/commands/migration-command/miration-command.module';
+import { MigrationCommandModule } from 'src/database/commands/migration-command/migration-command.module';
 import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-43/0-43-add-tasks-assigned-to-me-view.command';
+import { MigrateIsSearchableForCustomObjectMetadataCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-is-searchable-for-custom-object-metadata.command';
 import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-relations-to-field-metadata.command';
 import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-search-vector-on-note-and-task-entities.command';
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
@@ -33,6 +34,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       providers: [
         AddTasksAssignedToMeViewCommand,
         MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
+        MigrateIsSearchableForCustomObjectMetadataCommand,
         UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
         StandardizationOfActorCompositeContextTypeCommand,
         MigrateRelationsToFieldMetadataCommand,

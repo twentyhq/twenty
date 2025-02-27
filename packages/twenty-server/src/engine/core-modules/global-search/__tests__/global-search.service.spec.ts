@@ -19,7 +19,7 @@ describe('GlobalSearchService', () => {
   });
 
   describe('filterObjectMetadataItems', () => {
-    it('should return searchable object metadata items -- TODO isSearchable only', () => {
+    it('should return searchable object metadata items', () => {
       const objectMetadataItems = service.filterObjectMetadataItems(
         mockObjectMetadataItemsWithFieldMaps,
         [],
