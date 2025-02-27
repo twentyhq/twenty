@@ -116,45 +116,45 @@ export class UserService extends TypeOrmQueryService<User> {
         workspaceId,
         userWorkspaceId: userWorkspace.id,
       });
-
-      const workspaceMember = workspaceMembers.filter(
-        (member: WorkspaceMemberWorkspaceEntity) => member.userId === userId,
-      )?.[0];
-
-      assert(workspaceMember, 'WorkspaceMember not found');
-
-      await workspaceDataSource?.query(
-        `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
-      );
-
-      const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
-        where: {
-          nameSingular: 'workspaceMember',
-          workspaceId,
-        },
-      });
-
-      if (workspaceMembers.length === 1) {
-        await this.workspaceService.deleteWorkspace(workspaceId);
-
-        return;
-      }
-
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'workspaceMember',
-        action: DatabaseEventAction.DELETED,
-        events: [
-          {
-            recordId: workspaceMember.id,
-            objectMetadata,
-            properties: {
-              before: workspaceMember,
-            },
-          },
-        ],
-        workspaceId,
-      });
     }
+
+    const workspaceMember = workspaceMembers.filter(
+      (member: WorkspaceMemberWorkspaceEntity) => member.userId === userId,
+    )?.[0];
+
+    assert(workspaceMember, 'WorkspaceMember not found');
+
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
+    );
+
+    const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
+      where: {
+        nameSingular: 'workspaceMember',
+        workspaceId,
+      },
+    });
+
+    if (workspaceMembers.length === 1) {
+      await this.workspaceService.deleteWorkspace(workspaceId);
+
+      return;
+    }
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'workspaceMember',
+      action: DatabaseEventAction.DELETED,
+      events: [
+        {
+          recordId: workspaceMember.id,
+          objectMetadata,
+          properties: {
+            before: workspaceMember,
+          },
+        },
+      ],
+      workspaceId,
+    });
   }
 
   async deleteUser(userId: string): Promise<User> {
