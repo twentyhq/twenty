@@ -6,6 +6,7 @@ import { AdminPanelHealthServiceData } from 'src/engine/core-modules/admin-panel
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
@@ -18,6 +19,7 @@ export class AdminPanelHealthService {
     private readonly redisHealth: RedisHealthIndicator,
     private readonly workerHealth: WorkerHealthIndicator,
     private readonly connectedAccountHealth: ConnectedAccountHealth,
+    private readonly appHealth: AppHealthIndicator,
   ) {}
 
   private readonly healthIndicators = {
@@ -25,6 +27,7 @@ export class AdminPanelHealthService {
     [HealthIndicatorId.redis]: this.redisHealth,
     [HealthIndicatorId.worker]: this.workerHealth,
     [HealthIndicatorId.connectedAccount]: this.connectedAccountHealth,
+    [HealthIndicatorId.app]: this.appHealth,
   };
 
   private transformStatus(status: HealthIndicatorStatus) {
@@ -107,13 +110,19 @@ export class AdminPanelHealthService {
   }
 
   async getSystemHealthStatus(): Promise<SystemHealth> {
-    const [databaseResult, redisResult, workerResult, accountSyncResult] =
-      await Promise.allSettled([
-        this.databaseHealth.isHealthy(),
-        this.redisHealth.isHealthy(),
-        this.workerHealth.isHealthy(),
-        this.connectedAccountHealth.isHealthy(),
-      ]);
+    const [
+      databaseResult,
+      redisResult,
+      workerResult,
+      accountSyncResult,
+      appResult,
+    ] = await Promise.allSettled([
+      this.databaseHealth.isHealthy(),
+      this.redisHealth.isHealthy(),
+      this.workerHealth.isHealthy(),
+      this.connectedAccountHealth.isHealthy(),
+      this.appHealth.isHealthy(),
+    ]);
 
     return {
       services: [
@@ -140,6 +149,11 @@ export class AdminPanelHealthService {
             accountSyncResult,
             HealthIndicatorId.connectedAccount,
           ).status,
+        },
+        {
+          ...HEALTH_INDICATORS[HealthIndicatorId.app],
+          status: this.getServiceStatus(appResult, HealthIndicatorId.app)
+            .status,
         },
       ],
     };

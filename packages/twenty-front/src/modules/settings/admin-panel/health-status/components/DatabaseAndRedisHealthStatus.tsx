@@ -27,13 +27,13 @@ export const DatabaseAndRedisHealthStatus = () => {
     ? JSON.stringify(JSON.parse(indicatorHealth.details), null, 2)
     : null;
 
-  const isDatabaseOrRedisDown =
+  const isDatabaseRedisORAppDown =
     !indicatorHealth.status ||
     indicatorHealth.status === AdminPanelHealthServiceStatus.OUTAGE;
 
   return (
     <Section>
-      {isDatabaseOrRedisDown && !loading ? (
+      {isDatabaseRedisORAppDown && !loading ? (
         <StyledErrorMessage>
           {`${indicatorHealth.label} information is not available because the service is down`}
         </StyledErrorMessage>

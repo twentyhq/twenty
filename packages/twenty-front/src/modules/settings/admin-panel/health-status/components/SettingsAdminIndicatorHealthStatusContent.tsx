@@ -10,11 +10,13 @@ export const SettingsAdminIndicatorHealthStatusContent = () => {
   switch (indicatorId) {
     case HealthIndicatorId.database:
     case HealthIndicatorId.redis:
+    case HealthIndicatorId.app:
       return <DatabaseAndRedisHealthStatus />;
     case HealthIndicatorId.worker:
       return <WorkerHealthStatus />;
     case HealthIndicatorId.connectedAccount:
       return <ConnectedAccountHealthStatus />;
+
     default:
       return null;
   }
