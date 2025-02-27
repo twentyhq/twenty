@@ -24,6 +24,9 @@ import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreVie
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
+import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared';
@@ -120,6 +123,10 @@ export const ViewBarDetails = ({
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
+  );
+
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
@@ -137,6 +144,9 @@ export const ViewBarDetails = ({
   });
   const { resetUnsavedViewStates } = useResetUnsavedViewStates();
 
+  const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
+    useAreViewFilterGroupsDifferentFromRecordFilterGroups();
+
   const { viewFiltersAreDifferentFromRecordFilters } =
     useAreViewFiltersDifferentFromRecordFilters();
 
@@ -145,7 +155,8 @@ export const ViewBarDetails = ({
 
   const canResetView =
     (viewFiltersAreDifferentFromRecordFilters ||
-      viewSortsAreDifferentFromRecordSorts) &&
+      viewSortsAreDifferentFromRecordSorts ||
+      viewFilterGroupsAreDifferentFromRecordFilterGroups) &&
     !hasFiltersQueryParams;
 
   const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
@@ -162,6 +173,9 @@ export const ViewBarDetails = ({
     );
   }, [currentRecordFilters, checkIsSoftDeleteFilter]);
 
+  const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
+    useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
+
   const { applyCurrentViewFiltersToCurrentRecordFilters } =
     useApplyCurrentViewFiltersToCurrentRecordFilters();
 
@@ -171,6 +185,7 @@ export const ViewBarDetails = ({
   const handleCancelClick = () => {
     if (isDefined(viewId)) {
       resetUnsavedViewStates(viewId);
+      applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
       applyCurrentViewFiltersToCurrentRecordFilters();
       applyCurrentViewSortsToCurrentRecordSorts();
       toggleSoftDeleteFilterState(false);
@@ -180,7 +195,10 @@ export const ViewBarDetails = ({
   const shouldExpandViewBar =
     viewFiltersAreDifferentFromRecordFilters ||
     viewSortsAreDifferentFromRecordSorts ||
-    ((currentRecordSorts?.length || currentRecordFilters?.length) &&
+    viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+    ((currentRecordSorts.length > 0 ||
+      currentRecordFilters.length > 0 ||
+      currentRecordFilterGroups.length > 0) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
