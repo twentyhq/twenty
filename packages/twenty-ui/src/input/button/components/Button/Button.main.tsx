@@ -1,20 +1,19 @@
 import isPropValid from '@emotion/is-prop-valid';
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Pill } from '@ui/components/Pill/Pill';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { useIsMobile } from '@ui/utilities';
-import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader } from '@ui/feedback';
+import { ButtonText } from './ButtonText.internal';
+import { ButtonIcon } from '@ui/input/button/components/Button/ButtonIcon.internal';
+import { ButtonSoon } from '@ui/input/button/components/Button/ButtonSoon.internal';
+import { ButtonHotkeys } from '@ui/input/button/components/Button/ButtonHotKeys.internal';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 export type ButtonAccent = 'default' | 'blue' | 'danger';
-
-const baseTransitionTiming = 300;
 
 export type ButtonProps = {
   className?: string;
@@ -359,49 +358,6 @@ const StyledButton = styled('button', {
   }
 `;
 
-const StyledSoonPill = styled(Pill)`
-  margin-left: auto;
-`;
-
-const StyledSeparator = styled.div<{
-  buttonSize: ButtonSize;
-  accent: ButtonAccent;
-}>`
-  background: ${({ theme, accent }) => {
-    switch (accent) {
-      case 'blue':
-        return theme.border.color.blue;
-      case 'danger':
-        return theme.border.color.danger;
-      default:
-        return theme.font.color.light;
-    }
-  }};
-  height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 2 : 4)};
-  margin: 0;
-  width: 1px;
-`;
-
-const StyledShortcutLabel = styled.div<{
-  variant: ButtonVariant;
-  accent: ButtonAccent;
-}>`
-  color: ${({ theme, variant, accent }) => {
-    switch (accent) {
-      case 'blue':
-        return theme.border.color.blue;
-      case 'danger':
-        return variant === 'primary'
-          ? theme.border.color.danger
-          : theme.color.red40;
-      default:
-        return theme.font.color.light;
-    }
-  }};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
 const StyledButtonWrapper = styled.div<
   Pick<ButtonProps, 'loading' | 'variant' | 'accent' | 'inverted' | 'disabled'>
 >`
@@ -454,86 +410,6 @@ const StyledButtonWrapper = styled.div<
   position: relative;
 `;
 
-const StyledText = styled.div<{ loading: boolean; hasIcon: boolean }>`
-  clip-path: ${({ loading, theme, hasIcon }) =>
-    loading
-      ? ` inset(0 ${!hasIcon ? theme.spacing(12) : theme.spacing(6)} 0 0)`
-      : ' inset(0 0 0 0)'};
-
-  overflow: hidden;
-
-  transform: ${({ theme, loading, hasIcon }) =>
-    loading
-      ? `translateX(${!hasIcon ? theme.spacing(7) : theme.spacing(3)})`
-      : 'none'};
-
-  transition:
-    transform ${baseTransitionTiming}ms ease,
-    clip-path ${baseTransitionTiming}ms ease,
-    max-width ${baseTransitionTiming}ms ease;
-
-  transition-delay: ${({ loading }) =>
-    loading ? '0ms' : `${baseTransitionTiming / 4}ms`};
-  white-space: nowrap;
-`;
-
-const StyledIcon = styled.div<{
-  loading: boolean;
-}>`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  color: var(--tw-button-color);
-
-  padding: 8px;
-
-  opacity: ${({ loading }) => (loading ? 0 : 1)};
-  transition: opacity ${baseTransitionTiming / 2}ms ease;
-  transition-delay: ${({ loading }) =>
-    loading ? '0ms' : `${baseTransitionTiming / 2}ms`};
-`;
-
-const StyledIconWrapper = styled.div<{ loading: boolean }>`
-  align-items: center;
-  display: flex;
-  height: 100%;
-
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: ${({ loading }) => (loading ? 0 : '100%')};
-`;
-
-const StyledLoader = styled.div<{ loading: boolean }>`
-  left: ${({ theme }) => theme.spacing(2)};
-  opacity: ${({ loading }) => (loading ? 1 : 0)};
-  position: absolute;
-
-  transition: opacity ${baseTransitionTiming / 2}ms ease;
-  transition-delay: ${({ loading }) =>
-    loading ? `${baseTransitionTiming / 2}ms` : '0ms'};
-  width: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledEllipsis = styled.div<{ loading: boolean }>`
-  right: 0;
-  clip-path: ${({ theme, loading }) =>
-    loading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(6)})`};
-  overflow: hidden;
-  position: absolute;
-
-  transition: clip-path ${baseTransitionTiming}ms ease;
-`;
-
-const StyledTextWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  position: relative;
-`;
-
 export const Button = ({
   className,
   Icon,
@@ -557,8 +433,6 @@ export const Button = ({
   type,
   loading = false,
 }: ButtonProps) => {
-  const theme = useTheme();
-
   const isMobile = useIsMobile();
 
   const [isFocused, setIsFocused] = useState(propFocus);
@@ -570,17 +444,7 @@ export const Button = ({
       inverted={inverted}
       disabled={soon || disabled}
     >
-      <StyledIconWrapper loading={loading}>
-        <StyledLoader loading={loading}>
-          <Loader />
-        </StyledLoader>
-        {Icon && (
-          <StyledIcon loading={loading}>
-            <Icon size={theme.icon.size.sm} />
-          </StyledIcon>
-        )}
-      </StyledIconWrapper>
-
+      <ButtonIcon Icon={Icon} loading={loading} />
       <StyledButton
         fullWidth={fullWidth}
         variant={variant}
@@ -603,21 +467,16 @@ export const Button = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       >
-        <StyledTextWrapper>
-          <StyledText loading={loading} hasIcon={!!Icon}>
-            {title}
-          </StyledText>
-          <StyledEllipsis loading={loading}>...</StyledEllipsis>
-        </StyledTextWrapper>
+        <ButtonText hasIcon={!!Icon} title={title} loading={loading} />
         {hotkeys && !isMobile && (
-          <>
-            <StyledSeparator buttonSize={size} accent={accent} />
-            <StyledShortcutLabel variant={variant} accent={accent}>
-              {hotkeys.join(getOsShortcutSeparator())}
-            </StyledShortcutLabel>
-          </>
+          <ButtonHotkeys
+            hotkeys={hotkeys}
+            variant={variant}
+            accent={accent}
+            size={size}
+          />
         )}
-        {soon && <StyledSoonPill label="Soon" />}
+        {soon && <ButtonSoon />}
       </StyledButton>
     </StyledButtonWrapper>
   );
