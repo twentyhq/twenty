@@ -6,10 +6,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import {
-  WorkflowRunStatus,
-  WorkflowRunWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
@@ -120,21 +117,10 @@ export class RunWorkflowJob {
     workflowRunId: string;
     lastExecutedStepId: string;
   }): Promise<void> {
-    const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
-        'workflowRun',
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail(
+        workflowRunId,
       );
-
-    const workflowRun = await workflowRunRepository.findOne({
-      where: { id: workflowRunId },
-    });
-
-    if (!workflowRun) {
-      throw new WorkflowRunException(
-        'Workflow run not found',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
-      );
-    }
 
     if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
       throw new WorkflowRunException(
