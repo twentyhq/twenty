@@ -2,6 +2,7 @@ import { useCreateAppRouter } from '@/app/hooks/useCreateAppRouter';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { RouterProvider } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import StripeProvider from '~/pages/settings/integrations/stripe/context/StripeContext';
 
 export const AppRouter = () => {
   // We want to disable serverless function settings but keep the code for now
@@ -14,8 +15,13 @@ export const AppRouter = () => {
     false;
 
   return (
-    <RouterProvider
-      router={useCreateAppRouter(isFunctionSettingsEnabled, isAdminPageEnabled)}
-    />
+    <StripeProvider>
+      <RouterProvider
+        router={useCreateAppRouter(
+          isFunctionSettingsEnabled,
+          isAdminPageEnabled,
+        )}
+      />
+    </StripeProvider>
   );
 };
