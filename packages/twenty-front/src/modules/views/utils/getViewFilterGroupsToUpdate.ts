@@ -20,11 +20,12 @@ export const getViewFilterGroupsToUpdate = (
       return false;
     }
 
-    const shouldUpdateBecauseViewFilterIsDifferent = !areViewFilterGroupsEqual(
-      newViewFilterGroup,
-      correspondingViewFilterGroup,
-    );
+    const shouldUpdateBecauseViewFilterGroupIsDifferent =
+      !areViewFilterGroupsEqual(
+        newViewFilterGroup,
+        correspondingViewFilterGroup,
+      );
 
-    return shouldUpdateBecauseViewFilterIsDifferent;
+    return shouldUpdateBecauseViewFilterGroupIsDifferent;
   });
 };

@@ -1,12 +1,14 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useRecoilCallback } from 'recoil';
 
 import { isDefined } from 'twenty-shared';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
   () => {
@@ -17,6 +19,11 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
     const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
       currentRecordFilterGroupsComponentState,
     );
+
+    const currentRecordFilterGroupsCallbackState =
+      useRecoilComponentCallbackStateV2(
+        currentRecordFilterGroupsComponentState,
+      );
 
     const applyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
       useRecoilCallback(
@@ -31,14 +38,27 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
               .getValue();
 
             if (isDefined(currentView)) {
-              setCurrentRecordFilterGroups(
+              const currentRecordFilterGroups = snapshot
+                .getLoadable(currentRecordFilterGroupsCallbackState)
+                .getValue();
+
+              const newRecordFilterGroups =
                 mapViewFilterGroupsToRecordFilterGroups(
                   currentView.viewFilterGroups ?? [],
-                ),
-              );
+                );
+
+              if (
+                !isDeeplyEqual(currentRecordFilterGroups, newRecordFilterGroups)
+              ) {
+                setCurrentRecordFilterGroups(newRecordFilterGroups);
+              }
             }
           },
-        [currentViewId, setCurrentRecordFilterGroups],
+        [
+          currentViewId,
+          setCurrentRecordFilterGroups,
+          currentRecordFilterGroupsCallbackState,
+        ],
       );
 
     return {

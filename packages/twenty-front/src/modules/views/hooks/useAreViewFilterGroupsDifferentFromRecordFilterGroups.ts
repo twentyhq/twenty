@@ -5,7 +5,6 @@ import { getViewFilterGroupsToCreate } from '@/views/utils/getViewFilterGroupsTo
 import { getViewFilterGroupsToDelete } from '@/views/utils/getViewFilterGroupsToDelete';
 import { getViewFilterGroupsToUpdate } from '@/views/utils/getViewFilterGroupsToUpdate';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared';
 
 export const useAreViewFilterGroupsDifferentFromRecordFilterGroups = () => {
@@ -15,43 +14,36 @@ export const useAreViewFilterGroupsDifferentFromRecordFilterGroups = () => {
     currentRecordFilterGroupsComponentState,
   );
 
-  const viewFilterGroupsAreDifferentFromRecordFilterGroups = useMemo(() => {
-    if (!isDefined(currentView)) {
-      return undefined;
-    }
+  const currentViewFilterGroups = currentView?.viewFilterGroups ?? [];
 
-    const currentViewFilterGroups = currentView?.viewFilterGroups ?? [];
-
-    const viewFilterGroupsFromCurrentRecordFilterGroups =
-      currentRecordFilterGroups.map((recordFilterGroup) =>
+  const viewFilterGroupsFromCurrentRecordFilterGroups = isDefined(currentView)
+    ? currentRecordFilterGroups.map((recordFilterGroup) =>
         mapRecordFilterGroupToViewFilterGroup({
           recordFilterGroup,
           view: currentView,
         }),
-      );
+      )
+    : [];
 
-    const viewFilterGroupsToCreate = getViewFilterGroupsToCreate(
-      currentViewFilterGroups,
-      viewFilterGroupsFromCurrentRecordFilterGroups,
-    );
+  const viewFilterGroupsToCreate = getViewFilterGroupsToCreate(
+    currentViewFilterGroups,
+    viewFilterGroupsFromCurrentRecordFilterGroups,
+  );
 
-    const viewFilterGroupsToDelete = getViewFilterGroupsToDelete(
-      currentViewFilterGroups,
-      viewFilterGroupsFromCurrentRecordFilterGroups,
-    );
+  const viewFilterGroupsToDelete = getViewFilterGroupsToDelete(
+    currentViewFilterGroups,
+    viewFilterGroupsFromCurrentRecordFilterGroups,
+  );
 
-    const viewFilterGroupsToUpdate = getViewFilterGroupsToUpdate(
-      currentViewFilterGroups,
-      viewFilterGroupsFromCurrentRecordFilterGroups,
-    );
+  const viewFilterGroupsToUpdate = getViewFilterGroupsToUpdate(
+    currentViewFilterGroups,
+    viewFilterGroupsFromCurrentRecordFilterGroups,
+  );
 
-    const viewFilterGroupsHaveChanged =
-      viewFilterGroupsToCreate.length > 0 ||
-      viewFilterGroupsToDelete.length > 0 ||
-      viewFilterGroupsToUpdate.length > 0;
-
-    return viewFilterGroupsHaveChanged;
-  }, [currentRecordFilterGroups, currentView]);
+  const viewFilterGroupsAreDifferentFromRecordFilterGroups =
+    viewFilterGroupsToCreate.length > 0 ||
+    viewFilterGroupsToDelete.length > 0 ||
+    viewFilterGroupsToUpdate.length > 0;
 
   return {
     viewFilterGroupsAreDifferentFromRecordFilterGroups,
