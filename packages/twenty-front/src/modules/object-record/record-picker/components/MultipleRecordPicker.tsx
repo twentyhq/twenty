@@ -33,22 +33,27 @@ export const StyledSelectableItem = styled(SelectableItem)`
   width: 100%;
 `;
 
+type MultipleRecordPickerProps = {
+  onChange?: (changedRecordForSelectId: string) => void;
+  onSubmit?: () => void;
+  onCreate?: ((searchInput?: string) => void) | (() => void);
+  dropdownPlacement?: Placement | null;
+  componentInstanceId: string;
+};
+
 export const MultipleRecordPicker = ({
   onChange,
   onSubmit,
   onCreate,
   dropdownPlacement,
-}: {
-  onChange?: (changedRecordForSelectId: string) => void;
-  onSubmit?: () => void;
-  onCreate?: ((searchInput?: string) => void) | (() => void);
-  dropdownPlacement?: Placement | null;
-}) => {
+  componentInstanceId,
+}: MultipleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordPickerComponentInstanceContext,
+    componentInstanceId,
   );
 
   const { objectRecordsIdsMultiSelectState, recordMultiSelectIsLoadingState } =
@@ -143,49 +148,57 @@ export const MultipleRecordPicker = ({
   );
 
   return (
-    <DropdownMenu ref={containerRef} data-select-disable width={200}>
-      {dropdownPlacement?.includes('end') && (
-        <>
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
-            <DropdownMenuItemsContainer scrollable={false}>
-              {createNewButton}
-            </DropdownMenuItemsContainer>
-          )}
-          <DropdownMenuSeparator />
-          {objectRecordsIdsMultiSelect?.length > 0 && results}
-          {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
-            <>
-              <DropdownMenuSkeletonItem />
+    <RecordPickerComponentInstanceContext.Provider
+      value={{ instanceId: componentInstanceId }}
+    >
+      <DropdownMenu ref={containerRef} data-select-disable width={200}>
+        {dropdownPlacement?.includes('end') && (
+          <>
+            {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+              <DropdownMenuItemsContainer scrollable={false}>
+                {createNewButton}
+              </DropdownMenuItemsContainer>
+            )}
+            <DropdownMenuSeparator />
+            {objectRecordsIdsMultiSelect?.length > 0 && results}
+            {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
+              <>
+                <DropdownMenuSkeletonItem />
+                <DropdownMenuSeparator />
+              </>
+            )}
+            {objectRecordsIdsMultiSelect?.length > 0 && (
               <DropdownMenuSeparator />
-            </>
-          )}
-          {objectRecordsIdsMultiSelect?.length > 0 && <DropdownMenuSeparator />}
-        </>
-      )}
-      <DropdownMenuSearchInput
-        value={recordPickerSearchFilter}
-        onChange={handleFilterChange}
-        autoFocus
-      />
-      {(dropdownPlacement?.includes('start') ||
-        isUndefinedOrNull(dropdownPlacement)) && (
-        <>
-          <DropdownMenuSeparator />
-          {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
-            <>
-              <DropdownMenuSkeletonItem />
+            )}
+          </>
+        )}
+        <DropdownMenuSearchInput
+          value={recordPickerSearchFilter}
+          onChange={handleFilterChange}
+          autoFocus
+        />
+        {(dropdownPlacement?.includes('start') ||
+          isUndefinedOrNull(dropdownPlacement)) && (
+          <>
+            <DropdownMenuSeparator />
+            {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
+              <>
+                <DropdownMenuSkeletonItem />
+                <DropdownMenuSeparator />
+              </>
+            )}
+            {objectRecordsIdsMultiSelect?.length > 0 && results}
+            {objectRecordsIdsMultiSelect?.length > 0 && (
               <DropdownMenuSeparator />
-            </>
-          )}
-          {objectRecordsIdsMultiSelect?.length > 0 && results}
-          {objectRecordsIdsMultiSelect?.length > 0 && <DropdownMenuSeparator />}
-          {isDefined(onCreate) && (
-            <DropdownMenuItemsContainer scrollable={false}>
-              {createNewButton}
-            </DropdownMenuItemsContainer>
-          )}
-        </>
-      )}
-    </DropdownMenu>
+            )}
+            {isDefined(onCreate) && (
+              <DropdownMenuItemsContainer scrollable={false}>
+                {createNewButton}
+              </DropdownMenuItemsContainer>
+            )}
+          </>
+        )}
+      </DropdownMenu>
+    </RecordPickerComponentInstanceContext.Provider>
   );
 };

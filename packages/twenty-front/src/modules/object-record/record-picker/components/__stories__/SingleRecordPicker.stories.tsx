@@ -5,7 +5,6 @@ import { ComponentDecorator, IconUserCircle } from 'twenty-ui';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RecordPickerDecorator } from '~/testing/decorators/RecordPickerDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getPeopleMock } from '~/testing/mock-data/people';
@@ -30,7 +29,6 @@ const meta: Meta<typeof SingleRecordPicker> = {
   decorators: [
     ComponentDecorator,
     ComponentWithRecoilScopeDecorator,
-    RecordPickerDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],

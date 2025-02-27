@@ -2,14 +2,12 @@ import { gql, useQuery } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
+import { useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray } from '@/activities/inline-cell/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { useLimitPerMetadataItem } from '@/object-metadata/hooks/useLimitPerMetadataItem';
 import { useOrderByFieldPerMetadataItem } from '@/object-metadata/hooks/useOrderByFieldPerMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import {
-  MultiObjectRecordQueryResult,
-  useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
-} from '@/object-record/record-picker-morph-legacy/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { MultiObjectRecordQueryResult } from '@/object-record/multiple-objects/types/MultiObjectRecordQueryResult';
 import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
 import { capitalize, isDefined } from 'twenty-shared';
 

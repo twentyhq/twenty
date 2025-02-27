@@ -31,8 +31,14 @@ type RecordInlineCellProps = {
 };
 
 export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
-  const { fieldDefinition, recordId, isCentered, isDisplayModeFixHeight } =
-    useContext(FieldContext);
+  const {
+    fieldDefinition,
+    recordId,
+    isCentered,
+    isDisplayModeFixHeight,
+    onOpenEditMode,
+    onCloseEditMode,
+  } = useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -129,6 +135,8 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
+    onOpenEditMode,
+    onCloseEditMode,
   };
 
   return (

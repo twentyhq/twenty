@@ -57,6 +57,7 @@ export const RelationFromManyFieldInput = ({
       >
         <RelationFromManyFieldInputMultiRecordsEffect />
         <MultipleRecordPicker
+          componentInstanceId={recordPickerInstanceId}
           onSubmit={handleSubmit}
           onChange={updateRelation}
           onCreate={createNewRecordAndOpenRightDrawer}
