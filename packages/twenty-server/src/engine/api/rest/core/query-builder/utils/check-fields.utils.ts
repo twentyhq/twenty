@@ -6,10 +6,10 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export const checkFields = (
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   fieldNames: string[],
 ): void => {
-  const fieldMetadataNames = objectMetadata.fields
+  const fieldMetadataNames = objectMetadataItem.fields
     .map((field) => {
       if (isCompositeFieldMetadataType(field.type)) {
         const compositeType = compositeTypeDefinitions.get(field.type);
@@ -37,7 +37,7 @@ export const checkFields = (
     if (!fieldMetadataNames.includes(fieldName)) {
       throw new BadRequestException(
         `field '${fieldName}' does not exist in '${computeObjectTargetTable(
-          objectMetadata,
+          objectMetadataItem,
         )}' object`,
       );
     }
