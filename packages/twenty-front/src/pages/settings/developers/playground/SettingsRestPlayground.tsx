@@ -29,6 +29,10 @@ export const SettingsRestPlayground = () => {
     navigateSettings(SettingsPath.APIs);
   };
 
+  const handleError = () => {
+    handleExitFullScreen();
+  };
+
   return (
     <FullScreenContainer
       exitFullScreen={handleExitFullScreen}
@@ -49,7 +53,7 @@ export const SettingsRestPlayground = () => {
         componentInstanceId={'scroll-wrapper-playground-page-container'}
       >
         <StyledNestedContainer pageBarHeight={PAGE_BAR_MIN_HEIGHT}>
-          <RestPlayground />
+          <RestPlayground onError={handleError} />
         </StyledNestedContainer>
       </ScrollWrapper>
     </FullScreenContainer>
