@@ -1,6 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { createContext, FC, ReactNode, useState } from 'react';
+import { createContext, FC, ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useStripePromise } from '~/pages/settings/integrations/stripe/hooks/useStripePromise';
 
 export type StripeIntegrationContextType = {
@@ -15,32 +16,25 @@ export const StripeContext = createContext<StripeIntegrationContextType | null>(
 const StripeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { stripePromise } = useStripePromise();
 
-  const [accountCreatePending, SetAccountCreatePending] =
-    useState<boolean>(false);
-  const [accountId, setAccountId] = useState(null);
-  const [accountData, setAccountData] = useState<string | undefined>(undefined);
-
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  console.log('work', currentWorkspace?.id);
-
   const stripeLogin = async () => {
-    SetAccountCreatePending(true);
     try {
-      const response = await fetch('http://crm.kvoip.com.br/stripe/account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ workspaceId: currentWorkspace?.id }),
-      });
+      const response = await fetch(
+        `${REACT_APP_SERVER_BASE_URL}/stripe/account`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ workspaceId: currentWorkspace?.id }),
+        },
+      );
       if (!response.ok) {
         throw new Error('Failed to create account');
       }
       const accountData = await response.json();
-      setAccountId(accountData.account);
-      setAccountData(JSON.stringify(accountData));
 
       const loginResponse = await fetch(
-        'http://crm.kvoip.com.br/stripe/account_link',
+        `${REACT_APP_SERVER_BASE_URL}/stripe/account_link`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -60,16 +54,15 @@ const StripeProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       window.location.href = url;
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
-    } finally {
-      SetAccountCreatePending(false);
     }
   };
 
   const createCheckoutSession = async (amount: number, currency: string) => {
     try {
       const response = await fetch(
-        'http://crm.kvoip.com.br/stripe/create-checkout-session',
+        `${REACT_APP_SERVER_BASE_URL}/stripe/create-checkout-session`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -85,12 +78,12 @@ const StripeProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       const { id } = await response.json();
       const stripe = await stripePromise;
-      if (stripe) {
-        await stripe.redirectToCheckout({ sessionId: id });
-      } else {
-        console.error('Stripe failed to load');
-      }
+
+      if (!stripe) throw new Error('Stripe failed to load');
+
+      await stripe.redirectToCheckout({ sessionId: id });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to accountIdcreate checkout session', error);
     }
   };
