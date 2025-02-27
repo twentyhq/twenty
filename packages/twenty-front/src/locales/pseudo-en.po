@@ -1386,6 +1386,7 @@ msgstr ""
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder.ts
 msgid "First Name"
 msgstr ""
 
@@ -1437,8 +1438,25 @@ msgstr ""
 msgid "Global"
 msgstr ""
 
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to Activities"
+msgstr ""
+
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to Companies"
+msgstr ""
+
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to People"
+msgstr ""
+
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to Settings"
+msgstr ""
+
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to Tasks"
 msgstr ""
 
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -1692,6 +1710,7 @@ msgstr ""
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/object-record/record-field/meta-types/input/constants/LastNamePlaceholder.ts
 msgid "Last Name"
 msgstr ""
 
@@ -2140,6 +2159,10 @@ msgstr ""
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
 msgid "Permissions"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+msgid "Persian"
 msgstr ""
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx

@@ -1391,6 +1391,7 @@ msgstr "5 dòng đầu tiên"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder.ts
 msgid "First Name"
 msgstr "\"Tên riêng\""
 
@@ -1442,9 +1443,26 @@ msgstr "\\"
 msgid "Global"
 msgstr "\\"
 
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to Activities"
+msgstr ""
+
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to Companies"
+msgstr ""
+
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to People"
+msgstr ""
+
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to Settings"
 msgstr "Đi tới cài đặt"
+
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to Tasks"
+msgstr ""
 
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
@@ -1697,6 +1715,7 @@ msgstr "Ngôn ngữ"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/object-record/record-field/meta-types/input/constants/LastNamePlaceholder.ts
 msgid "Last Name"
 msgstr "Tên"
 
@@ -2146,6 +2165,10 @@ msgstr "Hủy bỏ vĩnh viễn các quy trình"
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
 msgid "Permissions"
 msgstr "Quyền"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+msgid "Persian"
+msgstr ""
 
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
