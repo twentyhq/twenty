@@ -16,6 +16,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
+import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
@@ -95,9 +96,10 @@ export const RecordBoardCardHeader = ({
     isRecordBoardCompactModeActiveComponentState,
   );
 
-  const isIdentifierEmpty =
-    (record?.[identifierFieldDefinition.metadata.fieldName] || '').trim() ===
-    '';
+  const isIdentifierEmpty = isFieldValueEmpty({
+    fieldDefinition: identifierFieldDefinition,
+    fieldValue: record?.[identifierFieldDefinition.metadata.fieldName],
+  });
 
   const { checkIfLastUnselectAndCloseDropdown } =
     useRecordBoardSelection(recordBoardId);
