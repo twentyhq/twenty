@@ -19,6 +19,7 @@ import { UserThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider'
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { ServerPreconnect } from '@/ui/utilities/server-preconnect/components/ServerPreconnect';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
@@ -52,6 +53,7 @@ export const AppRouterProviders = () => {
                               <StrictMode>
                                 <PromiseRejectionEffect />
                                 <GotoHotkeysEffectsProvider />
+                                <ServerPreconnect />
                                 <PageTitle title={pageTitle} />
                                 <PageFavicon />
                                 <Outlet />
