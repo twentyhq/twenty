@@ -1,24 +1,19 @@
-import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
-
-import { useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray } from '@/activities/inline-cell/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
-import { useMultiObjectSearch } from '@/activities/inline-cell/hooks/useMultiObjectSearch';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { objectRecordMultiSelectMatchesFilterRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectMatchesFilterRecordsIdsComponentState';
+import { useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray } from '@/object-record/multiple-objects/multiple-objects-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { useMultiObjectSearch } from '@/object-record/multiple-objects/multiple-objects-picker/hooks/useMultiObjectSearch';
+import { objectRecordMultiSelectMatchesFilterRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/objectRecordMultiSelectMatchesFilterRecordsIdsComponentState';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-// Todo: this effect should be deprecated to use sync hooks
-export const ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect = ({
-  recordPickerInstanceId,
-}: {
-  recordPickerInstanceId: string;
-}) => {
+export const useActivityTargetInlinePerformSearch = (
+  componentInstanceIdFromProps: string,
+) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordPickerComponentInstanceContext,
-    recordPickerInstanceId,
+    componentInstanceIdFromProps,
   );
   const setRecordMultiSelectMatchesFilterRecords = useSetRecoilState(
     objectRecordMultiSelectMatchesFilterRecordsIdsComponentState({
@@ -43,9 +38,14 @@ export const ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect = ({
         matchesSearchFilterObjectRecordsQueryResult,
     });
 
-  useEffect(() => {
-    setRecordMultiSelectMatchesFilterRecords(objectRecordForSelectArray);
-  }, [setRecordMultiSelectMatchesFilterRecords, objectRecordForSelectArray]);
+  const performSearch = useRecoilCallback(
+    ({ set }) => {
+      return (searchFilter: string) => {
+        setRecordMultiSelectMatchesFilterRecords(objectRecordForSelectArray);
+      };
+    },
+    [objectRecordForSelectArray, setRecordMultiSelectMatchesFilterRecords],
+  );
 
-  return <></>;
+  return { performSearch };
 };

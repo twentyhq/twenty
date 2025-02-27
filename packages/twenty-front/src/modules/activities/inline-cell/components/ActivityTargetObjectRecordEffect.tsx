@@ -1,15 +1,24 @@
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { activityTargetObjectRecordComponentFamilyState } from '@/activities/inline-cell/states/activityTargetObjectRecordComponentFamilyState';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
-import { activityTargetObjectRecordFamilyState } from '@/object-record/record-field/states/activityTargetObjectRecordFamilyState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const ActivityTargetObjectRecordEffect = ({
   activityTargetWithTargetRecords,
+  recordPickerInstanceId,
 }: {
   activityTargetWithTargetRecords: ActivityTargetWithTargetRecord[];
+  recordPickerInstanceId: string;
 }) => {
+  const activityTargetObjectRecordFamilyState =
+    useRecoilComponentCallbackStateV2(
+      activityTargetObjectRecordComponentFamilyState,
+      recordPickerInstanceId,
+    );
+
   const updateActivityTargets = useRecoilCallback(
     ({ snapshot, set }) =>
       (newActivityTargets: ActivityTargetWithTargetRecord[]) => {

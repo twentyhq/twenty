@@ -1,13 +1,13 @@
 type OpenActivityTargetInlineCellEditModeProps = {
-  recordPickerInstanceId: string;
+  componentInstanceId: string;
 };
 
 export const useOpenActivityTargetInlineCellEditMode = () => {
   const openActivityTargetInlineCellEditMode = ({
-    recordPickerInstanceId,
+    componentInstanceId,
   }: OpenActivityTargetInlineCellEditModeProps) => {
     // eslint-disable-next-line no-console
-    console.log('openActivityTargetInlineCellEditMode', recordPickerInstanceId);
+    console.log('openActivityTargetInlineCellEditMode', componentInstanceId);
   };
 
   return { openActivityTargetInlineCellEditMode };
