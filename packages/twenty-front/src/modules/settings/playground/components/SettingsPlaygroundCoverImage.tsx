@@ -17,5 +17,6 @@ export const StyledSettingsApiPlaygroundCoverImage = styled(Card)`
   height: 153px;
   justify-content: center;
   position: relative;
+  margin-top: ${({ theme }) => theme.spacing(4)};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
