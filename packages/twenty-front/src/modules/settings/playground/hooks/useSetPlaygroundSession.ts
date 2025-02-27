@@ -1,5 +1,5 @@
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundConfig';
-import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionTypes';
+import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionKeys';
 import { PlaygroundSessionService } from '@/settings/playground/utils/playgroundSessionService';
 
 export const useSetPlaygroundSession = () => {
