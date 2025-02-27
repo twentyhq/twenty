@@ -3,7 +3,7 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Button, H2Title, IconLoader, IconReload, Section } from 'twenty-ui';
+import { Button, H2Title, IconReload, Section } from 'twenty-ui';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
@@ -65,7 +65,8 @@ export const SettingsCustomDomain = () => {
           )}
         />
         <StyledButton
-          Icon={loading ? IconLoader : IconReload}
+          loading={loading}
+          Icon={IconReload}
           title={t`Reload`}
           variant="primary"
           onClick={checkCustomDomainRecords}
