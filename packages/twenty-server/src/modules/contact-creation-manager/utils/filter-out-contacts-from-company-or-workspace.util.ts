@@ -11,7 +11,10 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
 ): Contact[] {
   const selfDomainName = getDomainNameFromHandle(connectedAccount.handle);
 
-  const handleAliases = connectedAccount.handleAliases?.split(',') || [];
+  const handleAliases = [
+    connectedAccount.handle,
+    ...(connectedAccount.handleAliases?.split(',') || []),
+  ];
 
   const workspaceMembersMap = workspaceMembers.reduce(
     (map, workspaceMember) => {
