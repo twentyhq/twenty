@@ -11,7 +11,7 @@ import {
   ButtonPosition,
   ButtonSize,
   ButtonVariant,
-} from '../Button';
+} from '../Button/Button.main';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Input/Button/Button',
@@ -327,7 +327,7 @@ export const FullWidth: Story = {
 
 export const LoadingButton: Story = {
   args: {
-    title: 'Refresh',
+    title: 'Reload',
     Icon: IconReload,
     loading: true,
   },
@@ -349,7 +349,7 @@ export const LoadingButton: Story = {
         {
           name: 'loading',
           values: [true, false] satisfies boolean[],
-          props: (value: boolean) => ({ loading: value }), // ✅ Correct
+          props: (value: boolean) => ({ loading: value }),
         },
       ],
     },

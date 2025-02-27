@@ -9,10 +9,10 @@ import { useEffect } from 'react';
 import { IconComponent } from 'twenty-ui';
 import { Tab } from './Tab';
 
-export type SingleTabProps = {
+export type SingleTabProps<T extends string = string> = {
   title: string;
   Icon?: IconComponent;
-  id: string;
+  id: T;
   hide?: boolean;
   disabled?: boolean;
   pill?: string | React.ReactElement;

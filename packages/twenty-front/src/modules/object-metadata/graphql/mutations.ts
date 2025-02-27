@@ -13,6 +13,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isSearchable
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -98,6 +99,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isSearchable
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -119,6 +121,7 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isSearchable
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
