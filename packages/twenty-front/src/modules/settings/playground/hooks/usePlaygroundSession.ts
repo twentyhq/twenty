@@ -1,5 +1,5 @@
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundTypes';
-import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionTypes';
+import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundConfig';
+import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionKeys';
 import { PlaygroundSessionService } from '@/settings/playground/utils/playgroundSessionService';
 import { isDefined } from 'twenty-shared';
 

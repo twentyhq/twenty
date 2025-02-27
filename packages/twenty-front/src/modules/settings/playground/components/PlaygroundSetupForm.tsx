@@ -18,18 +18,6 @@ import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export enum PlaygroundTypes {
-  GRAPHQL = 'graphql',
-  REST = 'rest',
-}
-
-export enum PlaygroundSchemas {
-  METADATA = 'metadata',
-  CORE = 'core',
-}
-
-export const PLAYGROUND_API_KEY = 'apiKeyForPlayground';
-
 export const playgroundSetupFormSchema = z.object({
   apiKeyForPlayground: z.string(),
   schema: z.nativeEnum(PlaygroundSchemas),

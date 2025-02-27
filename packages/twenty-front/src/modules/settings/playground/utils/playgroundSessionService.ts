@@ -1,4 +1,4 @@
-import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionTypes';
+import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionKeys';
 
 export const PlaygroundSessionService = {
   get: <T = string>(key: PlaygroundSessionKeys): T | null =>

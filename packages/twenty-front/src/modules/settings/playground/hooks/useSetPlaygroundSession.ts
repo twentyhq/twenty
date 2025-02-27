@@ -1,4 +1,4 @@
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundTypes';
+import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundConfig';
 import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionTypes';
 import { PlaygroundSessionService } from '@/settings/playground/utils/playgroundSessionService';
 
