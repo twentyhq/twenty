@@ -7,7 +7,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useGenerateCombinedSearchRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedSearchRecordsQuery';
 import { MultiObjectRecordQueryResult } from '@/object-record/multiple-objects/types/MultiObjectRecordQueryResult';
-import { isObjectMetadataItemSearchableInCombinedRequest } from '@/object-record/utils/isObjectMetadataItemSearchableInCombinedRequest';
 import { isDefined } from 'twenty-shared';
 
 export const useMultiObjectSearch = ({
@@ -21,14 +20,11 @@ export const useMultiObjectSearch = ({
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const selectableObjectMetadataItems = objectMetadataItems
-    .filter(({ isSystem, isRemote }) => !isSystem && !isRemote)
-    .filter(({ nameSingular }) => {
-      return !excludedObjects?.includes(nameSingular as CoreObjectNameSingular);
-    })
-    .filter((objectMetadataItem) =>
-      isObjectMetadataItemSearchableInCombinedRequest(objectMetadataItem),
-    );
+  const selectableObjectMetadataItems = objectMetadataItems.filter(
+    ({ nameSingular, isSearchable }) =>
+      !excludedObjects?.includes(nameSingular as CoreObjectNameSingular) &&
+      isSearchable,
+  );
 
   const { limitPerMetadataItem } = useLimitPerMetadataItem({
     objectMetadataItems,

@@ -7,22 +7,22 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 interface SyncCustomerDataCommandOptions
-  extends ActiveWorkspacesMigrationCommandOptions {}
+  extends MaintainedWorkspacesMigrationCommandOptions {}
 
 @Command({
   name: 'billing:sync-customer-data',
   description: 'Sync customer data from Stripe for all active workspaces',
 })
-export class BillingSyncCustomerDataCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class BillingSyncCustomerDataCommand extends MaintainedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -34,7 +34,7 @@ export class BillingSyncCustomerDataCommand extends ActiveWorkspacesMigrationCom
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
     options: SyncCustomerDataCommandOptions,
     workspaceIds: string[],
