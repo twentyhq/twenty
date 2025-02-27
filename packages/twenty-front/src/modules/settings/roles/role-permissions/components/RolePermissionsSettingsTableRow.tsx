@@ -1,8 +1,8 @@
+import { RolePermissionsSettingPermission } from '@/settings/roles/types/RolePermissionsSettingPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Checkbox } from 'twenty-ui';
-import { RolePermissionsSettingPermission } from '~/pages/settings/roles/types/RolePermissionsSettingPermission';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.primary};

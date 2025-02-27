@@ -28,6 +28,7 @@ const mockWorkspaceMember = {
     firstName: 'John',
     lastName: 'Doe',
   },
+  colorScheme: 'Light' as const,
 };
 
 const createMockOptions = (): Options<any> => ({
@@ -168,6 +169,7 @@ describe('ApolloFactory', () => {
         firstName: 'John',
         lastName: 'Doe',
       },
+      colorScheme: 'Light' as const,
     };
 
     apolloFactory.updateWorkspaceMember(newWorkspaceMember);
