@@ -93,7 +93,6 @@ export class BillingResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApiKey() apiKey: string,
     @Args()
     {
       recurringInterval,
@@ -101,6 +100,7 @@ export class BillingResolver {
       plan,
       requirePaymentMethod,
     }: BillingCheckoutSessionInput,
+    @AuthApiKey() apiKey?: string,
   ) {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
