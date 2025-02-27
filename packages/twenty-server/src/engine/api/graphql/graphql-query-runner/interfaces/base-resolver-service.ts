@@ -90,17 +90,11 @@ export abstract class GraphqlQueryBaseResolverService<
           authContext.workspace.id,
         );
 
-      if (
-        featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
-        objectMetadataItemWithFieldMaps.isSystem === true
-      ) {
+      if (objectMetadataItemWithFieldMaps.isSystem === true) {
         await this.validateSystemObjectPermissionsOrThrow(options);
       }
 
-      if (
-        featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
-        !objectMetadataItemWithFieldMaps.isSystem
-      ) {
+      if (!objectMetadataItemWithFieldMaps.isSystem) {
         await this.validateObjectRecordPermissionsOrThrow({
           operationName,
           options,

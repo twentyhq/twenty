@@ -20,7 +20,6 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -126,9 +125,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Roles`,
           path: SettingsPath.Roles,
           Icon: IconLock,
-          isHidden:
-            !featureFlags[FeatureFlagKey.IsPermissionsEnabled] ||
-            !permissionMap[SettingsPermissions.ROLES],
+          isHidden: !permissionMap[SettingsPermissions.ROLES],
         },
         {
           label: t`Data model`,

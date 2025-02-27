@@ -181,15 +181,6 @@ export class BillingResolver {
     workspaceId: string;
     userWorkspaceId: string;
   }) {
-    const isPermissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspaceId,
-    );
-
-    if (!isPermissionsEnabled) {
-      return;
-    }
-
     if (
       await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspaceId,

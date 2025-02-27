@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
 
 const SettingsAccountsCalendars = lazy(() =>
@@ -342,7 +341,6 @@ export const SettingsRoutes = ({
         element={
           <SettingsProtectedRouteWrapper
             settingsPermission={SettingsPermissions.ROLES}
-            requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
           />
         }
       >

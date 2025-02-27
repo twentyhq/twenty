@@ -14,7 +14,6 @@ import { CustomDomainService } from 'src/engine/core-modules/domain-manager/serv
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -149,24 +148,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspace.id,
-    );
+    await this.validateSecurityPermissions({
+      payload,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
 
-    if (permissionsEnabled) {
-      await this.validateSecurityPermissions({
-        payload,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      });
-
-      await this.validateWorkspacePermissions({
-        payload,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      });
-    }
+    await this.validateWorkspacePermissions({
+      payload,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
       await this.validateSubdomainUpdate(payload.subdomain);

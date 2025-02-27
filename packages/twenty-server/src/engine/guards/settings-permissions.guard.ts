@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import {
@@ -30,15 +29,6 @@ export const SettingsPermissionsGuard = (
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const ctx = GqlExecutionContext.create(context);
       const workspaceId = ctx.getContext().req.workspace.id;
-
-      const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsEnabled,
-        workspaceId,
-      );
-
-      if (!permissionsEnabled) {
-        return true;
-      }
 
       const userWorkspaceId = ctx.getContext().req.userWorkspaceId;
 
