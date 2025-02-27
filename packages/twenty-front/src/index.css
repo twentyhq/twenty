@@ -21,3 +21,14 @@ form {
 .grecaptcha-badge {
   visibility: hidden !important;
 }
+
+input:not([placeholder]="email") {
+  direction: rtl;
+}
+
+div[contenteditable=true] {
+  direction: rtl;
+}
+input, textarea {
+  direction: rtl;
+}
