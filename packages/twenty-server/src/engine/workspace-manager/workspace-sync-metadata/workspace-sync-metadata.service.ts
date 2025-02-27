@@ -1,13 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import fs from 'fs/promises';
+
 import { DataSource, QueryFailedError } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
@@ -30,9 +34,11 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
+    private readonly workspaceSyncFieldMetadataRelationService: WorkspaceSyncFieldMetadataRelationService,
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   /**
@@ -62,6 +68,12 @@ export class WorkspaceSyncMetadataService {
     const manager = queryRunner.manager;
 
     try {
+      // const isNewRelationEnabled =
+      //   await this.featureFlagService.isFeatureEnabled(
+      //     FeatureFlagKey.IsNewRelationEnabled,
+      //     context.workspaceId,
+      //   );
+
       const workspaceMigrationRepository = manager.getRepository(
         WorkspaceMigrationEntity,
       );
@@ -101,12 +113,24 @@ export class WorkspaceSyncMetadataService {
 
       // 3 - Sync standard relations on standard and custom objects
       const workspaceRelationMigrationsStart = performance.now();
-      const workspaceRelationMigrations =
-        await this.workspaceSyncRelationMetadataService.synchronize(
+
+      let workspaceRelationMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+
+      // if (true) {
+      workspaceRelationMigrations =
+        await this.workspaceSyncFieldMetadataRelationService.synchronize(
           context,
           manager,
           storage,
         );
+      // } else {
+      //   workspaceRelationMigrations =
+      //     await this.workspaceSyncRelationMetadataService.synchronize(
+      //       context,
+      //       manager,
+      //       storage,
+      //     );
+      // }
 
       const workspaceRelationMigrationsEnd = performance.now();
 
@@ -153,6 +177,11 @@ export class WorkspaceSyncMetadataService {
         ...workspaceRelationMigrations,
         ...workspaceIndexMigrations,
       ]);
+
+      await fs.writeFile(
+        'workspace-migrations.json',
+        JSON.stringify(workspaceMigrations, null, 2),
+      );
 
       const workspaceMigrationsSaveEnd = performance.now();
 

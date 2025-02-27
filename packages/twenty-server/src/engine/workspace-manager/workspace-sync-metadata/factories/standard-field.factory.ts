@@ -14,26 +14,21 @@ import {
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
-import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
-import { assert } from 'src/utils/assert';
 
 @Injectable()
 export class StandardFieldFactory {
   create(
     target: typeof BaseWorkspaceEntity,
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     context: WorkspaceSyncContext,
   ): (PartialFieldMetadata | PartialComputedFieldMetadata)[];
 
   create(
     targets: (typeof BaseWorkspaceEntity)[],
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     context: WorkspaceSyncContext,
   ): Map<string, (PartialFieldMetadata | PartialComputedFieldMetadata)[]>;
 
@@ -41,7 +36,6 @@ export class StandardFieldFactory {
     targetOrTargets:
       | typeof BaseWorkspaceEntity
       | (typeof BaseWorkspaceEntity)[],
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     context: WorkspaceSyncContext,
   ):
     | (PartialFieldMetadata | PartialComputedFieldMetadata)[]
@@ -82,21 +76,18 @@ export class StandardFieldFactory {
         workspaceEntityMetadataArgs,
         metadataCollections.fields,
         context,
-        originalObjectMetadataMap,
         this.createFieldMetadata,
       ),
       ...this.processMetadata(
         workspaceEntityMetadataArgs,
         metadataCollections.relations,
         context,
-        originalObjectMetadataMap,
         this.createFieldRelationMetadata,
       ),
       ...this.processMetadata(
         workspaceEntityMetadataArgs,
         metadataCollections.dynamicRelations,
         context,
-        originalObjectMetadataMap,
         this.createComputedFieldRelationMetadata,
       ),
     ];
@@ -117,22 +108,15 @@ export class StandardFieldFactory {
     workspaceEntityMetadataArgs: WorkspaceEntityMetadataArgs | undefined,
     metadataArgs: T[],
     context: WorkspaceSyncContext,
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     createMetadata: (
       workspaceEntityMetadataArgs: WorkspaceEntityMetadataArgs | undefined,
       args: T,
       context: WorkspaceSyncContext,
-      originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     ) => U[],
   ): U[] {
     return metadataArgs
       .flatMap((args) =>
-        createMetadata(
-          workspaceEntityMetadataArgs,
-          args,
-          context,
-          originalObjectMetadataMap,
-        ),
+        createMetadata(workspaceEntityMetadataArgs, args, context),
       )
       .filter(Boolean) as U[];
   }
@@ -184,7 +168,6 @@ export class StandardFieldFactory {
     workspaceEntityMetadataArgs: WorkspaceEntityMetadataArgs | undefined,
     workspaceRelationMetadataArgs: WorkspaceRelationMetadataArgs,
     context: WorkspaceSyncContext,
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
   ): PartialFieldMetadata[] {
     const isNewRelationEnabled =
       context.featureFlags[FeatureFlagKey.IsNewRelationEnabled];
@@ -233,68 +216,22 @@ export class StandardFieldFactory {
       });
     }
 
-    let fieldMetadataRelation: PartialFieldMetadata<FieldMetadataType.RELATION> =
-      {
-        type: FieldMetadataType.RELATION,
-        standardId: workspaceRelationMetadataArgs.standardId,
-        name: workspaceRelationMetadataArgs.name,
-        label: workspaceRelationMetadataArgs.label,
-        description: workspaceRelationMetadataArgs.description,
-        icon: workspaceRelationMetadataArgs.icon,
-        workspaceId: context.workspaceId,
-        isCustom: false,
-        isSystem:
-          workspaceEntityMetadataArgs?.isSystem ||
-          workspaceRelationMetadataArgs.isSystem,
-        isNullable: true,
-        isUnique:
-          workspaceRelationMetadataArgs.type === RelationType.ONE_TO_ONE,
-        isActive: workspaceRelationMetadataArgs.isActive ?? true,
-      };
-
-    if (isNewRelationEnabled) {
-      const fromObjectNameSingular = convertClassNameToObjectMetadataName(
-        workspaceRelationMetadataArgs.target.name,
-      );
-      const toObjectNameSingular = convertClassNameToObjectMetadataName(
-        workspaceRelationMetadataArgs.inverseSideTarget().name,
-      );
-      const toFieldMetadataName =
-        (workspaceRelationMetadataArgs.inverseSideFieldKey as
-          | string
-          | undefined) ?? fromObjectNameSingular;
-
-      const toObjectMetadata = originalObjectMetadataMap[toObjectNameSingular];
-
-      assert(
-        toObjectMetadata,
-        `Object ${toObjectNameSingular} not found in DB
-    for relation TO defined in class ${fromObjectNameSingular}`,
-      );
-
-      const toFieldMetadata = toObjectMetadata?.fields.find(
-        (field) => field.name === toFieldMetadataName,
-      );
-
-      assert(
-        toFieldMetadata,
-        `Field ${toFieldMetadataName} not found in object ${toObjectNameSingular}
-    for relation TO defined in class ${fromObjectNameSingular}`,
-      );
-
-      fieldMetadataRelation = {
-        ...fieldMetadataRelation,
-        settings: {
-          relationType: workspaceRelationMetadataArgs.type,
-          onDelete: workspaceRelationMetadataArgs.onDelete,
-          joinColumnName: joinColumn,
-        },
-        relationTargetFieldMetadataId: toFieldMetadata?.id,
-        relationTargetObjectMetadataId: toObjectMetadata?.id,
-      };
-    }
-
-    fieldMetadataCollection.push(fieldMetadataRelation);
+    fieldMetadataCollection.push({
+      type: FieldMetadataType.RELATION,
+      standardId: workspaceRelationMetadataArgs.standardId,
+      name: workspaceRelationMetadataArgs.name,
+      label: workspaceRelationMetadataArgs.label,
+      description: workspaceRelationMetadataArgs.description,
+      icon: workspaceRelationMetadataArgs.icon,
+      workspaceId: context.workspaceId,
+      isCustom: false,
+      isSystem:
+        workspaceEntityMetadataArgs?.isSystem ||
+        workspaceRelationMetadataArgs.isSystem,
+      isNullable: true,
+      isUnique: workspaceRelationMetadataArgs.type === RelationType.ONE_TO_ONE,
+      isActive: workspaceRelationMetadataArgs.isActive ?? true,
+    });
 
     return fieldMetadataCollection;
   }
