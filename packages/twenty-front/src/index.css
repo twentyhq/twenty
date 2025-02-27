@@ -31,3 +31,11 @@ html[lang="fa"] div[contenteditable=true] {
 html[lang="fa"] input, html[lang="fa"] textarea {
   direction: rtl;
 }
+html[lang="fa"] .modal-backdrop {
+  direction: rtl;
+}
+html[lang="fa"] input[type="email"],
+html[lang="fa"] input[placeholder="Email"],
+html[lang="fa"] input[type="password"] {
+  direction: ltr;
+}
