@@ -10,14 +10,14 @@ module.exports = defineConfig({
     const rootWorkspace = Yarn.workspace({ ident: MONOREPO_ROOT_WORKSPACE });
     if (!rootWorkspace) {
       throw new Error(
-        `Should never occurs, ${MONOREPO_ROOT_WORKSPACE} workspace not found`,
+        `Should never occur, ${MONOREPO_ROOT_WORKSPACE} workspace not found`,
       );
     }
 
     const requiredNodeVersion = rootWorkspace.manifest.engines?.node;
     if (!requiredNodeVersion) {
       throw new Error(
-        `Should never occurs, ${requiredNodeVersion} could not find node range in engines manifest`,
+        `Should never occur, ${requiredNodeVersion} could not find node range in engines manifest`,
       );
     }
 
