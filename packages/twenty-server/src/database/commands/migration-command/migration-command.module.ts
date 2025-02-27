@@ -5,6 +5,9 @@ import { MigrationCommandInterface } from 'src/database/commands/migration-comma
 import { createUpgradeAllCommand } from 'src/database/commands/migration-command/create-upgrade-all-command.factory';
 import { getMigrationCommandsForVersion } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import { MIGRATION_COMMAND_INJECTION_TOKEN } from 'src/database/commands/migration-command/migration-command.constants';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
+import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 @Module({})
 export class MigrationCommandModule {
@@ -17,7 +20,12 @@ export class MigrationCommandModule {
 
     return {
       module: MigrationCommandModule,
-      imports: moduleMetadata.imports,
+      imports: [
+        ...(moduleMetadata.imports ?? []),
+        WorkspaceSyncMetadataModule,
+        DataSourceModule,
+        WorkspaceSyncMetadataCommandsModule,
+      ],
       providers: [
         ...(moduleMetadata.providers ?? []),
         ...commandClasses,
