@@ -1444,11 +1444,15 @@ msgid "Global"
 msgstr "Globální"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
-msgid "Go to Activities"
-msgstr ""
+#~ msgid "Go to Activities"
+#~ msgstr ""
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to Companies"
+msgstr ""
+
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to Opportunity"
 msgstr ""
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts

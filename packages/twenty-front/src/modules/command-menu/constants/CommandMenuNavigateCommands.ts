@@ -42,7 +42,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Opportunity,
     }),
-    label: t`Go to Activities`,
+    label: t`Go to Opportunity`,
     type: CommandType.Navigate,
     hotKeys: ['G', 'O'],
     Icon: IconTargetArrow,

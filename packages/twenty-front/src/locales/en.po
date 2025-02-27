@@ -1439,12 +1439,16 @@ msgid "Global"
 msgstr "Global"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
-msgid "Go to Activities"
-msgstr "Go to Activities"
+#~ msgid "Go to Activities"
+#~ msgstr "Go to Activities"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to Companies"
 msgstr "Go to Companies"
+
+#: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
+msgid "Go to Opportunity"
+msgstr "Go to Opportunity"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to People"
