@@ -1,7 +1,5 @@
-import {
-  PLAYGROUND_API_KEY,
-  PlaygroundSchemas,
-} from '@/settings/playground/components/PlaygroundSetupForm';
+import { usePlaygroundSession } from '@/settings/playground/hooks/usePlaygroundSession';
+import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundConfig';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
@@ -12,7 +10,7 @@ import { ThemeContext } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type GraphQLPlaygroundProps = {
-  schema: PlaygroundSchemas;
+  onError(): void;
 };
 
 const SchemaToPath = {
@@ -20,24 +18,25 @@ const SchemaToPath = {
   [PlaygroundSchemas.METADATA]: 'metadata',
 };
 
-export const GraphQLPlayground = ({ schema }: GraphQLPlaygroundProps) => {
-  const apiKey = sessionStorage.getItem(PLAYGROUND_API_KEY);
-  const baseUrl = REACT_APP_SERVER_BASE_URL;
-  const path = SchemaToPath[schema];
+export const GraphQLPlayground = ({ onError }: GraphQLPlaygroundProps) => {
+  const { apiKey, schema, isValid } = usePlaygroundSession();
 
   const { theme } = useContext(ThemeContext);
+
+  if (!isValid) {
+    onError();
+    return null;
+  }
+
+  const baseUrl = REACT_APP_SERVER_BASE_URL + '/' + SchemaToPath[schema];
 
   const explorer = explorerPlugin({
     showAttribution: true,
   });
 
   const fetcher = createGraphiQLFetcher({
-    url: baseUrl + '/' + path,
+    url: baseUrl,
   });
-
-  if (!baseUrl || !apiKey) {
-    return <></>;
-  }
 
   return (
     <GraphiQL
