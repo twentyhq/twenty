@@ -6,7 +6,7 @@ import { useLimitPerMetadataItem } from '@/object-metadata/hooks/useLimitPerMeta
 import { useOrderByFieldPerMetadataItem } from '@/object-metadata/hooks/useOrderByFieldPerMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray } from '@/object-record/multiple-objects/multiple-objects-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray } from '@/object-record/multiple-objects/multiple-objects-picker/hooks/useMultipleObjectsPickerQueryResultFormattedAsObjectRecordForSelectArray';
 import { MultiObjectRecordQueryResult } from '@/object-record/multiple-objects/types/MultiObjectRecordQueryResult';
 import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
 import { capitalize, isDefined } from 'twenty-shared';
@@ -17,7 +17,7 @@ export const EMPTY_QUERY = gql`
   }
 `;
 
-export const useMultiObjectSearchSelectedItemsQuery = ({
+export const useMultipleObjectsPickerSearchSelectedItemsQuery = ({
   selectedObjectRecordIds,
 }: {
   selectedObjectRecordIds: SelectedObjectRecordId[];

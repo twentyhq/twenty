@@ -1,6 +1,6 @@
 import { objectRecordsIdsMultiSelecComponentState } from '@/activities/states/objectRecordsIdsMultiSelectComponentState';
-import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
-import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/multiple-objects/multiple-objects-picker/states/objectRecordMultiSelectComponentFamilyState';
+import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerIsSelectedComponentFamilyState';
+import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerSelectedRecordsIdsComponentState';
 import { recordMultiSelectIsLoadingComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/recordMultiSelectIsLoadingComponentState';
 import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';

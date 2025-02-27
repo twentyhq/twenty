@@ -19,18 +19,19 @@ import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCrea
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/multiple-objects/multiple-objects-picker/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
-import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/multiple-objects/multiple-objects-picker/components/MultipleObjectRecordOnClickOutsideEffect';
-import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
+import { MultipleObjectsPicker } from '@/object-record/multiple-objects/multiple-objects-picker/components/MultipleObjectsPicker';
 import {
   ObjectRecordAndSelected,
   objectRecordMultiSelectComponentFamilyState,
-} from '@/object-record/multiple-objects/multiple-objects-picker/states/objectRecordMultiSelectComponentFamilyState';
+} from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerIsSelectedComponentFamilyState';
+import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerSelectedRecordsIdsComponentState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
+import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRef } from 'react';
+import { useEffect } from 'react';
 
 type ActivityTargetInlineCellEditModeProps = {
   activity: Task | Note;
@@ -265,7 +266,16 @@ export const ActivityTargetInlineCellEditMode = ({
     ],
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const { toggleClickOutsideListener: toggleRightDrawerClickOustideListener } =
+    useClickOutsideListener(RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID);
+
+  useEffect(() => {
+    toggleRightDrawerClickOustideListener(false);
+
+    return () => {
+      toggleRightDrawerClickOustideListener(true);
+    };
+  }, [toggleRightDrawerClickOustideListener]);
 
   return (
     <>
@@ -277,17 +287,12 @@ export const ActivityTargetInlineCellEditMode = ({
         recordPickerInstanceId={recordPickerInstanceId}
         selectedObjectRecordIds={selectedTargetObjectIds}
       />
-      <MultipleObjectRecordOnClickOutsideEffect
-        containerRef={containerRef}
+      <MultipleObjectsPicker
+        componentInstanceId={recordPickerInstanceId}
         onClickOutside={closeEditableField}
+        onSubmit={handleSubmit}
+        onChange={handleChange}
       />
-      <div ref={containerRef}>
-        <MultipleRecordPicker
-          onSubmit={handleSubmit}
-          onChange={handleChange}
-          componentInstanceId={recordPickerInstanceId}
-        />
-      </div>
     </>
   );
 };

@@ -10,7 +10,7 @@ import { MultiObjectRecordQueryResult } from '@/object-record/multiple-objects/t
 import { isObjectMetadataItemSearchableInCombinedRequest } from '@/object-record/utils/isObjectMetadataItemSearchableInCombinedRequest';
 import { isDefined } from 'twenty-shared';
 
-export const useMultiObjectSearch = ({
+export const useMultipleObjectsPickerSearch = ({
   searchFilterValue,
   limit,
   excludedObjects,

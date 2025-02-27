@@ -7,7 +7,8 @@ import { MultiObjectRecordQueryResult } from '@/object-record/multiple-objects/t
 import { formatMultiObjectRecordSearchResults } from '@/object-record/multiple-objects/utils/formatMultiObjectRecordSearchResults';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { isDefined } from 'twenty-shared';
-export const useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray =
+
+export const useMultipleObjectsPickerQueryResultFormattedAsObjectRecordForSelectArray =
   ({
     multiObjectRecordsQueryResult,
   }: {

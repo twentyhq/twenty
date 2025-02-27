@@ -3,7 +3,7 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/multiple-objects/multiple-objects-picker/states/objectRecordMultiSelectComponentFamilyState';
+import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerIsSelectedComponentFamilyState';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { useRecordPickerRecordsOptions } from '@/object-record/record-picker/hooks/useRecordPickerRecordsOptions';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
