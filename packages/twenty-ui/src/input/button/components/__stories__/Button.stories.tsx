@@ -349,7 +349,7 @@ export const LoadingButton: Story = {
         {
           name: 'loading',
           values: [true, false] satisfies boolean[],
-          props: (value: boolean) => ({ loading: value }), // ✅ Correct
+          props: (value: boolean) => ({ loading: value }),
         },
       ],
     },
