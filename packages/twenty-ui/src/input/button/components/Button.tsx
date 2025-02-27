@@ -358,9 +358,10 @@ const StyledButton = styled('button', {
 `;
 
 const StyledButtonWrapper = styled.div<{ loading: boolean }>`
+  height: 100%;
+
   max-width: ${({ loading, theme }) =>
     loading ? `calc(100% - ${theme.spacing(6)} - 10px)` : 'none'};
-
   position: relative;
 `;
 
