@@ -188,7 +188,7 @@ export type BillingProductDto = {
   description: Scalars['String'];
   images?: Maybe<Array<Scalars['String']>>;
   name: Scalars['String'];
-  prices: Array<Maybe<BillingPriceUnionDto>>;
+  prices: Array<BillingPriceUnionDto>;
   type: BillingUsageType;
 };
 
@@ -2222,7 +2222,7 @@ export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePa
 export type BillingBaseProductPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BillingBaseProductPricesQuery = { __typename?: 'Query', plans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, baseProduct: { __typename?: 'BillingProductDTO', prices: Array<{ __typename?: 'BillingPriceLicensedDTO', unitAmount: number, stripePriceId: string, recurringInterval: SubscriptionInterval } | { __typename?: 'BillingPriceMeteredDTO' } | null> } }> };
+export type BillingBaseProductPricesQuery = { __typename?: 'Query', plans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, baseProduct: { __typename?: 'BillingProductDTO', prices: Array<{ __typename?: 'BillingPriceLicensedDTO', unitAmount: number, stripePriceId: string, recurringInterval: SubscriptionInterval } | { __typename?: 'BillingPriceMeteredDTO' }> } }> };
 
 export type BillingPortalSessionQueryVariables = Exact<{
   returnUrlPath?: InputMaybe<Scalars['String']>;

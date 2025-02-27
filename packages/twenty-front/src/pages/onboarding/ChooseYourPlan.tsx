@@ -20,6 +20,7 @@ import {
 } from 'twenty-ui';
 import {
   BillingPlanKey,
+  BillingPriceLicensedDto,
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 import { useBillingBaseProductPricesQuery } from '~/generated/graphql';
@@ -97,21 +98,15 @@ export const ChooseYourPlan = () => {
 
   const { data: plans } = useBillingBaseProductPricesQuery();
 
-  const baseProductPrices = plans?.plans
-    ?.find((plan) => plan.planKey === BillingPlanKey.PRO)
-    ?.baseProduct.prices?.filter(
-      (
-        price,
-      ): price is NonNullable<typeof price> & {
-        recurringInterval: SubscriptionInterval;
-        unitAmount: number;
-      } => price !== null && 'recurringInterval' in price,
-    );
+  const baseProduct = plans?.plans.find(
+    (plan) => plan.planKey === BillingPlanKey.PRO,
+  )?.baseProduct;
 
-  const baseProductPrice = baseProductPrices?.find(
-    (price) => price.recurringInterval === SubscriptionInterval.Month,
+  const baseProductPrice = baseProduct?.prices.find(
+    (price): price is BillingPriceLicensedDto =>
+      'recurringInterval' in price &&
+      price.recurringInterval === SubscriptionInterval.Month,
   );
-
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
     (trialPeriod) =>
       !trialPeriod.isCreditCardRequired && trialPeriod.duration !== 0,
