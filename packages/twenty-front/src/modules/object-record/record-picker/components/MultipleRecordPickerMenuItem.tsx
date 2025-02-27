@@ -4,6 +4,7 @@ import { Avatar, MenuItemMultiSelectAvatar } from 'twenty-ui';
 
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { RECORD_PICKER_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-picker/constants/RecordPickerSelectableListComponentInstanceId';
+import { useIsObjectMetadataActive } from '@/object-record/record-picker/hooks/useIsObjectMetadataActive';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -47,6 +48,12 @@ export const MultipleRecordPickerMenuItem = ({
   );
 
   if (!record) {
+    return null;
+  }
+
+  const isActive = useIsObjectMetadataActive(record.objectMetadataItem?.nameSingular);
+
+  if (!isActive) {
     return null;
   }
 
