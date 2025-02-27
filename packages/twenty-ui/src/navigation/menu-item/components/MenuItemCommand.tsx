@@ -75,7 +75,7 @@ const StyledDescription = styled.span`
 const StyledTextContainer = styled.div`
   display: flex;
   flex-direction: row;
-  overflow: hidden;
+  width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
 export type MenuItemCommandProps = {
