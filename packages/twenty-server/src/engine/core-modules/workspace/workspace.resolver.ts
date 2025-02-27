@@ -111,7 +111,7 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApiKey() apiKey: string,
+    @AuthApiKey() apiKey?: string,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
