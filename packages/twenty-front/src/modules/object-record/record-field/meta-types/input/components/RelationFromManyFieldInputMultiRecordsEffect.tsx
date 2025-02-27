@@ -1,30 +1,35 @@
 import { useEffect, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
-import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerIsSelectedComponentFamilyState';
+import { multipleObjectsPickerMatchingSearchFilterRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerMatchingSearchFilterRecordsIdsComponentState';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { useRecordPickerRecordsOptions } from '@/object-record/record-picker/hooks/useRecordPickerRecordsOptions';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const RelationFromManyFieldInputMultiRecordsEffect = () => {
+type RelationFromManyFieldInputMultiRecordsEffectProps = {
+  recordPickerInstanceId: string;
+};
+
+export const RelationFromManyFieldInputMultiRecordsEffect = ({
+  recordPickerInstanceId,
+}: RelationFromManyFieldInputMultiRecordsEffectProps) => {
   const { fieldValue, fieldDefinition } =
     useRelationField<SingleRecordPickerRecord[]>();
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordPickerComponentInstanceContext,
   );
-  const {
-    objectRecordsIdsMultiSelectState,
-    objectRecordMultiSelectCheckedRecordsIdsState,
-    recordMultiSelectIsLoadingState,
-  } = useObjectRecordMultiSelectScopedStates(instanceId);
+
   const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
-    useRecoilState(objectRecordsIdsMultiSelectState);
+    useRecoilComponentStateV2(
+      multipleObjectsPickerMatchingSearchFilterRecordsIdsComponentState,
+      recordPickerInstanceId,
+    );
 
   const { records } = useRecordPickerRecordsOptions({
     objectNameSingular:
