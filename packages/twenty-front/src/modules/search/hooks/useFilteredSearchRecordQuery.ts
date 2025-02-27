@@ -1,8 +1,8 @@
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
-import { MultipleRecordPickerRecords } from '@/object-record/record-picker/types/MultipleRecordPickerRecords';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { MultipleRecordPickerRecords } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerRecords';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared';
 

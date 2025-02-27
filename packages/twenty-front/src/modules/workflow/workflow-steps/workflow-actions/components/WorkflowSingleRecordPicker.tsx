@@ -2,9 +2,9 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
-import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
-import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
+import { singleRecordPickerPreselectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerPreselectedIdComponentState';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -99,7 +99,7 @@ export const WorkflowSingleRecordPicker = ({
   const { closeDropdown } = useDropdown(dropdownId);
 
   const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
-    recordPickerSearchFilterComponentState,
+    singleRecordPickerPreselectedIdComponentState,
     dropdownId,
   );
 

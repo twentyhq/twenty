@@ -18,14 +18,14 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/multiple-objects/multiple-objects-picker/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
-import { MultipleObjectsPicker } from '@/object-record/multiple-objects/multiple-objects-picker/components/MultipleObjectsPicker';
 import {
   ObjectRecordAndSelected,
   objectRecordMultiSelectComponentFamilyState,
 } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerIsSelectedComponentFamilyState';
 import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerSelectedRecordsIdsComponentState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/record-picker/multiple-record-picker/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
+import { MultipleObjectsPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleObjectsPicker';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';

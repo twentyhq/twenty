@@ -8,7 +8,7 @@ import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-fiel
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 
 type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;

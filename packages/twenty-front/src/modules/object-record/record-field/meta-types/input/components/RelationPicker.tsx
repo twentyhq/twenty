@@ -8,8 +8,8 @@ import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/
 import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 
 export type RelationPickerProps = {
   selectedRecordId?: string;

@@ -3,7 +3,7 @@ import { RecoilRoot } from 'recoil';
 
 import { useLimitPerMetadataItem } from '@/object-metadata/hooks/useLimitPerMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 
 const instanceId = 'instanceId';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (

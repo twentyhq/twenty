@@ -2,7 +2,7 @@ import { RelationPicker } from '@/object-record/record-field/meta-types/input/co
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
 
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type RelationToOneFieldInputProps = {

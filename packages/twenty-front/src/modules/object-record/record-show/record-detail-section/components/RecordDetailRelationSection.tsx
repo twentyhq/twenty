@@ -12,11 +12,11 @@ import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/re
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
-import { SingleRecordPickerMenuItemsWithSearch } from '@/object-record/record-picker/components/SingleRecordPickerMenuItemsWithSearch';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
-import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { SingleRecordPickerMenuItemsWithSearch } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch';
+import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
@@ -86,7 +86,7 @@ export const RecordDetailRelationSection = ({
     useDropdown(dropdownId);
 
   const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
-    recordPickerSearchFilterComponentState,
+    singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
@@ -202,10 +202,10 @@ export const RecordDetailRelationSection = ({
                   />
                 }
                 dropdownComponents={
-                  <RecordPickerComponentInstanceContext.Provider
-                    value={{ instanceId: dropdownId }}
-                  >
-                    {isToOneObject ? (
+                  isToOneObject ? (
+                    <SingleRecordPickerComponentInstanceContext.Provider
+                      value={{ instanceId: dropdownId }}
+                    >
                       <SingleRecordPickerMenuItemsWithSearch
                         EmptyIcon={IconForbid}
                         onRecordSelected={handleRelationPickerEntitySelected}
@@ -215,22 +215,25 @@ export const RecordDetailRelationSection = ({
                         onCreate={createNewRecordAndOpenRightDrawer}
                         dropdownPlacement={dropdownPlacement}
                       />
-                    ) : (
-                      <>
-                        <RelationFromManyFieldInputMultiRecordsEffect />
-                        <MultipleRecordPicker
-                          componentInstanceId={dropdownId}
-                          onCreate={() => {
-                            closeDropdown();
-                            createNewRecordAndOpenRightDrawer?.();
-                          }}
-                          onChange={updateRelation}
-                          onSubmit={closeDropdown}
-                          dropdownPlacement={dropdownPlacement}
-                        />
-                      </>
-                    )}
-                  </RecordPickerComponentInstanceContext.Provider>
+                    </SingleRecordPickerComponentInstanceContext.Provider>
+                  ) : (
+                    <>
+                      <RelationFromManyFieldInputMultiRecordsEffect
+                        recordPickerInstanceId={dropdownId}
+                      />
+                      <MultipleRecordPicker
+                        componentInstanceId={dropdownId}
+                        onCreate={() => {
+                          closeDropdown();
+                          createNewRecordAndOpenRightDrawer?.();
+                        }}
+                        onChange={updateRelation}
+                        onSubmit={closeDropdown}
+                        onClickOutside={closeDropdown}
+                        dropdownPlacement={dropdownPlacement}
+                      />
+                    </>
+                  )
                 }
                 dropdownHotkeyScope={{ scope: dropdownId }}
               />

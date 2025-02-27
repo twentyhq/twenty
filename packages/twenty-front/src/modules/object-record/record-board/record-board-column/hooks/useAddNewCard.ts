@@ -2,8 +2,8 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
-import { useRecordSelectSearch } from '@/object-record/record-picker/hooks/useRecordSelectSearch';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { useRecordSelectSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
