@@ -1,11 +1,8 @@
 import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
-import { PlaygroundSchemas } from '@/settings/playground/components/PlaygroundSetupForm';
 import { SettingsPath } from '@/types/SettingsPath';
 
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { Trans } from '@lingui/react/macro';
-import { useParams } from 'react-router-dom';
-import { isDefined } from 'twenty-shared';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -16,14 +13,9 @@ export const SettingsGraphQLPlayground = () => {
     navigateSettings(SettingsPath.APIs);
   };
 
-  const { schema } = useParams<{
-    schema: PlaygroundSchemas;
-  }>();
-
-  if (!isDefined(schema)) {
+  const handleOnError = () => {
     handleExitFullScreen();
-    return null;
-  }
+  };
 
   return (
     <FullScreenContainer
@@ -40,7 +32,7 @@ export const SettingsGraphQLPlayground = () => {
         { children: <Trans>GraphQL API Playground</Trans> },
       ]}
     >
-      <GraphQLPlayground schema={schema} />
+      <GraphQLPlayground onError={handleOnError} />
     </FullScreenContainer>
   );
 };
