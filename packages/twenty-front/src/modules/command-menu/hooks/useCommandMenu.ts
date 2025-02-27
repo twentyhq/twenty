@@ -31,6 +31,7 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared';
@@ -54,6 +55,7 @@ export const useCommandMenu = () => {
       () => {
         set(isCommandMenuOpenedState, false);
         set(isCommandMenuClosingState, true);
+        set(isDragSelectionStartEnabledState, true);
       },
     [],
   );
@@ -118,6 +120,7 @@ export const useCommandMenu = () => {
 
         set(isCommandMenuOpenedState, true);
         set(hasUserSelectedCommandState, false);
+        set(isDragSelectionStartEnabledState, false);
       },
     [
       copyContextStoreStates,
