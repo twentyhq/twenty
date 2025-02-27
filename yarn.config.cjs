@@ -14,10 +14,18 @@ module.exports = defineConfig({
       );
     }
 
-    const currentNodeVersion = process.version;
     const requiredNodeVersion = rootWorkspace.manifest.engines?.node;
+    if (!requiredNodeVersion) {
+      throw new Error(
+        `Should never occurs, ${requiredNodeVersion} could not find node range in engines manifest`,
+      );
+    }
+
+    const currentNodeVersion = process.version;
     if (!semver.satisfies(currentNodeVersion, requiredNodeVersion)) {
-      throw new Error("Node version doesn't match the required version");
+      throw new Error(
+        `Node version ${currentNodeVersion} doesn't match the required version, please use ${requiredNodeVersion}`,
+      );
     }
   },
 });
