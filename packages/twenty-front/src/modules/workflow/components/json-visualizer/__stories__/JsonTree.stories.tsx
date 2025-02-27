@@ -1,11 +1,13 @@
 import { JsonTree } from '@/workflow/components/json-visualizer/components/JsonTree';
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 const meta: Meta<typeof JsonTree> = {
   title: 'Modules/Workflow/JsonVisualizer/JsonTree',
   component: JsonTree,
   args: {},
   argTypes: {},
+  decorators: [ComponentDecorator],
 };
 
 export default meta;
@@ -36,9 +38,30 @@ export const Null: Story = {
   },
 };
 
-export const Array: Story = {
+export const ArraySimple: Story = {
   args: {
     value: [1, 2, 3],
+  },
+};
+
+export const ArrayNested: Story = {
+  args: {
+    value: [1, 2, ['a', 'b', 'c'], 3],
+  },
+};
+
+export const ArrayWithObjects: Story = {
+  args: {
+    value: [
+      {
+        name: 'John Doe',
+        age: 30,
+      },
+      {
+        name: 'John Dowl',
+        age: 42,
+      },
+    ],
   },
 };
 
