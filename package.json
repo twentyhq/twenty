@@ -349,7 +349,7 @@
     "vitest": "1.4.0"
   },
   "engines": {
-    "node": ">=18.0.0 <19.0.0",
+    "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
