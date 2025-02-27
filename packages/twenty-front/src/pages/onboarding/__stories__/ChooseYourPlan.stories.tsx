@@ -3,9 +3,14 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 import { HttpResponse, graphql } from 'msw';
 
+import { BILLING_BASE_PRODUCT_PRICES } from '@/billing/graphql/billingBaseProductPrices';
 import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { OnboardingStatus } from '~/generated/graphql';
+import {
+  BillingPlanKey,
+  OnboardingStatus,
+  SubscriptionInterval,
+} from '~/generated/graphql';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import {
   PageDecorator,
@@ -31,33 +36,30 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        graphql.query('BillingBaseProductPrices', () => {
-          return HttpResponse.json({
-            data: {
-              plans: [
-                {
-                  planKey: 'PRO',
-                  baseProduct: {
-                    prices: [
-                      {
-                        __typename: 'BillingPriceLicensedDTO',
-                        recurringInterval: 'month',
-                        stripePriceId: 'monthly8usd',
-                        unitAmount: 900,
-                      },
-                      {
-                        __typename: 'BillingPriceLicensedDTO',
-                        recurringInterval: 'year',
-                        stripePriceId: 'priceId',
-                        unitAmount: 9000,
-                      },
-                    ],
+        graphql.query(
+          getOperationName(BILLING_BASE_PRODUCT_PRICES) ?? '',
+          () => {
+            return HttpResponse.json({
+              data: {
+                plans: [
+                  {
+                    planKey: BillingPlanKey.PRO,
+                    baseProduct: {
+                      prices: [
+                        {
+                          __typename: 'BillingPriceLicensedDTO',
+                          unitAmount: 900,
+                          stripePriceId: 'monthly8usd',
+                          recurringInterval: SubscriptionInterval.Month,
+                        },
+                      ],
+                    },
                   },
-                },
-              ],
-            },
-          });
-        }),
+                ],
+              },
+            });
+          },
+        ),
         ...graphqlMocks.handlers,
       ],
     },
