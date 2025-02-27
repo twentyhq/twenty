@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -50,6 +50,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
@@ -65,6 +66,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => User)
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(
     @InjectRepository(User, 'core')

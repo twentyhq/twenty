@@ -4,9 +4,10 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
+import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormMultiSelectFieldInputHotKeyScope';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { SelectOption } from '@/spreadsheet-import/types';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
@@ -74,7 +75,8 @@ export const FormMultiSelectFieldInput = ({
   const inputId = useId();
   const theme = useTheme();
 
-  const hotkeyScope = MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID;
+  const hotkeyScope =
+    FormMultiSelectFieldInputHotKeyScope.FormMultiSelectFieldInput;
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -234,6 +236,9 @@ export const FormMultiSelectFieldInput = ({
             draftValue.editingMode === 'edit' && (
               <OverlayContainer>
                 <MultiSelectInput
+                  selectableListComponentInstanceId={
+                    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
+                  }
                   hotkeyScope={hotkeyScope}
                   options={options}
                   onCancel={onCancel}

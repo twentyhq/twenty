@@ -9,7 +9,7 @@ import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewField } from '@/views/types/ViewField';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -48,10 +48,9 @@ export const RecordIndexTableContainerEffect = () => {
 
   const handleToggleColumnSort = useHandleToggleColumnSort({
     objectNameSingular,
-    viewBarId,
   });
 
-  const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   useEffect(() => {
     setOnToggleColumnFilter(
@@ -115,13 +114,10 @@ export const RecordIndexTableContainerEffect = () => {
   );
 
   useEffect(() => {
-    currentViewWithSavedFiltersAndSorts?.viewFields.forEach((viewField) => {
+    currentView?.viewFields.forEach((viewField) => {
       setViewFieldAggregateOperation(viewField);
     });
-  }, [
-    currentViewWithSavedFiltersAndSorts?.viewFields,
-    setViewFieldAggregateOperation,
-  ]);
+  }, [currentView, setViewFieldAggregateOperation]);
 
   return <></>;
 };

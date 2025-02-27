@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { InputSchema } from 'src/modules/workflow/workflow-builder/types/input-schema.type';
+import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 

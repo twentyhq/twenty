@@ -1,25 +1,26 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import {
-  ActiveWorkspacesCommandOptions,
-  ActiveWorkspacesCommandRunner,
-} from 'src/database/commands/active-workspaces.command';
 import { CommandLogger } from 'src/database/commands/logger';
+import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
+import {
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { settings } from 'src/engine/constants/settings';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
-@Command({
-  name: 'upgrade-0.42:limit-amount-of-view-field',
+@MigrationCommand({
+  name: 'limit-amount-of-view-field',
   description: 'Limit amount of view field.',
+  version: '0.42',
 })
-export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner {
+export class LimitAmountOfViewFieldCommand extends MaintainedWorkspacesMigrationCommandRunner {
   protected readonly logger: CommandLogger;
 
   constructor(
@@ -35,7 +36,7 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner
     this.logger.setVerbose(false);
   }
 
-  async execute(workspaceId: string, dryRun?: boolean): Promise<void> {
+  async runOnWorkspace(workspaceId: string, dryRun?: boolean): Promise<void> {
     this.logger.log(
       `Processing workspace ${workspaceId} for view field limitation`,
     );
@@ -94,9 +95,9 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner
     }
   }
 
-  async executeActiveWorkspacesCommand(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesCommandOptions,
+    options: MaintainedWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(`Running limit-amount-of-view-field command`);
@@ -107,7 +108,7 @@ export class LimitAmountOfViewFieldCommand extends ActiveWorkspacesCommandRunner
 
     for (const [index, workspaceId] of workspaceIds.entries()) {
       try {
-        await this.execute(workspaceId, options?.dryRun);
+        await this.runOnWorkspace(workspaceId, options?.dryRun);
         this.logger.verbose(
           `Processed workspace: ${workspaceId} (${index + 1}/${
             workspaceIds.length

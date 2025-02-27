@@ -106,7 +106,7 @@ export class RestApiCoreServiceV2 {
     }
 
     const objectMetadataNameSingular =
-      objectMetadata.objectMetadataItem.nameSingular;
+      objectMetadata.objectMetadataMapItem.nameSingular;
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspace.id,

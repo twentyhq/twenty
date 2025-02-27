@@ -3,12 +3,14 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
+import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -58,8 +60,9 @@ export const AdvancedFilterButton = () => {
     useGetCurrentView();
 
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
+  const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 
-  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
+  const { upsertRecordFilter } = useUpsertRecordFilter();
 
   const objectMetadataId =
     currentViewWithCombinedFiltersAndSorts?.objectMetadataId;
@@ -96,6 +99,11 @@ export const AdvancedFilterButton = () => {
 
       upsertCombinedViewFilterGroup(newViewFilterGroup);
 
+      upsertRecordFilterGroup({
+        id: newViewFilterGroup.id,
+        logicalOperator: RecordFilterGroupLogicalOperator.AND,
+      });
+
       const defaultFieldMetadataItem =
         availableFieldMetadataItemsForFilter.find(
           (fieldMetadataItem) =>
@@ -115,7 +123,7 @@ export const AdvancedFilterButton = () => {
         filterType,
       })[0];
 
-      upsertCombinedViewFilter({
+      upsertRecordFilter({
         id: v4(),
         fieldMetadataId: defaultFieldMetadataItem.id,
         operand: firstOperand,

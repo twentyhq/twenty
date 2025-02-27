@@ -25,6 +25,7 @@ export type MenuItemProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
+  LeftComponent?: ReactNode;
   RightIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
@@ -42,6 +43,7 @@ export const MenuItem = ({
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
   LeftIcon,
+  LeftComponent,
   RightIcon,
   onClick,
   onMouseEnter,
@@ -77,6 +79,7 @@ export const MenuItem = ({
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent
           LeftIcon={LeftIcon ?? undefined}
+          LeftComponent={LeftComponent}
           text={text}
           contextualText={contextualText}
           disabled={disabled}

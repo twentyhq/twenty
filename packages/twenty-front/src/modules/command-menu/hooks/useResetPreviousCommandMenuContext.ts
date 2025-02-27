@@ -1,3 +1,5 @@
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 
@@ -7,10 +9,10 @@ export const useResetPreviousCommandMenuContext = () => {
 
   const resetPreviousCommandMenuContext = () => {
     copyContextStoreStates({
-      instanceIdToCopyFrom: 'command-menu-previous',
-      instanceIdToCopyTo: 'command-menu',
+      instanceIdToCopyFrom: COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+      instanceIdToCopyTo: COMMAND_MENU_COMPONENT_INSTANCE_ID,
     });
-    resetContextStoreStates('command-menu-previous');
+    resetContextStoreStates(COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID);
   };
 
   return {
