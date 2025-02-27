@@ -1,4 +1,5 @@
 {
+  "private": true,
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
     "@apollo/client": "^3.7.17",
@@ -293,6 +294,7 @@
     "@typescript-eslint/utils": "6.21.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "@vitest/ui": "1.4.0",
+    "@yarnpkg/types": "^4.0.0",
     "chromatic": "^6.18.0",
     "concurrently": "^8.2.2",
     "cross-var": "^1.1.0",
@@ -347,7 +349,7 @@
     "vitest": "1.4.0"
   },
   "engines": {
-    "node": "^18.17.1",
+    "node": ">=18.0.0 <19.0.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
@@ -360,6 +362,7 @@
     "typescript": "5.3.3",
     "prosemirror-model": "1.23.0"
   },
+  "engineStrict": true,
   "version": "0.2.1",
   "nx": {},
   "scripts": {
