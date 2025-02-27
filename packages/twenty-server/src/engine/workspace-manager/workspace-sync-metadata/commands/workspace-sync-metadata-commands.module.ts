@@ -8,10 +8,9 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { ConvertRecordPositionsToIntegers } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/convert-record-positions-to-integers.command';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
-
 import { SyncWorkspaceLoggerModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.module';
-import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command';
 
+import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command';
 
 @Module({
   imports: [
@@ -21,12 +20,9 @@ import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command'
     DataSourceModule,
     WorkspaceDataSourceModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
-    SyncWorkspaceLoggerModule
+    SyncWorkspaceLoggerModule,
   ],
-  providers: [
-    SyncWorkspaceMetadataCommand,
-    ConvertRecordPositionsToIntegers,
-  ],
+  providers: [SyncWorkspaceMetadataCommand, ConvertRecordPositionsToIntegers],
   exports: [SyncWorkspaceMetadataCommand],
 })
 export class WorkspaceSyncMetadataCommandsModule {}

@@ -2,10 +2,11 @@ import { Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { Repository } from 'typeorm';
 
 import { MigrationCommandInterface } from 'src/database/commands/migration-command/interfaces/migration-command.interface';
-import { MaintainedWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 
+import { MaintainedWorkspacesMigrationCommandRunner } from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { MIGRATION_COMMAND_INJECTION_TOKEN } from 'src/database/commands/migration-command/migration-command.constants';
 import { MigrationCommandRunner } from 'src/database/commands/migration-command/migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -13,7 +14,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceLoggerService } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
-import { Repository } from 'typeorm';
 
 export function createUpgradeAllCommand(
   version: string,
@@ -43,8 +43,10 @@ export function createUpgradeAllCommand(
       workspaceIds: string[];
       options: Record<string, unknown>;
     }) {
+      // TODO Remove and avoid duplicated synchronize logic with SyncWorkspaceMetadataCommand after command refactoring
       this.logger.log(`Attempting to sync ${workspaceIds.length} workspaces.`);
-      let errorsDuringSync: string[] = [];
+      const errorsDuringSync: string[] = [];
+
       for (const [index, workspaceId] of workspaceIds.entries()) {
         try {
           this.logger.log(
@@ -73,6 +75,7 @@ export function createUpgradeAllCommand(
           }
         } catch (error) {
           const errorMessage = `Failed to synchronize workspace ${workspaceId}: ${error.message}`;
+
           this.logger.error(errorMessage);
           errorsDuringSync.push(errorMessage);
 
@@ -95,14 +98,13 @@ export function createUpgradeAllCommand(
       options: Record<string, unknown>,
       workspaceIds: string[],
     ): Promise<void> {
-      console.log(passedParams, options, workspaceIds)
       this.logger.log(`Running upgrade command for version ${version}`);
 
       for (const command of this.subCommands) {
         await command.runMigrationCommand(passedParams, options);
       }
 
-      await this.synchronizeWorkspaceMetadata({options, workspaceIds});
+      await this.synchronizeWorkspaceMetadata({ options, workspaceIds });
 
       this.logger.log(`Upgrade ${version} command completed!`);
     }
