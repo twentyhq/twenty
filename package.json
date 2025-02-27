@@ -362,7 +362,6 @@
     "typescript": "5.3.3",
     "prosemirror-model": "1.23.0"
   },
-  "engineStrict": true,
   "version": "0.2.1",
   "nx": {},
   "scripts": {
