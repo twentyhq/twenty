@@ -20,12 +20,11 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-
-import { WorkspaceService } from './workspace.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -61,62 +60,27 @@ describe('WorkspaceService', () => {
             softDelete: jest.fn(),
           },
         },
-        {
-          provide: WorkspaceManagerService,
+        ...[
+          WorkspaceManagerService,
+          WorkspaceManagerService,
+          UserWorkspaceService,
+          UserService,
+          DomainManagerService,
+          CustomDomainService,
+          BillingSubscriptionService,
+          BillingService,
+          EnvironmentService,
+          EmailService,
+          OnboardingService,
+          WorkspaceInvitationService,
+          PermissionsService,
+          FeatureFlagService,
+          ExceptionHandlerService,
+          PermissionsService,
+        ].map((service) => ({
+          provide: service,
           useValue: {},
-        },
-        {
-          provide: UserWorkspaceService,
-          useValue: {},
-        },
-        {
-          provide: UserService,
-          useValue: {},
-        },
-        {
-          provide: DomainManagerService,
-          useValue: {},
-        },
-        {
-          provide: CustomDomainService,
-          useValue: {},
-        },
-        {
-          provide: BillingSubscriptionService,
-          useValue: {},
-        },
-        {
-          provide: BillingService,
-          useValue: {},
-        },
-        {
-          provide: EnvironmentService,
-          useValue: {},
-        },
-        {
-          provide: EmailService,
-          useValue: {},
-        },
-        {
-          provide: OnboardingService,
-          useValue: {},
-        },
-        {
-          provide: WorkspaceInvitationService,
-          useValue: {},
-        },
-        {
-          provide: FeatureFlagService,
-          useValue: {},
-        },
-        {
-          provide: ExceptionHandlerService,
-          useValue: {},
-        },
-        {
-          provide: PermissionsService,
-          useValue: {},
-        },
+        })),
         {
           provide: WorkspaceCacheStorageService,
           useValue: {
