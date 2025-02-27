@@ -104,7 +104,7 @@ export const ChooseYourPlan = () => {
 
   const baseProductPrice = baseProduct?.prices.find(
     (price): price is BillingPriceLicensedDto =>
-      'recurringInterval' in price &&
+      'unitAmount' in price &&
       price.recurringInterval === SubscriptionInterval.Month,
   );
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
