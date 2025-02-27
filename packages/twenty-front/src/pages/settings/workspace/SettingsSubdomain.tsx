@@ -42,7 +42,7 @@ export const SettingsSubdomain = () => {
                 onChange={onChange}
                 error={error?.message}
                 disabled={!!currentWorkspace?.customDomain}
-                endAdornment={
+                rightAdornment={
                   isDefined(domainConfiguration.frontDomain)
                     ? `.${domainConfiguration.frontDomain}`
                     : undefined
