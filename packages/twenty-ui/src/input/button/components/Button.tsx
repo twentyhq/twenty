@@ -14,6 +14,8 @@ export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 export type ButtonAccent = 'default' | 'blue' | 'danger';
 
+const baseTransitionDelay = 300;
+
 export type ButtonProps = {
   className?: string;
   Icon?: IconComponent;
@@ -350,19 +352,11 @@ const StyledButton = styled('button', {
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
-  text-overflow: ellipsis;
+  padding-left: ${({ theme }) => theme.spacing(7)};
 
   &:focus {
     outline: none;
   }
-`;
-
-const StyledButtonWrapper = styled.div<{ loading: boolean }>`
-  height: 100%;
-
-  max-width: ${({ loading, theme }) =>
-    loading ? `calc(100% - ${theme.spacing(6)} - 10px)` : 'none'};
-  position: relative;
 `;
 
 const StyledSoonPill = styled(Pill)`
@@ -389,15 +383,6 @@ const StyledSeparator = styled.div<{
   width: 1px;
 `;
 
-const StyledLoader = styled.div`
-  position: absolute;
-  left: ${({ theme }) => theme.spacing(2)};
-  top: 50%;
-  transform: translateY(-50%);
-  width: ${({ theme }) => theme.spacing(6)};
-  height: ${({ theme }) => theme.spacing(3)};
-`;
-
 const StyledShortcutLabel = styled.div<{
   variant: ButtonVariant;
   accent: ButtonAccent;
@@ -417,24 +402,133 @@ const StyledShortcutLabel = styled.div<{
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledIcon = styled.div<{
-  loading: boolean;
-}>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: ${({ loading }) => (loading ? 0 : 1)};
+const StyledButtonWrapper = styled.div<
+  Pick<ButtonProps, 'loading' | 'variant' | 'accent' | 'inverted' | 'disabled'>
+>`
+  ${({ theme, variant, accent, inverted, disabled }) => css`
+    --tw-button-color: ${(() => {
+      switch (variant) {
+        case 'primary':
+          switch (accent) {
+            case 'default':
+              return !inverted
+                ? !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+                : theme.font.color.secondary;
+            case 'blue':
+              return !inverted ? theme.grayScale.gray0 : theme.color.blue;
+            case 'danger':
+              return !inverted ? theme.background.primary : theme.color.red;
+          }
+          break;
+        case 'secondary':
+        case 'tertiary':
+          switch (accent) {
+            case 'default':
+              return !inverted
+                ? !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+                : theme.font.color.inverted;
+            case 'blue':
+              return !inverted
+                ? !disabled
+                  ? theme.color.blue
+                  : theme.accent.accent4060
+                : theme.font.color.inverted;
+            case 'danger':
+              return !inverted
+                ? theme.font.color.danger
+                : theme.font.color.inverted;
+          }
+          break;
+      }
+      return theme.font.color.secondary; // Valeur par défaut
+    })()};
+  `}
+
+  height: 100%;
+  text-overflow: ellipsis;
+
+  max-width: ${({ loading, theme }) =>
+    loading ? `calc(100% - ${theme.spacing(8)})` : 'none'};
+  position: relative;
 `;
 
 const StyledText = styled.div<{ loading: boolean }>`
-  max-width: ${({ loading, theme }) =>
-    loading ? `calc(100% - ${theme.spacing(3)} - 10px)` : '100%'};
+  clip-path: ${({ loading, theme }) =>
+    loading ? ` inset(0 ${theme.spacing(6)} 0 0)` : ' inset(0 0 0 0)'};
+
   overflow: hidden;
+
   text-overflow: ellipsis;
   transform: ${({ theme, loading }) =>
     loading ? `translateX(${theme.spacing(3)})` : 'none'};
-  transition: transform 0.3s;
+
+  transition:
+    transform ${baseTransitionDelay}ms ease,
+    clip-path ${baseTransitionDelay}ms ease,
+    max-width ${baseTransitionDelay}ms ease;
+
+  transition-delay: ${({ loading }) =>
+    loading ? '0ms' : `${baseTransitionDelay / 4}ms`};
   white-space: nowrap;
+`;
+
+const StyledIcon = styled.div<{
+  loading: boolean;
+}>`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  color: var(--tw-button-color);
+
+  opacity: ${({ loading }) => (loading ? 0 : 1)};
+  transition: opacity ${baseTransitionDelay / 2}ms ease;
+  transition-delay: ${({ loading }) =>
+    loading ? '0ms' : `${baseTransitionDelay / 2}ms`};
+`;
+
+const StyledIconWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+
+  padding: 8px;
+
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+`;
+
+const StyledLoader = styled.div<{ loading: boolean }>`
+  left: ${({ theme }) => theme.spacing(2)};
+  opacity: ${({ loading }) => (loading ? 1 : 0)};
+  position: absolute;
+
+  transition: opacity ${baseTransitionDelay / 2}ms ease;
+  transition-delay: ${({ loading }) =>
+    loading ? `${baseTransitionDelay / 2}ms` : '0ms'};
+  width: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledEllipsis = styled.div<{ loading: boolean }>`
+  right: 0;
+  clip-path: ${({ theme, loading }) =>
+    loading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(5)})`};
+  overflow: hidden;
+  position: absolute;
+
+  transition: clip-path ${baseTransitionDelay}ms ease;
+`;
+
+const StyledTextWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  position: relative;
 `;
 
 export const Button = ({
@@ -467,12 +561,25 @@ export const Button = ({
   const [isFocused, setIsFocused] = useState(propFocus);
 
   return (
-    <StyledButtonWrapper loading={loading}>
-      {loading && (
-        <StyledLoader>
-          <Loader />
-        </StyledLoader>
-      )}
+    <StyledButtonWrapper
+      loading={loading}
+      variant={variant}
+      inverted={inverted}
+      disabled={soon || disabled}
+    >
+      <StyledIconWrapper>
+        {
+          <StyledLoader loading={loading}>
+            <Loader />
+          </StyledLoader>
+        }
+        {Icon && (
+          <StyledIcon loading={loading}>
+            <Icon size={theme.icon.size.sm} />
+          </StyledIcon>
+        )}
+      </StyledIconWrapper>
+
       <StyledButton
         fullWidth={fullWidth}
         variant={variant}
@@ -494,12 +601,10 @@ export const Button = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       >
-        {Icon && (
-          <StyledIcon loading={loading}>
-            <Icon size={theme.icon.size.sm} />
-          </StyledIcon>
-        )}
-        <StyledText loading={loading}>{title}</StyledText>
+        <StyledTextWrapper>
+          <StyledText loading={loading}>{title}</StyledText>
+          <StyledEllipsis loading={loading}>...</StyledEllipsis>
+        </StyledTextWrapper>
         {hotkeys && !isMobile && (
           <>
             <StyledSeparator buttonSize={size} accent={accent} />

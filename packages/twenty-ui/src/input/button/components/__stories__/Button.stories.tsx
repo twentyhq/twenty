@@ -327,7 +327,7 @@ export const FullWidth: Story = {
 
 export const LoadingButton: Story = {
   args: {
-    title: 'Refresh',
+    title: 'Reload',
     Icon: IconReload,
     loading: true,
   },
