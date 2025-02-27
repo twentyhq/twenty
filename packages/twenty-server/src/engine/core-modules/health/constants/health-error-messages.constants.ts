@@ -13,5 +13,4 @@ export const HEALTH_ERROR_MESSAGES = {
   CALENDAR_SYNC_CHECK_FAILED: 'Calendar sync check failed',
   CALENDAR_SYNC_HIGH_FAILURE_RATE: 'High failure rate in calendar sync jobs',
   APP_HEALTH_CHECK_FAILED: 'App health check failed',
-  APP_HEALTH_CHECK_TIMEOUT: 'App health check timeout',
 } as const;
