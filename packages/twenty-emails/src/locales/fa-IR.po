@@ -8,7 +8,7 @@ msgstr ""
 "Language: fa\n"
 "Project-Id-Version: twentyhamed\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-25 20:19\n"
+"PO-Revision-Date: 2025-02-27 17:26\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -34,6 +34,10 @@ msgstr "آدرس ایمیل خود را تایید کنید"
 msgid "Connect to Twenty"
 msgstr "به Twenty متصل شوید"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr ""
+
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr "Dear"
@@ -42,6 +46,14 @@ msgstr "به Twenty متصل شوید"
 msgid "Dear {userName}"
 msgstr "{userName} عزیز"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Dear {userName},"
+msgstr ""
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "از شما دعوت کرده است به فضای کاری به نام "
@@ -49,6 +61,10 @@ msgstr "از شما دعوت کرده است به فضای کاری به نام 
 #: src/emails/password-update-notify.email.tsx
 msgid "Hello"
 msgstr "سلام"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr ""
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -74,6 +90,10 @@ msgstr "به تیم خود در Twenty بپیوندید"
 msgid "Password updated"
 msgstr "رمز عبور به روز شد"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "بازنشانی"
@@ -81,6 +101,10 @@ msgstr "بازنشانی"
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "رمز عبور خود را بازنشانی کنید 🗝"
+
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Suspended Workspace "
+msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -108,6 +132,11 @@ msgstr ""
 
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
 msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx

@@ -8,7 +8,7 @@ msgstr ""
 "Language: fa\n"
 "Project-Id-Version: twentyhamed\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-25 20:19\n"
+"PO-Revision-Date: 2025-02-27 17:26\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -347,6 +347,10 @@ msgstr "ظاهر"
 msgid "Approved Domains"
 msgstr ""
 
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Approved Email Domain"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
 msgstr "عربی"
@@ -357,7 +361,7 @@ msgstr "آیا مطمئن هستید که می خواهید بازه زمانی 
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "آیا مطمئنید که می‌خواهید این نقش را تعیین کنید؟"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1086,6 +1090,10 @@ msgid "Email"
 msgstr "ایمل"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#~ msgid "Email can not be empty"
+#~ msgstr "Email can not be empty"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
 msgstr ""
 
@@ -1437,28 +1445,28 @@ msgstr "کلی"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 #~ msgid "Go to Activities"
-#~ msgstr ""
+#~ msgstr "Go to Activities"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to Companies"
-msgstr ""
+msgstr "رفتن به شرکت‌ها"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to Opportunity"
-msgstr ""
+msgstr "رفتن به فرصت‌ها"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to People"
-msgstr ""
+msgstr "رفتن به افراد"
 
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to Settings"
-msgstr ""
+msgstr "رفتن به تنظیمات"
 
 #: src/modules/command-menu/constants/CommandMenuNavigateCommands.ts
 msgid "Go to Tasks"
-msgstr ""
+msgstr "رفتن به تسک‌ها"
 
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
@@ -1578,7 +1586,7 @@ msgstr "ارائه دهنده تأیید اعتبار نامعتبر است"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-#~ msgstr "دامنه سفارشی نامعتبر است. دامنه‌های سفارشی باید کوچکتر از 256 کاراکتر باشند، نمی‌توانند آدرس IP باشند، نمی‌توانند حاوی فاصله باشند، نمی‌توانند حاوی کاراکترهای خاصی مانند _~`!@#$%^*()=+{}[]|\\;:'،<>/? باشند و نمی توانند با کاراکتر '-' شروع یا ختم شوند."
+#~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
@@ -2308,7 +2316,7 @@ msgstr "حذف"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "حذف {workspaceMemberName}؟"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2780,7 +2788,7 @@ msgstr "این عمل قابل لغو نیست. با این کار کل فضای
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
-#~ msgstr "این عضو از این نقش حذف خواهد شد."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -3102,6 +3110,10 @@ msgstr "بله"
 msgid "You are not allowed to create records for this object"
 msgstr ""
 
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#~ msgid "You are not allowed to create records in this object"
+#~ msgstr "You are not allowed to create records in this object"
+
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "You do not have access to impersonate users."
 msgstr ""
@@ -3137,3 +3149,4 @@ msgstr "فضای کار شما"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "فضای کار شما غیرفعال می‌شود"
+
