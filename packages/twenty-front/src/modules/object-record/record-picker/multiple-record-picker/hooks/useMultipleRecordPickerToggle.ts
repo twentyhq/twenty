@@ -10,10 +10,12 @@ export const useMultipleRecordPickerToggle = (
   );
 
   const openMultipleObjectsPicker = () => {
+    // eslint-disable-next-line no-console
     console.log('openMultipleObjectsPicker', componentInstanceId);
   };
 
   const closeMultipleObjectsPicker = () => {
+    // eslint-disable-next-line no-console
     console.log('closeMultipleObjectsPicker', componentInstanceId);
   };
 

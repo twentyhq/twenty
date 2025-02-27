@@ -1,15 +1,17 @@
 import { useEffect, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { multipleObjectsPickerMatchingSearchFilterRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerMatchingSearchFilterRecordsIdsComponentState';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
-import { useRecordPickerRecordsOptions } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerRecords';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
+import { multipleRecordPickerIsSelectedComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsSelectedComponentFamilyState';
+import { multipleRecordPickerSelectedRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSelectedRecordsIdsComponentState';
+import { useSingleRecordPickerRecords } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerRecords';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type RelationFromManyFieldInputMultiRecordsEffectProps = {
@@ -21,23 +23,21 @@ export const RelationFromManyFieldInputMultiRecordsEffect = ({
 }: RelationFromManyFieldInputMultiRecordsEffectProps) => {
   const { fieldValue, fieldDefinition } =
     useRelationField<SingleRecordPickerRecord[]>();
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordPickerComponentInstanceContext,
-  );
 
   const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
     useRecoilComponentStateV2(
-      multipleObjectsPickerMatchingSearchFilterRecordsIdsComponentState,
+      multipleRecordPickerSelectedRecordsIdsComponentState,
       recordPickerInstanceId,
     );
 
-  const { records } = useRecordPickerRecordsOptions({
+  const { records } = useSingleRecordPickerRecords({
     objectNameSingular:
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const setRecordMultiSelectIsLoading = useSetRecoilState(
-    recordMultiSelectIsLoadingState,
+  const setRecordMultiSelectIsLoading = useSetRecoilComponentStateV2(
+    multipleRecordPickerIsLoadingComponentState,
+    recordPickerInstanceId,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -59,10 +59,17 @@ export const RelationFromManyFieldInputMultiRecordsEffect = ({
     [records.recordsToSelect, objectMetadataItem],
   );
 
-  const [
-    objectRecordMultiSelectCheckedRecordsIds,
-    setObjectRecordMultiSelectCheckedRecordsIds,
-  ] = useRecoilState(objectRecordMultiSelectCheckedRecordsIdsState);
+  const multipleRecordPickerIsSelectedFamilyState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerIsSelectedComponentFamilyState,
+      recordPickerInstanceId,
+    );
+
+  const multipleRecordPickerSelectedRecordsIdsFamilyState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerSelectedRecordsIdsComponentState,
+      recordPickerInstanceId,
+    );
 
   const updateRecords = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -70,11 +77,12 @@ export const RelationFromManyFieldInputMultiRecordsEffect = ({
         for (const newRecord of newRecords) {
           const currentRecord = snapshot
             .getLoadable(
-              objectRecordMultiSelectComponentFamilyState({
-                scopeId: instanceId,
-                familyKey: newRecord.record.id,
-              }),
+              multipleRecordPickerIsSelectedFamilyState(newRecord.record.id),
             )
+            .getValue();
+
+          const objectRecordMultiSelectCheckedRecordsIds = snapshot
+            .getLoadable(multipleRecordPickerSelectedRecordsIdsFamilyState)
             .getValue();
 
           const newRecordWithSelected = {
@@ -91,16 +99,18 @@ export const RelationFromManyFieldInputMultiRecordsEffect = ({
             )
           ) {
             set(
-              objectRecordMultiSelectComponentFamilyState({
-                scopeId: instanceId,
-                familyKey: newRecordWithSelected.record.id,
-              }),
+              multipleRecordPickerIsSelectedFamilyState(
+                newRecordWithSelected.record.id,
+              ),
               newRecordWithSelected,
             );
           }
         }
       },
-    [objectRecordMultiSelectCheckedRecordsIds, instanceId],
+    [
+      multipleRecordPickerIsSelectedFamilyState,
+      multipleRecordPickerSelectedRecordsIdsFamilyState,
+    ],
   );
 
   useEffect(() => {
@@ -117,14 +127,14 @@ export const RelationFromManyFieldInputMultiRecordsEffect = ({
   ]);
 
   useEffect(() => {
-    setObjectRecordMultiSelectCheckedRecordsIds(
+    setObjectRecordsIdsMultiSelect(
       fieldValue
         ? fieldValue.map(
             (fieldValueItem: SingleRecordPickerRecord) => fieldValueItem.id,
           )
         : [],
     );
-  }, [fieldValue, setObjectRecordMultiSelectCheckedRecordsIds]);
+  }, [fieldValue, setObjectRecordsIdsMultiSelect]);
 
   useEffect(() => {
     setRecordMultiSelectIsLoading(records.loading);

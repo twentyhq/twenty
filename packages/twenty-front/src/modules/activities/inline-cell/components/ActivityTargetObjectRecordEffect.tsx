@@ -40,7 +40,7 @@ export const ActivityTargetObjectRecordEffect = ({
           }
         }
       },
-    [],
+    [activityTargetObjectRecordFamilyState],
   );
 
   useEffect(() => {

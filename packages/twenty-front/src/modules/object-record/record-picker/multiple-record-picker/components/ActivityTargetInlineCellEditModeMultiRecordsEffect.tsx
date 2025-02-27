@@ -1,18 +1,16 @@
 import { useEffect } from 'react';
-import {
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
-import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
-import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerIsSelectedComponentFamilyState';
-import { objectRecordMultiSelectMatchesFilterRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerMatchingSearchFilterRecordsIdsComponentState';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerIsSelectedComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsSelectedComponentFamilyState';
+import { multipleRecordPickerMatchingSearchFilterRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerMatchingSearchFilterRecordsIdsComponentState';
+import { multipleRecordPickerSelectedRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSelectedRecordsIdsComponentState';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 // Todo: this effect should be deprecated to use sync hooks
@@ -24,19 +22,21 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
   selectedObjectRecordIds: SelectedObjectRecordId[];
 }) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordPickerComponentInstanceContext,
+    MultipleRecordPickerComponentInstanceContext,
     recordPickerInstanceId,
   );
-  const {
-    objectRecordsIdsMultiSelectState,
-    objectRecordMultiSelectCheckedRecordsIdsState,
-  } = useObjectRecordMultiSelectScopedStates(instanceId);
-  const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
-    useRecoilState(objectRecordsIdsMultiSelectState);
 
-  const setObjectRecordMultiSelectCheckedRecordsIds = useSetRecoilState(
-    objectRecordMultiSelectCheckedRecordsIdsState,
-  );
+  const multipleRecordPickerSelectedRecordsIdsFamilyState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerSelectedRecordsIdsComponentState,
+      instanceId,
+    );
+
+  const multipleRecordPickerIsSelectedFamilyState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerIsSelectedComponentFamilyState,
+      instanceId,
+    );
 
   const updateRecords = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -44,15 +44,12 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
         for (const newRecord of newRecords) {
           const currentRecord = snapshot
             .getLoadable(
-              objectRecordMultiSelectComponentFamilyState({
-                scopeId: instanceId,
-                familyKey: newRecord.record.id,
-              }),
+              multipleRecordPickerIsSelectedFamilyState(newRecord.record.id),
             )
             .getValue();
 
           const objectRecordMultiSelectCheckedRecordsIds = snapshot
-            .getLoadable(objectRecordMultiSelectCheckedRecordsIdsState)
+            .getLoadable(multipleRecordPickerSelectedRecordsIdsFamilyState)
             .getValue();
 
           const newRecordWithSelected = {
@@ -69,43 +66,47 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
             )
           ) {
             set(
-              objectRecordMultiSelectComponentFamilyState({
-                scopeId: instanceId,
-                familyKey: newRecordWithSelected.record.id,
-              }),
+              multipleRecordPickerIsSelectedFamilyState(
+                newRecordWithSelected.record.id,
+              ),
               newRecordWithSelected,
             );
           }
         }
       },
-    [objectRecordMultiSelectCheckedRecordsIdsState, instanceId],
+    [
+      multipleRecordPickerIsSelectedFamilyState,
+      multipleRecordPickerSelectedRecordsIdsFamilyState,
+    ],
   );
 
-  const matchesSearchFilterObjectRecords = useRecoilValue(
-    objectRecordMultiSelectMatchesFilterRecordsIdsComponentState({
-      scopeId: instanceId,
-    }),
+  const matchesSearchFilterObjectRecords = useRecoilComponentValueV2(
+    multipleRecordPickerMatchingSearchFilterRecordsIdsComponentState,
+    instanceId,
+  );
+
+  const [selectedRecordsIds, setSelectedRecordsIds] = useRecoilComponentStateV2(
+    multipleRecordPickerSelectedRecordsIdsComponentState,
+    instanceId,
   );
 
   useEffect(() => {
     const allRecords = matchesSearchFilterObjectRecords ?? [];
     updateRecords(allRecords);
     const allRecordsIds = allRecords.map((record) => record.record.id);
-    if (!isDeeplyEqual(allRecordsIds, objectRecordsIdsMultiSelect)) {
-      setObjectRecordsIdsMultiSelect(allRecordsIds);
+    if (!isDeeplyEqual(allRecordsIds, selectedRecordsIds)) {
+      setSelectedRecordsIds(allRecordsIds);
     }
   }, [
     matchesSearchFilterObjectRecords,
-    objectRecordsIdsMultiSelect,
-    setObjectRecordsIdsMultiSelect,
+    selectedRecordsIds,
+    setSelectedRecordsIds,
     updateRecords,
   ]);
 
   useEffect(() => {
-    setObjectRecordMultiSelectCheckedRecordsIds(
-      selectedObjectRecordIds.map((rec) => rec.id),
-    );
-  }, [selectedObjectRecordIds, setObjectRecordMultiSelectCheckedRecordsIds]);
+    setSelectedRecordsIds(selectedObjectRecordIds.map((rec) => rec.id));
+  }, [selectedObjectRecordIds, setSelectedRecordsIds]);
 
   return <></>;
 };

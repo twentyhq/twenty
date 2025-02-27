@@ -60,6 +60,7 @@ export const RelationFromManyFieldInput = ({
         onSubmit={handleSubmit}
         onChange={updateRelation}
         onCreate={createNewRecordAndOpenRightDrawer}
+        onClickOutside={handleSubmit}
       />
     </>
   );

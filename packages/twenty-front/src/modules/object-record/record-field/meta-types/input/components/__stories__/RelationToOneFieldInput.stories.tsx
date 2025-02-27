@@ -18,7 +18,7 @@ import {
 } from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui';
 import {
   RelationToOneFieldInput,
@@ -74,12 +74,12 @@ const RelationToOneFieldInputWithContext = ({
         }}
         recordId={recordId}
       >
-        <RecordPickerComponentInstanceContext.Provider
+        <SingleRecordPickerComponentInstanceContext.Provider
           value={{ instanceId: 'relation-to-one-field-input' }}
         >
           <RelationWorkspaceSetterEffect />
           <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        </RecordPickerComponentInstanceContext.Provider>
+        </SingleRecordPickerComponentInstanceContext.Provider>
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>

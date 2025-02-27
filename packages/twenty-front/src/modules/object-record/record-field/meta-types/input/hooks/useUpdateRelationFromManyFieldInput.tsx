@@ -3,10 +3,11 @@ import { useRecoilCallback } from 'recoil';
 
 import { useAttachRelatedRecordFromRecord } from '@/object-record/hooks/useAttachRelatedRecordFromRecord';
 import { useDetachRelatedRecordFromRecord } from '@/object-record/hooks/useDetachRelatedRecordFromRecord';
-import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerSelectedRecordsIdsComponentState';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { multipleRecordPickerSelectedRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSelectedRecordsIdsComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUpdateRelationFromManyFieldInput = ({
@@ -40,32 +41,30 @@ export const useUpdateRelationFromManyFieldInput = ({
       fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
     });
 
+  const multipleRecordPickerSelectedRecordsIdsState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerSelectedRecordsIdsComponentState,
+      scopeId,
+    );
+
   const updateRelation = useRecoilCallback(
     ({ snapshot, set }) =>
       async (objectRecordId: string) => {
         const previouslyCheckedRecordsIds = snapshot
-          .getLoadable(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId,
-            }),
-          )
+          .getLoadable(multipleRecordPickerSelectedRecordsIdsState)
           .getValue();
 
         const isNewlySelected =
           !previouslyCheckedRecordsIds.includes(objectRecordId);
+
         if (isNewlySelected) {
-          set(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId,
-            }),
-            (prev) => [...prev, objectRecordId],
-          );
+          set(multipleRecordPickerSelectedRecordsIdsState, (prev) => [
+            ...prev,
+            objectRecordId,
+          ]);
         } else {
-          set(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId,
-            }),
-            (prev) => prev.filter((id) => id !== objectRecordId),
+          set(multipleRecordPickerSelectedRecordsIdsState, (prev) =>
+            prev.filter((id) => id !== objectRecordId),
           );
         }
 
@@ -82,8 +81,8 @@ export const useUpdateRelationFromManyFieldInput = ({
         }
       },
     [
+      multipleRecordPickerSelectedRecordsIdsState,
       recordId,
-      scopeId,
       updateOneRecordAndAttachRelations,
       updateOneRecordAndDetachRelations,
     ],

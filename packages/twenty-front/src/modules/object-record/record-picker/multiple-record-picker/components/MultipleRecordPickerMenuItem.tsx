@@ -3,10 +3,14 @@ import { useRecoilValue } from 'recoil';
 import { Avatar, MenuItemMultiSelectAvatar } from 'twenty-ui';
 
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerIsSelectedComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsSelectedComponentFamilyState';
+import { multipleRecordPickerSelectedRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSelectedRecordsIdsComponentState';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared';
 
 export const StyledSelectableItem = styled(SelectableItem)`
@@ -36,12 +40,15 @@ export const MultipleRecordPickerMenuItem = ({
     isSelectedItemIdSelector(objectRecordId),
   );
 
-  const record = useRecoilValue(
-    objectRecordMultiSelectFamilyState(objectRecordId),
+  const record = useRecoilComponentFamilyValueV2(
+    multipleRecordPickerIsSelectedComponentFamilyState,
+    objectRecordId,
+    componentInstanceId,
   );
 
-  const objectRecordMultiSelectCheckedRecordsIds = useRecoilValue(
-    objectRecordMultiSelectCheckedRecordsIdsState,
+  const selectedRecordsIds = useRecoilComponentValueV2(
+    multipleRecordPickerSelectedRecordsIdsComponentState,
+    componentInstanceId,
   );
 
   if (!record) {
@@ -58,7 +65,7 @@ export const MultipleRecordPickerMenuItem = ({
     return null;
   }
 
-  const selected = objectRecordMultiSelectCheckedRecordsIds.find(
+  const selected = selectedRecordsIds.find(
     (checkedObjectRecord) => checkedObjectRecord === objectRecordId,
   )
     ? true

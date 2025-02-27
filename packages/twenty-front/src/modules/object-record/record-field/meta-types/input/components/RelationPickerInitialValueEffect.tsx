@@ -1,4 +1,4 @@
-import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
+import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
 
@@ -11,7 +11,7 @@ export const RelationPickerInitialValueEffect = ({
   recordPickerInstanceId: string;
 }) => {
   const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
-    recordPickerSearchFilterComponentState,
+    singleRecordPickerSearchFilterComponentState,
     recordPickerInstanceId,
   );
 

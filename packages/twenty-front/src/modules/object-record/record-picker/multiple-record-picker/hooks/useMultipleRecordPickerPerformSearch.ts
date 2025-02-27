@@ -42,14 +42,11 @@ export const useMultipleRecordPickerPerformSearch = (
         matchesSearchFilterObjectRecordsQueryResult,
     });
 
-  const performSearch = useRecoilCallback(
-    ({ set }) => {
-      return (_searchFilter: string) => {
-        setRecordMultiSelectMatchesFilterRecords(objectRecordForSelectArray);
-      };
-    },
-    [objectRecordForSelectArray, setRecordMultiSelectMatchesFilterRecords],
-  );
+  const performSearch = useRecoilCallback(() => {
+    return (_searchFilter: string) => {
+      setRecordMultiSelectMatchesFilterRecords(objectRecordForSelectArray);
+    };
+  }, [objectRecordForSelectArray, setRecordMultiSelectMatchesFilterRecords]);
 
   return { performSearch };
 };

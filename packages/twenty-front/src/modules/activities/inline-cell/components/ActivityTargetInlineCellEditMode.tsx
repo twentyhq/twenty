@@ -18,14 +18,14 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import {
-  ObjectRecordAndSelected,
-  objectRecordMultiSelectComponentFamilyState,
-} from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerIsSelectedComponentFamilyState';
-import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/multiple-objects/multiple-objects-picker/states/multipleObjectsPickerSelectedRecordsIdsComponentState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/record-picker/multiple-record-picker/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
-import { MultipleObjectsPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleObjectsPicker';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import {
+  ObjectRecordAndSelected,
+  multipleRecordPickerIsSelectedComponentFamilyState,
+} from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsSelectedComponentFamilyState';
+import { multipleRecordPickerSelectedRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSelectedRecordsIdsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
@@ -86,6 +86,18 @@ export const ActivityTargetInlineCellEditMode = ({
       objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     });
 
+  const multipleRecordPickerIsSelectedFamilyState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerIsSelectedComponentFamilyState,
+      recordPickerInstanceId,
+    );
+
+  const multipleRecordPickerSelectedRecordsIdsFamilyState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerSelectedRecordsIdsComponentState,
+      recordPickerInstanceId,
+    );
+
   const handleSubmit = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
@@ -93,10 +105,9 @@ export const ActivityTargetInlineCellEditMode = ({
           activityTargetWithTargetRecords.filter((activityTarget) => {
             const recordSelectedInMultiSelect = snapshot
               .getLoadable(
-                objectRecordMultiSelectComponentFamilyState({
-                  scopeId: recordPickerInstanceId,
-                  familyKey: activityTarget.targetObject.id,
-                }),
+                multipleRecordPickerIsSelectedFamilyState(
+                  activityTarget.targetObject.id,
+                ),
               )
               .getValue() as ObjectRecordAndSelected;
 
@@ -119,7 +130,7 @@ export const ActivityTargetInlineCellEditMode = ({
     [
       activityTargetWithTargetRecords,
       closeEditableField,
-      recordPickerInstanceId,
+      multipleRecordPickerIsSelectedFamilyState,
       setActivityFromStore,
     ],
   );
@@ -141,23 +152,14 @@ export const ActivityTargetInlineCellEditMode = ({
         let activityTargetsAfterUpdate = Array.from(existingActivityTargets);
 
         const previouslyCheckedRecordsIds = snapshot
-          .getLoadable(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId: recordPickerInstanceId,
-            }),
-          )
+          .getLoadable(multipleRecordPickerSelectedRecordsIdsFamilyState)
           .getValue();
 
         const isNewlySelected = !previouslyCheckedRecordsIds.includes(recordId);
 
         if (isNewlySelected) {
           const record = snapshot
-            .getLoadable(
-              objectRecordMultiSelectComponentFamilyState({
-                scopeId: recordPickerInstanceId,
-                familyKey: recordId,
-              }),
-            )
+            .getLoadable(multipleRecordPickerIsSelectedFamilyState(recordId))
             .getValue();
 
           if (!record) {
@@ -166,12 +168,10 @@ export const ActivityTargetInlineCellEditMode = ({
             );
           }
 
-          set(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId: recordPickerInstanceId,
-            }),
-            (prev) => [...prev, recordId],
-          );
+          set(multipleRecordPickerSelectedRecordsIdsFamilyState, (prev) => [
+            ...prev,
+            recordId,
+          ]);
 
           const newActivityTargetId = v4();
           const fieldNameWithIdSuffix = getActivityTargetObjectFieldIdName({
@@ -221,11 +221,8 @@ export const ActivityTargetInlineCellEditMode = ({
             throw new Error('Could not delete this activity target.');
           }
 
-          set(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId: recordPickerInstanceId,
-            }),
-            previouslyCheckedRecordsIds.filter((id) => id !== recordId),
+          set(multipleRecordPickerSelectedRecordsIdsFamilyState, (prev) =>
+            prev.filter((id) => id !== recordId),
           );
           activityTargetsAfterUpdate = activityTargetsAfterUpdate.filter(
             (activityTarget) => activityTarget.id !== activityTargetToDeleteId,
@@ -253,7 +250,8 @@ export const ActivityTargetInlineCellEditMode = ({
       },
     [
       activityTargetWithTargetRecords,
-      recordPickerInstanceId,
+      multipleRecordPickerSelectedRecordsIdsFamilyState,
+      multipleRecordPickerIsSelectedFamilyState,
       activityObjectNameSingular,
       activity,
       objectMetadataItemActivityTarget,
@@ -287,9 +285,9 @@ export const ActivityTargetInlineCellEditMode = ({
         recordPickerInstanceId={recordPickerInstanceId}
         selectedObjectRecordIds={selectedTargetObjectIds}
       />
-      <MultipleObjectsPicker
+      <MultipleRecordPicker
         componentInstanceId={recordPickerInstanceId}
-        onClickOutside={closeEditableField}
+        onClickOutside={handleSubmit}
         onSubmit={handleSubmit}
         onChange={handleChange}
       />
