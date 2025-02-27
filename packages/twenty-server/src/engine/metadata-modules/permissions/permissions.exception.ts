@@ -16,9 +16,11 @@ export enum PermissionsExceptionCode {
   WORKSPACE_MEMBER_NOT_FOUND = 'WORKSPACE_MEMBER_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
   CANNOT_UNASSIGN_LAST_ADMIN = 'CANNOT_UNASSIGN_LAST_ADMIN',
+  CANNOT_DELETE_LAST_ADMIN_USER = 'CANNOT_DELETE_LAST_ADMIN_USER',
   UNKNOWN_OPERATION_NAME = 'UNKNOWN_OPERATION_NAME',
   UNKNOWN_REQUIRED_PERMISSION = 'UNKNOWN_REQUIRED_PERMISSION',
   CANNOT_UPDATE_SELF_ROLE = 'CANNOT_UPDATE_SELF_ROLE',
+  NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
 }
 
 export enum PermissionsExceptionMessage {
@@ -31,7 +33,9 @@ export enum PermissionsExceptionMessage {
   WORKSPACE_MEMBER_NOT_FOUND = 'Workspace member not found',
   ROLE_NOT_FOUND = 'Role not found',
   CANNOT_UNASSIGN_LAST_ADMIN = 'Cannot unassign admin role from last admin of the workspace',
+  CANNOT_DELETE_LAST_ADMIN_USER = 'Cannot delete account: user is the unique admin of a workspace',
   UNKNOWN_OPERATION_NAME = 'Unknown operation name, cannot determine required permission',
   UNKNOWN_REQUIRED_PERMISSION = 'Unknown required permission',
   CANNOT_UPDATE_SELF_ROLE = 'Cannot update self role',
+  NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'No role found for userWorkspace',
 }

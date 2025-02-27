@@ -4,9 +4,9 @@ import { Command, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -16,7 +16,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
 
 interface RunWorkspaceMigrationsOptions
-  extends ActiveWorkspacesMigrationCommandOptions {
+  extends MaintainedWorkspacesMigrationCommandOptions {
   force?: boolean;
 }
 
@@ -24,7 +24,7 @@ interface RunWorkspaceMigrationsOptions
   name: 'workspace:sync-metadata',
   description: 'Sync metadata',
 })
-export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class SyncWorkspaceMetadataCommand extends MaintainedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -37,7 +37,7 @@ export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesMigrationComma
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
     options: RunWorkspaceMigrationsOptions,
     workspaceIds: string[],

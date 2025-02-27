@@ -29,6 +29,7 @@ const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   isSystem: false,
   isCustom: false,
   isRemote: false,
+  isSearchable: false,
   labelPlural: 'object1s',
   labelSingular: 'object1',
   isLabelSyncedWithName: true,

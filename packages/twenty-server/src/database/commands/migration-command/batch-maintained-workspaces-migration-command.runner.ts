@@ -2,17 +2,17 @@ import chalk from 'chalk';
 import { Repository } from 'typeorm';
 
 import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-export abstract class BatchActiveWorkspacesMigrationCommandRunner<
+export abstract class BatchMaintainedWorkspacesMigrationCommandRunner<
   Options extends
-    ActiveWorkspacesMigrationCommandOptions = ActiveWorkspacesMigrationCommandOptions,
-> extends ActiveWorkspacesMigrationCommandRunner<Options> {
+    MaintainedWorkspacesMigrationCommandOptions = MaintainedWorkspacesMigrationCommandOptions,
+> extends MaintainedWorkspacesMigrationCommandRunner<Options> {
   constructor(
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -20,7 +20,7 @@ export abstract class BatchActiveWorkspacesMigrationCommandRunner<
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParams: string[],
     _options: Options,
     activeWorkspaceIds: string[],

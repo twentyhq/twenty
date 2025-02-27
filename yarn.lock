@@ -19925,6 +19925,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@yarnpkg/types@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@yarnpkg/types@npm:4.0.0"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 10c0/41f67a4aa5c414c1e228f51453451fa15e0dd70c5cf2b1ae1ca142a3f018f25e4a37e60372cd0f5970c755e1804a2e31e208bff427add1cf13f899b0b9adc1e0
+  languageName: node
+  linkType: hard
+
 "@zapier/secret-scrubber@npm:^1.0.8":
   version: 1.1.1
   resolution: "@zapier/secret-scrubber@npm:1.1.1"
@@ -47239,6 +47248,7 @@ __metadata:
     "@vitest/ui": "npm:1.4.0"
     "@wyw-in-js/vite": "npm:^0.5.3"
     "@xyflow/react": "npm:^12.4.2"
+    "@yarnpkg/types": "npm:^4.0.0"
     add: "npm:^2.0.6"
     addressparser: "npm:^1.0.1"
     afterframe: "npm:^1.0.2"

@@ -70,6 +70,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: true })
   isAuditLogged: boolean;
 
+  @Column({ default: false })
+  isSearchable: boolean;
+
   @Column({ type: 'jsonb', nullable: true })
   duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
 

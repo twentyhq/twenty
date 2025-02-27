@@ -19,6 +19,7 @@ export const mockPersonObjectMetadata = (
   isActive: true,
   isSystem: false,
   isAuditLogged: true,
+  isSearchable: true,
   duplicateCriteria: duplicateCriteria,
   fromRelations: [],
   toRelations: [],
