@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
@@ -26,25 +27,31 @@ export const getJestMetadataAndApolloMocksWrapper = ({
     <RecoilRoot initializeState={onInitializeRecoilSnapshot}>
       <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
         <MockedProvider mocks={apolloMocks} addTypename={false} cache={cache}>
-          <RecordFiltersComponentInstanceContext.Provider
+          <RecordFilterGroupsComponentInstanceContext.Provider
             value={{ instanceId: 'instanceId' }}
           >
-            <RecordSortsComponentInstanceContext.Provider
+            <RecordFiltersComponentInstanceContext.Provider
               value={{ instanceId: 'instanceId' }}
             >
-              <ViewComponentInstanceContext.Provider
+              <RecordSortsComponentInstanceContext.Provider
                 value={{ instanceId: 'instanceId' }}
               >
-                <JestObjectMetadataItemSetter>
-                  <ContextStoreComponentInstanceContext.Provider
-                    value={{ instanceId: 'instanceId' }}
-                  >
-                    <JestContextStoreSetter>{children}</JestContextStoreSetter>
-                  </ContextStoreComponentInstanceContext.Provider>
-                </JestObjectMetadataItemSetter>
-              </ViewComponentInstanceContext.Provider>
-            </RecordSortsComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
+                <ViewComponentInstanceContext.Provider
+                  value={{ instanceId: 'instanceId' }}
+                >
+                  <JestObjectMetadataItemSetter>
+                    <ContextStoreComponentInstanceContext.Provider
+                      value={{ instanceId: 'instanceId' }}
+                    >
+                      <JestContextStoreSetter>
+                        {children}
+                      </JestContextStoreSetter>
+                    </ContextStoreComponentInstanceContext.Provider>
+                  </JestObjectMetadataItemSetter>
+                </ViewComponentInstanceContext.Provider>
+              </RecordSortsComponentInstanceContext.Provider>
+            </RecordFiltersComponentInstanceContext.Provider>
+          </RecordFilterGroupsComponentInstanceContext.Provider>
         </MockedProvider>
       </SnackBarProviderScope>
     </RecoilRoot>

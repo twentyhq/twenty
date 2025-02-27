@@ -13,6 +13,7 @@ export const query = gql`
       icon
       isCustom
       isActive
+      isSearchable
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -79,6 +80,7 @@ export const responseData = {
   icon: '',
   isCustom: false,
   isActive: true,
+  isSearchable: false,
   createdAt: '',
   updatedAt: '',
   labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',

@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Repository } from 'typeorm';
 
-import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
+import {
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -24,7 +24,7 @@ import { SEARCH_FIELDS_FOR_TASKS } from 'src/modules/task/standard-objects/task.
   description: 'Migrate search vector on note and task entities',
   version: '0.43',
 })
-export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends MaintainedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -40,9 +40,9 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveWorks
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesMigrationCommandOptions,
+    options: MaintainedWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
