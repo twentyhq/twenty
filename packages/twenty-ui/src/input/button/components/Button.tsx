@@ -5,8 +5,9 @@ import { Pill } from '@ui/components/Pill/Pill';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Loader } from '@ui/feedback';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -33,6 +34,7 @@ export type ButtonProps = {
   dataTestId?: string;
   hotkeys?: string[];
   ariaLabel?: string;
+  loading?: boolean;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled('button', {
@@ -51,6 +53,7 @@ const StyledButton = styled('button', {
     | 'justify'
     | 'to'
     | 'target'
+    | 'loading'
   >
 >`
   align-items: center;
@@ -347,9 +350,18 @@ const StyledButton = styled('button', {
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
+  text-overflow: ellipsis;
+
   &:focus {
     outline: none;
   }
+`;
+
+const StyledButtonWrapper = styled.div<{ loading: boolean }>`
+  max-width: ${({ loading, theme }) =>
+    loading ? `calc(100% - ${theme.spacing(6)} - 10px)` : 'none'};
+
+  position: relative;
 `;
 
 const StyledSoonPill = styled(Pill)`
@@ -376,6 +388,15 @@ const StyledSeparator = styled.div<{
   width: 1px;
 `;
 
+const StyledLoader = styled.div`
+  position: absolute;
+  left: ${({ theme }) => theme.spacing(2)};
+  top: 50%;
+  transform: translateY(-50%);
+  width: ${({ theme }) => theme.spacing(6)};
+  height: ${({ theme }) => theme.spacing(3)};
+`;
+
 const StyledShortcutLabel = styled.div<{
   variant: ButtonVariant;
   accent: ButtonAccent;
@@ -393,6 +414,26 @@ const StyledShortcutLabel = styled.div<{
     }
   }};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledIcon = styled.div<{
+  loading: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: ${({ loading }) => (loading ? 0 : 1)};
+`;
+
+const StyledText = styled.div<{ loading: boolean }>`
+  max-width: ${({ loading, theme }) =>
+    loading ? `calc(100% - ${theme.spacing(3)} - 10px)` : '100%'};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: ${({ theme, loading }) =>
+    loading ? `translateX(${theme.spacing(3)})` : 'none'};
+  transition: transform 0.3s;
+  white-space: nowrap;
 `;
 
 export const Button = ({
@@ -416,46 +457,58 @@ export const Button = ({
   hotkeys,
   ariaLabel,
   type,
+  loading = false,
 }: ButtonProps) => {
   const theme = useTheme();
 
   const isMobile = useIsMobile();
 
-  const [isFocused, setIsFocused] = React.useState(propFocus);
+  const [isFocused, setIsFocused] = useState(propFocus);
 
   return (
-    <StyledButton
-      fullWidth={fullWidth}
-      variant={variant}
-      inverted={inverted}
-      size={size}
-      position={position}
-      disabled={soon || disabled}
-      focus={isFocused}
-      justify={justify}
-      accent={accent}
-      className={className}
-      onClick={onClick}
-      to={to}
-      as={to ? Link : 'button'}
-      target={target}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-      type={type}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-    >
-      {Icon && <Icon size={theme.icon.size.sm} />}
-      {title}
-      {hotkeys && !isMobile && (
-        <>
-          <StyledSeparator buttonSize={size} accent={accent} />
-          <StyledShortcutLabel variant={variant} accent={accent}>
-            {hotkeys.join(getOsShortcutSeparator())}
-          </StyledShortcutLabel>
-        </>
+    <StyledButtonWrapper loading={loading}>
+      {loading && (
+        <StyledLoader>
+          <Loader />
+        </StyledLoader>
       )}
-      {soon && <StyledSoonPill label="Soon" />}
-    </StyledButton>
+      <StyledButton
+        fullWidth={fullWidth}
+        variant={variant}
+        inverted={inverted}
+        position={position}
+        disabled={soon || disabled}
+        focus={isFocused}
+        justify={justify}
+        accent={accent}
+        className={className}
+        onClick={onClick}
+        to={to}
+        as={to ? Link : 'button'}
+        target={target}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+        type={type}
+        loading={loading}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+      >
+        {Icon && (
+          <StyledIcon loading={loading}>
+            <Icon size={theme.icon.size.sm} />
+          </StyledIcon>
+        )}
+        <StyledText loading={loading}>{title}</StyledText>
+        {hotkeys && !isMobile && (
+          <>
+            <StyledSeparator buttonSize={size} accent={accent} />
+            <StyledShortcutLabel variant={variant} accent={accent}>
+              {hotkeys.join(getOsShortcutSeparator())}
+            </StyledShortcutLabel>
+          </>
+        )}
+        {soon && <StyledSoonPill label="Soon" />}
+      </StyledButton>
+    </StyledButtonWrapper>
   );
 };
