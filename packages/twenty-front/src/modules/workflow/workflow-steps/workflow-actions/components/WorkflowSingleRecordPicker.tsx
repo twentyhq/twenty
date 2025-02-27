@@ -3,7 +3,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
-import { singleRecordPickerPreselectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerPreselectedIdComponentState';
+import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -99,7 +99,7 @@ export const WorkflowSingleRecordPicker = ({
   const { closeDropdown } = useDropdown(dropdownId);
 
   const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
-    singleRecordPickerPreselectedIdComponentState,
+    singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 

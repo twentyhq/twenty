@@ -13,6 +13,7 @@ import { isFieldRelation } from '@/object-record/record-field/types/guards/isFie
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
@@ -39,6 +40,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     onOpenEditMode,
     onCloseEditMode,
   } = useContext(FieldContext);
+
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -101,6 +103,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   );
 
   const { getIcon } = useIcons();
+  const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
     readonly: isFieldReadOnly,
@@ -135,8 +138,9 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
-    onOpenEditMode,
-    onCloseEditMode,
+    onOpenEditMode:
+      onOpenEditMode ?? (() => openFieldInput(fieldDefinition, recordId)),
+    onCloseEditMode: onCloseEditMode ?? (() => closeFieldInput()),
   };
 
   return (

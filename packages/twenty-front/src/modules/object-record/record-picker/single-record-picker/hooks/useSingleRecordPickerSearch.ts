@@ -1,6 +1,6 @@
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
-import { singleRecordPickerPreselectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerPreselectedIdComponentState';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
+import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useDebouncedCallback } from 'use-debounce';
@@ -19,8 +19,8 @@ export const useSingleRecordPickerSearch = (
     recordPickerComponentInstanceId,
   );
 
-  const setRecordPickerPreselectedId = useSetRecoilComponentStateV2(
-    singleRecordPickerPreselectedIdComponentState,
+  const setRecordPickerSelectedId = useSetRecoilComponentStateV2(
+    singleRecordPickerSelectedIdComponentState,
     recordPickerComponentInstanceId,
   );
   const debouncedSetSearchFilter = useDebouncedCallback(
@@ -33,14 +33,14 @@ export const useSingleRecordPickerSearch = (
 
   const resetSearchFilter = () => {
     debouncedSetSearchFilter('');
-    setRecordPickerPreselectedId('');
+    setRecordPickerSelectedId('');
   };
 
   const handleSearchFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     debouncedSetSearchFilter(event.currentTarget.value);
-    setRecordPickerPreselectedId('');
+    setRecordPickerSelectedId('');
   };
 
   return {

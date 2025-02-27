@@ -21,6 +21,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
@@ -79,6 +80,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const { openRecordInCommandMenu } = useCommandMenu();
+
+  const { openFieldInput } = useOpenFieldInputEditMode();
 
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -151,6 +154,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         }
 
         setDragSelectionStartEnabled(false);
+
+        openFieldInput(fieldDefinition, recordId);
 
         moveEditModeToTableCellPosition(cellPosition);
 
