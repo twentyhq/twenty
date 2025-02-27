@@ -11,6 +11,7 @@ import { MigrationCommandRunner } from 'src/database/commands/migration-command/
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { SyncWorkspaceLoggerService } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 import { Repository } from 'typeorm';
 
@@ -30,6 +31,7 @@ export function createUpgradeAllCommand(
       private readonly subCommands: MigrationCommandInterface[],
       private readonly dataSourceService: DataSourceService,
       private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
+      private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
     ) {
       super(workspaceRepository, twentyORMGlobalManager);
     }
@@ -53,14 +55,22 @@ export function createUpgradeAllCommand(
               workspaceId,
             );
 
-          await this.workspaceSyncMetadataService.synchronize(
-            {
+          const { storage, workspaceMigrations } =
+            await this.workspaceSyncMetadataService.synchronize(
+              {
+                workspaceId,
+                dataSourceId: dataSourceMetadata.id,
+              },
+              { applyChanges: !options.dryRun },
+            );
+
+          if (options.dryRun) {
+            await this.syncWorkspaceLoggerService.saveLogs(
               workspaceId,
-              dataSourceId: dataSourceMetadata.id,
-            },
-            { applyChanges: !options.dryRun },
-          );
-          // TODO save logs
+              storage,
+              workspaceMigrations,
+            );
+          }
         } catch (error) {
           const errorMessage = `Failed to synchronize workspace ${workspaceId}: ${error.message}`;
           this.logger.error(errorMessage);
@@ -85,14 +95,14 @@ export function createUpgradeAllCommand(
       options: Record<string, unknown>,
       workspaceIds: string[],
     ): Promise<void> {
-      console.log(passedParams, options, workspaceIds);
+      console.log(passedParams, options, workspaceIds)
       this.logger.log(`Running upgrade command for version ${version}`);
 
       for (const command of this.subCommands) {
         await command.runMigrationCommand(passedParams, options);
       }
 
-      await this.synchronizeWorkspaceMetadata({ options, workspaceIds });
+      await this.synchronizeWorkspaceMetadata({options, workspaceIds});
 
       this.logger.log(`Upgrade ${version} command completed!`);
     }
