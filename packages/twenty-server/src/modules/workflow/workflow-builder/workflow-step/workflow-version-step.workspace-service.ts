@@ -271,12 +271,14 @@ export class WorkflowVersionStepWorkspaceService {
 
     const newStepOutput: StepOutput = {
       id: stepId,
-      output: response,
+      output: {
+        result: response,
+      },
     };
 
     const updatedContext = {
       ...workflowRun.context,
-      [stepId]: newStepOutput,
+      [stepId]: response,
     };
 
     await this.workflowRunWorkspaceService.saveWorkflowRunState({
