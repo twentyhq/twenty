@@ -24,6 +24,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import {
   PermissionsException,
   PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -180,8 +181,8 @@ export class UserService extends TypeOrmQueryService<User> {
             error.code === PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN
           ) {
             throw new PermissionsException(
-              'Cannot delete account: user is the unique admin of a workspace',
-              PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN,
+              PermissionsExceptionMessage.CANNOT_DELETE_LAST_ADMIN_USER,
+              PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
             );
           }
           throw error;
