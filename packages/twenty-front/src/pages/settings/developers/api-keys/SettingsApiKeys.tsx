@@ -51,6 +51,8 @@ export const SettingsApiKeys = () => {
             <StyledSettingsApiPlaygroundCoverImage />
             <PlaygroundSetupForm />
           </Section>
+        </StyledContainer>
+        <StyledContainer>
           <Section>
             <H2Title
               title={t`API keys`}
