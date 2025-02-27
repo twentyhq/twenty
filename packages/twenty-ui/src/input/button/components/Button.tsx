@@ -14,7 +14,7 @@ export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 export type ButtonAccent = 'default' | 'blue' | 'danger';
 
-const baseTransitionDelay = 300;
+const baseTransitionTiming = 300;
 
 export type ButtonProps = {
   className?: string;
@@ -56,7 +56,7 @@ const StyledButton = styled('button', {
     | 'to'
     | 'target'
     | 'loading'
-  >
+  > & { hasIcon: boolean }
 >`
   align-items: center;
   ${({ theme, variant, inverted, accent, disabled, focus }) => {
@@ -342,8 +342,10 @@ const StyledButton = styled('button', {
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: ${({ justify }) => justify};
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
+  padding: ${({ theme, hasIcon }) => {
+    return `0 ${theme.spacing(2)} 0 ${
+      hasIcon ? theme.spacing(7) : theme.spacing(2)
+    }`;
   }};
 
   transition: background 0.1s ease;
@@ -351,8 +353,6 @@ const StyledButton = styled('button', {
   white-space: nowrap;
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-
-  padding-left: ${({ theme }) => theme.spacing(7)};
 
   &:focus {
     outline: none;
@@ -449,30 +449,31 @@ const StyledButtonWrapper = styled.div<
   `}
 
   height: 100%;
-  text-overflow: ellipsis;
-
   max-width: ${({ loading, theme }) =>
     loading ? `calc(100% - ${theme.spacing(8)})` : 'none'};
   position: relative;
 `;
 
-const StyledText = styled.div<{ loading: boolean }>`
-  clip-path: ${({ loading, theme }) =>
-    loading ? ` inset(0 ${theme.spacing(6)} 0 0)` : ' inset(0 0 0 0)'};
+const StyledText = styled.div<{ loading: boolean; hasIcon: boolean }>`
+  clip-path: ${({ loading, theme, hasIcon }) =>
+    loading
+      ? ` inset(0 ${!hasIcon ? theme.spacing(12) : theme.spacing(6)} 0 0)`
+      : ' inset(0 0 0 0)'};
 
   overflow: hidden;
 
-  text-overflow: ellipsis;
-  transform: ${({ theme, loading }) =>
-    loading ? `translateX(${theme.spacing(3)})` : 'none'};
+  transform: ${({ theme, loading, hasIcon }) =>
+    loading
+      ? `translateX(${!hasIcon ? theme.spacing(7) : theme.spacing(3)})`
+      : 'none'};
 
   transition:
-    transform ${baseTransitionDelay}ms ease,
-    clip-path ${baseTransitionDelay}ms ease,
-    max-width ${baseTransitionDelay}ms ease;
+    transform ${baseTransitionTiming}ms ease,
+    clip-path ${baseTransitionTiming}ms ease,
+    max-width ${baseTransitionTiming}ms ease;
 
   transition-delay: ${({ loading }) =>
-    loading ? '0ms' : `${baseTransitionDelay / 4}ms`};
+    loading ? '0ms' : `${baseTransitionTiming / 4}ms`};
   white-space: nowrap;
 `;
 
@@ -484,22 +485,24 @@ const StyledIcon = styled.div<{
   height: 100%;
   color: var(--tw-button-color);
 
+  padding: 8px;
+
   opacity: ${({ loading }) => (loading ? 0 : 1)};
-  transition: opacity ${baseTransitionDelay / 2}ms ease;
+  transition: opacity ${baseTransitionTiming / 2}ms ease;
   transition-delay: ${({ loading }) =>
-    loading ? '0ms' : `${baseTransitionDelay / 2}ms`};
+    loading ? '0ms' : `${baseTransitionTiming / 2}ms`};
 `;
 
-const StyledIconWrapper = styled.div`
+const StyledIconWrapper = styled.div<{ loading: boolean }>`
   align-items: center;
   display: flex;
   height: 100%;
 
-  padding: 8px;
-
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+
+  width: ${({ loading }) => (loading ? 0 : '100%')};
 `;
 
 const StyledLoader = styled.div<{ loading: boolean }>`
@@ -507,20 +510,20 @@ const StyledLoader = styled.div<{ loading: boolean }>`
   opacity: ${({ loading }) => (loading ? 1 : 0)};
   position: absolute;
 
-  transition: opacity ${baseTransitionDelay / 2}ms ease;
+  transition: opacity ${baseTransitionTiming / 2}ms ease;
   transition-delay: ${({ loading }) =>
-    loading ? `${baseTransitionDelay / 2}ms` : '0ms'};
+    loading ? `${baseTransitionTiming / 2}ms` : '0ms'};
   width: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledEllipsis = styled.div<{ loading: boolean }>`
   right: 0;
   clip-path: ${({ theme, loading }) =>
-    loading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(5)})`};
+    loading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(6)})`};
   overflow: hidden;
   position: absolute;
 
-  transition: clip-path ${baseTransitionDelay}ms ease;
+  transition: clip-path ${baseTransitionTiming}ms ease;
 `;
 
 const StyledTextWrapper = styled.div`
@@ -567,12 +570,10 @@ export const Button = ({
       inverted={inverted}
       disabled={soon || disabled}
     >
-      <StyledIconWrapper>
-        {
-          <StyledLoader loading={loading}>
-            <Loader />
-          </StyledLoader>
-        }
+      <StyledIconWrapper loading={loading}>
+        <StyledLoader loading={loading}>
+          <Loader />
+        </StyledLoader>
         {Icon && (
           <StyledIcon loading={loading}>
             <Icon size={theme.icon.size.sm} />
@@ -586,6 +587,7 @@ export const Button = ({
         inverted={inverted}
         position={position}
         disabled={soon || disabled}
+        hasIcon={!!Icon}
         focus={isFocused}
         justify={justify}
         accent={accent}
@@ -602,7 +604,9 @@ export const Button = ({
         onBlur={() => setIsFocused(false)}
       >
         <StyledTextWrapper>
-          <StyledText loading={loading}>{title}</StyledText>
+          <StyledText loading={loading} hasIcon={!!Icon}>
+            {title}
+          </StyledText>
           <StyledEllipsis loading={loading}>...</StyledEllipsis>
         </StyledTextWrapper>
         {hotkeys && !isMobile && (
