@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Repository } from 'typeorm';
 
-import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
 import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
+import {
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -17,7 +17,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
   description: 'Set isSearchable true for custom object metadata',
   version: '0.43',
 })
-export class MigrateIsSearchableForCustomObjectMetadataCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class MigrateIsSearchableForCustomObjectMetadataCommand extends MaintainedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -28,9 +28,9 @@ export class MigrateIsSearchableForCustomObjectMetadataCommand extends ActiveWor
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
-    _options: ActiveWorkspacesMigrationCommandOptions,
+    _options: MaintainedWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(

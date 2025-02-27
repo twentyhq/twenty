@@ -6,9 +6,9 @@ import { In, Repository } from 'typeorm';
 
 import { isCommandLogger } from 'src/database/commands/logger';
 import {
-  ActiveWorkspacesMigrationCommandOptions,
-  ActiveWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/active-workspaces-migration-command.runner';
+  MaintainedWorkspacesMigrationCommandOptions,
+  MaintainedWorkspacesMigrationCommandRunner,
+} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -20,7 +20,7 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
   name: 'upgrade-0.42:fix-body-v2-view-field-position',
   description: 'Make bodyV2 field position to match body field position',
 })
-export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesMigrationCommandRunner {
+export class FixBodyV2ViewFieldPositionCommand extends MaintainedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -32,9 +32,9 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesMigration
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnActiveWorkspaces(
+  async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
-    options: ActiveWorkspacesMigrationCommandOptions,
+    options: MaintainedWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log('Running command to fix bodyV2 field position');

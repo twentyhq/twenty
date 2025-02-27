@@ -10,16 +10,16 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-export type ActiveWorkspacesMigrationCommandOptions =
+export type MaintainedWorkspacesMigrationCommandOptions =
   MigrationCommandOptions & {
     workspaceId?: string;
     startFromWorkspaceId?: string;
     workspaceCountLimit?: number;
   };
 
-export abstract class ActiveWorkspacesMigrationCommandRunner<
+export abstract class MaintainedWorkspacesMigrationCommandRunner<
   Options extends
-    ActiveWorkspacesMigrationCommandOptions = ActiveWorkspacesMigrationCommandOptions,
+    MaintainedWorkspacesMigrationCommandOptions = MaintainedWorkspacesMigrationCommandOptions,
 > extends MigrationCommandRunner<Options> {
   private workspaceIds: string[] = [];
   private startFromWorkspaceId: string | undefined;
@@ -124,14 +124,14 @@ export abstract class ActiveWorkspacesMigrationCommandRunner<
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    await this.runMigrationCommandOnActiveWorkspaces(
+    await this.runMigrationCommandOnMaintainedWorkspaces(
       passedParams,
       options,
       activeWorkspaceIds,
     );
   }
 
-  protected abstract runMigrationCommandOnActiveWorkspaces(
+  protected abstract runMigrationCommandOnMaintainedWorkspaces(
     passedParams: string[],
     options: Options,
     activeWorkspaceIds: string[],
