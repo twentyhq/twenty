@@ -36,6 +36,7 @@ export function createUpgradeAllCommand(
       super(workspaceRepository, twentyORMGlobalManager);
     }
 
+    // TODO Remove and avoid duplicated synchronize logic with SyncWorkspaceMetadataCommand after command refactoring
     private async synchronizeWorkspaceMetadata({
       workspaceIds,
       options,
@@ -43,7 +44,6 @@ export function createUpgradeAllCommand(
       workspaceIds: string[];
       options: Record<string, unknown>;
     }) {
-      // TODO Remove and avoid duplicated synchronize logic with SyncWorkspaceMetadataCommand after command refactoring
       this.logger.log(`Attempting to sync ${workspaceIds.length} workspaces.`);
       const errorsDuringSync: string[] = [];
 
