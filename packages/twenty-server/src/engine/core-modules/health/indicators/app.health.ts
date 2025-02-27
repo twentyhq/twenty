@@ -10,12 +10,15 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 
+// TODO: move to dedicated file
 interface IssuesByCategory {
   tableIssues?: string[];
   columnIssues?: string[];
   relationIssues?: string[];
 }
 
+// not sure if to keep it like this or to move it to the workspace health service
+// had to define here because in workspace health service the type is being defined not constants
 const TABLE_ISSUES = [
   WorkspaceHealthIssueType.MISSING_TABLE,
   WorkspaceHealthIssueType.TABLE_NAME_SHOULD_BE_CUSTOM,
@@ -43,6 +46,15 @@ const RELATION_ISSUES = [
   WorkspaceHealthIssueType.RELATION_TYPE_NOT_VALID,
 ];
 
+// TODO: move to dedicated file
+const ISSUE_CATEGORIES = {
+  tableIssues: (type: WorkspaceHealthIssueType) => TABLE_ISSUES.includes(type),
+  columnIssues: (type: WorkspaceHealthIssueType) =>
+    COLUMN_ISSUES.includes(type),
+  relationIssues: (type: WorkspaceHealthIssueType) =>
+    RELATION_ISSUES.includes(type),
+} as const;
+
 @Injectable()
 export class AppHealthIndicator {
   constructor(
@@ -66,18 +78,16 @@ export class AppHealthIndicator {
             this.workspaceMigrationService.getPendingMigrations(workspaceId),
           ]);
 
-          // Group issues by their defined categories
           const issuesByCategory = healthIssues.reduce<IssuesByCategory>(
             (acc, issue) => {
-              if (this.isTableIssue(issue.type)) {
-                if (!acc.tableIssues) acc.tableIssues = [];
-                acc.tableIssues.push(issue.message);
-              } else if (this.isColumnIssue(issue.type)) {
-                if (!acc.columnIssues) acc.columnIssues = [];
-                acc.columnIssues.push(issue.message);
-              } else if (this.isRelationIssue(issue.type)) {
-                if (!acc.relationIssues) acc.relationIssues = [];
-                acc.relationIssues.push(issue.message);
+              for (const [category, checkFn] of Object.entries(
+                ISSUE_CATEGORIES,
+              )) {
+                if (checkFn(issue.type)) {
+                  acc[category] = acc[category] || [];
+                  acc[category].push(issue.message);
+                  break;
+                }
               }
 
               return acc;
@@ -136,19 +146,13 @@ export class AppHealthIndicator {
     }
   }
 
-  private isTableIssue(type: WorkspaceHealthIssueType): boolean {
-    return TABLE_ISSUES.includes(type);
-  }
-
-  private isColumnIssue(type: WorkspaceHealthIssueType): boolean {
-    return COLUMN_ISSUES.includes(type);
-  }
-
-  private isRelationIssue(type: WorkspaceHealthIssueType): boolean {
-    return RELATION_ISSUES.includes(type);
-  }
-
-  private getSeverityLevel(summary: any): 'critical' | 'warning' | 'healthy' {
+  private getSeverityLevel(summary: {
+    tableIssues: number;
+    columnIssues: number;
+    relationIssues: number;
+    pendingMigrations: number;
+  }): 'critical' | 'warning' | 'healthy' {
+    // return type could be materialized
     if (summary.pendingMigrations > 0 || summary.tableIssues > 0) {
       return 'critical';
     }
