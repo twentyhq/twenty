@@ -27,8 +27,9 @@ export const RestPlayground = ({ onError }: { onError(): void }) => {
           content: openAPIReference,
         },
         authentication: {
-          apiKey: {
-            token: apiKey,
+          http: {
+            basic: { username: '', password: '' },
+            bearer: { token: apiKey },
           },
         },
         baseServerURL: baseUrl,
