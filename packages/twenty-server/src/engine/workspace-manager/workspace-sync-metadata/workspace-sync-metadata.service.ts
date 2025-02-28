@@ -245,10 +245,14 @@ export class WorkspaceSyncMetadataService {
   } {
     const createMigrationsByTable = new Map<string, any>();
 
-    for (const migration of objectMigrations) {
-      if (!migration.migrations?.[0]) continue;
+    for (const objectMigration of objectMigrations) {
+      if (
+        !objectMigration.migrations ||
+        objectMigration.migrations.length === 0
+      )
+        continue;
 
-      const tableMigration = migration.migrations[0];
+      const tableMigration = objectMigration.migrations[0];
 
       if (tableMigration.action === WorkspaceMigrationTableActionType.CREATE) {
         createMigrationsByTable.set(tableMigration.name, tableMigration);
@@ -256,10 +260,14 @@ export class WorkspaceSyncMetadataService {
     }
 
     const fieldMigrationsWithoutTableCreation = fieldMigrations.filter(
-      (migration) => {
-        if (!migration.migrations?.[0]) return true;
+      (fieldMigration) => {
+        if (
+          !fieldMigration.migrations ||
+          fieldMigration.migrations.length === 0
+        )
+          return true;
 
-        const tableMigration = migration.migrations[0];
+        const tableMigration = fieldMigration.migrations[0];
         const tableName = tableMigration.name;
 
         if (createMigrationsByTable.has(tableName)) {

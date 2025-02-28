@@ -145,7 +145,7 @@ export class WorkspaceMigrationRunnerService {
             tableMigration.newName,
           );
 
-          return;
+          break;
         }
 
         if (tableMigration.columns && tableMigration.columns.length > 0) {
@@ -156,7 +156,7 @@ export class WorkspaceMigrationRunnerService {
             tableMigration.columns,
           );
 
-          return;
+          break;
         }
 
         break;
