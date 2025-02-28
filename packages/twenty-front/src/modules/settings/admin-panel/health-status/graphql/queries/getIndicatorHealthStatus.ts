@@ -12,15 +12,6 @@ export const GET_INDICATOR_HEALTH_STATUS = gql`
         id
         queueName
         status
-        workers
-        metrics {
-          failed
-          completed
-          waiting
-          active
-          delayed
-          prioritized
-        }
       }
     }
   }

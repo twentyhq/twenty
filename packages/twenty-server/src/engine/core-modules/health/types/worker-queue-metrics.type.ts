@@ -18,5 +18,11 @@ export class WorkerQueueMetrics {
   delayed: number;
 
   @Field(() => Number)
-  prioritized: number;
+  failureRate: number;
+
+  @Field(() => [Number], { nullable: true })
+  failedData?: number[];
+
+  @Field(() => [Number], { nullable: true })
+  completedData?: number[];
 }

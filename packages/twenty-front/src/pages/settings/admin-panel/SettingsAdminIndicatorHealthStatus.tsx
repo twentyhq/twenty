@@ -2,6 +2,7 @@ import { SettingsAdminHealthStatusRightContainer } from '@/settings/admin-panel/
 import { SettingsAdminIndicatorHealthStatusContent } from '@/settings/admin-panel/health-status/components/SettingsAdminIndicatorHealthStatusContent';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
@@ -22,12 +23,17 @@ const StyledH2Title = styled(H2Title)`
 export const SettingsAdminIndicatorHealthStatus = () => {
   const { t } = useLingui();
   const { indicatorId } = useParams();
-  const { data, loading } = useGetIndicatorHealthStatusQuery({
-    variables: {
-      indicatorId: indicatorId as HealthIndicatorId,
-    },
-    fetchPolicy: 'network-only',
-  });
+  const { data, loading: loadingIndicatorHealthStatus } =
+    useGetIndicatorHealthStatusQuery({
+      variables: {
+        indicatorId: indicatorId as HealthIndicatorId,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+  if (loadingIndicatorHealthStatus) {
+    return <SettingsSkeletonLoader />;
+  }
 
   return (
     <SubMenuTopBarContainer
@@ -60,7 +66,6 @@ export const SettingsAdminIndicatorHealthStatus = () => {
               details: data?.getIndicatorHealthStatus?.details,
               queues: data?.getIndicatorHealthStatus?.queues,
             },
-            loading: loading,
           }}
         >
           <Section>
