@@ -108,8 +108,10 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
   }
 
   private async createAdminRole({ workspaceId }: { workspaceId: string }) {
-    chalk.green(
-      `Creating admin role ${this.options.dryRun ? '(dry run)' : ''}`,
+    this.logger.log(
+      chalk.green(
+        `Creating admin role ${this.options.dryRun ? '(dry run)' : ''}`,
+      ),
     );
 
     if (this.options.dryRun) {
@@ -124,8 +126,10 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
   }
 
   private async createMemberRole({ workspaceId }: { workspaceId: string }) {
-    chalk.green(
-      `Creating member role ${this.options.dryRun ? '(dry run)' : ''}`,
+    this.logger.log(
+      chalk.green(
+        `Creating member role ${this.options.dryRun ? '(dry run)' : ''}`,
+      ),
     );
 
     if (this.options.dryRun) {
@@ -153,8 +157,10 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
     });
 
     if (!isDefined(workspaceDefaultRole?.defaultRoleId)) {
-      chalk.green(
-        `Setting member role as default role ${this.options.dryRun ? '(dry run)' : ''}`,
+      this.logger.log(
+        chalk.green(
+          `Setting member role as default role ${this.options.dryRun ? '(dry run)' : ''}`,
+        ),
       );
 
       if (this.options.dryRun) {
@@ -193,8 +199,10 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
       throw new Error('No user workspace found');
     }
 
-    chalk.green(
-      `Assigning admin role to user ${oldestUserWorkspace.id} ${this.options.dryRun ? '(dry run)' : ''}`,
+    this.logger.log(
+      chalk.green(
+        `Assigning admin role to user ${oldestUserWorkspace.id} ${this.options.dryRun ? '(dry run)' : ''}`,
+      ),
     );
 
     if (this.options.dryRun) {
@@ -239,14 +247,18 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
           .get(userWorkspace.id)
           ?.some((role) => isDefined(role))
       ) {
-        chalk.green(
-          `User workspace ${userWorkspace.id} already has a role. Skipping member role assignation`,
+        this.logger.log(
+          chalk.green(
+            `User workspace ${userWorkspace.id} already has a role. Skipping member role assignation`,
+          ),
         );
         continue;
       }
 
-      chalk.green(
-        `Assigning member role to user workspace ${userWorkspace.id} ${this.options.dryRun ? '(dry run)' : ''}`,
+      this.logger.log(
+        chalk.green(
+          `Assigning member role to user workspace ${userWorkspace.id} ${this.options.dryRun ? '(dry run)' : ''}`,
+        ),
       );
 
       if (this.options.dryRun) {
