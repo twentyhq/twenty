@@ -172,8 +172,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.extensionNumber,
     type: FieldMetadataType.TEXT,
-    label: 'Extension Number',
-    description: 'Extension number to receive calls.',
+    label: msg`Extension Number`,
+    description: msg`Extension number to receive calls.`,
     icon: 'IconKey',
   })
   extensionNumber: string | null;

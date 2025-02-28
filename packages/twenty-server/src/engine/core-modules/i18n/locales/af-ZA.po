@@ -850,6 +850,14 @@ msgstr "Uitgevoer deur"
 msgid "Expiration date"
 msgstr "Verstrykingsdatum"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Extension Number"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Extension number to receive calls."
+msgstr ""
+
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
 msgstr "Gunsteling"
