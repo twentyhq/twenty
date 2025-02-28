@@ -29,7 +29,6 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const {
     viewType,
     currentContentId,
-    recordIndexId,
     objectMetadataItem,
     onContentChange,
     closeDropdown,
