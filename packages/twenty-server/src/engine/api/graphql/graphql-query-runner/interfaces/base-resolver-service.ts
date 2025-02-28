@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import { capitalize, PermissionsOnAllObjectRecords } from 'twenty-shared';
+import {
+  capitalize,
+  isDefined,
+  PermissionsOnAllObjectRecords,
+} from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -24,10 +28,6 @@ import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-r
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
@@ -193,32 +193,24 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
       )
     ) {
-      if (!authContext.apiKey) {
-        if (!authContext.userWorkspaceId) {
-          throw new AuthException(
-            'Missing userWorkspaceId in authContext',
-            AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-          );
-        }
+      const permissionRequired: SettingsPermissions =
+        SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
+          objectMetadataItemWithFieldMaps.nameSingular
+        ];
 
-        const permissionRequired: SettingsPermissions =
-          SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
-            objectMetadataItemWithFieldMaps.nameSingular
-          ];
+      const userHasPermission =
+        await this.permissionsService.userHasWorkspaceSettingPermission({
+          userWorkspaceId: authContext.userWorkspaceId,
+          _setting: permissionRequired,
+          workspaceId: authContext.workspace.id,
+          isExecutedByApiKey: isDefined(authContext.apiKey),
+        });
 
-        const userHasPermission =
-          await this.permissionsService.userHasWorkspaceSettingPermission({
-            userWorkspaceId: authContext.userWorkspaceId,
-            _setting: permissionRequired,
-            workspaceId: authContext.workspace.id,
-          });
-
-        if (!userHasPermission) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.PERMISSION_DENIED,
-            PermissionsExceptionCode.PERMISSION_DENIED,
-          );
-        }
+      if (!userHasPermission) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
       }
     }
   }
@@ -230,30 +222,22 @@ export abstract class GraphqlQueryBaseResolverService<
     operationName: WorkspaceResolverBuilderMethodNames;
     options: WorkspaceQueryRunnerOptions;
   }) {
-    if (!options.authContext.apiKey) {
-      if (!options.authContext.userWorkspaceId) {
-        throw new AuthException(
-          'Missing userWorkspaceId in authContext',
-          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-        );
-      }
+    const requiredPermission =
+      this.getRequiredPermissionForMethod(operationName);
 
-      const requiredPermission =
-        this.getRequiredPermissionForMethod(operationName);
+    const userHasPermission =
+      await this.permissionsService.userHasObjectRecordsPermission({
+        userWorkspaceId: options.authContext.userWorkspaceId,
+        requiredPermission,
+        workspaceId: options.authContext.workspace.id,
+        isExecutedByApiKey: isDefined(options.authContext.apiKey),
+      });
 
-      const userHasPermission =
-        await this.permissionsService.userHasObjectRecordsPermission({
-          userWorkspaceId: options.authContext.userWorkspaceId,
-          requiredPermission,
-          workspaceId: options.authContext.workspace.id,
-        });
-
-      if (!userHasPermission) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
+    if (!userHasPermission) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
   }
 

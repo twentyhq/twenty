@@ -4,6 +4,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { GraphQLError } from 'graphql';
+import { isDefined } from 'twenty-shared';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingProductInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-product.input';
@@ -25,6 +26,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -98,10 +100,12 @@ export class BillingResolver {
       plan,
       requirePaymentMethod,
     }: BillingCheckoutSessionInput,
+    @AuthApiKey() apiKey?: string,
   ) {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
+      isExecutedByApiKey: isDefined(apiKey),
     });
     const isBillingPlansEnabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -177,9 +181,11 @@ export class BillingResolver {
   private async validateCanCheckoutSessionPermissionOrThrow({
     workspaceId,
     userWorkspaceId,
+    isExecutedByApiKey,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
+    isExecutedByApiKey: boolean;
   }) {
     const isPermissionsEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IsPermissionsEnabled,
@@ -203,6 +209,7 @@ export class BillingResolver {
         userWorkspaceId,
         workspaceId,
         _setting: SettingsPermissions.WORKSPACE,
+        isExecutedByApiKey,
       });
 
     if (!userHasPermission) {

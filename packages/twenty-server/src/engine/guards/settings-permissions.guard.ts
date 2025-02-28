@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
@@ -47,6 +49,7 @@ export const SettingsPermissionsGuard = (
           userWorkspaceId,
           _setting: requiredPermission,
           workspaceId,
+          isExecutedByApiKey: isDefined(ctx.getContext().req.apiKey),
         });
 
       if (hasPermission === true) {
