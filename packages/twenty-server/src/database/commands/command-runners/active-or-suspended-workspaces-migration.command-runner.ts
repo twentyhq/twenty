@@ -3,24 +3,31 @@ import { Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
-import {
-  MigrationCommandOptions,
-  MigrationCommandRunner,
-} from 'src/database/commands/migration-command/migration-command.runner';
+import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-export type MaintainedWorkspacesMigrationCommandOptions =
-  MigrationCommandOptions & {
-    workspaceId?: string;
-    startFromWorkspaceId?: string;
-    workspaceCountLimit?: number;
-  };
+export type ActiveOrSuspendedWorkspacesMigrationCommandOptions = {
+  workspaceIds: string[];
+  startFromWorkspaceId?: string;
+  workspaceCountLimit?: number;
+  dryRun?: boolean;
+  verbose?: boolean;
+};
 
-export abstract class MaintainedWorkspacesMigrationCommandRunner<
+export type RunOnWorkspaceArgs = {
+  options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
+  workspaceId: string;
+  dataSource: WorkspaceDataSource;
+  index: number;
+  total: number;
+};
+
+export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   Options extends
-    MaintainedWorkspacesMigrationCommandOptions = MaintainedWorkspacesMigrationCommandOptions,
-> extends MigrationCommandRunner<Options> {
+    ActiveOrSuspendedWorkspacesMigrationCommandOptions = ActiveOrSuspendedWorkspacesMigrationCommandOptions,
+> extends MigrationCommandRunner {
   private workspaceIds: string[] = [];
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
@@ -97,20 +104,8 @@ export abstract class MaintainedWorkspacesMigrationCommandRunner<
     return activeWorkspaces.map((workspace) => workspace.id);
   }
 
-  protected logWorkspaceCount(activeWorkspaceIds: string[]): void {
-    if (!activeWorkspaceIds.length) {
-      this.logger.log(chalk.yellow('No workspace found'));
-    } else {
-      this.logger.log(
-        chalk.green(
-          `Running command on ${activeWorkspaceIds.length} workspaces`,
-        ),
-      );
-    }
-  }
-
   override async runMigrationCommand(
-    passedParams: string[],
+    _passedParams: string[],
     options: Options,
   ): Promise<void> {
     const activeWorkspaceIds =
@@ -118,22 +113,44 @@ export abstract class MaintainedWorkspacesMigrationCommandRunner<
         ? this.workspaceIds
         : await this.fetchActiveWorkspaceIds();
 
-    this.logWorkspaceCount(activeWorkspaceIds);
-
     if (options.dryRun) {
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    await this.runMigrationCommandOnMaintainedWorkspaces(
-      passedParams,
-      options,
-      activeWorkspaceIds,
-    );
+    try {
+      for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
+        this.logger.log(
+          `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
+        );
+
+        const dataSource =
+          await this.twentyORMGlobalManager.getDataSourceForWorkspace(
+            workspaceId,
+            false,
+          );
+
+        try {
+          await this.runOnWorkspace({
+            options,
+            workspaceId,
+            dataSource,
+            index: index,
+            total: activeWorkspaceIds.length,
+          });
+        } catch (error) {
+          this.logger.warn(
+            chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
+          );
+        }
+
+        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+          workspaceId,
+        );
+      }
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  protected abstract runMigrationCommandOnMaintainedWorkspaces(
-    passedParams: string[],
-    options: Options,
-    activeWorkspaceIds: string[],
-  ): Promise<void>;
+  protected abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
 }

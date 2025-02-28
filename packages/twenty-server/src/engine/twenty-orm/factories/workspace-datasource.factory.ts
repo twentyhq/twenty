@@ -68,10 +68,6 @@ export class WorkspaceDatasourceFactory {
         const result = await this.cacheManager.execute(
           cacheKey,
           async () => {
-            this.logger.log(
-              `Creating workspace data source for workspace ${workspaceId} and metadata version ${cachedWorkspaceMetadataVersion}`,
-            );
-
             const dataSourceMetadata =
               await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
                 workspaceId,
