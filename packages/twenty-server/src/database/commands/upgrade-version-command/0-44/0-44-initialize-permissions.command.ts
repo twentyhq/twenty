@@ -8,7 +8,7 @@ import { MigrationCommand } from 'src/database/commands/migration-command/decora
 import {
   MaintainedWorkspacesMigrationCommandOptions,
   MaintainedWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
+} from 'src/database/commands/upgrade-version/maintained-workspaces-migration-command.runner';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';

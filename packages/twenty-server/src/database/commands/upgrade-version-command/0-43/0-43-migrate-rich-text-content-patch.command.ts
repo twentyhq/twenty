@@ -2,15 +2,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
+import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
-import { isCommandLogger } from 'src/database/commands/logger';
-import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import {
-  MaintainedWorkspacesMigrationCommandOptions,
-  MaintainedWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
+  ActiveOrSuspendedWorkspacesMigrationCommandOptions,
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
+} from 'src/database/commands/upgrade-version-command/active-or-suspended-workspaces-migration.command-runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -23,6 +23,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 type MigrateRichTextContentArgs = {
   richTextFieldsWithObjectMetadata: RichTextFieldsWithObjectMetadata[];
   workspaceId: string;
+  options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
 };
 
 type RichTextFieldsWithObjectMetadata = {
@@ -30,25 +31,16 @@ type RichTextFieldsWithObjectMetadata = {
   objectMetadata: ObjectMetadataEntity | null;
 };
 
-type ProcessWorkspaceArgs = {
-  workspaceId: string;
-  index: number;
-  total: number;
-};
-
 type ProcessRichTextFieldsArgs = {
   richTextFields: FieldMetadataEntity[];
   workspaceId: string;
 };
 
-@MigrationCommand({
+@Command({
   name: 'migrate-rich-text-content-patch',
   description: 'Migrate RICH_TEXT content from v1 to v2',
-  version: '0.43',
 })
-export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigrationCommandRunner<MaintainedWorkspacesMigrationCommandOptions> {
-  private options: MaintainedWorkspacesMigrationCommandOptions;
-
+export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -64,49 +56,15 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnMaintainedWorkspaces(
-    _passedParam: string[],
-    options: MaintainedWorkspacesMigrationCommandOptions,
-    workspaceIds: string[],
-  ): Promise<void> {
-    this.logger.log(
-      'Running command to migrate RICH_TEXT contents from v1 to v2',
-    );
-
-    this.options = options;
-    if (isCommandLogger(this.logger)) {
-      this.logger.setVerbose(options.verbose ?? false);
-    }
-
-    for (const [index, workspaceId] of workspaceIds.entries()) {
-      try {
-        await this.processWorkspace({
-          workspaceId,
-          index,
-          total: workspaceIds.length,
-        });
-      } catch (error) {
-        this.logger.log(
-          chalk.red(`Error in workspace ${workspaceId}: ${error}`),
-        );
-      }
-
-      await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-        workspaceId,
-      );
-    }
-
-    this.logger.log(chalk.green('Command completed!'));
-  }
-
-  private async processWorkspace({
+  override async runOnWorkspace({
     index,
     total,
+    options,
     workspaceId,
-  }: ProcessWorkspaceArgs): Promise<void> {
+  }: RunOnWorkspaceArgs): Promise<void> {
     try {
       this.logger.log(
-        `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
+        `Running MigrateRichTextContentPatchCommand for workspace ${workspaceId} ${index + 1}/${total}`,
       );
 
       if (await this.hasRichTextV2FeatureFlag(workspaceId)) {
@@ -141,6 +99,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
       await this.migrateToNewRichTextFieldsColumn({
         richTextFieldsWithObjectMetadata,
         workspaceId,
+        options,
       });
 
       this.logger.log(
@@ -179,7 +138,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
       });
 
       if (objectMetadata === null) {
-        this.logger.warn(
+        this.logger.log(
           `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
         );
       }
@@ -225,7 +184,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
     }
 
     if (!Array.isArray(jsonParsedblocknoteFieldValue)) {
-      this.logger.warn(
+      this.logger.log(
         `blocknoteFieldValue is defined and is not an array got ${blocknoteFieldValue}`,
       );
 
@@ -239,7 +198,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
         jsonParsedblocknoteFieldValue,
       );
     } catch (error) {
-      this.logger.warn(
+      this.logger.log(
         `Error converting blocknote to markdown for ${blocknoteFieldValue}`,
       );
     }
@@ -250,6 +209,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
   private async migrateToNewRichTextFieldsColumn({
     richTextFieldsWithObjectMetadata,
     workspaceId,
+    options,
   }: MigrateRichTextContentArgs) {
     const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
@@ -285,7 +245,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
           serverBlockNoteEditor,
         });
 
-        if (!this.options.dryRun) {
+        if (!options.dryRun) {
           await workspaceDataSource.query(
             `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
             [blocknoteFieldValue, markdownFieldValue, row.id],
