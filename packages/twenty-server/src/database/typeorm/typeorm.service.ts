@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -22,7 +23,6 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   private mainDataSource: DataSource;
@@ -33,7 +33,10 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     this.mainDataSource = new DataSource({
       url: environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging: false,
+      logging:
+        environmentService.get('NODE_ENV') === NodeEnvironment.development
+          ? ['query', 'error']
+          : ['error'],
       schema: 'core',
       entities: [
         User,
