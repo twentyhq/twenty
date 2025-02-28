@@ -56,6 +56,7 @@ const getWrapper = (
     componentInstanceId: '1',
     contextStoreCurrentObjectMetadataNameSingular:
       personMockObjectMetadataItem.nameSingular,
+    contextStoreCurrentViewId: 'my-view-id',
     contextStoreTargetedRecordsRule: {
       mode: 'selection',
       selectedRecordIds: [firstPeopleMock.id, secondPeopleMock.id],

@@ -157,7 +157,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
     return await this.featureFlagRepository.exists({
       where: {
         workspaceId,
-        key: FeatureFlagKey.IsRichTextV2Enabled,
+        key: 'IS_RICH_TEXT_V2_ENABLED' as FeatureFlagKey,
         value: true,
       },
     });
