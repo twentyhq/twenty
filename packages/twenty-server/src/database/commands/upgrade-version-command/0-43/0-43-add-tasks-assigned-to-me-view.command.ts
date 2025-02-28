@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
-} from 'src/database/commands/upgrade-version-command/active-or-suspended-workspaces-migration.command-runner';
+} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -50,13 +50,7 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
       `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
     );
 
-    const viewId = await this.createTasksAssignedToMeView(workspaceId);
-
-    await this.createTasksAssignedToMeViewGroups(workspaceId, viewId);
-
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
+    await this.createTasksAssignedToMeView(workspaceId);
 
     this.logger.log(
       chalk.green(`Command completed for workspace ${workspaceId}.`),
@@ -65,7 +59,7 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
 
   private async createTasksAssignedToMeView(
     workspaceId: string,
-  ): Promise<string> {
+  ): Promise<void> {
     const objectMetadata = await this.objectMetadataRepository.find({
       where: { workspaceId },
       relations: ['fields'],
@@ -107,9 +101,13 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
     });
 
     if (existingView) {
-      throw new Error(
-        `"Assigned to Me" view already exists for workspace ${workspaceId}`,
+      this.logger.log(
+        chalk.yellow(
+          `"Assigned to Me" view already exists for workspace ${workspaceId}`,
+        ),
       );
+
+      return;
     }
 
     const viewDefinition = tasksAssignedToMeView(objectMetadataMap);
@@ -163,7 +161,7 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
       await viewFilterRepository.save(viewFilters);
     }
 
-    return insertedView.id;
+    await this.createTasksAssignedToMeViewGroups(workspaceId, insertedView.id);
   }
 
   private async createTasksAssignedToMeViewGroups(

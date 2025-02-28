@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
-} from 'src/database/commands/upgrade-version-command/active-or-suspended-workspaces-migration.command-runner';
+} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';

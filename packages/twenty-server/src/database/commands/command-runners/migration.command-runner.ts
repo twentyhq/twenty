@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 
-import { CommandLogger } from './logger';
+import { CommandLogger } from '../logger';
 export type MigrationCommandOptions = {
   dryRun?: boolean;
   verbose?: boolean;

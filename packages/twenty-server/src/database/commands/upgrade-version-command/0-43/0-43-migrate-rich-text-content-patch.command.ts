@@ -10,7 +10,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
-} from 'src/database/commands/upgrade-version-command/active-or-suspended-workspaces-migration.command-runner';
+} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -242,10 +242,18 @@ export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspa
         });
 
         if (!options.dryRun) {
-          await workspaceDataSource.query(
-            `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
-            [blocknoteFieldValue, markdownFieldValue, row.id],
-          );
+          try {
+            await workspaceDataSource.query(
+              `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
+              [blocknoteFieldValue, markdownFieldValue, row.id],
+            );
+          } catch (error) {
+            this.logger.log(
+              chalk.red(
+                `Error updating rich text field ${richTextField.name} for record ${row.id} in workspace ${workspaceId}`,
+              ),
+            );
+          }
         }
       }
     }

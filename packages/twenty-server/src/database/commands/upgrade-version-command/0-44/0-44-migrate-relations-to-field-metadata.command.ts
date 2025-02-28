@@ -10,7 +10,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
-} from 'src/database/commands/upgrade-version-command/active-or-suspended-workspaces-migration.command-runner';
+} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

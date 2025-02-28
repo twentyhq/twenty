@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { StartDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data-seed-demo-workspace/crons/start-data-seed-demo-workspace.cron.command';
-import { StopDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data-seed-demo-workspace/crons/stop-data-seed-demo-workspace.cron.command';
-import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace-command';
-import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
@@ -45,18 +41,11 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     WorkspaceSyncMetadataModule,
     ObjectMetadataModule,
     FieldMetadataModule,
-    DataSeedDemoWorkspaceModule,
     WorkspaceCacheStorageModule,
     WorkspaceMetadataVersionModule,
     UpgradeVersionCommandModule,
     FeatureFlagModule,
   ],
-  providers: [
-    DataSeedWorkspaceCommand,
-    DataSeedDemoWorkspaceCommand,
-    ConfirmationQuestion,
-    StartDataSeedDemoWorkspaceCronCommand,
-    StopDataSeedDemoWorkspaceCronCommand,
-  ],
+  providers: [DataSeedWorkspaceCommand, ConfirmationQuestion],
 })
 export class DatabaseCommandModule {}
