@@ -342,6 +342,17 @@ export const responseData = {
         metadataVersion: 1,
         currentBillingSubscription: null,
         workspaceMembersCount: 1,
+        defaultRole:  {
+          id: 'default-role-id',
+          label: 'Default Role',
+          description: 'Default Role Description',
+          canUpdateAllSettings: true,
+          isEditable: true,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+        }
       },
       currentBillingSubscription: null,
       billingSubscriptions: [],

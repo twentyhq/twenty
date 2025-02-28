@@ -3,14 +3,13 @@ import { useContext } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 
 type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -51,19 +50,17 @@ export const RelationFromManyFieldInput = ({
       recordId,
     });
 
-  const { dropdownPlacement } = useDropdown(recordPickerInstanceId);
-
   return (
     <>
       <RecordPickerComponentInstanceContext.Provider
         value={{ instanceId: recordPickerInstanceId }}
       >
         <RelationFromManyFieldInputMultiRecordsEffect />
-        <MultiRecordSelect
+        <MultipleRecordPicker
+          componentInstanceId={recordPickerInstanceId}
           onSubmit={handleSubmit}
           onChange={updateRelation}
           onCreate={createNewRecordAndOpenRightDrawer}
-          dropdownPlacement={dropdownPlacement}
         />
       </RecordPickerComponentInstanceContext.Provider>
     </>

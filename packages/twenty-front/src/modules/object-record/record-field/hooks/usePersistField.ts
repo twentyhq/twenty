@@ -24,7 +24,6 @@ import { isFieldRelationToOneValue } from '@/object-record/record-field/types/gu
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
@@ -32,6 +31,7 @@ import { isFieldRichText } from '@/object-record/record-field/types/guards/isFie
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
@@ -156,7 +156,7 @@ export const usePersistField = () => {
           );
 
           if (fieldIsRelationToOneObject) {
-            const value = valueToPersist as RecordForSelect;
+            const value = valueToPersist as SingleRecordPickerRecord;
             updateRecord?.({
               variables: {
                 where: { id: recordId },

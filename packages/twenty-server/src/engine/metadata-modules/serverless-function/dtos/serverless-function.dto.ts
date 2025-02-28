@@ -23,7 +23,7 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ServerlessFunctionSyncStatus } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { InputSchema } from 'src/modules/workflow/workflow-builder/types/input-schema.type';
+import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 
 registerEnumType(ServerlessFunctionSyncStatus, {
   name: 'ServerlessFunctionSyncStatus',

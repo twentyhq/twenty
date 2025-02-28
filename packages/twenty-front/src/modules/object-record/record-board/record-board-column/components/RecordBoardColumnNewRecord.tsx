@@ -18,7 +18,9 @@ export const RecordBoardColumnNewRecord = ({
     }),
   );
 
-  const { handleCreateSuccess } = useAddNewCard();
+  const { handleCreateSuccess } = useAddNewCard({
+    recordPickerComponentInstanceId: `add-new-card-record-picker-column-${columnId}`,
+  });
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 

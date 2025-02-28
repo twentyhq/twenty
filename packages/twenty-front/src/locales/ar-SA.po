@@ -59,7 +59,7 @@ msgstr "مفتاح واجهة برمجة التطبيقات {apiKeyName}"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} سيتم إلغاء تعيينه من الدور التالي:"
 
@@ -97,7 +97,7 @@ msgstr "24 ساعة ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "بيئة مشتركة حيث يمكنك التحكم في علاقات العملاء مع فريقك."
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "القدرة على التفاعل مع كل كائن"
 
@@ -127,9 +127,9 @@ msgstr "حذف الحساب"
 msgid "Accounts"
 msgstr "الحسابات"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "الإجراءات"
 
@@ -225,9 +225,17 @@ msgstr "أضف أول {objectLabel}"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "تم الإضافة {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr "تم الإضافة {beautifyPastDateRelative}"
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "أضيف إلى القائمة السوداء"
+
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "ضبط الإعدادات المتعلقة بالدور"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -261,7 +269,7 @@ msgstr "جميع الخطوط"
 msgid "All Objects"
 msgstr "كل الكائنات"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "كل الأدوار"
 
@@ -336,8 +344,12 @@ msgid "Appearance"
 msgstr "المظهر"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "نطاق البريد الإلكتروني المعتمد"
+msgid "Approved Domains"
+msgstr "النطاقات المعتمدة"
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -348,31 +360,31 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "هل أنت متأكد أنك تريد تغيير فترة الفوترة؟"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "هل أنت متأكد أنك تريد تعيين هذا الدور؟"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Ascending"
 msgstr "تصاعدي"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "تعيين {workspaceMemberName}؟"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "قم بتعيين الأدوار لتحديد أذونات الوصول لكل عضو"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "التعيين لعضو"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "الأعضاء المعينون"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "مُعين إلى"
 
@@ -586,7 +598,7 @@ msgstr "حدد كيفية عرض أحداثك في التقويم الخاص ب�
 msgid "Configure your emails and calendar settings."
 msgstr "ضبط إعدادات بريدك الإلكتروني والتقويم."
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "تأكيد"
 
@@ -709,7 +721,7 @@ msgstr "إنشاء سجل جديد"
 msgid "Create profile"
 msgstr "إنشاء ملف شخصي"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "إنشاء دور"
 
@@ -737,6 +749,10 @@ msgstr "أنشئ"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "نطاق مخصص"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "النطاق المخصص محدث"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -936,8 +952,13 @@ msgid "Deleted"
 msgstr "تم الحذف"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Deleted {objectNamePlural}"
-msgstr "تم حذف {objectNamePlural}"
+#~ msgid "Deleted {objectNamePlural}"
+#~ msgstr "Deleted {objectNamePlural}"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Deleted records"
+msgstr "السجلات المحذوفة"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1003,6 +1024,10 @@ msgstr "النطاق"
 msgid "Domain added successfully."
 msgstr "تمت إضافة النطاق بنجاح."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr "يجب أن تكون النطاقات أصغر من 256 حرفًا، وألا تحتوي على مسافات ولا تحتوي على أي أحرف خاصة."
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "لا تقم بإنشاء جهات اتصال تلقائيًا."
@@ -1064,13 +1089,17 @@ msgstr "قم بتعديل اسم النطاق الفرعي أو اضبط نطا�
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
+#~ msgid "Email can not be empty"
+#~ msgstr "Email can not be empty"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
 msgstr "لا يمكن أن يكون البريد الإلكتروني فارغًا"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -1547,7 +1576,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "نطاق مخصص غير صالح. يُرجى تضمين نطاق فرعي واحد على الأقل (مثال: sub.example.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "نطاق غير صالح. يجب أن تكون النطاقات أقل من 256 حرفًا في الطول، ولا يمكن أن تكون عناوين IP، ولا يمكن أن تحتوي على مسافات، ولا يمكن أن تحتوي على أي أحرف خاصة مثل _~`!@#$%^*()=+{}[]|\\;:'\\\",<>/? ولا يمكن أن تبدأ أو تنتهي برمز '-'."
 
@@ -1788,10 +1816,6 @@ msgstr "نقل إلى اليمين"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1801,6 +1825,10 @@ msgstr "نقل إلى اليمين"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "الاسم"
@@ -1935,7 +1963,7 @@ msgstr "لا دولة"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "لا يوجد المزيد من الأعضاء لتعيينهم"
 
@@ -1947,7 +1975,7 @@ msgstr "لم يتم العثور على سجلات"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "لا توجد نتائج"
 
@@ -2006,13 +2034,13 @@ msgstr "كائن"
 msgid "Object destination"
 msgstr "وجهة الكائن"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Objects"
 msgstr "كائنات"
 
@@ -2045,6 +2073,7 @@ msgstr "تم الفتح"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "اختياري: حدد سلسلة سرية سنقوم بتضمينها في كل Webhook. استخدم هذا للمصادقة والتحقق من Webhook عند الاستقبال."
 
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2259,15 +2288,13 @@ msgstr "نوع العلاقة"
 msgid "Releases"
 msgstr "\\\\"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "\\\\"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "إزالة {workspaceMemberName}؟"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2351,7 +2378,7 @@ msgstr "ابحث عن ''{commandMenuSearch}'' بواسطة..."
 msgid "Search a field..."
 msgstr "ابحث عن حقل..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "ابحث عن عضو"
 
@@ -2398,6 +2425,11 @@ msgstr "\\\\"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "\\\\"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "See deleted records"
+msgstr "عرض السجلات المحذوفة"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2458,6 +2490,10 @@ msgstr "\\\\u0627\\\\u0644\\\\u0644\\\\u0648\\\\u062d\\\\u0629 \\\\u0627\\\\u064
 msgid "Service Provider Details"
 msgstr "تفاصيل موفر الخدمة"
 
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "تعيين دور افتراضي لمساحة العمل هذه"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "تعيين كافتراضي"
@@ -2479,15 +2515,15 @@ msgid "Set the name of your subdomain"
 msgstr "\\\\"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 msgid "Settings"
 msgstr "\\\\u0627\\\\u0644\\\\u0625\\\\u0639\\\\u062f\\\\u0627\\\\u062f\\\\u0627\\\\u062a"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "أذونات الإعدادات"
 
@@ -2566,6 +2602,10 @@ msgstr "لا يمكن أن يكون طول النطاق الفرعي أطول م
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "لا يمكن أن يقل طول النطاق الفرعي عن 3 أحرف"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "تم تحديث النطاق الفرعي"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2730,8 +2770,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف مساحة العمل الخاصة بك بشكل دائم. <0/> الرجاء إدخال بريدك الإلكتروني للتأكيد."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "سيتم إلغاء تعيين هذا العضو من هذا الدور."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -2741,7 +2781,7 @@ msgstr "سيتم إلغاء تعيين هذا العضو من هذا الدور.
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "تم تعيين هذا الدور لهؤلاء أعضاء الفضاء العمل."
 
@@ -2785,10 +2825,10 @@ msgstr "صحيح"
 msgid "Turkish"
 msgstr "التركية"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "النوع"
 
@@ -3033,8 +3073,8 @@ msgstr "مساحات العمل"
 msgid "Wrap on record pages"
 msgstr "لف في صفحات السجل"
 
-#: src/pages/settings/roles/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
@@ -3050,8 +3090,16 @@ msgid "yes"
 msgstr "نعم"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
-msgid "You are not allowed to create records in this object"
-msgstr "غير مسموح لك بإنشاء سجلات في هذا الكائن"
+msgid "You are not allowed to create records for this object"
+msgstr "غير مسموح لك بإنشاء سجلات لهذا الكائن"
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#~ msgid "You are not allowed to create records in this object"
+#~ msgstr "You are not allowed to create records in this object"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "ليس لديك صلاحية لانتحال شخصية المستخدمين."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

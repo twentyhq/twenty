@@ -5,6 +5,7 @@ import { IconArrowUpRight, IconPencil } from 'twenty-ui';
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
+import { useOpenActivityTargetInlineCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetInlineCellEditMode';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
@@ -59,6 +60,9 @@ export const ActivityTargetsInlineCell = ({
       overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
     });
 
+  const { openActivityTargetInlineCellEditMode } =
+    useOpenActivityTargetInlineCellEditMode();
+
   return (
     <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
       <FieldFocusContextProvider>
@@ -90,6 +94,11 @@ export const ActivityTargetsInlineCell = ({
                     maxWidth={maxWidth}
                   />
                 ),
+                onOpenEditMode: () => {
+                  openActivityTargetInlineCellEditMode({
+                    recordPickerInstanceId: `record-picker-${activity.id}`,
+                  });
+                },
               }}
             >
               <RecordInlineCellContainer />

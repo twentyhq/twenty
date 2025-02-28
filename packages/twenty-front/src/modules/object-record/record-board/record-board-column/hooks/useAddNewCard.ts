@@ -1,9 +1,9 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
-import { useRecordSelectSearch } from '@/object-record/relation-picker/hooks/useRecordSelectSearch';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
+import { useRecordSelectSearch } from '@/object-record/record-picker/hooks/useRecordSelectSearch';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
@@ -16,13 +16,19 @@ type SetFunction = <T>(
   valOrUpdater: T | ((currVal: T) => T),
 ) => void;
 
-export const useAddNewCard = () => {
+type UseAddNewCardProps = {
+  recordPickerComponentInstanceId: string;
+};
+
+export const useAddNewCard = ({
+  recordPickerComponentInstanceId,
+}: UseAddNewCardProps) => {
   const columnContext = useContext(RecordBoardColumnContext);
   const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
     useContext(RecordBoardContext);
-  const { resetSearchFilter } = useRecordSelectSearch({
-    recordPickerInstanceId: RelationPickerHotkeyScope.RelationPicker,
-  });
+  const { resetSearchFilter } = useRecordSelectSearch(
+    recordPickerComponentInstanceId,
+  );
 
   const {
     goBackToPreviousHotkeyScope,
@@ -71,7 +77,7 @@ export const useAddNewCard = () => {
       labelValue: string,
       position: 'first' | 'last',
       isOpportunity: boolean,
-      company?: RecordForSelect,
+      company?: SingleRecordPickerRecord,
     ) => {
       if (
         (isOpportunity && company !== null) ||
@@ -220,7 +226,7 @@ export const useAddNewCard = () => {
   const handleEntitySelect = useCallback(
     (
       position: 'first' | 'last',
-      company: RecordForSelect,
+      company: SingleRecordPickerRecord,
       columnId?: string,
     ) => {
       const columnDefinitionId = getColumnDefinitionId(columnId);
@@ -233,7 +239,6 @@ export const useAddNewCard = () => {
   return {
     handleAddNewCardClick,
     handleCreateSuccess,
-    handleCreate,
     handleBlur,
     handleInputEnter,
     handleEntitySelect,

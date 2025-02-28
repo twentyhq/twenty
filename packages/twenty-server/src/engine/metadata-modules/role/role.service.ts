@@ -21,6 +21,19 @@ export class RoleService {
     });
   }
 
+  public async getRoleById(
+    id: string,
+    workspaceId: string,
+  ): Promise<RoleEntity | null> {
+    return this.roleRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: ['userWorkspaceRoles'],
+    });
+  }
+
   public async createAdminRole({
     workspaceId,
   }: {

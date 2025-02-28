@@ -59,7 +59,7 @@ msgstr "{apiKeyName} API-Schlüssel"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} wird von folgender Rolle abgezogen:"
 
@@ -97,7 +97,7 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Eine gemeinsame Umgebung, in der Sie Ihre Kundenbeziehungen zusammen mit Ihrem Team verwalten können."
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Fähigkeit, mit jedem Objekt zu interagieren"
 
@@ -127,9 +127,9 @@ msgstr "Kontolöschung"
 msgid "Accounts"
 msgstr "Konten"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -225,9 +225,17 @@ msgstr "Fügen Sie Ihr erstes {objectLabel} hinzu"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Hinzugefügt am {beautifiedCreatedAt}"
 
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr "Hinzugefügt am {beautifyPastDateRelative}"
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Zur Blockliste hinzugefügt"
+
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "Passen Sie die rollenspezifischen Einstellungen an"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -261,7 +269,7 @@ msgstr "Alle Zeilen"
 msgid "All Objects"
 msgstr "Alle Objekte"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Alle Rollen"
 
@@ -336,8 +344,12 @@ msgid "Appearance"
 msgstr "Erscheinungsbild"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Approved Email Domain"
-msgstr "Genehmigte E-Mail-Domäne"
+msgid "Approved Domains"
+msgstr "Genehmigte Domänen"
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -348,31 +360,31 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Sind Sie sicher, dass Sie Ihr Abrechnungsintervall ändern möchten?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Sind Sie sicher, dass Sie diese Rolle zuweisen m\\u00f6chten?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Ascending"
 msgstr "Aufsteigend"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "{workspaceMemberName} zuweisen?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Rollen zuweisen, um die Zugriffsrechte der Mitglieder festzulegen"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Mitglied zuweisen"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Zugewiesene Mitglieder"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Zugewiesen an"
 
@@ -586,7 +598,7 @@ msgstr "Konfigurieren Sie, wie wir Ihre Ereignisse in Ihrem Kalender anzeigen so
 msgid "Configure your emails and calendar settings."
 msgstr "E-Mail- und Kalendereinstellungen konfigurieren."
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Best\\u00e4tigen"
 
@@ -709,7 +721,7 @@ msgstr "Neuen Datensatz erstellen"
 msgid "Create profile"
 msgstr "Profil erstellen"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Rolle erstellen"
 
@@ -737,6 +749,10 @@ msgstr "Erstellt"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Benutzerdefinierte Domäne"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "Benutzerdefinierte Domain aktualisiert"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -936,8 +952,13 @@ msgid "Deleted"
 msgstr "Gelöscht"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Deleted {objectNamePlural}"
-msgstr "Gelöschte {objectNamePlural}"
+#~ msgid "Deleted {objectNamePlural}"
+#~ msgstr "Deleted {objectNamePlural}"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Deleted records"
+msgstr "Gelöschte Datensätze"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1003,6 +1024,10 @@ msgstr "Domäne"
 msgid "Domain added successfully."
 msgstr "Domäne erfolgreich hinzugefügt."
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr "Domänen müssen kürzer als 256 Zeichen sein, dürfen keine Leerzeichen enthalten und keine Sonderzeichen enthalten."
+
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Keine Kontakte automatisch erstellen."
@@ -1064,13 +1089,17 @@ msgstr "Bearbeiten Sie den Namen Ihrer Subdomain oder legen Sie eine benutzerdef
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
 msgstr "E-Mail"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Email can not be empty"
+#~ msgid "Email can not be empty"
+#~ msgstr "Email can not be empty"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
 msgstr "E-Mail darf nicht leer sein"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -1547,7 +1576,6 @@ msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.e
 msgstr "Ungültige benutzerdefinierte Domain. Bitte fügen Sie mindestens eine Subdomain hinzu (z.B. sub.beispiel.com)."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Ungültige Domäne. Domänen müssen kleiner als 256 Zeichen sein, dürfen keine IP-Adressen sein, dürfen keine Leerzeichen enthalten, dürfen keine Sonderzeichen wie _~`!@#$%^*()=+{}[]|\\;:'\",<>/? enthalten und dürfen nicht mit einem '-' Zeichen beginnen oder enden."
 
@@ -1788,10 +1816,6 @@ msgstr "Nach rechts verschieben"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1801,6 +1825,10 @@ msgstr "Nach rechts verschieben"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "Name"
@@ -1935,7 +1963,7 @@ msgstr "Kein Land"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Keine Mitglieder mehr zuzuweisen"
 
@@ -1947,7 +1975,7 @@ msgstr "Keine Einträge gefunden"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Keine Ergebnisse"
 
@@ -2006,13 +2034,13 @@ msgstr "Objekt"
 msgid "Object destination"
 msgstr "Objektdestination"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Objects"
 msgstr "Objekte"
 
@@ -2045,6 +2073,7 @@ msgstr "Geöffnet"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Optional: Definieren Sie einen geheimen String, den wir in jedem Webhook enthalten. Verwenden Sie dies zur Authentifizierung und Überprüfung des Webhooks bei Erhalt."
 
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2259,15 +2288,13 @@ msgstr "Beziehungstyp"
 msgid "Releases"
 msgstr "Veröffentlichungen"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Entfernen"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "{workspaceMemberName} entfernen?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2351,7 +2378,7 @@ msgstr "Suche ''{commandMenuSearch}'' mit..."
 msgid "Search a field..."
 msgstr "Feld suchen..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "Ein Mitglied suchen"
 
@@ -2398,6 +2425,11 @@ msgstr "Sicherheit"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "Aktive Version anzeigen"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "See deleted records"
+msgstr "Gelöschte Datensätze anzeigen"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2458,6 +2490,10 @@ msgstr "Server-Admin-Bereich"
 msgid "Service Provider Details"
 msgstr "Details des Dienstanbieters"
 
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "Legen Sie eine Standardrolle für diesen Arbeitsbereich fest"
+
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Als Standard festlegen"
@@ -2479,15 +2515,15 @@ msgid "Set the name of your subdomain"
 msgstr "Subdomainnamen festlegen"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Einstellungen Berechtigungen"
 
@@ -2566,6 +2602,10 @@ msgstr "Die Subdomain darf nicht länger als 30 Zeichen sein"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Die Subdomain darf nicht kürzer als 3 Zeichen sein"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "Subdomain aktualisiert"
 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2730,8 +2770,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch wird Ihr gesamter Arbeitsbereich dauerhaft gelöscht. <0/> Bitte geben Sie zur Bestätigung Ihre E-Mail ein."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Dieses Mitglied wird von dieser Rolle abgezogen."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -2741,7 +2781,7 @@ msgstr "Dieses Mitglied wird von dieser Rolle abgezogen."
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Diese Rolle ist diesen Arbeitsbereichsmitgliedern zugewiesen."
 
@@ -2785,10 +2825,10 @@ msgstr "Wahr"
 msgid "Turkish"
 msgstr "T\\u00fcrkisch"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Typ"
 
@@ -3033,8 +3073,8 @@ msgstr "Arbeitsbereiche"
 msgid "Wrap on record pages"
 msgstr "Auf Rekordseiten umwickeln"
 
-#: src/pages/settings/roles/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
@@ -3050,8 +3090,16 @@ msgid "yes"
 msgstr "ja"
 
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
-msgid "You are not allowed to create records in this object"
-msgstr "Sie dürfen keine Datensätze in diesem Objekt erstellen"
+msgid "You are not allowed to create records for this object"
+msgstr "Sie dürfen keine Datensätze für dieses Objekt erstellen"
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#~ msgid "You are not allowed to create records in this object"
+#~ msgstr "You are not allowed to create records in this object"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "Sie haben keinen Zugriff, um Benutzer zu imitieren."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
