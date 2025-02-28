@@ -19,7 +19,7 @@ import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryP
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -56,7 +56,7 @@ export const UpdateViewButtonGroup = ({
   const { openDropdown: openViewPickerDropdown } = useDropdown(
     VIEW_PICKER_DROPDOWN_ID,
   );
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
     viewPickerReferenceViewIdComponentState,
@@ -109,7 +109,7 @@ export const UpdateViewButtonGroup = ({
 
   return (
     <StyledContainer>
-      {currentViewWithCombinedFiltersAndSorts?.key !== 'INDEX' ? (
+      {currentView?.key !== 'INDEX' ? (
         <ButtonGroup size="small" accent="blue">
           <Button title="Update view" onClick={handleUpdateViewClick} />
           <Dropdown

@@ -7,10 +7,10 @@ export type RecordFilter = {
   value: string;
   displayValue: string;
   type: FilterableFieldType;
-  viewFilterGroupId?: string;
+  recordFilterGroupId?: string;
   displayAvatarUrl?: string;
   operand: ViewFilterOperand;
-  positionInViewFilterGroup?: number | null;
+  positionInRecordFilterGroup?: number | null;
   label: string;
   subFieldName?: string | null | undefined;
 };

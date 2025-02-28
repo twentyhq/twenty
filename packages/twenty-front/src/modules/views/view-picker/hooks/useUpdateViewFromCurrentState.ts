@@ -10,7 +10,7 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useRecoilCallback } from 'recoil';
 
-export const useUpdateViewFromCurrentState = (viewBarInstanceId?: string) => {
+export const useUpdateViewFromCurrentState = () => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
   const viewPickerInputNameCallbackState = useRecoilComponentCallbackStateV2(
@@ -33,7 +33,7 @@ export const useUpdateViewFromCurrentState = (viewBarInstanceId?: string) => {
     useRecoilComponentCallbackStateV2(viewPickerReferenceViewIdComponentState);
 
   const { updateView } = useUpdateView();
-  const { changeView } = useChangeView(viewBarInstanceId);
+  const { changeView } = useChangeView();
 
   const updateViewFromCurrentState = useRecoilCallback(
     ({ set, snapshot }) =>

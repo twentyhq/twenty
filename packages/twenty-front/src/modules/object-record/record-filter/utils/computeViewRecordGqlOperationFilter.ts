@@ -824,7 +824,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
   }
 
   const groupFilters = filters.filter(
-    (filter) => filter.viewFilterGroupId === currentViewFilterGroupId,
+    (filter) => filter.recordFilterGroupId === currentViewFilterGroupId,
   );
 
   const groupRecordGqlOperationFilters = groupFilters
@@ -886,7 +886,7 @@ export const computeViewRecordGqlOperationFilter = (
   viewFilterGroups: ViewFilterGroup[],
 ): RecordGqlOperationFilter => {
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] = filters
-    .filter((filter) => !filter.viewFilterGroupId)
+    .filter((filter) => !filter.recordFilterGroupId)
     .map((regularFilter) =>
       computeFilterRecordGqlOperationFilter({
         filterValueDependencies,

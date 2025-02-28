@@ -32,11 +32,11 @@ export const mapViewFiltersToFilters = (
         value: viewFilter.value,
         displayValue: viewFilter.displayValue,
         operand: viewFilter.operand,
-        viewFilterGroupId: viewFilter.viewFilterGroupId,
-        positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+        recordFilterGroupId: viewFilter.viewFilterGroupId,
+        positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
         label: availableFieldMetadataItem.label,
         type: filterType,
-      };
+      } satisfies RecordFilter;
     })
     .filter(isDefined);
 };

@@ -18,7 +18,6 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -28,6 +27,7 @@ import { advancedFilterViewFilterIdComponentState } from '@/object-record/object
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
 
 export const StyledInput = styled.input`
@@ -156,16 +156,14 @@ export const ObjectFilterDropdownFilterSelect = ({
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
 
-  const { currentViewId, currentViewWithCombinedFiltersAndSorts } =
-    useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   const isAdvancedFiltersEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsAdvancedFiltersEnabled,
   );
 
   const shouldShowAdvancedFilterButton =
-    isDefined(currentViewId) &&
-    isDefined(currentViewWithCombinedFiltersAndSorts?.objectMetadataId) &&
+    isDefined(currentView?.objectMetadataId) &&
     isAdvancedFilterButtonVisible &&
     isAdvancedFiltersEnabled;
 
