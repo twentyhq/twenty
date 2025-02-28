@@ -67,9 +67,13 @@ export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspa
     );
 
     if (await this.hasRichTextV2FeatureFlag(workspaceId)) {
-      throw new Error(
-        'Rich text v2 feature flag is enabled, skipping migration',
+      this.logger.log(
+        chalk.yellow(
+          'Rich text v2 feature flag is enabled, skipping migration',
+        ),
       );
+
+      return;
     }
 
     const richTextFields = await this.fieldMetadataRepository.find({

@@ -49,10 +49,6 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
       args,
     );
 
-    await this.updateDefaultViewRecordOpeningOnWorkflowObjectsCommand.runOnWorkspace(
-      args,
-    );
-
     await this.migrateSearchVectorOnNoteAndTaskEntitiesCommand.runOnWorkspace(
       args,
     );
@@ -61,9 +57,13 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
       args,
     );
 
-    await this.addTasksAssignedToMeViewCommand.runOnWorkspace(args);
-
     await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
+
+    await this.updateDefaultViewRecordOpeningOnWorkflowObjectsCommand.runOnWorkspace(
+      args,
+    );
+
+    await this.addTasksAssignedToMeViewCommand.runOnWorkspace(args);
 
     this.logger.log(
       chalk.blue(`Upgrade for workspace ${args.workspaceId} completed.`),

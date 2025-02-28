@@ -148,7 +148,9 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
             total: activeWorkspaceIds.length,
           });
         } catch (error) {
-          this.logger.error(`Error in workspace ${workspaceId}: ${error}`);
+          this.logger.warn(
+            chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
+          );
         }
 
         await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
