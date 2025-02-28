@@ -8,8 +8,7 @@ import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-fiel
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 
 type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -20,6 +19,7 @@ export const RelationFromManyFieldInput = ({
 }: RelationFromManyFieldInputProps) => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
   const recordPickerInstanceId = `record-picker-${fieldDefinition.fieldMetadataId}`;
+
   const { updateRelation } = useUpdateRelationFromManyFieldInput({
     scopeId: recordPickerInstanceId,
   });
@@ -52,17 +52,16 @@ export const RelationFromManyFieldInput = ({
 
   return (
     <>
-      <RecordPickerComponentInstanceContext.Provider
-        value={{ instanceId: recordPickerInstanceId }}
-      >
-        <RelationFromManyFieldInputMultiRecordsEffect />
-        <MultipleRecordPicker
-          componentInstanceId={recordPickerInstanceId}
-          onSubmit={handleSubmit}
-          onChange={updateRelation}
-          onCreate={createNewRecordAndOpenRightDrawer}
-        />
-      </RecordPickerComponentInstanceContext.Provider>
+      <RelationFromManyFieldInputMultiRecordsEffect
+        recordPickerInstanceId={recordPickerInstanceId}
+      />
+      <MultipleRecordPicker
+        componentInstanceId={recordPickerInstanceId}
+        onSubmit={handleSubmit}
+        onChange={updateRelation}
+        onCreate={createNewRecordAndOpenRightDrawer}
+        onClickOutside={handleSubmit}
+      />
     </>
   );
 };

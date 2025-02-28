@@ -2,7 +2,7 @@ import { ThemeColor } from 'twenty-ui';
 
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { ConnectedAccountProvider } from 'twenty-shared';
 import * as z from 'zod';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';

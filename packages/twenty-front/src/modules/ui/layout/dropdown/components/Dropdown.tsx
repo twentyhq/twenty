@@ -92,9 +92,10 @@ export const Dropdown = ({
       flip(),
       size({
         padding: 32,
-        apply: ({ availableHeight }) => {
+        apply: () => {
           flushSync(() => {
-            setDropdownMaxHeight(availableHeight);
+            // TODO: I think this is not needed anymore let's remove it if not used for a few weeks
+            // setDropdownMaxHeight(availableHeight);
           });
         },
         boundary: document.querySelector('#root') ?? undefined,

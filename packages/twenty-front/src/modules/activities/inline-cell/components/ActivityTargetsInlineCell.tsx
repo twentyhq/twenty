@@ -6,6 +6,8 @@ import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { useOpenActivityTargetInlineCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetInlineCellEditMode';
+import { ActivityTargetInlineCellComponentInstanceContext } from '@/activities/inline-cell/states/contexts/ActivityTargetInlineCellComponentInstanceContext';
+import { getActivityTargetsInlineCellComponentInstanceIdFromActivityId } from '@/activities/inline-cell/utils/getActivityTargetsInlineCellComponentInstanceIdFromActivityId';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
@@ -64,48 +66,60 @@ export const ActivityTargetsInlineCell = ({
     useOpenActivityTargetInlineCellEditMode();
 
   return (
-    <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
-      <FieldFocusContextProvider>
-        {ActivityTargetsContextProvider && (
-          <ActivityTargetsContextProvider>
-            <RecordInlineCellContext.Provider
-              value={{
-                buttonIcon: IconPencil,
-                customEditHotkeyScope: {
-                  scope: ActivityEditorHotkeyScope.ActivityTargets,
-                },
-                IconLabel: showLabel ? IconArrowUpRight : undefined,
-                showLabel: showLabel,
-                readonly: readonly,
-                labelWidth: fieldDefinition?.labelWidth,
-                editModeContent: (
-                  <ActivityTargetInlineCellEditMode
-                    activity={activity}
-                    activityTargetWithTargetRecords={
-                      activityTargetObjectRecords
-                    }
-                    activityObjectNameSingular={activityObjectNameSingular}
-                  />
-                ),
-                label: 'Relations',
-                displayModeContent: (
-                  <ActivityTargetChips
-                    activityTargetObjectRecords={activityTargetObjectRecords}
-                    maxWidth={maxWidth}
-                  />
-                ),
-                onOpenEditMode: () => {
-                  openActivityTargetInlineCellEditMode({
-                    recordPickerInstanceId: `record-picker-${activity.id}`,
-                  });
-                },
-              }}
-            >
-              <RecordInlineCellContainer />
-            </RecordInlineCellContext.Provider>
-          </ActivityTargetsContextProvider>
-        )}
-      </FieldFocusContextProvider>
-    </RecordFieldInputScope>
+    <ActivityTargetInlineCellComponentInstanceContext.Provider
+      value={{
+        instanceId:
+          getActivityTargetsInlineCellComponentInstanceIdFromActivityId(
+            activity.id,
+          ),
+      }}
+    >
+      <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
+        <FieldFocusContextProvider>
+          {ActivityTargetsContextProvider && (
+            <ActivityTargetsContextProvider>
+              <RecordInlineCellContext.Provider
+                value={{
+                  buttonIcon: IconPencil,
+                  customEditHotkeyScope: {
+                    scope: ActivityEditorHotkeyScope.ActivityTargets,
+                  },
+                  IconLabel: showLabel ? IconArrowUpRight : undefined,
+                  showLabel: showLabel,
+                  readonly: readonly,
+                  labelWidth: fieldDefinition?.labelWidth,
+                  editModeContent: (
+                    <ActivityTargetInlineCellEditMode
+                      activity={activity}
+                      activityTargetWithTargetRecords={
+                        activityTargetObjectRecords
+                      }
+                      activityObjectNameSingular={activityObjectNameSingular}
+                    />
+                  ),
+                  label: 'Relations',
+                  displayModeContent: (
+                    <ActivityTargetChips
+                      activityTargetObjectRecords={activityTargetObjectRecords}
+                      maxWidth={maxWidth}
+                    />
+                  ),
+                  onOpenEditMode: () => {
+                    openActivityTargetInlineCellEditMode({
+                      componentInstanceId:
+                        getActivityTargetsInlineCellComponentInstanceIdFromActivityId(
+                          activity.id,
+                        ),
+                    });
+                  },
+                }}
+              >
+                <RecordInlineCellContainer />
+              </RecordInlineCellContext.Provider>
+            </ActivityTargetsContextProvider>
+          )}
+        </FieldFocusContextProvider>
+      </RecordFieldInputScope>
+    </ActivityTargetInlineCellComponentInstanceContext.Provider>
   );
 };

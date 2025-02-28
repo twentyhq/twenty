@@ -31,7 +31,7 @@ import { isFieldRichText } from '@/object-record/record-field/types/guards/isFie
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';

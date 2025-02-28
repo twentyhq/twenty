@@ -12,7 +12,7 @@ import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RecordPickerHotkeyScope } from '@/object-record/record-picker/types/RecordPickerHotkeyScope';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -144,7 +144,7 @@ export const ObjectFilterDropdownSourceSelect = ({
   return (
     <MultipleSelectDropdown
       selectableListId="object-filter-source-select-id"
-      hotkeyScope={RecordPickerHotkeyScope.RecordPicker}
+      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       itemsToSelect={sourceTypes.filter(
         (item) =>
           !filteredSelectedItems.some((selected) => selected.id === item.id),
