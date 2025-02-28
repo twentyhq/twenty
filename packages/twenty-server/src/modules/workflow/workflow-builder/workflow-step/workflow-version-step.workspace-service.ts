@@ -14,6 +14,7 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
@@ -21,6 +22,8 @@ import {
   WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -44,6 +47,8 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
   ) {}
 
   async createWorkflowVersionStep({
@@ -235,6 +240,58 @@ export class WorkflowVersionStepWorkspaceService {
         return step;
       }
     }
+  }
+
+  async submitFormStep({
+    workspaceId,
+    stepId,
+    workflowRunId,
+    response,
+  }: {
+    workspaceId: string;
+    stepId: string;
+    workflowRunId: string;
+    response: object;
+  }) {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail(
+        workflowRunId,
+      );
+
+    const step = workflowRun.output?.flow?.steps?.find(
+      (step) => step.id === stepId,
+    );
+
+    if (!isDefined(step)) {
+      throw new WorkflowVersionStepException(
+        'Step not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const newStepOutput: StepOutput = {
+      id: stepId,
+      output: {
+        result: response,
+      },
+    };
+
+    const updatedContext = {
+      ...workflowRun.context,
+      [stepId]: response,
+    };
+
+    await this.workflowRunWorkspaceService.saveWorkflowRunState({
+      workflowRunId,
+      stepOutput: newStepOutput,
+      context: updatedContext,
+    });
+
+    await this.workflowRunnerWorkspaceService.resume({
+      workspaceId,
+      workflowRunId,
+      lastExecutedStepId: stepId,
+    });
   }
 
   private async enrichOutputSchema({
