@@ -25,9 +25,9 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared';
-import { t } from '@lingui/core/macro';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -48,6 +48,7 @@ const StyledBar = styled.div`
   min-height: 32px;
   padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
   z-index: 4;
 `;
 
@@ -56,7 +57,7 @@ const StyledChipcontainer = styled.div`
   display: flex;
   flex-direction: row;
   overflow: scroll;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   z-index: 1;
 `;
@@ -80,6 +81,8 @@ const StyledFilterContainer = styled.div`
   align-items: center;
   flex: 1;
   overflow-x: hidden;
+
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledSeperatorContainer = styled.div`
@@ -99,7 +102,6 @@ const StyledSeperator = styled.div`
 `;
 
 const StyledAddFilterContainer = styled.div`
-  margin-left: ${({ theme }) => theme.spacing(1)};
   z-index: 5;
 `;
 
