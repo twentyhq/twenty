@@ -1,9 +1,9 @@
-import { useSetPlaygroundSession } from '@/settings/playground/hooks/useSetPlaygroundSession';
 import { openAPIReferenceState } from '@/settings/playground/states/openAPIReference';
 import {
   PlaygroundSchemas,
   PlaygroundTypes,
 } from '@/settings/playground/types/PlaygroundConfig';
+import { setPlaygroundSession } from '@/settings/playground/utils/setPlaygroundSession';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -52,7 +52,6 @@ export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const [, setOpenAPIReference] = useRecoilState(openAPIReferenceState);
-  const { setApiKey, setSchema } = useSetPlaygroundSession();
 
   const { control, handleSubmit } = useForm<PlaygroundSetupFormValues>({
     mode: 'onTouched',
@@ -76,8 +75,7 @@ export const PlaygroundSetupForm = () => {
   };
 
   const onSubmit = async (values: PlaygroundSetupFormValues) => {
-    setSchema(values.schema);
-    setApiKey(values.apiKeyForPlayground);
+    setPlaygroundSession(values.schema, values.apiKeyForPlayground);
 
     await getOpenAPIConfig(values);
 
