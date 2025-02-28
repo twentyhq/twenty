@@ -52,7 +52,6 @@ export const ButtonIcon = ({
   loading?: boolean;
 }) => {
   const theme = useTheme();
-  console.log('>>>>>>>>>>>>>>', loading);
   return (
     <StyledIconWrapper loading={loading}>
       {isDefined(loading) && (
