@@ -36,7 +36,7 @@ export class SripeController {
 
       return res.json(accouuntLink);
     } catch (error) {
-      console.error(
+      this.logger.error(
         'An error occurred when calling the Stripe API to create an account link:',
         error,
       );
@@ -49,8 +49,6 @@ export class SripeController {
   async handleAccount(@Req() req: any, @Res() res: any) {
     try {
       const { workspaceId } = req.body;
-
-      console.log('workspaceId:', workspaceId);
 
       const account = await this.stripe.accounts.create({});
 

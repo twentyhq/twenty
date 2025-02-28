@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { CreateStripeIntegrationInput } from 'src/engine/core-modules/stripe/integrations/dtos/create-stripe-integration.input';
 import { UpdateStripeIntegrationInput } from 'src/engine/core-modules/stripe/integrations/dtos/update-stripe-integration.input';
-import { EnvironmentService } from '../../environment/environment.service';
+import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class StripeIntegrationService {
@@ -65,8 +65,6 @@ export class StripeIntegrationService {
       where: { workspace: { id: workspaceId } },
       relations: ['workspace'],
     });
-
-    console.log('teste', result);
 
     return result;
   }

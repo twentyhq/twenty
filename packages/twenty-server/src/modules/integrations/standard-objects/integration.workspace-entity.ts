@@ -1,6 +1,7 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
 import { OneToMany, Relation } from 'typeorm';
 
-import { msg } from '@lingui/core/macro';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
@@ -24,7 +25,6 @@ import {
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { FieldMetadataType } from 'twenty-shared';
 
 const NAME_FIELD_NAME = 'name';
 
