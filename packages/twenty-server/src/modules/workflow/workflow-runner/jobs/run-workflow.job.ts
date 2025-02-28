@@ -42,12 +42,12 @@ export class RunWorkflowJob {
   }: RunWorkflowJobData): Promise<void> {
     try {
       if (lastExecutedStepId) {
-        this.resumeWorkflowExecution({
+        await this.resumeWorkflowExecution({
           workflowRunId,
           lastExecutedStepId,
         });
       } else {
-        this.startWorkflowExecution({
+        await this.startWorkflowExecution({
           workflowRunId,
           payload: payload ?? {},
         });
