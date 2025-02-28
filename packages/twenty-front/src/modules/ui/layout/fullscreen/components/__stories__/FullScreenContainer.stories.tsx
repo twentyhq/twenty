@@ -31,7 +31,7 @@ export const Default: Story = {
     ),
     links: [
       {
-        children: "Workspace",
+        children: "Layout",
         href: '/'
       },
       {
