@@ -24,8 +24,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
 import { isDefined } from 'twenty-shared';
+import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();

@@ -18,17 +18,21 @@ const StyledTable = styled(Table)`
 
 const StyledTableCell = styled(TableCell)`
   overflow: hidden;
+
+  padding: 0 ${({ theme }) => theme.spacing(3)} 0 0;
+
+  &:first-child {
+    padding-left: 0;
+  }
+
+  &:last-child {
+    padding-right: 0;
+  }
 `;
 
 const StyledButton = styled(Button)`
-  -moz-user-select: text;
-  -ms-user-select: text;
-  -webkit-user-select: text;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.tertiary};
-  font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   height: ${({ theme }) => theme.spacing(6)};
   overflow: hidden;

@@ -22,6 +22,7 @@ const StyledMainContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(3)};
   padding-left: 0;
   width: 100%;
+  height: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(3)};

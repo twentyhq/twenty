@@ -24,10 +24,6 @@ const StyledCard = styled(Card)<{
   cursor: ${({ disabled, onClick }) =>
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
   width: 100%;
-  & :hover {
-    background-color: ${({ theme }) => theme.background.quaternary};
-    cursor: pointer;
-  }
 `;
 
 const StyledCardContent = styled(CardContent)<object>`
@@ -35,6 +31,11 @@ const StyledCardContent = styled(CardContent)<object>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2, 2)};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.quaternary};
+    cursor: pointer;
+  }
 `;
 
 const StyledHeader = styled.div`

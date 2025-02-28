@@ -14,7 +14,7 @@ button {
 }
 
 form {
-  width: 100%;
+  display: contents;
 }
 
 /* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */
