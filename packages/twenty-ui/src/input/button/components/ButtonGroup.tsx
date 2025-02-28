@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 
 import { isDefined } from 'twenty-shared';
 
-import { ButtonPosition, ButtonProps } from './Button/Button.main';
+import { ButtonPosition, ButtonProps } from './Button/Button';
 
 const StyledButtonGroupContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};

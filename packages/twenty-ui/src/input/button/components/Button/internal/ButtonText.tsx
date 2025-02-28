@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
 
-const StyledEllipsis = styled.div<{ loading: boolean }>`
+const StyledEllipsis = styled.div<{ loading?: boolean }>`
   right: 0;
   clip-path: ${({ theme, loading }) =>
     loading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(6)})`};
@@ -19,7 +19,7 @@ const StyledTextWrapper = styled.div`
   position: relative;
 `;
 
-const StyledText = styled.div<{ loading: boolean; hasIcon: boolean }>`
+const StyledText = styled.div<{ loading?: boolean; hasIcon: boolean }>`
   clip-path: ${({ loading, theme, hasIcon }) =>
     loading
       ? ` inset(0 ${!hasIcon ? theme.spacing(12) : theme.spacing(6)} 0 0)`
@@ -42,11 +42,11 @@ const StyledText = styled.div<{ loading: boolean; hasIcon: boolean }>`
 `;
 
 export const ButtonText = ({
-  loading = false,
   hasIcon = false,
+  loading,
   title,
 }: {
-  loading: boolean;
+  loading?: boolean;
   hasIcon: boolean;
   title?: string;
 }) => (

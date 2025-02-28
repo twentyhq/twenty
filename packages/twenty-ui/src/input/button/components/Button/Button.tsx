@@ -5,10 +5,10 @@ import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { useIsMobile } from '@ui/utilities';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ButtonText } from './ButtonText.internal';
-import { ButtonIcon } from '@ui/input/button/components/Button/ButtonIcon.internal';
-import { ButtonSoon } from '@ui/input/button/components/Button/ButtonSoon.internal';
-import { ButtonHotkeys } from '@ui/input/button/components/Button/ButtonHotKeys.internal';
+import { ButtonText } from './internal/ButtonText';
+import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
+import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
+import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/ButtonHotKeys';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -431,12 +431,12 @@ export const Button = ({
   hotkeys,
   ariaLabel,
   type,
-  loading = false,
+  loading,
 }: ButtonProps) => {
   const isMobile = useIsMobile();
 
   const [isFocused, setIsFocused] = useState(propFocus);
-
+  console.log('>>>>>>>>>>>>>>', loading);
   return (
     <StyledButtonWrapper
       loading={loading}
@@ -444,7 +444,7 @@ export const Button = ({
       inverted={inverted}
       disabled={soon || disabled}
     >
-      <ButtonIcon Icon={Icon} loading={loading} />
+      {(loading || Icon) && <ButtonIcon Icon={Icon} loading={loading} />}
       <StyledButton
         fullWidth={fullWidth}
         variant={variant}
