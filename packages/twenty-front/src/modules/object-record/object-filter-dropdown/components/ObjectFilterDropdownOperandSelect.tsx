@@ -23,7 +23,13 @@ const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   border-radius: ${({ theme }) => theme.border.radius.md};
 `;
 
-export const ObjectFilterDropdownOperandSelect = () => {
+type ObjectFilterDropdownFilterInputProps = {
+  filterDropdownId?: string;
+};
+
+export const ObjectFilterDropdownOperandSelect = ({
+  filterDropdownId,
+}: ObjectFilterDropdownFilterInputProps) => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -44,12 +50,21 @@ export const ObjectFilterDropdownOperandSelect = () => {
 
   const { closeDropdown } = useDropdown();
 
+const selectedOperandInDropdown = useRecoilComponentValueV2(
+  selectedOperandInDropdownComponentState,
+  filterDropdownId,
+);
+
+const isActorAndIs = ()=>{
+  return fieldMetadataItemUsedInDropdown?.type=="ACTOR" && selectedOperandInDropdown === ViewFilterOperand.Is
+}
+
   const operandsForFilterType = isDefined(fieldMetadataItemUsedInDropdown)
     ? getRecordFilterOperands({
         filterType: getFilterTypeFromFieldType(
           fieldMetadataItemUsedInDropdown.type,
         ),
-        subFieldName: subFieldNameUsedInDropdown,
+        subFieldName: isActorAndIs()?"source":subFieldNameUsedInDropdown,
       })
     : [];
 
