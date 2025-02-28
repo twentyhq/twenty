@@ -14,6 +14,11 @@ import { IconTwentyStar } from 'twenty-ui';
 
 import { Select } from '@/ui/input/components/Select';
 
+export const OPTIONS = [
+  { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+  { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+]
+
 export const MyComponent = () => {
 
   return (
@@ -23,10 +28,7 @@ export const MyComponent = () => {
         disabled={false}
         dropdownScopeId="exampleDropdown"
         label="Select an option"
-        options={[
-          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
-          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
-        ]}
+        options={OPTIONS}
         value="option1"
       />
     </RecoilRoot>
