@@ -9,6 +9,8 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared';
 
+export const SINGLE_RECORD_PICKER_LISTENER_ID = 'single-record-select';
+
 export type SingleRecordPickerProps = {
   width?: number;
   componentInstanceId: string;
@@ -25,6 +27,7 @@ export const SingleRecordPicker = ({
   selectedRecordIds,
   width = 200,
   componentInstanceId,
+  dropdownPlacement,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +44,7 @@ export const SingleRecordPicker = ({
         onCancel();
       }
     },
-    listenerId: 'single-record-select',
+    listenerId: SINGLE_RECORD_PICKER_LISTENER_ID,
   });
 
   return (
@@ -59,6 +62,7 @@ export const SingleRecordPicker = ({
             onRecordSelected,
             objectNameSingular,
             selectedRecordIds,
+            dropdownPlacement,
           }}
         />
       </DropdownMenu>

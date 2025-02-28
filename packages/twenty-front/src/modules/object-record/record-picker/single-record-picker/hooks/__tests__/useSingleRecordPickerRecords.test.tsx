@@ -14,7 +14,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   </SingleRecordPickerComponentInstanceContext.Provider>
 );
 
-describe('useRecordSelectSearch', () => {
+describe('useSingleRecordPickerRecords', () => {
   it('should update searchFilter after change event', async () => {
     const { result } = renderHook(
       () => {

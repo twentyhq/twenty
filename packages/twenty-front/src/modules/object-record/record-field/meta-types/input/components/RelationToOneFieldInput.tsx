@@ -61,6 +61,7 @@ export const RelationToOneFieldInput = ({
       recordPickerInstanceId={recordPickerInstanceId}
       selectedRecordIds={fieldValue?.id ? [fieldValue.id] : []}
       excludedRecordIds={[]}
+      dropdownPlacement={'bottom-start'}
     />
   );
 };

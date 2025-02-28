@@ -1,5 +1,5 @@
 import { FieldRelationValue } from '@/object-record/record-field/types/FieldMetadata';
-import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
+import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useRecoilCallback } from 'recoil';
@@ -21,7 +21,7 @@ export const useOpenRelationToOneFieldInput = () => {
 
         if (isDefined(fieldValue)) {
           set(
-            singleRecordPickerSearchFilterComponentState.atomFamily({
+            singleRecordPickerSelectedIdComponentState.atomFamily({
               instanceId: recordPickerInstanceId,
             }),
             fieldValue.id,

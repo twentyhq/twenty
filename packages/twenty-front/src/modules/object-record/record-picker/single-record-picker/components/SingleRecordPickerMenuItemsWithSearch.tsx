@@ -60,7 +60,6 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
 
   const { records } = useSingleRecordPickerRecords({
     objectNameSingular,
-    selectedRecordIds,
     excludedRecordIds,
   });
 

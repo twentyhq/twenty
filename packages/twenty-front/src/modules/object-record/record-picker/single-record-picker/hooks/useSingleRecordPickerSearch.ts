@@ -33,14 +33,14 @@ export const useSingleRecordPickerSearch = (
 
   const resetSearchFilter = () => {
     debouncedSetSearchFilter('');
-    setRecordPickerSelectedId('');
+    setRecordPickerSelectedId(undefined);
   };
 
   const handleSearchFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     debouncedSetSearchFilter(event.currentTarget.value);
-    setRecordPickerSelectedId('');
+    setRecordPickerSelectedId(undefined);
   };
 
   return {

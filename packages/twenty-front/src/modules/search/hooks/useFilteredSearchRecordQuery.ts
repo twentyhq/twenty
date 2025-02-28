@@ -6,9 +6,6 @@ import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-r
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared';
 
-// TODO: use this for all search queries, because we need selectedRecords and recordsToSelect each time we want to search
-// Filtered entities to select are
-
 export const useFilteredSearchRecordQuery = ({
   selectedIds,
   limit,
