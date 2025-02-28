@@ -17,7 +17,7 @@ export const RelationToOneFieldInput = ({
   onSubmit,
   onCancel,
 }: RelationToOneFieldInputProps) => {
-  const { fieldDefinition, fieldValue, recordId } =
+  const { fieldDefinition, recordId } =
     useRelationField<SingleRecordPickerRecord>();
 
   const persistField = usePersistField();
@@ -59,7 +59,6 @@ export const RelationToOneFieldInput = ({
         fieldDefinition.metadata.relationObjectMetadataNameSingular
       }
       recordPickerInstanceId={recordPickerInstanceId}
-      excludedRecordIds={[]}
     />
   );
 };
