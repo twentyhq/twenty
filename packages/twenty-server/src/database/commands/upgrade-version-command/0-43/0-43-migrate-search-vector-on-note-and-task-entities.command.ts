@@ -88,5 +88,9 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveOrSus
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
     );
+
+    this.logger.log(
+      `Migrated search vector on note and task entities for workspace ${workspaceId}`,
+    );
   }
 }
