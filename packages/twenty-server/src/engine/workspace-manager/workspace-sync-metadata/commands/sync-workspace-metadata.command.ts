@@ -7,6 +7,7 @@ import {
   MaintainedWorkspacesMigrationCommandOptions,
   MaintainedWorkspacesMigrationCommandRunner,
 } from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

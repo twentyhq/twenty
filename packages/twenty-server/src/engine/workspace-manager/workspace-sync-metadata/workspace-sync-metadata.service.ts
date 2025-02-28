@@ -7,6 +7,7 @@ import { DataSource, QueryFailedError } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
@@ -68,11 +69,11 @@ export class WorkspaceSyncMetadataService {
     const manager = queryRunner.manager;
 
     try {
-      // const isNewRelationEnabled =
-      //   await this.featureFlagService.isFeatureEnabled(
-      //     FeatureFlagKey.IsNewRelationEnabled,
-      //     context.workspaceId,
-      //   );
+      const isNewRelationEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IsNewRelationEnabled,
+          context.workspaceId,
+        );
 
       const workspaceMigrationRepository = manager.getRepository(
         WorkspaceMigrationEntity,
@@ -116,21 +117,22 @@ export class WorkspaceSyncMetadataService {
 
       let workspaceRelationMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
-      // if (true) {
-      workspaceRelationMigrations =
-        await this.workspaceSyncFieldMetadataRelationService.synchronize(
-          context,
-          manager,
-          storage,
-        );
-      // } else {
-      //   workspaceRelationMigrations =
-      //     await this.workspaceSyncRelationMetadataService.synchronize(
-      //       context,
-      //       manager,
-      //       storage,
-      //     );
-      // }
+      console.log('isNewRelationEnabled', isNewRelationEnabled);
+      if (isNewRelationEnabled) {
+        workspaceRelationMigrations =
+          await this.workspaceSyncFieldMetadataRelationService.synchronize(
+            context,
+            manager,
+            storage,
+          );
+      } else {
+        workspaceRelationMigrations =
+          await this.workspaceSyncRelationMetadataService.synchronize(
+            context,
+            manager,
+            storage,
+          );
+      }
 
       const workspaceRelationMigrationsEnd = performance.now();
 

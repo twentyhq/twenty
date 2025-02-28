@@ -43,6 +43,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Message Channel`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
+    inverseSideFieldKey: 'messageFolders',
   })
   messageChannel: Relation<MessageChannelWorkspaceEntity>;
 

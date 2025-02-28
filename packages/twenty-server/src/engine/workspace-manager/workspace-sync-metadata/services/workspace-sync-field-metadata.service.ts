@@ -63,7 +63,7 @@ export class WorkspaceSyncFieldMetadataService {
 
     await this.synchronizeCustomObjectFields(
       context,
-      originalObjectMetadataCollection,
+      customObjectMetadataCollection,
       storage,
     );
 

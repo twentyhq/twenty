@@ -20,46 +20,25 @@ interface CustomRelationFactory {
 
 @Injectable()
 export class StandardFieldRelationFactory {
-  create(
+  createFieldRelationForCustomObject(
     customObjectFactories: CustomRelationFactory[],
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-  ): FieldMetadataEntity<FieldMetadataType.RELATION>[];
+  ): FieldMetadataEntity<FieldMetadataType.RELATION>[] {
+    return customObjectFactories.flatMap((customObjectFactory) =>
+      this.updateFieldRelationMetadata(
+        customObjectFactory,
+        context,
+        originalObjectMetadataMap,
+      ),
+    );
+  }
 
-  create(
+  createFieldRelationForStandardObject(
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-  ): Map<string, FieldMetadataEntity<FieldMetadataType.RELATION>[]>;
-
-  create(
-    standardObjectMetadataDefinitionsOrCustomObjectFactories:
-      | (typeof BaseWorkspaceEntity)[]
-      | CustomRelationFactory[],
-    context: WorkspaceSyncContext,
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-  ):
-    | FieldMetadataEntity<FieldMetadataType.RELATION>[]
-    | Map<string, FieldMetadataEntity<FieldMetadataType.RELATION>[]> {
-    // Custom object factories
-    if (
-      'metadata' in standardObjectMetadataDefinitionsOrCustomObjectFactories[0]
-    ) {
-      const customObjectFactories =
-        standardObjectMetadataDefinitionsOrCustomObjectFactories as CustomRelationFactory[];
-
-      return customObjectFactories.flatMap((customObjectFactory) =>
-        this.updateFieldRelationMetadata(
-          customObjectFactory,
-          context,
-          originalObjectMetadataMap,
-        ),
-      );
-    }
-
-    const standardObjectMetadataDefinitions =
-      standardObjectMetadataDefinitionsOrCustomObjectFactories as (typeof BaseWorkspaceEntity)[];
-
+  ): Map<string, FieldMetadataEntity<FieldMetadataType.RELATION>[]> {
     return standardObjectMetadataDefinitions.reduce(
       (acc, standardObjectMetadata) => {
         const workspaceEntityMetadataArgs = metadataArgsStorage.filterEntities(
@@ -135,7 +114,7 @@ export class StandardFieldRelationFactory {
       )
       .map((workspaceRelationMetadataArgs) => {
         // Compute reflect relation metadata
-        const fromObjectNameSingular =
+        const sourceObjectNameSingular =
           'object' in workspaceEntityOrCustomRelationFactory
             ? workspaceEntityOrCustomRelationFactory.object.nameSingular
             : convertClassNameToObjectMetadataName(
@@ -143,16 +122,16 @@ export class StandardFieldRelationFactory {
               );
         const inverseSideTarget =
           workspaceRelationMetadataArgs.inverseSideTarget();
-        const toObjectNameSingular = convertClassNameToObjectMetadataName(
+        const targetObjectNameSingular = convertClassNameToObjectMetadataName(
           inverseSideTarget.name,
         );
-        const fromFieldMetadataName = workspaceRelationMetadataArgs.name;
-        const toFieldMetadataName =
+        const sourceFieldMetadataName = workspaceRelationMetadataArgs.name;
+        const targetFieldMetadataName =
           (workspaceRelationMetadataArgs.inverseSideFieldKey as
             | string
-            | undefined) ?? fromObjectNameSingular;
-        const fromObjectMetadata =
-          originalObjectMetadataMap[fromObjectNameSingular];
+            | undefined) ?? sourceObjectNameSingular;
+        const sourceObjectMetadata =
+          originalObjectMetadataMap[sourceObjectNameSingular];
         const joinColumnsMetadataArgsCollection =
           metadataArgsStorage.filterJoinColumns(target);
         const joinColumnName = getJoinColumn(
@@ -161,50 +140,54 @@ export class StandardFieldRelationFactory {
         );
 
         assert(
-          fromObjectMetadata,
-          `Object ${fromObjectNameSingular} not found in DB 
-        for relation FROM defined in class ${fromObjectNameSingular}`,
+          sourceObjectMetadata,
+          `Source object ${sourceObjectNameSingular} not found in databse for relation ${workspaceRelationMetadataArgs.name} of type ${workspaceRelationMetadataArgs.type}`,
         );
 
-        const toObjectMetadata =
-          originalObjectMetadataMap[toObjectNameSingular];
+        const targetObjectMetadata =
+          originalObjectMetadataMap[targetObjectNameSingular];
 
         assert(
-          toObjectMetadata,
-          `Object ${toObjectNameSingular} not found in DB
-        for relation TO defined in class ${fromObjectNameSingular}`,
+          targetObjectMetadata,
+          `Target object ${targetObjectNameSingular} not found in databse for relation ${workspaceRelationMetadataArgs.name} of type ${workspaceRelationMetadataArgs.type}`,
         );
 
-        const fromFieldMetadata = fromObjectMetadata?.fields.find(
-          (field) => field.name === fromFieldMetadataName,
+        const sourceFieldMetadata = sourceObjectMetadata?.fields.find(
+          (field) => field.name === sourceFieldMetadataName,
+        ) as FieldMetadataEntity<FieldMetadataType.RELATION>;
+
+        if (!sourceFieldMetadata) {
+          console.log(
+            'sourceFieldMetadata',
+            sourceObjectMetadata?.fields,
+            sourceFieldMetadataName,
+          );
+        }
+
+        assert(
+          sourceFieldMetadata,
+          `Source field ${sourceFieldMetadataName} not found in object ${sourceObjectNameSingular} for relation ${workspaceRelationMetadataArgs.name} of type ${workspaceRelationMetadataArgs.type}`,
+        );
+
+        const targetFieldMetadata = targetObjectMetadata?.fields.find(
+          (field) => field.name === targetFieldMetadataName,
         ) as FieldMetadataEntity<FieldMetadataType.RELATION>;
 
         assert(
-          fromFieldMetadata,
-          `Field ${fromFieldMetadataName} not found in object ${fromObjectNameSingular}
-        for relation FROM defined in class ${fromObjectNameSingular}`,
-        );
-
-        const toFieldMetadata = toObjectMetadata?.fields.find(
-          (field) => field.name === toFieldMetadataName,
-        ) as FieldMetadataEntity<FieldMetadataType.RELATION>;
-
-        assert(
-          toFieldMetadata,
-          `Field ${toFieldMetadataName} not found in object ${toObjectNameSingular}
-        for relation TO defined in class ${fromObjectNameSingular}`,
+          targetFieldMetadata,
+          `Target field ${targetFieldMetadataName} not found in object ${targetObjectNameSingular} for relation ${workspaceRelationMetadataArgs.name} of type ${workspaceRelationMetadataArgs.type}`,
         );
 
         return {
-          ...fromFieldMetadata,
+          ...sourceFieldMetadata,
           type: FieldMetadataType.RELATION,
           settings: {
             relationType: workspaceRelationMetadataArgs.type,
             onDelete: workspaceRelationMetadataArgs.onDelete,
             joinColumnName,
           },
-          relationTargetObjectMetadataId: toObjectMetadata.id,
-          relationTargetFieldMetadataId: toFieldMetadata.id,
+          relationTargetObjectMetadataId: targetObjectMetadata.id,
+          relationTargetFieldMetadataId: targetFieldMetadata.id,
         } satisfies FieldMetadataEntity<FieldMetadataType.RELATION>;
       });
   }
