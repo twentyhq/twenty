@@ -1,17 +1,16 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
+import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { isCommandLogger } from 'src/database/commands/logger';
-import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import {
-  MaintainedWorkspacesMigrationCommandOptions,
-  MaintainedWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/upgrade-version/maintained-workspaces-migration-command.runner';
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
+} from 'src/database/commands/upgrade-version-command/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -21,12 +20,11 @@ import {
 } from 'src/engine/utils/deduce-relation-direction.util';
 import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-@MigrationCommand({
-  name: 'migrate-relations-to-field-metadata',
+@Command({
+  name: 'upgrade:0-44:migrate-relations-to-field-metadata',
   description: 'Migrate relations to field metadata',
-  version: '0.44',
 })
-export class MigrateRelationsToFieldMetadataCommand extends MaintainedWorkspacesMigrationCommandRunner {
+export class MigrateRelationsToFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -37,86 +35,58 @@ export class MigrateRelationsToFieldMetadataCommand extends MaintainedWorkspaces
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnMaintainedWorkspaces(
-    _passedParam: string[],
-    options: MaintainedWorkspacesMigrationCommandOptions,
-    workspaceIds: string[],
-  ): Promise<void> {
-    this.logger.log('Running command to create many to one relations');
+  override async runOnWorkspace({
+    index,
+    total,
+    workspaceId,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    this.logger.log(
+      `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
+    );
 
-    if (isCommandLogger(this.logger)) {
-      this.logger.setVerbose(options.verbose ?? false);
-    }
+    const fieldMetadataCollection = await this.fieldMetadataRepository.find({
+      where: {
+        workspaceId,
+        type: In([FieldMetadataType.RELATION, FieldMetadataType.UUID]),
+      },
+      relations: ['fromRelationMetadata', 'toRelationMetadata'],
+    });
 
-    try {
-      for (const [index, workspaceId] of workspaceIds.entries()) {
-        await this.processWorkspace(workspaceId, index, workspaceIds.length);
-      }
-
-      this.logger.log(chalk.green('Command completed!'));
-    } catch (error) {
-      this.logger.log(chalk.red('Error in workspace'));
-    }
-  }
-
-  private async processWorkspace(
-    workspaceId: string,
-    index: number,
-    total: number,
-  ): Promise<void> {
-    try {
+    if (!fieldMetadataCollection.length) {
       this.logger.log(
-        `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
+        chalk.yellow(
+          `No relation field metadata found for workspace ${workspaceId}.`,
+        ),
       );
 
-      const fieldMetadataCollection = await this.fieldMetadataRepository.find({
-        where: {
-          workspaceId,
-          type: In([FieldMetadataType.RELATION, FieldMetadataType.UUID]),
-        },
-        relations: ['fromRelationMetadata', 'toRelationMetadata'],
-      });
-
-      if (!fieldMetadataCollection.length) {
-        this.logger.log(
-          chalk.yellow(
-            `No relation field metadata found for workspace ${workspaceId}.`,
-          ),
-        );
-
-        return;
-      }
-
-      const joinColumnFieldMetadataCollection = fieldMetadataCollection.filter(
-        (fieldMetadata) =>
-          isFieldMetadataOfType(fieldMetadata, FieldMetadataType.UUID),
-        // TODO: Fix this, it's working in other places but not here
-      ) as FieldMetadataEntity<FieldMetadataType.UUID>[];
-
-      const fieldMetadataToUpdateCollection = fieldMetadataCollection
-        .filter((fieldMetadata) =>
-          isFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION),
-        )
-        .map((fieldMetadata) =>
-          this.updateRelationFieldMetadata(
-            joinColumnFieldMetadataCollection,
-            // TODO: Fix this, it's working in other places but not here
-            fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>,
-          ),
-        );
-
-      if (fieldMetadataToUpdateCollection.length > 0) {
-        await this.fieldMetadataRepository.save(
-          fieldMetadataToUpdateCollection,
-        );
-      }
-
-      this.logger.log(
-        chalk.green(`Command completed for workspace ${workspaceId}.`),
-      );
-    } catch {
-      this.logger.log(chalk.red(`Error in workspace ${workspaceId}.`));
+      return;
     }
+
+    const joinColumnFieldMetadataCollection = fieldMetadataCollection.filter(
+      (fieldMetadata) =>
+        isFieldMetadataOfType(fieldMetadata, FieldMetadataType.UUID),
+      // TODO: Fix this, it's working in other places but not here
+    ) as FieldMetadataEntity<FieldMetadataType.UUID>[];
+
+    const fieldMetadataToUpdateCollection = fieldMetadataCollection
+      .filter((fieldMetadata) =>
+        isFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION),
+      )
+      .map((fieldMetadata) =>
+        this.updateRelationFieldMetadata(
+          joinColumnFieldMetadataCollection,
+          // TODO: Fix this, it's working in other places but not here
+          fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>,
+        ),
+      );
+
+    if (fieldMetadataToUpdateCollection.length > 0) {
+      await this.fieldMetadataRepository.save(fieldMetadataToUpdateCollection);
+    }
+
+    this.logger.log(
+      chalk.green(`Command completed for workspace ${workspaceId}.`),
+    );
   }
 
   private updateRelationFieldMetadata(

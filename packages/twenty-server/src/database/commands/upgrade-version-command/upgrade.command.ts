@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
+import { MigrateRichTextContentPatchCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-rich-text-content-patch.command';
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
@@ -19,6 +20,7 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly migrateRichTextContentPatchCommand: MigrateRichTextContentPatchCommand,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -27,9 +29,19 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     index,
     total,
     workspaceId,
+    options,
+    dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
       `Running UpgradeCommand for workspace ${workspaceId} ${index + 1}/${total}`,
     );
+
+    await this.migrateRichTextContentPatchCommand.runOnWorkspace({
+      index,
+      total,
+      workspaceId,
+      options,
+      dataSource,
+    });
   }
 }

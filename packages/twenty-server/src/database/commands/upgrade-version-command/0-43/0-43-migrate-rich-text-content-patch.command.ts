@@ -37,7 +37,7 @@ type ProcessRichTextFieldsArgs = {
 };
 
 @Command({
-  name: 'migrate-rich-text-content-patch',
+  name: 'upgrade:0-43:migrate-rich-text-content-patch',
   description: 'Migrate RICH_TEXT content from v1 to v2',
 })
 export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
@@ -62,52 +62,48 @@ export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspa
     options,
     workspaceId,
   }: RunOnWorkspaceArgs): Promise<void> {
-    try {
-      this.logger.log(
-        `Running MigrateRichTextContentPatchCommand for workspace ${workspaceId} ${index + 1}/${total}`,
+    this.logger.log(
+      `Running MigrateRichTextContentPatchCommand for workspace ${workspaceId} ${index + 1}/${total}`,
+    );
+
+    if (await this.hasRichTextV2FeatureFlag(workspaceId)) {
+      throw new Error(
+        'Rich text v2 feature flag is enabled, skipping migration',
       );
-
-      if (await this.hasRichTextV2FeatureFlag(workspaceId)) {
-        throw new Error(
-          'Rich text v2 feature flag is enabled, skipping migration',
-        );
-      }
-
-      const richTextFields = await this.fieldMetadataRepository.find({
-        where: {
-          workspaceId,
-          type: FieldMetadataType.RICH_TEXT,
-        },
-      });
-
-      if (!richTextFields.length) {
-        this.logger.log(
-          chalk.yellow('No RICH_TEXT fields found in this workspace'),
-        );
-
-        return;
-      }
-
-      this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
-
-      const richTextFieldsWithObjectMetadata =
-        await this.getRichTextFieldsWithObjectMetadata({
-          richTextFields,
-          workspaceId,
-        });
-
-      await this.migrateToNewRichTextFieldsColumn({
-        richTextFieldsWithObjectMetadata,
-        workspaceId,
-        options,
-      });
-
-      this.logger.log(
-        chalk.green(`Command completed for workspace ${workspaceId}`),
-      );
-    } catch (error) {
-      this.logger.log(chalk.red(`Error in workspace ${workspaceId}: ${error}`));
     }
+
+    const richTextFields = await this.fieldMetadataRepository.find({
+      where: {
+        workspaceId,
+        type: FieldMetadataType.RICH_TEXT,
+      },
+    });
+
+    if (!richTextFields.length) {
+      this.logger.log(
+        chalk.yellow('No RICH_TEXT fields found in this workspace'),
+      );
+
+      return;
+    }
+
+    this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
+
+    const richTextFieldsWithObjectMetadata =
+      await this.getRichTextFieldsWithObjectMetadata({
+        richTextFields,
+        workspaceId,
+      });
+
+    await this.migrateToNewRichTextFieldsColumn({
+      richTextFieldsWithObjectMetadata,
+      workspaceId,
+      options,
+    });
+
+    this.logger.log(
+      chalk.green(`Command completed for workspace ${workspaceId}`),
+    );
   }
 
   private async hasRichTextV2FeatureFlag(
