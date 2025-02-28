@@ -85,13 +85,17 @@ describe('usePlaygroundSession', () => {
   );
 
   it.each([
-    ['missing API key', null, PlaygroundSchemas.METADATA],
-    ['missing schema', mockApiKey, null],
-    ['both API key and schema missing', null, null],
-    ['unsupported PlaygroundType is provided', 'INVALID_PLAYGROUND_TYPE', null],
-    ['empty strings', '', ''],
-    ['numeric values', 123, 123],
-    ['invalid schema', mockApiKey, 'INVALID_SCHEMA'],
+    ['session is missing API key', null, PlaygroundSchemas.METADATA],
+    ['session is missing schema', mockApiKey, null],
+    ['session is missing both API key and schema', null, null],
+    [
+      'an unsupported PlaygroundType is provided',
+      'INVALID_PLAYGROUND_TYPE',
+      null,
+    ],
+    ['empty strings are provdied', '', ''],
+    ['numeric values are provided', 123, 123],
+    ['invalid schema is provided', mockApiKey, 'INVALID_SCHEMA'],
   ])(
     'should return an invalid session when %s',
     (_, apiKeyValue, schemaValue) => {
@@ -103,15 +107,14 @@ describe('usePlaygroundSession', () => {
     },
   );
 
-  it('should handle errors in PlaygroundSessionService gracefully if an error occurs', () => {
+  it('should handle errors in PlaygroundSessionService gracefully', () => {
     jest.spyOn(PlaygroundSessionService, 'get').mockImplementation(() => {
       throw new Error('Something went wrong');
     });
 
-    const { result } = renderHook(() =>
-      usePlaygroundSession(PlaygroundTypes.GRAPHQL),
-    );
+    const { graphQlResult, restResult } = renderBothHooks();
 
-    expectInvalidSession(result.current);
+    expectInvalidSession(graphQlResult.current);
+    expectInvalidSession(restResult.current);
   });
 });
