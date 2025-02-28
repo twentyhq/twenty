@@ -357,7 +357,9 @@ const TextInputV2Component = forwardRef<
             )}
           </StyledTrailingIconContainer>
         </StyledInputContainer>
-        <InputErrorHelper isVisible={!noErrorHelper}>{error}</InputErrorHelper>
+        {!noErrorHelper && error && (
+          <InputErrorHelper>{error}</InputErrorHelper>
+        )}
       </StyledContainer>
     );
   },

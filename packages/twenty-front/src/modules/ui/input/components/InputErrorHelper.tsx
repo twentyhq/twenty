@@ -1,5 +1,5 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 const StyledInputErrorHelper = styled.div`
   color: ${({ theme }) => theme.color.red};
@@ -13,13 +13,11 @@ const StyledErrorContainer = styled.div`
 
 export const InputErrorHelper = ({
   children,
-  isVisible = true,
 }: {
   children?: React.ReactNode;
-  isVisible?: boolean;
 }) => (
   <StyledErrorContainer>
-    {children && isVisible && (
+    {children && (
       <StyledInputErrorHelper aria-live="polite">
         {children}
       </StyledInputErrorHelper>
