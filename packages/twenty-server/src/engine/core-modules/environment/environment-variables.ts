@@ -1047,6 +1047,90 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   @IsString()
   WEBHOOK_STRIPE_SECRETKEY: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX environment (development, production, etc.)',
+  })
+  @IsEnum(NodeEnvironment)
+  @IsOptional()
+  @IsString()
+  PABX_ENV: NodeEnvironment;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX test server base url.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV &&
+      [NodeEnvironment.development, NodeEnvironment.test].includes(
+        data.PABX_ENV,
+      ),
+  )
+  @IsString()
+  PABX_TEST_URL: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX test server user.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV &&
+      [NodeEnvironment.development, NodeEnvironment.test].includes(
+        data.PABX_ENV,
+      ),
+  )
+  @IsString()
+  PABX_TEST_USER: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX test server token.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV &&
+      [NodeEnvironment.development, NodeEnvironment.test].includes(
+        data.PABX_ENV,
+      ),
+  )
+  @IsString()
+  PABX_TEST_TOKEN: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX production server base url.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+  )
+  @IsString()
+  PABX_URL: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX production server user.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+  )
+  @IsString()
+  PABX_USER: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX production server token.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+  )
+  @IsString()
+  PABX_TOKEN: string;
 }
 
 export const validate = (

@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@sentry/types';
 import { Repository } from 'typeorm';
 
-import { PABXPRODapi } from 'src/engine/core-modules/telephony/api';
 import {
   CreateTelephonyInput,
   UpdateTelephonyInput,
 } from 'src/engine/core-modules/telephony/inputs';
-import { TelephonyService } from 'src/engine/core-modules/telephony/telephony.service';
+import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
+import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 
 import {
@@ -27,12 +27,8 @@ export class TelephonyResolver {
     @InjectRepository(Telephony, 'core')
     private readonly telephonyRepository: Repository<Telephony>,
     private readonly telephonyService: TelephonyService,
+    private readonly pabxService: PabxService,
   ) {}
-
-  bodyPROD = {
-    pos_registro_inicial: 0,
-    cliente_id: 3,
-  };
 
   getRamalBody(input: CreateTelephonyInput | UpdateTelephonyInput) {
     return {
@@ -42,7 +38,7 @@ export class TelephonyResolver {
         numero: input.numberExtension,
         senha_sip: input.SIPPassword,
         caller_id_externo: input.callerExternalID,
-        cliente_id: this.bodyPROD.cliente_id,
+        cliente_id: this.pabxService.LIST_BODY.cliente_id,
         grupo_ramais: '1',
         centro_custo: '1',
         dupla_autenticacao_ip_permitido: '1',
@@ -154,9 +150,7 @@ export class TelephonyResolver {
     const ramalBody = this.getRamalBody(createTelephonyInput);
 
     try {
-      const createdRamal = await PABXPRODapi.post('/inserir_ramal', {
-        ...ramalBody,
-      });
+      const createdRamal = await this.pabxService.createExtention(ramalBody);
 
       if (createdRamal) {
         const result = await this.telephonyService.createTelehony({
@@ -215,9 +209,7 @@ export class TelephonyResolver {
         },
       };
 
-      const updatedRamal = await PABXPRODapi.post('/alterar_ramal', {
-        ...ramalBody,
-      });
+      const updatedRamal = await this.pabxService.updateExtention(ramalBody);
 
       if (!updatedRamal) {
         throw new Error('Error updating ramal');
@@ -242,36 +234,28 @@ export class TelephonyResolver {
 
   @Query(() => [TelephonyExtension], { nullable: true })
   async getAllExtensions(): Promise<TelephonyExtension[]> {
-    const extensions = await PABXPRODapi.get('/listar_ramais', {
-      data: this.bodyPROD,
-    });
+    const extensions = await this.pabxService.listExtentions();
 
     return extensions.data.dados;
   }
 
   @Query(() => [TelephonyDialingPlan], { nullable: true })
   async getTelephonyPlans(): Promise<TelephonyDialingPlan[]> {
-    const extensions = await PABXPRODapi.get('/listar_planos_discagem', {
-      data: this.bodyPROD,
-    });
+    const extensions = await this.pabxService.listDialingPlans();
 
     return extensions.data.dados;
   }
 
   @Query(() => [TelephonyDids], { nullable: true })
   async getTelephonyDids(): Promise<TelephonyDids[]> {
-    const extensions = await PABXPRODapi.get('/listar_dids', {
-      data: this.bodyPROD,
-    });
+    const extensions = await this.pabxService.listDids();
 
     return extensions.data.dados;
   }
 
   @Query(() => [Campaign], { nullable: true })
   async getTelephonyURAs(): Promise<Campaign[]> {
-    const uras = await PABXPRODapi.get('/listar_campanhas', {
-      data: this.bodyPROD,
-    });
+    const uras = await this.pabxService.listCampaigns();
 
     const data = uras.data.dados.map((ura: Campaign) => {
       const { campanha_id, cliente_id, nome } = ura;
@@ -284,9 +268,7 @@ export class TelephonyResolver {
 
   @Query(() => [TelephonyCallFlow], { nullable: true })
   async getTelephonyCallFlows(): Promise<TelephonyCallFlow[]> {
-    const callFlows = await PABXPRODapi.get('/listar_fluxos_integracao', {
-      data: this.bodyPROD,
-    });
+    const callFlows = await this.pabxService.listIntegrationFlows();
 
     const data = callFlows.data.dados.map((ura: TelephonyCallFlow) => {
       const { fluxo_chamada_id, fluxo_chamada_nome } = ura;
@@ -301,8 +283,8 @@ export class TelephonyResolver {
   async getUserSoftfone(
     @Args('extNum', { type: () => String }) extNum: string,
   ): Promise<TelephonyExtension> {
-    const extensions = await PABXPRODapi.get('/listar_ramais', {
-      data: { ...this.bodyPROD, numero: extNum },
+    const extensions = await this.pabxService.listExtentions({
+      numero: extNum,
     });
 
     return extensions.data.dados[0];
