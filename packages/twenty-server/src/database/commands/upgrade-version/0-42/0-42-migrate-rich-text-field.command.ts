@@ -12,7 +12,6 @@ import {
   MaintainedWorkspacesMigrationCommandOptions,
   MaintainedWorkspacesMigrationCommandRunner,
 } from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -174,8 +173,6 @@ export class MigrateRichTextFieldCommand extends MaintainedWorkspacesMigrationCo
         workspaceId,
       });
 
-      await this.enableRichTextV2FeatureFlag(workspaceId);
-
       if (!this.options.dryRun) {
         await this.workspaceMetadataVersionService.incrementMetadataVersion(
           workspaceId,
@@ -187,24 +184,6 @@ export class MigrateRichTextFieldCommand extends MaintainedWorkspacesMigrationCo
       );
     } catch (error) {
       this.logger.log(chalk.red(`Error in workspace ${workspaceId}: ${error}`));
-    }
-  }
-
-  private async enableRichTextV2FeatureFlag(
-    workspaceId: string,
-  ): Promise<void> {
-    if (!this.options.dryRun) {
-      await this.featureFlagRepository.upsert(
-        {
-          workspaceId,
-          key: FeatureFlagKey.IsRichTextV2Enabled,
-          value: true,
-        },
-        {
-          conflictPaths: ['workspaceId', 'key'],
-          skipUpdateIfNoValuesChanged: true,
-        },
-      );
     }
   }
 

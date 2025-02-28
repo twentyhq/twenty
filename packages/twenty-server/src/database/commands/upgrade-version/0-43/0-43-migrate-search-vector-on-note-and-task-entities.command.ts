@@ -8,7 +8,6 @@ import {
   MaintainedWorkspacesMigrationCommandOptions,
   MaintainedWorkspacesMigrationCommandRunner,
 } from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -65,14 +64,6 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends MaintainedW
       this.logger.log(
         `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
       );
-
-      await this.featureFlagRepository.findOneOrFail({
-        where: {
-          workspaceId,
-          key: FeatureFlagKey.IsRichTextV2Enabled,
-          value: true,
-        },
-      });
 
       const noteObjectMetadata =
         await this.objectMetadataRepository.findOneOrFail({
