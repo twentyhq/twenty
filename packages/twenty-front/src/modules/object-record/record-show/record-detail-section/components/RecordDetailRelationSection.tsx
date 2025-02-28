@@ -13,8 +13,8 @@ import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
-import { SingleRecordPickerMenuItemsWithSearch } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch';
-import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerSelectedRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSelectedRecordsIdsComponentState';
+import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
@@ -87,6 +87,11 @@ export const RecordDetailRelationSection = ({
 
   const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
     singleRecordPickerSearchFilterComponentState,
+    dropdownId,
+  );
+
+  const setRecordPickerSelectedIds = useSetRecoilComponentStateV2(
+    multipleRecordPickerSelectedRecordsIdsComponentState,
     dropdownId,
   );
 
@@ -170,6 +175,11 @@ export const RecordDetailRelationSection = ({
 
   const relationRecordsCount = relationRecords.length;
 
+  const handleOpenRelationPickerDropdown = () => {
+    setRecordPickerSearchFilter('');
+    setRecordPickerSelectedIds(relationRecordIds);
+  };
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
@@ -194,6 +204,7 @@ export const RecordDetailRelationSection = ({
                 dropdownId={dropdownId}
                 dropdownPlacement="left-start"
                 onClose={handleCloseRelationPickerDropdown}
+                onOpen={handleOpenRelationPickerDropdown}
                 clickableComponent={
                   <LightIconButton
                     className="displayOnHover"
@@ -203,19 +214,19 @@ export const RecordDetailRelationSection = ({
                 }
                 dropdownComponents={
                   isToOneObject ? (
-                    <SingleRecordPickerComponentInstanceContext.Provider
-                      value={{ instanceId: dropdownId }}
-                    >
-                      <SingleRecordPickerMenuItemsWithSearch
-                        EmptyIcon={IconForbid}
-                        onRecordSelected={handleRelationPickerEntitySelected}
-                        selectedRecordIds={relationRecordIds}
-                        objectNameSingular={relationObjectMetadataNameSingular}
-                        recordPickerInstanceId={dropdownId}
-                        onCreate={createNewRecordAndOpenRightDrawer}
-                        dropdownPlacement={dropdownPlacement}
-                      />
-                    </SingleRecordPickerComponentInstanceContext.Provider>
+                    <SingleRecordPicker
+                      componentInstanceId={dropdownId}
+                      EmptyIcon={IconForbid}
+                      onRecordSelected={handleRelationPickerEntitySelected}
+                      objectNameSingular={relationObjectMetadataNameSingular}
+                      recordPickerInstanceId={dropdownId}
+                      onCreate={createNewRecordAndOpenRightDrawer}
+                      layoutDirection={
+                        dropdownPlacement?.includes('end')
+                          ? 'search-bar-on-bottom'
+                          : 'search-bar-on-top'
+                      }
+                    />
                   ) : (
                     <>
                       <RelationFromManyFieldInputMultiRecordsEffect

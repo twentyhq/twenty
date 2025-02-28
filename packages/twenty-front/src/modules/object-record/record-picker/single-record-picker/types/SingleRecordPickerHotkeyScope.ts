@@ -1,3 +1,3 @@
-export enum RecordPickerHotkeyScope {
-  RecordPicker = 'record-picker',
+export enum SingleRecordPickerHotkeyScope {
+  SingleRecordPicker = 'single-record-picker',
 }

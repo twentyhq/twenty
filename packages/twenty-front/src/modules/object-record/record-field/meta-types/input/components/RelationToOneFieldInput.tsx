@@ -59,9 +59,7 @@ export const RelationToOneFieldInput = ({
         fieldDefinition.metadata.relationObjectMetadataNameSingular
       }
       recordPickerInstanceId={recordPickerInstanceId}
-      selectedRecordIds={fieldValue?.id ? [fieldValue.id] : []}
       excludedRecordIds={[]}
-      dropdownPlacement={'bottom-start'}
     />
   );
 };

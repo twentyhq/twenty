@@ -1,8 +1,8 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
-import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
@@ -139,7 +139,7 @@ export const useAddNewCard = ({
         addNewItem(set, columnDefinitionId, position, isOpportunity);
         if (isOpportunity) {
           setHotkeyScopeAndMemorizePreviousScope(
-            RelationPickerHotkeyScope.RelationPicker,
+            SingleRecordPickerHotkeyScope.SingleRecordPicker,
           );
         } else {
           createRecord(labelIdentifier, labelValue, position, isOpportunity);

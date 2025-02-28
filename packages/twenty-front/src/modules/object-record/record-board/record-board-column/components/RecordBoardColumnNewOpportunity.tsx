@@ -74,7 +74,6 @@ export const RecordBoardColumnNewOpportunity = ({
               company ? handleEntitySelect(position, company) : null
             }
             objectNameSingular={CoreObjectNameSingular.Company}
-            selectedRecordIds={[]}
             onCreate={createCompanyOpportunityAndOpenRightDrawer}
           />
         </OverlayContainer>

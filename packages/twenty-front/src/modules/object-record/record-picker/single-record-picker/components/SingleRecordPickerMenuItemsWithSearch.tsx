@@ -13,18 +13,15 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { Placement } from '@floating-ui/react';
 import { isDefined } from 'twenty-shared';
 import { IconPlus } from 'twenty-ui';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type SingleRecordPickerMenuItemsWithSearchProps = {
   excludedRecordIds?: string[];
   onCreate?: ((searchInput?: string) => void) | (() => void);
   objectNameSingular: string;
   recordPickerInstanceId?: string;
-  selectedRecordIds: string[];
-  dropdownPlacement?: Placement | null;
+  layoutDirection?: 'search-bar-on-top' | 'search-bar-on-bottom';
 } & Pick<
   SingleRecordPickerMenuItemsProps,
   | 'EmptyIcon'
@@ -42,8 +39,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   onCreate,
   onRecordSelected,
   objectNameSingular,
-  selectedRecordIds,
-  dropdownPlacement,
+  layoutDirection = 'search-bar-on-top',
 }: SingleRecordPickerMenuItemsWithSearchProps) => {
   const { handleSearchFilterChange } = useSingleRecordPickerSearch();
 
@@ -76,7 +72,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
 
   return (
     <>
-      {dropdownPlacement?.includes('end') && (
+      {layoutDirection === 'search-bar-on-bottom' && (
         <>
           {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
             <DropdownMenuItemsContainer scrollable={false}>
@@ -89,8 +85,6 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
               recordsToSelect={records.recordsToSelect}
               loading={records.loading}
               selectedRecord={records.selectedRecords?.[0]}
-              shouldSelectEmptyOption={selectedRecordIds?.length === 0}
-              hotkeyScope={recordPickerInstanceId}
               isFiltered={!!recordPickerSearchFilter}
               {...{
                 EmptyIcon,
@@ -108,8 +102,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
         autoFocus
         role="combobox"
       />
-      {(dropdownPlacement?.includes('start') ||
-        isUndefinedOrNull(dropdownPlacement)) && (
+      {layoutDirection === 'search-bar-on-top' && (
         <>
           <DropdownMenuSeparator />
           {shouldDisplayDropdownMenuItems && (
@@ -117,8 +110,6 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
               recordsToSelect={records.recordsToSelect}
               loading={records.loading}
               selectedRecord={records.selectedRecords?.[0]}
-              shouldSelectEmptyOption={selectedRecordIds?.length === 0}
-              hotkeyScope={recordPickerInstanceId}
               isFiltered={!!recordPickerSearchFilter}
               {...{
                 EmptyIcon,

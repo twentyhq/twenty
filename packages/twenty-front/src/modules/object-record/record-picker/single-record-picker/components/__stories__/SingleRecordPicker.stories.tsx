@@ -34,7 +34,6 @@ const meta: Meta<typeof SingleRecordPicker> = {
   ],
   args: {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    selectedRecordIds: [],
     componentInstanceId: 'single-record-picker',
   },
   argTypes: {

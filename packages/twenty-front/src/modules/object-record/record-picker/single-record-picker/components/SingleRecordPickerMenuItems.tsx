@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -13,10 +13,13 @@ import { isDefined } from 'twenty-shared';
 
 import { SingleRecordPickerMenuItem } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItem';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
-import { RecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;
@@ -28,8 +31,12 @@ export type SingleRecordPickerMenuItemsProps = {
   selectedRecord?: SingleRecordPickerRecord;
   hotkeyScope?: string;
   isFiltered: boolean;
-  shouldSelectEmptyOption?: boolean;
 };
+
+const StyledContainer = styled.div`
+  display: flex;
+  height: 100%;
+`;
 
 export const SingleRecordPickerMenuItems = ({
   EmptyIcon,
@@ -39,9 +46,8 @@ export const SingleRecordPickerMenuItems = ({
   onCancel,
   onRecordSelected,
   selectedRecord,
-  hotkeyScope = RecordPickerHotkeyScope.RecordPicker,
+  hotkeyScope = SingleRecordPickerHotkeyScope.SingleRecordPicker,
   isFiltered,
-  shouldSelectEmptyOption,
 }: SingleRecordPickerMenuItemsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -89,9 +95,12 @@ export const SingleRecordPickerMenuItems = ({
   );
 
   const selectableItemIds = recordsInDropdown.map((entity) => entity.id);
+  const selectedRecordId = useRecoilComponentValueV2(
+    singleRecordPickerSelectedIdComponentState,
+  );
 
   return (
-    <div ref={containerRef}>
+    <StyledContainer ref={containerRef}>
       <SelectableList
         selectableListId={selectableListComponentInstanceId}
         selectableItemIdArray={selectableItemIds}
@@ -120,7 +129,7 @@ export const SingleRecordPickerMenuItems = ({
                         onClick={() => onRecordSelected()}
                         LeftIcon={EmptyIcon}
                         text={emptyLabel}
-                        selected={shouldSelectEmptyOption === true}
+                        selected={isUndefined(selectedRecordId)}
                         hovered={isSelectedSelectNoneButton}
                       />
                     )
@@ -141,6 +150,6 @@ export const SingleRecordPickerMenuItems = ({
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </div>
+    </StyledContainer>
   );
 };

@@ -8,14 +8,12 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/contexts
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
-import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
@@ -108,9 +106,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
     readonly: isFieldReadOnly,
     buttonIcon: buttonIcon,
-    customEditHotkeyScope: isFieldRelation(fieldDefinition)
-      ? { scope: RelationPickerHotkeyScope.RelationPicker }
-      : undefined,
     IconLabel: fieldDefinition.iconName
       ? getIcon(fieldDefinition.iconName)
       : undefined,

@@ -72,7 +72,6 @@ export const DropdownMenuItemsContainer = ({
     <ScrollWrapper
       contextProviderName="dropdownMenuItemsContainer"
       componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
-      heightMode="fit-content"
     >
       <StyledDropdownMenuItemsExternalContainer
         hasMaxHeight={hasMaxHeight}

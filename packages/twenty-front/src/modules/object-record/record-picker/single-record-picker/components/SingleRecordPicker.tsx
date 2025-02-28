@@ -24,10 +24,9 @@ export const SingleRecordPicker = ({
   onCreate,
   onRecordSelected,
   objectNameSingular,
-  selectedRecordIds,
   width = 200,
   componentInstanceId,
-  dropdownPlacement,
+  layoutDirection,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -61,8 +60,7 @@ export const SingleRecordPicker = ({
             onCreate,
             onRecordSelected,
             objectNameSingular,
-            selectedRecordIds,
-            dropdownPlacement,
+            layoutDirection,
           }}
         />
       </DropdownMenu>
