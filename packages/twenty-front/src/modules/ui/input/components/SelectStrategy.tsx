@@ -10,11 +10,6 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export enum StrategyType {
-    STRATEGY_ONE = 'STRATEGY_ONE',
-    STRATEGY_TWO = 'STRATEGY_TWO',
-    STRATEGY_THREE = 'STRATEGY_THREE'
-}
 
 export type SelectObject<Value extends SelectValue> = {
     className?: string;
@@ -35,21 +30,45 @@ export type SelectObject<Value extends SelectValue> = {
     callToActionButton?: CallToActionButton;
 }
 
-
-export const selectObjects: Record<StrategyType, SelectObject<string>> = {
-    [StrategyType.STRATEGY_ONE]: {
-        dropdownId: 'strategy-one-dropdown',
-        options: [],
-        label: 'Strategy One',
-    },
-    [StrategyType.STRATEGY_TWO]: {
-        dropdownId: 'strategy-two-dropdown',
-        options: [],
-        label: 'Strategy Two',
-    },
-    [StrategyType.STRATEGY_THREE]: {
-        dropdownId: 'strategy-three-dropdown',
-        options: [],
-        label: 'Strategy Three',
-    },
+export const analyticsGraphWindowLengthStrategy: SelectObject<string> = {
+    dropdownId: 'analytics-graph-window-length-dropdown',
+    options: [
+        { value: '7D', label: 'This week' },
+        { value: '1D', label: 'Today' },
+        { value: '12H', label: 'Last 12 hours' },
+        { value: '4H', label: 'Last 4 hours' },
+    ],
+    label: 'Select Window Length',
 };
+
+export const relationTypeStrategy: SelectObject<string> = {
+    dropdownId: 'relation-type-dropdown',
+    options: [
+        { value: 'one-to-one', label: 'One to One' },
+        { value: 'one-to-many', label: 'One to Many' },
+        { value: 'many-to-one', label: 'Many to One' },
+        { value: 'many-to-many', label: 'Many to Many' },
+    ],
+    label: 'Select Relation Type',
+};
+
+export const objectDestinationStrategy: SelectObject<string> = {
+    dropdownId: 'object-destination-dropdown',
+    options: [
+        { value: 'object1', label: 'Object 1' },
+        { value: 'object2', label: 'Object 2' },
+        { value: 'object3', label: 'Object 3' },
+    ],
+    label: 'Select Object Destination',
+};
+
+
+
+
+
+
+export const StrategyType = {
+    ANALYTICS_GRAPH_WINDOW_LENGTH: analyticsGraphWindowLengthStrategy,
+    RELATION_TYPE: relationTypeStrategy,
+    OBJECT_DESTINATION: objectDestinationStrategy
+} as const;

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
+import { IconX } from 'twenty-ui';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -32,8 +32,9 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { useMemo, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo, useState } from 'react';
+import { VIEW_PICKER_CONTENT_CREATE_MODE_TABLE_SELECT_OPTIONS } from '../constants/ViewPickerContentCreateModeSelectOptions';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -159,14 +160,7 @@ export const ViewPickerContentCreateMode = () => {
               setViewPickerIsDirty(true);
               setViewPickerType(value);
             }}
-            options={[
-              { value: ViewType.Table, label: t`Table`, Icon: IconTable },
-              {
-                value: ViewType.Kanban,
-                label: t`Kanban`,
-                Icon: IconLayoutKanban,
-              },
-            ]}
+            options={VIEW_PICKER_CONTENT_CREATE_MODE_TABLE_SELECT_OPTIONS}
             dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
           />
         </ViewPickerSelectContainer>

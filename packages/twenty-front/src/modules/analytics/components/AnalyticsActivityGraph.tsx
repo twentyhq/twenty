@@ -13,6 +13,7 @@ import { ResponsiveLine } from '@nivo/line';
 import { Section } from '@react-email/components';
 import { useId, useState } from 'react';
 import { H2Title } from 'twenty-ui';
+import { ANALYTICS_ACTIVITY_GRAPH_SELECT_OPTIONS } from '../constants/AnalyticsActivityGraphSelectOptions';
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -62,12 +63,7 @@ export const AnalyticsActivityGraph = ({
             <Select
               dropdownId={dropdownId}
               value={windowLengthGraphOption}
-              options={[
-                { value: '7D', label: 'This week' },
-                { value: '1D', label: 'Today' },
-                { value: '12H', label: 'Last 12 hours' },
-                { value: '4H', label: 'Last 4 hours' },
-              ]}
+              options={ANALYTICS_ACTIVITY_GRAPH_SELECT_OPTIONS}
               onChange={(windowLengthGraphOption) => {
                 setWindowLengthGraphOption(windowLengthGraphOption);
                 fetchGraphData(windowLengthGraphOption).then((graphInput) => {
