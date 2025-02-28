@@ -16,6 +16,7 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -51,6 +52,7 @@ export const SEARCH_FIELDS_FOR_TASKS: FieldTypeAndNameMetadata[] = [
   shortcut: 'T',
   labelIdentifierStandardId: TASK_STANDARD_FIELD_IDS.title,
 })
+@WorkspaceIsSearchable()
 export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.position,

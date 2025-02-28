@@ -59,7 +59,7 @@ msgstr "{apiKeyName} API кључ"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} ће бити уклоњен из следеће улоге:"
 
@@ -97,7 +97,7 @@ msgstr "24 часа ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Заједничко окружење у којем ћете моћи да управљате својим односима с купцима са вашим тимом."
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Могућност интеракције са сваким објектом"
 
@@ -127,9 +127,9 @@ msgstr "Брисање налога"
 msgid "Accounts"
 msgstr "Налози"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Акције"
 
@@ -233,7 +233,7 @@ msgstr "Додато {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Додато на црну листу"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "Прилагодите подешавања повезана са улогом"
 
@@ -269,7 +269,7 @@ msgstr "Све линије"
 msgid "All Objects"
 msgstr "Сви објекти"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Све улоге"
 
@@ -368,23 +368,23 @@ msgstr "Да ли сте сигурни да желите да променит�
 msgid "Ascending"
 msgstr "Растуће"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Доделите {workspaceMemberName}?"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Доделите улоге да бисте одредили овлашћења за приступ члановима"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Доделите члану"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Додељени чланови"
 
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Додељено"
 
@@ -598,7 +598,7 @@ msgstr "Конфигуришите како треба да прикажемо �
 msgid "Configure your emails and calendar settings."
 msgstr "Подесите своје подешавања е-поште и календара."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Потврди"
 
@@ -721,7 +721,7 @@ msgstr "Креирај нови запис"
 msgid "Create profile"
 msgstr "Креирај профил"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Креирај улогу"
 
@@ -952,8 +952,13 @@ msgid "Deleted"
 msgstr "Обрисано"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Deleted {objectNamePlural}"
-msgstr "Обрисани {objectNamePlural}"
+#~ msgid "Deleted {objectNamePlural}"
+#~ msgstr "Deleted {objectNamePlural}"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Deleted records"
+msgstr "Избрисани записи"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1084,8 +1089,8 @@ msgstr "Уредите назив свог потдомена или поста�
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
 msgstr "Имејл"
 
@@ -1811,10 +1816,6 @@ msgstr "Помери удесно"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1824,6 +1825,10 @@ msgstr "Помери удесно"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "Име"
@@ -1958,7 +1963,7 @@ msgstr "Нема земље"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Нема више чланова за доделу"
 
@@ -1970,7 +1975,7 @@ msgstr "Нису пронађени подаци"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Нема резултата"
 
@@ -2029,13 +2034,13 @@ msgstr "Објекат"
 msgid "Object destination"
 msgstr "Одредишни објекат"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Objects"
 msgstr "Објекти"
 
@@ -2068,7 +2073,7 @@ msgstr "Отворено"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Опционално: Дефинишите тајни низ који ћемо укључити у сваки вебхук. Користите ово за аутентификацију и проверу вебхука по пријему."
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2373,7 +2378,7 @@ msgstr "Претражите ''{commandMenuSearch}'' са..."
 msgid "Search a field..."
 msgstr "Претражите поље..."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "Претражите члана"
 
@@ -2420,6 +2425,11 @@ msgstr "Безбедност"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "Погледајте активну верзију"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "See deleted records"
+msgstr "Погледај избрисане записе"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2480,7 +2490,7 @@ msgstr "Админ панел сервера"
 msgid "Service Provider Details"
 msgstr "Детаљи добављача услуга"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
 msgstr "Подесите подразумевану улогу за овај радни простор"
 
@@ -2505,15 +2515,15 @@ msgid "Set the name of your subdomain"
 msgstr "Поставите име вашег поддомена"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 msgid "Settings"
 msgstr "Поставке"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Дозволе за подешавања"
 
@@ -2771,7 +2781,7 @@ msgstr "Ова акција се не може опозвати. Ово ће т�
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Ова улога је додељена следећим члановима радног простора."
 
@@ -2815,10 +2825,10 @@ msgstr "Истина"
 msgid "Turkish"
 msgstr "Турски"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Тип"
 
@@ -3063,8 +3073,8 @@ msgstr "Радни простори"
 msgid "Wrap on record pages"
 msgstr "Омотати на страницама записа"
 
-#: src/pages/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"

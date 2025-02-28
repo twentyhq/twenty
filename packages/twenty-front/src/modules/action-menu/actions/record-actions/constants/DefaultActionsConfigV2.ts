@@ -3,6 +3,7 @@ import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-ac
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
+import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -28,6 +29,7 @@ import {
   IconHeart,
   IconHeartOff,
   IconPlus,
+  IconRotate2,
   IconTrash,
   IconTrashX,
 } from 'twenty-ui';
@@ -147,13 +149,26 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useExportMultipleRecordsAction,
   },
+  seeDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
+    label: msg`See deleted records`,
+    shortLabel: msg`Deleted records`,
+    position: 8,
+    Icon: IconRotate2,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeDeletedRecordsNoSelectionRecordAction,
+  },
   destroySingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.DESTROY,
     label: msg`Permanently destroy record`,
     shortLabel: msg`Destroy`,
-    position: 8,
+    position: 9,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
@@ -168,7 +183,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: msg`Navigate to previous record`,
-    position: 9,
+    position: 10,
     isPinned: true,
     Icon: IconChevronUp,
     availableOn: [ActionViewType.SHOW_PAGE],
@@ -179,7 +194,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: msg`Navigate to next record`,
-    position: 10,
+    position: 11,
     isPinned: true,
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
@@ -191,7 +206,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
-    position: 11,
+    position: 12,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,

@@ -59,7 +59,7 @@ msgstr "{apiKeyName} Clé API"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} sera retiré du rôle suivant :"
 
@@ -97,7 +97,7 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Un environnement partagé où vous pourrez gérer vos relations clients avec votre équipe."
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Possibilité d'interagir avec chaque objet"
 
@@ -127,9 +127,9 @@ msgstr "Suppression de compte"
 msgid "Accounts"
 msgstr "Comptes"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Actions"
 
@@ -233,7 +233,7 @@ msgstr "Ajouté {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Ajouté à la liste de blocage"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "Ajuster les paramètres liés au rôle"
 
@@ -269,7 +269,7 @@ msgstr "Toutes les lignes"
 msgid "All Objects"
 msgstr "Tous les objets"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Tous les rôles"
 
@@ -368,23 +368,23 @@ msgstr "Êtes-vous sûr de vouloir modifier votre intervalle de facturation ?"
 msgid "Ascending"
 msgstr "Ascendant"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Assigner {workspaceMemberName} ?"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Attribuer des rôles pour spécifier les autorisations d'accès de chaque membre"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Assigner à un membre"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Membres assignés"
 
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Attribué à"
 
@@ -598,7 +598,7 @@ msgstr "Configurer comment nous devrions afficher vos événements dans votre ca
 msgid "Configure your emails and calendar settings."
 msgstr "Configurer vos paramètres de courriel et de calendrier."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -721,7 +721,7 @@ msgstr "Créer un nouvel enregistrement"
 msgid "Create profile"
 msgstr "Créer un profil"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Créer un rôle"
 
@@ -952,8 +952,13 @@ msgid "Deleted"
 msgstr "Supprimé"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Deleted {objectNamePlural}"
-msgstr "Supprimés {objectNamePlural}"
+#~ msgid "Deleted {objectNamePlural}"
+#~ msgstr "Deleted {objectNamePlural}"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Deleted records"
+msgstr "Enregistrements supprimés"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1084,8 +1089,8 @@ msgstr "Modifier le nom de votre sous-domaine ou définir un domaine personnalis
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
 msgstr "Courriel"
 
@@ -1811,10 +1816,6 @@ msgstr "Déplacer à droite"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1824,6 +1825,10 @@ msgstr "Déplacer à droite"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "Nom"
@@ -1958,7 +1963,7 @@ msgstr "Aucun pays"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Plus de membres à assigner"
 
@@ -1970,7 +1975,7 @@ msgstr "Aucun enregistrement trouvé"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Aucun résultat"
 
@@ -2029,13 +2034,13 @@ msgstr "Objet"
 msgid "Object destination"
 msgstr "Destination de l'objet"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Objects"
 msgstr "Objets"
 
@@ -2068,7 +2073,7 @@ msgstr "Ouvert"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Facultatif : Définissez une chaîne secrète que nous inclurons dans chaque webhook. Utilisez ceci pour authentifier et vérifier le webhook à la réception."
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2373,7 +2378,7 @@ msgstr "Rechercher ''{commandMenuSearch}'' avec..."
 msgid "Search a field..."
 msgstr "Rechercher un champ..."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "Rechercher un membre"
 
@@ -2420,6 +2425,11 @@ msgstr "Sécurité"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "Voir la version active"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "See deleted records"
+msgstr "Voir les enregistrements supprimés"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2480,7 +2490,7 @@ msgstr "Panneau d'administration du serveur"
 msgid "Service Provider Details"
 msgstr "Détails du fournisseur de services"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
 msgstr "Définir un rôle par défaut pour cet espace de travail"
 
@@ -2505,15 +2515,15 @@ msgid "Set the name of your subdomain"
 msgstr "Définir le nom de votre sous-domaine"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 msgid "Settings"
 msgstr "Paramètres"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Autorisations des paramètres"
 
@@ -2771,7 +2781,7 @@ msgstr "Cette action est irréversible. Cela supprimera définitivement l'ensemb
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Ce rôle est attribué à ces membres de l'espace de travail."
 
@@ -2815,10 +2825,10 @@ msgstr "Vrai"
 msgid "Turkish"
 msgstr "Turc"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Type"
 
@@ -3063,8 +3073,8 @@ msgstr "Espaces de travail"
 msgid "Wrap on record pages"
 msgstr "Envelopper sur les pages d'enregistrement"
 
-#: src/pages/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"

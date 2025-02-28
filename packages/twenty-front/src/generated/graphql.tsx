@@ -971,6 +971,7 @@ export type Mutation = {
   sendTemplate: Scalars['Boolean'];
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
+  submitFormStep: Scalars['Boolean'];
   toggleAgentStatus: Scalars['Boolean'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean'];
   track: Analytics;
@@ -1262,6 +1263,11 @@ export type MutationSignUpArgs = {
 };
 
 
+export type MutationSubmitFormStepArgs = {
+  input: SubmitFormStepInput;
+};
+
+
 export type MutationToggleAgentStatusArgs = {
   agentId: Scalars['String'];
 };
@@ -1414,6 +1420,7 @@ export type Object = {
   isCustom: Scalars['Boolean'];
   isLabelSyncedWithName: Scalars['Boolean'];
   isRemote: Scalars['Boolean'];
+  isSearchable: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural: Scalars['String'];
@@ -1466,6 +1473,7 @@ export type ObjectFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isRemote?: InputMaybe<BooleanFieldComparison>;
+  isSearchable?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
 };
@@ -2061,6 +2069,15 @@ export type StripeIntegration = {
   accountId: Scalars['String'];
   id: Scalars['UUID'];
   workspace: Workspace;
+};
+
+export type SubmitFormStepInput = {
+  /** Form response in JSON format */
+  response: Scalars['JSON'];
+  /** Workflow version ID */
+  stepId: Scalars['String'];
+  /** Workflow run ID */
+  workflowRunId: Scalars['String'];
 };
 
 export enum SubscriptionInterval {
@@ -2759,6 +2776,11 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+
+export type EmptyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EmptyQuery = { __typename: 'Query' };
 
 export type TrackMutationVariables = Exact<{
   action: Scalars['String'];
@@ -3791,6 +3813,38 @@ export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.
 export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
+export const EmptyDocument = gql`
+    query Empty {
+  __typename
+}
+    `;
+
+/**
+ * __useEmptyQuery__
+ *
+ * To run a query within a React component, call `useEmptyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEmptyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEmptyQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEmptyQuery(baseOptions?: Apollo.QueryHookOptions<EmptyQuery, EmptyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EmptyQuery, EmptyQueryVariables>(EmptyDocument, options);
+      }
+export function useEmptyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EmptyQuery, EmptyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EmptyQuery, EmptyQueryVariables>(EmptyDocument, options);
+        }
+export type EmptyQueryHookResult = ReturnType<typeof useEmptyQuery>;
+export type EmptyLazyQueryHookResult = ReturnType<typeof useEmptyLazyQuery>;
+export type EmptyQueryResult = Apollo.QueryResult<EmptyQuery, EmptyQueryVariables>;
 export const TrackDocument = gql`
     mutation Track($action: String!, $payload: JSON!) {
   track(action: $action, payload: $payload) {

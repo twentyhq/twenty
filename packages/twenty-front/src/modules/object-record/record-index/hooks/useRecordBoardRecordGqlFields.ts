@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
-import { hasPositionField } from '@/object-metadata/utils/hasPositionField';
+import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
@@ -58,7 +58,9 @@ export const useRecordBoardRecordGqlFields = ({
         true,
       ]),
     ),
-    ...(hasPositionField(objectMetadataItem) ? { position: true } : undefined),
+    ...(hasObjectMetadataItemPositionField(objectMetadataItem)
+      ? { position: true }
+      : undefined),
     ...identifierQueryFields,
     noteTargets: generateDepthOneRecordGqlFields({
       objectMetadataItem: noteTargetObjectMetadataItem,

@@ -3,7 +3,6 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
 import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
@@ -29,7 +28,9 @@ export const RecordBoardColumnNewOpportunity = ({
     }),
   );
 
-  const { handleCreateSuccess, handleEntitySelect } = useAddNewCard();
+  const { handleCreateSuccess, handleEntitySelect } = useAddNewCard({
+    recordPickerComponentInstanceId: `add-new-card-record-picker-column-${columnId}`,
+  });
 
   const { createOneRecord: createCompany } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Company,
@@ -68,9 +69,12 @@ export const RecordBoardColumnNewOpportunity = ({
       {newRecord.isCreating && newRecord.position === position && (
         <OverlayContainer>
           <RecordPickerComponentInstanceContext.Provider
-            value={{ instanceId: RelationPickerHotkeyScope.RelationPicker }}
+            value={{
+              instanceId: `add-new-card-record-picker-column-${columnId}`,
+            }}
           >
             <SingleRecordPicker
+              componentInstanceId={`add-new-card-record-picker-column-${columnId}`}
               onCancel={() => handleCreateSuccess(position, columnId, false)}
               onRecordSelected={(company) =>
                 company ? handleEntitySelect(position, company) : null

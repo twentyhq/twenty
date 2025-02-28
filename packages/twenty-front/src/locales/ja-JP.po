@@ -59,7 +59,7 @@ msgstr "{apiKeyName} APIキー"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName}が次の役割から割り当て解除されます："
 
@@ -97,7 +97,7 @@ msgstr "24時間 ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "チームと協力して顧客関係を管理できる共有環境です。"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "各オブジェクトと対話する能力"
 
@@ -127,9 +127,9 @@ msgstr "アカウント削除"
 msgid "Accounts"
 msgstr "アカウント"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "アクション"
 
@@ -233,7 +233,7 @@ msgstr "{beautifyPastDateRelative}に追加"
 msgid "Added to blocklist"
 msgstr "ブロックリストに追加済み"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "役割に関連した設定を調整する"
 
@@ -269,7 +269,7 @@ msgstr "すべての行"
 msgid "All Objects"
 msgstr "すべてのオブジェクト"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "すべてのロール"
 
@@ -368,23 +368,23 @@ msgstr "請求間隔を変更してもよろしいですか？"
 msgid "Ascending"
 msgstr "昇順"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "{workspaceMemberName}に割り当てますか？"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "各メンバーのアクセス権限を指定するロールを割り当てる"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "メンバーへの割り当て"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "割り当てられたメンバー"
 
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "担当"
 
@@ -598,7 +598,7 @@ msgstr "カレンダーでイベントをどのように表示するかを設定
 msgid "Configure your emails and calendar settings."
 msgstr "メールとカレンダーの設定を行う。"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "確認"
 
@@ -721,7 +721,7 @@ msgstr "新しいレコードを作成"
 msgid "Create profile"
 msgstr "プロフィールの作成"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "ロールの作成"
 
@@ -952,8 +952,13 @@ msgid "Deleted"
 msgstr "削除済み"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Deleted {objectNamePlural}"
-msgstr "削除済みの{objectNamePlural}"
+#~ msgid "Deleted {objectNamePlural}"
+#~ msgstr "Deleted {objectNamePlural}"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Deleted records"
+msgstr "削除されたレコード"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1084,8 +1089,8 @@ msgstr "サブドメイン名を編集するか、カスタムドメインを設
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
 msgstr "メール"
 
@@ -1811,10 +1816,6 @@ msgstr "右に移動"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1824,6 +1825,10 @@ msgstr "右に移動"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "名前"
@@ -1958,7 +1963,7 @@ msgstr "国なし"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "これ以上のメンバーを割り当てることはできません"
 
@@ -1970,7 +1975,7 @@ msgstr "レコードが見つかりません"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "結果なし"
 
@@ -2029,13 +2034,13 @@ msgstr "オブジェクト"
 msgid "Object destination"
 msgstr "オブジェクトの目的地"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Objects"
 msgstr "オブジェクト"
 
@@ -2068,7 +2073,7 @@ msgstr "開いた"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "オプション: すべてのWebhookに含める秘密の文字列を定義します。これを使用して受信時にWebhookを認証および確認します。"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2373,7 +2378,7 @@ msgstr "''{commandMenuSearch}''で検索..."
 msgid "Search a field..."
 msgstr "フィールドを検索..."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "メンバーを検索"
 
@@ -2420,6 +2425,11 @@ msgstr "セキュリティ"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "アクティブバージョンを見る"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "See deleted records"
+msgstr "削除されたレコードを見る"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2480,7 +2490,7 @@ msgstr "サーバー管理パネル"
 msgid "Service Provider Details"
 msgstr "サービスプロバイダーの詳細"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
 msgstr "このワークスペースのデフォルトロールを設定する"
 
@@ -2505,15 +2515,15 @@ msgid "Set the name of your subdomain"
 msgstr "サブドメイン名を設定"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 msgid "Settings"
 msgstr "設定"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "設定の権限"
 
@@ -2771,7 +2781,7 @@ msgstr "この操作は取り消せません。ワークスペース全体が永
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "この役割はこれらのワークスペースメンバーに割り当てられています。"
 
@@ -2815,10 +2825,10 @@ msgstr "真"
 msgid "Turkish"
 msgstr "トルコ語"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "タイプ"
 
@@ -3063,8 +3073,8 @@ msgstr "ワークスペース"
 msgid "Wrap on record pages"
 msgstr "レコードページに包む"
 
-#: src/pages/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"

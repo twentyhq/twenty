@@ -142,9 +142,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
+    apiKey,
   }: {
     payload: Partial<Workspace> & { id: string };
     userWorkspaceId?: string;
+    apiKey?: string;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -162,12 +164,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         payload,
         userWorkspaceId,
         workspaceId: workspace.id,
+        apiKey,
       });
 
       await this.validateWorkspacePermissions({
         payload,
         userWorkspaceId,
         workspaceId: workspace.id,
+        apiKey,
       });
     }
 
@@ -407,10 +411,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     payload,
     userWorkspaceId,
     workspaceId,
+    apiKey,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
     workspaceId: string;
+    apiKey?: string;
   }) {
     if (
       'isGoogleAuthEnabled' in payload ||
@@ -427,6 +433,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           userWorkspaceId,
           _setting: SettingsPermissions.SECURITY,
           workspaceId: workspaceId,
+          isExecutedByApiKey: isDefined(apiKey),
         });
 
       if (!userHasPermission) {
@@ -442,10 +449,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     payload,
     userWorkspaceId,
     workspaceId,
+    apiKey,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
     workspaceId: string;
+    apiKey?: string;
   }) {
     if (
       'displayName' in payload ||
@@ -462,6 +471,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           userWorkspaceId,
           workspaceId,
           _setting: SettingsPermissions.WORKSPACE,
+          isExecutedByApiKey: isDefined(apiKey),
         });
 
       if (!userHasPermission) {

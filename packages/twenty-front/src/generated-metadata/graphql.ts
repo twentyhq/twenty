@@ -1322,7 +1322,7 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 };
 
 export type MutationUpdateWorkspaceMemberRoleArgs = {
-  roleId?: InputMaybe<Scalars['String']['input']>;
+  roleId: Scalars['String']['input'];
   workspaceMemberId: Scalars['String']['input'];
 };
 
@@ -1375,6 +1375,7 @@ export type Object = {
   isCustom: Scalars['Boolean']['output'];
   isLabelSyncedWithName: Scalars['Boolean']['output'];
   isRemote: Scalars['Boolean']['output'];
+  isSearchable: Scalars['Boolean']['output'];
   isSystem: Scalars['Boolean']['output'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']['output']>;
   labelPlural: Scalars['String']['output'];
@@ -1425,6 +1426,7 @@ export type ObjectFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isRemote?: InputMaybe<BooleanFieldComparison>;
+  isSearchable?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
 };

@@ -59,7 +59,7 @@ msgstr "{apiKeyName} API-nøgle"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} vil blive fjernet fra f\\u00f8lgende rolle:"
 
@@ -97,7 +97,7 @@ msgstr "24 timer ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Et delt miljø, hvor du vil kunne administrere dine kunde relationer sammen med dit team."
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Mulighed for at interagere med hvert objekt"
 
@@ -127,9 +127,9 @@ msgstr "Konto Sletning"
 msgid "Accounts"
 msgstr "Konti"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -233,7 +233,7 @@ msgstr "Tilføjet {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Tilføjet til blokeringsliste"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "Juster de rolle-relaterede indstillinger"
 
@@ -269,7 +269,7 @@ msgstr "Alle linjer"
 msgid "All Objects"
 msgstr "Alle objekter"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Alle roller"
 
@@ -368,23 +368,23 @@ msgstr "Er du sikker på, at du vil ændre din faktureringsperiode?"
 msgid "Ascending"
 msgstr "Stigende"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Tildele {workspaceMemberName}?"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Tildel roller for at specificere hver medlems adgangstilladelser"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Tildel til medlem"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Tildelte medlemmer"
 
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Tildelt til"
 
@@ -598,7 +598,7 @@ msgstr "Konfigurer, hvordan vi skal vise dine begivenheder i din kalender"
 msgid "Configure your emails and calendar settings."
 msgstr "Konfigurer dine e-mails og kalenderindstillinger."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Bekr\\u00e6ft"
 
@@ -721,7 +721,7 @@ msgstr "Opret ny post"
 msgid "Create profile"
 msgstr "Opret profil"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Opret Rolle"
 
@@ -952,8 +952,13 @@ msgid "Deleted"
 msgstr "Slettet"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Deleted {objectNamePlural}"
-msgstr "Slettet {objectNamePlural}"
+#~ msgid "Deleted {objectNamePlural}"
+#~ msgstr "Deleted {objectNamePlural}"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Deleted records"
+msgstr "Slettede poster"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1084,8 +1089,8 @@ msgstr "Rediger dit underdomænenavn eller sæt et brugerdefineret domæne."
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
 msgstr "E-mail"
 
@@ -1811,10 +1816,6 @@ msgstr "Flyt til højre"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1824,6 +1825,10 @@ msgstr "Flyt til højre"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "Navn"
@@ -1958,7 +1963,7 @@ msgstr "Intet land"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Ingen flere medlemmer at tildele"
 
@@ -1970,7 +1975,7 @@ msgstr "Ingen poster fundet"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Ingen resultater"
 
@@ -2029,13 +2034,13 @@ msgstr "Objekt"
 msgid "Object destination"
 msgstr "Objektdestination"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Objects"
 msgstr "Objekter"
 
@@ -2068,7 +2073,7 @@ msgstr "Åbnet"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Valgfrit: Definér en hemmelig streng, som vi vil inkludere i hver webhook. Brug dette til at autentificere og verificere webhooken ved modtagelse."
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2373,7 +2378,7 @@ msgstr "Søg ''{commandMenuSearch}'' med..."
 msgid "Search a field..."
 msgstr "Søg i et felt..."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "S\\u00f8g et medlem"
 
@@ -2420,6 +2425,11 @@ msgstr "Sikkerhed"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "Se aktiv version"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "See deleted records"
+msgstr "Se slettede poster"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2480,7 +2490,7 @@ msgstr "Serveradministratorpanel"
 msgid "Service Provider Details"
 msgstr "Tjenesteudbyderoplysninger"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
 msgstr "Indstil en standardrolle for dette arbejdsområde"
 
@@ -2505,15 +2515,15 @@ msgid "Set the name of your subdomain"
 msgstr "Indstil navnet på dit underdomæne"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 msgid "Settings"
 msgstr "Indstillinger"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Indstillinger for tilladelser"
 
@@ -2771,7 +2781,7 @@ msgstr "Denne handling kan ikke fortrydes. Dette vil permanent slette hele dit a
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Denne rolle er tildelt disse arbejdsomr\\u00e5demedlemmer."
 
@@ -2815,10 +2825,10 @@ msgstr "Sand"
 msgid "Turkish"
 msgstr "Tyrkisk"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Type"
 
@@ -3063,8 +3073,8 @@ msgstr "Arbejdsområder"
 msgid "Wrap on record pages"
 msgstr "Pak ind på post sider"
 
-#: src/pages/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"

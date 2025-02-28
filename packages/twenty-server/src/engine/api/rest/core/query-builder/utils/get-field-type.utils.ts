@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const getFieldType = (
-  objectMetadata: ObjectMetadataInterface,
+  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   fieldName: string,
 ): FieldMetadataType | undefined => {
-  return objectMetadata.fields.find((field) => field.name === fieldName)?.type;
+  return objectMetadataItem.fieldsByName[fieldName]?.type;
 };

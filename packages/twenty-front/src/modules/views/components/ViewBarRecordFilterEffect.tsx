@@ -41,10 +41,6 @@ export const ViewBarRecordFilterEffect = () => {
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
-    currentRecordFiltersComponentState,
-  );
-
   const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
     contextStoreCurrentObjectMetadataItem?.id,
   );
@@ -65,6 +61,7 @@ export const ViewBarRecordFilterEffect = () => {
             filterableFieldMetadataItems,
           ),
         );
+
         setHasInitializedCurrentRecordFilters(true);
       }
     }
@@ -72,7 +69,6 @@ export const ViewBarRecordFilterEffect = () => {
     currentViewId,
     setCurrentRecordFilters,
     filterableFieldMetadataItems,
-    currentRecordFilters,
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
     contextStoreCurrentObjectMetadataItem?.id,

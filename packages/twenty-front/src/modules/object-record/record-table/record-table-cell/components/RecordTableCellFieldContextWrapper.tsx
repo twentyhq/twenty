@@ -2,10 +2,10 @@ import { ReactNode, useContext } from 'react';
 
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';

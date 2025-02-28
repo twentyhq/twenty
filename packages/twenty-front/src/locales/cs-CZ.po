@@ -59,7 +59,7 @@ msgstr "{apiKeyName} API klíč"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} bude odebrán z následující role:"
 
@@ -97,7 +97,7 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Sdílené prostředí, ve kterém budete moci spravovat vztahy se zákazníky se svým týmem."
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Možnost interakce s každým objektem"
 
@@ -127,9 +127,9 @@ msgstr "Smazání účtu"
 msgid "Accounts"
 msgstr "Účty"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Akce"
 
@@ -233,7 +233,7 @@ msgstr "Přidáno {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Přidáno do blokovaného seznamu"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "Upravit nastavení související s rolí"
 
@@ -269,7 +269,7 @@ msgstr "Všechny řádky"
 msgid "All Objects"
 msgstr "Všechny objekty"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Všechny role"
 
@@ -368,23 +368,23 @@ msgstr "Jste si jisti, že chcete změnit interval fakturace?"
 msgid "Ascending"
 msgstr "Vzestupně"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Přiřadit uživatele {workspaceMemberName}?"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Přiřaďte role pro specifikaci přístupových oprávnění každého člena"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Přiřadit členu"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Přiřazení členové"
 
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Přiřazeno"
 
@@ -598,7 +598,7 @@ msgstr "Nakonfigurujte, jak by se měly zobrazovat vaše události ve vašem kal
 msgid "Configure your emails and calendar settings."
 msgstr "Nakonfigurujte nastavení svých e-mailů a kalendáře."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Potvrdit"
 
@@ -721,7 +721,7 @@ msgstr "Vytvořit nový záznam"
 msgid "Create profile"
 msgstr "Vytvořit profil"
 
-#: src/pages/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Vytvořit roli"
 
@@ -952,8 +952,13 @@ msgid "Deleted"
 msgstr "Smazáno"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "Deleted {objectNamePlural}"
-msgstr "Smazané {objectNamePlural}"
+#~ msgid "Deleted {objectNamePlural}"
+#~ msgstr "Deleted {objectNamePlural}"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Deleted records"
+msgstr "Smazané záznamy"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1084,8 +1089,8 @@ msgstr "Upravit název vaší subdomény nebo nastavit vlastní doménu."
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
 msgstr "E-mail"
 
@@ -1811,10 +1816,6 @@ msgstr "Posunout doprava"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
-#: src/pages/settings/roles/components/RolesTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1824,6 +1825,10 @@ msgstr "Posunout doprava"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "Název"
@@ -1958,7 +1963,7 @@ msgstr "Žádná země"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Žádní další členové k přiřazení"
 
@@ -1970,7 +1975,7 @@ msgstr "Žádné záznamy nenalezeny"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Žádné výsledky"
 
@@ -2029,13 +2034,13 @@ msgstr "Objekt"
 msgid "Object destination"
 msgstr "Cíl objektu"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Objects"
 msgstr "Objekty"
 
@@ -2068,7 +2073,7 @@ msgstr "Otevřený"
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Volitelné: Definujte tajný řetězec, který zahrneme do každého webhooku. Použijte to pro ověření a ověření webhooku po přijetí."
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -2373,7 +2378,7 @@ msgstr "Hledat ''{commandMenuSearch}'' s..."
 msgid "Search a field..."
 msgstr "Hledat ve sloupci..."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "Vyhledejte člena"
 
@@ -2420,6 +2425,11 @@ msgstr "Bezpečnost"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "Zobrazit aktivní verzi"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "See deleted records"
+msgstr "Zobrazit smazané záznamy"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2480,7 +2490,7 @@ msgstr "Administrační panel serveru"
 msgid "Service Provider Details"
 msgstr "Detaily poskytovatele služby"
 
-#: src/pages/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
 msgstr "Nastavit výchozí roli pro tento pracovní prostor"
 
@@ -2505,15 +2515,15 @@ msgid "Set the name of your subdomain"
 msgstr "Nastavte název vaší subdomény"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 msgid "Settings"
 msgstr "Nastavení"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Nastavení oprávnění"
 
@@ -2771,7 +2781,7 @@ msgstr "Tuto akci nelze vrátit zpět. Tímto dojde k trvalému odstranění cel
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Tuto roli mají přiřazení následující členové pracovního prostoru."
 
@@ -2815,10 +2825,10 @@ msgstr "Pravda"
 msgid "Turkish"
 msgstr "Turečtina"
 
-#: src/pages/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Typ"
 
@@ -3063,8 +3073,8 @@ msgstr "Pracovní prostory"
 msgid "Wrap on record pages"
 msgstr "Zalomit na stránkách záznamů"
 
-#: src/pages/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
