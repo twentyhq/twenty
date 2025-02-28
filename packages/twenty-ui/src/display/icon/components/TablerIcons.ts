@@ -59,6 +59,8 @@ export {
   IconCoins,
   IconColorSwatch,
   IconMessageCircle as IconComment,
+  IconCube,
+  IconTypography,
   IconCopy,
   IconCreativeCommonsSa,
   IconCreditCard,

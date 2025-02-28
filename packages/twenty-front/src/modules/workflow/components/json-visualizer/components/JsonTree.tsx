@@ -4,7 +4,7 @@ import { JsonValue } from 'type-fest';
 
 export const JsonTree = ({ value }: { value: JsonValue }) => {
   return (
-    <JsonList className="json-tree" depth={0}>
+    <JsonList depth={0}>
       <JsonNode value={value} depth={0} />
     </JsonList>
   );

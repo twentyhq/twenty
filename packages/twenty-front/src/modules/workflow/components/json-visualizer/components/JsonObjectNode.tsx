@@ -1,4 +1,5 @@
 import { JsonNestedNode } from '@/workflow/components/json-visualizer/components/JsonNestedNode';
+import { IconCube } from 'twenty-ui';
 import { JsonObject } from 'type-fest';
 
 export const JsonObjectNode = ({
@@ -17,6 +18,7 @@ export const JsonObjectNode = ({
         value,
       }))}
       label={label}
+      Icon={IconCube}
       depth={depth}
     />
   );

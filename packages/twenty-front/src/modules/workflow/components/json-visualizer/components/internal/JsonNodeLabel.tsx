@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconPlaylistAdd } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui';
 
 const StyledLabelContainer = styled.span`
   align-items: center;
@@ -20,15 +20,18 @@ const StyledLabelContainer = styled.span`
   width: fit-content;
 `;
 
-export const JsonNodeLabel = ({ label }: { label: string }) => {
+export const JsonNodeLabel = ({
+  label,
+  Icon,
+}: {
+  label: string;
+  Icon: IconComponent;
+}) => {
   const theme = useTheme();
 
   return (
     <StyledLabelContainer>
-      <IconPlaylistAdd
-        size={theme.icon.size.md}
-        color={theme.font.color.tertiary}
-      />
+      <Icon size={theme.icon.size.md} color={theme.font.color.tertiary} />
 
       <span>{label}</span>
     </StyledLabelContainer>

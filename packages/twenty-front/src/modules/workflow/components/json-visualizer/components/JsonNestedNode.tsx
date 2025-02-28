@@ -5,6 +5,7 @@ import { JsonNode } from '@/workflow/components/json-visualizer/components/JsonN
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
+import { IconComponent } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 
 const StyledContainer = styled.li`
@@ -21,10 +22,12 @@ const StyledLabelContainer = styled.div`
 
 export const JsonNestedNode = ({
   label,
+  Icon,
   elements,
   depth,
 }: {
   label?: string;
+  Icon: IconComponent;
   elements: Array<{ key: string; value: JsonValue }>;
   depth: number;
 }) => {
@@ -53,7 +56,7 @@ export const JsonNestedNode = ({
       <StyledLabelContainer>
         <JsonArrow isOpen={isOpen} onClick={handleArrowClick} />
 
-        <JsonNodeLabel label={label} />
+        <JsonNodeLabel label={label} Icon={Icon} />
       </StyledLabelContainer>
 
       {isOpen && renderedChildren}
