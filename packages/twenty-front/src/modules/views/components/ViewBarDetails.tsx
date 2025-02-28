@@ -24,10 +24,13 @@ import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreVie
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
+import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared';
-import { t } from '@lingui/core/macro';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -48,6 +51,7 @@ const StyledBar = styled.div`
   min-height: 32px;
   padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
   z-index: 4;
 `;
 
@@ -56,7 +60,7 @@ const StyledChipcontainer = styled.div`
   display: flex;
   flex-direction: row;
   overflow: scroll;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   z-index: 1;
 `;
@@ -80,6 +84,8 @@ const StyledFilterContainer = styled.div`
   align-items: center;
   flex: 1;
   overflow-x: hidden;
+
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledSeperatorContainer = styled.div`
@@ -99,7 +105,6 @@ const StyledSeperator = styled.div`
 `;
 
 const StyledAddFilterContainer = styled.div`
-  margin-left: ${({ theme }) => theme.spacing(1)};
   z-index: 5;
 `;
 
@@ -120,6 +125,10 @@ export const ViewBarDetails = ({
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
+  );
+
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
@@ -137,6 +146,9 @@ export const ViewBarDetails = ({
   });
   const { resetUnsavedViewStates } = useResetUnsavedViewStates();
 
+  const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
+    useAreViewFilterGroupsDifferentFromRecordFilterGroups();
+
   const { viewFiltersAreDifferentFromRecordFilters } =
     useAreViewFiltersDifferentFromRecordFilters();
 
@@ -145,7 +157,8 @@ export const ViewBarDetails = ({
 
   const canResetView =
     (viewFiltersAreDifferentFromRecordFilters ||
-      viewSortsAreDifferentFromRecordSorts) &&
+      viewSortsAreDifferentFromRecordSorts ||
+      viewFilterGroupsAreDifferentFromRecordFilterGroups) &&
     !hasFiltersQueryParams;
 
   const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
@@ -162,6 +175,9 @@ export const ViewBarDetails = ({
     );
   }, [currentRecordFilters, checkIsSoftDeleteFilter]);
 
+  const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
+    useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
+
   const { applyCurrentViewFiltersToCurrentRecordFilters } =
     useApplyCurrentViewFiltersToCurrentRecordFilters();
 
@@ -171,6 +187,7 @@ export const ViewBarDetails = ({
   const handleCancelClick = () => {
     if (isDefined(viewId)) {
       resetUnsavedViewStates(viewId);
+      applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
       applyCurrentViewFiltersToCurrentRecordFilters();
       applyCurrentViewSortsToCurrentRecordSorts();
       toggleSoftDeleteFilterState(false);
@@ -180,7 +197,10 @@ export const ViewBarDetails = ({
   const shouldExpandViewBar =
     viewFiltersAreDifferentFromRecordFilters ||
     viewSortsAreDifferentFromRecordSorts ||
-    ((currentRecordSorts?.length || currentRecordFilters?.length) &&
+    viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+    ((currentRecordSorts.length > 0 ||
+      currentRecordFilters.length > 0 ||
+      currentRecordFilterGroups.length > 0) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {

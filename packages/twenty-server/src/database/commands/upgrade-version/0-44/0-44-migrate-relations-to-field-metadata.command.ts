@@ -24,7 +24,7 @@ import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-typ
 @MigrationCommand({
   name: 'migrate-relations-to-field-metadata',
   description: 'Migrate relations to field metadata',
-  version: '0.43',
+  version: '0.44',
 })
 export class MigrateRelationsToFieldMetadataCommand extends MaintainedWorkspacesMigrationCommandRunner {
   constructor(

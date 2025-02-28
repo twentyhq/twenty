@@ -46,8 +46,6 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   column-gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   white-space: nowrap;
-
-  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`

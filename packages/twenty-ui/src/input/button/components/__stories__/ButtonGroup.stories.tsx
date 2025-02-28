@@ -10,7 +10,7 @@ import {
   ButtonAccent,
   ButtonSize,
   ButtonVariant,
-} from '../Button/Button.main';
+} from '../Button/Button';
 import { ButtonGroup } from '../ButtonGroup';
 
 const meta: Meta<typeof ButtonGroup> = {

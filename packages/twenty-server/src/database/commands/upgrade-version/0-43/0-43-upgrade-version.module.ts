@@ -5,7 +5,7 @@ import { MigrationCommandModule } from 'src/database/commands/migration-command/
 import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-43/0-43-add-tasks-assigned-to-me-view.command';
 import { MigrateIsSearchableForCustomObjectMetadataCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-is-searchable-for-custom-object-metadata.command';
-import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-relations-to-field-metadata.command';
+import { MigrateRichTextContentPatchCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-rich-text-content-patch.command';
 import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-search-vector-on-note-and-task-entities.command';
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -15,6 +15,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { SearchModule } from 'src/engine/metadata-modules/search/search.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
@@ -30,6 +31,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
         WorkspaceMigrationRunnerModule,
         WorkspaceMigrationModule,
         WorkspaceMetadataVersionModule,
+        WorkspaceDataSourceModule,
       ],
       providers: [
         AddTasksAssignedToMeViewCommand,
@@ -37,7 +39,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
         MigrateIsSearchableForCustomObjectMetadataCommand,
         UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
         StandardizationOfActorCompositeContextTypeCommand,
-        MigrateRelationsToFieldMetadataCommand,
+        MigrateRichTextContentPatchCommand,
       ],
     }),
   ],

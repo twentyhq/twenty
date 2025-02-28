@@ -163,4 +163,26 @@ export class WorkflowRunWorkspaceService {
       context,
     });
   }
+
+  async getWorkflowRunOrFail(
+    workflowRunId: string,
+  ): Promise<WorkflowRunWorkspaceEntity> {
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowRun = await workflowRunRepository.findOne({
+      where: { id: workflowRunId },
+    });
+
+    if (!workflowRun) {
+      throw new WorkflowRunException(
+        'Workflow run not found',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+      );
+    }
+
+    return workflowRun;
+  }
 }

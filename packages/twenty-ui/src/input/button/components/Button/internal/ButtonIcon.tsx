@@ -3,9 +3,10 @@ import { baseTransitionTiming } from '@ui/input/button/components/Button/constan
 import { IconComponent } from '@ui/display';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared';
 
 const StyledIcon = styled.div<{
-  loading: boolean;
+  loading?: boolean;
 }>`
   align-items: center;
   display: flex;
@@ -20,7 +21,7 @@ const StyledIcon = styled.div<{
     loading ? '0ms' : `${baseTransitionTiming / 2}ms`};
 `;
 
-const StyledIconWrapper = styled.div<{ loading: boolean }>`
+const StyledIconWrapper = styled.div<{ loading?: boolean }>`
   align-items: center;
   display: flex;
   height: 100%;
@@ -32,7 +33,7 @@ const StyledIconWrapper = styled.div<{ loading: boolean }>`
   width: ${({ loading }) => (loading ? 0 : '100%')};
 `;
 
-const StyledLoader = styled.div<{ loading: boolean }>`
+const StyledLoader = styled.div<{ loading?: boolean }>`
   left: ${({ theme }) => theme.spacing(2)};
   opacity: ${({ loading }) => (loading ? 1 : 0)};
   position: absolute;
@@ -45,18 +46,20 @@ const StyledLoader = styled.div<{ loading: boolean }>`
 
 export const ButtonIcon = ({
   Icon,
-  loading = false,
+  loading,
 }: {
   Icon?: IconComponent;
   loading?: boolean;
 }) => {
   const theme = useTheme();
-
+  console.log('>>>>>>>>>>>>>>', loading);
   return (
     <StyledIconWrapper loading={loading}>
-      <StyledLoader loading={loading}>
-        <Loader />
-      </StyledLoader>
+      {isDefined(loading) && (
+        <StyledLoader loading={loading}>
+          <Loader />
+        </StyledLoader>
+      )}
       {Icon && (
         <StyledIcon loading={loading}>
           <Icon size={theme.icon.size.sm} />

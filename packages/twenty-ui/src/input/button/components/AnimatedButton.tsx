@@ -11,7 +11,7 @@ import {
   ButtonProps,
   ButtonSize,
   ButtonVariant,
-} from './Button/Button.main';
+} from './Button/Button';
 
 export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {

@@ -11,7 +11,7 @@ import {
   ButtonPosition,
   ButtonSize,
   ButtonVariant,
-} from '../Button/Button.main';
+} from '../Button/Button';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Input/Button/Button',
