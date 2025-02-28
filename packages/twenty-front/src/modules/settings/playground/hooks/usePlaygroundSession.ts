@@ -4,6 +4,7 @@ import {
 } from '@/settings/playground/types/PlaygroundConfig';
 import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionKeys';
 import { PlaygroundSessionService } from '@/settings/playground/utils/playgroundSessionService';
+import { PlaygroundSessionSchema } from '@/settings/playground/utils/sessionSchema';
 import { isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -24,26 +25,35 @@ type PlaygroundSessionInvalid = {
   baseUrl: null;
 };
 
-type PlaygroundSession = PlaygroundSessionValid | PlaygroundSessionInvalid;
+export type usePlaygroundSessionResult =
+  | PlaygroundSessionValid
+  | PlaygroundSessionInvalid;
 
-const SchemaToPath = {
+export const SchemaToPath = {
   [PlaygroundSchemas.CORE]: 'graphql',
   [PlaygroundSchemas.METADATA]: 'metadata',
 };
 
 export const usePlaygroundSession = (
   playgroundType: PlaygroundTypes,
-): PlaygroundSession => {
-  const apiKey: string | null = PlaygroundSessionService.get(
-    PlaygroundSessionKeys.API_KEY,
-  );
-  const schema: PlaygroundSchemas | null = PlaygroundSessionService.get(
-    PlaygroundSessionKeys.SCHEMA,
-  );
+): usePlaygroundSessionResult => {
+  try {
+    const apiKey: string | null = PlaygroundSessionService.get(
+      PlaygroundSessionKeys.API_KEY,
+    );
+    const schema: PlaygroundSchemas | null = PlaygroundSessionService.get(
+      PlaygroundSessionKeys.SCHEMA,
+    );
 
-  const isValid = isDefined(apiKey) && isDefined(schema);
+    const isValid =
+      isDefined(apiKey) &&
+      isDefined(schema) &&
+      PlaygroundSessionSchema.safeParse({ apiKey, schema }).success;
 
-  if (isValid) {
+    if (!isValid) {
+      throw Error('Invalid playground setup');
+    }
+
     const baseUrl =
       playgroundType === PlaygroundTypes.GRAPHQL
         ? REACT_APP_SERVER_BASE_URL + '/' + SchemaToPath[schema]
@@ -55,7 +65,7 @@ export const usePlaygroundSession = (
       isValid: true,
       baseUrl,
     };
+  } catch (e) {
+    return { apiKey: null, schema: null, isValid: false, baseUrl: null };
   }
-
-  return { apiKey: null, schema: null, isValid: false, baseUrl: null };
 };
