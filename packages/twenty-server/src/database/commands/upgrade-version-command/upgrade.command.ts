@@ -38,7 +38,9 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
-      `### ${args.options.dryRun ? '(dry run)' : ''} Upgrading workspace ${args.workspaceId} ${args.index + 1}/${args.total}`,
+      chalk.blue(
+        `${args.options.dryRun ? '(dry run)' : ''} Upgrading workspace ${args.workspaceId} ${args.index + 1}/${args.total}`,
+      ),
     );
 
     await this.migrateRichTextContentPatchCommand.runOnWorkspace(args);
@@ -64,7 +66,7 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
 
     this.logger.log(
-      chalk.green(`### Upgrade for workspace ${args.workspaceId} completed.`),
+      chalk.blue(`Upgrade for workspace ${args.workspaceId} completed.`),
     );
   }
 }
