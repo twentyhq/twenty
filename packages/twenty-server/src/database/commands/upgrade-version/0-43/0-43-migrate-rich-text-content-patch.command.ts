@@ -284,7 +284,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
         );
 
       const rows = await workspaceDataSource.query(
-        `SELECT id, "${richTextField.name}" FROM "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" WHERE "${richTextField.name}" IS NOT NULL AND "${richTextField.name}V2Markdown" IS NULL`,
+        `SELECT id, "${richTextField.name}" FROM "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" WHERE "${richTextField.name}" IS NOT NULL`,
       );
 
       this.logger.log(`Generating markdown for ${rows.length} records`);
