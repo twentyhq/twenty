@@ -1,7 +1,7 @@
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 export const getJoinColumn = (
@@ -9,10 +9,7 @@ export const getJoinColumn = (
   relationMetadataArgs: WorkspaceRelationMetadataArgs,
   opposite = false,
 ): string | null => {
-  if (
-    relationMetadataArgs.type === RelationMetadataType.ONE_TO_MANY ||
-    relationMetadataArgs.type === RelationMetadataType.MANY_TO_MANY
-  ) {
+  if (relationMetadataArgs.type === RelationType.ONE_TO_MANY) {
     return null;
   }
 
@@ -41,7 +38,7 @@ export const getJoinColumn = (
 
   // If we're in a ONE_TO_ONE relation and there are no join columns, we need to find the join column on the inverse side
   if (
-    relationMetadataArgs.type === RelationMetadataType.ONE_TO_ONE &&
+    relationMetadataArgs.type === RelationType.ONE_TO_ONE &&
     filteredJoinColumnsMetadataArgsCollection.length === 0 &&
     !opposite
   ) {

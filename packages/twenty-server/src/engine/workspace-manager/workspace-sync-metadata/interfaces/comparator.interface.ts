@@ -52,6 +52,10 @@ export type FieldComparatorResult =
     >
   | ComparatorDeleteResult<FieldMetadataEntity>;
 
+export type FieldRelationComparatorResult =
+  | ComparatorSkipResult
+  | ComparatorUpdateResult<Partial<FieldMetadataEntity> & { id: string }>;
+
 export type RelationComparatorResult =
   | ComparatorCreateResult<Partial<RelationMetadataEntity>>
   | ComparatorDeleteResult<RelationMetadataEntity>

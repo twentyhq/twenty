@@ -5,8 +5,10 @@ import { WorkspaceDynamicRelationMetadataArgsFactory } from 'src/engine/twenty-o
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export type PartialFieldMetadata = Omit<
-  FieldMetadataInterface,
+export type PartialFieldMetadata<
+  T extends FieldMetadataType = FieldMetadataType,
+> = Omit<
+  FieldMetadataInterface<T>,
   'id' | 'label' | 'description' | 'objectMetadataId'
 > & {
   standardId: string;

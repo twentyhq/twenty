@@ -1,33 +1,36 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 import {
   ComparatorAction,
-  FieldComparatorResult,
+  FieldRelationComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
+import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
-import { WorkspaceFieldComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field.comparator';
-import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
+import { WorkspaceFieldRelationComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field-relation.comparator';
+import { StandardFieldRelationFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field-relation.factory';
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
-import { computeStandardFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-fields.util';
 import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/sync-metadata.util';
 
 @Injectable()
-export class WorkspaceSyncFieldMetadataService {
-  private readonly logger = new Logger(WorkspaceSyncFieldMetadataService.name);
+export class WorkspaceSyncFieldMetadataRelationService {
+  private readonly logger = new Logger(
+    WorkspaceSyncFieldMetadataRelationService.name,
+  );
 
   constructor(
-    private readonly standardFieldFactory: StandardFieldFactory,
-    private readonly workspaceFieldComparator: WorkspaceFieldComparator,
+    private readonly standardFieldRelationFactory: StandardFieldRelationFactory,
+    private readonly workspaceFieldRelationComparator: WorkspaceFieldRelationComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
     private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
   ) {}
@@ -45,7 +48,9 @@ export class WorkspaceSyncFieldMetadataService {
       await objectMetadataRepository.find({
         where: {
           workspaceId: context.workspaceId,
-          // We're only interested in standard fields
+          fields: {
+            type: FieldMetadataType.RELATION,
+          },
         },
         relations: ['dataSource', 'fields'],
       });
@@ -54,16 +59,24 @@ export class WorkspaceSyncFieldMetadataService {
         (objectMetadata) => objectMetadata.isCustom,
       );
 
-    await this.synchronizeStandardObjectFields(
+    // Create map of object metadata & field metadata by unique identifier
+    const originalObjectMetadataMapByName = mapObjectMetadataByUniqueIdentifier(
+      originalObjectMetadataCollection,
+      // Relation are based on the singular name
+      (objectMetadata) => objectMetadata.nameSingular,
+    );
+
+    await this.synchronizeStandardObjectRelationFields(
       context,
       originalObjectMetadataCollection,
-      customObjectMetadataCollection,
+      originalObjectMetadataMapByName,
       storage,
     );
 
-    await this.synchronizeCustomObjectFields(
+    await this.synchronizeCustomObjectRelationFields(
       context,
       customObjectMetadataCollection,
+      originalObjectMetadataMapByName,
       storage,
     );
 
@@ -77,13 +90,6 @@ export class WorkspaceSyncFieldMetadataService {
 
     this.logger.log('Generating migrations');
 
-    const deleteFieldWorkspaceMigrations =
-      await this.workspaceMigrationFieldFactory.create(
-        originalObjectMetadataCollection,
-        storage.fieldMetadataDeleteCollection,
-        WorkspaceMigrationBuilderAction.DELETE,
-      );
-
     const updateFieldWorkspaceMigrations =
       await this.workspaceMigrationFieldFactory.create(
         originalObjectMetadataCollection,
@@ -91,38 +97,23 @@ export class WorkspaceSyncFieldMetadataService {
         WorkspaceMigrationBuilderAction.UPDATE,
       );
 
-    const createFieldWorkspaceMigrations =
-      await this.workspaceMigrationFieldFactory.create(
-        originalObjectMetadataCollection,
-        metadataFieldUpdaterResult.createdFieldMetadataCollection,
-        WorkspaceMigrationBuilderAction.CREATE,
-      );
-
     this.logger.log('Saving migrations');
 
-    return [
-      ...deleteFieldWorkspaceMigrations,
-      ...updateFieldWorkspaceMigrations,
-      ...createFieldWorkspaceMigrations,
-    ];
+    return [...updateFieldWorkspaceMigrations];
   }
 
-  /**
-   * This can be optimized to avoid import of standardObjectFactory here.
-   * We should refactor the logic of the factory, so this one only create the objects and not the fields.
-   * Then standardFieldFactory should be used to create the fields of standard objects.
-   */
-  private async synchronizeStandardObjectFields(
+  private async synchronizeStandardObjectRelationFields(
     context: WorkspaceSyncContext,
     originalObjectMetadataCollection: ObjectMetadataEntity[],
-    customObjectMetadataCollection: ObjectMetadataEntity[],
+    originalObjectMetadataMapByName: Record<string, ObjectMetadataEntity>,
     storage: WorkspaceSyncStorage,
   ): Promise<void> {
     // Create standard field metadata map
-    const standardObjectStandardFieldMetadataMap =
-      this.standardFieldFactory.create(
+    const standardFieldMetadataRelationCollection =
+      this.standardFieldRelationFactory.createFieldRelationForStandardObject(
         standardObjectMetadataDefinitions,
         context,
+        originalObjectMetadataMapByName,
       );
 
     // Create map of original and standard object metadata by standard ids
@@ -134,75 +125,73 @@ export class WorkspaceSyncFieldMetadataService {
     for (const [
       standardObjectId,
       standardFieldMetadataCollection,
-    ] of standardObjectStandardFieldMetadataMap) {
+    ] of standardFieldMetadataRelationCollection) {
       const originalObjectMetadata =
         originalObjectMetadataMap[standardObjectId];
 
-      const computedStandardFieldMetadataCollection = computeStandardFields(
-        context,
-        standardFieldMetadataCollection,
-        originalObjectMetadata,
-        // We need to provide this for generated relations with custom objects
-        customObjectMetadataCollection,
-      );
+      const originalFieldRelationMetadataCollection =
+        originalObjectMetadata?.fields.filter(
+          (field) => field.type === FieldMetadataType.RELATION,
+        ) ?? [];
 
-      const fieldComparatorResults = this.workspaceFieldComparator.compare(
-        originalObjectMetadata.id,
-        originalObjectMetadata.fields,
-        computedStandardFieldMetadataCollection,
-      );
+      if (originalFieldRelationMetadataCollection.length === 0) {
+        continue;
+      }
+
+      const fieldComparatorResults =
+        this.workspaceFieldRelationComparator.compare(
+          originalFieldRelationMetadataCollection,
+          standardFieldMetadataCollection,
+        );
 
       this.storeComparatorResults(fieldComparatorResults, storage);
     }
   }
 
-  private async synchronizeCustomObjectFields(
+  private async synchronizeCustomObjectRelationFields(
     context: WorkspaceSyncContext,
     customObjectMetadataCollection: ObjectMetadataEntity[],
+    originalObjectMetadataMapByName: Record<string, ObjectMetadataEntity>,
     storage: WorkspaceSyncStorage,
   ): Promise<void> {
     // Create standard field metadata collection
-    const customObjectStandardFieldMetadataCollection =
-      this.standardFieldFactory.create(CustomWorkspaceEntity, context);
+    const customFieldMetadataRelationCollection =
+      this.standardFieldRelationFactory.createFieldRelationForCustomObject(
+        customObjectMetadataCollection.map((objectMetadata) => ({
+          object: objectMetadata,
+          metadata: CustomWorkspaceEntity,
+        })),
+        context,
+        originalObjectMetadataMapByName,
+      );
 
     // Loop over all custom objects from the DB and compare their fields with standard fields
     for (const customObjectMetadata of customObjectMetadataCollection) {
-      // Also, maybe it's better to refactor a bit and move generation part into a separate module ?
-      const standardFieldMetadataCollection = computeStandardFields(
-        context,
-        customObjectStandardFieldMetadataCollection,
-        customObjectMetadata,
-      );
-
       /**
        * COMPARE FIELD METADATA
        */
-      const fieldComparatorResults = this.workspaceFieldComparator.compare(
-        customObjectMetadata.id,
-        customObjectMetadata.fields,
-        standardFieldMetadataCollection,
-      );
+      const fieldComparatorResults =
+        this.workspaceFieldRelationComparator.compare(
+          customObjectMetadata.fields,
+          customFieldMetadataRelationCollection,
+        );
 
       this.storeComparatorResults(fieldComparatorResults, storage);
     }
   }
 
   private storeComparatorResults(
-    fieldComparatorResults: FieldComparatorResult[],
+    fieldComparatorResults: FieldRelationComparatorResult[],
     storage: WorkspaceSyncStorage,
   ): void {
     for (const fieldComparatorResult of fieldComparatorResults) {
       switch (fieldComparatorResult.action) {
-        case ComparatorAction.CREATE: {
-          storage.addCreateFieldMetadata(fieldComparatorResult.object);
-          break;
-        }
         case ComparatorAction.UPDATE: {
-          storage.addUpdateFieldMetadata(fieldComparatorResult.object);
-          break;
-        }
-        case ComparatorAction.DELETE: {
-          storage.addDeleteFieldMetadata(fieldComparatorResult.object);
+          storage.addUpdateFieldMetadata(
+            fieldComparatorResult.object as Partial<ComputedPartialFieldMetadata> & {
+              id: string;
+            },
+          );
           break;
         }
       }

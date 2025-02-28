@@ -87,9 +87,13 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
+    const featureFlags =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
+      featureFlags,
     });
 
     const dataSourceMetadataCreationEnd = performance.now();
@@ -143,9 +147,13 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
+    const featureFlags =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
+      featureFlags,
     });
 
     await this.prefillWorkspaceWithDemoObjects(dataSourceMetadata, workspaceId);
@@ -163,9 +171,13 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
+    const featureFlags =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
+      featureFlags,
     });
 
     const permissionsEnabled =

@@ -7,6 +7,7 @@ import {
   MaintainedWorkspacesMigrationCommandOptions,
   MaintainedWorkspacesMigrationCommandRunner,
 } from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -32,6 +33,7 @@ export class SyncWorkspaceMetadataCommand extends MaintainedWorkspacesMigrationC
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
+    private readonly featureFlagService: FeatureFlagService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -98,11 +100,17 @@ export class SyncWorkspaceMetadataCommand extends MaintainedWorkspacesMigrationC
             workspaceId,
           );
 
+        const featureFlags =
+          await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+            workspaceId,
+          );
+
         const { storage, workspaceMigrations } =
           await this.workspaceSyncMetadataService.synchronize(
             {
               workspaceId,
               dataSourceId: dataSourceMetadata.id,
+              featureFlags,
             },
             { applyChanges: !options.dryRun },
           );

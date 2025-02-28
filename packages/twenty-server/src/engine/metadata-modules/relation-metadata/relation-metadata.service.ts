@@ -9,6 +9,8 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -55,6 +57,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(relationMetadataRepository);
   }
@@ -64,6 +67,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   ): Promise<RelationMetadataEntity> {
     const objectMetadataMap = await this.getObjectMetadataMap(
       relationMetadataInput,
+    );
+
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      relationMetadataInput.workspaceId,
     );
 
     try {
@@ -93,21 +101,31 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const toId = uuidV4();
 
     const createdRelationFieldsMetadata =
-      await this.fieldMetadataRepository.save([
-        this.createFieldMetadataForRelationMetadata(
-          relationMetadataInput,
-          'from',
-          isCustom,
-          fromId,
-        ),
-        this.createFieldMetadataForRelationMetadata(
-          relationMetadataInput,
-          'to',
-          isCustom,
-          toId,
-        ),
-        this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
-      ]);
+      await this.fieldMetadataRepository.save(
+        [
+          this.createFieldMetadataForRelationMetadata(
+            relationMetadataInput,
+            'from',
+            isCustom,
+            fromId,
+          ),
+          this.createFieldMetadataForRelationMetadata(
+            relationMetadataInput,
+            'to',
+            isCustom,
+            toId,
+          ),
+          // We don't want to create the join column field metadata for new relation
+          ...(isNewRelationEnabled
+            ? []
+            : [
+                this.createForeignKeyFieldMetadata(
+                  relationMetadataInput,
+                  columnName,
+                ),
+              ]),
+        ].flat(),
+      );
 
     const createdRelationMetadata = await super.createOne({
       ...relationMetadataInput,
