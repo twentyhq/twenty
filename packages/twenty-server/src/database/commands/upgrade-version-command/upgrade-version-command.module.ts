@@ -5,12 +5,14 @@ import { V0_43_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { V0_44_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-44/0-44-upgrade-version-command.module';
 import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Workspace], 'core'),
     V0_43_UpgradeVersionCommandModule,
     V0_44_UpgradeVersionCommandModule,
+    WorkspaceSyncMetadataModule,
   ],
   providers: [UpgradeCommand],
 })

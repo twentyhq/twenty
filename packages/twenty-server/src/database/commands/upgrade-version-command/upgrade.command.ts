@@ -15,6 +15,7 @@ import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/co
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 @Command({
   name: 'upgrade',
@@ -30,6 +31,7 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     protected readonly migrateIsSearchableForCustomObjectMetadataCommand: MigrateIsSearchableForCustomObjectMetadataCommand,
     protected readonly updateDefaultViewRecordOpeningOnWorkflowObjectsCommand: UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
     protected readonly migrateSearchVectorOnNoteAndTaskEntitiesCommand: MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
+    protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -58,6 +60,8 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     );
 
     await this.addTasksAssignedToMeViewCommand.runOnWorkspace(args);
+
+    await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
 
     this.logger.log(
       chalk.green(
