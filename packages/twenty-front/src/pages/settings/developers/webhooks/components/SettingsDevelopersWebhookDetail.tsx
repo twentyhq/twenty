@@ -128,10 +128,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        {
-          children: t`Developers`,
-          href: getSettingsPath(SettingsPath.Developers),
-        },
         { children: t`Webhook` },
       ]}
     >

@@ -90,7 +90,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         updateOneRecordInput: { revokedAt: DateTime.now().toString() },
       });
       if (redirect) {
-        navigate(SettingsPath.Developers);
+        navigate(SettingsPath.APIs);
       }
     } catch (err) {
       enqueueSnackBar(t`Error deleting api key: ${err}`, {
@@ -166,8 +166,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.Workspace),
             },
             {
-              children: t`Developers`,
-              href: getSettingsPath(SettingsPath.Developers),
+              children: t`APIs`,
+              href: getSettingsPath(SettingsPath.APIs),
             },
             { children: t`${apiKeyName} API Key` },
           ]}

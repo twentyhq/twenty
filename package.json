@@ -48,6 +48,7 @@
     "@ptc-org/nestjs-query-typeorm": "4.2.1-alpha.2",
     "@react-email/components": "0.0.32",
     "@react-email/render": "0.0.17",
+    "@scalar/api-reference-react": "^0.3.166",
     "@sentry/node": "^8",
     "@sentry/profiling-node": "^8",
     "@sentry/react": "^8",
@@ -357,6 +358,7 @@
   "name": "twenty",
   "packageManager": "yarn@4.4.0",
   "resolutions": {
+    "@codemirror/state": "6.4.1",
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
     "typescript": "5.3.3",

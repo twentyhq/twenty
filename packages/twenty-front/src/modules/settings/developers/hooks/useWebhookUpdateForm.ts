@@ -145,7 +145,7 @@ export const useWebhookUpdateForm = ({
 
   const deleteWebhook = async () => {
     await deleteOneWebhook(webhookId);
-    navigate(SettingsPath.Developers);
+    navigate(SettingsPath.Webhooks);
   };
 
   useFindOneRecord({
