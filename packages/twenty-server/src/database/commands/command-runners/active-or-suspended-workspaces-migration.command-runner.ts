@@ -104,18 +104,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
     return activeWorkspaces.map((workspace) => workspace.id);
   }
 
-  protected logWorkspaceCount(activeWorkspaceIds: string[]): void {
-    if (!activeWorkspaceIds.length) {
-      this.logger.log(chalk.yellow('No workspace found'));
-    } else {
-      this.logger.log(
-        chalk.green(
-          `Running command on ${activeWorkspaceIds.length} workspaces`,
-        ),
-      );
-    }
-  }
-
   override async runMigrationCommand(
     _passedParams: string[],
     options: Options,
@@ -125,14 +113,16 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
         ? this.workspaceIds
         : await this.fetchActiveWorkspaceIds();
 
-    this.logWorkspaceCount(activeWorkspaceIds);
-
     if (options.dryRun) {
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
     try {
       for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
+        this.logger.log(
+          `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
+        );
+
         const dataSource =
           await this.twentyORMGlobalManager.getDataSourceForWorkspace(
             workspaceId,
