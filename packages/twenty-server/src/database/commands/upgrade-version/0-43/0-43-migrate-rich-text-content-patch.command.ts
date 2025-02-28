@@ -2,7 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
-import { Option } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
@@ -63,16 +62,6 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
-  }
-
-  @Option({
-    flags: '-f, --force [boolean]',
-    description:
-      'Force RICH_TEXT_FIELD value update even if column migration has already be run',
-    required: false,
-  })
-  parseForceValue(val?: boolean): boolean {
-    return val ?? false;
   }
 
   async runMigrationCommandOnMaintainedWorkspaces(
@@ -212,7 +201,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
     }
   }
 
-  private async getMardownFieldValue({
+  private async getMarkdownFieldValue({
     blocknoteFieldValue,
     serverBlockNoteEditor,
   }: {
@@ -291,7 +280,7 @@ export class MigrateRichTextContentPatchCommand extends MaintainedWorkspacesMigr
 
       for (const row of rows) {
         const blocknoteFieldValue = row[richTextField.name];
-        const markdownFieldValue = await this.getMardownFieldValue({
+        const markdownFieldValue = await this.getMarkdownFieldValue({
           blocknoteFieldValue,
           serverBlockNoteEditor,
         });
