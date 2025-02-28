@@ -160,9 +160,5 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
     }
   }
 
-  protected abstract runOnWorkspace({
-    options,
-    workspaceId,
-    dataSource,
-  }: RunOnWorkspaceArgs): Promise<void>;
+  protected abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
 }
