@@ -12,6 +12,8 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isDefined } from 'twenty-shared';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
+import { SelectObject, StrategyType } from './SelectStrategy';
+
 export type SelectOption<Value extends string | number | boolean | null> = {
   value: Value;
   label: string;
@@ -29,23 +31,8 @@ type CallToActionButton = {
 export type SelectValue = string | number | boolean | null;
 
 export type SelectProps<Value extends SelectValue> = {
-  className?: string;
-  disabled?: boolean;
-  selectSizeVariant?: SelectSizeVariant;
-  dropdownId: string;
-  dropdownWidth?: `${string}px` | 'auto' | number;
-  dropdownWidthAuto?: boolean;
-  emptyOption?: SelectOption<Value>;
-  fullWidth?: boolean;
-  label?: string;
-  onChange?: (value: Value) => void;
-  onBlur?: () => void;
-  options: SelectOption<Value>[];
-  value?: Value;
-  withSearchInput?: boolean;
-  needIconCheck?: boolean;
-  callToActionButton?: CallToActionButton;
-};
+  strategy: SelectObject<Value>;
+}
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
@@ -60,91 +47,76 @@ const StyledLabel = styled.span`
 `;
 
 export const Select = <Value extends SelectValue>({
-  className,
-  disabled: disabledFromProps,
-  selectSizeVariant,
-  dropdownId,
-  dropdownWidth = 176,
-  dropdownWidthAuto = false,
-  emptyOption,
-  fullWidth,
-  label,
-  onChange,
-  onBlur,
-  options,
-  value,
-  withSearchInput,
-  needIconCheck,
-  callToActionButton,
+  strategy
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const selectedOption =
-    options.find(({ value: key }) => key === value) ||
-    emptyOption ||
-    options[0];
+    strategy.options.find(({ value: key }) => key === strategy.value) ||
+    strategy.emptyOption ||
+    strategy.options[0];
   const filteredOptions = useMemo(
     () =>
       searchInputValue
-        ? options.filter(({ label }) =>
+        ? strategy.options.filter(({ label }) =>
             label.toLowerCase().includes(searchInputValue.toLowerCase()),
           )
-        : options,
-    [options, searchInputValue],
+        : strategy.options,
+    [strategy.options, searchInputValue],
   );
 
   const isDisabled =
-    disabledFromProps ||
-    (options.length <= 1 &&
-      !isDefined(callToActionButton) &&
-      (!isDefined(emptyOption) || selectedOption !== emptyOption));
+  strategy.disabled ||
+    (strategy.options.length <= 1 &&
+      !isDefined(strategy.callToActionButton) &&
+      (!isDefined(strategy.emptyOption) || selectedOption !== strategy.emptyOption));
 
-  const { closeDropdown } = useDropdown(dropdownId);
+  const { closeDropdown } = useDropdown(strategy.dropdownId);
 
   const dropDownMenuWidth =
-    dropdownWidthAuto && selectContainerRef.current?.clientWidth
+  strategy.dropdownWidthAuto && selectContainerRef.current?.clientWidth
       ? selectContainerRef.current?.clientWidth
-      : dropdownWidth;
+      : strategy.dropdownWidth;
 
   return (
     <StyledContainer
-      className={className}
-      fullWidth={fullWidth}
+      className={strategy.className}
+      fullWidth={strategy.fullWidth}
       tabIndex={0}
-      onBlur={onBlur}
+      onBlur={strategy.onBlur}
       ref={selectContainerRef}
     >
-      {!!label && <StyledLabel>{label}</StyledLabel>}
+      {!!strategy.label && <StyledLabel>{strategy.label}</StyledLabel>}
       {isDisabled ? (
         <SelectControl
           selectedOption={selectedOption}
           isDisabled={isDisabled}
-          selectSizeVariant={selectSizeVariant}
+          selectSizeVariant={strategy.selectSizeVariant}
         />
       ) : (
         <Dropdown
-          dropdownId={dropdownId}
+          dropdownId={strategy.dropdownId}
           dropdownMenuWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
           clickableComponent={
             <SelectControl
               selectedOption={selectedOption}
               isDisabled={isDisabled}
-              selectSizeVariant={selectSizeVariant}
+              selectSizeVariant={strategy.selectSizeVariant}
             />
           }
           dropdownComponents={
             <>
-              {!!withSearchInput && (
+              {!!strategy.withSearchInput && (
                 <DropdownMenuSearchInput
                   autoFocus
                   value={searchInputValue}
                   onChange={(event) => setSearchInputValue(event.target.value)}
                 />
               )}
-              {!!withSearchInput && !!filteredOptions.length && (
+              {!!strategy.withSearchInput && !!filteredOptions.length && (
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
@@ -155,25 +127,25 @@ export const Select = <Value extends SelectValue>({
                       LeftIcon={option.Icon}
                       text={option.label}
                       selected={selectedOption.value === option.value}
-                      needIconCheck={needIconCheck}
+                      needIconCheck={strategy.needIconCheck}
                       onClick={() => {
-                        onChange?.(option.value);
-                        onBlur?.();
+                        strategy.onChange?.(option.value);
+                        strategy.onBlur?.();
                         closeDropdown();
                       }}
                     />
                   ))}
                 </DropdownMenuItemsContainer>
               )}
-              {!!callToActionButton && !!filteredOptions.length && (
+              {!!strategy.callToActionButton && !!filteredOptions.length && (
                 <DropdownMenuSeparator />
               )}
-              {!!callToActionButton && (
+              {!!strategy.callToActionButton && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
                   <MenuItem
-                    onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
+                    onClick={strategy.callToActionButton.onClick}
+                    LeftIcon={strategy.callToActionButton.Icon}
+                    text={strategy.callToActionButton.text}
                   />
                 </DropdownMenuItemsContainer>
               )}
