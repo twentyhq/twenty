@@ -436,7 +436,7 @@ export const Button = ({
   const isMobile = useIsMobile();
 
   const [isFocused, setIsFocused] = useState(propFocus);
-  console.log('>>>>>>>>>>>>>>', loading);
+
   return (
     <StyledButtonWrapper
       loading={loading}
