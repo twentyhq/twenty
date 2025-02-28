@@ -36,7 +36,7 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     index,
     total,
   }: RunOnWorkspaceArgs): Promise<void> {
-    this.log(
+    this.logger.log(
       `Running workspace sync for workspace: ${workspaceId} (${index} out of ${total})`,
     );
 
@@ -62,7 +62,7 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
       );
     }
 
-    this.log(
+    this.logger.log(
       `Finished synchronizing all active workspaces (${total} workspaces).`,
     );
   }
