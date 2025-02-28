@@ -2,11 +2,9 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
@@ -24,18 +22,12 @@ export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
   const shouldBeRegistered =
     isDefined(objectMetadataItem) && isDefined(selectedRecord) && isNoteOrTask;
 
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
-
   const onClick = async () => {
     if (!shouldBeRegistered || !selectedRecord?.body) {
       return;
     }
 
-    const initialBody = isRichTextV2Enabled
-      ? selectedRecord.bodyV2?.blocknote
-      : selectedRecord.body;
+    const initialBody = selectedRecord.bodyV2?.blocknote;
 
     let parsedBody = [];
 
@@ -45,7 +37,7 @@ export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
     } catch (error) {
       // eslint-disable-next-line no-console
       console.warn(
-        `Failed to parse body for record ${recordId}, for rich text version ${isRichTextV2Enabled ? 'v2' : 'v1'}`,
+        `Failed to parse body for record ${recordId}, for rich text version 'v2'`,
       );
       // eslint-disable-next-line no-console
       console.warn(initialBody);
