@@ -11,7 +11,7 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   display: flex;
 
   flex-direction: column;
-  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '188px' : 'none')};
+  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '168px' : 'none')};
 
   padding: var(--padding);
 

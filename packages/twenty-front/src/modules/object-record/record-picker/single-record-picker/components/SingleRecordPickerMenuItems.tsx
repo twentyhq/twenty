@@ -35,7 +35,6 @@ export type SingleRecordPickerMenuItemsProps = {
 
 const StyledContainer = styled.div`
   display: flex;
-  height: 100%;
 `;
 
 export const SingleRecordPickerMenuItems = ({
