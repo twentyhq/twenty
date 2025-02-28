@@ -117,16 +117,6 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
     const memberRole = await this.roleService.createMemberRole({ workspaceId });
 
     return memberRole.id;
-
-    // const workspaceDefaultRole = await this.workspaceRepository.findOne({
-    //   where: {
-    //     id: workspaceId,
-    //   },
-    // });
-
-    // await this.workspaceRepository.update(workspaceId, {
-    //   defaultRoleId: memberRole.id,
-    // });
   }
 
   private async setMemberRoleAsDefaultRole({
