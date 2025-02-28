@@ -117,7 +117,6 @@ export class WorkspaceSyncMetadataService {
 
       let workspaceRelationMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
-      console.log('isNewRelationEnabled', isNewRelationEnabled);
       if (isNewRelationEnabled) {
         workspaceRelationMigrations =
           await this.workspaceSyncFieldMetadataRelationService.synchronize(

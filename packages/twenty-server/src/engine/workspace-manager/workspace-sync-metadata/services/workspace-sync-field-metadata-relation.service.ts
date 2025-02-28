@@ -48,9 +48,9 @@ export class WorkspaceSyncFieldMetadataRelationService {
       await objectMetadataRepository.find({
         where: {
           workspaceId: context.workspaceId,
-          // fields: {
-          //   type: FieldMetadataType.RELATION,
-          // },
+          fields: {
+            type: FieldMetadataType.RELATION,
+          },
         },
         relations: ['dataSource', 'fields'],
       });
