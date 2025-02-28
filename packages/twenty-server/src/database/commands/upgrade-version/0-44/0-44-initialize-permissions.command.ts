@@ -23,6 +23,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
   version: '0.44',
 })
 export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationCommandRunner {
+  private options: MaintainedWorkspacesMigrationCommandOptions;
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -37,11 +38,12 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
 
   async runMigrationCommandOnMaintainedWorkspaces(
     _passedParam: string[],
-    _options: MaintainedWorkspacesMigrationCommandOptions,
+    options: MaintainedWorkspacesMigrationCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(chalk.green('Running command to initialize permissions'));
 
+    this.options = options;
     for (const [index, workspaceId] of workspaceIds.entries()) {
       await this.processWorkspace(workspaceId, index, workspaceIds.length);
     }
@@ -106,6 +108,14 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
   }
 
   private async createAdminRole({ workspaceId }: { workspaceId: string }) {
+    chalk.green(
+      `Creating admin role ${this.options.dryRun ? '(dry run)' : ''}`,
+    );
+
+    if (this.options.dryRun) {
+      return '';
+    }
+
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
@@ -113,8 +123,18 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
     return adminRole.id;
   }
 
-  private async createMemberRole({ workspaceId }) {
-    const memberRole = await this.roleService.createMemberRole({ workspaceId });
+  private async createMemberRole({ workspaceId }: { workspaceId: string }) {
+    chalk.green(
+      `Creating member role ${this.options.dryRun ? '(dry run)' : ''}`,
+    );
+
+    if (this.options.dryRun) {
+      return '';
+    }
+
+    const memberRole = await this.roleService.createMemberRole({
+      workspaceId,
+    });
 
     return memberRole.id;
   }
@@ -133,6 +153,14 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
     });
 
     if (!isDefined(workspaceDefaultRole?.defaultRoleId)) {
+      chalk.green(
+        `Setting member role as default role ${this.options.dryRun ? '(dry run)' : ''}`,
+      );
+
+      if (this.options.dryRun) {
+        return;
+      }
+
       await this.workspaceRepository.update(workspaceId, {
         defaultRoleId: memberRoleId,
       });
@@ -163,6 +191,14 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
 
     if (!oldestUserWorkspace) {
       throw new Error('No user workspace found');
+    }
+
+    chalk.green(
+      `Assigning admin role to user ${oldestUserWorkspace.id} ${this.options.dryRun ? '(dry run)' : ''}`,
+    );
+
+    if (this.options.dryRun) {
+      return;
     }
 
     await this.userRoleService.assignRoleToUserWorkspace({
@@ -203,6 +239,17 @@ export class InitializePermissionsCommand extends MaintainedWorkspacesMigrationC
           .get(userWorkspace.id)
           ?.some((role) => isDefined(role))
       ) {
+        chalk.green(
+          `User workspace ${userWorkspace.id} already has a role. Skipping member role assignation`,
+        );
+        continue;
+      }
+
+      chalk.green(
+        `Assigning member role to user workspace ${userWorkspace.id} ${this.options.dryRun ? '(dry run)' : ''}`,
+      );
+
+      if (this.options.dryRun) {
         continue;
       }
 
