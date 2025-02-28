@@ -23,6 +23,7 @@ export {
   IconBookmark,
   IconBookmarkPlus,
   IconBox,
+  IconBrackets,
   IconBracketsContain,
   IconBrandGithub,
   IconBrandGoogle,

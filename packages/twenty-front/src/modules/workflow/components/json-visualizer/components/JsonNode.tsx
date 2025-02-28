@@ -2,7 +2,12 @@ import { JsonArrayNode } from '@/workflow/components/json-visualizer/components/
 import { JsonObjectNode } from '@/workflow/components/json-visualizer/components/JsonObjectNode';
 import { JsonValueNode } from '@/workflow/components/json-visualizer/components/JsonValueNode';
 import { isArray } from '@/workflow/components/json-visualizer/utils/isArray';
-import { IconCheckbox, IconTypography, IconX } from 'twenty-ui';
+import {
+  IconCheckbox,
+  IconCircleOff,
+  IconNumber9,
+  IconTypography,
+} from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 
 export const JsonNode = ({
@@ -15,7 +20,13 @@ export const JsonNode = ({
   depth: number;
 }) => {
   if (value === null) {
-    return <JsonValueNode label={label} valueAsString="[null]" Icon={IconX} />;
+    return (
+      <JsonValueNode
+        label={label}
+        valueAsString="[null]"
+        Icon={IconCircleOff}
+      />
+    );
   }
 
   if (typeof value === 'string') {
@@ -33,7 +44,7 @@ export const JsonNode = ({
       <JsonValueNode
         label={label}
         valueAsString={String(value)}
-        Icon={IconTypography}
+        Icon={IconNumber9}
       />
     );
   }
