@@ -63,9 +63,18 @@ export const ObjectFilterDropdownSourceSelect = ({
     objectFilterDropdownSelectedRecordIds,
   );
 
-  const filteredSelectedItems = sourceTypes.filter((option) =>
-    objectFilterDropdownSelectedRecordIds.includes(option.id),
-  );
+  const selectedFilterValues = Array.isArray(selectedFilter?.value)
+    ? selectedFilter.value
+    : isDefined(selectedFilter?.value)
+      ? JSON.parse(selectedFilter.value)
+      : [];
+
+  const filteredSelectedItems = sourceTypes
+    .filter((option) => selectedFilterValues.includes(option.id))
+    .map((option) => ({
+      ...option,
+      isSelected: true,
+    }));
 
   const { emptyRecordFilter } = useEmptyRecordFilter();
 
@@ -79,11 +88,11 @@ export const ObjectFilterDropdownSourceSelect = ({
     itemToSelect: SelectableItem,
     newSelectedValue: boolean,
   ) => {
-    const newSelectedItemIds = newSelectedValue
-      ? [...objectFilterDropdownSelectedRecordIds, itemToSelect.id]
-      : objectFilterDropdownSelectedRecordIds.filter(
-          (id) => id !== itemToSelect.id,
-        );
+    const updatedSelectedItems = newSelectedValue
+      ? [...filteredSelectedItems, { ...itemToSelect, isSelected: true }]
+      : filteredSelectedItems.filter((item) => item.id !== itemToSelect.id);
+
+    const newSelectedItemIds = updatedSelectedItems.map((item) => item.id);
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
