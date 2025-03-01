@@ -158,17 +158,16 @@ export const useCommandMenu = () => {
           resetNavigationStack ||
           currentNavigationStack.some((item) => item.page === page)
         ) {
-
-        if (resetNavigationStack) {
-          set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
-        } else {
-          set(commandMenuNavigationStackState, [
-            ...currentNavigationStack,
-            { page, pageTitle, pageIcon },
-          ]);
+          
+          if (resetNavigationStack) {
+            set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
+          } else {
+            set(commandMenuNavigationStackState, [
+              ...currentNavigationStack,
+              { page, pageTitle, pageIcon },
+            ]);
+          }
         }
-        openCommandMenu();
-       }   
       };
     },
     [openCommandMenu],
