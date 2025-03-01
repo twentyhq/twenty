@@ -6,6 +6,7 @@ import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-he
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
@@ -17,13 +18,14 @@ describe('AdminPanelHealthService', () => {
   let redisHealth: jest.Mocked<RedisHealthIndicator>;
   let workerHealth: jest.Mocked<WorkerHealthIndicator>;
   let connectedAccountHealth: jest.Mocked<ConnectedAccountHealth>;
+  let appHealth: jest.Mocked<AppHealthIndicator>;
 
   beforeEach(async () => {
     databaseHealth = { isHealthy: jest.fn() } as any;
     redisHealth = { isHealthy: jest.fn() } as any;
     workerHealth = { isHealthy: jest.fn() } as any;
     connectedAccountHealth = { isHealthy: jest.fn() } as any;
-
+    appHealth = { isHealthy: jest.fn() } as any;
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminPanelHealthService,
@@ -31,6 +33,7 @@ describe('AdminPanelHealthService', () => {
         { provide: RedisHealthIndicator, useValue: redisHealth },
         { provide: WorkerHealthIndicator, useValue: workerHealth },
         { provide: ConnectedAccountHealth, useValue: connectedAccountHealth },
+        { provide: AppHealthIndicator, useValue: appHealth },
       ],
     }).compile();
 
@@ -74,6 +77,32 @@ describe('AdminPanelHealthService', () => {
           details: 'Account sync is operational',
         },
       });
+      appHealth.isHealthy.mockResolvedValue({
+        app: {
+          status: 'up',
+          details: {
+            system: {
+              nodeVersion: '16.0',
+            },
+            workspaces: {
+              totalWorkspaces: 1,
+              healthStatus: [
+                {
+                  workspaceId: '1',
+                  summary: {
+                    structuralIssues: 0,
+                    dataIssues: 0,
+                    relationshipIssues: 0,
+                    pendingMigrations: 0,
+                  },
+                  severity: 'healthy',
+                  details: {},
+                },
+              ],
+            },
+          },
+        },
+      });
 
       const result = await service.getSystemHealthStatus();
 
@@ -95,6 +124,10 @@ describe('AdminPanelHealthService', () => {
             ...HEALTH_INDICATORS[HealthIndicatorId.connectedAccount],
             status: AdminPanelHealthServiceStatus.OPERATIONAL,
           },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.app],
+            status: AdminPanelHealthServiceStatus.OPERATIONAL,
+          },
         ],
       };
 
@@ -114,6 +147,9 @@ describe('AdminPanelHealthService', () => {
       connectedAccountHealth.isHealthy.mockResolvedValue({
         connectedAccount: { status: 'up' },
       });
+      appHealth.isHealthy.mockResolvedValue({
+        app: { status: 'down', details: {} },
+      });
 
       const result = await service.getSystemHealthStatus();
 
@@ -134,6 +170,10 @@ describe('AdminPanelHealthService', () => {
           {
             ...HEALTH_INDICATORS[HealthIndicatorId.connectedAccount],
             status: AdminPanelHealthServiceStatus.OPERATIONAL,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.app],
+            status: AdminPanelHealthServiceStatus.OUTAGE,
           },
         ],
       });
@@ -152,6 +192,9 @@ describe('AdminPanelHealthService', () => {
       connectedAccountHealth.isHealthy.mockRejectedValue(
         new Error(HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_CHECK_FAILED),
       );
+      appHealth.isHealthy.mockRejectedValue(
+        new Error(HEALTH_ERROR_MESSAGES.APP_HEALTH_CHECK_FAILED),
+      );
 
       const result = await service.getSystemHealthStatus();
 
@@ -171,6 +214,10 @@ describe('AdminPanelHealthService', () => {
           },
           {
             ...HEALTH_INDICATORS[HealthIndicatorId.connectedAccount],
+            status: AdminPanelHealthServiceStatus.OUTAGE,
+          },
+          {
+            ...HEALTH_INDICATORS[HealthIndicatorId.app],
             status: AdminPanelHealthServiceStatus.OUTAGE,
           },
         ],
