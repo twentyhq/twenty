@@ -10,8 +10,8 @@ RUN echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && \
 # Setup build environment
 ENV NODE_OPTIONS="--max-old-space-size=4096 --no-warnings"
 ENV NODE_ENV=production
-ENV CHOKIDAR_USEPOLLING=false
-ENV WATCHPACK_POLLING=false
+ENV CHOKIDAR_USEPOLLING=1
+ENV WATCHPACK_POLLING=true
 
 # Copy only the necessary files for dependency resolution
 COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
