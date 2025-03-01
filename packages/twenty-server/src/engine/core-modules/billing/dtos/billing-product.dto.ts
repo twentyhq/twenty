@@ -21,6 +21,6 @@ export class BillingProductDTO {
   @Field(() => BillingUsageType)
   type: BillingUsageType;
 
-  @Field(() => [BillingPriceUnionDTO], { nullable: 'items' })
-  prices: Array<BillingPriceLicensedDTO | BillingPriceMeteredDTO>;
+  @Field(() => [BillingPriceUnionDTO])
+  prices: Array<BillingPriceLicensedDTO> | Array<BillingPriceMeteredDTO>;
 }

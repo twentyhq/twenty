@@ -7,10 +7,8 @@ import { GraphQLError } from 'graphql';
 import { isDefined } from 'twenty-shared';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
-import { BillingProductInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-product.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
-import { BillingProductPricesOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-product-prices.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
@@ -48,27 +46,12 @@ export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
-    private readonly stripePriceService: StripePriceService,
     private readonly billingPlanService: BillingPlanService,
+    private readonly stripePriceService: StripePriceService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingService: BillingService,
     private readonly permissionsService: PermissionsService,
   ) {}
-
-  @Query(() => BillingProductPricesOutput)
-  @UseGuards(WorkspaceAuthGuard)
-  async getProductPrices(
-    @AuthWorkspace() workspace: Workspace,
-    @Args() { product }: BillingProductInput,
-  ) {
-    const productPrices =
-      await this.stripePriceService.getStripePrices(product);
-
-    return {
-      totalNumberOfPrices: productPrices.length,
-      productPrices,
-    };
-  }
 
   @Query(() => BillingSessionOutput)
   @UseGuards(
