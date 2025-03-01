@@ -1,12 +1,14 @@
 import isPropValid from '@emotion/is-prop-valid';
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Pill } from '@ui/components/Pill/Pill';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { useIsMobile } from '@ui/utilities';
-import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ButtonText } from './internal/ButtonText';
+import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
+import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
+import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/ButtonHotKeys';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -33,6 +35,7 @@ export type ButtonProps = {
   dataTestId?: string;
   hotkeys?: string[];
   ariaLabel?: string;
+  loading?: boolean;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled('button', {
@@ -51,7 +54,8 @@ const StyledButton = styled('button', {
     | 'justify'
     | 'to'
     | 'target'
-  >
+    | 'loading'
+  > & { hasIcon: boolean }
 >`
   align-items: center;
   ${({ theme, variant, inverted, accent, disabled, focus }) => {
@@ -337,8 +341,10 @@ const StyledButton = styled('button', {
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: ${({ justify }) => justify};
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
+  padding: ${({ theme, hasIcon }) => {
+    return `0 ${theme.spacing(2)} 0 ${
+      hasIcon ? theme.spacing(7) : theme.spacing(2)
+    }`;
   }};
 
   transition: background 0.1s ease;
@@ -352,47 +358,56 @@ const StyledButton = styled('button', {
   }
 `;
 
-const StyledSoonPill = styled(Pill)`
-  margin-left: auto;
-`;
+const StyledButtonWrapper = styled.div<
+  Pick<ButtonProps, 'loading' | 'variant' | 'accent' | 'inverted' | 'disabled'>
+>`
+  ${({ theme, variant, accent, inverted, disabled }) => css`
+    --tw-button-color: ${(() => {
+      switch (variant) {
+        case 'primary':
+          switch (accent) {
+            case 'default':
+              return !inverted
+                ? !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+                : theme.font.color.secondary;
+            case 'blue':
+              return !inverted ? theme.grayScale.gray0 : theme.color.blue;
+            case 'danger':
+              return !inverted ? theme.background.primary : theme.color.red;
+          }
+          break;
+        case 'secondary':
+        case 'tertiary':
+          switch (accent) {
+            case 'default':
+              return !inverted
+                ? !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+                : theme.font.color.inverted;
+            case 'blue':
+              return !inverted
+                ? !disabled
+                  ? theme.color.blue
+                  : theme.accent.accent4060
+                : theme.font.color.inverted;
+            case 'danger':
+              return !inverted
+                ? theme.font.color.danger
+                : theme.font.color.inverted;
+          }
+          break;
+      }
+      return theme.font.color.secondary; // Valeur par défaut
+    })()};
+  `}
 
-const StyledSeparator = styled.div<{
-  buttonSize: ButtonSize;
-  accent: ButtonAccent;
-}>`
-  background: ${({ theme, accent }) => {
-    switch (accent) {
-      case 'blue':
-        return theme.border.color.blue;
-      case 'danger':
-        return theme.border.color.danger;
-      default:
-        return theme.font.color.light;
-    }
-  }};
-  height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 2 : 4)};
-  margin: 0;
-  width: 1px;
-`;
-
-const StyledShortcutLabel = styled.div<{
-  variant: ButtonVariant;
-  accent: ButtonAccent;
-}>`
-  color: ${({ theme, variant, accent }) => {
-    switch (accent) {
-      case 'blue':
-        return theme.border.color.blue;
-      case 'danger':
-        return variant === 'primary'
-          ? theme.border.color.danger
-          : theme.color.red40;
-      default:
-        return theme.font.color.light;
-    }
-  }};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: 100%;
+  max-width: ${({ loading, theme }) =>
+    loading ? `calc(100% - ${theme.spacing(8)})` : 'none'};
+  position: relative;
 `;
 
 export const Button = ({
@@ -416,46 +431,53 @@ export const Button = ({
   hotkeys,
   ariaLabel,
   type,
+  loading,
 }: ButtonProps) => {
-  const theme = useTheme();
-
   const isMobile = useIsMobile();
 
-  const [isFocused, setIsFocused] = React.useState(propFocus);
+  const [isFocused, setIsFocused] = useState(propFocus);
 
   return (
-    <StyledButton
-      fullWidth={fullWidth}
+    <StyledButtonWrapper
+      loading={loading}
       variant={variant}
       inverted={inverted}
-      size={size}
-      position={position}
       disabled={soon || disabled}
-      focus={isFocused}
-      justify={justify}
-      accent={accent}
-      className={className}
-      onClick={onClick}
-      to={to}
-      as={to ? Link : 'button'}
-      target={target}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-      type={type}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
     >
-      {Icon && <Icon size={theme.icon.size.sm} />}
-      {title}
-      {hotkeys && !isMobile && (
-        <>
-          <StyledSeparator buttonSize={size} accent={accent} />
-          <StyledShortcutLabel variant={variant} accent={accent}>
-            {hotkeys.join(getOsShortcutSeparator())}
-          </StyledShortcutLabel>
-        </>
-      )}
-      {soon && <StyledSoonPill label="Soon" />}
-    </StyledButton>
+      {(loading || Icon) && <ButtonIcon Icon={Icon} loading={loading} />}
+      <StyledButton
+        fullWidth={fullWidth}
+        variant={variant}
+        inverted={inverted}
+        position={position}
+        disabled={soon || disabled}
+        hasIcon={!!Icon}
+        focus={isFocused}
+        justify={justify}
+        accent={accent}
+        className={className}
+        onClick={onClick}
+        to={to}
+        as={to ? Link : 'button'}
+        target={target}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+        type={type}
+        loading={loading}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+      >
+        <ButtonText hasIcon={!!Icon} title={title} loading={loading} />
+        {hotkeys && !isMobile && (
+          <ButtonHotkeys
+            hotkeys={hotkeys}
+            variant={variant}
+            accent={accent}
+            size={size}
+          />
+        )}
+        {soon && <ButtonSoon />}
+      </StyledButton>
+    </StyledButtonWrapper>
   );
 };
