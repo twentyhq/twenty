@@ -48,3 +48,18 @@ export const checkFilename = (filename: string) => {
 
   return basename(sanitizedFilename);
 };
+
+export const checkFileFolder = (filePath: string): FileFolder => {
+  const allowedFolders = Object.values(FileFolder).map((value) =>
+    kebabCase(value),
+  );
+
+  const sanitizedFilePath = filePath.replace(/\0/g, '');
+  const [rootFolder] = sanitizedFilePath.split('/');
+
+  if (!allowedFolders.includes(rootFolder as AllowedFolders)) {
+    throw new BadRequestException(`Folder ${rootFolder} is not allowed`);
+  }
+
+  return rootFolder as FileFolder;
+};

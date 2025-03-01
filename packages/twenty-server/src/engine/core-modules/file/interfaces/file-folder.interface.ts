@@ -11,3 +11,25 @@ export enum FileFolder {
 registerEnumType(FileFolder, {
   name: 'FileFolder',
 });
+
+export type FileFolderConfig = {
+  isPublic: boolean;
+};
+
+export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
+  [FileFolder.ProfilePicture]: {
+    isPublic: true,
+  },
+  [FileFolder.WorkspaceLogo]: {
+    isPublic: true,
+  },
+  [FileFolder.Attachment]: {
+    isPublic: false,
+  },
+  [FileFolder.PersonPicture]: {
+    isPublic: true,
+  },
+  [FileFolder.ServerlessFunction]: {
+    isPublic: false,
+  },
+};
