@@ -43,10 +43,9 @@ describe('useDeleteOneRecord', () => {
   ): MockedResponse[] => {
     const deleteOneQueryMock: MockedResponse<
       Record<string, any>,
-      { idToDelete: string }
+      Record<'idToDelete', string>
     > = {
       request: {
-        // @ts-expect-error TODO investigate
         variables: { idToDelete: personRecord.id },
         query,
       },
@@ -242,7 +241,7 @@ describe('useDeleteOneRecord', () => {
           objectMetadataItem: personObjectMetadataItem,
           matchObject: {
             deletedAt: expect.any(String),
-          }
+          },
         });
         assertCachedRecordMatchSnapshot({
           objectMetadataItem: companyObjectMetadataItem,
@@ -284,7 +283,7 @@ describe('useDeleteOneRecord', () => {
             },
             matchObject: {
               deletedAt: expect.any(String),
-            }
+            },
           });
           assertCachedRecordMatchSnapshot({
             objectMetadataItem: companyObjectMetadataItem,
