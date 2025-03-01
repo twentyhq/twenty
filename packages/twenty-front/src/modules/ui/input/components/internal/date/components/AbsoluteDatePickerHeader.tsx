@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { DateTime } from 'luxon';
 import { IconChevronLeft, IconChevronRight, LightIconButton } from 'twenty-ui';
 
 import { Select } from '@/ui/input/components/Select';
@@ -23,19 +22,19 @@ const StyledCustomDatePickerHeader = styled.div`
 `;
 
 const years = Array.from(
-  { length: 200 },
-  (_, i) => new Date().getFullYear() + 5 - i,
+  { length: 201 },
+  (_, i) => new Date().getFullYear() + 75 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
 
 type AbsoluteDatePickerHeaderProps = {
   date: Date;
+  month: number;
+  year: number;
   onChange?: (date: Date | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
   onAddMonth: () => void;
   onSubtractMonth: () => void;
-  prevMonthButtonDisabled: boolean;
-  nextMonthButtonDisabled: boolean;
   isDateTimeInput?: boolean;
   timeZone: string;
   hideInput?: boolean;
@@ -43,29 +42,20 @@ type AbsoluteDatePickerHeaderProps = {
 
 export const AbsoluteDatePickerHeader = ({
   date,
+  month,
+  year,
   onChange,
   onChangeMonth,
   onChangeYear,
   onAddMonth,
   onSubtractMonth,
-  prevMonthButtonDisabled,
-  nextMonthButtonDisabled,
   isDateTimeInput,
   timeZone,
   hideInput = false,
 }: AbsoluteDatePickerHeaderProps) => {
-  const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
-    day: date.getDate(),
-    month: date.getMonth() + 1,
-    year: date.getFullYear(),
-    hour: 23,
-    minute: 59,
-    second: 59,
-    millisecond: 999,
-  });
-
-  const endOfDayInLocalTimezone = endOfDayDateTimeInLocalTimezone.toJSDate();
-
+  const prevMonthButtonDisabled =
+    month === 0 && year === years[years.length - 1].value;
+  const nextMonthButtonDisabled = month === 11 && year === years[0].value;
   return (
     <>
       {!hideInput && (
@@ -82,13 +72,13 @@ export const AbsoluteDatePickerHeader = ({
           dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
           options={getMonthSelectOptions()}
           onChange={onChangeMonth}
-          value={endOfDayInLocalTimezone.getMonth()}
+          value={month}
           fullWidth
         />
         <Select
           dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
           onChange={onChangeYear}
-          value={endOfDayInLocalTimezone.getFullYear()}
+          value={year}
           options={years}
           fullWidth
         />
