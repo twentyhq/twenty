@@ -3,33 +3,29 @@ import { RecoilURLSyncJSON } from 'recoil-sync';
 
 export const SafeRecoilURLSync = ({ children }: { children: ReactNode }) => {
   const [hasError, setHasError] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    // Clear any existing error state on component mount
-    setHasError(false);
-
-    // Set up error handler
     const handleError = (event: any) => {
       const hasSnapshotError = Boolean(
         event.error?.message?.includes('Snapshot has already been released'),
       );
 
       if (hasSnapshotError === true) {
-        event.preventDefault(); // Prevent the error from bubbling up
+        event.preventDefault();
         setHasError(true);
       }
     };
 
     window.addEventListener('error', handleError);
 
-    // Firefox-specific delay for initialization
     const isFirefox = Boolean(
       navigator.userAgent.toLowerCase().includes('firefox'),
     );
 
     if (isFirefox === true) {
       const initializationTimeout = setTimeout(() => {
-        setHasError(false); // Reset error state after delay
+        setIsInitializing(false); // Only mark initialization as complete
       }, 300);
 
       return () => {
@@ -38,17 +34,15 @@ export const SafeRecoilURLSync = ({ children }: { children: ReactNode }) => {
       };
     }
 
-    return () => {
-      window.removeEventListener('error', handleError);
-    };
+    setIsInitializing(false);
+    return () => window.removeEventListener('error', handleError);
   }, []);
 
-  // If we detected an error, render without RecoilURLSyncJSON
-  if (hasError === true) {
+  // Only render without RecoilURLSyncJSON if we have an error and aren't still initializing
+  if (hasError === true && isInitializing === false) {
     return children;
   }
 
-  // Otherwise use RecoilURLSyncJSON
   return (
     <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
       {children}

@@ -2,7 +2,7 @@ import { AppRouter } from '@/app/components/AppRouter';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { SafeRecoilURLSync } from '@/error-handler/components//SafeRecoilURLSync';
+import { SafeRecoilURLSync } from '@/error-handler/components/SafeRecoilURLSync';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
