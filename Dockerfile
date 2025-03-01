@@ -44,13 +44,6 @@ RUN mv /app/packages/twenty-server/dist/package.json /app/packages/twenty-server
 RUN rm -rf /app/packages/twenty-server/dist
 RUN mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
 
-# Install only production dependencies
-RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
-
-# Clean up any temp files to avoid "directory not empty" errors
-RUN find /app -type d -name "node_modules" -prune -o -type d -name ".nx" -prune -o -type d -name "dist" -prune -o -type d -empty -delete || true
-
-
 # Build the front
 FROM common-deps as twenty-front-build
 
@@ -62,9 +55,6 @@ COPY ./packages/twenty-shared /app/packages/twenty-shared
 
 # Build with production settings
 RUN npx nx build twenty-front
-
-# Clean up any temp files to avoid "directory not empty" errors
-RUN find /app -type d -name "node_modules" -prune -o -type d -name ".nx" -prune -o -type d -name "build" -prune -o -type d -empty -delete || true
 
 
 # Final stage: Run the application
@@ -90,12 +80,23 @@ ENV NODE_ENV=production
 # Create a dedicated directory for the server and frontend
 RUN mkdir -p /app/packages/twenty-server/dist/front
 
-# Copy built applications from previous stages - use explicit paths for better control
+# Copy package.json files needed for dependencies
+COPY --chown=1000 ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
+COPY --chown=1000 ./.yarn/releases /app/.yarn/releases
+
+COPY --chown=1000 ./packages/twenty-server/package.json /app/packages/twenty-server/
+COPY --chown=1000 ./packages/twenty-emails/package.json /app/packages/twenty-emails/
+COPY --chown=1000 ./packages/twenty-shared/package.json /app/packages/twenty-shared/
+
+# Copy built applications from previous stages
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/dist /app/packages/twenty-server/dist
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails /app/packages/twenty-emails
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared /app/packages/twenty-shared
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/package.json /app/packages/twenty-server/
 COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+
+# Install only production dependencies in the final image
+WORKDIR /app
+RUN yarn workspaces focus --production twenty-server twenty-emails twenty-shared
 
 # Set metadata and labels
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
