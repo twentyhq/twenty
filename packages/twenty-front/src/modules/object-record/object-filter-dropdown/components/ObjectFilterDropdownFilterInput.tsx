@@ -71,8 +71,11 @@ export const ObjectFilterDropdownFilterInput = ({
   );
 
   const isActorAndIs =
-    selectedOperandInDropdown === ViewFilterOperand.Is &&
-    filterType === 'ACTOR';
+    filterType === 'ACTOR' &&
+    [ViewFilterOperand.Is,
+      ViewFilterOperand.IsNot,
+ ].includes(selectedOperandInDropdown);
+
   return (
     <>
       {isConfigurable && selectedOperandInDropdown && (

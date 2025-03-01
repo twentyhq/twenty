@@ -56,7 +56,12 @@ const selectedOperandInDropdown = useRecoilComponentValueV2(
 );
 
 const isActorAndIs = ()=>{
-  return fieldMetadataItemUsedInDropdown?.type=="ACTOR" && selectedOperandInDropdown === ViewFilterOperand.Is
+  return fieldMetadataItemUsedInDropdown?.type=="ACTOR" &&
+   [
+    ViewFilterOperand.Is,
+    ViewFilterOperand.IsNot,
+   
+  ].includes(selectedOperandInDropdown);
 }
 
   const operandsForFilterType = isDefined(fieldMetadataItemUsedInDropdown)
