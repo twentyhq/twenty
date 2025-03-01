@@ -29,6 +29,7 @@ export class RestApiCoreController {
   ) {}
 
   @Post('/duplicates')
+  @UseFilters(RestApiExceptionFilter)
   async handleApiFindDuplicates(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.findDuplicates(request);
 
@@ -36,6 +37,7 @@ export class RestApiCoreController {
   }
 
   @Get()
+  @UseFilters(RestApiExceptionFilter)
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.get(request);
 

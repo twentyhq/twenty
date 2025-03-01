@@ -66,6 +66,7 @@ export class WorkspaceMemberPreQueryHookService {
         userWorkspaceId,
         workspaceId,
         _setting: SettingsPermissions.WORKSPACE_MEMBERS,
+        isExecutedByApiKey: isDefined(apiKey),
       })
     ) {
       return;

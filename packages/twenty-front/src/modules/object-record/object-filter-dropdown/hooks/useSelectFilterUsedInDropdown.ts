@@ -8,7 +8,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
+import { RecordPickerHotkeyScope } from '@/object-record/record-picker/types/RecordPickerHotkeyScope';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -67,7 +67,7 @@ export const useSelectFilterUsedInDropdown = (componentInstanceId?: string) => {
       fieldMetadataItem.type === 'RELATION' ||
       fieldMetadataItem.type === 'SELECT'
     ) {
-      setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+      setHotkeyScope(RecordPickerHotkeyScope.RecordPicker);
     }
 
     const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);

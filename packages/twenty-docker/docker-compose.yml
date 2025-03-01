@@ -66,14 +66,12 @@ services:
     restart: always
 
   db:
-    image: twentycrm/twenty-postgres-spilo:${TAG:-latest}
+    image: postgres:16
     volumes:
-      - db-data:/home/postgres/pgdata
+      - db-data:/var/lib/postgresql/data
     environment:
-      PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
-      PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
-      ALLOW_NOSSL: "true"
-      SPILO_PROVIDER: "local"
+      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
     healthcheck:
       test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
       interval: 5s
