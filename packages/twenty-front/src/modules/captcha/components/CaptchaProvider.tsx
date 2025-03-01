@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { CaptchaProviderScriptLoaderEffect } from '@/captcha/components/CaptchaProviderScriptLoaderEffect';
-import { isCurrentPathRequiringCaptcha } from '@/captcha/utils/isCaptchaRequiredForPath';
+import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 
 export const CaptchaProvider = ({ children }: React.PropsWithChildren) => {
-  if (!isCurrentPathRequiringCaptcha()) {
+  if (!isCaptchaRequiredForPath(window.location.pathname)) {
     return <>{children}</>;
   }
 

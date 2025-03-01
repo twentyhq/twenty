@@ -9,21 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 
-const OPERATIONS_REQUIRING_CAPTCHA = [
-  'GetClientConfig',
-  'GetCurrentUser',
-  'GetPublicWorkspaceDataByDomain',
-  'GetAuthTokensFromLoginToken',
-  'EmailPasswordResetLink',
-  // TODO: Verify
-  'SignUp',
-  'GetLoginTokenFromCredentials',
-  'EmailPasswordResetLink',
-  'GetLoginTokenFromEmailVerificationToken',
-  'UpdatePasswordViaResetToken',
-  'ResendEmailVerificationToken',
-  'GetAuthorizationUrlForSSO',
-];
+import { OPERATIONS_REQUIRING_CAPTCHA } from './constants/operations-requiring-captcha.constants';
 
 @Injectable()
 export class CaptchaGuard implements CanActivate {
