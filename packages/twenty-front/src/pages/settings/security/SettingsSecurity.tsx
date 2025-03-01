@@ -67,7 +67,7 @@ export const SettingsSecurity = () => {
           {IsApprovedAccessDomainsEnabled && (
             <StyledSection>
               <H2Title
-                title={t`Approved Email Domain`}
+                title={t`Approved Domains`}
                 description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
               />
               <SettingsApprovedAccessDomainsListCard />

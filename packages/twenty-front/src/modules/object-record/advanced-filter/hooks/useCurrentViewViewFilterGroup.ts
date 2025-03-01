@@ -1,3 +1,5 @@
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
@@ -9,6 +11,10 @@ export const useCurrentViewViewFilterGroup = ({
   viewFilterGroupId?: string;
 }) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
 
   const viewFilterGroup =
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.find(
@@ -25,11 +31,10 @@ export const useCurrentViewViewFilterGroup = ({
     };
   }
 
-  const childViewFilters =
-    currentViewWithCombinedFiltersAndSorts?.viewFilters.filter(
-      (viewFilterToFilter) =>
-        viewFilterToFilter.viewFilterGroupId === viewFilterGroup.id,
-    );
+  const childRecordFilters = currentRecordFilters.filter(
+    (recordFilterToFilter) =>
+      recordFilterToFilter.viewFilterGroupId === viewFilterGroup.id,
+  );
 
   const childViewFilterGroups =
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.filter(
@@ -39,7 +44,7 @@ export const useCurrentViewViewFilterGroup = ({
 
   const childViewFiltersAndViewFilterGroups = [
     ...(childViewFilterGroups ?? []),
-    ...(childViewFilters ?? []),
+    ...(childRecordFilters ?? []),
   ].sort((a, b) => {
     const positionA = a.positionInViewFilterGroup ?? 0;
     const positionB = b.positionInViewFilterGroup ?? 0;

@@ -3,11 +3,20 @@ import { Injectable } from '@nestjs/common';
 import { capitalize } from 'twenty-shared';
 
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class FindDuplicatesQueryFactory {
-  create(objectMetadata, depth?: number): string {
-    const objectNameSingular = objectMetadata.objectMetadataItem.nameSingular;
+  create(
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    },
+    depth?: number,
+  ): string {
+    const objectNameSingular =
+      objectMetadata.objectMetadataMapItem.nameSingular;
 
     return `
       query FindDuplicate${capitalize(
@@ -22,10 +31,10 @@ export class FindDuplicatesQueryFactory {
           }
           edges{
             node {
-                ${objectMetadata.objectMetadataItem.fields
+                ${objectMetadata.objectMetadataMapItem.fields
                   .map((field) =>
                     mapFieldMetadataToGraphqlQuery(
-                      objectMetadata.objectMetadataItems,
+                      objectMetadata.objectMetadataMaps,
                       field,
                       depth,
                     ),

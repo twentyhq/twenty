@@ -34,7 +34,7 @@ export const RecordIndexTableContainer = ({
         viewBarId={viewBarId}
         updateRecordMutation={updateEntity}
       />
-      <RecordIndexRemoveSortingModal recordIndexId={recordTableId} />
+      <RecordIndexRemoveSortingModal />
     </>
   );
 };

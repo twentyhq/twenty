@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useMoveSoftFocusToCellOnHoverV2 } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCellOnHoverV2';
+import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
@@ -18,8 +18,8 @@ export const useHandleContainerMouseEnter = ({
 }: {
   recordTableId: string;
 }) => {
-  const { moveSoftFocusToCell } =
-    useMoveSoftFocusToCellOnHoverV2(recordTableId);
+  const { moveSoftFocusToCurrentCell } =
+    useMoveSoftFocusToCurrentCellOnHover(recordTableId);
 
   const currentTableCellInEditModePositionState =
     useRecoilComponentCallbackStateV2(
@@ -56,7 +56,7 @@ export const useHandleContainerMouseEnter = ({
         );
 
         if (!isSomeCellInEditMode && !isSoftFocusOnTableCell) {
-          moveSoftFocusToCell(cellPosition);
+          moveSoftFocusToCurrentCell(cellPosition);
           set(isSoftFocusUsingMouseState, true);
         }
       },
@@ -64,7 +64,7 @@ export const useHandleContainerMouseEnter = ({
       isSoftFocusOnTableCellFamilyState,
       currentTableCellInEditModePositionState,
       isTableCellInEditModeFamilyState,
-      moveSoftFocusToCell,
+      moveSoftFocusToCurrentCell,
     ],
   );
 

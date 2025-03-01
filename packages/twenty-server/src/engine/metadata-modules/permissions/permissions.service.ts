@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  PermissionsOnAllObjectRecords,
-  SettingsPermissions,
-} from 'twenty-shared';
+import { isDefined, PermissionsOnAllObjectRecords } from 'twenty-shared';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -76,11 +78,24 @@ export class PermissionsService {
     userWorkspaceId,
     workspaceId,
     _setting,
+    isExecutedByApiKey,
   }: {
-    userWorkspaceId: string;
+    userWorkspaceId?: string;
     workspaceId: string;
     _setting: SettingsPermissions;
+    isExecutedByApiKey: boolean;
   }): Promise<boolean> {
+    if (isExecutedByApiKey) {
+      return true;
+    }
+
+    if (!isDefined(userWorkspaceId)) {
+      throw new AuthException(
+        'Missing userWorkspaceId or apiKey in authContext',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
     const [roleOfUserWorkspace] = await this.userRoleService
       .getRolesByUserWorkspaces({
         userWorkspaceIds: [userWorkspaceId],
@@ -99,11 +114,24 @@ export class PermissionsService {
     userWorkspaceId,
     workspaceId,
     requiredPermission,
+    isExecutedByApiKey,
   }: {
-    userWorkspaceId: string;
+    userWorkspaceId?: string;
     workspaceId: string;
     requiredPermission: PermissionsOnAllObjectRecords;
+    isExecutedByApiKey: boolean;
   }): Promise<boolean> {
+    if (isExecutedByApiKey) {
+      return true;
+    }
+
+    if (!isDefined(userWorkspaceId)) {
+      throw new AuthException(
+        'Missing userWorkspaceId or apiKey in authContext',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
     const [roleOfUserWorkspace] = await this.userRoleService
       .getRolesByUserWorkspaces({
         userWorkspaceIds: [userWorkspaceId],

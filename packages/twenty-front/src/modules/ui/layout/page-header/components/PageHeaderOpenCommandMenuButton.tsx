@@ -2,6 +2,7 @@ import {
   AnimatedButton,
   IconButton,
   IconDotsVertical,
+  IconX,
   getOsControlSymbol,
   useIsMobile,
 } from 'twenty-ui';
@@ -144,7 +145,7 @@ export const PageHeaderOpenCommandMenuButton = () => {
         />
       ) : (
         <IconButton
-          Icon={IconDotsVertical}
+          Icon={isCommandMenuOpened ? IconX : IconDotsVertical}
           size="medium"
           dataTestId="more-showpage-button"
           accent="default"

@@ -23,6 +23,7 @@ jest.mock('@/object-record/record-index/export/hooks/useExportRecords', () => ({
 const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: '1',
+  contextStoreCurrentViewId: 'my-view-id',
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
   contextStoreTargetedRecordsRule: {

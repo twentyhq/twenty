@@ -15,6 +15,7 @@ import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedA
 import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
 import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
 import { useGetApprovedAccessDomainsQuery } from '~/generated/graphql';
+import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -41,6 +42,11 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     },
   });
 
+  const getItemDescription = (createdAt: string) => {
+    const beautifyPastDateRelative = beautifyPastDateRelativeToNow(createdAt);
+    return t`Added ${beautifyPastDateRelative}`;
+  };
+
   return loading || !approvedAccessDomains.length ? (
     <StyledLink to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
       <SettingsCard
@@ -53,9 +59,8 @@ export const SettingsApprovedAccessDomainsListCard = () => {
       <SettingsSecurityApprovedAccessDomainValidationEffect />
       <SettingsListCard
         items={approvedAccessDomains}
-        getItemLabel={(approvedAccessDomain) =>
-          `${approvedAccessDomain.domain} - ${approvedAccessDomain.createdAt}`
-        }
+        getItemLabel={({ domain }) => domain}
+        getItemDescription={({ createdAt }) => getItemDescription(createdAt)}
         RowIcon={IconAt}
         RowRightComponent={({ item: approvedAccessDomain }) => (
           <SettingsSecurityApprovedAccessDomainRowDropdownMenu

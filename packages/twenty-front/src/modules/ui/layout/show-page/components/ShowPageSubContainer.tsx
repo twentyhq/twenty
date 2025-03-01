@@ -9,6 +9,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
+import { ShowPageSubContainerTabListContainer } from '@/ui/layout/show-page/components/ShowPageSubContainerTabListContainer';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -26,14 +27,8 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
 `;
 
 const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
-  align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
   display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-`;
+`.withComponent(ShowPageSubContainerTabListContainer);
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;

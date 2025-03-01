@@ -17,6 +17,8 @@ export type RecordInlineCellContextProps = {
   disableHoverEffect?: boolean;
   loading?: boolean;
   isCentered?: boolean;
+  onOpenEditMode?: () => void;
+  onCloseEditMode?: () => void;
 };
 
 const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
@@ -34,6 +36,8 @@ const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   disableHoverEffect: false,
   loading: false,
   isCentered: false,
+  onOpenEditMode: undefined,
+  onCloseEditMode: undefined,
 };
 
 export const RecordInlineCellContext =
