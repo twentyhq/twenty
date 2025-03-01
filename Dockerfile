@@ -3,6 +3,15 @@ FROM node:18.17.1-alpine as common-deps
 
 WORKDIR /app
 
+# Increase file watcher limits
+RUN echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && \
+    echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf && \
+    sysctl -p
+
+ENV NODE_OPTIONS="--max-old-space-size=4096 --no-warnings"
+ENV CHOKIDAR_USEPOLLING=1
+ENV WATCHPACK_POLLING=true
+
 # Copy only the necessary files for dependency resolution
 COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
 COPY ./.yarn/releases /app/.yarn/releases
