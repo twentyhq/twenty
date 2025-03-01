@@ -6,7 +6,7 @@ export const SafeRecoilURLSync = ({ children }: { children: ReactNode }) => {
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    const handleError = (event: any) => {
+    const handleError = (event: ErrorEvent) => {
       const hasSnapshotError = Boolean(
         event.error?.message?.includes('Snapshot has already been released'),
       );
