@@ -3,7 +3,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { InMemoryCache } from '@apollo/client';
+import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { expect } from '@storybook/jest';
 
 type ObjectMetadataItemAndRecordId = {
@@ -25,23 +25,36 @@ type GetMockCachedRecord = {
     createdAt?: any;
   };
 };
-type GetCacheUtilsArgs = {
+type InMemoryTestingCacheInstanceArgs = {
   objectMetadataItems: ObjectMetadataItem[];
-  recordsTopPopulateInCache?: RecordsWithObjectMetadataItem;
+  initialRecordsInCache?: RecordsWithObjectMetadataItem;
 };
-export const buildCacheUtils = ({
-  objectMetadataItems,
-  recordsTopPopulateInCache = [],
-}: GetCacheUtilsArgs) => {
-  const populateRecordsInCache = (
+
+export class InMemoryTestingCacheInstance {
+  private _cache: InMemoryCache;
+  private objectMetadataItems: ObjectMetadataItem[];
+  private initialStateExtract: NormalizedCacheObject;
+
+  constructor({
+    objectMetadataItems,
+    initialRecordsInCache = [],
+  }: InMemoryTestingCacheInstanceArgs) {
+    this.objectMetadataItems = objectMetadataItems;
+    this._cache = new InMemoryCache();
+
+    this.populateRecordsInCache(initialRecordsInCache);
+    this.initialStateExtract = this._cache.extract();
+  }
+
+  public populateRecordsInCache = (
     recordsWithObjectMetadataItem: RecordsWithObjectMetadataItem,
   ) => {
     recordsWithObjectMetadataItem.forEach(({ objectMetadataItem, records }) =>
       records.forEach((record) =>
         updateRecordFromCache({
-          cache,
+          cache: this._cache,
           objectMetadataItem,
-          objectMetadataItems,
+          objectMetadataItems: this.objectMetadataItems,
           record,
           recordGqlFields: computeDepthOneRecordGqlFieldsFromRecord({
             objectMetadataItem,
@@ -51,32 +64,34 @@ export const buildCacheUtils = ({
       ),
     );
   };
-  const assertCachedRecordIsNull = ({
+
+  public assertCachedRecordIsNull = ({
     objectMetadataItem,
     recordId,
   }: ObjectMetadataItemAndRecordId) => {
     const cachedRecord = getRecordFromCache({
-      cache,
+      cache: this._cache,
       objectMetadataItem,
-      objectMetadataItems,
+      objectMetadataItems: this.objectMetadataItems,
       recordId,
     });
     expect(cachedRecord).toBeNull();
   };
 
-  const assertCachedRecordMatchSnapshot = ({
+  public assertCachedRecordMatchSnapshot = ({
     objectMetadataItem,
     recordId,
     matchObject,
-    snapshotPropertyMatchers,
+    snapshotPropertyMatchers
   }: GetMockCachedRecord) => {
     const cachedRecord = getRecordFromCache({
-      cache,
+      cache: this._cache,
       objectMetadataItem,
-      objectMetadataItems,
+      objectMetadataItems: this.objectMetadataItems,
       recordId,
     });
     expect(cachedRecord).not.toBeNull();
+
     if (cachedRecord === null) {
       throw new Error('Should never occurs, cachedRecord is null');
     }
@@ -87,19 +102,11 @@ export const buildCacheUtils = ({
     expect(cachedRecord).toMatchSnapshot(snapshotPropertyMatchers ?? {});
   };
 
-  const cache = new InMemoryCache();
-  populateRecordsInCache(recordsTopPopulateInCache);
-  const initialStateExtract = cache.extract();
-  cache.reset;
-  const restoreCacheToInitialState = async () => {
-    cache.restore(initialStateExtract);
+  public restoreCacheToInitialState = async () => {
+    return this._cache.restore(this.initialStateExtract);
   };
 
-  return {
-    assertCachedRecordIsNull,
-    assertCachedRecordMatchSnapshot,
-    restoreCacheToInitialState,
-    populateRecordsInCache,
-    cache,
-  };
-};
+  public get cache() {
+    return this._cache;
+  }
+}

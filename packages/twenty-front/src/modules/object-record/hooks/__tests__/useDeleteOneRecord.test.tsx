@@ -19,7 +19,7 @@ import {
   getMockPersonObjectMetadataItem,
   getMockPersonRecord,
 } from '~/testing/mock-data/people';
-import { buildCacheUtils } from './utils/testingCacheUtils';
+import { InMemoryTestingCacheInstance } from './utils/inMemoryTestingCacheInstance';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
 const mockRefetchAggregateQueries = jest.fn();
@@ -75,7 +75,7 @@ describe('useDeleteOneRecord', () => {
       assertCachedRecordIsNull,
       assertCachedRecordMatchSnapshot,
       restoreCacheToInitialState,
-    } = buildCacheUtils({
+    } = new InMemoryTestingCacheInstance({
       objectMetadataItems,
     });
     beforeEach(async () => restoreCacheToInitialState());
@@ -196,9 +196,9 @@ describe('useDeleteOneRecord', () => {
       assertCachedRecordMatchSnapshot,
       cache,
       restoreCacheToInitialState,
-    } = buildCacheUtils({
+    } = new InMemoryTestingCacheInstance({
       objectMetadataItems,
-      recordsTopPopulateInCache: [
+      initialRecordsInCache: [
         {
           objectMetadataItem: companyObjectMetadataItem,
           records: allMockCompanyRecordsWithRelation,
