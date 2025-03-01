@@ -230,7 +230,8 @@ describe('useDeleteOneRecord', () => {
 
       await act(async () => {
         const res = await result.current.deleteOneRecord(personRecord.id);
-        expect(res).toMatchObject({
+        expect(res).toMatchObject<ObjectRecord>({
+          __typename: 'Person',
           id: personRecord.id,
           deletedAt: expect.any(String),
         });
@@ -241,7 +242,7 @@ describe('useDeleteOneRecord', () => {
           objectMetadataItem: personObjectMetadataItem,
           matchObject: {
             deletedAt: expect.any(String),
-          },
+          }
         });
         assertCachedRecordMatchSnapshot({
           objectMetadataItem: companyObjectMetadataItem,
@@ -278,8 +279,12 @@ describe('useDeleteOneRecord', () => {
             recordId: personRecord.id,
             objectMetadataItem: personObjectMetadataItem,
             snapshotPropertyMatchers: {
+              // Request is paused then the cached get filled with optmistic deletedAt
               deletedAt: expect.any(String),
             },
+            matchObject: {
+              deletedAt: expect.any(String),
+            }
           });
           assertCachedRecordMatchSnapshot({
             objectMetadataItem: companyObjectMetadataItem,
