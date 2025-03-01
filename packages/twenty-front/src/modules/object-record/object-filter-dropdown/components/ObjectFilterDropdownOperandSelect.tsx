@@ -55,21 +55,19 @@ const selectedOperandInDropdown = useRecoilComponentValueV2(
   filterDropdownId,
 );
 
-const isActorAndIs = ()=>{
-  return fieldMetadataItemUsedInDropdown?.type=="ACTOR" &&
-   [
+const isActorAndIs =
+  fieldMetadataItemUsedInDropdown?.type=="ACTOR" && selectedOperandInDropdown !== null &&
+  [
     ViewFilterOperand.Is,
     ViewFilterOperand.IsNot,
-   
   ].includes(selectedOperandInDropdown);
-}
 
   const operandsForFilterType = isDefined(fieldMetadataItemUsedInDropdown)
     ? getRecordFilterOperands({
         filterType: getFilterTypeFromFieldType(
           fieldMetadataItemUsedInDropdown.type,
         ),
-        subFieldName: isActorAndIs()?"source":subFieldNameUsedInDropdown,
+        subFieldName: isActorAndIs?"source":subFieldNameUsedInDropdown,
       })
     : [];
 
