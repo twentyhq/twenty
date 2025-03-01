@@ -14,7 +14,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 
 const RecordMockSetterEffect = ({
@@ -71,7 +71,7 @@ export const getFieldDecorator =
           ]
         : companiesMock;
 
-    const peopleMock = getPeopleMock();
+    const peopleMock = getPeopleRecordConnectionMock();
 
     const people =
       objectNameSingular === 'person' && isDefined(fieldValue)

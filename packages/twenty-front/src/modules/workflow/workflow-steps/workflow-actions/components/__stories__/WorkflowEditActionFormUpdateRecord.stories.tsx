@@ -6,11 +6,11 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionFormUpdateRecord } from '../WorkflowEditActionFormUpdateRecord';
-import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -128,7 +128,7 @@ export const DisabledWithEmptyValues: Story = {
   },
 };
 
-const peopleMock = getPeopleMock()[0];
+const peopleMock = allMockPersonRecords[0];
 
 export const DisabledWithDefaultStaticValues: Story = {
   args: {

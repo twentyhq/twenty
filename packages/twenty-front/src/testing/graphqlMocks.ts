@@ -14,7 +14,7 @@ import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNotes } from '~/testing/mock-data/notes';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
@@ -33,7 +33,7 @@ import {
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
-const peopleMock = getPeopleMock();
+const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
 

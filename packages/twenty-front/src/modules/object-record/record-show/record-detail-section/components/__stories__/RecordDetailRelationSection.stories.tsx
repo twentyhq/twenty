@@ -9,15 +9,13 @@ import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { getPeopleMock } from '~/testing/mock-data/people';
 
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
 
 const companiesMock = getCompaniesMock();
-
-const peopleMock = getPeopleMock();
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
@@ -72,9 +70,9 @@ export const WithRecords: Story = {
     records: [
       {
         ...companiesMock[0],
-        people: peopleMock,
+        people: allMockPersonRecords,
       },
-      ...peopleMock,
+      ...allMockPersonRecords,
     ],
   },
 };
