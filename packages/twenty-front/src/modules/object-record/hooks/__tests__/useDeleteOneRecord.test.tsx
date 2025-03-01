@@ -7,6 +7,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/jest';
+import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import {
@@ -19,7 +20,6 @@ import {
   getMockPersonObjectMetadataItem,
   getMockPersonRecord,
 } from '~/testing/mock-data/people';
-import { InMemoryTestingCacheInstance } from './utils/inMemoryTestingCacheInstance';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
 const mockRefetchAggregateQueries = jest.fn();

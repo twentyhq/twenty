@@ -6,8 +6,8 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import {
-    RecordFieldValueSelectorContextProvider,
-    useSetRecordValue,
+  RecordFieldValueSelectorContextProvider,
+  useSetRecordValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';

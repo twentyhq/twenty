@@ -8,7 +8,10 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { allMockPersonRecords, peopleQueryResult } from '~/testing/mock-data/people';
+import {
+  allMockPersonRecords,
+  peopleQueryResult,
+} from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { RecordShowPage } from '../RecordShowPage';

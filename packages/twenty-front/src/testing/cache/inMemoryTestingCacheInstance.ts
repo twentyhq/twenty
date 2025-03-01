@@ -5,6 +5,7 @@ import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphq
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { expect } from '@storybook/jest';
+import { isDefined } from 'twenty-shared';
 
 type ObjectMetadataItemAndRecordId = {
   recordId: string;
@@ -82,7 +83,7 @@ export class InMemoryTestingCacheInstance {
     objectMetadataItem,
     recordId,
     matchObject,
-    snapshotPropertyMatchers
+    snapshotPropertyMatchers,
   }: GetMockCachedRecord) => {
     const cachedRecord = getRecordFromCache({
       cache: this._cache,
@@ -96,7 +97,7 @@ export class InMemoryTestingCacheInstance {
       throw new Error('Should never occurs, cachedRecord is null');
     }
 
-    if (matchObject) {
+    if (isDefined(matchObject)) {
       expect(cachedRecord).toMatchObject(matchObject);
     }
     expect(cachedRecord).toMatchSnapshot(snapshotPropertyMatchers ?? {});

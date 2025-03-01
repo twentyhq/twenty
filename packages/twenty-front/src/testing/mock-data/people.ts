@@ -1699,10 +1699,9 @@ export const peopleQueryResult = {
   },
 } satisfies { people: RecordGqlConnection };
 
-export const allMockPersonRecords =
-  peopleQueryResult.people.edges.map((edge) =>
-    getRecordFromRecordNode({ recordNode: edge.node }),
-  )
+export const allMockPersonRecords = peopleQueryResult.people.edges.map((edge) =>
+  getRecordFromRecordNode({ recordNode: edge.node }),
+);
 
 export const getPeopleRecordConnectionMock = () => {
   const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
@@ -1767,4 +1766,3 @@ export const mockedEmptyPersonData = {
   deletedAt: null,
   __typename: 'Person',
 };
-

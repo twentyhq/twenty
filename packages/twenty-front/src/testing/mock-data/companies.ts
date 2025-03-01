@@ -732,8 +732,9 @@ export const companiesQueryResult = {
   },
 };
 
-const allMockedCompanyRecords =
-  companiesQueryResult.companies.edges.map((edge) => edge.node);
+const allMockedCompanyRecords = companiesQueryResult.companies.edges.map(
+  (edge) => edge.node,
+);
 export const getCompaniesMock = () => {
   return [...allMockedCompanyRecords];
 };

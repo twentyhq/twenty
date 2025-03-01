@@ -20,10 +20,12 @@ const personMockObjectMetadataItemDeletedAtField =
 if (personMockObjectMetadataItemDeletedAtField === undefined)
   throw new Error('Should never occur');
 
-const [firstPeopleMock, secondPeopleMock] = getPeopleRecordConnectionMock().map((record) => ({
-  ...record,
-  deletedAt: new Date().toISOString(),
-}));
+const [firstPeopleMock, secondPeopleMock] = getPeopleRecordConnectionMock().map(
+  (record) => ({
+    ...record,
+    deletedAt: new Date().toISOString(),
+  }),
+);
 
 const destroyManyRecordsMock = jest.fn();
 const resetTableRowSelectionMock = jest.fn();

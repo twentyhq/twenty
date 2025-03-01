@@ -1857,7 +1857,6 @@ export const allMockCompanyRecordsWithRelation =
     (edge) => getRecordFromRecordNode({ recordNode: edge.node }),
   );
 
-
 export const getMockCompanyWithRelationRecord = (
   overrides?: Partial<ObjectRecord>,
   index = 0,

@@ -1,7 +1,7 @@
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import {
   allMockPersonRecords,
-  getMockPersonObjectMetadataItem
+  getMockPersonObjectMetadataItem,
 } from '~/testing/mock-data/people';
 
 describe('computeDepthOneRecordGqlFieldsFromRecord', () => {
