@@ -235,7 +235,6 @@ describe('useDeleteOneRecord', () => {
           deletedAt: expect.any(String),
         });
 
-        // TODO explicit assertions on relation deletion from companies
         assertCachedRecordMatchSnapshot({
           recordId: personRecord.id,
           objectMetadataItem: personObjectMetadataItem,
