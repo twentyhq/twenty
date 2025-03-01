@@ -1,23 +1,33 @@
 import React from 'react';
+import { matchPath } from 'react-router-dom';
+
 import { CaptchaProviderScriptLoaderEffect } from '@/captcha/components/CaptchaProviderScriptLoaderEffect';
+import { AppPath } from '@/types/AppPath';
 
 const PATHS_REQUIRING_CAPTCHA = [
-  'verify',
-  'verify-email',
-  'welcome',
-  'invite',
-  'reset-password',
+  AppPath.SignInUp,
+  AppPath.Verify,
+  AppPath.VerifyEmail,
+  AppPath.ResetPassword,
+  AppPath.Invite,
 ];
 
-export const CaptchaProvider = ({ children }: React.PropsWithChildren) => {
-  const isCurrentPathRequiringCaptcha = PATHS_REQUIRING_CAPTCHA.some(
-    (pathRequiringCaptcha: string) => {
-      const currentPathFirstSegment = window.location.pathname.split('/')[1];
-      return currentPathFirstSegment === pathRequiringCaptcha;
-    },
-  );
+const isCurrentPathRequiringCaptcha = (): boolean => {
+  const { pathname } = window.location;
 
-  if (!isCurrentPathRequiringCaptcha) {
+  return PATHS_REQUIRING_CAPTCHA.some((path) =>
+    matchPath(
+      {
+        path,
+        end: false, // Match nested routes too
+      },
+      pathname,
+    ),
+  );
+};
+
+export const CaptchaProvider = ({ children }: React.PropsWithChildren) => {
+  if (!isCurrentPathRequiringCaptcha()) {
     return <>{children}</>;
   }
 
