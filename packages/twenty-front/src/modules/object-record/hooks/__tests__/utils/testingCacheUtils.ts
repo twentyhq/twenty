@@ -14,10 +14,16 @@ type RecordsWithObjectMetadataItem = {
   records: ObjectRecord[];
   objectMetadataItem: ObjectMetadataItem;
 }[];
+
 type GetMockCachedRecord = {
   recordId: string;
   objectMetadataItem: ObjectMetadataItem;
   matchObject?: Record<string, unknown>;
+  snapshotPropertyMatchers?: {
+    deletedAt?: any;
+    updatedAt?: any;
+    createdAt?: any;
+  };
 };
 type GetCacheUtilsArgs = {
   objectMetadataItems: ObjectMetadataItem[];
@@ -62,6 +68,7 @@ export const buildCacheUtils = ({
     objectMetadataItem,
     recordId,
     matchObject,
+    snapshotPropertyMatchers,
   }: GetMockCachedRecord) => {
     const cachedRecord = getRecordFromCache({
       cache,
@@ -77,7 +84,7 @@ export const buildCacheUtils = ({
     if (matchObject) {
       expect(cachedRecord).toMatchObject(matchObject);
     }
-    expect(cachedRecord).toMatchSnapshot();
+    expect(cachedRecord).toMatchSnapshot(snapshotPropertyMatchers ?? {});
   };
 
   const cache = new InMemoryCache();

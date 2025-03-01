@@ -263,7 +263,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     "source": "MANUAL",
     "workspaceMemberId": "20202020-0687-4c41-b707-ed1bfca972a7",
   },
-  "deletedAt": "2025-02-16T22:40:33.722Z",
+  "deletedAt": Any<String>,
   "id": "da3c2c4b-da01-4b81-9734-226069eb4cd0",
   "jobTitle": "",
   "linkedinLink": {

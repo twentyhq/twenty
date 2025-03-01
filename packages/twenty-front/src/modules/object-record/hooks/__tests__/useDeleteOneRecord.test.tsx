@@ -1,9 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
 
-import {
-  query
-} from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
+import { query } from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -100,12 +98,11 @@ describe('useDeleteOneRecord', () => {
         const deleteOneResult = await result.current.deleteOneRecord(
           personRecord.id,
         );
-        const expectedResult: ObjectRecord = {
+        expect(deleteOneResult).toStrictEqual<ObjectRecord>({
           __typename: personRecord.__typename,
           deletedAt: expect.any(String),
           id: personRecord.id,
-        };
-        expect(deleteOneResult).toStrictEqual(expectedResult);
+        });
         assertCachedRecordMatchSnapshot({
           recordId: personRecord.id,
           objectMetadataItem: personObjectMetadataItem,
@@ -277,13 +274,13 @@ describe('useDeleteOneRecord', () => {
       await act(async () => {
         result.current.deleteOneRecord(personRecord.id);
         await waitFor(() => {
-          // assertCachedRecordMatchSnapshot({
-          //   recordId: personRecord.id,
-          //   objectMetadataItem: personObjectMetadataItem,
-          //   matchObject: {
-          //     deletedAt: expect.any(String),
-          //   },
-          // });
+          assertCachedRecordMatchSnapshot({
+            recordId: personRecord.id,
+            objectMetadataItem: personObjectMetadataItem,
+            snapshotPropertyMatchers: {
+              deletedAt: expect.any(String),
+            },
+          });
           assertCachedRecordMatchSnapshot({
             objectMetadataItem: companyObjectMetadataItem,
             recordId: personRecord.company.id,
