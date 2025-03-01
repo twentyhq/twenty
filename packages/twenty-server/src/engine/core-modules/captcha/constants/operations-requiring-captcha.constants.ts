@@ -1,0 +1,18 @@
+export const OPERATIONS_REQUIRING_CAPTCHA = [
+  'GetClientConfig',
+  'GetCurrentUser',
+  'GetPublicWorkspaceDataByDomain',
+  'GetAuthTokensFromLoginToken',
+  'EmailPasswordResetLink',
+  'SignUp',
+  'GetLoginTokenFromCredentials',
+  'GetLoginTokenFromEmailVerificationToken',
+  'UpdatePasswordViaResetToken',
+  'ResendEmailVerificationToken',
+  'GetAuthorizationUrlForSSO',
+  'CheckUserExists',
+  'CheckWorkspaceInviteHashIsValid',
+  'FindWorkspaceFromInviteHash',
+  'ValidatePasswordResetToken',
+  'FindAvailableWorkspacesByEmail',
+];
