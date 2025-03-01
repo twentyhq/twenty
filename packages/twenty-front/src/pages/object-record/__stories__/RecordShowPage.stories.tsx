@@ -8,13 +8,12 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getPeopleMock, peopleQueryResult } from '~/testing/mock-data/people';
+import { allMockPersonRecords, peopleQueryResult } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { RecordShowPage } from '../RecordShowPage';
 
-const peopleMock = getPeopleMock();
-
+const personRecord = allMockPersonRecords[0];
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordShowPage',
   component: RecordShowPage,
@@ -22,7 +21,7 @@ const meta: Meta<PageDecoratorArgs> = {
     routePath: '/object/:objectNameSingular/:objectRecordId',
     routeParams: {
       ':objectNameSingular': 'person',
-      ':objectRecordId': peopleMock[0].id,
+      ':objectRecordId': personRecord.id,
     },
   },
   parameters: {
@@ -36,7 +35,7 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query('FindOnePerson', () => {
           return HttpResponse.json({
             data: {
-              person: peopleMock[0],
+              person: personRecord,
             },
           });
         }),

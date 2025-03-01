@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InMemoryCache } from '@apollo/client';
 import { expect } from '@storybook/jest';
@@ -37,7 +37,7 @@ export const buildCacheUtils = ({
           objectMetadataItem,
           objectMetadataItems,
           record,
-          recordGqlFields: generateDepthOneRecordGqlFields({
+          recordGqlFields: computeDepthOneRecordGqlFieldsFromRecord({
             objectMetadataItem,
             record,
           }),
