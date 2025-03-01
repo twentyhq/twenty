@@ -149,12 +149,15 @@ export const useCommandMenu = () => {
         const isCommandMenuClosing = snapshot
           .getLoadable(isCommandMenuClosingState)
           .getValue();
-
+    
         const currentNavigationStack = isCommandMenuClosing
           ? []
           : snapshot.getLoadable(commandMenuNavigationStackState).getValue();
 
-        if (resetNavigationStack) {
+        if (
+          resetNavigationStack ||
+          currentNavigationStack.some((item) => item.page === page)
+        ) {
           set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
         } else {
           set(commandMenuNavigationStackState, [
