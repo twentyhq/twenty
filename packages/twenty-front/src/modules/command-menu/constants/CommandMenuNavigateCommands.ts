@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import {
   IconBuildingSkyscraper,
   IconCheckbox,
@@ -20,7 +19,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Person,
     }),
-    label: t`Go to People`,
+    label: 'Go to People',
     type: CommandType.Navigate,
     hotKeys: ['G', 'P'],
     Icon: IconUser,
@@ -31,7 +30,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Company,
     }),
-    label: t`Go to Companies`,
+    label: 'Go to Companies',
     type: CommandType.Navigate,
     hotKeys: ['G', 'C'],
     Icon: IconBuildingSkyscraper,
@@ -42,7 +41,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Opportunity,
     }),
-    label: t`Go to Opportunity`,
+    label: 'Go to Opportunities',
     type: CommandType.Navigate,
     hotKeys: ['G', 'O'],
     Icon: IconTargetArrow,
@@ -51,7 +50,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   settings: {
     id: 'go-to-settings',
     to: getSettingsPath(SettingsPath.ProfilePage),
-    label: t`Go to Settings`,
+    label: 'Go to Settings',
     type: CommandType.Navigate,
     hotKeys: ['G', 'S'],
     Icon: IconSettings,
@@ -62,7 +61,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     to: getAppPath(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Task,
     }),
-    label: t`Go to Tasks`,
+    label: 'Go to Tasks',
     type: CommandType.Navigate,
     hotKeys: ['G', 'T'],
     Icon: IconCheckbox,
