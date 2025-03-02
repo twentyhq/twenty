@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
+export const useSaveCurrentViewGroups = () => {
   const { createViewGroupRecords, updateViewGroupRecords } =
     usePersistViewGroupRecords();
 
@@ -17,7 +17,6 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
 
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
     contextStoreCurrentViewIdComponentState,
-    viewBarComponentId,
   );
 
   const saveViewGroup = useRecoilCallback(
@@ -31,7 +30,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
           return;
         }
 
-        const view = await getViewFromPrefetchState(currentViewId);
+        const view = getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
