@@ -1,0 +1,26 @@
+name: CI Tinybird
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-tinybird/**'
+
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-tinybird/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: tinybirdco/ci/.github/workflows/ci.yml@main
+    with:
+      data_project_dir: packages/twenty-tinybird
+    secrets:
+      tb_admin_token: ${{ secrets.TB_ADMIN_TOKEN }}
+      tb_host: https://api.eu-central-1.aws.tinybird.co

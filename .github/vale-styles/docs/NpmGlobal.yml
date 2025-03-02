@@ -1,0 +1,7 @@
+extends: existence
+message: "The -g option should be added at the end of the command"
+level: error
+scope: raw
+ignorecase: true
+raw:
+  - '(npm (i|install) (-g|--global)|npm (-g|--global) (i|install))'

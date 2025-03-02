@@ -1,0 +1,7 @@
+extends: existence
+message: "Consider adding npm2yarn to ```bash"
+level: warning
+scope: raw
+ignorecase: true
+raw:
+  - '```bash[\n]+npm'

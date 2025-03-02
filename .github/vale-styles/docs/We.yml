@@ -1,0 +1,9 @@
+extends: existence
+message: "Avoid using first-person plural like '%s'."
+level: warning
+ignorecase: true
+tokens:
+  - we
+  - we'(?:ve|re)
+  - us
+  - let's

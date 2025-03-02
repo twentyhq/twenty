@@ -1,0 +1,21 @@
+name: Save cache
+inputs:
+  key:
+    required: true
+    description: Primary key to the cache, should be retrieved from `cache-restore` composite action outputs.
+  additional-paths:
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Save cache
+      uses: actions/cache/save@v4
+      with:
+        key: ${{ inputs.key }}
+        path: |
+          .cache
+          .nx/cache
+          node_modules/.cache
+          packages/*/node_modules/.cache
+          ${{ inputs.additional-paths }}

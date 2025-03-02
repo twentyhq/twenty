@@ -1,0 +1,6 @@
+extends: existence
+message: "Use a numeral plus the units."
+nonword: true
+level: error
+tokens:
+  - '\b[a-zA-z]+\spercent\b'

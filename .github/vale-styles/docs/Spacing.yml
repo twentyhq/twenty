@@ -1,0 +1,7 @@
+extends: existence
+message: "'%s' should have one space."
+level: warning
+nonword: true
+tokens:
+  - '[a-z][.?!] {2,}[A-Z]'
+  - '[a-z][.?!][A-Z]'
