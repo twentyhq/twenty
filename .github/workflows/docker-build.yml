@@ -21,10 +21,9 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          docker build \
+          docker build -f ./packages/twenty-docker/twenty/Dockerfile \
             --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} \
             --build-arg SENTRY_RELEASE=${{ github.sha }} \
-            -f ./packages/twenty-docker/twenty/Dockerfile
             -t ${{ secrets.DOCKERHUB_USERNAME }}/twenty:latest .
           
       - name: Push the Docker image
