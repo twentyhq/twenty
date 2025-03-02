@@ -15,8 +15,14 @@ export const emailModuleFactory = (
       return {};
 
     case EmailDriver.Smtp: {
+      const options: EmailModuleOptions = {};
+
       const host = environmentService.get('EMAIL_SMTP_HOST');
       const port = environmentService.get('EMAIL_SMTP_PORT');
+      const user = environmentService.get('EMAIL_SMTP_USER');
+      const pass = environmentService.get('EMAIL_SMTP_PASSWORD');
+      const ignoreTls = environmentService.get('EMAIL_SMTP_IGNORE_TLS');
+      const secure = environmentService.get('EMAIL_SMTP_SECURE');
 
       if (!host || !port) {
         throw new Error(
@@ -24,23 +30,12 @@ export const emailModuleFactory = (
         );
       }
 
-      const options: EmailModuleOptions = {
-        host,
-        port,
-        ...(environmentService.get('EMAIL_SMTP_SECURE') !== undefined && {
-          secure: environmentService.get('EMAIL_SMTP_SECURE') === 'true',
-        }),
-        ...(environmentService.get('EMAIL_SMTP_IGNORE_TLS') !== undefined && {
-          ignoreTLS: environmentService.get('EMAIL_SMTP_IGNORE_TLS') === 'true',
-        }),
-        ...((environmentService.get('EMAIL_SMTP_USER') &&
-          environmentService.get('EMAIL_SMTP_PASSWORD')) && {
-          auth: {
-            user: environmentService.get('EMAIL_SMTP_USER'),
-            pass: environmentService.get('EMAIL_SMTP_PASSWORD'),
-          },
-        }),
-      };
+      options.host = host;
+      options.port = port;
+
+      if (secure !== undefined) options.secure = secure === 'true';
+      if (ignoreTls !== undefined) options.ignoreTLS = ignoreTls === 'true';
+      if (user && pass) options.auth = { user, pass };
 
       return options;
     }
