@@ -1,8 +1,8 @@
 import { matchPath } from 'react-router-dom';
-import { PATHS_REQUIRING_CAPTCHA } from '../constants/PathsRequiringCaptcha';
+import { CAPTCHA_PROTECTED_PATHS } from '../constants/CaptchaProtectedPaths';
 
 export const isCaptchaRequiredForPath = (pathname: string): boolean =>
-  PATHS_REQUIRING_CAPTCHA.some((path) =>
+  CAPTCHA_PROTECTED_PATHS.some((path) =>
     matchPath(
       {
         path,

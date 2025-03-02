@@ -9,7 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 
-import { OPERATIONS_REQUIRING_CAPTCHA } from './constants/operations-requiring-captcha.constants';
+import { CAPTCHA_PROTECTED_FIELDS } from './constants/captcha-protected-fields.constants';
 
 @Injectable()
 export class CaptchaGuard implements CanActivate {
@@ -21,9 +21,9 @@ export class CaptchaGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
     const info = ctx.getInfo();
-    const operationName = info.fieldName;
+    const operationName: string = info.fieldName;
 
-    if (!OPERATIONS_REQUIRING_CAPTCHA.includes(operationName)) {
+    if (!CAPTCHA_PROTECTED_FIELDS.includes(operationName)) {
       return true;
     }
 

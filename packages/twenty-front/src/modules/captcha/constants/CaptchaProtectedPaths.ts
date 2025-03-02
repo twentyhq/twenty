@@ -1,6 +1,6 @@
 import { AppPath } from '@/types/AppPath';
 
-export const PATHS_REQUIRING_CAPTCHA = [
+export const CAPTCHA_PROTECTED_PATHS: string[] = [
   AppPath.SignInUp,
   AppPath.Verify,
   AppPath.VerifyEmail,

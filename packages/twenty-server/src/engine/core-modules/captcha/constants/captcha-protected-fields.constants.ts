@@ -1,0 +1,18 @@
+export const CAPTCHA_PROTECTED_FIELDS: string[] = [
+  'getClientConfig',
+  'getCurrentUser',
+  'getPublicWorkspaceDataByDomain',
+  'getAuthTokensFromLoginToken',
+  'emailPasswordResetLink',
+  'signUp',
+  'getLoginTokenFromCredentials',
+  'getLoginTokenFromEmailVerificationToken',
+  'updatePasswordViaResetToken',
+  'resendEmailVerificationToken',
+  'getAuthorizationUrlForSSO',
+  'checkUserExists',
+  'checkWorkspaceInviteHashIsValid',
+  'findWorkspaceFromInviteHash',
+  'validatePasswordResetToken',
+  'findAvailableWorkspacesByEmail',
+];
