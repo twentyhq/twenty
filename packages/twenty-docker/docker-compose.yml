@@ -13,7 +13,7 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: hamedniroomand/twenty:custom
+    image: hamedniroomand/twenty:latest
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
@@ -44,7 +44,7 @@ services:
     restart: always
 
   worker:
-    image: hamedniroomand/twenty:custom
+    image: hamedniroomand/twenty:latest
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
