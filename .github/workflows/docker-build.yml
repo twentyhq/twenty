@@ -1,0 +1,32 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - feat/translate-fa
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build the Docker image
+        run: |
+          docker build \
+            --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} \
+            --build-arg SENTRY_RELEASE=${{ github.sha }} \
+            -f ./packages/twenty-docker/twenty/Dockerfile
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/twenty:latest .
+          
+      - name: Push the Docker image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/twenty:latest
