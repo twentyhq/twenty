@@ -11,29 +11,40 @@ export const emailModuleFactory = (
   const driver = environmentService.get('EMAIL_DRIVER');
 
   switch (driver) {
-    case EmailDriver.Logger: {
-      return;
-    }
+    case EmailDriver.Logger:
+      return {};
+
     case EmailDriver.Smtp: {
       const host = environmentService.get('EMAIL_SMTP_HOST');
       const port = environmentService.get('EMAIL_SMTP_PORT');
-      const user = environmentService.get('EMAIL_SMTP_USER');
-      const pass = environmentService.get('EMAIL_SMTP_PASSWORD');
 
-      if (!(host && port)) {
+      if (!host || !port) {
         throw new Error(
-          `${driver} email driver requires host: ${host} and port: ${port} to be defined, check your .env file`,
+          `${driver} email driver requires host and port to be defined, check your .env file`,
         );
       }
 
-      const auth = user && pass ? { user, pass } : undefined;
+      const options: EmailModuleOptions = {
+        host,
+        port,
+        ...(environmentService.get('EMAIL_SMTP_SECURE') !== undefined && {
+          secure: environmentService.get('EMAIL_SMTP_SECURE') === 'true',
+        }),
+        ...(environmentService.get('EMAIL_SMTP_IGNORE_TLS') !== undefined && {
+          ignoreTLS: environmentService.get('EMAIL_SMTP_IGNORE_TLS') === 'true',
+        }),
+        ...((environmentService.get('EMAIL_SMTP_USER') &&
+          environmentService.get('EMAIL_SMTP_PASSWORD')) && {
+          auth: {
+            user: environmentService.get('EMAIL_SMTP_USER'),
+            pass: environmentService.get('EMAIL_SMTP_PASSWORD'),
+          },
+        }),
+      };
 
-      if (auth) {
-        return { host, port, auth };
-      }
-
-      return { host, port };
+      return options;
     }
+
     default:
       throw new Error(`Invalid email driver (${driver}), check your .env file`);
   }

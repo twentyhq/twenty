@@ -288,7 +288,23 @@ export class EnvironmentVariables {
     description: 'SMTP host for sending emails',
   })
   EMAIL_SMTP_HOST: string;
-
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.EmailSettings,
+    description: 'Ignore TLS for SMTP',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  EMAIL_SMTP_IGNORE_TLS = false;
+  
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.EmailSettings,
+    description: 'Use secure connection for SMTP',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  EMAIL_SMTP_SECURE = false;
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.EmailSettings,
     description: 'SMTP port for sending emails',
