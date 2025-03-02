@@ -21,8 +21,7 @@ export const emailModuleFactory = (
       const port = environmentService.get('EMAIL_SMTP_PORT');
       const user = environmentService.get('EMAIL_SMTP_USER');
       const pass = environmentService.get('EMAIL_SMTP_PASSWORD');
-      const ignoreTls = environmentService.get('EMAIL_SMTP_IGNORE_TLS');
-      const secure = environmentService.get('EMAIL_SMTP_SECURE');
+      const noTLS = environmentService.get('EMAIL_SMTP_NO_TLS');
 
       if (!host || !port) {
         throw new Error(
@@ -35,8 +34,11 @@ export const emailModuleFactory = (
 
       if (user && pass) options.auth = { user, pass };
 
-      if (secure !== undefined) options.secure = secure; 
-      if (ignoreTls !== undefined) options.ignoreTLS = ignoreTls;
+      if (noTLS){
+        options.secure = false; 
+        options.ignoreTLS = true;
+      }
+    
 
       return options;
     }
