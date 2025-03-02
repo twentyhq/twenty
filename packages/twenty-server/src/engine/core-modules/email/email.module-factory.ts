@@ -33,9 +33,10 @@ export const emailModuleFactory = (
       options.host = host;
       options.port = port;
 
-      if (secure !== undefined) options.secure = secure === 'true';
-      if (ignoreTls !== undefined) options.ignoreTLS = ignoreTls === 'true';
       if (user && pass) options.auth = { user, pass };
+
+      if (secure !== undefined) options.secure = secure; 
+      if (ignoreTls !== undefined) options.ignoreTLS = ignoreTls;
 
       return options;
     }

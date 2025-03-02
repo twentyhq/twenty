@@ -295,7 +295,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  EMAIL_SMTP_IGNORE_TLS = false;
+
   
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.EmailSettings,
@@ -304,7 +304,6 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  EMAIL_SMTP_SECURE = false;
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.EmailSettings,
     description: 'SMTP port for sending emails',
