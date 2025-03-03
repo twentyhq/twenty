@@ -6,6 +6,8 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 
 export const ChangePassword = () => {
   const { t } = useLingui();
@@ -14,37 +16,11 @@ export const ChangePassword = () => {
 
   const currentUser = useRecoilValue(currentUserState);
 
+  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+
   const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
 
-  const handlePasswordResetClick = async () => {
-    if (!currentUser?.email) {
-      enqueueSnackBar(t`Invalid email`, {
-        variant: SnackBarVariant.Error,
-      });
-      return;
-    }
-
-    try {
-      const { data } = await emailPasswordResetLink({
-        variables: {
-          email: currentUser.email,
-        },
-      });
-      if (data?.emailPasswordResetLink?.success === true) {
-        enqueueSnackBar(t`Password reset link has been sent to the email`, {
-          variant: SnackBarVariant.Success,
-        });
-      } else {
-        enqueueSnackBar(t`There was an issue`, {
-          variant: SnackBarVariant.Error,
-        });
-      }
-    } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
-      });
-    }
-  };
+  const {handleResetPassword} = useHandleResetPassword()
 
   return (
     <>
@@ -53,7 +29,7 @@ export const ChangePassword = () => {
         description={t`Receive an email containing password update link`}
       />
       <Button
-        onClick={handlePasswordResetClick}
+        onClick={handleResetPassword}
         variant="secondary"
         title={t`Change Password`}
       />

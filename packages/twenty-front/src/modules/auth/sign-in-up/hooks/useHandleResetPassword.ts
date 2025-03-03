@@ -4,10 +4,14 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { useRecoilValue } from 'recoil';
 
 export const useHandleResetPassword = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
+  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+
   const { t } = useLingui();
 
   const handleResetPassword = useCallback(
@@ -20,9 +24,16 @@ export const useHandleResetPassword = () => {
           return;
         }
 
+        if (!workspacePublicData?.id) {
+          enqueueSnackBar(t`Invalid workspace`, {
+            variant: SnackBarVariant.Error,
+          });
+          return;
+        }
+
         try {
           const { data } = await emailPasswordResetLink({
-            variables: { email },
+            variables: { email, workspaceId: workspacePublicData.id },
           });
 
           if (data?.emailPasswordResetLink?.success === true) {
