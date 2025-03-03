@@ -441,6 +441,7 @@ export const Button = ({
     <StyledButtonWrapper
       loading={loading}
       variant={variant}
+      accent={accent}
       inverted={inverted}
       disabled={soon || disabled}
     >
