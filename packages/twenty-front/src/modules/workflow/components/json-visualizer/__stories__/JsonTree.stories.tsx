@@ -1,13 +1,20 @@
 import { JsonTree } from '@/workflow/components/json-visualizer/components/JsonTree';
 import { Meta, StoryObj } from '@storybook/react';
+import {
+  expect,
+  userEvent,
+  waitForElementToBeRemoved,
+  within,
+} from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof JsonTree> = {
   title: 'Modules/Workflow/JsonVisualizer/JsonTree',
   component: JsonTree,
   args: {},
   argTypes: {},
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -101,5 +108,82 @@ export const ObjectWithArray: Story = {
         notifications: true,
       },
     },
+  },
+};
+
+export const NestedElementCanBeCollapsed: Story = {
+  args: {
+    value: {
+      person: {
+        name: 'John Doe',
+        age: 12,
+      },
+      isActive: true,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const toggleButton = await canvas.findByRole('button', {
+      name: 'Collapse',
+    });
+
+    const ageElement = canvas.getByText('age');
+
+    await Promise.all([
+      waitForElementToBeRemoved(ageElement),
+
+      userEvent.click(toggleButton),
+    ]);
+
+    expect(toggleButton).toHaveTextContent('Expand');
+  },
+};
+
+export const ExpandingElementExpandsAllItsDescendants: Story = {
+  args: {
+    value: {
+      person: {
+        name: 'John Doe',
+        address: {
+          street: '123 Main St',
+          city: 'New York',
+          country: {
+            name: 'USA',
+            code: 'US',
+          },
+        },
+      },
+      isActive: true,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    {
+      const allCollapseButtons = await canvas.findAllByRole('button', {
+        name: 'Collapse',
+      });
+
+      expect(allCollapseButtons).toHaveLength(3);
+
+      for (const collapseButton of allCollapseButtons.reverse()) {
+        await userEvent.click(collapseButton);
+      }
+    }
+
+    const rootExpandButton = await canvas.findByRole('button', {
+      name: 'Expand',
+    });
+
+    await userEvent.click(rootExpandButton);
+
+    {
+      const allCollapseButtons = await canvas.findAllByRole('button', {
+        name: 'Collapse',
+      });
+
+      expect(allCollapseButtons).toHaveLength(3);
+    }
   },
 };

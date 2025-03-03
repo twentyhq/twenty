@@ -1,7 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
-import { IconChevronDown } from 'twenty-ui';
+import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
 
 const StyledButton = styled(motion.button)`
   align-items: center;
@@ -28,10 +29,14 @@ export const JsonArrow = ({
   isOpen: boolean;
   onClick: () => void;
 }) => {
+  const { t } = useLingui();
+
   const theme = useTheme();
 
   return (
     <StyledButton onClick={onClick}>
+      <VisibilityHidden>{isOpen ? t`Collapse` : t`Expand`}</VisibilityHidden>
+
       <MotionIconChevronDown
         size={theme.icon.size.md}
         color={theme.font.color.secondary}
