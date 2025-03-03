@@ -1603,7 +1603,7 @@ msgstr "Ogiltiga formul\\u00e4rv\\u00e4rden"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "Ogiltig arbetsyta"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"

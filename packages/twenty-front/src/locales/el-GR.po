@@ -1603,7 +1603,7 @@ msgstr "Μη έγκυρες τιμές φόρμας"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "Μη έγκυρος χώρος εργασίας"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"

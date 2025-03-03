@@ -1603,7 +1603,7 @@ msgstr "Neplatné hodnoty formuláře"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "Neplatný pracovní prostor"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"

@@ -1603,7 +1603,7 @@ msgstr "ערכים לא חוקיים בטופס"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "סביבת עבודה לא חוקית"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"

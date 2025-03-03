@@ -1603,7 +1603,7 @@ msgstr "قيم النموذج غير صالحة"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "مساحة العمل غير صالحة"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"

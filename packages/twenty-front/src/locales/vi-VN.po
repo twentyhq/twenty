@@ -1603,7 +1603,7 @@ msgstr "Giá trị biểu mẫu không hợp lệ"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "Không gian làm việc không hợp lệ"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
