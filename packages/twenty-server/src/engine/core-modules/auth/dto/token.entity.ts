@@ -37,4 +37,7 @@ export class PasswordResetToken {
 
   @Field(() => Date)
   passwordResetTokenExpiresAt: Date;
+
+  @Field(() => String)
+  workspaceId: string;
 }
