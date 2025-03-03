@@ -6,16 +6,18 @@ import { useLingui } from '@lingui/react/macro';
 import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useRecoilValue } from 'recoil';
+import { currentUserState } from '@/auth/states/currentUserState';
 
 export const useHandleResetPassword = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const currentUser = useRecoilValue(currentUserState);
 
   const { t } = useLingui();
 
   const handleResetPassword = useCallback(
-    (email: string) => {
+    (email = currentUser?.email) => {
       return async () => {
         if (!email) {
           enqueueSnackBar(t`Invalid email`, {
