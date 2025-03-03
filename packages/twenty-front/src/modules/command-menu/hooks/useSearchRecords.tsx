@@ -20,7 +20,7 @@ export const useSearchRecords = () => {
     variables: {
       searchInput: deferredCommandMenuSearch ?? '',
       limit: MAX_SEARCH_RESULTS,
-      excludedObjectNameSingulars: [],
+      excludedObjectNameSingulars: ['workspaceMember'],
     },
   });
 

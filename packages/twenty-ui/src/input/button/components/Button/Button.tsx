@@ -2,13 +2,13 @@ import isPropValid from '@emotion/is-prop-valid';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/ButtonHotKeys';
+import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
+import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
 import { useIsMobile } from '@ui/utilities';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ButtonText } from './internal/ButtonText';
-import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
-import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
-import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/ButtonHotKeys';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -404,7 +404,6 @@ const StyledButtonWrapper = styled.div<
     })()};
   `}
 
-  height: 100%;
   max-width: ${({ loading, theme }) =>
     loading ? `calc(100% - ${theme.spacing(8)})` : 'none'};
   position: relative;
@@ -441,6 +440,7 @@ export const Button = ({
     <StyledButtonWrapper
       loading={loading}
       variant={variant}
+      accent={accent}
       inverted={inverted}
       disabled={soon || disabled}
     >
@@ -466,6 +466,7 @@ export const Button = ({
         loading={loading}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        size={size}
       >
         <ButtonText hasIcon={!!Icon} title={title} loading={loading} />
         {hotkeys && !isMobile && (
