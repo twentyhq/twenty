@@ -6,7 +6,12 @@ import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSepara
 import { MotionProps, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-import { ButtonAccent, ButtonProps, ButtonSize, ButtonVariant } from './Button';
+import {
+  ButtonAccent,
+  ButtonProps,
+  ButtonSize,
+  ButtonVariant,
+} from './Button/Button';
 
 export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {
