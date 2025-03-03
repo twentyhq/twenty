@@ -1,7 +1,6 @@
 import { Key } from 'ts-key-enum';
 import {
   AppTooltip,
-  IconFileImport,
   IconLayout,
   IconLayoutList,
   IconList,
@@ -10,12 +9,10 @@ import {
   useIcons,
 } from 'twenty-ui';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -65,16 +62,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
   });
-
-  const { openObjectRecordsSpreasheetImportDialog } =
-    useOpenObjectRecordsSpreadsheetImportDialog(
-      objectMetadataItem.nameSingular,
-    );
-
-  // TODO: Remove this once we have implemented Rich Text v2 and removed the old rich text
-  const canImportOrExport =
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task;
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
@@ -134,19 +121,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
             noArrow
             place="bottom"
             width="100%"
-          />
-        )}
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        {canImportOrExport && (
-          <MenuItem
-            onClick={() => {
-              closeDropdown();
-              openObjectRecordsSpreasheetImportDialog();
-            }}
-            LeftIcon={IconFileImport}
-            text={t`Import`}
           />
         )}
       </DropdownMenuItemsContainer>
