@@ -80,6 +80,7 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'view',
+        false,
       );
 
     await viewRepository.update(
