@@ -6,6 +6,7 @@ import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
+import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -22,8 +23,8 @@ import {
   BillingPlanKey,
   BillingPriceLicensedDto,
   SubscriptionInterval,
-} from '~/generated-metadata/graphql';
-import { useBillingBaseProductPricesQuery } from '~/generated/graphql';
+  useBillingBaseProductPricesQuery,
+} from '~/generated/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
@@ -101,12 +102,12 @@ export const ChooseYourPlan = () => {
   const baseProduct = plans?.plans.find(
     (plan) => plan.planKey === BillingPlanKey.PRO,
   )?.baseProduct;
-
   const baseProductPrice = baseProduct?.prices.find(
     (price): price is BillingPriceLicensedDto =>
-      'unitAmount' in price &&
+      isBillingPriceLicensed(price) &&
       price.recurringInterval === SubscriptionInterval.Month,
   );
+
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
     (trialPeriod) =>
       !trialPeriod.isCreditCardRequired && trialPeriod.duration !== 0,

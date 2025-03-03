@@ -155,6 +155,7 @@ export type BillingPlanOutput = {
 
 export type BillingPriceLicensedDto = {
   __typename?: 'BillingPriceLicensedDTO';
+  priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
   unitAmount: Scalars['Float'];
@@ -162,6 +163,7 @@ export type BillingPriceLicensedDto = {
 
 export type BillingPriceMeteredDto = {
   __typename?: 'BillingPriceMeteredDTO';
+  priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
   tiers?: Maybe<Array<BillingPriceTierDto>>;
