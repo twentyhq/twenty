@@ -1579,7 +1579,6 @@ msgstr "Ogiltig anpassad domän. Vänligen inkludera minst en subdomän (t.ex., 
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Ogiltig domän. Domäner måste vara kortare än 256 tecken, får inte vara IP-adresser, får inte innehålla mellanslag, får inte innehålla några specialtecken som _~`!@#$%^*()=+{}[]|\\;:'\",<>/? och får inte börja eller sluta med tecknet '-'."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "Ogiltig fil"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Ogiltiga formul\\u00e4rv\\u00e4rden"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "Lösenord"
 msgid "Password has been updated"
 msgstr "Lösenordet har uppdaterats"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "En länk för återställning av lösenordet har skickats till e-postadressen"
@@ -2755,7 +2757,6 @@ msgstr "Hela händelsedetaljerna kommer att delas med ditt team."
 msgid "There was an error while updating password."
 msgstr "Det uppstod ett fel vid uppdatering av lösenordet."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

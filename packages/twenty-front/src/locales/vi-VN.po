@@ -1579,7 +1579,6 @@ msgstr "Tên miền tùy chỉnh không hợp lệ. Vui lòng bao gồm ít nh�
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Tên miền không hợp lệ. Tên miền phải ngắn hơn 256 ký tự, không được là địa chỉ IP, không được chứa khoảng trắng, không chứa các ký tự đặc biệt như _~`!@#$%^*()=+{}[]|\\;:'\",<>/? và không được bắt đầu hoặc kết thúc bằng ký tự '-'."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "Tập tin không hợp lệ"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Giá trị biểu mẫu không hợp lệ"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "Mật khẩu"
 msgid "Password has been updated"
 msgstr "Mật khẩu đã được cập nhật"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Đường dẫn đặt lại mật khẩu đã được gửi đến email"
@@ -2755,7 +2757,6 @@ msgstr "Toàn bộ chi tiết sự kiện sẽ được chia sẻ với nhóm c�
 msgid "There was an error while updating password."
 msgstr "Đã có lỗi xảy ra trong quá trình cập nhật mật khẩu."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

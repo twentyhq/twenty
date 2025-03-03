@@ -1635,7 +1635,6 @@ msgstr "Неприпустимий користувацький домен. Бу
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Недійсний домен. Домен має бути коротшим за 256 символів, не може бути IP-адресою, не може містити пробіли, не може містити спеціальні символи такі як _~`!@#$%^*()=+{}[]|\\;:'\",<>/? та не може починатися або закінчуватися символом '-'."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1657,6 +1656,10 @@ msgstr "Недійсний файл"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Недійсні значення форми"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2160,7 +2163,6 @@ msgstr "Пароль"
 msgid "Password has been updated"
 msgstr "Пароль було оновлено"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Посилання для скидання пароля було відправлене на електронну пошту"
@@ -2811,7 +2813,6 @@ msgstr "Всі подробиці подій будуть поділені з в
 msgid "There was an error while updating password."
 msgstr "Сталася помилка під час оновлення пароля."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

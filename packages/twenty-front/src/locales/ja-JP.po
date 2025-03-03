@@ -1579,7 +1579,6 @@ msgstr "無効なカスタムドメインです。少なくとも1つのサブ�
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "無効なドメインです。ドメインは256文字以下で、IPアドレスであってはならず、スペースや _~`!@#$%^*()=+{}[]|\\;:'\",<>/? のような特殊文字を含むことはできず、'-'文字で始まったり終わったりすることはできません。"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "無効なファイル"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "無効なフォーム値"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "パスワード"
 msgid "Password has been updated"
 msgstr "パスワードが更新されました"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "パスワードリセットリンクがメールに送信されました"
@@ -2755,7 +2757,6 @@ msgstr "イベント詳細がすべてチームと共有されます。"
 msgid "There was an error while updating password."
 msgstr "パスワードの更新中にエラーが発生しました"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

@@ -1574,7 +1574,6 @@ msgstr ""
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr ""
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1595,6 +1594,10 @@ msgstr ""
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
+msgstr ""
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
 msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -2099,7 +2102,6 @@ msgstr ""
 msgid "Password has been updated"
 msgstr ""
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr ""
@@ -2750,7 +2752,6 @@ msgstr ""
 msgid "There was an error while updating password."
 msgstr ""
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

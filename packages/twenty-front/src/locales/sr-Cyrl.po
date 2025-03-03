@@ -1579,7 +1579,6 @@ msgstr "Неправилан прилагођен домен. Молимо ва�
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Неважећи домен. Домене морају бити краће од 256 карактера, не могу бити ИП адресе, не могу садржати размаке, не могу садржати било какве посебне карактере као што су _~`!@#$%^*()=+{}[]|\\;:'\",<>/? и не могу почети ни завршавати са '-' карактером."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "Неважећа датотека"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Невалиде вредности формулара"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "Лозинка"
 msgid "Password has been updated"
 msgstr "Лозинка је ажурирана"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Линк за ресетовање лозинке је послат на емаил"
@@ -2755,7 +2757,6 @@ msgstr "Цели детаљи догађаја ће бити подељени с
 msgid "There was an error while updating password."
 msgstr "Дошло је до грешке при ажурирању лозинке."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

@@ -1579,7 +1579,6 @@ msgstr "Domini personalitzat no vàlid. Si us plau, inclogueu almenys un subdomi
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Domini invàlid. Els dominis han de ser més curts de 256 caràcters, no poden ser adreces IP, no poden contenir espais, ni cap caràcter especial com _~`!@#$%^*()=+{}[]|\\;:'\",<>/? i no poden començar o acabar amb el caràcter '-'."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "Fitxer invàlid"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Valors del formulari no vàlids"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "Contrasenya"
 msgid "Password has been updated"
 msgstr "La contrasenya s'ha actualitzat"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "S'ha enviat l'enllaç de restabliment de la contrasenya al correu electrònic"
@@ -2755,7 +2757,6 @@ msgstr "Els detalls complets de l'esdeveniment seran compartits amb el teu equip
 msgid "There was an error while updating password."
 msgstr "S'ha produït un error en actualitzar la contrasenya."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

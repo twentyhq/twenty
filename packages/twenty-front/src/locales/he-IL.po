@@ -1579,7 +1579,6 @@ msgstr "דומיין מותאם אינו חוקי. יש לכלול לפחות ת
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "דומיין לא תקין. הדומיינים צריכים להיות קטנים מ-256 תווים, לא יכולים להיות כתובות IP, לא יכולים להכיל רווחים, לא יכולים להכיל תווים מיוחדים כגון _~`!@#$%^*()=+{}[]|\\;:'\",<>/? ולא יכולים להתחיל או להיגמר בתו '-'."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "קובץ לא תקין"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "ערכים לא חוקיים בטופס"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "סיסמה"
 msgid "Password has been updated"
 msgstr "הסיסמה עודכנה"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "קישור לאיפוס הסיסמה נשלח לדוא\"ל"
@@ -2755,7 +2757,6 @@ msgstr "פרטי האירוע המלאים ישותפו עם הצוות שלך."
 msgid "There was an error while updating password."
 msgstr "אירעה תקלה בעדכון הסיסמה."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

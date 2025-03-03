@@ -1579,7 +1579,6 @@ msgstr "نطاق مخصص غير صالح. يُرجى تضمين نطاق فرع
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "نطاق غير صالح. يجب أن تكون النطاقات أقل من 256 حرفًا في الطول، ولا يمكن أن تكون عناوين IP، ولا يمكن أن تحتوي على مسافات، ولا يمكن أن تحتوي على أي أحرف خاصة مثل _~`!@#$%^*()=+{}[]|\\;:'\\\",<>/? ولا يمكن أن تبدأ أو تنتهي برمز '-'."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "ملف غير صالح"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "قيم النموذج غير صالحة"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "كلمة السر"
 msgid "Password has been updated"
 msgstr "تم تحديث كلمة السر"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "تم إرسال رابط إعادة تعيين كلمة السر إلى البريد الإلكتروني"
@@ -2755,7 +2757,6 @@ msgstr "سيتم مشاركة تفاصيل الحدث بالكامل مع فري
 msgid "There was an error while updating password."
 msgstr "حدث خطأ أثناء تحديث كلمة المرور."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

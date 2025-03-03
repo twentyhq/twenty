@@ -1579,7 +1579,6 @@ msgstr "Μη έγκυρο προσαρμοσμένο domain. Παρακαλώ π
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Άκυρος τομέας. Οι τομείς πρέπει να είναι μικρότεροι από 256 χαρακτήρες σε μήκος, δεν μπορούν να είναι διευθύνσεις IP, δεν μπορούν να περιέχουν κενά, δεν μπορούν να περιέχουν ειδικούς χαρακτήρες όπως _~`!@#$%^*()=+{}[]|\\;:'\",<>/? και δεν μπορούν να αρχίζουν ή να τελειώνουν με τον χαρακτήρα '-'."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "Μη έγκυρο αρχείο"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Μη έγκυρες τιμές φόρμας"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "Κωδικός"
 msgid "Password has been updated"
 msgstr "Ο κωδικός έχει ενημερωθεί"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Ο σύνδεσμος για την επαναφορά του κωδικού έχει σταλεί στο email"
@@ -2755,7 +2757,6 @@ msgstr "Όλες οι λεπτομέρειες του γεγονότος θα μ
 msgid "There was an error while updating password."
 msgstr "Παρουσιάστηκε σφάλμα κατά την ενημέρωση του κωδικού πρόσβασης."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

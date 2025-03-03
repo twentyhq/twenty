@@ -1579,7 +1579,6 @@ msgstr "유효하지 않은 사용자 정의 도메인입니다. 적어도 하�
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "잘못된 도메인입니다. 도메인은 길이가 256자를 넘을 수 없고, IP 주소가 될 수 없으며, 공백이 포함될 수 없고, _~`!@#$%^*()=+{}[]|\\;:'\",<>/?와 같은 특수 문자를 포함할 수 없으며, '-' 문자로 시작하거나 끝나선 안 됩니다."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "잘못된 파일"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "잘못된 양식 값"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "비밀번호"
 msgid "Password has been updated"
 msgstr "비밀번호가 업데이트되었습니다"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "비밀번호 재설정 링크가 이메일로 전송되었습니다"
@@ -2755,7 +2757,6 @@ msgstr "전체 이벤트 세부정보가 팀과 공유됩니다."
 msgid "There was an error while updating password."
 msgstr "비밀번호 업데이트 중 오류가 발생했습니다."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

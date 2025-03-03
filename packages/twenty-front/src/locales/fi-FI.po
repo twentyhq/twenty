@@ -1579,7 +1579,6 @@ msgstr "Virheellinen mukautettu verkkotunnus. Ole hyvä ja sisällytä vähintä
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Virheellinen verkkotunnus. Verkkotunnusten on oltava alle 256 merkkiä pitkiä, eivät saa olla IP-osoitteita, eivät saa sisältää välilyöntejä eivätkä erikoismerkkejä, kuten _~`!@#$%^*()=+{}[]|\\;:'\",<>/? eivätkä saa alkaa tai päättyä '-'-merkillä."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "Virheellinen tiedosto"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Virheelliset lomaketiedot"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "Salasana"
 msgid "Password has been updated"
 msgstr "Salasana on päivitetty"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Salasanan palautuslinkki on lähetetty sähköpostiin"
@@ -2755,7 +2757,6 @@ msgstr "Koko tapahtuman tiedot jaetaan tiimisi kanssa."
 msgid "There was an error while updating password."
 msgstr "Salasanan päivityksessä tapahtui virhe."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

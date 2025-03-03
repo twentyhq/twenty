@@ -1579,7 +1579,6 @@ msgstr "Ongeldig aangepast domein. Voeg ten minste één subdomein toe (bijv. su
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Ongeldig domein. Domeinen moeten kleiner zijn dan 256 karakters in lengte, kunnen geen IP-adressen zijn, kunnen geen spaties bevatten, kunnen geen speciale tekens bevatten zoals _~`!@#$%^*()=+{}[]|\\;:'\",<>/? en kunnen niet beginnen of eindigen met een '-' karakter."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "Ongeldig bestand"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "''"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "Wachtwoord"
 msgid "Password has been updated"
 msgstr "Wachtwoord is geüpdated"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Link voor het resetten van het wachtwoord is naar de email verstuurd"
@@ -2755,7 +2757,6 @@ msgstr "De hele evenementdetails worden gedeeld met uw team."
 msgid "There was an error while updating password."
 msgstr "Er was een fout bij het bijwerken van het wachtwoord."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

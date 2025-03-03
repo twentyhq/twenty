@@ -1579,7 +1579,6 @@ msgstr "Ugyldig brugerdefineret domæne. Inkluder venligst mindst ét underdomæ
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Ugyldigt domæne. Domæner skal være kortere end 256 tegn, kan ikke være IP-adresser, kan ikke indeholde mellemrum, kan ikke indeholde specialtegn såsom _~`!@#$%^*()=+{}[]|\\;:'\",<>/? og kan ikke begynde eller slutte med et '-' tegn."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1600,10 @@ msgstr "Ugyldig fil"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Ugyldige formularværdier"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr ""
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -2104,7 +2107,6 @@ msgstr "Adgangskode"
 msgid "Password has been updated"
 msgstr "Password er blevet opdateret"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Link til password nulstilling er blevet sendt til emailadressen"
@@ -2755,7 +2757,6 @@ msgstr "Hele begivenhedsdetaljerne vil blive delt med dit team."
 msgid "There was an error while updating password."
 msgstr "Der opstod en fejl under opdatering af adgangskoden."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"
