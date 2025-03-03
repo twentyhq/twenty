@@ -3,6 +3,7 @@ import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-ac
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
+import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
@@ -32,6 +33,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconDatabaseExport,
+  IconFileImport,
   IconHeart,
   IconHeartOff,
   IconHistory,
@@ -315,5 +317,18 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
+  },
+  importRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
+    label: msg`Import records`,
+    shortLabel: msg`Import`,
+    position: 19,
+    Icon: IconFileImport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useImportRecordsNoSelectionRecordAction,
   },
 };
