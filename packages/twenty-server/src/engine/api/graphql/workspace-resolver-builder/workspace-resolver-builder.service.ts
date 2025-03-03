@@ -6,6 +6,7 @@ import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { FindDuplicatesResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/find-duplicates-resolver.factory';
+import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 
 @Injectable()
 export class WorkspaceResolverBuilderService {
@@ -18,6 +19,8 @@ export class WorkspaceResolverBuilderService {
     switch (methodName) {
       case FindDuplicatesResolverFactory.methodName:
         return isDefined(objectMetadata.duplicateCriteria);
+      case SearchResolverFactory.methodName:
+        return objectMetadata.isSearchable;
       default:
         return true;
     }

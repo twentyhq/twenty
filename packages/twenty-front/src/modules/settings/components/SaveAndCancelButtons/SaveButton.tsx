@@ -1,4 +1,5 @@
 import { Button, IconDeviceFloppy } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
 
 type SaveButtonProps = {
   onSave?: () => void;
@@ -8,12 +9,13 @@ type SaveButtonProps = {
 export const SaveButton = ({ onSave, disabled }: SaveButtonProps) => {
   return (
     <Button
-      title="Save"
+      title={t`Save`}
       variant="primary"
       size="small"
       accent="blue"
       disabled={disabled}
       onClick={onSave}
+      type="submit"
       Icon={IconDeviceFloppy}
     />
   );

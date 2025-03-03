@@ -37,6 +37,7 @@ const StyledContextualText = styled.div`
 
 type MenuItemLeftContentProps = {
   className?: string;
+  LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
   disabled?: boolean;
@@ -46,6 +47,7 @@ type MenuItemLeftContentProps = {
 
 export const MenuItemLeftContent = ({
   className,
+  LeftComponent,
   LeftIcon,
   text,
   contextualText,
@@ -70,6 +72,7 @@ export const MenuItemLeftContent = ({
       {LeftIcon && (
         <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
+      {LeftComponent}
       <StyledMenuItemLabel>
         {isString(text) ? (
           <StyledMainText>

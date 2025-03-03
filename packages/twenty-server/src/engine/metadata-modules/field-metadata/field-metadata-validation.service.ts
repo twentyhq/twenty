@@ -44,7 +44,7 @@ class TextSettingsValidation {
 
 @Injectable()
 export class FieldMetadataValidationService<
-  T extends FieldMetadataType | 'default' = 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > {
   constructor() {}
 

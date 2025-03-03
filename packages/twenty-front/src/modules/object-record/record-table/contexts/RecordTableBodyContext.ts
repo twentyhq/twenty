@@ -20,7 +20,7 @@ export type RecordTableBodyContextProps = {
   onOpenTableCell: (args: OpenTableCellArgs) => void;
   onMoveFocus: (direction: MoveFocusDirection) => void;
   onCloseTableCell: () => void;
-  onMoveSoftFocusToCell: (cellPosition: TableCellPosition) => void;
+  onMoveSoftFocusToCurrentCell: (cellPosition: TableCellPosition) => void;
   onActionMenuDropdownOpened: (
     event: React.MouseEvent,
     recordId: string,

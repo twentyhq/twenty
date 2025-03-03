@@ -147,7 +147,7 @@ export const SettingsDataModelObjectAboutForm = ({
     <>
       <StyledInputsContainer>
         <StyledInputContainer>
-          <StyledLabel>Icon</StyledLabel>
+          <StyledLabel>{t`Icon`}</StyledLabel>
           <Controller
             name="icon"
             control={control}
@@ -171,7 +171,7 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelSingular}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              label={'Singular'}
+              label={t`Singular`}
               placeholder={'Listing'}
               value={value}
               onChange={(value) => {

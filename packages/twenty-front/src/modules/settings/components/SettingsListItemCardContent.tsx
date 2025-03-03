@@ -17,8 +17,16 @@ const StyledRow = styled(CardContent)`
   min-height: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledLabel = styled.span`
+const StyledContent = styled.div`
   flex: 1 0 auto;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledDescription = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledLink = styled(Link)`
@@ -32,6 +40,7 @@ const StyledLink = styled(Link)`
 
 type SettingsListItemCardContentProps = {
   label: string;
+  description?: string;
   divider?: boolean;
   LeftIcon?: IconComponent;
   onClick?: () => void;
@@ -41,6 +50,7 @@ type SettingsListItemCardContentProps = {
 
 export const SettingsListItemCardContent = ({
   label,
+  description,
   divider,
   LeftIcon,
   onClick,
@@ -52,7 +62,10 @@ export const SettingsListItemCardContent = ({
   const content = (
     <StyledRow onClick={onClick} divider={divider}>
       {!!LeftIcon && <LeftIcon size={theme.icon.size.md} />}
-      <StyledLabel>{label}</StyledLabel>
+      <StyledContent>
+        {label}
+        {!!description && <StyledDescription>{description}</StyledDescription>}
+      </StyledContent>
       {rightComponent}
     </StyledRow>
   );

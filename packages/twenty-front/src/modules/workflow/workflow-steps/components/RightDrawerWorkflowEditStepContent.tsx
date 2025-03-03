@@ -1,11 +1,9 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 
 export const RightDrawerWorkflowEditStepContent = ({
   workflow,
@@ -13,13 +11,7 @@ export const RightDrawerWorkflowEditStepContent = ({
   workflow: WorkflowWithCurrentVersion;
 }) => {
   const flow = useFlowOrThrow();
-
-  const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
-  if (!isDefined(workflowSelectedNode)) {
-    throw new Error(
-      'Expected a node to be selected. Selecting a node is mandatory to edit it.',
-    );
-  }
+  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
 
   const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
   const { updateStep } = useUpdateStep({

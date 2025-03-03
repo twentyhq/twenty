@@ -230,11 +230,13 @@ export class WorkflowVisualizerPage {
   }
 
   async closeSidePanel() {
-    const closeButton = this.#page.getByTestId(
-      'page-header-command-menu-button',
-    );
+    const closeButton = this.#page.getByRole('button', {
+      name: 'Close command menu',
+    });
 
     await closeButton.click();
+
+    await expect(this.#page.getByTestId('command-menu')).not.toBeVisible();
   }
 }
 

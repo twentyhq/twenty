@@ -6,6 +6,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
@@ -63,25 +64,34 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
             recordIndexId: instanceId,
           }}
         >
-          <RecordFiltersComponentInstanceContext.Provider
+          <RecordFilterGroupsComponentInstanceContext.Provider
             value={{ instanceId }}
           >
-            <RecordSortsComponentInstanceContext.Provider
+            <RecordFiltersComponentInstanceContext.Provider
               value={{ instanceId }}
             >
-              <ObjectFilterDropdownComponentInstanceContext.Provider
+              <RecordSortsComponentInstanceContext.Provider
                 value={{ instanceId }}
               >
-                <RecordTableComponentInstanceContext.Provider
-                  value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+                <ObjectFilterDropdownComponentInstanceContext.Provider
+                  value={{ instanceId }}
                 >
-                  <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                    <Story />
-                  </ViewComponentInstanceContext.Provider>
-                </RecordTableComponentInstanceContext.Provider>
-              </ObjectFilterDropdownComponentInstanceContext.Provider>
-            </RecordSortsComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
+                  <RecordTableComponentInstanceContext.Provider
+                    value={{
+                      instanceId: instanceId,
+                      onColumnsChange: () => {},
+                    }}
+                  >
+                    <ViewComponentInstanceContext.Provider
+                      value={{ instanceId }}
+                    >
+                      <Story />
+                    </ViewComponentInstanceContext.Provider>
+                  </RecordTableComponentInstanceContext.Provider>
+                </ObjectFilterDropdownComponentInstanceContext.Provider>
+              </RecordSortsComponentInstanceContext.Provider>
+            </RecordFiltersComponentInstanceContext.Provider>
+          </RecordFilterGroupsComponentInstanceContext.Provider>
         </RecordIndexContextProvider>
       );
     },

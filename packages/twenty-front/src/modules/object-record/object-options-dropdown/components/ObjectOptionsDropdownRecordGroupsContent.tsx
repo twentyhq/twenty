@@ -26,8 +26,10 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
+  const { t } = useLingui();
   const {
     viewType,
     currentContentId,
@@ -65,7 +67,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     handleVisibilityChange: handleRecordGroupVisibilityChange,
     handleHideEmptyRecordGroupChange,
   } = useRecordGroupVisibility({
-    viewBarId: recordIndexId,
     viewType,
   });
 
@@ -97,14 +98,14 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             <MenuItem
               onClick={() => onContentChange('recordGroupFields')}
               LeftIcon={IconLayoutList}
-              text="Group by"
+              text={t`Group by`}
               contextualText={recordGroupFieldMetadata?.label}
               hasSubMenu
             />
             <MenuItem
               onClick={() => onContentChange('recordGroupSort')}
               LeftIcon={IconSortDescending}
-              text="Sort"
+              text={t`Sort`}
               contextualText={recordGroupSort}
               hasSubMenu
             />
@@ -114,7 +115,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           LeftIcon={IconCircleOff}
           onToggleChange={handleHideEmptyRecordGroupChange}
           toggled={hideEmptyRecordGroup}
-          text="Hide empty groups"
+          text={t`Hide empty groups`}
           toggleSize="small"
         />
       </DropdownMenuItemsContainer>
@@ -122,7 +123,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         <>
           <DropdownMenuSeparator />
           <RecordGroupsVisibilityDropdownSection
-            title="Visible groups"
+            title={t`Visible groups`}
             recordGroupIds={visibleRecordGroupIds}
             onDragEnd={handleRecordGroupOrderChangeWithModal}
             onVisibilityChange={handleRecordGroupVisibilityChange}

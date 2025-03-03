@@ -1,9 +1,8 @@
-import { RelationPicker } from '@/object-record/relation-picker/components/RelationPicker';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
-
+import { RelationPicker } from '@/object-record/record-field/meta-types/input/components/RelationPicker';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
 
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type RelationToOneFieldInputProps = {
@@ -16,11 +15,11 @@ export const RelationToOneFieldInput = ({
   onCancel,
 }: RelationToOneFieldInputProps) => {
   const { fieldDefinition, initialSearchValue, fieldValue } =
-    useRelationField<RecordForSelect>();
+    useRelationField<SingleRecordPickerRecord>();
 
   const persistField = usePersistField();
 
-  const handleSubmit = (newEntity: RecordForSelect | null) => {
+  const handleSubmit = (newEntity: SingleRecordPickerRecord | null) => {
     onSubmit?.(() => persistField(newEntity?.record ?? null));
   };
 

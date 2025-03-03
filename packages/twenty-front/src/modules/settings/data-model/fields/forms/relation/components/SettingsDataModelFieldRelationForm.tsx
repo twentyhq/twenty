@@ -17,6 +17,7 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({
@@ -93,6 +94,7 @@ export const SettingsDataModelFieldRelationForm = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldRelationFormProps) => {
+  const { t } = useLingui();
   const { control, watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldRelationFormValues>();
   const { getIcon } = useIcons();
@@ -133,7 +135,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={initialRelationType}
           render={({ field: { onChange, value } }) => (
             <Select
-              label="Relation type"
+              label={t`Relation type`}
               dropdownId="relation-type-select"
               fullWidth
               disabled={disableRelationEdition}
@@ -149,7 +151,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={initialRelationObjectMetadataItem.id}
           render={({ field: { onChange, value } }) => (
             <Select
-              label="Object destination"
+              label={t`Object destination`}
               dropdownId="object-destination-select"
               fullWidth
               disabled={disableRelationEdition}
@@ -194,7 +196,7 @@ export const SettingsDataModelFieldRelationForm = ({
           render={({ field: { onChange, value } }) => (
             <TextInput
               disabled={disableFieldEdition}
-              placeholder="Field name"
+              placeholder={t`Field name`}
               value={value}
               onChange={onChange}
               fullWidth
