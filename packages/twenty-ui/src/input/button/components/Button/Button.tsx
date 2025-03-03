@@ -404,7 +404,6 @@ const StyledButtonWrapper = styled.div<
     })()};
   `}
 
-  height: 100%;
   max-width: ${({ loading, theme }) =>
     loading ? `calc(100% - ${theme.spacing(8)})` : 'none'};
   position: relative;
