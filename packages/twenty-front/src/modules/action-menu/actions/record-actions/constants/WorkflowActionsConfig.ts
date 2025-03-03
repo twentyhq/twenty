@@ -269,7 +269,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
   exportSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: MultipleRecordsActionKeys.EXPORT,
+    key: SingleRecordActionKeys.EXPORT,
     label: msg`Export workflow`,
     shortLabel: msg`Export`,
     position: 15,

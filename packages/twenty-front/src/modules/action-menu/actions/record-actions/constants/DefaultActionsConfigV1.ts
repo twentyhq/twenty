@@ -88,7 +88,7 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
   exportSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: MultipleRecordsActionKeys.EXPORT,
+    key: SingleRecordActionKeys.EXPORT,
     label: msg`Export record`,
     shortLabel: msg`Export`,
     position: 4,
