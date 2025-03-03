@@ -2,6 +2,7 @@ import { JsonArrayNode } from '@/workflow/components/json-visualizer/components/
 import { JsonObjectNode } from '@/workflow/components/json-visualizer/components/JsonObjectNode';
 import { JsonValueNode } from '@/workflow/components/json-visualizer/components/JsonValueNode';
 import { isArray } from '@/workflow/components/json-visualizer/utils/isArray';
+import { isBoolean, isNull, isNumber, isString } from '@sniptt/guards';
 import {
   IconCheckbox,
   IconCircleOff,
@@ -19,7 +20,7 @@ export const JsonNode = ({
   value: JsonValue;
   depth: number;
 }) => {
-  if (value === null) {
+  if (isNull(value)) {
     return (
       <JsonValueNode
         label={label}
@@ -29,7 +30,7 @@ export const JsonNode = ({
     );
   }
 
-  if (typeof value === 'string') {
+  if (isString(value)) {
     return (
       <JsonValueNode
         label={label}
@@ -39,7 +40,7 @@ export const JsonNode = ({
     );
   }
 
-  if (typeof value === 'number') {
+  if (isNumber(value)) {
     return (
       <JsonValueNode
         label={label}
@@ -49,7 +50,7 @@ export const JsonNode = ({
     );
   }
 
-  if (typeof value === 'boolean') {
+  if (isBoolean(value)) {
     return (
       <JsonValueNode
         label={label}
