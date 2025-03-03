@@ -4,7 +4,6 @@ import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
-import WebSoftphone from '@/softphone/components/WebSoftphone';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -30,7 +29,6 @@ export const App = () => {
                   <ExceptionHandlerProvider>
                     <HelmetProvider>
                       <AppRouter />
-                      <WebSoftphone />
                     </HelmetProvider>
                   </ExceptionHandlerProvider>
                 </IconsProvider>

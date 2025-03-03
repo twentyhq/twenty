@@ -1,8 +1,16 @@
 /* eslint-disable @nx/workspace-no-state-useref */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable no-console */
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
+import StatusIndicator from '@/softphone/components/StatusPill';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
-  Circle,
   Mic,
   MicOff,
   Phone,
@@ -12,6 +20,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
+import { useRecoilValue } from 'recoil';
 import {
   Invitation,
   Inviter,
@@ -27,6 +36,7 @@ import {
   SessionDescriptionHandler,
   SessionManager,
 } from 'sip.js/lib/platform/web';
+import { useIcons } from 'twenty-ui';
 import defaultCallState from '../constants/defaultCallState';
 import defaultConfig from '../constants/defaultConfig';
 import { useRingTone } from '../hooks/useRingTone';
@@ -37,6 +47,16 @@ import formatTime from '../utils/formatTime';
 import generateAuthorizationHa1 from '../utils/generateAuthorizationHa1';
 import HoldButton from './HoldButton';
 import TransferButton from './TransferButton';
+
+const StyledContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.tertiary};
+  display: flex;
+  flex-direction: column;
+  padding: ${({ theme }) => theme.spacing(3)};
+  width: 300px;
+  position: relative;
+  cursor: grab;
+`;
 
 const WebSoftphone: React.FC = () => {
   const [config, setConfig] = useState<SipConfig>(defaultConfig);
@@ -58,6 +78,26 @@ const WebSoftphone: React.FC = () => {
   );
 
   useRingTone(isRinging, isIncomingCall);
+
+  const { getIcon } = useIcons();
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
+
+  const workspaceMember = workspaceMembers.find(
+    (member: WorkspaceMember) => member.id === currentWorkspaceMember?.id,
+  );
+
+  // const { telephonyExtensions, loading } = useFindAllPABX();
+  const { telephonyExtension, loading: loadingSoftfone } = useGetUserSoftfone({
+    extNum: workspaceMember?.extensionNumber || '',
+  });
+
+  useEffect(() => {
+    console.log('****telephonyExtension', telephonyExtension);
+  }, [telephonyExtension]);
 
   useEffect(() => {
     if (config.username && config.password && config.domain) {
@@ -610,7 +650,10 @@ const WebSoftphone: React.FC = () => {
       );
   };
 
-  // const sendDTMF1 = (tone: string) => {
+  const KeyboradOffIcon = getIcon('IconKeyboardOff');
+  const theme = useTheme();
+
+  // const sendDTMF = (tone: string) => {
   //   console.log('Sending DTMF tone:', tone);
   //   console.log(
   //     'Comparacao',
@@ -651,35 +694,17 @@ const WebSoftphone: React.FC = () => {
 
   return (
     <Draggable>
-      <div className="bg-white rounded-lg shadow-lg p-2 flex items-center gap-2 w-full max-w-full h-auto">
+      <StyledContainer>
         <audio ref={remoteAudioRef} autoPlay />
-
-        {/* Barra de status */}
-        <div className="flex items-center gap-2">
-          <div className="relative group">
-            <Circle
-              className={`w-3 h-3 ${
-                callState.isRegistered
-                  ? 'text-green-500'
-                  : callState.isRegistering
-                    ? 'text-yellow-500'
-                    : 'text-red-500'
-              }`}
-            />
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
-              {callState.isRegistered
-                ? 'Online'
-                : callState.isRegistering
-                  ? 'Registrando'
-                  : 'Offline'}
-            </div>
-          </div>
-          {callState.callStatus && (
-            <span className="text-xs text-gray-600 truncate">
-              {callState.callStatus}
-            </span>
-          )}
-        </div>
+        <StatusIndicator
+          status={
+            callState.isRegistered
+              ? 'online'
+              : callState.isRegistering
+                ? 'registering'
+                : 'offline'
+          }
+        />
 
         {/* Área principal */}
         <div className="flex items-center gap-2 flex-1">
@@ -709,21 +734,27 @@ const WebSoftphone: React.FC = () => {
           ) : (
             <>
               {!callState.isInCall && !callState.callStatus ? (
-                <input
-                  type="text"
-                  placeholder="Digite o número com o código do país e DDD"
+                <TextInput
+                  placeholder="Dial the phone number"
+                  fullWidth={true}
                   value={callState.currentNumber}
                   onChange={(e) => {
                     if (!callState.isInCall) {
-                      const numericValue = e.target.value.replace(/\D/g, '');
+                      const numericValue = e.replace(/\D/g, '');
                       setCallState((prev) => ({
                         ...prev,
                         currentNumber: numericValue,
                       }));
                     }
                   }}
+                  RightIcon={() => (
+                    <KeyboradOffIcon
+                      color={theme.font.color.tertiary}
+                      size={theme.icon.size.md}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  )}
                   disabled={callState.isInCall}
-                  className="flex-1 min-w-0 px-2 py-1 text-xs border rounded-md focus:ring-1"
                   onKeyDown={(e) => {
                     if (
                       e.key === 'Enter' &&
@@ -807,7 +838,7 @@ const WebSoftphone: React.FC = () => {
             </>
           )}
         </div>
-      </div>
+      </StyledContainer>
     </Draggable>
   );
 };

@@ -13,6 +13,7 @@ export const GET_USER_SOFTFONE = gql`
       caller_id_externo
       usuario_autenticacao
       numero
+      senha_sip
     }
   }
 `;

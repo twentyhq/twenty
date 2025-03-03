@@ -16,6 +16,7 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui';
+import WebSoftphone from '../../../../softphone/components/WebSoftphone';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -61,6 +62,13 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
   overflow: hidden;
+`;
+
+const StyledWebSoftphoneContainer = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
 `;
 
 export const DefaultLayout = () => {
@@ -126,6 +134,9 @@ export const DefaultLayout = () => {
         </StyledPageContainer>
         {isMobile && <MobileNavigationBar />}
       </StyledLayout>
+      <StyledWebSoftphoneContainer>
+        <WebSoftphone />
+      </StyledWebSoftphoneContainer>
     </>
   );
 };
