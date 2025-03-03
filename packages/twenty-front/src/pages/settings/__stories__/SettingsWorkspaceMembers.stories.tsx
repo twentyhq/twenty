@@ -31,7 +31,7 @@ export const Default: Story = {
 
     await sleep(1000);
 
-    const buttons = await canvas.getByRole('button');
+    const buttons = await canvas.getAllByRole('button');
 
     expect(
       buttons.findIndex((button) => button.outerHTML.includes('Copy link')),
