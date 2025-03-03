@@ -7,7 +7,6 @@ import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHa
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { useEffect } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
@@ -17,11 +16,6 @@ import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 initialI18nActivate();
 
 export const App = () => {
-  useEffect(() => {
-    const loader = document.getElementById("loader-container");
-    loader?.classList.add("loader--hide");
-  }, []);
-  
   return (
     <RecoilRoot>
       <RecoilURLSyncJSON location={{ part: 'queryParams' }}>

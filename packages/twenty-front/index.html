@@ -61,54 +61,32 @@
     </script>
     <style>
       .loader-container {
-        background: url("/images/placeholders/background/light-noise.jpg");
+        background: url('/images/placeholders/background/light-noise.jpg');
         width: 100%;
         height: 100vh;
-        overflow: hidden;
-        z-index: 999;
       }
 
       .loader-container-dark {
-        background: url("/images/placeholders/dark-background/dark-noise.jpg");
+        background: url('/images/placeholders/dark-background/dark-noise.jpg');
         width: 100%;
         height: 100vh;
-        overflow: hidden;
-        z-index: 999;
-      }
-
-      .loader--hide {
-        display: none;
-      }
-
-      @keyframes load8 {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      img {
-        width: 400px;
       }
     </style>
   </head>
-  <body style="margin: 0; padding: 0">
+  <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <div id="loader-container"></div></div>
+    <!-- <div id="loader-container"></div></div> -->
     <script>
       // TODO should look for user preferences that should be stored in local storage
       // In order to avoid flickering after authentication still not 100% bullet proof
       const isDarkTheme =
         window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const loaderContainer = document.getElementById('loader-container');
       if (isDarkTheme) {
-        loaderContainer.classList.add('loader-container-dark');
-      }else {
-        loaderContainer.classList.add('loader-container');
+        document.body.classList.add('loader-container-dark');
+      } else {
+        document.body.classList.add('loader-container');
       }
     </script>
     <script type="module" src="/src/index.tsx"></script>
