@@ -6,7 +6,7 @@ import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-s
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isUndefined } from '@sniptt/guards';
-import { getCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 
 export const ContextStoreDecorator: Decorator = (Story, context) => {
   const { contextStore } = context.parameters;
@@ -24,7 +24,7 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const objectMetadataItem = getCompanyObjectMetadataItem();
+  const objectMetadataItem = getMockCompanyObjectMetadataItem();
 
   useEffect(() => {
     setCurrentObjectMetadataItem(objectMetadataItem);
