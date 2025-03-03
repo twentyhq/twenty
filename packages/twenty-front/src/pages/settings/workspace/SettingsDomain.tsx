@@ -25,7 +25,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { isDefined } from 'twenty-shared';
-import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -229,12 +228,7 @@ export const SettingsDomain = () => {
         >
           <SettingsPageContainer>
             <SettingsSubdomain />
-            {isCustomDomainEnabled && (
-              <>
-                <SettingsCustomDomainEffect />
-                <SettingsCustomDomain />
-              </>
-            )}
+            {isCustomDomainEnabled && <SettingsCustomDomain />}
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>

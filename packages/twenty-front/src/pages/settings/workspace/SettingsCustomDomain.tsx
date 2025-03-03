@@ -35,6 +35,10 @@ export const SettingsCustomDomain = () => {
 
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
 
+  if (!customDomainRecords && !loading) {
+    checkCustomDomainRecords();
+  }
+
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { t } = useLingui();
