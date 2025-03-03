@@ -560,6 +560,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
   agentId: 'e2dcedef-a3ba-4273-a0d4-b3277f281f78',
+  extensionNumber: 'f3475c8e-2d1a-4979-92ae-bb013e4cedca',
   userDocument: '20202020-a1b2-4c3d-9e8f-123456789abc',
   userPhone: '20202020-b2a1-3d4c-8f9e-987654321cba',
 };

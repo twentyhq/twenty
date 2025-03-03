@@ -16,8 +16,11 @@ import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center
 import { SettingsServiceCenterEditServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterEditServiceLevel';
 import { SettingsServiceCenterNewAgent } from '~/pages/settings/service-center/SettingsServiceCenterNewAgent';
 import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/SettingsServiceCenterNewSector';
+import { SettingsServiceCenterNewTelephonyExtension } from '~/pages/settings/service-center/SettingsServiceCenterNewTelephonyExtension';
 import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/SettingsServiceCenterSectors';
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
+import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
+import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -339,6 +342,18 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.ServiceCenterAgents}
         element={<SettingsServiceCenterAgents />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterTelephony}
+        element={<SettingsServiceCenterTelephony />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterNewTelephonyExtension}
+        element={<SettingsServiceCenterNewTelephonyExtension />}
+      />
+      <Route
+        path={SettingsPath.EditTelephony}
+        element={<SettingsTelephonyEdit />}
       />
       <Route
         path={SettingsPath.ServiceCenterNewAgent}

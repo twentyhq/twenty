@@ -36516,6 +36516,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lucide-react@npm:^0.477.0":
+  version: 0.477.0
+  resolution: "lucide-react@npm:0.477.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/950b21e13875f3fbeaa233ffb470e0200c3a4559fd706a0c80c16f3a401d91acb2bd25848c7dd478da79c74b7fd00582d5114f335dc19ec0190fb130045b19e5
+  languageName: node
+  linkType: hard
+
 "luxon@npm:^3.2.1, luxon@npm:^3.3.0, luxon@npm:~3.5.0":
   version: 3.5.0
   resolution: "luxon@npm:3.5.0"
@@ -42809,6 +42818,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-draggable@npm:^4.4.6":
+  version: 4.4.6
+  resolution: "react-draggable@npm:4.4.6"
+  dependencies:
+    clsx: "npm:^1.1.1"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ">= 16.3.0"
+    react-dom: ">= 16.3.0"
+  checksum: 10c0/1e8cf47414a8554caa68447e5f27749bc40e1eabb4806e2dadcb39ab081d263f517d6aaec5231677e6b425603037c7e3386d1549898f9ffcc98a86cabafb2b9a
+  languageName: node
+  linkType: hard
+
 "react-dropzone@npm:^14.2.3":
   version: 14.2.3
   resolution: "react-dropzone@npm:14.2.3"
@@ -45422,6 +45444,13 @@ __metadata:
   dependencies:
     is-arrayish: "npm:^0.3.1"
   checksum: 10c0/df5e4662a8c750bdba69af4e8263c5d96fe4cd0f9fe4bdfa3cbdeb45d2e869dff640beaaeb1ef0e99db4d8d2ec92f85508c269f50c972174851bc1ae5bd64308
+  languageName: node
+  linkType: hard
+
+"sip.js@npm:^0.21.2":
+  version: 0.21.2
+  resolution: "sip.js@npm:0.21.2"
+  checksum: 10c0/febc4faaed20ec86bbd51f551d724fabbe4b35a45185fc535e142f57fe842dcef7a316bc8b90bbe64736c030a3e31a0f3c450afd2b7f934c94178d3a31149215
   languageName: node
   linkType: hard
 
@@ -48323,6 +48352,7 @@ __metadata:
     lodash.pickby: "npm:^4.6.0"
     lodash.snakecase: "npm:^4.1.1"
     lodash.upperfirst: "npm:^4.3.1"
+    lucide-react: "npm:^0.477.0"
     luxon: "npm:^3.3.0"
     microdiff: "npm:^1.3.2"
     moize: "npm:^6.1.6"
@@ -48355,6 +48385,7 @@ __metadata:
     react-data-grid: "npm:7.0.0-beta.13"
     react-datepicker: "npm:^6.7.1"
     react-dom: "npm:^18.2.0"
+    react-draggable: "npm:^4.4.6"
     react-dropzone: "npm:^14.2.3"
     react-error-boundary: "npm:^4.0.11"
     react-helmet-async: "npm:^1.3.0"
@@ -48379,6 +48410,7 @@ __metadata:
     scroll-into-view: "npm:^1.16.2"
     semver: "npm:^7.5.4"
     sharp: "npm:^0.32.1"
+    sip.js: "npm:^0.21.2"
     slash: "npm:^5.1.0"
     source-map-support: "npm:^0.5.20"
     storybook: "npm:^7.6.3"
