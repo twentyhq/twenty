@@ -54,7 +54,13 @@ export const useHandleResetPassword = () => {
         }
       };
     },
-    [enqueueSnackBar, emailPasswordResetLink, t],
+    [
+      currentUser?.email,
+      workspacePublicData.id,
+      enqueueSnackBar,
+      t,
+      emailPasswordResetLink,
+    ],
   );
 
   return { handleResetPassword };

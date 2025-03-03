@@ -15,7 +15,7 @@ export const ChangePassword = () => {
         description={t`Receive an email containing password update link`}
       />
       <Button
-        onClick={() => handleResetPassword()}
+        onClick={handleResetPassword()}
         variant="secondary"
         title={t`Change Password`}
       />
