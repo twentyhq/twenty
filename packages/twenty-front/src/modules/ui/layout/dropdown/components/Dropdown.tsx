@@ -3,10 +3,8 @@ import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/Dropdown
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
-import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
   Placement,
@@ -67,11 +65,6 @@ export const Dropdown = ({
   avoidPortal,
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
-
-  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
-    dropdownMaxHeightComponentStateV2,
-    dropdownId,
-  );
 
   const isUsingOffset =
     isDefined(dropdownOffset?.x) || isDefined(dropdownOffset?.y);
