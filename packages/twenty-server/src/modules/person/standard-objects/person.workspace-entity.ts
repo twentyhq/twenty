@@ -21,6 +21,7 @@ import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -68,6 +69,7 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
   ['linkedinLinkPrimaryLinkUrl'],
   ['emailsPrimaryEmail'],
 ])
+@WorkspaceIsSearchable()
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.name,

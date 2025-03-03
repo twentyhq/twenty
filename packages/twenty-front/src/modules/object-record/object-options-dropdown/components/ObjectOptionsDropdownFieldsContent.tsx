@@ -8,8 +8,10 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
+  const { t } = useLingui();
   const {
     viewType,
     recordIndexId,
@@ -50,10 +52,10 @@ export const ObjectOptionsDropdownFieldsContent = () => {
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        Fields
+        {t`Fields`}
       </DropdownMenuHeader>
       <ViewFieldsVisibilityDropdownSection
-        title="Visible"
+        title={t`Visible`}
         fields={visibleRecordFields}
         isDraggable
         onDragEnd={handleReorderFields}
@@ -66,7 +68,7 @@ export const ObjectOptionsDropdownFieldsContent = () => {
         <MenuItemNavigate
           onClick={() => onContentChange('hiddenFields')}
           LeftIcon={IconEyeOff}
-          text="Hidden Fields"
+          text={t`Hidden Fields`}
         />
       </DropdownMenuItemsContainer>
     </>

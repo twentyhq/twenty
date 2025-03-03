@@ -10,7 +10,6 @@ import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersE
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
 import { ViewBarSkeletonLoader } from '@/views/components/ViewBarSkeletonLoader';
-import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
@@ -19,6 +18,7 @@ import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types
 import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
 import { ViewBarRecordFilterEffect } from '@/views/components/ViewBarRecordFilterEffect';
+import { ViewBarRecordFilterGroupEffect } from '@/views/components/ViewBarRecordFilterGroupEffect';
 import { ViewBarRecordSortEffect } from '@/views/components/ViewBarRecordSortEffect';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
@@ -48,12 +48,11 @@ export const ViewBar = ({
     <ObjectSortDropdownComponentInstanceContext.Provider
       value={{ instanceId: VIEW_SORT_DROPDOWN_ID }}
     >
+      <ViewBarRecordFilterGroupEffect />
       <ViewBarRecordFilterEffect />
       <ViewBarRecordSortEffect />
       <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
-      <ViewBarSortEffect />
       <QueryParamsFiltersEffect />
-
       <ViewBarPageTitle viewBarId={viewBarId} />
       <TopBar
         className={className}

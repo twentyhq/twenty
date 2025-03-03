@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -32,7 +33,10 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     this.mainDataSource = new DataSource({
       url: environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging: false,
+      logging:
+        environmentService.get('NODE_ENV') === NodeEnvironment.development
+          ? ['query', 'error']
+          : ['error'],
       schema: 'core',
       entities: [
         User,
@@ -50,6 +54,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingEntitlement,
         PostgresCredentials,
         WorkspaceSSOIdentityProvider,
+        ApprovedAccessDomain,
         TwoFactorMethod,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',

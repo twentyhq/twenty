@@ -3,9 +3,12 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
+import {
+  getImageAbsoluteURI,
+  getLogoUrlFromDomainName,
+  isDefined,
+} from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { getLogoUrlFromDomainName } from '~/utils';
 import { getImageIdentifierFieldValue } from './getImageIdentifierFieldValue';
 
 export const getAvatarUrl = (

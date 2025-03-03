@@ -18,6 +18,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     isActive: true,
     isSystem: false,
     isRemote: false,
+    isSearchable: false,
     labelIdentifierFieldMetadataId: '06b33746-5293-4d07-9f7f-ebf5ad396064',
     imageIdentifierFieldMetadataId: null,
     isLabelSyncedWithName: true,

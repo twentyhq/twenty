@@ -11,7 +11,7 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceFieldOptions<
-  T extends FieldMetadataType | 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > {
   standardId: string;
   type: T;

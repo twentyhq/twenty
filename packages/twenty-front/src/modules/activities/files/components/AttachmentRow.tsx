@@ -16,7 +16,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
+import {
+  IconCalendar,
+  OverflowingTextWithTooltip,
+  isModifiedEvent,
+} from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
@@ -145,7 +149,7 @@ export const AttachmentRow = ({
 
   const handleOpenDocument = (e: React.MouseEvent) => {
     // Cmd/Ctrl+click opens new tab, right click opens context menu
-    if (e.metaKey || e.ctrlKey || e.button === 2) {
+    if (isModifiedEvent(e) || e.button === 2) {
       return;
     }
 

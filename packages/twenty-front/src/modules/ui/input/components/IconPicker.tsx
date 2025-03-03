@@ -22,6 +22,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
+import { t } from '@lingui/core/macro';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -182,7 +183,7 @@ export const IconPicker = ({
           >
             <DropdownMenu width={176}>
               <DropdownMenuSearchInput
-                placeholder="Search icon"
+                placeholder={t`Search icon`}
                 autoFocus
                 onChange={(event) => {
                   setSearchString(event.target.value);

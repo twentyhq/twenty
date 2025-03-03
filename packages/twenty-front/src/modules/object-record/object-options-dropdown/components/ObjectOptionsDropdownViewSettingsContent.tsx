@@ -15,9 +15,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownViewSettingsContent = () => {
+  const { t } = useLingui();
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const {
@@ -37,27 +41,33 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        View settings
+        {t`View settings`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        <MenuItem
-          onClick={() => onContentChange('viewSettingsOpenIn')}
-          LeftIcon={
-            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-              ? IconLayoutSidebarRight
-              : IconLayoutNavbar
-          }
-          text="Open in"
-          contextualText={
-            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-              ? 'Side Panel'
-              : 'Record Page'
-          }
-          hasSubMenu
-        />
+        {isCommandMenuV2Enabled && (
+          <MenuItem
+            onClick={() => onContentChange('viewSettingsOpenIn')}
+            LeftIcon={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? IconLayoutSidebarRight
+                : IconLayoutNavbar
+            }
+            text={t`Open in`}
+            contextualText={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? t`Side Panel`
+                : t`Record Page`
+            }
+            hasSubMenu
+          />
+        )}
         {viewType === ViewType.Kanban && (
           <MenuItemToggle
             LeftIcon={IconBaselineDensitySmall}
@@ -68,7 +78,7 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
               )
             }
             toggled={isCompactModeActive}
-            text="Compact view"
+            text={t`Compact view`}
             toggleSize="small"
           />
         )}

@@ -1,15 +1,16 @@
-import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
+import { APP_LOCALES } from 'twenty-shared';
 
 type WarnSuspendedWorkspaceEmailProps = {
   daysSinceInactive: number;
   inactiveDaysBeforeDelete: number;
   userName: string;
   workspaceDisplayName: string | undefined;
+  locale: keyof typeof APP_LOCALES;
 };
 
 export const WarnSuspendedWorkspaceEmail = ({
@@ -17,6 +18,7 @@ export const WarnSuspendedWorkspaceEmail = ({
   inactiveDaysBeforeDelete,
   userName,
   workspaceDisplayName,
+  locale,
 }: WarnSuspendedWorkspaceEmailProps) => {
   const daysLeft = inactiveDaysBeforeDelete - daysSinceInactive;
   const dayOrDays = daysLeft > 1 ? 'days' : 'day';
@@ -25,8 +27,8 @@ export const WarnSuspendedWorkspaceEmail = ({
   const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
 
   return (
-    <BaseEmail width={333} locale="en">
-      <Title value="Suspended Workspace 😴" />
+    <BaseEmail width={333} locale={locale}>
+      <Title value={<Trans>Suspended Workspace </Trans>} />
       <MainText>
         {helloString},
         <br />
@@ -50,7 +52,7 @@ export const WarnSuspendedWorkspaceEmail = ({
       </MainText>
       <CallToAction
         href="https://app.twenty.com/settings/billing"
-        value={t`Update your subscription`}
+        value={<Trans>Update your subscription</Trans>}
       />
     </BaseEmail>
   );

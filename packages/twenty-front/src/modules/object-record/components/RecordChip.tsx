@@ -1,19 +1,28 @@
-import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
+import {
+  AvatarChip,
+  AvatarChipVariant,
+  ChipSize,
+  LinkAvatarChip,
+  isModifiedEvent,
+} from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
-
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
   variant?: AvatarChipVariant;
+  forceDisableClick?: boolean;
+  maxWidth?: number;
+  to?: string | undefined;
+  size?: ChipSize;
+  isLabelHidden?: boolean;
 };
 
 export const RecordChip = ({
@@ -21,6 +30,11 @@ export const RecordChip = ({
   record,
   className,
   variant,
+  maxWidth,
+  to,
+  size,
+  forceDisableClick = false,
+  isLabelHidden = false,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -29,32 +43,57 @@ export const RecordChip = ({
 
   const { openRecordInCommandMenu } = useCommandMenu();
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useRecoilValue(
+    recordIndexOpenRecordInSelector,
+  );
 
-  const handleClick = (e: MouseEvent<Element>) => {
-    e.stopPropagation();
-    if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-      openRecordInCommandMenu({
-        recordId: record.id,
-        objectNameSingular,
-      });
-    }
-  };
+  // TODO temporary until we create a record show page for Workspaces members
+  if (forceDisableClick) {
+    return (
+      <AvatarChip
+        size={size}
+        maxWidth={maxWidth}
+        placeholderColorSeed={record.id}
+        name={recordChipData.name}
+        avatarType={recordChipData.avatarType}
+        avatarUrl={recordChipData.avatarUrl ?? ''}
+        className={className}
+      />
+    );
+  }
+
+  const isSidePanelViewOpenRecordInType =
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+  const onClick = isSidePanelViewOpenRecordInType
+    ? () =>
+        openRecordInCommandMenu({
+          recordId: record.id,
+          objectNameSingular,
+        })
+    : undefined;
 
   return (
-    <AvatarChip
+    <LinkAvatarChip
+      size={size}
+      maxWidth={maxWidth}
       placeholderColorSeed={record.id}
       name={recordChipData.name}
+      isLabelHidden={isLabelHidden}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
       variant={variant}
-      onClick={handleClick}
-      to={
-        recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-          ? getLinkToShowPage(objectNameSingular, record)
-          : undefined
-      }
+      to={to ?? getLinkToShowPage(objectNameSingular, record)}
+      onClick={(clickEvent) => {
+        // TODO refactor wrapper event listener to avoid colliding events
+        clickEvent.stopPropagation();
+
+        const isModifiedEventResult = isModifiedEvent(clickEvent);
+        if (isSidePanelViewOpenRecordInType && !isModifiedEventResult) {
+          clickEvent.preventDefault();
+          onClick?.();
+        }
+      }}
     />
   );
 };

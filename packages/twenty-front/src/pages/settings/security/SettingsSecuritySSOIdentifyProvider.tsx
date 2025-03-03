@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import SettingsSSOIdentitiesProvidersForm from '@/settings/security/components/SettingsSSOIdentitiesProvidersForm';
+import SettingsSSOIdentitiesProvidersForm from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm';
 import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreateSSOIdentityProvider';
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { sSOIdentityProviderDefaultValues } from '@/settings/security/utils/sSOIdentityProviderDefaultValues';
@@ -11,10 +11,12 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans } from '@lingui/react/macro';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { t } from '@lingui/core/macro';
 
 export const SettingsSecuritySSOIdentifyProvider = () => {
   const navigate = useNavigateSettings();
@@ -22,8 +24,8 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
   const { enqueueSnackBar } = useSnackBar();
   const { createSSOIdentityProvider } = useCreateSSOIdentityProvider();
 
-  const formConfig = useForm<SettingSecurityNewSSOIdentityFormValues>({
-    mode: 'onChange',
+  const form = useForm<SettingSecurityNewSSOIdentityFormValues>({
+    mode: 'onSubmit',
     resolver: zodResolver(SSOIdentitiesProvidersParamsSchema),
     defaultValues: Object.values(sSOIdentityProviderDefaultValues).reduce(
       (acc, fn) => ({ ...acc, ...fn() }),
@@ -33,12 +35,12 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
 
   const handleSave = async () => {
     try {
-      const type = formConfig.getValues('type');
+      const type = form.getValues('type');
 
       await createSSOIdentityProvider(
         SSOIdentitiesProvidersParamsSchema.parse(
           pick(
-            formConfig.getValues(),
+            form.getValues(),
             Object.keys(sSOIdentityProviderDefaultValues[type]()),
           ),
         ),
@@ -53,33 +55,34 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title="New SSO Configuration"
-      actionButton={
-        <SaveAndCancelButtons
-          isSaveDisabled={!formConfig.formState.isValid}
-          onCancel={() => navigate(SettingsPath.Security)}
-          onSave={handleSave}
-        />
-      }
-      links={[
-        {
-          children: 'Workspace',
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: 'Security',
-          href: getSettingsPath(SettingsPath.Security),
-        },
-        { children: 'New' },
-      ]}
-    >
+    <form onSubmit={form.handleSubmit(handleSave)}>
       <FormProvider
         // eslint-disable-next-line react/jsx-props-no-spreading
-        {...formConfig}
+        {...form}
       >
-        <SettingsSSOIdentitiesProvidersForm />
+        <SubMenuTopBarContainer
+          title={t`New SSO Configuration`}
+          actionButton={
+            <SaveAndCancelButtons
+              onCancel={() => navigate(SettingsPath.Security)}
+              isSaveDisabled={form.formState.isSubmitting}
+            />
+          }
+          links={[
+            {
+              children: <Trans>Workspace</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            {
+              children: <Trans>Security</Trans>,
+              href: getSettingsPath(SettingsPath.Security),
+            },
+            { children: <Trans>New SSO provider</Trans> },
+          ]}
+        >
+          <SettingsSSOIdentitiesProvidersForm />
+        </SubMenuTopBarContainer>
       </FormProvider>
-    </SubMenuTopBarContainer>
+    </form>
   );
 };

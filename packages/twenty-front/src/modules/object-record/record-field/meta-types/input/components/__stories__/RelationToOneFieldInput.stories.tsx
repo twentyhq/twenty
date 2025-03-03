@@ -18,7 +18,7 @@ import {
 } from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
-import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui';
 import {
   RelationToOneFieldInput,

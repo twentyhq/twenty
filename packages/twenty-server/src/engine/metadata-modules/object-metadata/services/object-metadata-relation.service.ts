@@ -73,7 +73,7 @@ export class ObjectMetadataRelationService {
     createdObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
     relationObjectMetadataStandardId: string,
   ) {
@@ -109,7 +109,7 @@ export class ObjectMetadataRelationService {
     relatedObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
   ) {
     return this.fieldMetadataRepository.save([
@@ -340,7 +340,7 @@ export class ObjectMetadataRelationService {
     relatedObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | FieldMetadataSettings<FieldMetadataType>
       | undefined,
     isUpdate = false,
   ) {

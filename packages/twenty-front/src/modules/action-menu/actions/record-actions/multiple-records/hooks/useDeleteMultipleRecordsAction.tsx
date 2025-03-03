@@ -1,4 +1,5 @@
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -11,6 +12,7 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -22,10 +24,21 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
       useState(false);
 
+    const contextStoreCurrentViewId = useRecoilComponentValueV2(
+      contextStoreCurrentViewIdComponentState,
+    );
+
+    if (!contextStoreCurrentViewId) {
+      throw new Error('Current view ID is not defined');
+    }
+
     const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
     const { resetTableRowSelection } = useRecordTable({
-      recordTableId: objectMetadataItem.namePlural,
+      recordTableId: getRecordIndexIdFromObjectNamePluralAndViewId(
+        objectMetadataItem.namePlural,
+        contextStoreCurrentViewId,
+      ),
     });
 
     const { deleteManyRecords } = useDeleteManyRecords({

@@ -5,15 +5,16 @@ import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useOb
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
-import { useRecordPickerRecordsOptions } from '@/object-record/relation-picker/hooks/useRecordPickerRecordsOptions';
-import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
+import { useRecordPickerRecordsOptions } from '@/object-record/record-picker/hooks/useRecordPickerRecordsOptions';
+import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RelationFromManyFieldInputMultiRecordsEffect = () => {
-  const { fieldValue, fieldDefinition } = useRelationField<RecordForSelect[]>();
+  const { fieldValue, fieldDefinition } =
+    useRelationField<SingleRecordPickerRecord[]>();
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordPickerComponentInstanceContext,
   );
@@ -113,7 +114,9 @@ export const RelationFromManyFieldInputMultiRecordsEffect = () => {
   useEffect(() => {
     setObjectRecordMultiSelectCheckedRecordsIds(
       fieldValue
-        ? fieldValue.map((fieldValueItem: RecordForSelect) => fieldValueItem.id)
+        ? fieldValue.map(
+            (fieldValueItem: SingleRecordPickerRecord) => fieldValueItem.id,
+          )
         : [],
     );
   }, [fieldValue, setObjectRecordMultiSelectCheckedRecordsIds]);
