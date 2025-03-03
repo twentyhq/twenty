@@ -8,10 +8,10 @@ const StyledList = styled.ul<{ depth: number }>`
   display: grid;
   row-gap: ${({ theme }) => theme.spacing(2)};
 
-  ${({ depth }) =>
+  ${({ theme, depth }) =>
     depth > 0 &&
     css`
-      padding-left: 32px;
+      padding-left: ${theme.spacing(8)};
     `}
 `;
 

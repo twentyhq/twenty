@@ -17,7 +17,7 @@ type JsonValueNodeProps = {
     }
   | {
       label?: never;
-      Icon?: any;
+      Icon?: unknown;
     }
 );
 
