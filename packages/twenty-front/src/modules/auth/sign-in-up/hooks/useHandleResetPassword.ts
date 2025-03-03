@@ -56,7 +56,7 @@ export const useHandleResetPassword = () => {
     },
     [
       currentUser?.email,
-      workspacePublicData.id,
+      workspacePublicData?.id,
       enqueueSnackBar,
       t,
       emailPasswordResetLink,
