@@ -254,31 +254,25 @@ export class AdminPanelHealthService {
     }
 
     try {
-      const availablePoints = metrics.length;
-      const result: number[] = [];
-
-      for (let i = 0; i < availablePoints; i += samplingFactor) {
-        let maxValueInSample = 0;
-
-        for (let j = 0; j < samplingFactor && i + j < availablePoints; j++) {
-          const index = i + j;
-          const count = metrics[index] ?? 0;
-
-          maxValueInSample = Math.max(maxValueInSample, count);
-        }
-
-        result.push(maxValueInSample);
-      }
-
-      const reversedResult = result.reverse();
-
       const targetPoints = Math.ceil(pointsNeeded / samplingFactor);
 
-      while (reversedResult.length < targetPoints) {
-        reversedResult.push(0);
+      const relevantData = metrics.slice(-pointsNeeded);
+      const result: number[] = [];
+
+      const backfillCount = Math.max(
+        0,
+        targetPoints - Math.ceil(relevantData.length / samplingFactor),
+      );
+
+      result.push(...Array(backfillCount).fill(0));
+
+      for (let i = 0; i < relevantData.length; i += samplingFactor) {
+        const chunk = relevantData.slice(i, i + samplingFactor);
+
+        result.push(Math.max(...chunk));
       }
 
-      return reversedResult;
+      return result.slice(0, targetPoints);
     } catch (error) {
       this.logger.error(`Error extracting metrics data: ${error.message}`);
       throw error;

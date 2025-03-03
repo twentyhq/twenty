@@ -401,6 +401,153 @@ describe('AdminPanelHealthService', () => {
         'Error getting metrics for messaging-queue: Metrics error',
       );
     });
+
+    describe('backfilling behavior', () => {
+      it('should handle partial data with correct historical backfilling', async () => {
+        // Test with 40 recent points for 4-hour range (needs 240 points)
+        const partialData = Array(40)
+          .fill(0)
+          .map((_, i) => i + 1);
+
+        workerHealth.getQueueDetails.mockResolvedValue({
+          queueName: 'test-queue',
+          workers: 1,
+          status: 'up',
+          metrics: {
+            failed: 0,
+            completed: 0,
+            waiting: 0,
+            active: 0,
+            delayed: 0,
+            failureRate: 0,
+            completedData: partialData,
+            failedData: partialData,
+          },
+        });
+
+        const result = await service.getQueueMetrics(
+          MessageQueue.messagingQueue,
+          QueueMetricsTimeRange.FourHours,
+        );
+
+        // Should have 240 total points
+        expect(result.data[0].data).toHaveLength(240);
+
+        // First 200 points should be zero (historical backfill)
+        const historicalPoints = result.data[0].data.slice(0, 200);
+
+        expect(historicalPoints.every((point) => point.y === 0)).toBe(true);
+
+        // Last 40 points should be actual data
+        const actualDataPoints = result.data[0].data.slice(200);
+
+        expect(actualDataPoints.every((point) => point.y > 0)).toBe(true);
+
+        // Verify chronological order (increasing values)
+        const nonZeroValues = actualDataPoints.map((point) => point.y);
+
+        for (let i = 1; i < nonZeroValues.length; i++) {
+          expect(nonZeroValues[i]).toBeGreaterThan(nonZeroValues[i - 1]);
+        }
+      });
+
+      it('should handle completely empty data with full backfilling', async () => {
+        workerHealth.getQueueDetails.mockResolvedValue({
+          queueName: 'test-queue',
+          workers: 1,
+          status: 'up',
+          metrics: {
+            failed: 0,
+            completed: 0,
+            waiting: 0,
+            active: 0,
+            delayed: 0,
+            failureRate: 0,
+            completedData: [],
+            failedData: [],
+          },
+        });
+
+        const result = await service.getQueueMetrics(
+          MessageQueue.messagingQueue,
+          QueueMetricsTimeRange.OneHour,
+        );
+
+        // Should have 60 points for one hour
+        expect(result.data[0].data).toHaveLength(60);
+        // All points should be zero
+        expect(result.data[0].data.every((point) => point.y === 0)).toBe(true);
+      });
+    });
+
+    describe('sampling behavior', () => {
+      it('should correctly sample data for different time ranges', async () => {
+        const testCases = [
+          {
+            timeRange: QueueMetricsTimeRange.OneHour,
+            expectedPoints: 60,
+            samplingFactor: 1,
+          },
+          {
+            timeRange: QueueMetricsTimeRange.FourHours,
+            expectedPoints: 240,
+            samplingFactor: 1,
+          },
+          {
+            timeRange: QueueMetricsTimeRange.OneDay,
+            expectedPoints: 240,
+            samplingFactor: 6,
+          },
+        ];
+
+        for (const testCase of testCases) {
+          // Create test data with non-zero values
+          const testData = Array(testCase.expectedPoints * 2)
+            .fill(0)
+            .map((_, i) => i + 1); // Start from 1 to avoid zero values
+
+          workerHealth.getQueueDetails.mockResolvedValue({
+            queueName: 'test-queue',
+            workers: 1,
+            status: 'up',
+            metrics: {
+              failed: 0,
+              completed: 0,
+              waiting: 0,
+              active: 0,
+              delayed: 0,
+              failureRate: 0,
+              completedData: testData,
+              failedData: testData,
+            },
+          });
+
+          const result = await service.getQueueMetrics(
+            MessageQueue.messagingQueue,
+            testCase.timeRange,
+          );
+
+          expect(result.data[0].data).toHaveLength(testCase.expectedPoints);
+
+          if (testCase.samplingFactor > 1) {
+            const sampledData = result.data[0].data;
+
+            for (let i = 0; i < sampledData.length; i++) {
+              const start = i * testCase.samplingFactor;
+              const end = start + testCase.samplingFactor;
+              const originalDataSlice = testData.slice(start, end);
+
+              if (originalDataSlice.length > 0) {
+                // Add this check
+                const maxInSlice = Math.max(...originalDataSlice);
+
+                expect(sampledData[i].y).toBeLessThanOrEqual(maxInSlice);
+              }
+            }
+          }
+        }
+      });
+    });
   });
 
   describe('getPointsConfiguration', () => {
