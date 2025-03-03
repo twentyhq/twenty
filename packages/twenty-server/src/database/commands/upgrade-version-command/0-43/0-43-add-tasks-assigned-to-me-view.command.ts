@@ -1,15 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
+import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { isCommandLogger } from 'src/database/commands/logger';
-import { MigrationCommand } from 'src/database/commands/migration-command/decorators/migration-command.decorator';
 import {
-  MaintainedWorkspacesMigrationCommandOptions,
-  MaintainedWorkspacesMigrationCommandRunner,
-} from 'src/database/commands/migration-command/maintained-workspaces-migration-command.runner';
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
+} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -24,12 +23,11 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
-@MigrationCommand({
-  name: 'add-tasks-assigned-to-me-view',
+@Command({
+  name: 'upgrade:0-43:add-tasks-assigned-to-me-view',
   description: 'Add tasks assigned to me view',
-  version: '0.43',
 })
-export class AddTasksAssignedToMeViewCommand extends MaintainedWorkspacesMigrationCommandRunner {
+export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -43,57 +41,25 @@ export class AddTasksAssignedToMeViewCommand extends MaintainedWorkspacesMigrati
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  async runMigrationCommandOnMaintainedWorkspaces(
-    _passedParam: string[],
-    options: MaintainedWorkspacesMigrationCommandOptions,
-    workspaceIds: string[],
-  ): Promise<void> {
-    this.logger.log('Running command to create many to one relations');
+  override async runOnWorkspace({
+    index,
+    total,
+    workspaceId,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    this.logger.log(
+      `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
+    );
 
-    if (isCommandLogger(this.logger)) {
-      this.logger.setVerbose(options.verbose ?? false);
-    }
+    await this.createTasksAssignedToMeView(workspaceId);
 
-    try {
-      for (const [index, workspaceId] of workspaceIds.entries()) {
-        await this.processWorkspace(workspaceId, index, workspaceIds.length);
-      }
-
-      this.logger.log(chalk.green('Command completed!'));
-    } catch (error) {
-      this.logger.log(chalk.red('Error in workspace'));
-    }
-  }
-
-  private async processWorkspace(
-    workspaceId: string,
-    index: number,
-    total: number,
-  ): Promise<void> {
-    try {
-      this.logger.log(
-        `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
-      );
-
-      const viewId = await this.createTasksAssignedToMeView(workspaceId);
-
-      await this.createTasksAssignedToMeViewGroups(workspaceId, viewId);
-
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        workspaceId,
-      );
-
-      this.logger.log(
-        chalk.green(`Command completed for workspace ${workspaceId}.`),
-      );
-    } catch {
-      this.logger.log(chalk.red(`Error in workspace ${workspaceId}.`));
-    }
+    this.logger.log(
+      chalk.green(`Command completed for workspace ${workspaceId}.`),
+    );
   }
 
   private async createTasksAssignedToMeView(
     workspaceId: string,
-  ): Promise<string> {
+  ): Promise<void> {
     const objectMetadata = await this.objectMetadataRepository.find({
       where: { workspaceId },
       relations: ['fields'],
@@ -135,9 +101,13 @@ export class AddTasksAssignedToMeViewCommand extends MaintainedWorkspacesMigrati
     });
 
     if (existingView) {
-      throw new Error(
-        `"Assigned to Me" view already exists for workspace ${workspaceId}`,
+      this.logger.log(
+        chalk.yellow(
+          `"Assigned to Me" view already exists for workspace ${workspaceId}`,
+        ),
       );
+
+      return;
     }
 
     const viewDefinition = tasksAssignedToMeView(objectMetadataMap);
@@ -191,7 +161,7 @@ export class AddTasksAssignedToMeViewCommand extends MaintainedWorkspacesMigrati
       await viewFilterRepository.save(viewFilters);
     }
 
-    return insertedView.id;
+    await this.createTasksAssignedToMeViewGroups(workspaceId, insertedView.id);
   }
 
   private async createTasksAssignedToMeViewGroups(

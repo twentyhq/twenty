@@ -9,7 +9,7 @@ import {
   getJestMetadataAndApolloMocksAndActionMenuWrapper,
 } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { useDestroyMultipleRecordsAction } from '../useDestroyMultipleRecordsAction';
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
@@ -20,10 +20,12 @@ const personMockObjectMetadataItemDeletedAtField =
 if (personMockObjectMetadataItemDeletedAtField === undefined)
   throw new Error('Should never occur');
 
-const [firstPeopleMock, secondPeopleMock] = getPeopleMock().map((record) => ({
-  ...record,
-  deletedAt: new Date().toISOString(),
-}));
+const [firstPeopleMock, secondPeopleMock] = getPeopleRecordConnectionMock().map(
+  (record) => ({
+    ...record,
+    deletedAt: new Date().toISOString(),
+  }),
+);
 
 const destroyManyRecordsMock = jest.fn();
 const resetTableRowSelectionMock = jest.fn();
@@ -56,6 +58,7 @@ const getWrapper = (
     componentInstanceId: '1',
     contextStoreCurrentObjectMetadataNameSingular:
       personMockObjectMetadataItem.nameSingular,
+    contextStoreCurrentViewId: 'my-view-id',
     contextStoreTargetedRecordsRule: {
       mode: 'selection',
       selectedRecordIds: [firstPeopleMock.id, secondPeopleMock.id],

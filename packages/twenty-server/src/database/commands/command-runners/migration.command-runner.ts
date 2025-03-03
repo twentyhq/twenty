@@ -3,23 +3,16 @@ import { Logger } from '@nestjs/common';
 import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 
-import { MigrationCommandInterface } from 'src/database/commands/migration-command/interfaces/migration-command.interface';
-
 import { CommandLogger } from 'src/database/commands/logger';
 
 export type MigrationCommandOptions = {
-  workspaceId?: string;
   dryRun?: boolean;
   verbose?: boolean;
 };
 
-export abstract class MigrationCommandRunner<
-    Options extends MigrationCommandOptions = MigrationCommandOptions,
-  >
-  extends CommandRunner
-  implements MigrationCommandInterface<Options>
-{
+export abstract class MigrationCommandRunner extends CommandRunner {
   protected logger: CommandLogger | Logger;
+
   constructor() {
     super();
     this.logger = new CommandLogger({
@@ -46,7 +39,10 @@ export abstract class MigrationCommandRunner<
     return true;
   }
 
-  override async run(passedParams: string[], options: Options): Promise<void> {
+  override async run(
+    passedParams: string[],
+    options: MigrationCommandOptions,
+  ): Promise<void> {
     if (options.verbose) {
       this.logger = new CommandLogger({
         verbose: true,
@@ -64,8 +60,8 @@ export abstract class MigrationCommandRunner<
     }
   }
 
-  abstract runMigrationCommand(
+  protected abstract runMigrationCommand(
     passedParams: string[],
-    options: Options,
+    options: MigrationCommandOptions,
   ): Promise<void>;
 }
