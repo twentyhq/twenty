@@ -16,22 +16,21 @@ import {
 
 const StyledMainText = styled.div`
   flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 `;
 
 const StyledContextualText = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   font-family: inherit;
-
   font-size: inherit;
   font-weight: inherit;
   max-width: 100%;
   overflow: hidden;
-
-  text-decoration: inherit;
   text-overflow: ellipsis;
-
   white-space: nowrap;
-
   padding-left: ${({ theme }) => theme.spacing(1)};
   flex-shrink: 1;
 `;
