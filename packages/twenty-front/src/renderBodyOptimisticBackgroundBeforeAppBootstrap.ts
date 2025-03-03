@@ -1,5 +1,7 @@
 // TODO consume theme from twenty-ui after its migration as a package, at the moment the bunlde is too big
+// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const THEME_LIGHT_BACKGROUND_TERTIARY = '#f1f1f1';
+// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const THEME_DARK_BACKGROUND_TERTIARY = '#1d1d1d';
 
 // TODO should search in local storage for user last session appearance preferences
