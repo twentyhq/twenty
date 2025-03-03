@@ -31,6 +31,8 @@ const StyledIconWrapper = styled.div<{ loading?: boolean }>`
   transform: translateY(-50%);
 
   width: ${({ loading }) => (loading ? 0 : '100%')};
+
+  pointer-events: none;
 `;
 
 const StyledLoader = styled.div<{ loading?: boolean }>`
