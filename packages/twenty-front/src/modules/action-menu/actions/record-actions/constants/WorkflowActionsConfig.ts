@@ -3,6 +3,7 @@ import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-ac
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
+import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -40,6 +41,7 @@ import {
   IconPlayerPlay,
   IconPlus,
   IconPower,
+  IconRotate2,
   IconTrash,
   IconTrashX,
 } from 'twenty-ui';
@@ -52,7 +54,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
 > = {
   createNewRecord: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
     label: msg`Create new record`,
     shortLabel: msg`New record`,
@@ -277,7 +279,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
   },
   exportView: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: msg`Export view`,
     shortLabel: msg`Export`,
@@ -300,5 +302,18 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     isPinned: true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDestroyMultipleRecordsAction,
+  },
+  seeDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
+    label: msg`See deleted records`,
+    shortLabel: msg`Deleted records`,
+    position: 18,
+    Icon: IconRotate2,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
 };

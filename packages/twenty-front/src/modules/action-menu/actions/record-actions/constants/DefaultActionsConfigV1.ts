@@ -1,6 +1,7 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
@@ -17,6 +18,7 @@ import {
 import { msg } from '@lingui/core/macro';
 import {
   IconDatabaseExport,
+  IconFileImport,
   IconHeart,
   IconHeartOff,
   IconRotate2,
@@ -121,5 +123,18 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
+  },
+  importRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
+    label: msg`Import records`,
+    shortLabel: msg`Import`,
+    position: 7,
+    Icon: IconFileImport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useImportRecordsNoSelectionRecordAction,
   },
 };
