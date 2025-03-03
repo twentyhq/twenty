@@ -230,6 +230,7 @@ export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspa
       const workspaceDataSource =
         await this.twentyORMGlobalManager.getDataSourceForWorkspace(
           workspaceId,
+          false,
         );
 
       const rows = await workspaceDataSource.query(
