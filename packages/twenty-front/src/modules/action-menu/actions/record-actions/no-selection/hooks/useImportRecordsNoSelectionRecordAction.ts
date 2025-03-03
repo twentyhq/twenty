@@ -3,7 +3,7 @@ import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spr
 
 export const useImportRecordsNoSelectionRecordAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
-    const { openObjectRecordsSpreasheetImportDialog } =
+    const { openObjectRecordsSpreadsheetImportDialog } =
       useOpenObjectRecordsSpreadsheetImportDialog(
         objectMetadataItem.nameSingular,
       );
@@ -11,7 +11,7 @@ export const useImportRecordsNoSelectionRecordAction: ActionHookWithObjectMetada
     return {
       shouldBeRegistered: true,
       onClick: () => {
-        openObjectRecordsSpreasheetImportDialog();
+        openObjectRecordsSpreadsheetImportDialog();
       },
     };
   };
