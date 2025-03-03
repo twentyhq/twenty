@@ -76,11 +76,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsRichTextV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsNewRelationEnabled,
         workspaceId: workspaceId,
         value: false,

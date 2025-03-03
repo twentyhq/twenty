@@ -15,6 +15,7 @@ export interface ReflectMetadataTypeMap {
   ['workspace:is-unique-metadata-args']: true;
   ['workspace:duplicate-criteria-metadata-args']: WorkspaceEntityDuplicateCriteria[];
   ['environment-variables']: EnvironmentVariablesMetadataMap;
+  ['workspace:is-searchable-metadata-args']: boolean;
 }
 
 export class TypedReflect {

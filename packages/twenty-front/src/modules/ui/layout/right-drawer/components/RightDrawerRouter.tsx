@@ -9,8 +9,8 @@ import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isR
 
 import { RightDrawerContainer } from '@/ui/layout/right-drawer/components/RightDrawerContainer';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
-import { ComponentByRightDrawerPage } from '@/ui/layout/right-drawer/types/ComponentByRightDrawerPage';
 import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStep';
+import { RightDrawerWorkflowRunViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowRunViewStep';
 import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStep';
 import { RightDrawerWorkflowSelectAction } from '@/workflow/workflow-steps/workflow-actions/components/RightDrawerWorkflowSelectAction';
 import { RightDrawerWorkflowSelectTriggerType } from '@/workflow/workflow-trigger/components/RightDrawerWorkflowSelectTriggerType';
@@ -28,7 +28,7 @@ const StyledRightDrawerBody = styled.div`
   position: relative;
 `;
 
-const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
+const RIGHT_DRAWER_PAGES_CONFIG = {
   [RightDrawerPages.ViewEmailThread]: <RightDrawerEmailThread />,
   [RightDrawerPages.ViewCalendarEvent]: <RightDrawerCalendarEvent />,
   [RightDrawerPages.ViewRecord]: <RightDrawerRecord />,
@@ -41,7 +41,8 @@ const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
   ),
   [RightDrawerPages.WorkflowStepEdit]: <RightDrawerWorkflowEditStep />,
   [RightDrawerPages.WorkflowStepView]: <RightDrawerWorkflowViewStep />,
-};
+  [RightDrawerPages.WorkflowRunStepView]: <RightDrawerWorkflowRunViewStep />,
+} satisfies Record<RightDrawerPages, JSX.Element>;
 
 export const RightDrawerRouter = () => {
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);

@@ -16,6 +16,7 @@ import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -49,19 +50,19 @@ const mockWorkspaceWithFeatureFlag = {
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: 'command-menu' }}
+      value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
     >
       <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: 'command-menu' }}
+        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
       >
         <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: 'command-menu' }}
+          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
           <ContextStoreComponentInstanceContext.Provider
-            value={{ instanceId: 'command-menu' }}
+            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
           >
             <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'command-menu' }}
+              value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
               <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
                 <Story />

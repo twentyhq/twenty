@@ -1,3 +1,4 @@
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
@@ -14,7 +15,7 @@ export const useSetRecordGroup = () => {
         const objectMetadataItem = snapshot
           .getLoadable(
             contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
-              instanceId: 'main-context-store',
+              instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
             }),
           )
           .getValue();

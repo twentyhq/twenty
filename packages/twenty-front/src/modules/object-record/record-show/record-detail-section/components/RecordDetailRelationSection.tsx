@@ -219,6 +219,7 @@ export const RecordDetailRelationSection = ({
                       <>
                         <RelationFromManyFieldInputMultiRecordsEffect />
                         <MultipleRecordPicker
+                          componentInstanceId={dropdownId}
                           onCreate={() => {
                             closeDropdown();
                             createNewRecordAndOpenRightDrawer?.();

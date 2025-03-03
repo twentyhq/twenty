@@ -7,6 +7,7 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code.workflow-action';
+import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
@@ -23,6 +24,7 @@ export class WorkflowExecutorFactory {
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
     private readonly deleteRecordWorkflowAction: DeleteRecordWorkflowAction,
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
+    private readonly formWorkflowAction: FormWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowExecutor {
@@ -39,6 +41,8 @@ export class WorkflowExecutorFactory {
         return this.deleteRecordWorkflowAction;
       case WorkflowActionType.FIND_RECORDS:
         return this.findRecordsWorkflowAction;
+      case WorkflowActionType.FORM:
+        return this.formWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,

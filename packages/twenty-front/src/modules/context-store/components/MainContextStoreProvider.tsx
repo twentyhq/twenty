@@ -73,7 +73,6 @@ export const MainContextStoreProvider = () => {
 
   return (
     <MainContextStoreProviderEffect
-      mainContextStoreComponentInstanceIdToSet={'main-context-store'}
       viewId={viewId}
       objectMetadataItem={objectMetadataItem}
       pageName={pageName}

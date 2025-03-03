@@ -7,4 +7,5 @@ export enum RightDrawerPages {
   WorkflowStepSelectAction = 'workflow-step-select-action',
   WorkflowStepView = 'workflow-step-view',
   WorkflowStepEdit = 'workflow-step-edit',
+  WorkflowRunStepView = 'workflow-run-step-view',
 }

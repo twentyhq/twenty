@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import {
   MigrationCommandOptions,
   MigrationCommandRunner,
-} from 'src/database/commands/migration-command/migration-command.runner';
+} from 'src/database/commands/command-runners/migration.command-runner';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';

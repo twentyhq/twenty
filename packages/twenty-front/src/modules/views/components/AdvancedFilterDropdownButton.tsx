@@ -4,6 +4,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 import { AdvancedFilterRootLevelViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootLevelViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
+import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -14,6 +15,7 @@ import { isDefined } from 'twenty-shared';
 
 export const AdvancedFilterDropdownButton = () => {
   const { deleteCombinedViewFilterGroup } = useDeleteCombinedViewFilterGroup();
+  const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
@@ -43,6 +45,7 @@ export const AdvancedFilterDropdownButton = () => {
 
     for (const viewFilterGroupId of viewFilterGroupIds) {
       await deleteCombinedViewFilterGroup(viewFilterGroupId);
+      removeRecordFilterGroup(viewFilterGroupId);
     }
 
     for (const recordFilterId of advancedRecordFilterIds) {
@@ -50,6 +53,7 @@ export const AdvancedFilterDropdownButton = () => {
     }
   }, [
     advancedRecordFilterIds,
+    removeRecordFilterGroup,
     removeRecordFilter,
     deleteCombinedViewFilterGroup,
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups,
