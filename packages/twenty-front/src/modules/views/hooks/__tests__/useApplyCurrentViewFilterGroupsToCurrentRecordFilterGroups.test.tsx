@@ -80,15 +80,10 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
+          contextStoreCurrentViewId: mockView.id,
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              contextStoreCurrentViewIdComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              mockView.id,
-            );
             snapshot.set(prefetchViewsState, [mockView]);
           },
         }),

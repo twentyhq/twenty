@@ -1,13 +1,13 @@
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import {
-  getPersonObjectMetadataItem,
-  getPersonRecord,
+  allMockPersonRecords,
+  getMockPersonObjectMetadataItem,
 } from '~/testing/mock-data/people';
 
 describe('computeDepthOneRecordGqlFieldsFromRecord', () => {
-  const objectMetadataItem = getPersonObjectMetadataItem();
+  const objectMetadataItem = getMockPersonObjectMetadataItem();
   it('Should handle basic call', () => {
-    const personRecord = getPersonRecord();
+    const personRecord = allMockPersonRecords[0];
     const result = computeDepthOneRecordGqlFieldsFromRecord({
       objectMetadataItem,
       record: personRecord,

@@ -35,11 +35,15 @@ export class UserRoleService {
     userWorkspaceId: string;
     roleId: string;
   }): Promise<void> {
-    await this.validateAssignRoleInput({
+    const validationResult = await this.validateAssignRoleInput({
       userWorkspaceId,
       workspaceId,
       roleId,
     });
+
+    if (validationResult?.roleToAssignIsSameAsCurrentRole) {
+      return;
+    }
 
     const newUserWorkspaceRole = await this.userWorkspaceRoleRepository.save({
       roleId,
@@ -209,7 +213,9 @@ export class UserRoleService {
     const currentRole = roles.get(userWorkspace.id)?.[0];
 
     if (currentRole?.id === roleId) {
-      return;
+      return {
+        roleToAssignIsSameAsCurrentRole: true,
+      };
     }
 
     if (!(currentRole?.label === ADMIN_ROLE_LABEL)) {

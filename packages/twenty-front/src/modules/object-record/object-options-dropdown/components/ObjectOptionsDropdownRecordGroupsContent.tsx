@@ -67,7 +67,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     handleVisibilityChange: handleRecordGroupVisibilityChange,
     handleHideEmptyRecordGroupChange,
   } = useRecordGroupVisibility({
-    viewBarId: recordIndexId,
     viewType,
   });
 
