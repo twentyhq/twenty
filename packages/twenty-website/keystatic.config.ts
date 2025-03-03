@@ -27,5 +27,19 @@ export default config({
         }),
       },
     }),
+    releases: collection({
+      label: 'Releases',
+      slugField: 'release',
+      path: 'src/content/releases/*',
+      format: { contentField: 'content' },
+      schema: {
+        release: fields.slug({ name: { label: 'Release' } }),
+        // TODO: Define the date with a normalized format
+        Date: fields.text({ label: 'Date' }),
+        content: fields.mdx({
+          label: 'Content',
+        }),
+      },
+    }),
   },
 });
