@@ -49,7 +49,9 @@ export const RecordIndexPageKanbanAddButton = () => {
   const { closeDropdown } = useDropdown(dropdownId);
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
-  const { handleAddNewCardClick } = useAddNewCard();
+  const { handleAddNewCardClick } = useAddNewCard({
+    recordPickerComponentInstanceId: `add-new-card-record-picker`,
+  });
 
   const handleItemClick = useCallback(
     (columnDefinition: RecordGroupDefinition) => {

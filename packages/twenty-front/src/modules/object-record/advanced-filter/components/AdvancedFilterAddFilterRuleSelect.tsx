@@ -2,6 +2,9 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
+import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
+import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -31,6 +34,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const { currentViewId } = useGetCurrentView();
 
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
+  const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
+
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
   const newPositionInViewFilterGroup = lastChildPosition + 1;
@@ -108,15 +113,26 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       throw new Error('Missing view id');
     }
 
-    const newViewFilterGroup = {
-      id: v4(),
+    const newRecordFilterGroupId = v4();
+
+    const newViewFilterGroup: ViewFilterGroup = {
+      __typename: 'ViewFilterGroup',
+      id: newRecordFilterGroupId,
       viewId: currentViewId,
       logicalOperator: ViewFilterGroupLogicalOperator.AND,
       parentViewFilterGroupId: viewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     };
 
+    const newRecordFilterGroup: RecordFilterGroup = {
+      id: newRecordFilterGroupId,
+      logicalOperator: RecordFilterGroupLogicalOperator.AND,
+      parentRecordFilterGroupId: viewFilterGroup.id,
+      positionInRecordFilterGroup: newPositionInViewFilterGroup,
+    };
+
     upsertCombinedViewFilterGroup(newViewFilterGroup);
+    upsertRecordFilterGroup(newRecordFilterGroup);
 
     const defaultFieldMetadataItem = getDefaultFieldMetadataItem();
 

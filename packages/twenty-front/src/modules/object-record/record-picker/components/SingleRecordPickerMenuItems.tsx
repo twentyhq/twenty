@@ -13,8 +13,8 @@ import { isDefined } from 'twenty-shared';
 
 import { SingleRecordPickerMenuItem } from '@/object-record/record-picker/components/SingleRecordPickerMenuItem';
 import { RECORD_PICKER_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-picker/constants/RecordPickerSelectableListComponentInstanceId';
+import { RecordPickerHotkeyScope } from '@/object-record/record-picker/types/RecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
-import { RelationPickerHotkeyScope } from '../legacy/types/RelationPickerHotkeyScope';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;
@@ -37,7 +37,7 @@ export const SingleRecordPickerMenuItems = ({
   onCancel,
   onRecordSelected,
   selectedRecord,
-  hotkeyScope = RelationPickerHotkeyScope.RelationPicker,
+  hotkeyScope = RecordPickerHotkeyScope.RecordPicker,
   isFiltered,
   shouldSelectEmptyOption,
 }: SingleRecordPickerMenuItemsProps) => {

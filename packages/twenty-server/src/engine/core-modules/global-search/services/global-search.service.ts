@@ -1,5 +1,5 @@
 import { Entity } from '@microsoft/microsoft-graph-types';
-import { getLogoUrlFromDomainName } from 'twenty-shared';
+import { FieldMetadataType, getLogoUrlFromDomainName } from 'twenty-shared';
 import { Brackets } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -22,20 +22,9 @@ export class GlobalSearchService {
     excludedObjectNameSingulars: string[] | undefined,
   ) {
     return objectMetadataItemWithFieldMaps.filter(
-      ({ nameSingular, isSystem, isRemote, isCustom }) => {
-        if (excludedObjectNameSingulars?.includes(nameSingular)) {
-          return false;
-        }
-        //TODO - #345 issue - IsSearchable decorator
-        if (isSystem || isRemote) {
-          return false;
-        }
-
+      ({ nameSingular, isSearchable }) => {
         return (
-          isCustom ||
-          ['company', 'person', 'opportunity', 'note', 'task'].includes(
-            nameSingular,
-          )
+          !excludedObjectNameSingulars?.includes(nameSingular) && isSearchable
         );
       },
     );
@@ -120,7 +109,7 @@ export class GlobalSearchService {
         objectMetadataItem.labelIdentifierFieldMetadataId
       ];
 
-    if (objectMetadataItem.nameSingular === 'person') {
+    if (labelIdentifierField.type === FieldMetadataType.FULL_NAME) {
       return [
         `${labelIdentifierField.name}FirstName`,
         `${labelIdentifierField.name}LastName`,

@@ -5,24 +5,23 @@ import { ComponentDecorator, IconUserCircle } from 'twenty-ui';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RecordPickerDecorator } from '~/testing/decorators/RecordPickerDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { sleep } from '~/utils/sleep';
 
 import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
 import { SingleRecordPickerRecord } from '../../types/SingleRecordPickerRecord';
 
-const peopleMock = getPeopleMock();
-
-const records = peopleMock.map<SingleRecordPickerRecord>((person) => ({
-  id: person.id,
-  name: person.name.firstName + ' ' + person.name.lastName,
-  avatarUrl: 'https://picsum.photos/200',
-  avatarType: 'rounded',
-  record: { ...person, __typename: 'Person' },
-}));
+const records = allMockPersonRecords.map<SingleRecordPickerRecord>(
+  (person) => ({
+    id: person.id,
+    name: person.name.firstName + ' ' + person.name.lastName,
+    avatarUrl: 'https://picsum.photos/200',
+    avatarType: 'rounded',
+    record: { ...person, __typename: 'Person' },
+  }),
+);
 
 const meta: Meta<typeof SingleRecordPicker> = {
   title: 'UI/RecordPicker/SingleRecordPicker',
@@ -30,13 +29,13 @@ const meta: Meta<typeof SingleRecordPicker> = {
   decorators: [
     ComponentDecorator,
     ComponentWithRecoilScopeDecorator,
-    RecordPickerDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],
   args: {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     selectedRecordIds: [],
+    componentInstanceId: 'single-record-picker',
   },
   argTypes: {
     selectedRecord: {

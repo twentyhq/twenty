@@ -2,6 +2,7 @@ import { AdvancedFilterRuleOptionsDropdownButton } from '@/object-record/advance
 
 import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
+import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 
@@ -30,6 +31,7 @@ export const AdvancedFilterRuleOptionsDropdown = ({
 
   const { removeRecordFilter } = useRemoveRecordFilter();
   const { deleteCombinedViewFilterGroup } = useDeleteCombinedViewFilterGroup();
+  const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
 
   const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
     useCurrentViewViewFilterGroup({
@@ -56,9 +58,11 @@ export const AdvancedFilterRuleOptionsDropdown = ({
         isDefined(currentRecordFilter?.viewFilterGroupId)
       ) {
         deleteCombinedViewFilterGroup(currentRecordFilter.viewFilterGroupId);
+        removeRecordFilterGroup(currentRecordFilter.viewFilterGroupId);
       }
     } else if (isDefined(currentViewFilterGroup)) {
       deleteCombinedViewFilterGroup(currentViewFilterGroup.id);
+      removeRecordFilterGroup(currentViewFilterGroup.id);
 
       // TODO: This is a temporary fix view filter group will be removed soon.
       const childViewFilters = childViewFiltersAndViewFilterGroups.filter(

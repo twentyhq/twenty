@@ -14,14 +14,16 @@ import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNotes } from '~/testing/mock-data/notes';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
+import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
+import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import {
   getWorkflowMock,
@@ -31,7 +33,7 @@ import {
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
-const peopleMock = getPeopleMock();
+const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
 
@@ -716,6 +718,13 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           workflowVersions: getWorkflowVersionsMock(),
+        },
+      });
+    }),
+    graphql.query(getOperationName(GET_ROLES) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          getRoles: getRolesMock(),
         },
       });
     }),

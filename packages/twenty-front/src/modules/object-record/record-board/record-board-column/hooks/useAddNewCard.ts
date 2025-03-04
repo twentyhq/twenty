@@ -1,8 +1,8 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
+import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { useRecordSelectSearch } from '@/object-record/record-picker/hooks/useRecordSelectSearch';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
@@ -16,13 +16,19 @@ type SetFunction = <T>(
   valOrUpdater: T | ((currVal: T) => T),
 ) => void;
 
-export const useAddNewCard = () => {
+type UseAddNewCardProps = {
+  recordPickerComponentInstanceId: string;
+};
+
+export const useAddNewCard = ({
+  recordPickerComponentInstanceId,
+}: UseAddNewCardProps) => {
   const columnContext = useContext(RecordBoardColumnContext);
   const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
     useContext(RecordBoardContext);
-  const { resetSearchFilter } = useRecordSelectSearch({
-    recordPickerInstanceId: RelationPickerHotkeyScope.RelationPicker,
-  });
+  const { resetSearchFilter } = useRecordSelectSearch(
+    recordPickerComponentInstanceId,
+  );
 
   const {
     goBackToPreviousHotkeyScope,
@@ -233,7 +239,6 @@ export const useAddNewCard = () => {
   return {
     handleAddNewCardClick,
     handleCreateSuccess,
-    handleCreate,
     handleBlur,
     handleInputEnter,
     handleEntitySelect,

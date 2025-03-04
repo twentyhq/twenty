@@ -35,11 +35,15 @@ export class UserRoleService {
     userWorkspaceId: string;
     roleId: string;
   }): Promise<void> {
-    await this.validateAssignRoleInput({
+    const validationResult = await this.validateAssignRoleInput({
       userWorkspaceId,
       workspaceId,
       roleId,
     });
+
+    if (validationResult?.roleToAssignIsSameAsCurrentRole) {
+      return;
+    }
 
     const newUserWorkspaceRole = await this.userWorkspaceRoleRepository.save({
       roleId,
@@ -137,6 +141,35 @@ export class UserRoleService {
     return workspaceMembers;
   }
 
+  public async validateUserWorkspaceIsNotUniqueAdminOrThrow({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }) {
+    const roleOfUserWorkspace = await this.getRolesByUserWorkspaces({
+      userWorkspaceIds: [userWorkspaceId],
+      workspaceId,
+    }).then((roles) => roles.get(userWorkspaceId)?.[0]);
+
+    if (!isDefined(roleOfUserWorkspace)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+      );
+    }
+
+    if (roleOfUserWorkspace.label === ADMIN_ROLE_LABEL) {
+      const adminRole = roleOfUserWorkspace;
+
+      await this.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
+        adminRoleId: adminRole.id,
+        workspaceId,
+      });
+    }
+  }
+
   private async validateAssignRoleInput({
     userWorkspaceId,
     workspaceId,
@@ -180,15 +213,30 @@ export class UserRoleService {
     const currentRole = roles.get(userWorkspace.id)?.[0];
 
     if (currentRole?.id === roleId) {
-      return;
+      return {
+        roleToAssignIsSameAsCurrentRole: true,
+      };
     }
 
     if (!(currentRole?.label === ADMIN_ROLE_LABEL)) {
       return;
     }
 
+    await this.validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
+      workspaceId,
+      adminRoleId: currentRole.id,
+    });
+  }
+
+  private async validateMoreThanOneWorkspaceMemberHasAdminRoleOrThrow({
+    adminRoleId,
+    workspaceId,
+  }: {
+    adminRoleId: string;
+    workspaceId: string;
+  }) {
     const workspaceMembersWithAdminRole =
-      await this.getWorkspaceMembersAssignedToRole(currentRole.id, workspaceId);
+      await this.getWorkspaceMembersAssignedToRole(adminRoleId, workspaceId);
 
     if (workspaceMembersWithAdminRole.length === 1) {
       throw new PermissionsException(

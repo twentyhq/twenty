@@ -39,6 +39,7 @@ import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -110,6 +111,7 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApiKey() apiKey?: string,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
@@ -118,6 +120,7 @@ export class WorkspaceResolver {
           id: workspace.id,
         },
         userWorkspaceId,
+        apiKey,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
