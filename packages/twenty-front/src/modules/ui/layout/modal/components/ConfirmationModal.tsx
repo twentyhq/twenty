@@ -24,7 +24,7 @@ export type ConfirmationModalProps = {
   subtitle: ReactNode;
   setIsOpen: (val: boolean) => void;
   onConfirmClick: () => void;
-  deleteButtonText?: string;
+  confirmButtonText?: string;
   confirmationPlaceholder?: string;
   confirmationValue?: string;
   confirmButtonAccent?: ButtonAccent;
@@ -70,7 +70,7 @@ export const ConfirmationModal = ({
   subtitle,
   setIsOpen,
   onConfirmClick,
-  deleteButtonText = `Delete`,
+  confirmButtonText = 'Confirm',
   confirmationValue,
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
@@ -159,7 +159,7 @@ export const ConfirmationModal = ({
               onClick={handleConfirmClick}
               variant="secondary"
               accent={confirmButtonAccent}
-              title={deleteButtonText}
+              title={confirmButtonText}
               disabled={!isValidValue || loading}
               fullWidth
               dataTestId="confirmation-modal-confirm-button"

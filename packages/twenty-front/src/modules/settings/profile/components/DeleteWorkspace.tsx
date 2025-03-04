@@ -51,7 +51,7 @@ export const DeleteWorkspace = () => {
           </Trans>
         }
         onConfirmClick={deleteWorkspace}
-        deleteButtonText={t`Delete workspace`}
+        confirmButtonText={t`Delete workspace`}
       />
     </>
   );

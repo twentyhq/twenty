@@ -126,7 +126,7 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
           "Are you sure you want to destroy these records? They won't be recoverable anymore."
         }
         onConfirmClick={handleDestroyClick}
-        deleteButtonText={'Destroy Records'}
+        confirmButtonText={'Destroy Records'}
       />
     );
 

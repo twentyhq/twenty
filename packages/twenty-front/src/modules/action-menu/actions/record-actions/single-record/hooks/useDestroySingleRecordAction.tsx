@@ -86,7 +86,7 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
             closeRightDrawer();
           }
         }}
-        deleteButtonText={'Permanently Destroy Record'}
+        confirmButtonText={'Permanently Destroy Record'}
       />
     ),
   };

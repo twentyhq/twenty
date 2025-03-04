@@ -18,7 +18,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
@@ -36,8 +36,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
   } = useOptionsDropdown();
 
   const { getIcon } = useIcons();
-  const { currentViewWithCombinedFiltersAndSorts: currentView } =
-    useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   const CurrentViewIcon = currentView?.icon ? getIcon(currentView.icon) : null;
 

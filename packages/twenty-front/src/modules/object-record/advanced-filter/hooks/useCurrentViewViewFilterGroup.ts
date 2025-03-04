@@ -1,27 +1,28 @@
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { isDefined } from 'twenty-shared';
 
 export const useCurrentViewViewFilterGroup = ({
-  viewFilterGroupId,
+  recordFilterGroupId,
 }: {
-  viewFilterGroupId?: string;
+  recordFilterGroupId?: string;
 }) => {
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
-
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
-  const viewFilterGroup =
-    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.find(
-      (viewFilterGroup) => viewFilterGroup.id === viewFilterGroupId,
-    );
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
+  );
 
-  if (!isDefined(viewFilterGroup)) {
+  const currentRecordFilterGroup = currentRecordFilterGroups.find(
+    (recordFilterGroup) => recordFilterGroup.id === recordFilterGroupId,
+  );
+
+  if (!isDefined(currentRecordFilterGroup)) {
     return {
       currentViewFilterGroup: undefined,
       childViewFiltersAndViewFilterGroups: [] as (
@@ -33,31 +34,31 @@ export const useCurrentViewViewFilterGroup = ({
 
   const childRecordFilters = currentRecordFilters.filter(
     (recordFilterToFilter) =>
-      recordFilterToFilter.viewFilterGroupId === viewFilterGroup.id,
+      recordFilterToFilter.recordFilterGroupId === currentRecordFilterGroup.id,
   );
 
-  const childViewFilterGroups =
-    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.filter(
-      (viewFilterGroupToFilter) =>
-        viewFilterGroupToFilter.parentViewFilterGroupId === viewFilterGroup.id,
-    );
+  const childViewFilterGroups = currentRecordFilterGroups.filter(
+    (currentRecordGroupToFilter) =>
+      currentRecordGroupToFilter.parentRecordFilterGroupId ===
+      currentRecordFilterGroup.id,
+  );
 
   const childViewFiltersAndViewFilterGroups = [
     ...(childViewFilterGroups ?? []),
     ...(childRecordFilters ?? []),
   ].sort((a, b) => {
-    const positionA = a.positionInViewFilterGroup ?? 0;
-    const positionB = b.positionInViewFilterGroup ?? 0;
+    const positionA = a.positionInRecordFilterGroup ?? 0;
+    const positionB = b.positionInRecordFilterGroup ?? 0;
     return positionA - positionB;
   });
 
   const lastChildPosition =
     childViewFiltersAndViewFilterGroups[
       childViewFiltersAndViewFilterGroups.length - 1
-    ]?.positionInViewFilterGroup ?? 0;
+    ]?.positionInRecordFilterGroup ?? 0;
 
   return {
-    currentViewFilterGroup: viewFilterGroup,
+    currentViewFilterGroup: currentRecordFilterGroup,
     childViewFiltersAndViewFilterGroups,
     lastChildPosition,
   };
