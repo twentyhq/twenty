@@ -3,16 +3,21 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, Section } from 'twenty-ui';
+import { Button, H2Title, IconReload, Section } from 'twenty-ui';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
 
 const StyledDomainFormWrapper = styled.div`
-  align-items: center;
   display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledButton = styled(Button)`
+  align-self: flex-start;
 `;
 
 const StyledRecordsWrapper = styled.div`
@@ -27,6 +32,12 @@ export const SettingsCustomDomain = () => {
   const { customDomainRecords, loading } = useRecoilValue(
     customDomainRecordsState,
   );
+
+  const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
+
+  if (!customDomainRecords && !loading) {
+    checkCustomDomainRecords();
+  }
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -53,10 +64,17 @@ export const SettingsCustomDomain = () => {
               onChange={onChange}
               placeholder="crm.yourdomain.com"
               error={error?.message}
-              loading={!!loading}
               fullWidth
             />
           )}
+        />
+        <StyledButton
+          loading={loading}
+          Icon={IconReload}
+          title={t`Reload`}
+          variant="primary"
+          onClick={checkCustomDomainRecords}
+          type="button"
         />
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (
