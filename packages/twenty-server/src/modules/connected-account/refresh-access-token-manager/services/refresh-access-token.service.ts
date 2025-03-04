@@ -41,7 +41,7 @@ export class RefreshAccessTokenService {
           );
         } catch (error) {
           throw new RefreshAccessTokenException(
-            `Error refreshing access token for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
+            `Error refreshing access token for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message} ${error?.response?.data?.error_description}`,
             RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
           );
         }

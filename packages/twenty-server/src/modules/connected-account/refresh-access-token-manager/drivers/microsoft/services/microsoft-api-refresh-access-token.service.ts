@@ -19,6 +19,11 @@ export class MicrosoftAPIRefreshAccessTokenService {
         refresh_token: refreshToken,
         grant_type: 'refresh_token',
       }),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      },
     );
 
     return response.data.access_token;
