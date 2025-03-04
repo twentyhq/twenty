@@ -572,7 +572,7 @@ msgstr "Parancsmenü bezárása"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Collapse"
-msgstr ""
+msgstr "Összecsuk"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
@@ -966,15 +966,15 @@ msgstr "Törölt rekordok"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Deleted runs"
-msgstr ""
+msgstr "Törölt futtatások"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Deleted versions"
-msgstr ""
+msgstr "Törölt verziók"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deleted workflows"
-msgstr ""
+msgstr "Törölt munkafolyamatok"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1283,7 +1283,7 @@ msgstr "Kilépés a beállításokból"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Expand"
-msgstr ""
+msgstr "Kibontás"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
@@ -1334,7 +1334,7 @@ msgstr "Exportálás"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export record"
-msgstr ""
+msgstr "Rekord exportálása"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -1343,7 +1343,7 @@ msgstr "Rekordok exportálása"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export runs"
-msgstr ""
+msgstr "Futtatások exportálása"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Export to PDF"
@@ -1351,7 +1351,7 @@ msgstr "Exportálás PDF-be"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export versions"
-msgstr ""
+msgstr "Verziók exportálása"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1363,15 +1363,15 @@ msgstr "Nézet exportálása"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflow"
-msgstr ""
+msgstr "Munkafolyamat exportálása"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflows"
-msgstr ""
+msgstr "Munkafolyamatok exportálása"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
-#~ msgstr "Munkafolyamatok exportálása"
+#~ msgstr "Export Workflows"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1582,11 +1582,11 @@ msgstr "Importálás"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Import records"
-msgstr ""
+msgstr "Rekordok importálása"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Import workflows"
-msgstr ""
+msgstr "Munkafolyamatok importálása"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
@@ -1656,7 +1656,7 @@ msgstr "Érvénytelen űrlap értékek"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "Érvénytelen munkaterület"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -1912,7 +1912,7 @@ msgstr "Navigálás a következő rekordra"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to next run"
-msgstr ""
+msgstr "Navigálás a következő futtatásra"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
@@ -1928,7 +1928,7 @@ msgstr "Navigálás az előző rekordra"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to previous run"
-msgstr ""
+msgstr "Navigálás az előző futtatásra"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
@@ -2351,7 +2351,7 @@ msgstr "Kiadások"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Reload"
-msgstr ""
+msgstr "Újratöltés"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
@@ -2498,15 +2498,15 @@ msgstr "Törölt rekordok megtekintése"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See deleted runs"
-msgstr ""
+msgstr "Törölt futtatások megtekintése"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "See deleted versions"
-msgstr ""
+msgstr "Törölt verziók megtekintése"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See deleted workflows"
-msgstr ""
+msgstr "Törölt munkafolyamatok megtekintése"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts

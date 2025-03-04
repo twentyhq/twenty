@@ -572,7 +572,7 @@ msgstr "명령 메뉴 닫기"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Collapse"
-msgstr ""
+msgstr "접기"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
@@ -966,15 +966,15 @@ msgstr "삭제된 레코드"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Deleted runs"
-msgstr ""
+msgstr "삭제된 실행"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Deleted versions"
-msgstr ""
+msgstr "삭제된 버전"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deleted workflows"
-msgstr ""
+msgstr "삭제된 워크플로"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1283,7 +1283,7 @@ msgstr "설정 종료"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Expand"
-msgstr ""
+msgstr "확장"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
@@ -1334,7 +1334,7 @@ msgstr "내보내기"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export record"
-msgstr ""
+msgstr "레코드 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -1343,7 +1343,7 @@ msgstr "레코드 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export runs"
-msgstr ""
+msgstr "실행 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Export to PDF"
@@ -1351,7 +1351,7 @@ msgstr "PDF로 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export versions"
-msgstr ""
+msgstr "버전 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1363,15 +1363,15 @@ msgstr "보기 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflow"
-msgstr ""
+msgstr "워크플로 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflows"
-msgstr ""
+msgstr "워크플로 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
-#~ msgstr "워크플로 내보내기"
+#~ msgstr "Export Workflows"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1582,11 +1582,11 @@ msgstr "가져오기"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Import records"
-msgstr ""
+msgstr "레코드 가져오기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Import workflows"
-msgstr ""
+msgstr "워크플로 가져오기"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
@@ -1656,7 +1656,7 @@ msgstr "잘못된 양식 값"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "잘못된 작업 공간"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -1912,7 +1912,7 @@ msgstr "다음 레코드로 이동"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to next run"
-msgstr ""
+msgstr "다음 실행으로 이동"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
@@ -1928,7 +1928,7 @@ msgstr "이전 레코드로 이동"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to previous run"
-msgstr ""
+msgstr "이전 실행으로 이동"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
@@ -2351,7 +2351,7 @@ msgstr "릴리스"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Reload"
-msgstr ""
+msgstr "새로 고침"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
@@ -2498,15 +2498,15 @@ msgstr "삭제된 레코드 보기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See deleted runs"
-msgstr ""
+msgstr "삭제된 실행 보기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "See deleted versions"
-msgstr ""
+msgstr "삭제된 버전 보기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See deleted workflows"
-msgstr ""
+msgstr "삭제된 워크플로 보기"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts

@@ -76,10 +76,12 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
     workflowObjectMetadataIds: string[],
     workspaceId: string,
   ): Promise<void> {
+    const failOnMetadataCacheMiss = false;
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'view',
+        failOnMetadataCacheMiss,
       );
 
     await viewRepository.update(

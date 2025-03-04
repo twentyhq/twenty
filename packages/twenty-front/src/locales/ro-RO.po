@@ -572,7 +572,7 @@ msgstr "Închide meniul de comandă"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Collapse"
-msgstr ""
+msgstr "Restrângere"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
@@ -966,15 +966,15 @@ msgstr "Înregistrări șterse"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Deleted runs"
-msgstr ""
+msgstr "Rulări șterse"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Deleted versions"
-msgstr ""
+msgstr "Versiuni șterse"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deleted workflows"
-msgstr ""
+msgstr "Fluxuri de lucru șterse"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1283,7 +1283,7 @@ msgstr "Ieșire din Setări"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Expand"
-msgstr ""
+msgstr "Extinde"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
@@ -1334,7 +1334,7 @@ msgstr "Export"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export record"
-msgstr ""
+msgstr "Exportă înregistrarea"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -1343,7 +1343,7 @@ msgstr "Exportul înregistrărilor"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export runs"
-msgstr ""
+msgstr "Exportă rulările"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Export to PDF"
@@ -1351,7 +1351,7 @@ msgstr "Export în format PDF"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export versions"
-msgstr ""
+msgstr "Exportă versiunile"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1363,11 +1363,11 @@ msgstr "Exportați vizualizarea"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflow"
-msgstr ""
+msgstr "Exportă flux de lucru"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflows"
-msgstr ""
+msgstr "Exportă fluxuri de lucru"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
@@ -1582,11 +1582,11 @@ msgstr "Importați"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Import records"
-msgstr ""
+msgstr "Importă înregistrări"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Import workflows"
-msgstr ""
+msgstr "Importă fluxuri de lucru"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
@@ -1656,7 +1656,7 @@ msgstr "Valori de formular invalide"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "Spațiu de lucru nevalid"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -1912,7 +1912,7 @@ msgstr "Navighează la următoarea înregistrare"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to next run"
-msgstr ""
+msgstr "Navighează la rularea următoare"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
@@ -1928,7 +1928,7 @@ msgstr "Navigați la înregistrarea anterioară"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to previous run"
-msgstr ""
+msgstr "Navighează la rularea anterioară"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
@@ -2351,7 +2351,7 @@ msgstr "Versiuni"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Reload"
-msgstr ""
+msgstr "Reîncarcă"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
@@ -2498,15 +2498,15 @@ msgstr "Vezi înregistrările șterse"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See deleted runs"
-msgstr ""
+msgstr "Vezi rulări șterse"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "See deleted versions"
-msgstr ""
+msgstr "Vezi versiuni șterse"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See deleted workflows"
-msgstr ""
+msgstr "Vezi fluxuri de lucru șterse"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts

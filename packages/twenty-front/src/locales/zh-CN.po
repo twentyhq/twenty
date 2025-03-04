@@ -572,7 +572,7 @@ msgstr "关闭命令菜单"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Collapse"
-msgstr ""
+msgstr "折叠"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
@@ -966,15 +966,15 @@ msgstr "已删除记录"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Deleted runs"
-msgstr ""
+msgstr "删除运行"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Deleted versions"
-msgstr ""
+msgstr "删除版本"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deleted workflows"
-msgstr ""
+msgstr "删除工作流"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1283,7 +1283,7 @@ msgstr "退出设置"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Expand"
-msgstr ""
+msgstr "展开"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
@@ -1334,7 +1334,7 @@ msgstr "导出"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export record"
-msgstr ""
+msgstr "导出记录"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -1343,7 +1343,7 @@ msgstr "导出记录"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export runs"
-msgstr ""
+msgstr "导出运行"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Export to PDF"
@@ -1351,7 +1351,7 @@ msgstr "导出为 PDF"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export versions"
-msgstr ""
+msgstr "导出版本"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1363,15 +1363,15 @@ msgstr "导出视图"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflow"
-msgstr ""
+msgstr "导出工作流程"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflows"
-msgstr ""
+msgstr "导出工作流程"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
-#~ msgstr "导出工作流程"
+#~ msgstr "Export Workflows"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1582,11 +1582,11 @@ msgstr "导入"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Import records"
-msgstr ""
+msgstr "导入记录"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Import workflows"
-msgstr ""
+msgstr "导入工作流"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
@@ -1656,7 +1656,7 @@ msgstr "无效的表单值"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "无效的工作空间"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -1912,7 +1912,7 @@ msgstr "导航到下一条记录"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to next run"
-msgstr ""
+msgstr "导航到下一个运行"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
@@ -1928,7 +1928,7 @@ msgstr "导航到上一条记录"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to previous run"
-msgstr ""
+msgstr "导航到上一个运行"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
@@ -2351,7 +2351,7 @@ msgstr "发布"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Reload"
-msgstr ""
+msgstr "重新加载"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
@@ -2498,15 +2498,15 @@ msgstr "查看已删除记录"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See deleted runs"
-msgstr ""
+msgstr "查看已删除的运行"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "See deleted versions"
-msgstr ""
+msgstr "查看已删除的版本"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See deleted workflows"
-msgstr ""
+msgstr "查看已删除的工作流"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts

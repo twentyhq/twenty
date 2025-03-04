@@ -572,7 +572,7 @@ msgstr "Tanca el menú de comandament"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Collapse"
-msgstr ""
+msgstr "Contraure"
 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
@@ -966,15 +966,15 @@ msgstr "Registres suprimits"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Deleted runs"
-msgstr ""
+msgstr "Execucions eliminades"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Deleted versions"
-msgstr ""
+msgstr "Versions eliminades"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deleted workflows"
-msgstr ""
+msgstr "Fluxos de treball eliminats"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1283,7 +1283,7 @@ msgstr "Sortir de la configuració"
 
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Expand"
-msgstr ""
+msgstr "Ampliar"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
@@ -1334,7 +1334,7 @@ msgstr "Exportar"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export record"
-msgstr ""
+msgstr "Exportar registre"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -1343,7 +1343,7 @@ msgstr "Exportar registres"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export runs"
-msgstr ""
+msgstr "Exportar execucions"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Export to PDF"
@@ -1351,7 +1351,7 @@ msgstr "Exportar a PDF"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export versions"
-msgstr ""
+msgstr "Exportar versions"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1363,15 +1363,15 @@ msgstr "Exportar vista"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflow"
-msgstr ""
+msgstr "Exportar el flux de treball"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflows"
-msgstr ""
+msgstr "Exportar fluxos de treball"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
-#~ msgstr "Exportar workflows"
+#~ msgstr "Export Workflows"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1582,11 +1582,11 @@ msgstr "Importa"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Import records"
-msgstr ""
+msgstr "Importar registres"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Import workflows"
-msgstr ""
+msgstr "Importar fluxos de treball"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
@@ -1656,7 +1656,7 @@ msgstr "Valors del formulari no vàlids"
 
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
-msgstr ""
+msgstr "Espai de treball no vàlid"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -1912,7 +1912,7 @@ msgstr "Navegar al següent registre"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to next run"
-msgstr ""
+msgstr "Navega a l'execució següent"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
@@ -1928,7 +1928,7 @@ msgstr "Navega al registre anterior"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to previous run"
-msgstr ""
+msgstr "Navega a l'execució anterior"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
@@ -2351,7 +2351,7 @@ msgstr "Versions"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Reload"
-msgstr ""
+msgstr "Tornar a carregar"
 
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
@@ -2498,15 +2498,15 @@ msgstr "Veure els registres suprimits"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See deleted runs"
-msgstr ""
+msgstr "Veure execucions eliminades"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "See deleted versions"
-msgstr ""
+msgstr "Veure versions eliminades"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See deleted workflows"
-msgstr ""
+msgstr "Veure fluxos de treball eliminats"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
