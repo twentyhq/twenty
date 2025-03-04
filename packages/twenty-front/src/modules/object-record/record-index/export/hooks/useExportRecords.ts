@@ -10,12 +10,12 @@ import {
 } from '@/object-record/record-index/export/hooks/useExportFetchRecords';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { t } from '@lingui/core/macro';
 
 type GenerateExportOptions = {
   columns: ColumnDefinition<FieldMetadata>[];

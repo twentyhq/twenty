@@ -8,11 +8,6 @@ rawDataSource
   .initialize()
   .then(async () => {
     await performQuery(
-      'CREATE EXTENSION IF NOT EXISTS "vector"',
-      'create extension "vector (pgvector)"',
-    );
-
-    await performQuery(
       'CREATE SCHEMA IF NOT EXISTS "public"',
       'create schema "public"',
     );

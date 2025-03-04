@@ -20,9 +20,11 @@ import { ResetPasswordService } from './reset-password.service';
 describe('ResetPasswordService', () => {
   let service: ResetPasswordService;
   let userRepository: Repository<User>;
+  let workspaceRepository: Repository<Workspace>;
   let appTokenRepository: Repository<AppToken>;
   let emailService: EmailService;
   let environmentService: EnvironmentService;
+  let domainManagerService: DomainManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,6 +32,10 @@ describe('ResetPasswordService', () => {
         ResetPasswordService,
         {
           provide: getRepositoryToken(User, 'core'),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(Workspace, 'core'),
           useClass: Repository,
         },
         {
@@ -52,6 +58,7 @@ describe('ResetPasswordService', () => {
             getBaseUrl: jest
               .fn()
               .mockResolvedValue(new URL('http://localhost:3001')),
+            buildWorkspaceURL: jest.fn(),
           },
         },
         {
@@ -67,11 +74,16 @@ describe('ResetPasswordService', () => {
     userRepository = module.get<Repository<User>>(
       getRepositoryToken(User, 'core'),
     );
+    workspaceRepository = module.get<Repository<Workspace>>(
+      getRepositoryToken(Workspace, 'core'),
+    );
     appTokenRepository = module.get<Repository<AppToken>>(
       getRepositoryToken(AppToken, 'core'),
     );
     emailService = module.get<EmailService>(EmailService);
     environmentService = module.get<EnvironmentService>(EnvironmentService);
+    domainManagerService =
+      module.get<DomainManagerService>(DomainManagerService);
   });
 
   it('should be defined', () => {
@@ -89,8 +101,10 @@ describe('ResetPasswordService', () => {
       jest.spyOn(appTokenRepository, 'save').mockResolvedValue({} as AppToken);
       jest.spyOn(environmentService, 'get').mockReturnValue('1h');
 
-      const result =
-        await service.generatePasswordResetToken('test@example.com');
+      const result = await service.generatePasswordResetToken(
+        'test@example.com',
+        'workspace-id',
+      );
 
       expect(result.passwordResetToken).toBeDefined();
       expect(result.passwordResetTokenExpiresAt).toBeDefined();
@@ -106,7 +120,10 @@ describe('ResetPasswordService', () => {
       jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
 
       await expect(
-        service.generatePasswordResetToken('nonexistent@example.com'),
+        service.generatePasswordResetToken(
+          'nonexistent@example.com',
+          'workspace-id',
+        ),
       ).rejects.toThrow(AuthException);
     });
 
@@ -115,6 +132,7 @@ describe('ResetPasswordService', () => {
       const mockExistingToken = {
         userId: '1',
         type: AppTokenType.PasswordResetToken,
+        workspaceId: 'workspace-id',
         expiresAt: addMilliseconds(new Date(), 3600000),
       };
 
@@ -126,7 +144,7 @@ describe('ResetPasswordService', () => {
         .mockResolvedValue(mockExistingToken as AppToken);
 
       await expect(
-        service.generatePasswordResetToken('test@example.com'),
+        service.generatePasswordResetToken('test@example.com', 'workspace-id'),
       ).rejects.toThrow(AuthException);
     });
   });
@@ -135,6 +153,7 @@ describe('ResetPasswordService', () => {
     it('should send a password reset email', async () => {
       const mockUser = { id: '1', email: 'test@example.com' };
       const mockToken = {
+        workspaceId: 'workspace-id',
         passwordResetToken: 'token123',
         passwordResetTokenExpiresAt: new Date(),
       };
@@ -143,8 +162,18 @@ describe('ResetPasswordService', () => {
         .spyOn(userRepository, 'findOneBy')
         .mockResolvedValue(mockUser as User);
       jest
+        .spyOn(workspaceRepository, 'findOneBy')
+        .mockResolvedValue({ id: 'workspace-id' } as Workspace);
+      jest
         .spyOn(environmentService, 'get')
         .mockReturnValue('http://localhost:3000');
+      jest
+        .spyOn(domainManagerService, 'buildWorkspaceURL')
+        .mockReturnValue(
+          new URL(
+            'https://subdomain.localhost.com:3000/reset-password/passwordResetToken',
+          ),
+        );
 
       const result = await service.sendEmailPasswordResetLink(
         mockToken,

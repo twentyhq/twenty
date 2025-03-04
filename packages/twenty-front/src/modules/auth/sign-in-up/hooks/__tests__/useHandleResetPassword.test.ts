@@ -7,8 +7,12 @@ import { SOURCE_LOCALE } from 'twenty-shared';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
+import {
+  PublicWorkspaceDataOutput,
+  useEmailPasswordResetLinkMutation,
+} from '~/generated/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 
 // Mocks
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
@@ -19,7 +23,14 @@ dynamicActivate(SOURCE_LOCALE);
 const renderHooks = () => {
   const { result } = renderHook(() => useHandleResetPassword(), {
     wrapper: ({ children }) =>
-      RecoilRoot({ children: I18nProvider({ i18n, children }) }),
+      RecoilRoot({
+        initializeState: ({ set }) => {
+          set(workspacePublicDataState, {
+            id: 'workspace-id',
+          } as PublicWorkspaceDataOutput);
+        },
+        children: I18nProvider({ i18n, children }),
+      }),
   });
   return { result };
 };
