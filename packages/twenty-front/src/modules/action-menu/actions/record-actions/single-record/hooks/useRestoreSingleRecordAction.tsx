@@ -51,8 +51,6 @@ export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
     isSoftDeleteFilterActiveComponentState,
   );
 
-  console.log('isSoftDeleteFilterActive', isSoftDeleteFilterActive);
-
   const isShowPage =
     useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
@@ -73,6 +71,13 @@ export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
     setIsRestoreRecordModalOpen(true);
   };
 
+  const handleConfirmClick = () => {
+    handleRestoreClick();
+    if (isInRightDrawer) {
+      closeRightDrawer({ emitCloseEvent: false });
+    }
+  };
+
   return {
     shouldBeRegistered,
     onClick,
@@ -82,12 +87,7 @@ export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
         setIsOpen={setIsRestoreRecordModalOpen}
         title={'Restore Record'}
         subtitle={'Are you sure you want to restore this record?'}
-        onConfirmClick={() => {
-          handleRestoreClick();
-          if (isInRightDrawer) {
-            closeRightDrawer({ emitCloseEvent: false });
-          }
-        }}
+        onConfirmClick={handleConfirmClick}
         confirmButtonText={'Restore Record'}
       />
     ),
