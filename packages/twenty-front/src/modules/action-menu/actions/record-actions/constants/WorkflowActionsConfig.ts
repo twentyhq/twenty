@@ -1,7 +1,6 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
 import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDestroyMultipleRecordsAction';
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
-import { useRestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useRestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
 import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
@@ -13,7 +12,6 @@ import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actio
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
-import { useRestoreOneRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreOneRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { useActivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateWorkflowSingleRecordAction';
 import { useDeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useDeactivateWorkflowSingleRecordAction';
@@ -45,7 +43,6 @@ import {
   IconPlayerPlay,
   IconPlus,
   IconPower,
-  IconRefresh,
   IconRotate2,
   IconTrash,
   IconTrashX,
@@ -350,33 +347,34 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useImportRecordsNoSelectionRecordAction,
   },
-  restoreSingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.RESTORE,
-    label: msg`Restore workflow`,
-    shortLabel: msg`Restore`,
-    position: 15,
-    Icon: IconRefresh,
-    accent: 'default',
-    isPinned: true,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useRestoreOneRecordAction,
-  },
-  restoreMultipleRecords: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: MultipleRecordsActionKeys.RESTORE,
-    label: msg`Restore workflows`,
-    shortLabel: msg`Restore`,
-    position: 16,
-    Icon: IconRefresh,
-    accent: 'default',
-    isPinned: true,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    useAction: useRestoreMultipleRecordsAction,
-  },
+  // TODO: uncomment when restore is implemented for workflows
+  // restoreSingleRecord: {
+  //   type: ActionMenuEntryType.Standard,
+  //   scope: ActionMenuEntryScope.RecordSelection,
+  //   key: SingleRecordActionKeys.RESTORE,
+  //   label: msg`Restore workflow`,
+  //   shortLabel: msg`Restore`,
+  //   position: 15,
+  //   Icon: IconRefresh,
+  //   accent: 'default',
+  //   isPinned: true,
+  //   availableOn: [
+  //     ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+  //     ActionViewType.SHOW_PAGE,
+  //   ],
+  //   useAction: useRestoreOneRecordAction,
+  // },
+  // restoreMultipleRecords: {
+  //   type: ActionMenuEntryType.Standard,
+  //   scope: ActionMenuEntryScope.RecordSelection,
+  //   key: MultipleRecordsActionKeys.RESTORE,
+  //   label: msg`Restore workflows`,
+  //   shortLabel: msg`Restore`,
+  //   position: 16,
+  //   Icon: IconRefresh,
+  //   accent: 'default',
+  //   isPinned: true,
+  //   availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+  //   useAction: useRestoreMultipleRecordsAction,
+  // },
 };
