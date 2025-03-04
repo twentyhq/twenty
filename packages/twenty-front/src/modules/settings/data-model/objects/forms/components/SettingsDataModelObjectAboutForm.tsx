@@ -1,16 +1,27 @@
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
+import {
+  SettingsDataModelObjectAboutFormValues,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
+import pick from 'lodash.pick';
 import { plural } from 'pluralize';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
   AppTooltip,
@@ -19,34 +30,15 @@ import {
   IconRefresh,
   TooltipDelay,
 } from 'twenty-ui';
-import { z } from 'zod';
+import { ZodError, isDirty } from 'zod';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-
-export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
-  .pick({
-    description: true,
-    icon: true,
-    labelPlural: true,
-    labelSingular: true,
-  })
-  .merge(
-    objectMetadataItemSchema
-      .pick({
-        nameSingular: true,
-        namePlural: true,
-        isLabelSyncedWithName: true,
-      })
-      .partial(),
-  );
-
-type SettingsDataModelObjectAboutFormValues = z.infer<
-  typeof settingsDataModelObjectAboutFormSchema
->;
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
+  // TODO upper throw if undefined ? new object settings things should provided default value ?
   objectMetadataItem?: ObjectMetadataItem;
-  onBlur?: () => void;
 };
 
 const StyledInputsContainer = styled.div`
@@ -94,12 +86,108 @@ export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
 export const SettingsDataModelObjectAboutForm = ({
   disableEdition,
   objectMetadataItem,
-  onBlur,
 }: SettingsDataModelObjectAboutFormProps) => {
+  const navigate = useNavigateSettings();
+  const { enqueueSnackBar } = useSnackBar();
+  const setUpdatedObjectNamePlural = useSetRecoilState(
+    updatedObjectNamePluralState,
+  );
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+  const { control, watch, setValue, formState, reset, handleSubmit } =
+    useForm<SettingsDataModelObjectAboutFormValues>({
+      mode: 'onTouched',
+      resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
+    });
+
+  const getUpdatePayload = (
+    formValues: SettingsDataModelObjectAboutFormValues,
+  ) => {
+    let values = formValues;
+    const dirtyFieldKeys = Object.keys(
+      formState.dirtyFields,
+    ) as (keyof SettingsDataModelObjectAboutFormValues)[];
+    const shouldComputeNamesFromLabels: boolean = dirtyFieldKeys.includes(
+      IS_LABEL_SYNCED_WITH_NAME_LABEL,
+    )
+      ? (formValues.isLabelSyncedWithName as boolean)
+      : isDefined(objectMetadataItem) &&
+        objectMetadataItem.isLabelSyncedWithName;
+
+    // OOF
+    if (shouldComputeNamesFromLabels) {
+      values = {
+        ...values,
+        ...(values.labelSingular && dirtyFieldKeys.includes('labelSingular')
+          ? {
+              nameSingular: computeMetadataNameFromLabel(
+                formValues.labelSingular,
+              ),
+            }
+          : {}),
+        ...(values.labelPlural && dirtyFieldKeys.includes('labelPlural')
+          ? {
+              namePlural: computeMetadataNameFromLabel(formValues.labelPlural),
+            }
+          : {}),
+      };
+    }
+    ///
+
+    return settingsUpdateObjectInputSchema.parse(
+      pick(values, [
+        ...dirtyFieldKeys,
+        ...(shouldComputeNamesFromLabels &&
+        dirtyFieldKeys.includes('labelPlural')
+          ? ['namePlural']
+          : []),
+        ...(shouldComputeNamesFromLabels &&
+        dirtyFieldKeys.includes('labelSingular')
+          ? ['nameSingular']
+          : []),
+      ]),
+    );
+  };
+
+  const handleSave = async (
+    formValues: SettingsDataModelObjectAboutFormValues,
+  ) => {
+    if (!isDirty) {
+      return;
+    }
+    try {
+      console.log(objectMetadataItem);
+      const updatePayload = getUpdatePayload(formValues);
+      const objectNamePluralForRedirection =
+        updatePayload.namePlural ?? objectMetadataItem.namePlural;
+
+      setUpdatedObjectNamePlural(objectNamePluralForRedirection);
+
+      // TODO try with create new object and see if it's working
+      await updateOneObjectMetadataItem({
+        idToUpdate: objectMetadataItem.id,
+        updatePayload,
+      });
+
+      reset(undefined, { keepValues: true });
+
+      navigate(SettingsPath.ObjectDetail, {
+        objectNamePlural: objectNamePluralForRedirection,
+      });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        enqueueSnackBar(error.issues[0].message, {
+          variant: SnackBarVariant.Error,
+        });
+      } else {
+        enqueueSnackBar((error as Error).message, {
+          variant: SnackBarVariant.Error,
+        });
+      }
+    }
+  };
+
   const { t } = useLingui();
 
-  const { control, watch, setValue } =
-    useFormContext<SettingsDataModelObjectAboutFormValues>();
   const theme = useTheme();
 
   const isLabelSyncedWithName =
@@ -107,12 +195,14 @@ export const SettingsDataModelObjectAboutForm = ({
     (isDefined(objectMetadataItem)
       ? objectMetadataItem.isLabelSyncedWithName
       : true);
+  // OOF
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
   watch('nameSingular');
   watch('namePlural');
   watch('description');
   watch('icon');
+  ///
   const apiNameTooltipText = isLabelSyncedWithName
     ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
     : t`Input must be in camel case and cannot start with a number`;
@@ -158,7 +248,6 @@ export const SettingsDataModelObjectAboutForm = ({
                 selectedIconKey={value}
                 onChange={({ iconKey }) => {
                   onChange(iconKey);
-                  onBlur?.();
                 }}
               />
             )}
@@ -181,7 +270,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fillNameSingularFromLabelSingular(value);
                 }
               }}
-              onBlur={onBlur}
+              onBlur={() => handleSubmit(handleSave)()}
               disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
@@ -222,7 +311,7 @@ export const SettingsDataModelObjectAboutForm = ({
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             disabled={disableEdition}
-            onBlur={onBlur}
+            onBlur={() => handleSubmit(handleSave)()}
           />
         )}
       />
@@ -271,7 +360,7 @@ export const SettingsDataModelObjectAboutForm = ({
                             disabled={disableEdition}
                             fullWidth
                             maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
-                            onBlur={onBlur}
+                            onBlur={() => handleSubmit(handleSave)()}
                             RightIcon={() =>
                               tooltip && (
                                 <>
@@ -324,7 +413,8 @@ export const SettingsDataModelObjectAboutForm = ({
                           fillNamePluralFromLabelPlural(labelPlural);
                           fillNameSingularFromLabelSingular(labelSingular);
                         }
-                        onBlur?.();
+                        // TO_CHECK prastoin Could be factorized to be scoped to form itself ?
+                        handleSubmit(handleSave)();
                       }}
                     />
                   </Card>

@@ -23,7 +23,6 @@ const StyledSettingsPageContainer = styled.div<{
     return OBJECT_SETTINGS_WIDTH + 'px';
   }};
   padding-bottom: ${({ theme }) => theme.spacing(20)};
-  height: 100%;
 `;
 
 export const SettingsPageContainer = ({
