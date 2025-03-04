@@ -3,12 +3,13 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { NewTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/refresh-tokens.service';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
-  async refreshAccessToken(refreshToken: string): Promise<string> {
+  async refreshAccessToken(refreshToken: string): Promise<NewTokens> {
     const response = await axios.post(
       'https://oauth2.googleapis.com/token',
       {
@@ -24,6 +25,8 @@ export class GoogleAPIRefreshAccessTokenService {
       },
     );
 
-    return response.data.access_token;
+    return {
+      newAccessToken: response.data.access_token,
+    };
   }
 }

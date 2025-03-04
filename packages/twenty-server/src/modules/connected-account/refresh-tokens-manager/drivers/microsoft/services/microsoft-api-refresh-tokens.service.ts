@@ -3,12 +3,13 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { NewTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/refresh-tokens.service';
 
 @Injectable()
 export class MicrosoftAPIRefreshAccessTokenService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
-  async refreshAccessToken(refreshToken: string): Promise<string> {
+  async refreshTokens(refreshToken: string): Promise<NewTokens> {
     const response = await axios.post(
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
       new URLSearchParams({
@@ -26,6 +27,9 @@ export class MicrosoftAPIRefreshAccessTokenService {
       },
     );
 
-    return response.data.access_token;
+    return {
+      newAccessToken: response.data.access_token,
+      newRefreshToken: response.data.refresh_token,
+    };
   }
 }

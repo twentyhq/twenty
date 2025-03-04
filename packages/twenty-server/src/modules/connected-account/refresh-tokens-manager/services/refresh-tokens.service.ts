@@ -1,28 +1,32 @@
 import { Injectable } from '@nestjs/common';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/drivers/google/services/google-api-refresh-access-token.service';
-import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/drivers/microsoft/services/microsoft-api-refresh-access-token.service';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
+import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
   RefreshAccessTokenException,
   RefreshAccessTokenExceptionCode,
-} from 'src/modules/connected-account/refresh-access-token-manager/exceptions/refresh-access-token.exception';
+} from 'src/modules/connected-account/refresh-tokens-manager/exceptions/refresh-tokens.exception';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
+export type NewTokens = {
+  newAccessToken: string;
+  newRefreshToken?: string;
+};
+
 @Injectable()
-export class RefreshAccessTokenService {
+export class RefreshTokensService {
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
-  async refreshAndSaveAccessToken(
+  async refreshAndSaveTokens(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<string> {
     const refreshToken = connectedAccount.refreshToken;
-    let accessToken: string;
 
     if (!refreshToken) {
       throw new RefreshAccessTokenException(
@@ -34,11 +38,17 @@ export class RefreshAccessTokenService {
     switch (connectedAccount.provider) {
       case 'microsoft':
       case 'google': {
+        let newAccessToken: string;
+        let newRefreshToken: string | undefined;
+
         try {
-          accessToken = await this.refreshAccessToken(
+          const tokenObject = await this.refreshTokens(
             connectedAccount,
             refreshToken,
           );
+
+          newAccessToken = tokenObject.newAccessToken;
+          newRefreshToken = tokenObject.newRefreshToken;
         } catch (error) {
           throw new RefreshAccessTokenException(
             `Error refreshing access token for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message} ${error?.response?.data?.error_description}`,
@@ -51,31 +61,41 @@ export class RefreshAccessTokenService {
             'connectedAccount',
           );
 
-        await connectedAccountRepository.update(
-          { id: connectedAccount.id },
-          {
-            accessToken,
-          },
-        );
+        if (newRefreshToken) {
+          await connectedAccountRepository.update(
+            { id: connectedAccount.id },
+            {
+              accessToken: newAccessToken,
+              refreshToken: newRefreshToken,
+            },
+          );
+        } else {
+          await connectedAccountRepository.update(
+            { id: connectedAccount.id },
+            {
+              accessToken: newAccessToken,
+            },
+          );
+        }
 
-        return accessToken;
+        return newAccessToken;
       }
       default:
         throw new Error('Provider not supported for access token refresh');
     }
   }
 
-  async refreshAccessToken(
+  async refreshTokens(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     refreshToken: string,
-  ): Promise<string> {
+  ): Promise<NewTokens> {
     switch (connectedAccount.provider) {
       case 'google':
         return this.googleAPIRefreshAccessTokenService.refreshAccessToken(
           refreshToken,
         );
       case 'microsoft':
-        return this.microsoftAPIRefreshAccessTokenService.refreshAccessToken(
+        return this.microsoftAPIRefreshAccessTokenService.refreshTokens(
           refreshToken,
         );
       default:
