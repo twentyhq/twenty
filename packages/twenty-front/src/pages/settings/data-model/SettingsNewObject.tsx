@@ -1,14 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { H2Title, Section } from 'twenty-ui';
-import { z } from 'zod';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
-import { settingsDataModelObjectAboutFormSchema } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import {
+  SettingsDataModelObjectAboutFormValues,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -17,10 +19,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
-
-type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
-
 export const SettingsNewObject = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
@@ -28,16 +26,16 @@ export const SettingsNewObject = () => {
 
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
-  const formConfig = useForm<SettingsDataModelNewObjectFormValues>({
+  const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(newObjectFormSchema),
+    resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
   });
 
   const { isValid, isSubmitting } = formConfig.formState;
   const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
-    formValues: SettingsDataModelNewObjectFormValues,
+    formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
     try {
       const { data: response } = await createOneObjectMetadataItem(
@@ -51,6 +49,8 @@ export const SettingsNewObject = () => {
           : undefined,
       );
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });

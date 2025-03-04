@@ -6,7 +6,6 @@ import {
   SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -56,14 +55,14 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         ? computeMetadataNameFromLabel(dirtyFields.labelPlural)
         : undefined;
 
-      return settingsUpdateObjectInputSchema.parse({
+      return settingsDataModelObjectAboutFormSchema.parse({
         ...formValues,
         namePlural,
         nameSingular,
       });
     }
 
-    return settingsUpdateObjectInputSchema.parse(formValues);
+    return settingsDataModelObjectAboutFormSchema.parse(formValues);
   };
 
   const handleSave = async (
