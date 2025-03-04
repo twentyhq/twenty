@@ -4,7 +4,7 @@ import { Button, H2Title, IconArchive, Section } from 'twenty-ui';
 
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
+import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
@@ -45,8 +45,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
             title={t`About`}
             description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
           />
-          <SettingsDataModelObjectAboutForm
-            disableEdition={!objectMetadataItem.isCustom}
+          <SettingsUpdateDataModelObjectAboutForm
             objectMetadataItem={objectMetadataItem}
           />
         </StyledFormSection>

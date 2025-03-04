@@ -1,27 +1,16 @@
-import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
-import { getDirtyValues } from '@/settings/data-model/utils/getFormDirtyFields';
-import {
-  SettingsDataModelObjectAboutFormValues,
-  settingsDataModelObjectAboutFormSchema,
-} from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
-import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
-import { Controller, useForm } from 'react-hook-form';
-import { useSetRecoilState } from 'recoil';
+import { Controller, useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared';
 import {
   AppTooltip,
@@ -30,15 +19,13 @@ import {
   IconRefresh,
   TooltipDelay,
 } from 'twenty-ui';
-import { ZodError, isDirty } from 'zod';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
   // TODO upper throw if undefined ? new object settings things should provided default value ?
   objectMetadataItem?: ObjectMetadataItem;
+  handleSave: (arg: SettingsDataModelObjectAboutFormValues) => void;
 };
 
 const StyledInputsContainer = styled.div`
@@ -85,95 +72,12 @@ export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
 
 export const SettingsDataModelObjectAboutForm = ({
   disableEdition,
+  handleSave,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
-  const navigate = useNavigateSettings();
-  const { enqueueSnackBar } = useSnackBar();
-  const setUpdatedObjectNamePlural = useSetRecoilState(
-    updatedObjectNamePluralState,
-  );
-  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
-  const { control, watch, setValue, formState, reset, handleSubmit } =
-    useForm<SettingsDataModelObjectAboutFormValues>({
-      mode: 'onTouched',
-      resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
-    });
-
-  const getUpdatePayload = (
-    formValues: SettingsDataModelObjectAboutFormValues,
-  ) => {
-    const dirtyFields = getDirtyValues(formState.dirtyFields, formValues);
-    const shouldComputeNamesFromLabels =
-      dirtyFields.isLabelSyncedWithName === true ||
-      objectMetadataItem?.isLabelSyncedWithName === true;
-
-    if (shouldComputeNamesFromLabels) {
-      const nameSingular = isDefined(dirtyFields.labelSingular)
-        ? computeMetadataNameFromLabel(dirtyFields.labelSingular)
-        : undefined;
-      const namePlural = isDefined(dirtyFields.labelPlural)
-        ? computeMetadataNameFromLabel(dirtyFields.labelPlural)
-        : undefined;
-
-      return settingsUpdateObjectInputSchema.parse({
-        ...formValues,
-        namePlural,
-        nameSingular,
-      });
-    }
-
-    return settingsUpdateObjectInputSchema.parse(formValues);
-  };
-
-  const handleSave = async (
-    formValues: SettingsDataModelObjectAboutFormValues,
-  ) => {
-    if (!isDirty) {
-      return;
-    }
-    try {
-      console.log(objectMetadataItem);
-      const updatePayload = getUpdatePayload(formValues);
-      const objectNamePluralForRedirection =
-        updatePayload.namePlural ?? objectMetadataItem?.namePlural;
-
-      if (!isDefined(objectNamePluralForRedirection)) {
-        throw new Error('Should never occur, object name plural is undefined');
-      }
-
-      if (!isDefined(objectMetadataItem)) {
-        throw new Error('Should never occur, objectMetadataItem is undefined');
-      }
-
-      setUpdatedObjectNamePlural(objectNamePluralForRedirection);
-
-      // TODO try with create new object and see if it's working
-      await updateOneObjectMetadataItem({
-        idToUpdate: objectMetadataItem.id,
-        updatePayload,
-      });
-
-      reset(undefined, { keepValues: true });
-
-      navigate(SettingsPath.ObjectDetail, {
-        objectNamePlural: objectNamePluralForRedirection,
-      });
-    } catch (error) {
-      console.error(error);
-      if (error instanceof ZodError) {
-        enqueueSnackBar(error.issues[0].message, {
-          variant: SnackBarVariant.Error,
-        });
-      } else {
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
-        });
-      }
-    }
-  };
-
+  const { control, watch, setValue, handleSubmit } =
+    useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
-
   const theme = useTheme();
 
   const isLabelSyncedWithName =
