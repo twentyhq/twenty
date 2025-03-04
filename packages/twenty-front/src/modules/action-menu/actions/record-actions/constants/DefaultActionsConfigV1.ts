@@ -8,7 +8,7 @@ import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-action
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
-import { useRestoreOneRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreOneRecordAction';
+import { useRestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -144,7 +144,7 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    useAction: useRestoreOneRecordAction,
+    useAction: useRestoreSingleRecordAction,
   },
   restoreMultipleRecords: {
     type: ActionMenuEntryType.Standard,

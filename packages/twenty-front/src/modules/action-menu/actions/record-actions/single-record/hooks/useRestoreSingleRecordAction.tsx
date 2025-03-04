@@ -1,17 +1,21 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
-export const useRestoreOneRecordAction: ActionHookWithObjectMetadataItem = ({
+export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
 }) => {
   const recordId = useSelectedRecordIdOrThrow();
@@ -43,12 +47,23 @@ export const useRestoreOneRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
+  const isSoftDeleteFilterActive = useRecoilComponentValueV2(
+    isSoftDeleteFilterActiveComponentState,
+  );
+
+  console.log('isSoftDeleteFilterActive', isSoftDeleteFilterActive);
+
+  const isShowPage =
+    useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
+    ContextStoreViewType.ShowPage;
+
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const shouldBeRegistered =
     !isRemoteObject &&
     isDefined(selectedRecord?.deletedAt) &&
-    !hasObjectReadOnlyPermission;
+    !hasObjectReadOnlyPermission &&
+    (isShowPage || isSoftDeleteFilterActive);
 
   const onClick = () => {
     if (!shouldBeRegistered) {

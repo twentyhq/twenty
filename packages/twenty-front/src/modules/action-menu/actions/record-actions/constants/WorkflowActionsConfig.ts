@@ -362,7 +362,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
   //     ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
   //     ActionViewType.SHOW_PAGE,
   //   ],
-  //   useAction: useRestoreOneRecordAction,
+  //   useAction: useRestoreSingleRecordAction,
   // },
   // restoreMultipleRecords: {
   //   type: ActionMenuEntryType.Standard,

@@ -14,7 +14,7 @@ import { useExportNoteAction } from '@/action-menu/actions/record-actions/single
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
-import { useRestoreOneRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreOneRecordAction';
+import { useRestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -261,7 +261,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    useAction: useRestoreOneRecordAction,
+    useAction: useRestoreSingleRecordAction,
   },
   restoreMultipleRecords: {
     type: ActionMenuEntryType.Standard,
