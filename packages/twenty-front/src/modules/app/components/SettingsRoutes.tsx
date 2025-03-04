@@ -403,6 +403,7 @@ export const SettingsRoutes = ({
         }
       >
         <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
+        <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
         <Route
           path={SettingsPath.GraphQLPlayground}
           element={<SettingsGraphQLPlayground />}
