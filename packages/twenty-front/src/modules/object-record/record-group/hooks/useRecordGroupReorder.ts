@@ -29,7 +29,7 @@ export const useRecordGroupReorder = ({
     visibleRecordGroupIdsComponentFamilySelector,
   );
 
-  const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);
+  const { saveViewGroups } = useSaveCurrentViewGroups();
 
   const handleOrderChange: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>

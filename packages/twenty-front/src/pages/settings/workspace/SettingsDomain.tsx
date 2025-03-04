@@ -24,7 +24,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
 import { isDefined } from 'twenty-shared';
 
 export const SettingsDomain = () => {
@@ -229,12 +228,7 @@ export const SettingsDomain = () => {
         >
           <SettingsPageContainer>
             <SettingsSubdomain />
-            {isCustomDomainEnabled && (
-              <>
-                <SettingsCustomDomainEffect />
-                <SettingsCustomDomain />
-              </>
-            )}
+            {isCustomDomainEnabled && <SettingsCustomDomain />}
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>

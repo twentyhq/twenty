@@ -67,11 +67,10 @@ export const RecordIndexPageHeader = () => {
         ))}
 
       {isCommandMenuV2Enabled && (
-        <>
-          <RecordIndexActionMenu indexId={recordIndexId} />
-          <PageHeaderOpenCommandMenuButton />
-        </>
+        <RecordIndexActionMenu indexId={recordIndexId} />
       )}
+
+      <PageHeaderOpenCommandMenuButton />
     </PageHeader>
   );
 };

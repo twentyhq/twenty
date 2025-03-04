@@ -109,7 +109,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
           displayValue,
           type: getFilterTypeFromFieldType(fieldMetadataItem.type),
           label: fieldMetadataItem.label,
-          viewFilterGroupId: advancedFilterViewFilterGroupId,
+          recordFilterGroupId: advancedFilterViewFilterGroupId,
           subFieldName: subFieldName,
         });
       }

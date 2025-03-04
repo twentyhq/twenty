@@ -45,12 +45,30 @@ export class WorkflowRunnerWorkspaceService {
       RunWorkflowJob.name,
       {
         workspaceId,
-        workflowVersionId,
         payload: payload,
         workflowRunId,
       },
     );
 
     return { workflowRunId };
+  }
+
+  async resume({
+    workspaceId,
+    workflowRunId,
+    lastExecutedStepId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    lastExecutedStepId: string;
+  }) {
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId,
+      },
+    );
   }
 }

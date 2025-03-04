@@ -1,6 +1,6 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 @ArgsType()
 export class EmailPasswordResetLinkInput {
@@ -8,4 +8,9 @@ export class EmailPasswordResetLinkInput {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  workspaceId: string;
 }
