@@ -73,7 +73,6 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       return;
     }
     try {
-      console.log(objectMetadataItem);
       const updatePayload = getUpdatePayload(formValues);
       const objectNamePluralForRedirection =
         updatePayload.namePlural ?? objectMetadataItem?.namePlural;
@@ -114,6 +113,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   };
 
   return (
+    // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SettingsDataModelObjectAboutForm
         handleSave={handleSave}

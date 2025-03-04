@@ -6,10 +6,10 @@ export type DirtyFieldsType =
     }
   | DirtyFieldsType[];
 
-export function getDirtyValues<T extends Record<string, any>>(
+export const getDirtyValues = <T extends Record<string, any>>(
   dirtyFields: Partial<Record<keyof T, DirtyFieldsType>>,
   values: T,
-): Partial<T> {
+): Partial<T> => {
   const dirtyValues = Object.keys(dirtyFields).reduce((prev, key) => {
     const value = dirtyFields[key];
     if (!value) {
@@ -24,4 +24,4 @@ export function getDirtyValues<T extends Record<string, any>>(
     return { ...prev, [key]: isArray ? values[key] : nestedValue };
   }, {} as Partial<T>);
   return dirtyValues;
-}
+};

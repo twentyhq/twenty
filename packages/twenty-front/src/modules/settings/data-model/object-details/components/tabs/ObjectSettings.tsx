@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { Button, H2Title, IconArchive, Section } from 'twenty-ui';
 
