@@ -260,7 +260,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           </Trans>
         }
         onConfirmClick={deleteIntegration}
-        deleteButtonText={t`Delete`}
+        confirmButtonText={t`Delete`}
         loading={isLoading}
       />
       <ConfirmationModal
@@ -277,7 +277,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           </Trans>
         }
         onConfirmClick={regenerateApiKey}
-        deleteButtonText={t`Regenerate key`}
+        confirmButtonText={t`Regenerate key`}
         loading={isLoading}
       />
     </>
