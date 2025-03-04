@@ -3,8 +3,11 @@ import { useRelationField } from '../../hooks/useRelationField';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
+import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { IconForbid } from 'twenty-ui';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
@@ -47,6 +50,18 @@ export const RelationToOneFieldInput = ({
       recordId,
     });
 
+  const layoutDirection = useRecoilComponentValueV2(
+    recordFieldInputLayoutDirectionComponentState,
+  );
+
+  const isLoading = useRecoilComponentValueV2(
+    recordFieldInputLayoutDirectionLoadingComponentState,
+  );
+
+  if (isLoading) {
+    return <></>;
+  }
+
   return (
     <SingleRecordPicker
       componentInstanceId={recordPickerInstanceId}
@@ -59,6 +74,11 @@ export const RelationToOneFieldInput = ({
         fieldDefinition.metadata.relationObjectMetadataNameSingular
       }
       recordPickerInstanceId={recordPickerInstanceId}
+      layoutDirection={
+        layoutDirection === 'downward'
+          ? 'search-bar-on-top'
+          : 'search-bar-on-bottom'
+      }
     />
   );
 };
