@@ -32,7 +32,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
 
   return (
     <StyledContainer>
-      <JsonTree value={stepContext} />;
+      <JsonTree value={stepContext} />
     </StyledContainer>
   );
 };
