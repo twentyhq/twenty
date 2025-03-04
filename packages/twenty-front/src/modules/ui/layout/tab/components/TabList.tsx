@@ -3,7 +3,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import styled from '@emotion/styled';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Tab } from './Tab';
 import { MoreTabsDropdown } from './TabMoreDropdown';
 import { IconComponent, IconChevronDown } from 'twenty-ui';
@@ -57,18 +57,17 @@ export const TabList = ({
   const [maxVisibleTabs, setMaxVisibleTabs] = useState<number>(
     visibleTabs.length,
   );
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (containerRef.current !== null) {
-      const containerWidth = containerRef.current.offsetWidth;
-      const firstTab = containerRef.current.querySelector(
-        '.tab-item',
-      ) as HTMLElement;
-      const tabWidth = firstTab.offsetWidth + 16; // 16px := gap between tabs
-      const calculatedMaxVisible = Math.floor(containerWidth / tabWidth) - 1; // -1 to make space for the dropdown button
-      setMaxVisibleTabs(calculatedMaxVisible);
-    }
+  const containerRef = useCallback((node: HTMLDivElement) => {
+    const containerWidth = node.offsetWidth;
+    const firstTab = node.querySelector(
+      '.tab-item',
+    ) as HTMLElement;
+    if (!firstTab) return;
+
+    const tabWidth = firstTab.offsetWidth + 16; // 16px := gap between tabs
+    const calculatedMaxVisible = Math.floor(containerWidth / tabWidth) - 1; // -1 to make space for the dropdown button
+    setMaxVisibleTabs(calculatedMaxVisible);
   }, []);
 
   const truncatedTabs = visibleTabs.slice(0, maxVisibleTabs);
