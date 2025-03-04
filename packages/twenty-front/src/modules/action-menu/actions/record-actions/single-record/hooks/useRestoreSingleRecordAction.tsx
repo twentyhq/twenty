@@ -1,35 +1,35 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
-import { AppPath } from '@/types/AppPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
+export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
 }) => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
+  const [isRestoreRecordModalOpen, setIsRestoreRecordModalOpen] =
     useState(false);
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
-  const navigateApp = useNavigateApp();
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: objectMetadataItem.namePlural,
   });
 
-  const { destroyOneRecord } = useDestroyOneRecord({
+  const { restoreManyRecords } = useRestoreManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
@@ -37,36 +37,45 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const { closeRightDrawer } = useRightDrawer();
 
-  const handleDeleteClick = useCallback(async () => {
+  const handleRestoreClick = useCallback(async () => {
     resetTableRowSelection();
 
-    await destroyOneRecord(recordId);
-    navigateApp(AppPath.RecordIndexPage, {
-      objectNamePlural: objectMetadataItem.namePlural,
+    await restoreManyRecords({
+      idsToRestore: [recordId],
     });
-  }, [
-    resetTableRowSelection,
-    destroyOneRecord,
-    recordId,
-    navigateApp,
-    objectMetadataItem.namePlural,
-  ]);
+  }, [restoreManyRecords, resetTableRowSelection, recordId]);
 
   const isRemoteObject = objectMetadataItem.isRemote;
+
+  const isSoftDeleteFilterActive = useRecoilComponentValueV2(
+    isSoftDeleteFilterActiveComponentState,
+  );
+
+  const isShowPage =
+    useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
+    ContextStoreViewType.ShowPage;
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const shouldBeRegistered =
-    !hasObjectReadOnlyPermission &&
     !isRemoteObject &&
-    isDefined(selectedRecord?.deletedAt);
+    isDefined(selectedRecord?.deletedAt) &&
+    !hasObjectReadOnlyPermission &&
+    (isShowPage || isSoftDeleteFilterActive);
 
   const onClick = () => {
     if (!shouldBeRegistered) {
       return;
     }
 
-    setIsDestroyRecordsModalOpen(true);
+    setIsRestoreRecordModalOpen(true);
+  };
+
+  const handleConfirmClick = () => {
+    handleRestoreClick();
+    if (isInRightDrawer) {
+      closeRightDrawer({ emitCloseEvent: false });
+    }
   };
 
   return {
@@ -74,19 +83,12 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
     onClick,
     ConfirmationModal: (
       <ConfirmationModal
-        isOpen={isDestroyRecordsModalOpen}
-        setIsOpen={setIsDestroyRecordsModalOpen}
-        title={'Permanently Destroy Record'}
-        subtitle={
-          'Are you sure you want to destroy this record? It cannot be recovered anymore.'
-        }
-        onConfirmClick={async () => {
-          await handleDeleteClick();
-          if (isInRightDrawer) {
-            closeRightDrawer();
-          }
-        }}
-        confirmButtonText={'Permanently Destroy Record'}
+        isOpen={isRestoreRecordModalOpen}
+        setIsOpen={setIsRestoreRecordModalOpen}
+        title={'Restore Record'}
+        subtitle={'Are you sure you want to restore this record?'}
+        onConfirmClick={handleConfirmClick}
+        confirmButtonText={'Restore Record'}
       />
     ),
   };

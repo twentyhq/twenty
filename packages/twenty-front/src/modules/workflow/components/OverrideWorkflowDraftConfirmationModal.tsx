@@ -47,7 +47,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
         title="A draft already exists"
         subtitle="A draft already exists for this workflow. Are you sure you want to erase it?"
         onConfirmClick={handleOverrideDraft}
-        deleteButtonText={'Override Draft'}
+        confirmButtonText={'Override Draft'}
         AdditionalButtons={
           <StyledCenteredButton
             to={getAppPath(AppPath.RecordShowPage, {
