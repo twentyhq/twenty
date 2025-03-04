@@ -1790,7 +1790,7 @@ msgstr "\\\\u30ea\\\\u30b9\\\\u30c8"
 msgid "Log out"
 msgstr "ログアウト"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "ログアウト"
 

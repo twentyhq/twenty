@@ -1790,7 +1790,7 @@ msgstr "Listados"
 msgid "Log out"
 msgstr "Cerrar sesión"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Cerrar sesión"
 

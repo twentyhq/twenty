@@ -1790,7 +1790,7 @@ msgstr "Listningar"
 msgid "Log out"
 msgstr "Logga ut"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Logga ut"
 

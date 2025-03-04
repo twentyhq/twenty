@@ -1790,7 +1790,7 @@ msgstr "Annonces"
 msgid "Log out"
 msgstr "Déconnexion"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Déconnexion"
 

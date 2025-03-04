@@ -1785,7 +1785,7 @@ msgstr "Listings"
 msgid "Log out"
 msgstr "Log out"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Logout"
 
