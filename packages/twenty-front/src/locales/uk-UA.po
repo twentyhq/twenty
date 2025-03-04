@@ -1846,7 +1846,7 @@ msgstr "Списки"
 msgid "Log out"
 msgstr "Вийти"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Вийти"
 
