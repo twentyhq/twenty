@@ -1790,7 +1790,7 @@ msgstr "crwdns3997:0crwdne3997:0"
 msgid "Log out"
 msgstr "crwdns469:0crwdne469:0"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "crwdns471:0crwdne471:0"
 
