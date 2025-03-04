@@ -5,19 +5,13 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
+import Keyboard from '@/softphone/components/Keyboard';
 import StatusIndicator from '@/softphone/components/StatusPill';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  Mic,
-  MicOff,
-  Phone,
-  PhoneIncoming,
-  PhoneOff,
-  RefreshCcw,
-} from 'lucide-react';
+import { RefreshCcw } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useRecoilValue } from 'recoil';
@@ -36,7 +30,7 @@ import {
   SessionDescriptionHandler,
   SessionManager,
 } from 'sip.js/lib/platform/web';
-import { useIcons } from 'twenty-ui';
+import { IconPhone, useIcons } from 'twenty-ui';
 import defaultCallState from '../constants/defaultCallState';
 import defaultConfig from '../constants/defaultConfig';
 import { useRingTone } from '../hooks/useRingTone';
@@ -56,6 +50,112 @@ const StyledContainer = styled.div`
   width: 300px;
   position: relative;
   cursor: grab;
+  gap: ${({ theme }) => theme.spacing(3)};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+`;
+
+const StyledControlsContainer = styled.div<{ column?: boolean; gap?: number }>`
+  align-items: center;
+  display: flex;
+  flex-direction: ${({ column }) => (column ? 'column' : 'row')};
+  gap: ${({ theme, gap }) => theme.spacing(gap || 1)};
+`;
+
+const StyledIncomingCall = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledIncomingText = styled.span`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: normal;
+`;
+
+const StyledIncomingNumber = styled.span<{ alignSelf?: string }>`
+  align-self: ${({ alignSelf }) => alignSelf || 'start'};
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
+
+const StyledIncomingButton = styled.div<{ accept: boolean }>`
+  color: ${({ theme }) => theme.font.color.inverted};
+  font-size: ${({ theme }) => theme.font.size.md};
+  width: 100%;
+  text-align: center;
+
+  background-color: ${({ accept, theme }) =>
+    accept ? theme.color.green60 : theme.color.red};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding: ${({ theme }) => theme.spacing(2)};
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ accept, theme }) =>
+      accept ? theme.color.green70 : theme.color.red50};
+  }
+`;
+
+const StyledTextAndCallButton = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+`;
+
+const StyledDefaultContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(3)};
+  width: 100%;
+`;
+
+const StyledIncomingButtonContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+`;
+
+const StyledIncomingTimerAndIcon = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledStatusAndTimer = styled.div`
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+  width: 100%;
+`;
+
+const StyledOngoingCallContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(3)};
+  width: 100%;
+`;
+
+const StyledEndButton = styled.div`
+  color: ${({ theme }) => theme.font.color.inverted};
+  font-size: ${({ theme }) => theme.font.size.md};
+  width: 100%;
+  text-align: center;
+
+  background-color: ${({ theme }) => theme.color.red};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding-block: ${({ theme }) => theme.spacing(2)};
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.color.red50};
+  }
 `;
 
 const WebSoftphone: React.FC = () => {
@@ -63,6 +163,7 @@ const WebSoftphone: React.FC = () => {
   const [callState, setCallState] = useState<CallState>(defaultCallState);
   const [elapsedTime, setElapsedTime] = useState<string>('00:00');
   const [ringingTime, setRingingTime] = useState<string>('00:00');
+  const [isKeyboardExpanded, setIsKeyboardExpanded] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const ringingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const userAgentRef = useRef<UserAgent | null>(null);
@@ -97,6 +198,15 @@ const WebSoftphone: React.FC = () => {
 
   useEffect(() => {
     console.log('****telephonyExtension', telephonyExtension);
+
+    if (telephonyExtension) {
+      setConfig({
+        ...config,
+        username: telephonyExtension.usuario_autenticacao,
+        password: telephonyExtension.senha_sip,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [telephonyExtension]);
 
   useEffect(() => {
@@ -516,6 +626,8 @@ const WebSoftphone: React.FC = () => {
     if (!callState.currentNumber || !userAgentRef.current || callState.isInCall)
       return;
 
+    setIsKeyboardExpanded(false);
+
     try {
       await cleanupSession();
       setCallState((prev) => ({
@@ -650,7 +762,18 @@ const WebSoftphone: React.FC = () => {
       );
   };
 
+  const handleKeyboardClick = (key: string) => {
+    setCallState((prev) => ({
+      ...prev,
+      currentNumber: prev.currentNumber + key,
+    }));
+  };
+
   const KeyboradOffIcon = getIcon('IconKeyboardOff');
+  const PhoneIncoming = getIcon('IconPhoneIncoming');
+  const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
+  const IconMicrophoneOff = getIcon('IconMicrophoneOff');
+
   const theme = useTheme();
 
   // const sendDTMF = (tone: string) => {
@@ -696,148 +819,208 @@ const WebSoftphone: React.FC = () => {
     <Draggable>
       <StyledContainer>
         <audio ref={remoteAudioRef} autoPlay />
-        <StatusIndicator
-          status={
-            callState.isRegistered
-              ? 'online'
-              : callState.isRegistering
-                ? 'registering'
-                : 'offline'
-          }
-        />
 
-        {/* Área principal */}
-        <div className="flex items-center gap-2 flex-1">
+        {/* callState.incomingCall && !callState.isInCall
+callState.incomingCall && !callState.isInCall
+callState.incomingCall && !callState.isInCall */}
+
+        {callState.incomingCall && !callState.isInCall ? (
+          <StyledIncomingCall>
+            <PhoneIncoming
+              color={theme.font.color.secondary}
+              size={theme.icon.size.md}
+            />
+            <StyledIncomingText>incoming</StyledIncomingText>
+          </StyledIncomingCall>
+        ) : (
+          <StyledStatusAndTimer>
+            <StatusIndicator
+              status={
+                callState.isRegistered
+                  ? 'online'
+                  : callState.isRegistering
+                    ? 'registering'
+                    : 'offline'
+              }
+            />
+            {/* callState.isInCall */}
+            {(callState.isInCall || callState.ringingStartTime) && (
+              <StyledIncomingTimerAndIcon>
+                <IconPhoneOutgoing
+                  color={theme.font.color.secondary}
+                  size={theme.icon.size.md}
+                />
+                <StyledIncomingText>
+                  {callState.callStartTime ? elapsedTime : ringingTime}
+                </StyledIncomingText>
+              </StyledIncomingTimerAndIcon>
+            )}
+          </StyledStatusAndTimer>
+        )}
+
+        <StyledControlsContainer
+          column={callState.incomingCall && !callState.isInCall}
+        >
           {callState.incomingCall && !callState.isInCall ? (
             <>
-              <div className="flex-1 flex items-center gap-1 min-w-0">
-                <PhoneIncoming className="w-4 h-4 text-blue-600 animate-pulse flex-shrink-0" />
-                <span className="text-xs truncate">
-                  Chamada de: <strong>{callState.incomingCallNumber}</strong>
-                </span>
-              </div>
-              <div className="flex gap-1 flex-shrink-0">
-                <button
-                  onClick={handleAcceptCall}
-                  className="p-1 rounded-full bg-green-100 hover:bg-green-200 text-green-600"
-                >
-                  <Phone className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={handleRejectCall}
-                  className="p-1 rounded-full bg-red-100 hover:bg-red-200 text-red-600"
-                >
-                  <PhoneOff className="w-4 h-4" />
-                </button>
-              </div>
+              <StyledIncomingNumber>
+                {callState.incomingCallNumber}
+              </StyledIncomingNumber>
+              <StyledIncomingButtonContainer>
+                <StyledIncomingButton accept={false} onClick={handleRejectCall}>
+                  Reject
+                </StyledIncomingButton>
+                <StyledIncomingButton accept={true} onClick={handleAcceptCall}>
+                  Accept
+                </StyledIncomingButton>
+              </StyledIncomingButtonContainer>
             </>
           ) : (
-            <>
-              {!callState.isInCall && !callState.callStatus ? (
-                <TextInput
-                  placeholder="Dial the phone number"
-                  fullWidth={true}
-                  value={callState.currentNumber}
-                  onChange={(e) => {
-                    if (!callState.isInCall) {
-                      const numericValue = e.replace(/\D/g, '');
-                      setCallState((prev) => ({
-                        ...prev,
-                        currentNumber: numericValue,
-                      }));
-                    }
-                  }}
-                  RightIcon={() => (
-                    <KeyboradOffIcon
-                      color={theme.font.color.tertiary}
-                      size={theme.icon.size.md}
-                      style={{ cursor: 'pointer' }}
+            <div style={{ width: '100%' }}>
+              <StyledDefaultContainer>
+                <StyledTextAndCallButton>
+                  {/* !callState.isInCall && !callState.callStatus */}
+                  {!callState.isInCall && !callState.callStatus && (
+                    <TextInput
+                      placeholder="Dial the phone number"
+                      fullWidth
+                      value={callState.currentNumber}
+                      onChange={(e) => {
+                        if (!callState.isInCall) {
+                          setCallState((prev) => ({
+                            ...prev,
+                            currentNumber: e.replace(/\D/g, ''),
+                          }));
+                        }
+                      }}
+                      RightIcon={() => (
+                        <KeyboradOffIcon
+                          color={theme.font.color.tertiary}
+                          size={theme.icon.size.md}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() =>
+                            setIsKeyboardExpanded(!isKeyboardExpanded)
+                          }
+                        />
+                      )}
+                      disabled={callState.isInCall}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && callState.isRegistered) {
+                          handleCall();
+                        }
+                      }}
                     />
                   )}
-                  disabled={callState.isInCall}
-                  onKeyDown={(e) => {
-                    if (
-                      e.key === 'Enter' &&
-                      typeof window !== 'undefined' &&
-                      callState.isRegistered
-                    ) {
-                      handleCall();
-                    }
-                  }}
-                />
-              ) : (
-                <span className="text-xs font-mono">
-                  {callState.callStartTime ? elapsedTime : ringingTime}
-                </span>
-              )}
 
-              <div className="flex gap-1 flex-shrink-0">
+                  {/* callState.isRegistered &&
+                  !callState.isInCall &&
+                  !callState.callStatus &&  */}
+                  {callState.isRegistered &&
+                    !callState.isInCall &&
+                    !callState.callStatus &&
+                    !isKeyboardExpanded && (
+                      <IconPhone
+                        onClick={handleCall}
+                        size={theme.icon.size.lg}
+                        stroke={theme.icon.stroke.sm}
+                        color={theme.color.gray30}
+                        style={{
+                          cursor: 'pointer',
+                          padding: theme.spacing(1),
+                          borderRadius: '50%',
+                          backgroundColor: theme.color.green60,
+                        }}
+                      />
+                    )}
+                </StyledTextAndCallButton>
+
+                {isKeyboardExpanded && (
+                  <Keyboard onClick={handleKeyboardClick} />
+                )}
+
                 {callState.isRegistered &&
                   !callState.isInCall &&
-                  !callState.callStatus && (
-                    <button
+                  !callState.callStatus &&
+                  isKeyboardExpanded && (
+                    <IconPhone
                       onClick={handleCall}
-                      className="p-1 rounded-full hover:bg-blue-50 text-blue-600"
-                    >
-                      <Phone className="w-4 h-4" />
-                    </button>
+                      size={theme.icon.size.lg}
+                      stroke={theme.icon.stroke.sm}
+                      color={theme.color.gray30}
+                      style={{
+                        cursor: 'pointer',
+                        padding: theme.spacing(5),
+                        borderRadius: '50%',
+                        backgroundColor: theme.color.green60,
+                      }}
+                    />
                   )}
+              </StyledDefaultContainer>
 
-                {callState.isInCall && (
-                  <>
-                    <button
-                      onClick={handleMute}
-                      className={`p-1 rounded-full hover:bg-blue-50 ${
-                        callState.isMuted ? 'text-red-600' : 'text-blue-600'
-                      }`}
-                    >
-                      {callState.isMuted ? (
-                        <MicOff className="w-4 h-4" />
-                      ) : (
-                        <Mic className="w-4 h-4" />
-                      )}
-                    </button>
+              {/* callState.isInCall */}
+              {callState.isInCall && (
+                <StyledOngoingCallContainer>
+                  <StyledIncomingNumber alignSelf="center">
+                    {callState.incomingCallNumber}
+                    +55 11 99999-9999
+                  </StyledIncomingNumber>
+
+                  <StyledControlsContainer column={false} gap={5}>
                     <HoldButton
                       session={sessionRef.current}
                       isOnHold={callState.isOnHold}
                       setCallState={setCallState}
                       callState={callState}
                     />
+
+                    <IconMicrophoneOff
+                      onClick={handleMute}
+                      size={theme.icon.size.lg}
+                      stroke={theme.icon.stroke.sm}
+                      color={theme.font.color.secondary}
+                      style={{
+                        cursor: 'pointer',
+                        padding: theme.spacing(3),
+                        borderRadius: '50%',
+                        // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+                        border: `1px solid #fff`,
+                        backgroundColor: callState.isMuted
+                          ? theme.background.overlaySecondary
+                          : theme.background.tertiary,
+                      }}
+                    />
+
                     <TransferButton
                       session={sessionRef.current}
                       type="attended"
                       sendDTMF={sendDTMF}
                     />
-                    <button
-                      onClick={cleanupSession}
-                      className="p-1 rounded-full hover:bg-red-50 text-red-600"
-                    >
-                      <PhoneOff className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
+                  </StyledControlsContainer>
 
-                {(callState.callStatus === CallStatus.CALLING ||
-                  callState.callStatus === CallStatus.STARTING_CALL) && (
-                  <button
-                    onClick={cleanupSession}
-                    className="p-1 rounded-full hover:bg-red-50 text-red-600"
-                  >
-                    <PhoneOff className="w-4 h-4" />
-                  </button>
-                )}
-                {!callState.isRegistered && (
-                  <button
-                    onClick={() => initializeSIP(config)}
-                    className="p-1 rounded-full hover:bg-blue-50 text-blue-600"
-                  >
-                    <RefreshCcw className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </>
+                  <StyledEndButton onClick={cleanupSession}>
+                    End call
+                  </StyledEndButton>
+                </StyledOngoingCallContainer>
+              )}
+
+              {(callState.callStatus === CallStatus.CALLING ||
+                callState.callStatus === CallStatus.STARTING_CALL) && (
+                <StyledEndButton onClick={cleanupSession}>
+                  End call
+                </StyledEndButton>
+              )}
+
+              {!callState.isRegistered && (
+                <button
+                  onClick={() => initializeSIP(config)}
+                  className="p-1 rounded-full hover:bg-blue-50 text-blue-600"
+                >
+                  <RefreshCcw className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           )}
-        </div>
+        </StyledControlsContainer>
       </StyledContainer>
     </Draggable>
   );

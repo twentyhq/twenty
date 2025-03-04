@@ -1,8 +1,10 @@
+/* eslint-disable @nx/workspace-no-hardcoded-colors */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable no-console */
-import { ArrowRight, Check } from 'lucide-react';
+import { useTheme } from '@emotion/react';
 import React, { useState } from 'react';
 import { Session } from 'sip.js';
+import { IconArrowRight, IconCheck } from 'twenty-ui';
 
 interface TransferButtonProps {
   session: Session | null;
@@ -35,24 +37,38 @@ const TransferButton: React.FC<TransferButtonProps> = ({ type, sendDTMF }) => {
     setIsTransferring(false);
   };
 
+  const theme = useTheme();
+
   return (
-    <div className="relative">
+    <>
       {isTransferring ? (
-        <button
+        <IconCheck
           onClick={handleCompleteTransfer}
-          className="p-2 rounded-full hover:bg-green-50 text-green-600"
-        >
-          <Check className="w-5 h-5" />
-        </button>
+          size={theme.icon.size.lg}
+          stroke={theme.icon.stroke.sm}
+          color={theme.font.color.secondary}
+          style={{
+            cursor: 'pointer',
+            padding: theme.spacing(3),
+            borderRadius: '50%',
+            border: `1px solid #fff`,
+          }}
+        />
       ) : (
-        <button
+        <IconArrowRight
           onClick={handleTransfer}
-          className="p-2 rounded-full hover:bg-blue-50 text-blue-600"
-        >
-          <ArrowRight className="w-5 h-5" />
-        </button>
+          size={theme.icon.size.lg}
+          stroke={theme.icon.stroke.sm}
+          color={theme.font.color.secondary}
+          style={{
+            cursor: 'pointer',
+            padding: theme.spacing(3),
+            borderRadius: '50%',
+            border: `1px solid #fff`,
+          }}
+        />
       )}
-    </div>
+    </>
   );
 };
 

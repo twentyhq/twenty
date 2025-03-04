@@ -1,9 +1,11 @@
+/* eslint-disable @nx/workspace-no-hardcoded-colors */
 /* eslint-disable no-console */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { Pause } from 'lucide-react';
+import { useTheme } from '@emotion/react';
 import React from 'react';
 import { Session, SessionState } from 'sip.js';
 import { SessionDescriptionHandler } from 'sip.js/lib/platform/web';
+import { useIcons } from 'twenty-ui';
 import { CallState } from '../types/callState';
 
 interface HoldButtonProps {
@@ -126,13 +128,30 @@ const HoldButton: React.FC<HoldButtonProps> = ({
     }
   };
 
+  const { getIcon } = useIcons();
+
+  const IconPhonePause = getIcon('IconPhonePause');
+
+  const theme = useTheme();
+
   return (
-    <button
-      onClick={handleHold}
-      className={`p-2 rounded-full hover:bg-blue-50 ${isOnHold ? 'text-red-600' : 'text-blue-600'}`}
-    >
-      <Pause className="w-5 h-5" />
-    </button>
+    <IconPhonePause
+      onClick={() => {
+        handleHold();
+      }}
+      size={theme.icon.size.lg}
+      stroke={theme.icon.stroke.sm}
+      color={theme.font.color.secondary}
+      style={{
+        cursor: 'pointer',
+        padding: theme.spacing(3),
+        borderRadius: '50%',
+        border: `1px solid #fff`,
+        backgroundColor: isOnHold
+          ? theme.background.overlaySecondary
+          : theme.background.tertiary,
+      }}
+    />
   );
 };
 
