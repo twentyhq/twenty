@@ -1,8 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AppPath } from '@/types/AppPath';
 import {
-    ConfirmationModal,
-    StyledCenteredButton,
+  ConfirmationModal,
+  StyledCenteredButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';

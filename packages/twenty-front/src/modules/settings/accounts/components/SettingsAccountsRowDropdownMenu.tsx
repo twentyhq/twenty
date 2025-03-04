@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import {
-    IconCalendarEvent,
-    IconDotsVertical,
-    IconMail,
-    IconRefresh,
-    IconTrash,
-    LightIconButton,
-    MenuItem,
+  IconCalendarEvent,
+  IconDotsVertical,
+  IconMail,
+  IconRefresh,
+  IconTrash,
+  LightIconButton,
+  MenuItem,
 } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
