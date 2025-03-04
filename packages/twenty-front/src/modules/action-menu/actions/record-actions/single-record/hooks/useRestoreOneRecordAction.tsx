@@ -1,0 +1,80 @@
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { useCallback, useContext, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
+
+export const useRestoreOneRecordAction: ActionHookWithObjectMetadataItem = ({
+  objectMetadataItem,
+}) => {
+  const recordId = useSelectedRecordIdOrThrow();
+
+  const [isRestoreRecordModalOpen, setIsRestoreRecordModalOpen] =
+    useState(false);
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableId: objectMetadataItem.namePlural,
+  });
+
+  const { restoreManyRecords } = useRestoreManyRecords({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+
+  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
+
+  const { closeRightDrawer } = useRightDrawer();
+
+  const handleRestoreClick = useCallback(async () => {
+    resetTableRowSelection();
+
+    await restoreManyRecords({
+      idsToRestore: [recordId],
+    });
+  }, [restoreManyRecords, resetTableRowSelection, recordId]);
+
+  const isRemoteObject = objectMetadataItem.isRemote;
+
+  const { isInRightDrawer } = useContext(ActionMenuContext);
+
+  const shouldBeRegistered =
+    !isRemoteObject &&
+    isDefined(selectedRecord?.deletedAt) &&
+    !hasObjectReadOnlyPermission;
+
+  const onClick = () => {
+    if (!shouldBeRegistered) {
+      return;
+    }
+
+    setIsRestoreRecordModalOpen(true);
+  };
+
+  return {
+    shouldBeRegistered,
+    onClick,
+    ConfirmationModal: (
+      <ConfirmationModal
+        isOpen={isRestoreRecordModalOpen}
+        setIsOpen={setIsRestoreRecordModalOpen}
+        title={'Restore Record'}
+        subtitle={'Are you sure you want to restore this record?'}
+        onConfirmClick={() => {
+          handleRestoreClick();
+          if (isInRightDrawer) {
+            closeRightDrawer({ emitCloseEvent: false });
+          }
+        }}
+        confirmButtonText={'Restore Record'}
+      />
+    ),
+  };
+};
