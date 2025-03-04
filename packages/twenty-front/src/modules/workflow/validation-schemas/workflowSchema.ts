@@ -23,7 +23,7 @@ export const baseWorkflowActionSchema = z.object({
 });
 
 export const baseTriggerSchema = z.object({
-  name: z.string().optional(),
+  name: z.string(),
   type: z.string(),
 });
 
