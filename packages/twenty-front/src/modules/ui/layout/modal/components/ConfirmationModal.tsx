@@ -70,7 +70,7 @@ export const ConfirmationModal = ({
   subtitle,
   setIsOpen,
   onConfirmClick,
-  confirmButtonText = `Delete`,
+  confirmButtonText = 'Confirm',
   confirmationValue,
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
