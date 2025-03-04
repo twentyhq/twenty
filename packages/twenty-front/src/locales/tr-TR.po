@@ -1790,7 +1790,7 @@ msgstr "Listeler"
 msgid "Log out"
 msgstr "Oturumu kapat"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Çıkış yap"
 

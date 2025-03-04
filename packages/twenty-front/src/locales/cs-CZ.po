@@ -1790,7 +1790,7 @@ msgstr "Výpisy"
 msgid "Log out"
 msgstr "Odhlásit se"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Odhlásit"
 

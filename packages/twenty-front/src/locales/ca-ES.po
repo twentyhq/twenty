@@ -1790,7 +1790,7 @@ msgstr "Llistats"
 msgid "Log out"
 msgstr "Tancar sessió"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Tancar sessió"
 

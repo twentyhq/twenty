@@ -1790,7 +1790,7 @@ msgstr "목록"
 msgid "Log out"
 msgstr "로그아웃"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "로그아웃"
 

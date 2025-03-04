@@ -1790,7 +1790,7 @@ msgstr "Listări"
 msgid "Log out"
 msgstr "Deconectare"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Deconectare"
 

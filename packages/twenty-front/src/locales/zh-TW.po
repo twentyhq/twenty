@@ -1790,7 +1790,7 @@ msgstr "列表"
 msgid "Log out"
 msgstr "登出"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "登出"
 

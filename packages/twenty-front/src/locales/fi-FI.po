@@ -1790,7 +1790,7 @@ msgstr "Luettelot"
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
