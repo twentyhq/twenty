@@ -3,6 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
+import { getDirtyValues } from '@/settings/data-model/utils/getFormDirtyFields';
 import {
   SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
@@ -18,7 +19,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import pick from 'lodash.pick';
 import { plural } from 'pluralize';
 import { Controller, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
@@ -102,50 +102,27 @@ export const SettingsDataModelObjectAboutForm = ({
   const getUpdatePayload = (
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
-    let values = formValues;
-    const dirtyFieldKeys = Object.keys(
-      formState.dirtyFields,
-    ) as (keyof SettingsDataModelObjectAboutFormValues)[];
-    const shouldComputeNamesFromLabels: boolean = dirtyFieldKeys.includes(
-      IS_LABEL_SYNCED_WITH_NAME_LABEL,
-    )
-      ? (formValues.isLabelSyncedWithName as boolean)
-      : isDefined(objectMetadataItem) &&
-        objectMetadataItem.isLabelSyncedWithName;
+    const dirtyFields = getDirtyValues(formState.dirtyFields, formValues);
+    const shouldComputeNamesFromLabels =
+      dirtyFields.isLabelSyncedWithName === true ||
+      objectMetadataItem?.isLabelSyncedWithName === true;
 
-    // OOF
     if (shouldComputeNamesFromLabels) {
-      values = {
-        ...values,
-        ...(values.labelSingular && dirtyFieldKeys.includes('labelSingular')
-          ? {
-              nameSingular: computeMetadataNameFromLabel(
-                formValues.labelSingular,
-              ),
-            }
-          : {}),
-        ...(values.labelPlural && dirtyFieldKeys.includes('labelPlural')
-          ? {
-              namePlural: computeMetadataNameFromLabel(formValues.labelPlural),
-            }
-          : {}),
-      };
-    }
-    ///
+      const nameSingular = isDefined(dirtyFields.labelSingular)
+        ? computeMetadataNameFromLabel(dirtyFields.labelSingular)
+        : undefined;
+      const namePlural = isDefined(dirtyFields.labelPlural)
+        ? computeMetadataNameFromLabel(dirtyFields.labelPlural)
+        : undefined;
 
-    return settingsUpdateObjectInputSchema.parse(
-      pick(values, [
-        ...dirtyFieldKeys,
-        ...(shouldComputeNamesFromLabels &&
-        dirtyFieldKeys.includes('labelPlural')
-          ? ['namePlural']
-          : []),
-        ...(shouldComputeNamesFromLabels &&
-        dirtyFieldKeys.includes('labelSingular')
-          ? ['nameSingular']
-          : []),
-      ]),
-    );
+      return settingsUpdateObjectInputSchema.parse({
+        ...formValues,
+        namePlural,
+        nameSingular,
+      });
+    }
+
+    return settingsUpdateObjectInputSchema.parse(formValues);
   };
 
   const handleSave = async (
@@ -158,7 +135,15 @@ export const SettingsDataModelObjectAboutForm = ({
       console.log(objectMetadataItem);
       const updatePayload = getUpdatePayload(formValues);
       const objectNamePluralForRedirection =
-        updatePayload.namePlural ?? objectMetadataItem.namePlural;
+        updatePayload.namePlural ?? objectMetadataItem?.namePlural;
+
+      if (!isDefined(objectNamePluralForRedirection)) {
+        throw new Error('Should never occur, object name plural is undefined');
+      }
+
+      if (!isDefined(objectMetadataItem)) {
+        throw new Error('Should never occur, objectMetadataItem is undefined');
+      }
 
       setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
@@ -174,6 +159,7 @@ export const SettingsDataModelObjectAboutForm = ({
         objectNamePlural: objectNamePluralForRedirection,
       });
     } catch (error) {
+      console.error(error);
       if (error instanceof ZodError) {
         enqueueSnackBar(error.issues[0].message, {
           variant: SnackBarVariant.Error,
