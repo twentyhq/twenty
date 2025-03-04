@@ -31,7 +31,7 @@ export const RoleAssignmentConfirmationModalSubtitle = ({
               placeholderColorSeed={selectedWorkspaceMember.id}
               placeholder={selectedWorkspaceMember.name}
               size="md"
-              type={'rounded'}
+              type="rounded"
             />
           }
           onClick={() =>
