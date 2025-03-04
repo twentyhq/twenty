@@ -3,6 +3,7 @@ import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
+import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import styled from '@emotion/styled';
@@ -45,6 +46,10 @@ export const RightDrawerWorkflowRunViewStep = () => {
           trigger={flow.trigger}
           steps={flow.steps}
         />
+      ) : null}
+
+      {activeTabId === 'input' ? (
+        <WorkflowRunStepInputDetail stepId={workflowSelectedNode} />
       ) : null}
     </>
   );
