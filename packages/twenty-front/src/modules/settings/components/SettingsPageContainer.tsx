@@ -32,7 +32,7 @@ export const SettingsPageContainer = ({
 }) => (
   <ScrollWrapper
     contextProviderName="settingsPageContainer"
-    heightMode='full'
+    heightMode="full"
     componentInstanceId={'scroll-wrapper-settings-page-container'}
   >
     <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
