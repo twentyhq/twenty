@@ -27,7 +27,6 @@ export const LinkChip = ({
   to,
   size = ChipSize.Small,
   label,
-  isLabelHidden = false,
   variant = ChipVariant.Regular,
   leftComponent = null,
   rightComponent = null,
@@ -41,7 +40,6 @@ export const LinkChip = ({
       <Chip
         size={size}
         label={label}
-        isLabelHidden={isLabelHidden}
         clickable={true}
         variant={variant}
         leftComponent={leftComponent}

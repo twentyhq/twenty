@@ -154,7 +154,11 @@ export const useCommandMenu = () => {
           ? []
           : snapshot.getLoadable(commandMenuNavigationStackState).getValue();
 
-        if (resetNavigationStack) {
+        const itemIsAlreadyInStack = currentNavigationStack.some(
+          (item) => item.page === page,
+        );
+
+        if (resetNavigationStack || itemIsAlreadyInStack) {
           set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
         } else {
           set(commandMenuNavigationStackState, [

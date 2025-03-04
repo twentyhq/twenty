@@ -1,5 +1,5 @@
 import { Entity } from '@microsoft/microsoft-graph-types';
-import { getLogoUrlFromDomainName } from 'twenty-shared';
+import { FieldMetadataType, getLogoUrlFromDomainName } from 'twenty-shared';
 import { Brackets } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -109,7 +109,7 @@ export class GlobalSearchService {
         objectMetadataItem.labelIdentifierFieldMetadataId
       ];
 
-    if (objectMetadataItem.nameSingular === 'person') {
+    if (labelIdentifierField.type === FieldMetadataType.FULL_NAME) {
       return [
         `${labelIdentifierField.name}FirstName`,
         `${labelIdentifierField.name}LastName`,

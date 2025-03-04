@@ -6,7 +6,6 @@ import {
 
 type SettingsAdminIndicatorHealthContextType = {
   indicatorHealth: AdminPanelHealthServiceData;
-  loading: boolean;
 };
 
 export const SettingsAdminIndicatorHealthContext =
@@ -19,5 +18,4 @@ export const SettingsAdminIndicatorHealthContext =
       details: '',
       queues: [],
     },
-    loading: false,
   });
