@@ -1,6 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE } from '@/settings/constants/SettingsObjectModel';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -23,7 +24,6 @@ import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
-  // TODO upper throw if undefined ? new object settings things should provided default value ?
   objectMetadataItem?: ObjectMetadataItem;
   handleSave: (arg: SettingsDataModelObjectAboutFormValues) => void;
 };
@@ -84,15 +84,13 @@ export const SettingsDataModelObjectAboutForm = ({
     watch(IS_LABEL_SYNCED_WITH_NAME_LABEL) ??
     (isDefined(objectMetadataItem)
       ? objectMetadataItem.isLabelSyncedWithName
-      : true);
-  // OOF
+      : SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE);
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
   watch('nameSingular');
   watch('namePlural');
   watch('description');
   watch('icon');
-  ///
   const apiNameTooltipText = isLabelSyncedWithName
     ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
     : t`Input must be in camel case and cannot start with a number`;
@@ -284,7 +282,10 @@ export const SettingsDataModelObjectAboutForm = ({
               <Controller
                 name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
                 control={control}
-                defaultValue={objectMetadataItem?.isLabelSyncedWithName ?? true}
+                defaultValue={
+                  objectMetadataItem?.isLabelSyncedWithName ??
+                  SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE
+                }
                 render={({ field: { onChange, value } }) => (
                   <Card rounded>
                     <SettingsOptionCardContentToggle
@@ -303,7 +304,6 @@ export const SettingsDataModelObjectAboutForm = ({
                           fillNamePluralFromLabelPlural(labelPlural);
                           fillNameSingularFromLabelSingular(labelSingular);
                         }
-                        // TO_CHECK prastoin Could be factorized to be scoped to form itself ?
                         handleSubmit(handleSave)();
                       }}
                     />
