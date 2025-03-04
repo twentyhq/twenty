@@ -22,13 +22,13 @@ services:
     environment:
       NODE_PORT: 3000
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
-      SERVER_URL: ${SERVER_URL:-http://localhost:3000}
+      SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
-      STORAGE_TYPE: ${STORAGE_TYPE:-local}
-      STORAGE_S3_REGION: ${STORAGE_S3_REGION:-}
-      STORAGE_S3_NAME: ${STORAGE_S3_NAME:-}
-      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT:-}
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
       APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
 
@@ -73,14 +73,14 @@ services:
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
-      SERVER_URL: ${SERVER_URL:-http://localhost:3000}
+      SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
 
-      STORAGE_TYPE: ${STORAGE_TYPE:-local}
-      STORAGE_S3_REGION: ${STORAGE_S3_REGION:-}
-      STORAGE_S3_NAME: ${STORAGE_S3_NAME:-}
-      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT:-}
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
       APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
 
