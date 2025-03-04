@@ -55,7 +55,6 @@ export {
   IconCode,
   IconStepInto,
   IconLogin2,
-  IconLogout,
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,
