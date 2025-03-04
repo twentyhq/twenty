@@ -15,6 +15,10 @@ const StyledIconWrapper = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledNameCell = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+`;
+
 type RoleAssignmentTableRowProps = {
   workspaceMember: WorkspaceMember;
 };
@@ -24,7 +28,7 @@ export const RoleAssignmentTableRow = ({
 }: RoleAssignmentTableRowProps) => {
   return (
     <StyledTable>
-      <TableRow gridAutoColumns="150px 1fr 1fr">
+      <TableRow gridAutoColumns="2fr 4fr">
         <TableCell>
           <StyledIconWrapper>
             <Avatar
@@ -35,9 +39,11 @@ export const RoleAssignmentTableRow = ({
               size="md"
             />
           </StyledIconWrapper>
-          <OverflowingTextWithTooltip
-            text={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-          />
+          <StyledNameCell>
+            <OverflowingTextWithTooltip
+              text={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+            />
+          </StyledNameCell>
         </TableCell>
         <TableCell>
           <OverflowingTextWithTooltip text={workspaceMember.userEmail} />
