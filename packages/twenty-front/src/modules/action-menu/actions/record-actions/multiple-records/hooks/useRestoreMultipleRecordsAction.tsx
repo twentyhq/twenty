@@ -9,6 +9,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
@@ -59,12 +60,19 @@ export const useRestoreMultipleRecordsAction: ActionHookWithObjectMetadataItem =
 
     const { filterValueDependencies } = useFilterValueDependencies();
 
-    const graphqlFilter = computeContextStoreFilters(
-      contextStoreTargetedRecordsRule,
-      contextStoreFilters,
-      objectMetadataItem,
-      filterValueDependencies,
-    );
+    const deletedAtFilter: RecordGqlOperationFilter = {
+      deletedAt: { is: 'NOT_NULL' },
+    };
+
+    const graphqlFilter = {
+      ...computeContextStoreFilters(
+        contextStoreTargetedRecordsRule,
+        contextStoreFilters,
+        objectMetadataItem,
+        filterValueDependencies,
+      ),
+      ...deletedAtFilter,
+    };
 
     const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
 
