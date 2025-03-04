@@ -20,6 +20,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -31,8 +32,8 @@ import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/get
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
@@ -104,6 +105,10 @@ export const RecordBoard = () => {
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
+  const currentRecordSorts = useRecoilComponentValueV2(
+    currentRecordSortsComponentState,
+  );
+
   useListenClickOutside({
     excludeClassNames: [
       'bottom-bar',
@@ -144,9 +149,6 @@ export const RecordBoard = () => {
     ActionBarHotkeyScope.ActionBar,
   );
 
-  const { currentViewWithCombinedFiltersAndSorts } =
-    useGetCurrentView(recordBoardId);
-
   const setIsRemoveSortingModalOpen = useSetRecoilState(
     isRemoveSortingModalOpenState,
   );
@@ -156,10 +158,7 @@ export const RecordBoard = () => {
       (result) => {
         if (!result.destination) return;
 
-        const viewSorts =
-          currentViewWithCombinedFiltersAndSorts?.viewSorts || [];
-
-        if (viewSorts.length > 0) {
+        if (currentRecordSorts.length > 0) {
           setIsRemoveSortingModalOpen(true);
           return;
         }
@@ -219,7 +218,7 @@ export const RecordBoard = () => {
       selectFieldMetadataItem,
       updateOneRecord,
       setIsRemoveSortingModalOpen,
-      currentViewWithCombinedFiltersAndSorts,
+      currentRecordSorts,
     ],
   );
 

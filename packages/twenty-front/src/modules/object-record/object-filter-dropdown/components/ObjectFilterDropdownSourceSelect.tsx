@@ -136,7 +136,7 @@ export const ObjectFilterDropdownSourceSelect = ({
         displayValue: filterDisplayValue,
         fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
         value: newFilterValue,
-        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+        recordFilterGroupId: selectedFilter?.recordFilterGroupId,
       });
     }
   };

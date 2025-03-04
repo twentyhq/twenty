@@ -10,13 +10,14 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { useLingui } from '@lingui/react/macro';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -24,8 +25,9 @@ const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
 
 export const ViewPickerListContent = () => {
   const { t } = useLingui();
-  const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
-    useGetCurrentView();
+  const { viewsOnCurrentObject } = useGetCurrentView();
+
+  const { currentView } = useGetCurrentViewOnly();
 
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
     viewPickerReferenceViewIdComponentState,
@@ -41,8 +43,8 @@ export const ViewPickerListContent = () => {
   };
 
   const handleAddViewButtonClick = () => {
-    if (isDefined(currentViewWithCombinedFiltersAndSorts?.id)) {
-      setViewPickerReferenceViewId(currentViewWithCombinedFiltersAndSorts.id);
+    if (isDefined(currentView?.id)) {
+      setViewPickerReferenceViewId(currentView.id);
       setViewPickerMode('create-empty');
     }
   };
