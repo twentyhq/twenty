@@ -2401,17 +2401,17 @@ msgstr "重置为"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Restore"
-msgstr ""
+msgstr "恢复"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Restore record"
-msgstr ""
+msgstr "恢复记录"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Restore records"
-msgstr ""
+msgstr "恢复记录"
 
 #: src/modules/command-menu/hooks/useSearchRecords.tsx
 msgid "Results"
