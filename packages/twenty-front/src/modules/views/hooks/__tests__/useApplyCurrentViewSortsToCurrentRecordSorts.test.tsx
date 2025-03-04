@@ -73,14 +73,8 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
+          contextStoreCurrentViewId: mockView.id,
           onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              contextStoreCurrentViewIdComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              mockView.id,
-            );
-
             snapshot.set(prefetchViewsState, [mockView]);
           },
         }),
