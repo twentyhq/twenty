@@ -133,7 +133,7 @@ export const ShowPageSubContainer = ({
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
         </StyledContentContainer>
-        {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
+        {isInRightDrawer && recordFromStore && (
           <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
         )}
       </StyledShowPageRightContainer>
