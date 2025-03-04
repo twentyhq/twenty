@@ -7,10 +7,14 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 const meta: Meta<typeof FullScreenContainer> = {
   title: 'UI/Layout/FullScreenContainer',
   component: FullScreenContainer,
-  decorators: [ComponentDecorator, I18nFrontDecorator, ComponentWithRouterDecorator],
+  decorators: [
+    ComponentDecorator,
+    I18nFrontDecorator,
+    ComponentWithRouterDecorator,
+  ],
 };
 export default meta;
-    
+
 type Story = StoryObj<typeof FullScreenContainer>;
 
 const StyledContainer = styled.div`
@@ -20,26 +24,22 @@ const StyledContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
-   
+`;
+
 export const Default: Story = {
   args: {
-    children: (
-      <StyledContainer>
-        This is full-screen content
-      </StyledContainer>
-    ),
+    children: <StyledContainer>This is full-screen content</StyledContainer>,
     links: [
       {
-        children: "Layout",
-        href: '/'
+        children: 'Layout',
+        href: '/',
       },
       {
-        children: "FullScreen",
+        children: 'FullScreen',
         href: '/',
       },
     ],
-    exitFullScreen: function(){}
+    exitFullScreen: function () {},
   },
   decorators: [ComponentDecorator],
 };
