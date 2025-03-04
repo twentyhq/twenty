@@ -12,7 +12,6 @@ import {
   SettingsDataModelObjectAboutForm,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
-import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -26,13 +25,8 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
-const objectEditFormSchema = z
-  .object({})
-  .merge(settingsDataModelObjectAboutFormSchema)
-  .merge(settingsDataModelObjectIdentifiersFormSchema);
-
 type SettingsDataModelObjectEditFormValues = z.infer<
-  typeof objectEditFormSchema
+  typeof settingsDataModelObjectAboutFormSchema
 >;
 
 type ObjectSettingsProps = {
@@ -61,7 +55,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
 
   const formConfig = useForm<SettingsDataModelObjectEditFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(objectEditFormSchema),
+    resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
   });
   const { isDirty } = formConfig.formState;
 
@@ -78,6 +72,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       ? (formValues.isLabelSyncedWithName as boolean)
       : objectMetadataItem.isLabelSyncedWithName;
 
+    // *** OOF ***
     if (shouldComputeNamesFromLabels) {
       values = {
         ...values,
@@ -179,7 +174,6 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
                 description={t`Choose the fields that will identify your records`}
               />
               <SettingsDataModelObjectSettingsFormCard
-                onBlur={() => formConfig.handleSubmit(handleSave)()}
                 objectMetadataItem={objectMetadataItem}
               />
             </Section>
