@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import diff from 'microdiff';
 import { FieldMetadataType } from 'twenty-shared';
 
+import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import {
   ComparatorAction,
   FieldRelationComparatorResult,
@@ -24,13 +25,13 @@ export class WorkspaceFieldRelationComparator {
   constructor() {}
 
   public compare(
-    originalFieldMetadataCollection: FieldMetadataEntity[],
+    originalFieldMetadataCollection: FieldMetadataEntity<FieldMetadataType.RELATION>[],
     standardFieldMetadataCollection: FieldMetadataEntity<FieldMetadataType.RELATION>[],
   ): FieldRelationComparatorResult[] {
     const result: FieldRelationComparatorResult[] = [];
     const fieldPropertiesToUpdateMap: Record<
       string,
-      Partial<FieldMetadataEntity>
+      Partial<FieldMetadataEntity<FieldMetadataType.RELATION>>
     > = {};
 
     // Double security to only compare non-custom fields
@@ -79,10 +80,14 @@ export class WorkspaceFieldRelationComparator {
 
     for (const difference of fieldMetadataDifference) {
       const fieldName = difference.path[0];
-      const findField = (field: FieldMetadataEntity) => {
+      const findField = (
+        field: FieldMetadataEntity<FieldMetadataType.RELATION>,
+      ) => {
         return field.standardId === fieldName;
       };
       // Object shouldn't have thousands of fields, so we can use find here
+      const standardFieldMetadata =
+        standardFieldMetadataCollection.find(findField);
       const originalFieldMetadata =
         originalFieldMetadataCollection.find(findField);
 
@@ -99,9 +104,6 @@ export class WorkspaceFieldRelationComparator {
             );
           }
 
-          const id = originalFieldMetadata.id;
-          const property = difference.path[difference.path.length - 1];
-
           // If the old value and the new value are both null, skip
           // Database is storing null, and we can get undefined here
           if (
@@ -111,23 +113,81 @@ export class WorkspaceFieldRelationComparator {
             break;
           }
 
+          const id = originalFieldMetadata.id;
+          const property = difference.path[difference.path.length - 1];
+
           if (typeof property !== 'string') {
             break;
           }
 
-          if (!fieldPropertiesToUpdateMap[id]) {
-            fieldPropertiesToUpdateMap[id] = {};
+          console.log(difference);
+
+          // We're creating a new relation field
+          if (difference.oldValue === null) {
+            if (!standardFieldMetadata) {
+              throw new Error(
+                `Field ${fieldName} not found in standardObjectMetadata`,
+              );
+            }
+
+            result.push({
+              action: ComparatorAction.CREATE,
+              object: {
+                ...standardFieldMetadata,
+                standardId: standardFieldMetadata.standardId ?? undefined,
+              },
+            });
           }
 
-          // If the property is a stringified JSON, parse it
-          if (
-            (fieldPropertiesToStringify as readonly string[]).includes(property)
-          ) {
-            fieldPropertiesToUpdateMap[id][property] = this.parseJSONOrString(
-              difference.value,
-            );
-          } else {
-            fieldPropertiesToUpdateMap[id][property] = difference.value;
+          // We're updating a relation field
+          if (difference.oldValue !== null && difference.value !== null) {
+            if (!fieldPropertiesToUpdateMap[id]) {
+              fieldPropertiesToUpdateMap[id] = {};
+            }
+
+            // Check the settings to see if the relation type has changed
+            if (property === 'settings') {
+              const newSettings = this.parseJSONOrString(
+                difference.value,
+              ) as FieldMetadataRelationSettings;
+              const oldSettings = this.parseJSONOrString(
+                difference.oldValue,
+              ) as FieldMetadataRelationSettings;
+
+              // If the relation type has changed, we need to delete the old relation and create a new one
+              if (newSettings.relationType !== oldSettings.relationType) {
+                if (!standardFieldMetadata) {
+                  throw new Error(
+                    `Field ${fieldName} not found in standardObjectMetadata`,
+                  );
+                }
+
+                result.push({
+                  action: ComparatorAction.DELETE,
+                  object: originalFieldMetadata,
+                });
+
+                result.push({
+                  action: ComparatorAction.CREATE,
+                  object: {
+                    ...standardFieldMetadata,
+                    standardId: standardFieldMetadata.standardId ?? undefined,
+                  },
+                });
+              } else {
+                fieldPropertiesToUpdateMap[id][property] = newSettings;
+              }
+            } else {
+              fieldPropertiesToUpdateMap[id][property] = difference.value;
+            }
+          }
+
+          // We're deleting a relation field
+          if (difference.value === null) {
+            result.push({
+              action: ComparatorAction.DELETE,
+              object: originalFieldMetadata,
+            });
           }
           break;
         }
@@ -147,6 +207,7 @@ export class WorkspaceFieldRelationComparator {
         object: {
           id,
           ...fieldPropertiesToUpdate,
+          standardId: fieldPropertiesToUpdate.standardId ?? undefined,
         },
       });
     }

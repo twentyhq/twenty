@@ -33,6 +33,10 @@ export type PartialComputedFieldMetadata = {
   objectMetadataId?: string;
 };
 
-export type ComputedPartialFieldMetadata = {
-  [K in keyof PartialFieldMetadata]: ExcludeFunctions<PartialFieldMetadata[K]>;
+export type ComputedPartialFieldMetadata<
+  T extends FieldMetadataType = FieldMetadataType,
+> = {
+  [K in keyof PartialFieldMetadata<T>]: ExcludeFunctions<
+    PartialFieldMetadata<T>[K]
+  >;
 };

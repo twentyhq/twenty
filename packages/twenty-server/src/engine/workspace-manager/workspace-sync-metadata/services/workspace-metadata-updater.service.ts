@@ -14,6 +14,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
+import { UpdaterOptions } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/updater-options.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -38,54 +39,65 @@ export class WorkspaceMetadataUpdaterService {
   async updateObjectMetadata(
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
+    options?: UpdaterOptions,
   ): Promise<{
     createdObjectMetadataCollection: ObjectMetadataEntity[];
     updatedObjectMetadataCollection: ObjectMetadataUpdate[];
   }> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
+    let createdObjectMetadataCollection: ObjectMetadataEntity[] = [];
+    let updatedObjectMetadataCollection: ObjectMetadataUpdate[] = [];
 
     /**
      * Create object metadata
      */
-    const createdPartialObjectMetadataCollection =
-      await objectMetadataRepository.save(
-        storage.objectMetadataCreateCollection.map((objectMetadata) => ({
-          ...objectMetadata,
-          isActive: true,
-        })) as DeepPartial<ObjectMetadataEntity>[],
+    if (!options || options.actions.includes('create')) {
+      const createdPartialObjectMetadataCollection =
+        await objectMetadataRepository.save(
+          storage.objectMetadataCreateCollection.map((objectMetadata) => ({
+            ...objectMetadata,
+            isActive: true,
+          })) as DeepPartial<ObjectMetadataEntity>[],
+        );
+      const identifiers = createdPartialObjectMetadataCollection.map(
+        (object) => object.id,
       );
-    const identifiers = createdPartialObjectMetadataCollection.map(
-      (object) => object.id,
-    );
-    const createdObjectMetadataCollection = await manager.find(
-      ObjectMetadataEntity,
-      {
-        where: { id: In(identifiers) },
-        relations: ['dataSource', 'fields'],
-      },
-    );
+
+      createdObjectMetadataCollection = await manager.find(
+        ObjectMetadataEntity,
+        {
+          where: { id: In(identifiers) },
+          relations: ['dataSource', 'fields'],
+        },
+      );
+    }
 
     /**
      * Update object metadata
      */
-    const updatedObjectMetadataCollection = await this.updateEntities(
-      manager,
-      ObjectMetadataEntity,
-      storage.objectMetadataUpdateCollection,
-      [
-        'fields',
-        'dataSourceId',
-        'workspaceId',
-        'labelIdentifierFieldMetadataId',
-        'imageIdentifierFieldMetadataId',
-      ],
-    );
+    if (!options || options.actions.includes('update')) {
+      updatedObjectMetadataCollection = await this.updateEntities(
+        manager,
+        ObjectMetadataEntity,
+        storage.objectMetadataUpdateCollection,
+        [
+          'fields',
+          'dataSourceId',
+          'workspaceId',
+          'labelIdentifierFieldMetadataId',
+          'imageIdentifierFieldMetadataId',
+        ],
+      );
+    }
 
     /**
      * Delete object metadata
      */
-    if (storage.objectMetadataDeleteCollection.length > 0) {
+    if (
+      storage.objectMetadataDeleteCollection.length > 0 &&
+      (!options || options.actions.includes('delete'))
+    ) {
       await objectMetadataRepository.delete(
         storage.objectMetadataDeleteCollection.map((object) => object.id),
       );
@@ -125,6 +137,7 @@ export class WorkspaceMetadataUpdaterService {
   async updateFieldMetadata(
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
+    options?: UpdaterOptions,
   ): Promise<{
     createdFieldMetadataCollection: FieldMetadataEntity[];
     updatedFieldMetadataCollection: FieldMetadataUpdate[];
@@ -134,26 +147,32 @@ export class WorkspaceMetadataUpdaterService {
       IndexFieldMetadataEntity,
     );
     const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
+    let createdFieldMetadataCollection: FieldMetadataEntity[] = [];
+    let updatedFieldMetadataCollection: FieldMetadataUpdate[] = [];
 
     /**
      * Update field metadata
      */
-    const updatedFieldMetadataCollection =
-      await this.updateEntities<FieldMetadataEntity>(
-        manager,
-        FieldMetadataEntity,
-        storage.fieldMetadataUpdateCollection,
-        ['objectMetadataId', 'workspaceId'],
-      );
+    if (!options || options.actions.includes('update')) {
+      updatedFieldMetadataCollection =
+        await this.updateEntities<FieldMetadataEntity>(
+          manager,
+          FieldMetadataEntity,
+          storage.fieldMetadataUpdateCollection,
+          ['objectMetadataId', 'workspaceId'],
+        );
+    }
 
     /**
      * Create field metadata
      */
-    const createdFieldMetadataCollection = await fieldMetadataRepository.save(
-      storage.fieldMetadataCreateCollection.map((field) =>
-        this.prepareFieldMetadataForCreation(field),
-      ) as DeepPartial<FieldMetadataEntity>[],
-    );
+    if (!options || options.actions.includes('create')) {
+      createdFieldMetadataCollection = await fieldMetadataRepository.save(
+        storage.fieldMetadataCreateCollection.map((field) =>
+          this.prepareFieldMetadataForCreation(field),
+        ) as DeepPartial<FieldMetadataEntity>[],
+      );
+    }
 
     /**
      * Delete field metadata
@@ -164,7 +183,10 @@ export class WorkspaceMetadataUpdaterService {
         (field) => field.type !== FieldMetadataType.RELATION,
       );
 
-    if (fieldMetadataDeleteCollectionWithoutRelationType.length > 0) {
+    if (
+      fieldMetadataDeleteCollectionWithoutRelationType.length > 0 &&
+      (!options || options.actions.includes('delete'))
+    ) {
       await this.deleteIndexFieldMetadata(
         fieldMetadataDeleteCollectionWithoutRelationType,
         indexFieldMetadataRepository,
@@ -181,6 +203,34 @@ export class WorkspaceMetadataUpdaterService {
     return {
       createdFieldMetadataCollection:
         createdFieldMetadataCollection as FieldMetadataEntity[],
+      updatedFieldMetadataCollection,
+    };
+  }
+
+  async updateFieldRelationMetadata(
+    manager: EntityManager,
+    storage: WorkspaceSyncStorage,
+    options?: UpdaterOptions,
+  ) {
+    let updatedFieldMetadataCollection: FieldMetadataUpdate[] = [];
+
+    /**
+     * Update field relation metadata
+     */
+    if (!options || options.actions.includes('update')) {
+      updatedFieldMetadataCollection =
+        await this.updateEntities<FieldMetadataEntity>(
+          manager,
+          FieldMetadataEntity,
+          [
+            ...storage.fieldRelationMetadataCreateCollection,
+            ...storage.fieldRelationMetadataUpdateCollection,
+          ],
+          ['objectMetadataId', 'workspaceId'],
+        );
+    }
+
+    return {
       updatedFieldMetadataCollection,
     };
   }

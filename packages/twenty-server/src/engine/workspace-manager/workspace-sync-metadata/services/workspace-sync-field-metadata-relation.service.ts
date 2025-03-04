@@ -1,19 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared';
-import { EntityManager } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 import {
   ComparatorAction,
   FieldRelationComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
-import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { WorkspaceMigrationFieldRelationFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field-relation.factory';
 import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { WorkspaceFieldRelationComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field-relation.comparator';
 import { StandardFieldRelationFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field-relation.factory';
@@ -33,6 +34,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
     private readonly workspaceFieldRelationComparator: WorkspaceFieldRelationComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
     private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
+    private readonly workspaceMigrationFieldRelationFactory: WorkspaceMigrationFieldRelationFactory,
   ) {}
 
   async synchronize(
@@ -42,6 +44,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
+    const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
 
     // Retrieve object metadata collection from DB
     const originalObjectMetadataCollection =
@@ -82,8 +85,9 @@ export class WorkspaceSyncFieldMetadataRelationService {
 
     this.logger.log('Updating workspace metadata');
 
-    const metadataFieldUpdaterResult =
-      await this.workspaceMetadataUpdaterService.updateFieldMetadata(
+    // Save field metadata to DB
+    const metadataFieldRelationUpdaterResult =
+      await this.workspaceMetadataUpdaterService.updateFieldRelationMetadata(
         manager,
         storage,
       );
@@ -93,13 +97,55 @@ export class WorkspaceSyncFieldMetadataRelationService {
     const updateFieldWorkspaceMigrations =
       await this.workspaceMigrationFieldFactory.create(
         originalObjectMetadataCollection,
-        metadataFieldUpdaterResult.updatedFieldMetadataCollection,
+        metadataFieldRelationUpdaterResult.updatedFieldMetadataCollection,
+        WorkspaceMigrationBuilderAction.UPDATE,
+      );
+
+    const createFieldMetadataCollection = (await fieldMetadataRepository.find({
+      where: {
+        id: In(
+          storage.fieldRelationMetadataCreateCollection.map(
+            (field) => field.id,
+          ),
+        ),
+        workspaceId: context.workspaceId,
+        type: FieldMetadataType.RELATION,
+      },
+    })) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+
+    const createFieldRelationWorkspaceMigrations =
+      await this.workspaceMigrationFieldRelationFactory.create(
+        originalObjectMetadataCollection,
+        createFieldMetadataCollection,
+        WorkspaceMigrationBuilderAction.CREATE,
+      );
+
+    const updateFieldMetadataCollection = (await fieldMetadataRepository.find({
+      where: {
+        id: In(
+          storage.fieldRelationMetadataUpdateCollection.map(
+            (field) => field.id,
+          ),
+        ),
+        workspaceId: context.workspaceId,
+        type: FieldMetadataType.RELATION,
+      },
+    })) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+
+    const updateFieldRelationWorkspaceMigrations =
+      await this.workspaceMigrationFieldRelationFactory.create(
+        originalObjectMetadataCollection,
+        updateFieldMetadataCollection,
         WorkspaceMigrationBuilderAction.UPDATE,
       );
 
     this.logger.log('Saving migrations');
 
-    return [...updateFieldWorkspaceMigrations];
+    return [
+      ...updateFieldWorkspaceMigrations,
+      ...createFieldRelationWorkspaceMigrations,
+      ...updateFieldRelationWorkspaceMigrations,
+    ];
   }
 
   private async synchronizeStandardObjectRelationFields(
@@ -130,9 +176,9 @@ export class WorkspaceSyncFieldMetadataRelationService {
         originalObjectMetadataMap[standardObjectId];
 
       const originalFieldRelationMetadataCollection =
-        originalObjectMetadata?.fields.filter(
+        (originalObjectMetadata?.fields.filter(
           (field) => field.type === FieldMetadataType.RELATION,
-        ) ?? [];
+        ) ?? []) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
 
       if (originalFieldRelationMetadataCollection.length === 0) {
         continue;
@@ -172,7 +218,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
        */
       const fieldComparatorResults =
         this.workspaceFieldRelationComparator.compare(
-          customObjectMetadata.fields,
+          customObjectMetadata.fields as FieldMetadataEntity<FieldMetadataType.RELATION>[],
           customFieldMetadataRelationCollection,
         );
 
@@ -186,12 +232,16 @@ export class WorkspaceSyncFieldMetadataRelationService {
   ): void {
     for (const fieldComparatorResult of fieldComparatorResults) {
       switch (fieldComparatorResult.action) {
+        case ComparatorAction.CREATE: {
+          storage.addCreateFieldRelationMetadata(fieldComparatorResult.object);
+          break;
+        }
         case ComparatorAction.UPDATE: {
-          storage.addUpdateFieldMetadata(
-            fieldComparatorResult.object as Partial<ComputedPartialFieldMetadata> & {
-              id: string;
-            },
-          );
+          storage.addUpdateFieldRelationMetadata(fieldComparatorResult.object);
+          break;
+        }
+        case ComparatorAction.DELETE: {
+          storage.addDeleteFieldRelationMetadata(fieldComparatorResult.object);
           break;
         }
       }
