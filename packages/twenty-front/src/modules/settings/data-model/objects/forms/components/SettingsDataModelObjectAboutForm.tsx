@@ -25,7 +25,7 @@ import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
-  handleSave: (arg: SettingsDataModelObjectAboutFormValues) => void;
+  onNewDirtyField?: () => void;
 };
 
 const StyledInputsContainer = styled.div`
@@ -72,7 +72,7 @@ export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
 
 export const SettingsDataModelObjectAboutForm = ({
   disableEdition,
-  handleSave,
+  onNewDirtyField,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
   const { control, watch, setValue, handleSubmit } =
@@ -158,7 +158,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fillNameSingularFromLabelSingular(value);
                 }
               }}
-              onBlur={() => handleSubmit(handleSave)()}
+              onBlur={() => onNewDirtyField?.()}
               disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
@@ -199,7 +199,7 @@ export const SettingsDataModelObjectAboutForm = ({
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             disabled={disableEdition}
-            onBlur={() => handleSubmit(handleSave)()}
+            onBlur={() => onNewDirtyField?.()}
           />
         )}
       />
@@ -248,7 +248,7 @@ export const SettingsDataModelObjectAboutForm = ({
                             disabled={disableEdition}
                             fullWidth
                             maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
-                            onBlur={() => handleSubmit(handleSave)()}
+                            onBlur={() => onNewDirtyField?.()}
                             RightIcon={() =>
                               tooltip && (
                                 <>
@@ -304,7 +304,7 @@ export const SettingsDataModelObjectAboutForm = ({
                           fillNamePluralFromLabelPlural(labelPlural);
                           fillNameSingularFromLabelSingular(labelSingular);
                         }
-                        handleSubmit(handleSave)();
+                        onNewDirtyField?.();
                       }}
                     />
                   </Card>

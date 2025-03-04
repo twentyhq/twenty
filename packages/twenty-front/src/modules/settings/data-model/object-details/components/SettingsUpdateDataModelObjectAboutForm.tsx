@@ -107,7 +107,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SettingsDataModelObjectAboutForm
-        handleSave={handleSave}
+        onNewDirtyField={() => formConfig.handleSubmit(handleSave)()}
         disableEdition={!objectMetadataItem.isCustom}
         objectMetadataItem={objectMetadataItem}
       />

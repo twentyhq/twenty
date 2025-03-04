@@ -88,7 +88,7 @@ export const SettingsNewObject = () => {
               title={t`About`}
               description={t`Define the name and description of your object`}
             />
-            <SettingsDataModelObjectAboutForm handleSave={handleSave} />
+            <SettingsDataModelObjectAboutForm />
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
