@@ -1,6 +1,7 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
 import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDestroyMultipleRecordsAction';
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
+import { useRestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useRestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
 import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
@@ -43,6 +44,7 @@ import {
   IconPlayerPlay,
   IconPlus,
   IconPower,
+  IconRefresh,
   IconRotate2,
   IconTrash,
   IconTrashX,
@@ -346,5 +348,34 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useImportRecordsNoSelectionRecordAction,
+  },
+  restoreSingleRecord: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: SingleRecordActionKeys.RESTORE,
+    label: msg`Restore workflow`,
+    shortLabel: msg`Restore`,
+    position: 15,
+    Icon: IconRefresh,
+    accent: 'default',
+    isPinned: true,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    useAction: useRestoreMultipleRecordsAction,
+  },
+  restoreMultipleRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: MultipleRecordsActionKeys.RESTORE,
+    label: msg`Restore workflows`,
+    shortLabel: msg`Restore`,
+    position: 16,
+    Icon: IconRefresh,
+    accent: 'default',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    useAction: useRestoreMultipleRecordsAction,
   },
 };

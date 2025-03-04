@@ -3,14 +3,14 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useCallback, useContext, useState } from 'react';
 import {
-  AnimatedEaseInOut,
-  IconChevronDown,
-  IconComponent,
-  IconDotsVertical,
-  IconTrash,
-  IconUnlink,
-  LightIconButton,
-  MenuItem,
+    AnimatedEaseInOut,
+    IconChevronDown,
+    IconComponent,
+    IconDotsVertical,
+    IconTrash,
+    IconUnlink,
+    LightIconButton,
+    MenuItem,
 } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -22,9 +22,9 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
+    FieldContext,
+    RecordUpdateHook,
+    RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
@@ -300,7 +300,7 @@ export const RecordDetailRelationRecordsListItem = ({
             </>
           }
           onConfirmClick={handleConfirmDelete}
-          deleteButtonText={`Delete ${relationObjectTypeName}`}
+          confirmButtonText={`Delete ${relationObjectTypeName}`}
         />,
         document.body,
       )}

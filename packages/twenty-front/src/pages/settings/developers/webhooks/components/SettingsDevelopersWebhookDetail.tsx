@@ -3,16 +3,16 @@ import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
-  Button,
-  H2Title,
-  IconBox,
-  IconButton,
-  IconNorthStar,
-  IconPlus,
-  IconRefresh,
-  IconTrash,
-  Section,
-  useIcons,
+    Button,
+    H2Title,
+    IconBox,
+    IconButton,
+    IconNorthStar,
+    IconPlus,
+    IconRefresh,
+    IconTrash,
+    Section,
+    useIcons,
 } from 'twenty-ui';
 
 import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
@@ -266,7 +266,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
               </Trans>
             }
             onConfirmClick={deleteWebhook}
-            deleteButtonText={t`Delete webhook`}
+            confirmButtonText={t`Delete webhook`}
           />
         </Section>
       </SettingsPageContainer>

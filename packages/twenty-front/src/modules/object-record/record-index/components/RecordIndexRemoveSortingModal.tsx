@@ -33,7 +33,7 @@ export const RecordIndexRemoveSortingModal = () => {
         title={'Remove sorting?'}
         subtitle={<>This is required to enable manual row reordering.</>}
         onConfirmClick={() => handleRemoveClick()}
-        deleteButtonText={'Remove Sorting'}
+        confirmButtonText={'Remove Sorting'}
       />
     </>
   );

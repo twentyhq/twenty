@@ -2,12 +2,12 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  Button,
-  H2Title,
-  IconCalendarEvent,
-  IconCircleX,
-  IconCreditCard,
-  Section,
+    Button,
+    H2Title,
+    IconCalendarEvent,
+    IconCircleX,
+    IconCreditCard,
+    Section,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -22,10 +22,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared';
 import {
-  SubscriptionInterval,
-  SubscriptionStatus,
-  useBillingPortalSessionQuery,
-  useUpdateBillingSubscriptionMutation,
+    SubscriptionInterval,
+    SubscriptionStatus,
+    useBillingPortalSessionQuery,
+    useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -190,7 +190,7 @@ export const SettingsBilling = () => {
           ` ${impact}`
         }
         onConfirmClick={switchInterval}
-        deleteButtonText={t`Change ${to}`}
+        confirmButtonText={t`Change ${to}`}
         confirmButtonAccent={'blue'}
       />
     </SubMenuTopBarContainer>

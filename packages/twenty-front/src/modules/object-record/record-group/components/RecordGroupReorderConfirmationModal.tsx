@@ -32,7 +32,7 @@ export const RecordGroupReorderConfirmationModal = ({
       title="Group sorting"
       subtitle={`Would you like to remove ${recordGroupSort} group sorting ?`}
       onConfirmClick={onConfirmClick}
-      deleteButtonText="Remove"
+      confirmButtonText="Remove"
     />,
     document.body,
   );

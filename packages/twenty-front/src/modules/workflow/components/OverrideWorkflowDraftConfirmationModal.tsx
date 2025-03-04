@@ -1,8 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AppPath } from '@/types/AppPath';
 import {
-  ConfirmationModal,
-  StyledCenteredButton,
+    ConfirmationModal,
+    StyledCenteredButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
@@ -47,7 +47,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
         title="A draft already exists"
         subtitle="A draft already exists for this workflow. Are you sure you want to erase it?"
         onConfirmClick={handleOverrideDraft}
-        deleteButtonText={'Override Draft'}
+        confirmButtonText={'Override Draft'}
         AdditionalButtons={
           <StyledCenteredButton
             to={getAppPath(AppPath.RecordShowPage, {

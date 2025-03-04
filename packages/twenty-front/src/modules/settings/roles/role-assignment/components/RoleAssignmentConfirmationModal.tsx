@@ -34,7 +34,7 @@ export const RoleAssignmentConfirmationModal = ({
         />
       }
       onConfirmClick={onConfirm}
-      deleteButtonText={t`Confirm`}
+      confirmButtonText={t`Confirm`}
       confirmButtonAccent="blue"
     />
   );
