@@ -1,5 +1,7 @@
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
@@ -14,7 +16,9 @@ import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Button, IconArrowsDiagonal, getOsControlSymbol } from 'twenty-ui';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -39,6 +43,10 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
 `;
 
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
 
 type ShowPageSubContainerProps = {
   layout?: RecordLayout;
@@ -111,6 +119,8 @@ export const ShowPageSubContainer = ({
   const displaySummaryAndFields =
     layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
 
+  const { closeCommandMenu } = useCommandMenu();
+
   return (
     <>
       {displaySummaryAndFields && (
@@ -134,7 +144,27 @@ export const ShowPageSubContainer = ({
           {renderActiveTabContent()}
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && (
-          <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
+          <RightDrawerFooter
+            actions={[
+              <RecordShowRightDrawerActionMenu />,
+              <StyledLink
+                to={getLinkToShowPage(
+                  targetableObject.targetObjectNameSingular,
+                  recordFromStore,
+                )}
+                onClick={closeCommandMenu}
+              >
+                <Button
+                  title="Open"
+                  variant="primary"
+                  accent="blue"
+                  size="medium"
+                  Icon={IconArrowsDiagonal}
+                  hotkeys={[getOsControlSymbol(), '⏎']}
+                />
+              </StyledLink>,
+            ]}
+          />
         )}
       </StyledShowPageRightContainer>
     </>
