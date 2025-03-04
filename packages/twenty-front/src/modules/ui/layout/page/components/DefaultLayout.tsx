@@ -70,7 +70,7 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
-  const showPlayground = useShowFullscreen();
+  const useShowFullScreen = useShowFullscreen();
 
   return (
     <>
@@ -92,7 +92,7 @@ export const DefaultLayout = () => {
         <StyledPageContainer
           animate={{
             marginLeft:
-              isSettingsPage && !isMobile && !showPlayground
+              isSettingsPage && !isMobile && !useShowFullScreen
                 ? (windowsWidth -
                     (OBJECT_SETTINGS_WIDTH +
                       NAV_DRAWER_WIDTHS.menu.desktop.expanded +
@@ -104,7 +104,7 @@ export const DefaultLayout = () => {
         >
           {showAuthModal ? (
             <StyledAppNavigationDrawerMock />
-          ) : showPlayground ? null : (
+          ) : useShowFullScreen ? null : (
             <StyledAppNavigationDrawer />
           )}
           {showAuthModal ? (
