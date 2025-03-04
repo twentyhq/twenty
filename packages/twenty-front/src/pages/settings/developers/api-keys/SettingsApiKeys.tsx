@@ -1,6 +1,5 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
-import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { PlaygroundSetupForm } from '@/settings/playground/components/PlaygroundSetupForm';
 import { StyledSettingsApiPlaygroundCoverImage } from '@/settings/playground/components/SettingsPlaygroundCoverImage';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -32,7 +31,6 @@ export const SettingsApiKeys = () => {
   return (
     <SubMenuTopBarContainer
       title={t`APIs`}
-      actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
           children: <Trans>Workspace</Trans>,

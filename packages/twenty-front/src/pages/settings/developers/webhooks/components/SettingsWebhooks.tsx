@@ -1,5 +1,4 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -33,7 +32,6 @@ export const SettingsWebhooks = () => {
   return (
     <SubMenuTopBarContainer
       title={t`Webhooks`}
-      actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
           children: <Trans>Workspace</Trans>,
