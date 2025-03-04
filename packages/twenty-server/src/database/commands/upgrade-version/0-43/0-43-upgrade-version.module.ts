@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MigrationCommandModule } from 'src/database/commands/migration-command/miration-command.module';
 import { StandardizationOfActorCompositeContextTypeCommand } from 'src/database/commands/upgrade-version/0-42/0-42-standardization-of-actor-composite-context-type';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version/0-43/0-43-add-tasks-assigned-to-me-view.command';
+import { BackfillWorkspaceVersionCommand } from 'src/database/commands/upgrade-version/0-43/0-43-backfill-workspace-version.command';
 import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-relations-to-field-metadata.command';
 import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/commands/upgrade-version/0-43/0-43-migrate-search-vector-on-note-and-task-entities.command';
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
@@ -32,6 +33,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       ],
       providers: [
         AddTasksAssignedToMeViewCommand,
+        BackfillWorkspaceVersionCommand,
         MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
         UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
         StandardizationOfActorCompositeContextTypeCommand,
