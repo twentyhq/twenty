@@ -1,5 +1,6 @@
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
@@ -20,6 +21,7 @@ import {
   IconDatabaseExport,
   IconHeart,
   IconHeartOff,
+  IconRotate2,
 } from 'twenty-ui';
 
 export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
@@ -30,7 +32,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
 > = {
   addToFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
@@ -62,7 +64,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
-    label: msg`Navigate to previous record`,
+    label: msg`Navigate to previous run`,
     position: 2,
     isPinned: true,
     Icon: IconChevronUp,
@@ -73,7 +75,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
-    label: msg`Navigate to next record`,
+    label: msg`Navigate to next run`,
     position: 3,
     isPinned: true,
     Icon: IconChevronDown,
@@ -84,7 +86,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.EXPORT,
-    label: msg`Export records`,
+    label: msg`Export runs`,
     shortLabel: msg`Export`,
     position: 4,
     Icon: IconDatabaseExport,
@@ -95,7 +97,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
   },
   exportView: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: msg`Export view`,
     shortLabel: msg`Export`,
@@ -105,5 +107,18 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useExportMultipleRecordsAction,
+  },
+  seeDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
+    label: msg`See deleted runs`,
+    shortLabel: msg`Deleted runs`,
+    position: 6,
+    Icon: IconRotate2,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
 };

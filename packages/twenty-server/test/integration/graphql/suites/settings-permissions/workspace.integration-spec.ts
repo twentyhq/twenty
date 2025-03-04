@@ -10,7 +10,7 @@ import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permiss
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('WorkspaceResolver', () => {
+describe('workspace permissions', () => {
   let originalWorkspaceState;
 
   beforeAll(async () => {

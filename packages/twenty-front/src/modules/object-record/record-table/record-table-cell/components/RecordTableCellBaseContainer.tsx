@@ -59,7 +59,7 @@ export const RecordTableCellBaseContainer = ({
   const isReadOnly = useIsFieldValueReadOnly();
   const { hasSoftFocus, cellPosition } = useContext(RecordTableCellContext);
 
-  const { onMoveSoftFocusToCell, onCellMouseEnter } =
+  const { onMoveSoftFocusToCurrentCell, onCellMouseEnter } =
     useRecordTableBodyContextOrThrow();
 
   const handleContainerMouseMove = () => {
@@ -77,7 +77,7 @@ export const RecordTableCellBaseContainer = ({
 
   const handleContainerClick = () => {
     if (!hasSoftFocus) {
-      onMoveSoftFocusToCell(cellPosition);
+      onMoveSoftFocusToCurrentCell(cellPosition);
       openTableCell();
     }
   };

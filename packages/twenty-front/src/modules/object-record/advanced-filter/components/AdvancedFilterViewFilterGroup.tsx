@@ -37,7 +37,7 @@ export const AdvancedFilterViewFilterGroup = ({
     childViewFiltersAndViewFilterGroups,
     lastChildPosition,
   } = useCurrentViewViewFilterGroup({
-    viewFilterGroupId,
+    recordFilterGroupId: viewFilterGroupId,
   });
 
   if (!currentViewFilterGroup) {
@@ -46,20 +46,20 @@ export const AdvancedFilterViewFilterGroup = ({
 
   return (
     <StyledContainer
-      isGrayBackground={!!currentViewFilterGroup.parentViewFilterGroupId}
+      isGrayBackground={!!currentViewFilterGroup.parentRecordFilterGroupId}
     >
       {childViewFiltersAndViewFilterGroups.map((child, i) => (
         <StyledRow key={child.id}>
           <AdvancedFilterLogicalOperatorCell
             index={i}
-            viewFilterGroup={currentViewFilterGroup}
+            recordFilterGroup={currentViewFilterGroup}
           />
           <AdvancedFilterViewFilter viewFilterId={child.id} />
           <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
         </StyledRow>
       ))}
       <AdvancedFilterAddFilterRuleSelect
-        viewFilterGroup={currentViewFilterGroup}
+        recordFilterGroup={currentViewFilterGroup}
         lastChildPosition={lastChildPosition}
       />
     </StyledContainer>

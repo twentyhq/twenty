@@ -3,17 +3,18 @@ import { SettingsLabContent } from '@/settings/lab/components/SettingsLabContent
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { t } from '@lingui/core/macro';
 
 export const SettingsLab = () => {
   return (
     <SubMenuTopBarContainer
-      title="Lab"
+      title={t`Lab`}
       links={[
         {
-          children: 'Other',
+          children: t`Other`,
           href: getSettingsPath(SettingsPath.Lab),
         },
-        { children: 'Lab' },
+        { children: t`Lab` },
       ]}
     >
       <SettingsPageContainer>

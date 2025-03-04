@@ -5,6 +5,7 @@ import {
   GraphQLFieldConfigMap,
   GraphQLObjectType,
 } from 'graphql';
+import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -14,7 +15,7 @@ import { RelationTypeV2Factory } from 'src/engine/api/graphql/workspace-schema-b
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
-import { isRelationFieldMetadata } from 'src/engine/utils/is-relation-field-metadata.util';
+import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 import { ArgsFactory } from './args.factory';
 
@@ -107,7 +108,7 @@ export class ExtendObjectTypeDefinitionV2Factory {
 
     for (const fieldMetadata of objectMetadata.fields) {
       // Ignore non-relation fields as they are already defined
-      if (!isRelationFieldMetadata(fieldMetadata)) {
+      if (!isFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)) {
         continue;
       }
 

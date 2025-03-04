@@ -94,7 +94,7 @@ const meta: Meta = {
                     onOpenTableCell: () => {},
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},
-                    onMoveSoftFocusToCell: () => {},
+                    onMoveSoftFocusToCurrentCell: () => {},
                     onActionMenuDropdownOpened: () => {},
                     onCellMouseEnter: () => {},
                   }}

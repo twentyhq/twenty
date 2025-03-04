@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -11,6 +11,7 @@ import {
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -32,6 +33,8 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 @Injectable()
 export class WorkspaceManagerService {
+  private readonly logger = new Logger(WorkspaceManagerService.name);
+
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -49,6 +52,8 @@ export class WorkspaceManagerService {
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   /**
@@ -63,11 +68,19 @@ export class WorkspaceManagerService {
     workspaceId: string;
     userId: string;
   }): Promise<void> {
+    const schemaCreationStart = performance.now();
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
       );
 
+    const schemaCreationEnd = performance.now();
+
+    this.logger.log(
+      `Schema creation took ${schemaCreationEnd - schemaCreationStart}ms`,
+    );
+
+    const dataSourceMetadataCreationStart = performance.now();
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
@@ -79,6 +92,13 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
+    const dataSourceMetadataCreationEnd = performance.now();
+
+    this.logger.log(
+      `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
+    );
+
+    const permissionsEnabledStart = performance.now();
     const permissionsEnabled =
       await this.permissionsService.isPermissionsEnabled();
 
@@ -86,9 +106,23 @@ export class WorkspaceManagerService {
       await this.initPermissions({ workspaceId, userId });
     }
 
+    const permissionsEnabledEnd = performance.now();
+
+    this.logger.log(
+      `Permissions enabled took ${permissionsEnabledEnd - permissionsEnabledStart}ms`,
+    );
+
+    const prefillStandardObjectsStart = performance.now();
+
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
       workspaceId,
+    );
+
+    const prefillStandardObjectsEnd = performance.now();
+
+    this.logger.log(
+      `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
     );
   }
 
@@ -261,6 +295,14 @@ export class WorkspaceManagerService {
       userWorkspaceId: userWorkspace.id,
       roleId: adminRole.id,
     });
+
+    const memberRole = await this.roleService.createMemberRole({
+      workspaceId,
+    });
+
+    await this.workspaceRepository.update(workspaceId, {
+      defaultRoleId: memberRole.id,
+    });
   }
 
   private async initPermissionsDev(workspaceId: string) {
@@ -303,6 +345,10 @@ export class WorkspaceManagerService {
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
+    });
+
+    await this.workspaceRepository.update(workspaceId, {
+      defaultRoleId: memberRole.id,
     });
 
     if (memberUserWorkspaceId) {

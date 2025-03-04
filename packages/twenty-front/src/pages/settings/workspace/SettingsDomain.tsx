@@ -24,7 +24,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
 import { isDefined } from 'twenty-shared';
 
 export const SettingsDomain = () => {
@@ -43,9 +42,15 @@ export const SettingsDomain = () => {
       customDomain: z
         .string()
         .regex(
+          /^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$/,
+          {
+            message: t`Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com).`,
+          },
+        )
+        .regex(
           /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
           {
-            message: t`Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+            message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
           },
         )
         .max(256)
@@ -70,7 +75,7 @@ export const SettingsDomain = () => {
     subdomain: string;
     customDomain: string | null;
   }>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
@@ -100,6 +105,9 @@ export const SettingsDomain = () => {
           ...currentWorkspace,
           customDomain:
             customDomain && customDomain.length > 0 ? customDomain : null,
+        });
+        enqueueSnackBar(t`Custom domain updated`, {
+          variant: SnackBarVariant.Success,
         });
       },
       onError: (error) => {
@@ -155,6 +163,10 @@ export const SettingsDomain = () => {
           subdomain,
         });
 
+        enqueueSnackBar(t`Subdomain updated`, {
+          variant: SnackBarVariant.Success,
+        });
+
         redirectToWorkspaceDomain(currentUrl.toString());
       },
     });
@@ -163,7 +175,16 @@ export const SettingsDomain = () => {
   const handleSave = async () => {
     const values = form.getValues();
 
-    if (!values || !form.formState.isValid || !currentWorkspace) {
+    if (
+      subdomainValue === currentWorkspace?.subdomain &&
+      customDomainValue === currentWorkspace?.customDomain
+    ) {
+      return enqueueSnackBar(t`No change detected`, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+
+    if (!values || !currentWorkspace) {
       return enqueueSnackBar(t`Invalid form values`, {
         variant: SnackBarVariant.Error,
       });
@@ -182,43 +203,35 @@ export const SettingsDomain = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title={t`Domain`}
-      links={[
-        {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: <Trans>General</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        { children: <Trans>Domain</Trans> },
-      ]}
-      actionButton={
-        <SaveAndCancelButtons
-          isSaveDisabled={
-            !form.formState.isValid ||
-            (subdomainValue === currentWorkspace?.subdomain &&
-              customDomainValue === currentWorkspace?.customDomain)
+    <form onSubmit={form.handleSubmit(handleSave)}>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...form}>
+        <SubMenuTopBarContainer
+          title={t`Domain`}
+          links={[
+            {
+              children: <Trans>Workspace</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            {
+              children: <Trans>General</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            { children: <Trans>Domain</Trans> },
+          ]}
+          actionButton={
+            <SaveAndCancelButtons
+              onCancel={() => navigate(SettingsPath.Workspace)}
+              isSaveDisabled={form.formState.isSubmitting}
+            />
           }
-          onCancel={() => navigate(SettingsPath.Workspace)}
-          onSave={handleSave}
-        />
-      }
-    >
-      <SettingsPageContainer>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <FormProvider {...form}>
-          <SettingsSubdomain />
-          {isCustomDomainEnabled && (
-            <>
-              <SettingsCustomDomainEffect />
-              <SettingsCustomDomain />
-            </>
-          )}
-        </FormProvider>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+        >
+          <SettingsPageContainer>
+            <SettingsSubdomain />
+            {isCustomDomainEnabled && <SettingsCustomDomain />}
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
+    </form>
   );
 };

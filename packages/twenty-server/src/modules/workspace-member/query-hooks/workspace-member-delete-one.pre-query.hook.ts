@@ -5,25 +5,40 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
 
 @WorkspaceQueryHook(`workspaceMember.deleteOne`)
 export class WorkspaceMemberDeleteOnePreQueryHook
   implements WorkspaceQueryHookInstance
 {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMManager: TwentyORMManager,
+    private readonly workspaceMemberPreQueryHookService: WorkspaceMemberPreQueryHookService,
+  ) {}
 
-  // There is no need to validate the user's access to the workspace member since we don't have permission yet.
   async execute(
     authContext: AuthContext,
     objectName: string,
     payload: DeleteOneResolverArgs,
   ): Promise<DeleteOneResolverArgs> {
+    const targettedWorkspaceMemberId = payload.id;
+
+    await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
+      {
+        userWorkspaceId: authContext.userWorkspaceId,
+        workspaceMemberId: authContext.workspaceMemberId,
+        targettedWorkspaceMemberId,
+        workspaceId: authContext.workspace.id,
+        apiKey: authContext.apiKey,
+      },
+    );
+
     const attachmentRepository =
       await this.twentyORMManager.getRepository<AttachmentWorkspaceEntity>(
         'attachment',
       );
 
-    const authorId = payload.id;
+    const authorId = targettedWorkspaceMemberId;
 
     await attachmentRepository.delete({
       authorId,

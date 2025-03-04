@@ -1,3 +1,4 @@
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -7,9 +8,11 @@ import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeybo
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
   const {
@@ -27,7 +30,11 @@ export const useCommandMenuHotKeys = () => {
 
   const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
-    'command-menu',
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
+
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   useScopedHotkeys(
@@ -64,7 +71,7 @@ export const useCommandMenuHotKeys = () => {
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],
     () => {
-      if (isNonEmptyString(commandMenuSearch)) {
+      if (isNonEmptyString(commandMenuSearch) || !isCommandMenuV2Enabled) {
         return;
       }
 

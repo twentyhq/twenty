@@ -73,14 +73,8 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
+          contextStoreCurrentViewId: mockView.id,
           onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              contextStoreCurrentViewIdComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              mockView.id,
-            );
-
             snapshot.set(prefetchViewsState, [mockView]);
           },
         }),
@@ -96,11 +90,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
         direction: mockViewSort.direction,
-        definition: {
-          fieldMetadataId: mockViewSort.fieldMetadataId,
-          iconName: mockFieldMetadataItem.icon ?? '',
-          label: mockFieldMetadataItem.label,
-        },
       } satisfies RecordSort,
     ]);
   });

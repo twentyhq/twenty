@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { FieldMetadataType, isDefined } from 'twenty-shared';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
@@ -21,7 +21,7 @@ import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/work
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isRelationFieldMetadata } from 'src/engine/utils/is-relation-field-metadata.util';
+import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
@@ -151,7 +151,9 @@ export class QueryResultGettersFactory {
           objectMetadataMapItem.fieldsByName[recordFieldName],
       )
       .filter(isDefined)
-      .filter((fieldMetadata) => isRelationFieldMetadata(fieldMetadata));
+      .filter((fieldMetadata) =>
+        isFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION),
+      );
 
     const relationFieldsProcessedMap = {} as Record<
       string,

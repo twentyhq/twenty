@@ -1,15 +1,17 @@
 import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
+
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
-import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
@@ -28,7 +30,13 @@ export const AdvancedFilterViewFilterOperandSelect = ({
 }: AdvancedFilterViewFilterOperandSelectProps) => {
   const dropdownId = `advanced-filter-view-filter-operand-${viewFilterId}`;
 
-  const filter = useCurrentViewFilter({ viewFilterId });
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
+
+  const filter = currentRecordFilters.find(
+    (recordFilter) => recordFilter.id === viewFilterId,
+  );
 
   const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
 
@@ -36,7 +44,7 @@ export const AdvancedFilterViewFilterOperandSelect = ({
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
+  const { upsertRecordFilter } = useUpsertRecordFilter();
 
   const handleOperandChange = (operand: ViewFilterOperand) => {
     closeDropdown();
@@ -60,7 +68,7 @@ export const AdvancedFilterViewFilterOperandSelect = ({
       filter.displayValue,
     );
 
-    upsertCombinedViewFilter({
+    upsertRecordFilter({
       ...filter,
       operand,
       value,

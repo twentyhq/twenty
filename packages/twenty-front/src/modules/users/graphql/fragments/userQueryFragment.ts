@@ -1,12 +1,15 @@
+import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
 export const USER_QUERY_FRAGMENT = gql`
+  ${ROLE_FRAGMENT}
   fragment UserQueryFragment on User {
     id
     firstName
     lastName
     email
+    canAccessFullAdminPanel
     canImpersonate
     supportUserHash
     analyticsTinybirdJwts {
@@ -42,6 +45,7 @@ export const USER_QUERY_FRAGMENT = gql`
       subdomain
       hasValidEnterpriseKey
       customDomain
+      isCustomDomainEnabled
       workspaceUrls {
         subdomainUrl
         customUrl
@@ -63,6 +67,9 @@ export const USER_QUERY_FRAGMENT = gql`
         status
       }
       workspaceMembersCount
+      defaultRole {
+        ...RoleFragment
+      }
     }
     workspaces {
       workspace {

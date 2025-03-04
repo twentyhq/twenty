@@ -9,12 +9,12 @@ import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButto
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
@@ -31,8 +31,14 @@ type RecordInlineCellProps = {
 };
 
 export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
-  const { fieldDefinition, recordId, isCentered, isDisplayModeFixHeight } =
-    useContext(FieldContext);
+  const {
+    fieldDefinition,
+    recordId,
+    isCentered,
+    isDisplayModeFixHeight,
+    onOpenEditMode,
+    onCloseEditMode,
+  } = useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -129,6 +135,8 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
+    onOpenEditMode,
+    onCloseEditMode,
   };
 
   return (

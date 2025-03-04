@@ -1,7 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 
@@ -31,10 +30,6 @@ export const getQueryVariablesFromView = ({
 
   const { viewFilterGroups, viewFilters, viewSorts } = view;
 
-  const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-    fields: fieldMetadataItems,
-  });
-
   const filter = computeViewRecordGqlOperationFilter(
     filterValueDependencies,
     mapViewFiltersToFilters(viewFilters, fieldMetadataItems),
@@ -44,7 +39,7 @@ export const getQueryVariablesFromView = ({
 
   const orderBy = turnSortsIntoOrderBy(
     objectMetadataItem,
-    mapViewSortsToSorts(viewSorts, sortDefinitions),
+    mapViewSortsToSorts(viewSorts),
   );
 
   return {

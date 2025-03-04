@@ -28,6 +28,8 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
+      customDomain: 'my-custom-domain.com',
+      isCustomDomainEnabled: true,
       workspaceUrls: {
         subdomainUrl: 'https://twenty.twenty.com',
         customUrl: 'https://my-custom-domain.com',
@@ -63,9 +65,8 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
       },
     );
 
-    const { columnDefinitions, sortDefinitions } = result.current;
+    const { columnDefinitions } = result.current;
 
     expect(columnDefinitions.length).toBe(21);
-    expect(sortDefinitions.length).toBe(14);
   });
 });

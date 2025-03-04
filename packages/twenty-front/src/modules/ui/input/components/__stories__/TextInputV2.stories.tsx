@@ -56,3 +56,15 @@ export const Small: Story = {
 export const AutoGrowSmall: Story = {
   args: { autoGrow: true, sizeVariant: 'sm', value: 'Tim' },
 };
+
+export const WithLeftAdornment: Story = {
+  args: {
+    leftAdornment: 'https://',
+  },
+};
+
+export const WithRightAdornment: Story = {
+  args: {
+    rightAdornment: '@twenty.com',
+  },
+};

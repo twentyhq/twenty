@@ -19,15 +19,16 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
+  const { t } = useLingui();
   const {
     viewType,
     currentContentId,
-    recordIndexId,
     objectMetadataItem,
     onContentChange,
     closeDropdown,
@@ -47,7 +48,6 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
-      viewBarId: recordIndexId,
       viewType,
     });
 
@@ -98,7 +98,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
         }}
       >
         <DropdownMenuItemsContainer>
-          <MenuItem LeftIcon={IconSettings} text="Edit field values" />
+          <MenuItem LeftIcon={IconSettings} text={t`Edit field values`} />
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
     </>

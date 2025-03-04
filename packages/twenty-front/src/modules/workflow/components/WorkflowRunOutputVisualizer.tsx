@@ -1,4 +1,4 @@
-import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
+import { useWorkflowRunUnsafe } from '@/workflow/hooks/useWorkflowRunUnsafe';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 import { CodeEditor } from 'twenty-ui';
@@ -12,7 +12,8 @@ export const WorkflowRunOutputVisualizer = ({
 }: {
   workflowRunId: string;
 }) => {
-  const workflowRun = useWorkflowRun({ workflowRunId });
+  const workflowRun = useWorkflowRunUnsafe({ workflowRunId });
+
   if (!isDefined(workflowRun)) {
     return null;
   }

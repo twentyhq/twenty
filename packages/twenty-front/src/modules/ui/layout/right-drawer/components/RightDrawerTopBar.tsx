@@ -102,7 +102,7 @@ export const RightDrawerTopBar = () => {
         <Chip
           disabled={isNewViewableRecordLoading}
           label={label}
-          leftComponent={<Icon size={theme.icon.size.md} />}
+          leftComponent={() => <Icon size={theme.icon.size.md} />}
           size={ChipSize.Large}
           accent={ChipAccent.TextSecondary}
           clickable={false}

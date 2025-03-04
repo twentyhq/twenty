@@ -5,6 +5,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
+import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
@@ -21,6 +22,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { fileStorageModuleFactory } from 'src/engine/core-modules/file-storage/file-storage.module-factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { GlobalSearchModule } from 'src/engine/core-modules/global-search/global-search.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
@@ -68,6 +70,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
+    ApprovedAccessDomainModule,
     PostgresCredentialsModule,
     WorkflowApiModule,
     WorkspaceEventEmitterModule,
@@ -118,6 +121,7 @@ import { FileModule } from './file/file.module';
       useFactory: serverlessModuleFactory,
       inject: [EnvironmentService, FileStorageService],
     }),
+    GlobalSearchModule,
   ],
   exports: [
     AnalyticsModule,

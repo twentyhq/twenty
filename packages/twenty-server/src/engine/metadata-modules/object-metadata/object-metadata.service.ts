@@ -120,6 +120,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isCustom: !objectMetadataInput.isRemote,
       isSystem: false,
       isRemote: objectMetadataInput.isRemote,
+      isSearchable: !objectMetadataInput.isRemote,
       fields: objectMetadataInput.isRemote
         ? []
         : buildDefaultFieldsForCustomObject(objectMetadataInput.workspaceId),
