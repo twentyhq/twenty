@@ -50,10 +50,6 @@ export const ActivityRichTextEditor = ({
   const cache = useApolloClient().cache;
   const activity = activityInStore as Task | Note | null;
 
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
-
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
@@ -73,14 +69,12 @@ export const ActivityRichTextEditor = ({
   });
 
   const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
-    const input = isRichTextV2Enabled
-      ? {
-          bodyV2: {
-            blocknote,
-            markdown: null,
-          },
-        }
-      : { body: blocknote };
+    const input = {
+      bodyV2: {
+        blocknote,
+        markdown: null,
+      },
+    };
 
     if (isDefined(activity)) {
       upsertActivity({
@@ -175,9 +169,7 @@ export const ActivityRichTextEditor = ({
   };
 
   const initialBody = useMemo(() => {
-    const blocknote = isRichTextV2Enabled
-      ? activity?.bodyV2?.blocknote
-      : activity?.body;
+    const blocknote = activity?.bodyV2?.blocknote;
 
     if (
       isDefined(activity) &&
@@ -192,7 +184,7 @@ export const ActivityRichTextEditor = ({
       } catch (error) {
         // eslint-disable-next-line no-console
         console.warn(
-          `Failed to parse body for activity ${activityId}, for rich text version ${isRichTextV2Enabled ? 'v2' : 'v1'}`,
+          `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
         );
         // eslint-disable-next-line no-console
         console.warn(blocknote);
@@ -206,7 +198,7 @@ export const ActivityRichTextEditor = ({
     }
 
     return undefined;
-  }, [activity, isRichTextV2Enabled, activityId]);
+  }, [activity, activityId]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
     const { attachmentAbsoluteURL } = await handleUploadAttachment(file);
