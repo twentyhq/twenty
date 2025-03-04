@@ -3,7 +3,7 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import { getWorkflowRunStepContext } from '../getWorkflowRunStepContext';
 
 describe('getWorkflowRunStepContext', () => {
-  it('should return only trigger context for trigger step', () => {
+  it('should return an empty object for trigger step', () => {
     const flow = {
       trigger: {
         name: 'Company Created',
@@ -25,9 +25,7 @@ describe('getWorkflowRunStepContext', () => {
       context,
     });
 
-    expect(result).toEqual({
-      'Company Created': { company: { id: '123' } },
-    });
+    expect(result).toEqual({});
   });
 
   it('should include previous steps context', () => {

@@ -10,13 +10,13 @@ export const getWorkflowRunStepContext = ({
   context: WorkflowRunContext;
   flow: WorkflowRunFlow;
 }) => {
-  const stepContext: Record<string, any> = {
-    [flow.trigger.name ?? 'Trigger']: context[TRIGGER_STEP_ID],
-  };
+  const stepContext: Record<string, any> = {};
 
   if (stepId === TRIGGER_STEP_ID) {
     return stepContext;
   }
+
+  stepContext[flow.trigger.name ?? 'Trigger'] = context[TRIGGER_STEP_ID];
 
   for (const step of flow.steps) {
     if (step.id === stepId) {
