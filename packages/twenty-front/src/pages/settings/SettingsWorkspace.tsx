@@ -56,8 +56,11 @@ export const SettingsWorkspace = () => {
                   title={t`Customize Domain`}
                   Icon={<IconWorld />}
                   Status={
-                    currentWorkspace?.customDomain ? (
+                    currentWorkspace?.customDomain &&
+                    currentWorkspace?.isCustomDomainEnabled ? (
                       <Status text={'Active'} color={'turquoise'} />
+                    ) : currentWorkspace?.customDomain ? (
+                      <Status text={'Inactive'} color={'orange'} />
                     ) : undefined
                   }
                 />

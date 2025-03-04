@@ -59,7 +59,7 @@ export const ObjectFilterDropdownDateInput = () => {
           ? newDate.toLocaleString()
           : newDate.toLocaleDateString()
         : '',
-      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
       type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
       label: fieldMetadataItemUsedInDropdown.label,
     });
@@ -88,7 +88,7 @@ export const ObjectFilterDropdownDateInput = () => {
       value,
       operand: selectedOperandInDropdown,
       displayValue: getRelativeDateDisplayValue(relativeDate),
-      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
       type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
       label: fieldMetadataItemUsedInDropdown.label,
     });

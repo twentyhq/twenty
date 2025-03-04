@@ -24,7 +24,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
 import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
@@ -366,6 +365,7 @@ export class AuthResolver {
     const resetToken =
       await this.resetPasswordService.generatePasswordResetToken(
         emailPasswordResetInput.email,
+        emailPasswordResetInput.workspaceId,
       );
 
     return await this.resetPasswordService.sendEmailPasswordResetLink(
@@ -402,12 +402,5 @@ export class AuthResolver {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
-  }
-
-  @Query(() => [AvailableWorkspaceOutput])
-  async findAvailableWorkspacesByEmail(
-    @Args('email') email: string,
-  ): Promise<AvailableWorkspaceOutput[]> {
-    return this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
   }
 }

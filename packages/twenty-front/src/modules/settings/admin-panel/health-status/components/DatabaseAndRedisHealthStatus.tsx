@@ -19,9 +19,7 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const DatabaseAndRedisHealthStatus = () => {
-  const { indicatorHealth, loading } = useContext(
-    SettingsAdminIndicatorHealthContext,
-  );
+  const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
   const formattedDetails = indicatorHealth.details
     ? JSON.stringify(JSON.parse(indicatorHealth.details), null, 2)
@@ -33,7 +31,7 @@ export const DatabaseAndRedisHealthStatus = () => {
 
   return (
     <Section>
-      {isDatabaseOrRedisDown && !loading ? (
+      {isDatabaseOrRedisDown ? (
         <StyledErrorMessage>
           {`${indicatorHealth.label} information is not available because the service is down`}
         </StyledErrorMessage>
