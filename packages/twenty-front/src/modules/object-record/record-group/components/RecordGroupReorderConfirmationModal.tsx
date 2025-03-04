@@ -30,7 +30,7 @@ export const RecordGroupReorderConfirmationModal = ({
       isOpen={isRecordGroupReorderConfirmationModalVisible}
       setIsOpen={setIsRecordGroupReorderConfirmationModalVisible}
       title="Group sorting"
-      subtitle={`Would you like to remove ${recordGroupSort} group sorting ?`}
+      subtitle={`Would you like to remove ${recordGroupSort} group sorting?`}
       onConfirmClick={onConfirmClick}
       confirmButtonText="Remove"
     />,
