@@ -1,3 +1,4 @@
+import { RightDrawerActionMenuDropdownHotkeyScope } from '@/action-menu/types/RightDrawerActionMenuDropdownHotkeyScope';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -28,16 +29,25 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
   const navigate = useNavigateApp();
 
+  const handleOpenRecord = () => {
+    navigate(AppPath.RecordShowPage, {
+      objectNameSingular,
+      objectRecordId: record.id,
+    });
+    closeCommandMenu();
+  };
+
   useScopedHotkeys(
     ['ctrl+Enter,meta+Enter'],
-    () => {
-      navigate(AppPath.RecordShowPage, {
-        objectNameSingular,
-        objectRecordId: record.id,
-      });
-      closeCommandMenu();
-    },
+    handleOpenRecord,
     AppHotkeyScope.CommandMenuOpen,
+    [closeCommandMenu, navigate, objectNameSingular, record.id],
+  );
+
+  useScopedHotkeys(
+    ['ctrl+Enter,meta+Enter'],
+    handleOpenRecord,
+    RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
     [closeCommandMenu, navigate, objectNameSingular, record.id],
   );
 
