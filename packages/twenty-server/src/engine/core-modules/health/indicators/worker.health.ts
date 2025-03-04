@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { HealthIndicatorService } from '@nestjs/terminus';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  HealthIndicatorResult,
+  HealthIndicatorService,
+} from '@nestjs/terminus';
 
 import { Queue } from 'bullmq';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
+import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/health/constants/metrics-failure-rate-threshold.const';
 import { WorkerQueueHealth } from 'src/engine/core-modules/health/types/worker-queue-health.type';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -11,12 +15,14 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
 
 @Injectable()
 export class WorkerHealthIndicator {
+  private readonly logger = new Logger(WorkerHealthIndicator.name);
+
   constructor(
     private readonly redisClient: RedisClientService,
     private readonly healthIndicatorService: HealthIndicatorService,
   ) {}
 
-  async isHealthy() {
+  async isHealthy(): Promise<HealthIndicatorResult> {
     const indicator = this.healthIndicatorService.check('worker');
 
     try {
@@ -42,51 +48,106 @@ export class WorkerHealthIndicator {
     }
   }
 
-  private async checkWorkers() {
+  async getQueueDetails(
+    queueName: MessageQueue,
+    options?: {
+      pointsNeeded?: number;
+    },
+  ): Promise<WorkerQueueHealth | null> {
     const redis = this.redisClient.getClient();
+    const queue = new Queue(queueName, { connection: redis });
+
+    try {
+      const workers = await queue.getWorkers();
+
+      if (workers.length > 0) {
+        const metricsParams = options?.pointsNeeded
+          ? [0, options.pointsNeeded - 1]
+          : [];
+
+        const [
+          failedMetrics,
+          completedMetrics,
+          waitingCount,
+          activeCount,
+          delayedCount,
+        ] = await Promise.all([
+          queue.getMetrics('failed', ...metricsParams),
+          queue.getMetrics('completed', ...metricsParams),
+          queue.getWaitingCount(),
+          queue.getActiveCount(),
+          queue.getDelayedCount(),
+        ]);
+
+        const failedCount = options?.pointsNeeded
+          ? this.calculateMetricsSum(failedMetrics.data)
+          : failedMetrics.count;
+
+        const completedCount = options?.pointsNeeded
+          ? this.calculateMetricsSum(completedMetrics.data)
+          : completedMetrics.count;
+
+        const totalJobs = failedCount + completedCount;
+        const failureRate =
+          totalJobs > 0
+            ? Number(((failedCount / totalJobs) * 100).toFixed(1))
+            : 0;
+
+        return {
+          queueName,
+          workers: workers.length,
+          status: failureRate > METRICS_FAILURE_RATE_THRESHOLD ? 'down' : 'up',
+          metrics: {
+            failed: failedCount,
+            completed: completedCount,
+            waiting: waitingCount,
+            active: activeCount,
+            delayed: delayedCount,
+            failureRate,
+            ...(options?.pointsNeeded && {
+              failedData: failedMetrics.data.map(Number),
+              completedData: completedMetrics.data.map(Number),
+            }),
+          },
+        };
+      }
+
+      return null;
+    } catch (error) {
+      this.logger.error(
+        `Error getting queue details for ${queueName}: ${error.message}`,
+      );
+      throw error;
+    } finally {
+      await queue.close();
+    }
+  }
+
+  private calculateMetricsSum(data: string[] | number[]): number {
+    const sum = data.reduce((sum: number, value: string | number) => {
+      const numericValue = Number(value);
+
+      return sum + (isNaN(numericValue) ? 0 : numericValue);
+    }, 0);
+
+    return Math.round(Number(sum));
+  }
+
+  private async checkWorkers() {
     const queues = Object.values(MessageQueue);
     const queueStatuses: WorkerQueueHealth[] = [];
 
     for (const queueName of queues) {
-      const queue = new Queue(queueName, { connection: redis });
-
       try {
-        const workers = await queue.getWorkers();
+        const queueDetails = await this.getQueueDetails(queueName);
 
-        if (workers.length > 0) {
-          const [
-            failedCount,
-            completedCount,
-            waitingCount,
-            activeCount,
-            delayedCount,
-            prioritizedCount,
-          ] = await Promise.all([
-            queue.getFailedCount(),
-            queue.getCompletedCount(),
-            queue.getWaitingCount(),
-            queue.getActiveCount(),
-            queue.getDelayedCount(),
-            queue.getPrioritizedCount(),
-          ]);
-
-          queueStatuses.push({
-            queueName: queueName,
-            workers: workers.length,
-            metrics: {
-              failed: failedCount,
-              completed: completedCount,
-              waiting: waitingCount,
-              active: activeCount,
-              delayed: delayedCount,
-              prioritized: prioritizedCount,
-            },
-          });
+        if (queueDetails) {
+          queueStatuses.push(queueDetails);
         }
-
-        await queue.close();
       } catch (error) {
-        await queue.close();
+        this.logger.error(
+          `Error checking worker for queue ${queueName}: ${error.message}`,
+        );
       }
     }
 

@@ -1,4 +1,5 @@
 import { SettingsAdminEnvVariablesTable } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesTable';
+import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { Button, H1Title, H1TitleFontColor, Section } from 'twenty-ui';
@@ -37,11 +38,10 @@ const StyledShowMoreButton = styled(Button)<{ isSelected?: boolean }>`
 `;
 
 export const SettingsAdminEnvVariables = () => {
-  const { data: environmentVariables } = useGetEnvironmentVariablesGroupedQuery(
-    {
+  const { data: environmentVariables, loading: environmentVariablesLoading } =
+    useGetEnvironmentVariablesGroupedQuery({
       fetchPolicy: 'network-only',
-    },
-  );
+    });
 
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 
@@ -63,6 +63,10 @@ export const SettingsAdminEnvVariables = () => {
     environmentVariables?.getEnvironmentVariablesGrouped.groups.find(
       (group) => group.name === selectedGroup,
     );
+
+  if (environmentVariablesLoading) {
+    return <SettingsAdminTabSkeletonLoader />;
+  }
 
   return (
     <>

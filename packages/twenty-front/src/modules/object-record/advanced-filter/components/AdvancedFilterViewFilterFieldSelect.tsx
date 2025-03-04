@@ -67,7 +67,7 @@ export const AdvancedFilterViewFilterFieldSelect = ({
         }
         onOpen={() => {
           setAdvancedFilterViewFilterId(recordFilter?.id);
-          setAdvancedFilterViewFilterGroupId(recordFilter?.viewFilterGroupId);
+          setAdvancedFilterViewFilterGroupId(recordFilter?.recordFilterGroupId);
         }}
         dropdownComponents={
           shouldShowCompositeSelectionSubMenu ? (

@@ -7,6 +7,9 @@ export class WorkerQueueHealth {
   @Field(() => String)
   queueName: string;
 
+  @Field(() => String)
+  status: string;
+
   @Field(() => Number)
   workers: number;
 
