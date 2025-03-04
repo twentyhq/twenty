@@ -227,9 +227,11 @@ export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspa
       const schemaName =
         this.workspaceDataSourceService.getSchemaName(workspaceId);
 
+      const failOnMetadataCacheMiss = false;
       const workspaceDataSource =
         await this.twentyORMGlobalManager.getDataSourceForWorkspace(
           workspaceId,
+          failOnMetadataCacheMiss,
         );
 
       const rows = await workspaceDataSource.query(
