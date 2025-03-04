@@ -75,19 +75,10 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     try {
       const updatePayload = getUpdatePayload(formValues);
       const objectNamePluralForRedirection =
-        updatePayload.namePlural ?? objectMetadataItem?.namePlural;
-
-      if (!isDefined(objectNamePluralForRedirection)) {
-        throw new Error('Should never occur, object name plural is undefined');
-      }
-
-      if (!isDefined(objectMetadataItem)) {
-        throw new Error('Should never occur, objectMetadataItem is undefined');
-      }
+        updatePayload.namePlural ?? objectMetadataItem.namePlural;
 
       setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
-      // TODO try with create new object and see if it's working
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
         updatePayload,
