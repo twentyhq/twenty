@@ -285,6 +285,12 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.EmailSettings,
+    description: 'SMTP config string for sending emails',
+  })
+  EMAIL_SMTP: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.EmailSettings,
     description: 'SMTP host for sending emails',
   })
   EMAIL_SMTP_HOST: string;

@@ -7,7 +7,7 @@ export enum EmailDriver {
   Smtp = 'smtp',
 }
 
-export type EmailModuleOptions = SMTPConnection.Options | undefined;
+export type EmailModuleOptions = SMTPConnection.Options | string | undefined;
 
 export type EmailModuleAsyncOptions = {
   useFactory: (...args: any[]) => EmailModuleOptions;

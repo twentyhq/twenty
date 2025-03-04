@@ -15,6 +15,10 @@ export const emailModuleFactory = (
       return;
     }
     case EmailDriver.Smtp: {
+      const smtpConfigString = environmentService.get('EMAIL_SMTP');
+      if (smtpConfigString) {
+        return smtpConfigString;
+      }
       const host = environmentService.get('EMAIL_SMTP_HOST');
       const port = environmentService.get('EMAIL_SMTP_PORT');
       const user = environmentService.get('EMAIL_SMTP_USER');
