@@ -123,13 +123,13 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
           `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
         );
 
-        const dataSource =
-          await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-            workspaceId,
-            false,
-          );
-
         try {
+          const dataSource =
+            await this.twentyORMGlobalManager.getDataSourceForWorkspace(
+              workspaceId,
+              false,
+            );
+
           await this.runOnWorkspace({
             options,
             workspaceId,

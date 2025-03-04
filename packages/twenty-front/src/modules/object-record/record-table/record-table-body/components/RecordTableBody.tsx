@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledTbody = styled.tbody`
   &.first-columns-sticky {
@@ -20,6 +21,18 @@ const StyledTbody = styled.tbody`
       left: 43px;
       z-index: 5;
       transition: 0.3s ease;
+
+      @media (max-width: ${MOBILE_VIEWPORT}px) {
+        & [data-testid='editable-cell-display-mode'] {
+          [data-testid='tooltip'] {
+            display: none;
+          }
+
+          [data-testid='chip'] {
+            gap: 0;
+          }
+        }
+      }
 
       &:not(.disable-shadow)::after {
         content: '';
