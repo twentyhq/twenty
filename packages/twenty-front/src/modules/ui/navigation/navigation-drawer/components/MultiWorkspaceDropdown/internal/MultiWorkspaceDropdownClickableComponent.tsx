@@ -11,7 +11,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useTheme } from '@emotion/react';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 
-export const ClickableComponent = () => {
+export const MultiWorkspaceDropdownClickableComponent = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const theme = useTheme();
 

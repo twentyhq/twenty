@@ -91,7 +91,6 @@ export class SignInUpService {
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType,
   ) {
-    // with personal invitation flow
     if (params.workspace && params.invitation) {
       return {
         workspace: params.workspace,
@@ -111,14 +110,7 @@ export class SignInUpService {
       return { user: updatedUser, workspace: params.workspace };
     }
 
-    if (params.userData.type === 'newUserWithPicture') {
-      return await this.signUpOnNewWorkspace(
-        params.userData.newUserWithPicture,
-      );
-    }
-
-    // should never happen.
-    throw new Error('Invalid sign in up params');
+    return await this.signUpOnNewWorkspace(params.userData);
   }
 
   async generateHash(password: string) {
@@ -305,14 +297,42 @@ export class SignInUpService {
     }
   }
 
-  async signUpOnNewWorkspace(partialUserWithPicture: PartialUserWithPicture) {
-    const user: PartialUserWithPicture = {
-      ...partialUserWithPicture,
-      canImpersonate: false,
-      canAccessFullAdminPanel: false,
-    };
+  private async saveNewUser(
+    newUserWithPicture: PartialUserWithPicture,
+    workspaceId: string,
+    {
+      canImpersonate,
+      canAccessFullAdminPanel,
+    }: {
+      canImpersonate: boolean;
+      canAccessFullAdminPanel: boolean;
+    },
+  ) {
+    const defaultAvatarUrl = await this.uploadPicture(
+      newUserWithPicture.picture,
+      workspaceId,
+    );
+    const userCreated = this.userRepository.create({
+      ...newUserWithPicture,
+      defaultAvatarUrl,
+      canImpersonate,
+      canAccessFullAdminPanel,
+    });
 
-    if (!user.email) {
+    return await this.userRepository.save(userCreated);
+  }
+
+  async signUpOnNewWorkspace(
+    userData: ExistingUserOrPartialUserWithPicture['userData'],
+  ) {
+    let canImpersonate = false;
+    let canAccessFullAdminPanel = false;
+    const email =
+      userData.type === 'newUserWithPicture'
+        ? userData.newUserWithPicture.email
+        : userData.existingUser.email;
+
+    if (!email) {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
@@ -323,8 +343,8 @@ export class SignInUpService {
       const workspacesCount = await this.workspaceRepository.count();
 
       // if the workspace doesn't exist it means it's the first user of the workspace
-      user.canImpersonate = true;
-      user.canAccessFullAdminPanel = true;
+      canImpersonate = true;
+      canAccessFullAdminPanel = true;
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
@@ -335,7 +355,7 @@ export class SignInUpService {
       }
     }
 
-    const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(user.email)}`;
+    const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
       try {
         return (
@@ -348,7 +368,7 @@ export class SignInUpService {
     };
 
     const logo =
-      isWorkEmail(user.email) && (await isLogoUrlValid()) ? logoUrl : undefined;
+      isWorkEmail(email) && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
@@ -360,25 +380,24 @@ export class SignInUpService {
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    user.defaultAvatarUrl = await this.uploadPicture(
-      partialUserWithPicture.picture,
-      workspace.id,
-    );
+    const user =
+      userData.type === 'existingUser'
+        ? userData.existingUser
+        : await this.saveNewUser(userData.newUserWithPicture, workspace.id, {
+            canImpersonate,
+            canAccessFullAdminPanel,
+          });
 
-    const userCreated = this.userRepository.create(user);
+    await this.userWorkspaceService.create(user.id, workspace.id);
 
-    const newUser = await this.userRepository.save(userCreated);
-
-    await this.userWorkspaceService.create(newUser.id, workspace.id);
-
-    await this.activateOnboardingForUser(newUser, workspace);
+    await this.activateOnboardingForUser(user, workspace);
 
     await this.onboardingService.setOnboardingInviteTeamPending({
       workspaceId: workspace.id,
       value: true,
     });
 
-    return { user: newUser, workspace };
+    return { user, workspace };
   }
 
   async uploadPicture(

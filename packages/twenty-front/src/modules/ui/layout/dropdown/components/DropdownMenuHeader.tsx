@@ -66,7 +66,9 @@ const StyledNonClickableStartIcon = styled.div`
 
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   StartIcon?: IconComponent;
+  StartComponent?: React.ReactNode;
   EndIcon?: IconComponent;
+  EndComponent?: React.ReactNode;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
   className?: string;
@@ -75,7 +77,9 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
 export const DropdownMenuHeader = ({
   children,
   StartIcon,
+  StartComponent,
   EndIcon,
+  EndComponent,
   onClick,
   testId,
   className,
@@ -83,18 +87,6 @@ export const DropdownMenuHeader = ({
   const theme = useTheme();
   return (
     <>
-      {EndIcon && (
-        <StyledHeader
-          data-testid={testId}
-          onClick={onClick}
-          className={className}
-        >
-          <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-          <StyledEndIcon>
-            <EndIcon size={theme.icon.size.md} />
-          </StyledEndIcon>
-        </StyledHeader>
-      )}
       {StartIcon && (
         <StyledHeader data-testid={testId} className={className}>
           {isDefined(onClick) ? (
@@ -114,6 +106,18 @@ export const DropdownMenuHeader = ({
             </StyledNonClickableStartIcon>
           )}
           <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
+        </StyledHeader>
+      )}
+      {EndIcon && (
+        <StyledHeader
+          data-testid={testId}
+          onClick={onClick}
+          className={className}
+        >
+          <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
+          <StyledEndIcon>
+            <EndIcon size={theme.icon.size.md} />
+          </StyledEndIcon>
         </StyledHeader>
       )}
     </>

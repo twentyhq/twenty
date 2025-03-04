@@ -203,12 +203,10 @@ export class WorkspaceResolver {
       return null;
     }
 
-    const role = await this.roleService.getRoleById(
+    return await this.roleService.getRoleById(
       workspace.defaultRoleId,
       workspace.id,
     );
-
-    return role;
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })

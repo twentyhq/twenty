@@ -1,62 +1,63 @@
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import {
   Avatar,
-  IconLogout,
-  IconPlus,
-  IconSunMoon,
-  IconSwitchHorizontal,
-  IconUserPlus,
+  IconChevronLeft,
   MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { useRecoilValue } from 'recoil';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces, workspacesState } from '@/auth/states/workspaces';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useLingui } from '@lingui/react/macro';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
+import { useState } from 'react';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 
-export const DropdownComponents = () => {
+export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const { t } = useLingui();
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const workspaces = useRecoilValue(workspacesState);
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const { t } = useLingui();
 
   const handleChange = async (workspace: Workspaces[0]) => {
     redirectToWorkspaceDomain(getWorkspaceUrl(workspace.workspaceUrls));
   };
+  const setMultiWorkspaceDropdownState = useSetRecoilState(
+    multiWorkspaceDropdownState,
+  );
+  const [searchValue, setSearchValue] = useState('');
 
   return (
     <DropdownMenuItemsContainer>
-      <MenuItemWithOptionDropdown
-        LeftComponent={
-          <Avatar
-            placeholder={currentWorkspace?.displayName || ''}
-            avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
-          />
-        }
-        dropdownId="multiworkspace-dropdown"
-        text={currentWorkspace?.displayName}
-        dropdownContent={
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconPlus}
-              text={t`Create Workspace`}
-              onClick={() => console.log('create workspace')}
-            />
-          </DropdownMenuItemsContainer>
-        }
+      <MenuItem
+        LeftIcon={IconChevronLeft}
+        text={t`Other workspaces`}
+        onClick={() => setMultiWorkspaceDropdownState('default')}
+      />
+      <DropdownMenuSeparator />
+      <DropdownMenuSearchInput
+        placeholder={t`Search`}
+        autoFocus
+        onChange={(event) => {
+          setSearchValue(event.target.value);
+        }}
       />
       <DropdownMenuSeparator />
       {workspaces
-        .filter(({ id }) => id !== currentWorkspace?.id)
+        .filter(
+          (workspace) =>
+            workspace.id !== currentWorkspace?.id &&
+            workspace.displayName
+              ?.toLowerCase()
+              .includes(searchValue.toLowerCase()),
+        )
         .map((workspace) => (
           <UndecoratedLink
             key={workspace.id}
@@ -78,17 +79,6 @@ export const DropdownComponents = () => {
             />
           </UndecoratedLink>
         ))}
-      {workspaces.length > 3 && (
-        <MenuItem
-          LeftIcon={IconSwitchHorizontal}
-          text="Other workspaces"
-          hasSubMenu={true}
-        />
-      )}
-      <DropdownMenuSeparator />
-      <MenuItem LeftIcon={IconSunMoon} text={t`Theme`} hasSubMenu={true} />
-      <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
-      <MenuItem LeftIcon={IconLogout} text={t`Log out`} />
     </DropdownMenuItemsContainer>
   );
 };

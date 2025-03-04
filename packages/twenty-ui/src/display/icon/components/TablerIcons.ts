@@ -270,6 +270,8 @@ export {
   IconUserPin,
   IconUserPlus,
   IconSunMoon,
+  IconMoon,
+  IconSun,
   IconLogout,
   IconUsers,
   IconVariable,

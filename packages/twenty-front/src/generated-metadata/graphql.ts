@@ -50,10 +50,8 @@ export enum AdminPanelHealthServiceStatus {
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
   id: Scalars['String']['output'];
-  metrics: WorkerQueueMetrics;
   queueName: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
-  workers: Scalars['Float']['output'];
 };
 
 export type Analytics = {
@@ -906,6 +904,7 @@ export type Mutation = {
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
+  signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
   syncRemoteTable: RemoteTable;
@@ -1446,6 +1445,7 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
@@ -1532,6 +1532,12 @@ export type QueryGetProductPricesArgs = {
 };
 
 
+export type QueryGetQueueMetricsArgs = {
+  queueName: Scalars['String']['input'];
+  timeRange?: InputMaybe<QueueMetricsTimeRange>;
+};
+
+
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
 };
@@ -1602,6 +1608,35 @@ export type QueryRelationMetadataArgs = {
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String']['input'];
 };
+
+export type QueueMetricsData = {
+  __typename?: 'QueueMetricsData';
+  data: Array<QueueMetricsSeries>;
+  details?: Maybe<WorkerQueueMetrics>;
+  queueName: Scalars['String']['output'];
+  timeRange: QueueMetricsTimeRange;
+  workers: Scalars['Float']['output'];
+};
+
+export type QueueMetricsDataPoint = {
+  __typename?: 'QueueMetricsDataPoint';
+  x: Scalars['Float']['output'];
+  y: Scalars['Float']['output'];
+};
+
+export type QueueMetricsSeries = {
+  __typename?: 'QueueMetricsSeries';
+  data: Array<QueueMetricsDataPoint>;
+  id: Scalars['String']['output'];
+};
+
+export enum QueueMetricsTimeRange {
+  FourHours = 'FourHours',
+  OneDay = 'OneDay',
+  OneHour = 'OneHour',
+  SevenDays = 'SevenDays',
+  TwelveHours = 'TwelveHours'
+}
 
 export type Relation = {
   __typename?: 'Relation';
@@ -2192,9 +2227,11 @@ export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float']['output'];
   completed: Scalars['Float']['output'];
+  completedData?: Maybe<Array<Scalars['Float']['output']>>;
   delayed: Scalars['Float']['output'];
   failed: Scalars['Float']['output'];
-  prioritized: Scalars['Float']['output'];
+  failedData?: Maybe<Array<Scalars['Float']['output']>>;
+  failureRate: Scalars['Float']['output'];
   waiting: Scalars['Float']['output'];
 };
 
