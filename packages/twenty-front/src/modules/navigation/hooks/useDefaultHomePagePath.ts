@@ -36,9 +36,13 @@ export const useDefaultHomePagePath = () => {
   );
 
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
+    if (alphaSortedActiveObjectMetadataItems.length === 0) {
+      return null;
+    }
+
     const [firstObjectMetadataItem] = alphaSortedActiveObjectMetadataItems;
 
-    if (!isDefined(firstObjectMetadataItem)) {
+    if (!isDefined(firstObjectMetadataItem) || !firstObjectMetadataItem.isActive) {
       return null;
     }
 
@@ -76,8 +80,8 @@ export const useDefaultHomePagePath = () => {
       return AppPath.SignInUp;
     }
 
-    if (!isDefined(defaultObjectPathInfo)) {
-      return AppPath.NotFound;
+    if (!isDefined(defaultObjectPathInfo) || !isDefined(defaultObjectPathInfo.objectMetadataItem)) {
+      return `${AppPath.SettingsCatchAll.replace('/*', '')}/objects`;
     }
 
     const namePlural = defaultObjectPathInfo.objectMetadataItem?.namePlural;
