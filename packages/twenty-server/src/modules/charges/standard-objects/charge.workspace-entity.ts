@@ -125,7 +125,7 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Integration linked to the charge`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => IntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'charges',
+    inverseSideFieldKey: 'charge',
   })
   @WorkspaceIsNullable()
   integration: Relation<IntegrationWorkspaceEntity> | null;
