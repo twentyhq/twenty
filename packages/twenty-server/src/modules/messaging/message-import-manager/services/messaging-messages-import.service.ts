@@ -8,8 +8,8 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
-import { RefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/refresh-tokens.exception';
-import { RefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/refresh-tokens.service';
+import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
+import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -37,7 +37,7 @@ export class MessagingMessagesImportService {
     private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
-    private readonly refreshTokensService: RefreshTokensService,
+    private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
@@ -79,14 +79,14 @@ export class MessagingMessagesImportService {
 
       try {
         connectedAccount.accessToken =
-          await this.refreshTokensService.refreshAndSaveTokens(
+          await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
             connectedAccount,
             workspaceId,
           );
       } catch (error) {
         switch (error.code) {
-          case RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
             await this.messagingTelemetryService.track({
               eventName: `refresh_token.error.insufficient_permissions`,
               workspaceId,
@@ -98,7 +98,7 @@ export class MessagingMessagesImportService {
               code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
               message: error.message,
             };
-          case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
             throw {
               code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
               message: error.message,

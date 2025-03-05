@@ -4,8 +4,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { RefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/refresh-tokens.exception';
-import { RefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/refresh-tokens.service';
+import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
+import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import {
   MessageChannelSyncStage,
@@ -38,7 +38,7 @@ export class MessagingMessageListFetchJob {
     private readonly messagingPartialMessageListFetchService: MessagingPartialMessageListFetchService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly refreshTokensService: RefreshTokensService,
+    private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
   ) {}
 
@@ -86,14 +86,14 @@ export class MessagingMessageListFetchJob {
 
       try {
         messageChannel.connectedAccount.accessToken =
-          await this.refreshTokensService.refreshAndSaveTokens(
+          await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
             messageChannel.connectedAccount,
             workspaceId,
           );
       } catch (error) {
         switch (error.code) {
-          case RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
             await this.messagingTelemetryService.track({
               eventName: `refresh_token.error.insufficient_permissions`,
               workspaceId,
@@ -105,7 +105,7 @@ export class MessagingMessageListFetchJob {
               code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
               message: error.message,
             };
-          case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
             throw {
               code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
               message: error.message,

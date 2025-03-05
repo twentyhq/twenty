@@ -12,15 +12,15 @@ import {
   MicrosoftTokens,
 } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
-  RefreshAccessTokenException,
-  RefreshAccessTokenExceptionCode,
-} from 'src/modules/connected-account/refresh-tokens-manager/exceptions/refresh-tokens.exception';
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type ConnectedAccountTokens = GoogleTokens | MicrosoftTokens;
 
 @Injectable()
-export class RefreshTokensService {
+export class ConnectedAccountRefreshTokensService {
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
@@ -34,9 +34,9 @@ export class RefreshTokensService {
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
-      throw new RefreshAccessTokenException(
+      throw new ConnectedAccountRefreshAccessTokenException(
         `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
-        RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
+        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
       );
     }
 
@@ -87,9 +87,9 @@ export class RefreshTokensService {
           );
       }
     } catch (error) {
-      throw new RefreshAccessTokenException(
+      throw new ConnectedAccountRefreshAccessTokenException(
         `Error refreshing tokens for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message} ${error?.response?.data?.error_description}`,
-        RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
+        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
       );
     }
   }
