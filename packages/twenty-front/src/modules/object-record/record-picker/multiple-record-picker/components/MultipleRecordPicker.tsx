@@ -1,9 +1,10 @@
-import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
+import { MultipleRecordPickerMenuItems } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems';
 import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
+import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { multipleRecordPickerSelectedRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSelectedRecordsIdsComponentState';
+import { multipleRecordPickerPickableMorphItemsLengthComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableMorphItemsLengthComponentSelector';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
@@ -11,18 +12,17 @@ import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNew
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { Placement } from '@floating-ui/react';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
+import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared';
 import { IconPlus } from 'twenty-ui';
@@ -64,13 +64,13 @@ export const MultipleRecordPicker = ({
     componentInstanceId,
   );
 
-  const objectRecordsIdsMultiSelect = useRecoilComponentValueV2(
-    multipleRecordPickerSelectedRecordsIdsComponentState,
+  const selectedRecordsWithObjectItemLength = useRecoilComponentValueV2(
+    multipleRecordPickerPickableMorphItemsLengthComponentSelector,
     componentInstanceId,
   );
 
-  const [recordPickerSearchFilter, setRecordPickerSearchFilter] =
-    useRecoilComponentStateV2(
+  const multipleRecordPickerSearchFilterState =
+    useRecoilComponentCallbackStateV2(
       multipleRecordPickerSearchFilterComponentState,
       componentInstanceId,
     );
@@ -92,46 +92,23 @@ export const MultipleRecordPicker = ({
     [handleSubmit],
   );
 
-  const handleFilterChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setRecordPickerSearchFilter(event.currentTarget.value);
-    },
-    [setRecordPickerSearchFilter],
-  );
-
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // TODO: refactor this in a separate component
-  const results = (
-    <DropdownMenuItemsContainer hasMaxHeight>
-      <SelectableList
-        selectableListId={selectableListComponentInstanceId}
-        selectableItemIdArray={objectRecordsIdsMultiSelect}
-        hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
-        onEnter={(selectedId) => {
-          onChange?.(selectedId);
-          resetSelectedItem();
-        }}
-      >
-        {objectRecordsIdsMultiSelect?.map((recordId) => {
-          return (
-            <MultipleRecordPickerMenuItem
-              key={recordId}
-              objectRecordId={recordId}
-              onChange={(recordId) => {
-                onChange?.(recordId);
-                resetSelectedItem();
-              }}
-            />
-          );
-        })}
-      </SelectableList>
-    </DropdownMenuItemsContainer>
+  const handleCreateNewButtonClick = useRecoilCallback(
+    ({ snapshot }) => {
+      return () => {
+        const recordPickerSearchFilter = snapshot
+          .getLoadable(multipleRecordPickerSearchFilterState)
+          .getValue();
+        onCreate?.(recordPickerSearchFilter);
+      };
+    },
+    [multipleRecordPickerSearchFilterState, onCreate],
   );
 
   const createNewButton = isDefined(onCreate) && (
     <CreateNewButton
-      onClick={() => onCreate?.(recordPickerSearchFilter)}
+      onClick={handleCreateNewButtonClick}
       LeftIcon={IconPlus}
       text="Add New"
     />
@@ -154,35 +131,35 @@ export const MultipleRecordPicker = ({
               </DropdownMenuItemsContainer>
             )}
             <DropdownMenuSeparator />
-            {objectRecordsIdsMultiSelect?.length > 0 && results}
-            {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
+            {selectedRecordsWithObjectItemLength > 0 && (
+              <MultipleRecordPickerMenuItems onChange={onChange} />
+            )}
+            {recordMultiSelectIsLoading && (
               <>
                 <DropdownMenuSkeletonItem />
                 <DropdownMenuSeparator />
               </>
             )}
-            {objectRecordsIdsMultiSelect?.length > 0 && (
+            {selectedRecordsWithObjectItemLength > 0 && (
               <DropdownMenuSeparator />
             )}
           </>
         )}
-        <DropdownMenuSearchInput
-          value={recordPickerSearchFilter}
-          onChange={handleFilterChange}
-          autoFocus
-        />
+        <MultipleRecordPickerSearchInput />
         {(dropdownPlacement?.includes('start') ||
           isUndefinedOrNull(dropdownPlacement)) && (
           <>
             <DropdownMenuSeparator />
-            {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
+            {recordMultiSelectIsLoading && (
               <>
                 <DropdownMenuSkeletonItem />
                 <DropdownMenuSeparator />
               </>
             )}
-            {objectRecordsIdsMultiSelect?.length > 0 && results}
-            {objectRecordsIdsMultiSelect?.length > 0 && (
+            {selectedRecordsWithObjectItemLength > 0 && (
+              <MultipleRecordPickerMenuItems onChange={onChange} />
+            )}
+            {selectedRecordsWithObjectItemLength > 0 && (
               <DropdownMenuSeparator />
             )}
             {isDefined(onCreate) && (

@@ -1,12 +1,13 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAttachRelatedRecordFromRecord } from '@/object-record/hooks/useAttachRelatedRecordFromRecord';
 import { useDetachRelatedRecordFromRecord } from '@/object-record/hooks/useDetachRelatedRecordFromRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { multipleRecordPickerSelectedRecordsIdsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSelectedRecordsIdsComponentState';
+import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -41,47 +42,59 @@ export const useUpdateRelationFromManyFieldInput = ({
       fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
     });
 
-  const multipleRecordPickerSelectedRecordsIdsState =
-    useRecoilComponentCallbackStateV2(
-      multipleRecordPickerSelectedRecordsIdsComponentState,
-      scopeId,
-    );
+  const pickableMorphItemsState = useRecoilComponentCallbackStateV2(
+    multipleRecordPickerPickableMorphItemsComponentState,
+    scopeId,
+  );
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
+  });
 
   const updateRelation = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (objectRecordId: string) => {
-        const previouslyCheckedRecordsIds = snapshot
-          .getLoadable(multipleRecordPickerSelectedRecordsIdsState)
+      async (relatedRecordId: string) => {
+        const previouslyPickableMorphItems = snapshot
+          .getLoadable(pickableMorphItemsState)
           .getValue();
 
-        const isNewlySelected =
-          !previouslyCheckedRecordsIds.includes(objectRecordId);
+        const isNewlyPickable = !previouslyPickableMorphItems.find(
+          ({ recordId: itemRecordId }) => itemRecordId === relatedRecordId,
+        );
 
-        if (isNewlySelected) {
-          set(multipleRecordPickerSelectedRecordsIdsState, (prev) => [
+        if (isNewlyPickable) {
+          set(pickableMorphItemsState, (prev) => [
             ...prev,
-            objectRecordId,
+            {
+              recordId: relatedRecordId,
+              objectMetadataId: objectMetadataItem.id,
+              isSelected: false,
+              isMatchingSearchFilter: true,
+            },
           ]);
         } else {
-          set(multipleRecordPickerSelectedRecordsIdsState, (prev) =>
-            prev.filter((id) => id !== objectRecordId),
+          set(pickableMorphItemsState, (prev) =>
+            prev.filter(
+              ({ recordId: itemRecordId }) => itemRecordId !== recordId,
+            ),
           );
         }
 
-        if (isNewlySelected) {
+        if (isNewlyPickable) {
           await updateOneRecordAndAttachRelations({
             recordId,
-            relatedRecordId: objectRecordId,
+            relatedRecordId: recordId,
           });
         } else {
           await updateOneRecordAndDetachRelations({
             recordId,
-            relatedRecordId: objectRecordId,
+            relatedRecordId,
           });
         }
       },
     [
-      multipleRecordPickerSelectedRecordsIdsState,
+      objectMetadataItem.id,
+      pickableMorphItemsState,
       recordId,
       updateOneRecordAndAttachRelations,
       updateOneRecordAndDetachRelations,

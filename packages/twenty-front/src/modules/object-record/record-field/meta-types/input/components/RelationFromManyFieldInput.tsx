@@ -2,7 +2,6 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
@@ -51,17 +50,12 @@ export const RelationFromManyFieldInput = ({
     });
 
   return (
-    <>
-      <RelationFromManyFieldInputMultiRecordsEffect
-        recordPickerInstanceId={recordPickerInstanceId}
-      />
-      <MultipleRecordPicker
-        componentInstanceId={recordPickerInstanceId}
-        onSubmit={handleSubmit}
-        onChange={updateRelation}
-        onCreate={createNewRecordAndOpenRightDrawer}
-        onClickOutside={handleSubmit}
-      />
-    </>
+    <MultipleRecordPicker
+      componentInstanceId={recordPickerInstanceId}
+      onSubmit={handleSubmit}
+      onChange={updateRelation}
+      onCreate={createNewRecordAndOpenRightDrawer}
+      onClickOutside={handleSubmit}
+    />
   );
 };
