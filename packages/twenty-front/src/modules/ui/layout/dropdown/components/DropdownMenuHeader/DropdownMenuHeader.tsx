@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import { ComponentProps, MouseEvent, ReactElement } from 'react';
+import { ComponentProps, MouseEvent, ReactElement, ReactNode } from 'react';
 import { Avatar, AvatarProps, IconComponent } from 'twenty-ui';
 import { DropdownMenuHeaderStartIcon } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderStartIcon';
 import { isDefined } from 'twenty-shared';
-import {
-  DropdownMenuHeaderEndIcon,
-  DropdownMenuHeaderEndIconProps,
-} from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderEndIcon';
+import { DropdownMenuHeaderWithDropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderWithDropdownMenu';
+import { useTheme } from '@emotion/react';
+import { Placement } from '@floating-ui/react';
+
 const StyledHeader = styled.li`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
@@ -36,6 +36,19 @@ const StyledChildrenWrapper = styled.span`
   text-overflow: ellipsis;
 `;
 
+const StyledEndIcon = styled.div`
+  display: inline-flex;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: ${({ theme }) => theme.spacing(1)};
+  margin-left: auto;
+  margin-right: 0;
+
+  & > svg {
+    height: ${({ theme }) => theme.icon.size.md}px;
+    width: ${({ theme }) => theme.icon.size.md}px;
+  }
+`;
+
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   EndIcon?: IconComponent;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
@@ -46,18 +59,27 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
     | { StartIcon?: IconComponent }
     | { StartAvatar?: ReactElement<AvatarProps, typeof Avatar> }
   ) &
-  Omit<DropdownMenuHeaderEndIconProps, 'EndIcon'>;
-
+  (
+    | {
+        dropdownId: string;
+        dropdownPlacement: Placement;
+        dropdownComponents: ReactNode;
+      }
+    | Record<never, never>
+  );
 export const DropdownMenuHeader = ({
   children,
   EndIcon,
   onStartIconClick,
+  onClick,
   testId,
   className,
   ...props
 }: DropdownMenuHeaderProps) => {
+  const theme = useTheme();
+
   return (
-    <StyledHeader data-testid={testId} className={className}>
+    <StyledHeader data-testid={testId} className={className} onClick={onClick}>
       {'StartIcon' in props && isDefined(props.StartIcon) && (
         <DropdownMenuHeaderStartIcon
           onClick={onStartIconClick}
@@ -71,7 +93,21 @@ export const DropdownMenuHeader = ({
         />
       )}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-      {isDefined(EndIcon) && <DropdownMenuHeaderEndIcon EndIcon={EndIcon} />}
+      {'dropdownId' in props && (
+        <StyledEndIcon>
+          <DropdownMenuHeaderWithDropdownMenu
+            EndIcon={EndIcon}
+            dropdownId={props.dropdownId}
+            dropdownPlacement={props.dropdownPlacement}
+            dropdownComponents={props.dropdownComponents}
+          />
+        </StyledEndIcon>
+      )}
+      {!('dropdownId' in props) && EndIcon && (
+        <StyledEndIcon>
+          <EndIcon size={theme.icon.size.md} />
+        </StyledEndIcon>
+      )}
     </StyledHeader>
   );
 };

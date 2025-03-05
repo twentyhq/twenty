@@ -21,6 +21,10 @@ const StyledNonClickableStartIcon = styled.div`
   width: 24px;
 `;
 
+const StyledAvatarWrapper = styled.div`
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const DropdownMenuHeaderStartIcon = ({
   onClick,
   ...props
@@ -52,7 +56,10 @@ export const DropdownMenuHeaderStartIcon = ({
             />
           </StyledNonClickableStartIcon>
         ))}
-      {'StartAvatar' in props && props.StartAvatar}
+
+      {'StartAvatar' in props && (
+        <StyledAvatarWrapper>{props.StartAvatar}</StyledAvatarWrapper>
+      )}
     </>
   );
 };

@@ -219,7 +219,7 @@ export const ObjectSortDropdownButton = ({
           )}
           <DropdownMenuHeader
             EndIcon={IconChevronDown}
-            onStartIconClick={() =>
+            onClick={() =>
               setIsRecordSortDirectionMenuUnfolded(
                 !isRecordSortDirectionMenuUnfolded,
               )

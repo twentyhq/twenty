@@ -7,6 +7,7 @@ import {
   Avatar,
   Button,
   ComponentDecorator,
+  IconChevronLeft,
   MenuItem,
   MenuItemMultiSelectAvatar,
   MenuItemSelectAvatar,
@@ -218,8 +219,12 @@ export const WithHeaders: Story = {
   args: {
     dropdownComponents: (
       <>
-        <DropdownMenuHeader>Header</DropdownMenuHeader>
-        <DropdownMenuSeparator />
+        <DropdownMenuHeader
+          StartIcon={IconChevronLeft}
+          onStartIconClick={() => ''}
+        >
+          Header
+        </DropdownMenuHeader>
         <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer hasMaxHeight>
           <>

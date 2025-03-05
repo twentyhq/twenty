@@ -117,7 +117,7 @@ export const WorkflowVariablesDropdownFieldItems = ({
     <>
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
-        onClick={goBack}
+        onStartIconClick={goBack}
         style={{ position: 'fixed' }}
       >
         <OverflowingTextWithTooltip
