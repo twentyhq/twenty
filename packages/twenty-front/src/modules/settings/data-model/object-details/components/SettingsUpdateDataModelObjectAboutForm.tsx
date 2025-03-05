@@ -36,7 +36,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   const handleSave = async (
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
-    if (!formConfig.formState.isDirty) {
+    if (!(Object.keys(formConfig.formState.dirtyFields).length > 0)) {
       return;
     }
 
