@@ -7,7 +7,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
-import { Button, IconArrowsDiagonal, getOsControlSymbol } from 'twenty-ui';
+import { Button, IconBrowserMaximize, getOsControlSymbol } from 'twenty-ui';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledLink = styled(Link)`
@@ -58,7 +58,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
         variant="primary"
         accent="blue"
         size="medium"
-        Icon={IconArrowsDiagonal}
+        Icon={IconBrowserMaximize}
         hotkeys={[getOsControlSymbol(), '⏎']}
       />
     </StyledLink>
