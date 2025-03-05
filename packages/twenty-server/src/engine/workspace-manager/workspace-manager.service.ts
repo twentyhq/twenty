@@ -287,12 +287,13 @@ export class WorkspaceManagerService {
       roleId: adminRole.id,
     });
 
-    const memberRole = await this.roleService.createMemberRole({
+    await this.roleService.createMemberRole({
       workspaceId,
     });
 
+    // Temporary - after permissions are rolled-out we will set member role as the default role
     await this.workspaceRepository.update(workspaceId, {
-      defaultRoleId: memberRole.id,
+      defaultRoleId: adminRole.id,
     });
   }
 

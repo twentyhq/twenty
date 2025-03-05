@@ -68,24 +68,22 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
         options,
       });
 
-      let memberRoleId: string | undefined;
+      await this.setAdminRoleAsDefaultRole({
+        workspaceId,
+        adminRoleId,
+        options,
+      });
 
-      memberRoleId = workspaceRoles.find(
+      const memberRole = workspaceRoles.find(
         (role) => role.label === MEMBER_ROLE_LABEL,
-      )?.id;
+      );
 
-      if (!isDefined(memberRoleId)) {
-        memberRoleId = await this.createMemberRole({
+      if (!isDefined(memberRole)) {
+        await this.createMemberRole({
           workspaceId,
           options,
         });
       }
-
-      await this.setMemberRoleAsDefaultRole({
-        workspaceId,
-        memberRoleId,
-        options,
-      });
     } catch (error) {
       this.logger.log(
         chalk.red(`Error in workspace ${workspaceId} - ${error.message}`),
@@ -137,13 +135,13 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
     return memberRole.id;
   }
 
-  private async setMemberRoleAsDefaultRole({
+  private async setAdminRoleAsDefaultRole({
     workspaceId,
-    memberRoleId,
+    adminRoleId,
     options,
   }: {
     workspaceId: string;
-    memberRoleId: string;
+    adminRoleId: string;
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
   }) {
     const workspaceDefaultRole = await this.workspaceRepository.findOne({
@@ -152,21 +150,29 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       },
     });
 
-    if (!isDefined(workspaceDefaultRole?.defaultRoleId)) {
+    if (isDefined(workspaceDefaultRole?.defaultRoleId)) {
       this.logger.log(
         chalk.green(
-          `Setting member role as default role ${options.dryRun ? '(dry run)' : ''}`,
+          'Workspace already has a default role. Skipping setting admin role as default role',
         ),
       );
 
-      if (options.dryRun) {
-        return;
-      }
-
-      await this.workspaceRepository.update(workspaceId, {
-        defaultRoleId: memberRoleId,
-      });
+      return;
     }
+
+    this.logger.log(
+      chalk.green(
+        `Setting member role as default role ${options.dryRun ? '(dry run)' : ''}`,
+      ),
+    );
+
+    if (options.dryRun) {
+      return;
+    }
+
+    await this.workspaceRepository.update(workspaceId, {
+      defaultRoleId: adminRoleId,
+    });
   }
 
   private async assignAdminRoleToMembers({
