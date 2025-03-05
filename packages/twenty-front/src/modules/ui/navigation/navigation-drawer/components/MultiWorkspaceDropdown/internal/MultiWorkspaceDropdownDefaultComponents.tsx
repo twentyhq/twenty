@@ -3,7 +3,6 @@ import {
   IconDotsVertical,
   IconLogout,
   IconPlus,
-  IconSunMoon,
   IconSwitchHorizontal,
   IconUserPlus,
   LightIconButton,
@@ -41,7 +40,6 @@ import styled from '@emotion/styled';
 
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
   padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -54,7 +52,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
   const { signOut } = useAuth();
   const { enqueueSnackBar } = useSnackBar();
-  const { colorScheme } = useColorScheme();
+  const { colorScheme, colorSchemeList } = useColorScheme();
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
@@ -154,7 +152,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       )}
       <DropdownMenuSeparator />
       <MenuItem
-        LeftIcon={IconSunMoon}
+        LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
         text={
           <>
             {t`Theme `}

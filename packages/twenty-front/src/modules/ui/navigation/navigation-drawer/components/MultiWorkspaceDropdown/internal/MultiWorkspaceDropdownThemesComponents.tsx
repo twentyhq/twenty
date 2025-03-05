@@ -1,46 +1,19 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import {
-  IconCheck,
-  IconChevronLeft,
-  IconComponent,
-  IconMoon,
-  IconSun,
-  IconSunMoon,
-  MenuItem,
-} from 'twenty-ui';
+import { IconCheck, IconChevronLeft, MenuItem } from 'twenty-ui';
 import { useLingui } from '@lingui/react/macro';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useSetRecoilState } from 'recoil';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const MultiWorkspaceDropdownThemesComponents = () => {
   const { t } = useLingui();
 
-  const { setColorScheme, colorScheme } = useColorScheme();
+  const { setColorScheme, colorScheme, colorSchemeList } = useColorScheme();
 
   const setMultiWorkspaceDropdownState = useSetRecoilState(
     multiWorkspaceDropdownState,
   );
-
-  const themesList: Array<{
-    id: ColorScheme;
-    icon: IconComponent;
-  }> = [
-    {
-      id: 'System',
-      icon: IconSunMoon,
-    },
-    {
-      id: 'Dark',
-      icon: IconMoon,
-    },
-    {
-      id: 'Light',
-      icon: IconSun,
-    },
-  ];
 
   return (
     <DropdownMenuItemsContainer>
@@ -50,7 +23,7 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
       >
         {t`Theme`}
       </DropdownMenuHeader>
-      {themesList.map((theme) => (
+      {colorSchemeList.map((theme) => (
         <MenuItem
           LeftIcon={theme.icon}
           /* eslint-disable-next-line lingui/no-expression-in-message */
