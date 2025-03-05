@@ -5,6 +5,7 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -69,7 +70,18 @@ export const useOpenRelationFromManyFieldInput = () => {
           pickableMorphItems,
         );
 
-        performSearch();
+        set(
+          multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
+            { instanceId: recordPickerInstanceId },
+          ),
+          [objectMetadataItem],
+        );
+
+        performSearch({
+          multipleRecordPickerInstanceId: recordPickerInstanceId,
+          forceSearchFilter: '',
+          forceSearchableObjectMetadataItems: [objectMetadataItem],
+        });
       },
     [],
   );

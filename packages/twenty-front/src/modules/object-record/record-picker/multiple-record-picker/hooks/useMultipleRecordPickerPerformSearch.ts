@@ -1,40 +1,89 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
+import { generateCombinedSearchRecordsQuery } from '@/object-record/multiple-objects/utils/generateCombinedSearchRecordsQuery';
+import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
+import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
+import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
+import { capitalize, isDefined } from 'twenty-shared';
 
 export const useMultipleRecordPickerPerformSearch = () => {
-  // const instanceId = useAvailableComponentInstanceIdOrThrow(
-  //   MultipleRecordPickerComponentInstanceContext,
-  //   componentInstanceIdFromProps,
-  // );
-
-  // const recordPickerSearchFilter = useRecoilComponentValueV2(
-  //   multipleRecordPickerSearchFilterComponentState,
-  //   instanceId,
-  // );
-
-  // const { matchesSearchFilterObjectRecordsQueryResult } =
-  //   useMultipleRecordPickerSearch({
-  //     excludedObjects: [
-  //       CoreObjectNameSingular.Task,
-  //       CoreObjectNameSingular.Note,
-  //     ],
-  //     searchFilterValue: recordPickerSearchFilter,
-  //     limit: 10,
-  //   });
-
   // const { objectRecordForSelectArray } =
   //   useMultipleRecordPickerQueryResultFormattedAsObjectRecordForSelectArray({
   //     multiObjectRecordsQueryResult:
   //       matchesSearchFilterObjectRecordsQueryResult,
   //   });
 
-  const performSearch = useRecoilCallback(() => {
-    return () => {
-      //   setRecordMultiSelectMatchesFilterRecordsWithObjectItem(
-      //     objectRecordForSelectArray,
-      //   );
-      console.log('performSearch');
-    };
-  }, []);
+  const client = useApolloClient();
+
+  const performSearch = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async ({
+        multipleRecordPickerInstanceId,
+        forceSearchFilter = '',
+        forceSearchableObjectMetadataItems = [],
+      }: {
+        multipleRecordPickerInstanceId: string;
+        forceSearchFilter?: string;
+        forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
+      }) => {
+        const recordPickerSearchFilter = snapshot
+          .getLoadable(
+            multipleRecordPickerSearchFilterComponentState.atomFamily({
+              instanceId: multipleRecordPickerInstanceId,
+            }),
+          )
+          .getValue();
+
+        const searchFilter = forceSearchFilter ?? recordPickerSearchFilter;
+
+        const recordPickerSearchableObjectMetadataItems = snapshot
+          .getLoadable(
+            multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
+              { instanceId: multipleRecordPickerInstanceId },
+            ),
+          )
+          .getValue();
+
+        const searchableObjectMetadataItems =
+          forceSearchableObjectMetadataItems.length > 0
+            ? forceSearchableObjectMetadataItems
+            : recordPickerSearchableObjectMetadataItems;
+
+        const combinedSearchRecordsQuery = generateCombinedSearchRecordsQuery({
+          objectMetadataItems: searchableObjectMetadataItems,
+          operationSignatures: searchableObjectMetadataItems.map(
+            (objectMetadataItem) => ({
+              objectNameSingular: objectMetadataItem.nameSingular,
+              variables: {},
+            }),
+          ),
+        });
+
+        const limitPerMetadataItem = Object.fromEntries(
+          searchableObjectMetadataItems
+            .map(({ nameSingular }) => {
+              return [`limit${capitalize(nameSingular)}`, 10];
+            })
+            .filter(isDefined),
+        );
+
+        const { data: combinedSearchRecordsQueryResult } =
+          await client.query<CombinedFindManyRecordsQueryResult>({
+            query: combinedSearchRecordsQuery,
+            variables: {
+              search: searchFilter,
+              ...limitPerMetadataItem,
+            },
+          });
+
+        console.log(
+          'combinedSearchRecordsQueryResult',
+          combinedSearchRecordsQueryResult,
+        );
+      },
+    [client],
+  );
 
   return { performSearch };
 };
