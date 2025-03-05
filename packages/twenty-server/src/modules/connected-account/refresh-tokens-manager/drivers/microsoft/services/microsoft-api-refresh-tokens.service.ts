@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
+import { z } from 'zod';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { NewTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/refresh-tokens.service';
+
+export type MicrosoftTokens = {
+  accessToken: string;
+  refreshToken: string;
+};
 
 interface MicrosoftRefreshTokenResponse {
   access_token: string;
@@ -17,7 +22,7 @@ interface MicrosoftRefreshTokenResponse {
 export class MicrosoftAPIRefreshAccessTokenService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
-  async refreshTokens(refreshToken: string): Promise<NewTokens> {
+  async refreshTokens(refreshToken: string): Promise<MicrosoftTokens> {
     const response = await axios.post<MicrosoftRefreshTokenResponse>(
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
       new URLSearchParams({
@@ -35,9 +40,13 @@ export class MicrosoftAPIRefreshAccessTokenService {
       },
     );
 
+    // todo make sure the catch is explicit enough for the logs
+    z.string().parse(response.data.access_token);
+    z.string().parse(response.data.refresh_token);
+
     return {
-      newAccessToken: response.data.access_token,
-      newRefreshToken: response.data.refresh_token,
+      accessToken: response.data.access_token,
+      refreshToken: response.data.refresh_token,
     };
   }
 }

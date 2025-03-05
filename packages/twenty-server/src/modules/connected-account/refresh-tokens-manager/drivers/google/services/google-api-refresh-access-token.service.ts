@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
+import { z } from 'zod';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { NewTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/refresh-tokens.service';
+
+export type GoogleTokens = {
+  accessToken: string;
+};
 
 interface GoogleRefreshTokenResponse {
   access_token: string;
@@ -16,7 +20,7 @@ interface GoogleRefreshTokenResponse {
 export class GoogleAPIRefreshAccessTokenService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
-  async refreshAccessToken(refreshToken: string): Promise<NewTokens> {
+  async refreshAccessToken(refreshToken: string): Promise<GoogleTokens> {
     const response = await axios.post<GoogleRefreshTokenResponse>(
       'https://oauth2.googleapis.com/token',
       {
@@ -32,8 +36,10 @@ export class GoogleAPIRefreshAccessTokenService {
       },
     );
 
+    z.string().parse(response.data.access_token);
+
     return {
-      newAccessToken: response.data.access_token,
+      accessToken: response.data.access_token,
     };
   }
 }
