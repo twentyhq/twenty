@@ -52,6 +52,7 @@ export const usePersistViewSortRecords = () => {
                 fieldMetadataId: viewSort.fieldMetadataId,
                 viewId: view.id,
                 direction: viewSort.direction,
+                id: viewSort.id,
               },
             },
             update: (cache, { data }) => {
