@@ -1,8 +1,8 @@
-import { ManyToOne } from 'typeorm';
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { msg } from '@lingui/core/macro';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
@@ -29,7 +29,6 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { FieldMetadataType } from 'twenty-shared';
 
 const NAME_FIELD_NAME = 'product';
 
@@ -119,24 +118,6 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   position: number | null;
 
-  //Relations
-  @WorkspaceRelation({
-    standardId: CHARGE_STANDARD_FIELD_IDS.customer,
-    type: RelationMetadataType.MANY_TO_ONE,
-    label: msg`Customer`,
-    description: msg`Company linked to the charge`,
-    icon: 'IconBuildingSkyscraper',
-    inverseSideTarget: () => CompanyWorkspaceEntity,
-    inverseSideFieldKey: 'charges',
-  })
-  @WorkspaceIsNullable()
-  @ManyToOne(() => CompanyWorkspaceEntity, (company) => company.charges, {
-    nullable: true,
-  })
-  company: CompanyWorkspaceEntity | null;
-  @WorkspaceJoinColumn('company')
-  companyId: string | null;
-
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.integration,
     type: RelationMetadataType.MANY_TO_ONE,
@@ -147,30 +128,41 @@ export class ChargeWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'charges',
   })
   @WorkspaceIsNullable()
-  @ManyToOne(
-    () => IntegrationWorkspaceEntity,
-    (integration) => integration.charges,
-    {
-      nullable: true,
-    },
-  )
-  integration: IntegrationWorkspaceEntity | null;
+  integration: Relation<IntegrationWorkspaceEntity> | null;
+
   @WorkspaceJoinColumn('integration')
   integrationId: string | null;
 
+  //Relations
   @WorkspaceRelation({
-    standardId: CHARGE_STANDARD_FIELD_IDS.people,
-    type: RelationMetadataType.ONE_TO_ONE,
+    standardId: CHARGE_STANDARD_FIELD_IDS.company,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: msg`Customer`,
+    description: msg`Customer linked to the charge`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => CompanyWorkspaceEntity,
+    inverseSideFieldKey: 'charges',
+  })
+  @WorkspaceIsNullable()
+  company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
+
+  @WorkspaceRelation({
+    standardId: CHARGE_STANDARD_FIELD_IDS.person,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: msg`Contact`,
     description: msg`Person linked to the charge`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
+    inverseSideFieldKey: 'charge',
   })
   @WorkspaceIsNullable()
-  people: Relation<PersonWorkspaceEntity>;
-  @WorkspaceJoinColumn('people')
-  peopleId: string;
+  person: Relation<PersonWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('person')
+  personId: string;
 
   @WorkspaceRelation({
     standardId: CHARGE_STANDARD_FIELD_IDS.timelineActivities,

@@ -148,7 +148,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
 
 export const CHARGE_STANDARD_FIELD_IDS = {
   name: '20202020-0b7b-4d0d-8b5d-4b7c3d2b8u2r',
-  customer: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
+  company: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
   contact: '20202020-0b7b-4d0d-8b5d-4b7c3d2bm9pe',
   product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
   price: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3b',
@@ -160,7 +160,7 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
   position: '20202020-fcd5-4231-aff5-fff583eaa0a1',
   attachments: 'bdc8497f-9ecb-451d-aa35-17dbade48b71',
-  people: '20202020-3213-4ddf-9494-6422bcff8d7c',
+  person: '20202020-3213-4ddf-9494-6422bcff8d7c',
   timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
