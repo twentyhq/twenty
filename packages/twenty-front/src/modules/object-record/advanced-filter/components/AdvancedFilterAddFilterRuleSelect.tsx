@@ -10,7 +10,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -29,7 +28,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 }: AdvancedFilterAddFilterRuleSelectProps) => {
   const dropdownId = `advanced-filter-add-filter-rule-${recordFilterGroup.id}`;
 
-  const { currentViewId } = useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 
@@ -38,8 +37,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const newPositionInRecordFilterGroup = lastChildPosition + 1;
 
   const { closeDropdown } = useDropdown(dropdownId);
-
-  const { currentView } = useGetCurrentViewOnly();
 
   const objectMetadataId = currentView?.objectMetadataId;
 
@@ -105,8 +102,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const handleAddFilterGroup = () => {
     closeDropdown();
 
-    if (!currentViewId) {
-      throw new Error('Missing view id');
+    if (!isDefined(currentView)) {
+      throw new Error('Missing view');
     }
 
     const newRecordFilterGroupId = v4();
