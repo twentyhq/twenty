@@ -18,7 +18,6 @@ import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTab
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
-import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
@@ -205,12 +204,7 @@ export const useLoadRecordIndexStates = () => {
 
         onViewFieldsChange(view.viewFields, objectMetadataItem, recordIndexId);
         onViewGroupsChange(view.viewGroups, objectMetadataItem, recordIndexId);
-        set(
-          tableViewFilterGroupsComponentState.atomFamily({
-            instanceId: recordIndexId,
-          }),
-          view.viewFilterGroups ?? [],
-        );
+
         set(
           tableFiltersComponentState.atomFamily({
             instanceId: recordIndexId,

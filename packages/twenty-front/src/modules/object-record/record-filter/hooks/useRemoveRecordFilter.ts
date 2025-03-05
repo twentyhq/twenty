@@ -10,7 +10,7 @@ export const useRemoveRecordFilter = () => {
 
   const removeRecordFilter = useRecoilCallback(
     ({ set, snapshot }) =>
-      (fieldMetadataId: string) => {
+      ({ recordFilterId }: { recordFilterId: string }) => {
         const currentRecordFilters = getSnapshotValue(
           snapshot,
           currentRecordFiltersCallbackState,
@@ -18,8 +18,7 @@ export const useRemoveRecordFilter = () => {
 
         const foundRecordFilterInCurrentRecordFilters =
           currentRecordFilters.some(
-            (existingFilter) =>
-              existingFilter.fieldMetadataId === fieldMetadataId,
+            (existingFilter) => existingFilter.id === recordFilterId,
           );
 
         if (foundRecordFilterInCurrentRecordFilters) {
@@ -27,8 +26,7 @@ export const useRemoveRecordFilter = () => {
             const newCurrentRecordFilters = [...currentRecordFilters];
 
             const indexOfFilterToRemove = newCurrentRecordFilters.findIndex(
-              (existingFilter) =>
-                existingFilter.fieldMetadataId === fieldMetadataId,
+              (existingFilter) => existingFilter.id === recordFilterId,
             );
 
             newCurrentRecordFilters.splice(indexOfFilterToRemove, 1);

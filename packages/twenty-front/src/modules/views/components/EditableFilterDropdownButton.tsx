@@ -29,11 +29,11 @@ export const EditableFilterDropdownButton = ({
   const handleRemove = () => {
     closeDropdown();
 
-    removeRecordFilter(viewFilter.fieldMetadataId);
+    removeRecordFilter({ recordFilterId: viewFilter.id });
   };
 
   const handleDropdownClickOutside = useCallback(() => {
-    const { value, operand, fieldMetadataId } = viewFilter;
+    const { value, operand } = viewFilter;
     if (
       !value &&
       ![
@@ -44,7 +44,7 @@ export const EditableFilterDropdownButton = ({
         RecordFilterOperand.IsToday,
       ].includes(operand)
     ) {
-      removeRecordFilter(fieldMetadataId);
+      removeRecordFilter({ recordFilterId: viewFilter.id });
     }
   }, [viewFilter, removeRecordFilter]);
 
