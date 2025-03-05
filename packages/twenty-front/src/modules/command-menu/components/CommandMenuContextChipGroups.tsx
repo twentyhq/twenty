@@ -34,6 +34,7 @@ export const CommandMenuContextChipGroups = ({
   }
 
   const firstChips = contextChips.slice(0, -1);
+  const firstThreeChips = firstChips.slice(0, 3);
   const lastChip = contextChips.at(-1);
 
   return (
@@ -42,7 +43,7 @@ export const CommandMenuContextChipGroups = ({
         <Dropdown
           clickableComponent={
             <CommandMenuContextChip
-              Icons={firstChips.map((chip) => chip.Icons?.[0])}
+              Icons={firstThreeChips.map((chip) => chip.Icons?.[0])}
               onClick={() => {}}
             />
           }

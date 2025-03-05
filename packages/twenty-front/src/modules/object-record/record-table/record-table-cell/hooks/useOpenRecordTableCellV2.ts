@@ -129,7 +129,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           }
 
           if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-            console.log('openRecordInCommandMenu', openRecordInCommandMenu);
             openRecordInCommandMenu({
               recordId,
               objectNameSingular,
