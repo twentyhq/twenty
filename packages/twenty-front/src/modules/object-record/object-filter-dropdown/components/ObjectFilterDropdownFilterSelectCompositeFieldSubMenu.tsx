@@ -9,12 +9,15 @@ import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-rec
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -81,55 +84,88 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     advancedFilterViewFilterId,
   );
 
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
+
+  const setSelectedFilter = useSetRecoilComponentStateV2(
+    selectedFilterComponentState,
+  );
+
   const handleSelectFilter = (
     fieldMetadataItem: FieldMetadataItem | null | undefined,
     subFieldName?: string | null | undefined,
   ) => {
-    if (isDefined(fieldMetadataItem)) {
-      if (
-        isDefined(advancedFilterViewFilterId) &&
-        isDefined(advancedFilterViewFilterGroupId)
-      ) {
-        closeAdvancedFilterDropdown();
+    if (!isDefined(fieldMetadataItem)) {
+      return;
+    }
 
-        const type = getFilterTypeFromFieldType(fieldMetadataItem.type);
-
-        const operand = getRecordFilterOperands({
-          filterType: type,
-          subFieldName: subFieldName,
-        })[0];
-
-        const { value, displayValue } = getInitialFilterValue(type, operand);
-
-        applyRecordFilter({
-          id: advancedFilterViewFilterId,
-          fieldMetadataId: fieldMetadataItem.id,
-          value,
-          operand,
-          displayValue,
-          type: getFilterTypeFromFieldType(fieldMetadataItem.type),
-          label: fieldMetadataItem.label,
-          recordFilterGroupId: advancedFilterViewFilterGroupId,
-          subFieldName: subFieldName,
-        });
-      }
-
-      setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
+    if (
+      isDefined(advancedFilterViewFilterId) &&
+      isDefined(advancedFilterViewFilterGroupId)
+    ) {
+      closeAdvancedFilterDropdown();
 
       const type = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
+      const operand = getRecordFilterOperands({
+        filterType: type,
+        subFieldName: subFieldName,
+      })[0];
+
+      const { value, displayValue } = getInitialFilterValue(type, operand);
+
+      applyRecordFilter({
+        id: advancedFilterViewFilterId,
+        fieldMetadataId: fieldMetadataItem.id,
+        value,
+        operand,
+        displayValue,
+        type: getFilterTypeFromFieldType(fieldMetadataItem.type),
+        label: fieldMetadataItem.label,
+        recordFilterGroupId: advancedFilterViewFilterGroupId,
+        subFieldName: subFieldName,
+      });
+    }
+
+    setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
+
+    const type = getFilterTypeFromFieldType(fieldMetadataItem.type);
+
+    const defaultOperand = getRecordFilterOperands({
+      filterType: type,
+      subFieldName: subFieldName,
+    })[0];
+
+    setSubFieldNameUsedInDropdown(subFieldName);
+
+    setObjectFilterDropdownSearchInput('');
+
+    setObjectFilterDropdownFilterIsSelected(true);
+
+    const duplicateFilterInCurrentRecordFilters =
+      findDuplicateRecordFilterInNonAdvancedRecordFilters({
+        recordFilters: currentRecordFilters,
+        fieldMetadataItemId: fieldMetadataItem.id,
+        subFieldName,
+      });
+
+    const filterIsAlreadyInCurrentRecordFilters = isDefined(
+      duplicateFilterInCurrentRecordFilters,
+    );
+
+    const isSimpleFilter = !isDefined(advancedFilterViewFilterId);
+
+    if (isSimpleFilter && filterIsAlreadyInCurrentRecordFilters) {
+      setSelectedFilter({
+        ...duplicateFilterInCurrentRecordFilters,
+      });
+
       setSelectedOperandInDropdown(
-        getRecordFilterOperands({
-          filterType: type,
-          subFieldName: subFieldName,
-        })[0],
+        duplicateFilterInCurrentRecordFilters.operand,
       );
-
-      setSubFieldNameUsedInDropdown(subFieldName);
-
-      setObjectFilterDropdownSearchInput('');
-
-      setObjectFilterDropdownFilterIsSelected(true);
+    } else {
+      setSelectedOperandInDropdown(defaultOperand);
     }
   };
 

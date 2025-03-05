@@ -8,7 +8,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { isDefined } from 'twenty-shared';
 import { MenuItem } from 'twenty-ui';
 
@@ -46,7 +45,7 @@ export const AdvancedFilterRuleOptionsDropdown = ({
 
   const handleRemove = async () => {
     if (isDefined(viewFilterId)) {
-      removeRecordFilter(viewFilterId);
+      removeRecordFilter({ recordFilterId: viewFilterId });
 
       const isOnlyViewFilterInGroup =
         childViewFiltersAndViewFilterGroups.length === 1;
@@ -66,7 +65,7 @@ export const AdvancedFilterRuleOptionsDropdown = ({
       );
 
       for (const childViewFilter of childViewFilters) {
-        removeRecordFilter(childViewFilter.id);
+        removeRecordFilter({ recordFilterId: childViewFilter.id });
       }
     } else {
       throw new Error('No view filter or view filter group to remove');
@@ -86,7 +85,7 @@ export const AdvancedFilterRuleOptionsDropdown = ({
           <MenuItem text={removeButtonLabel} onClick={handleRemove} />
         </DropdownMenuItemsContainer>
       }
-      dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
+      dropdownHotkeyScope={{ scope: dropdownId }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
     />
