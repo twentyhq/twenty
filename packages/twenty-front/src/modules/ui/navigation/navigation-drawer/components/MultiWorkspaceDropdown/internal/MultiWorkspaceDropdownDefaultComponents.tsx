@@ -36,6 +36,14 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
+import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import styled from '@emotion/styled';
+
+const StyledDescription = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+`;
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -46,6 +54,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
   const { signOut } = useAuth();
   const { enqueueSnackBar } = useSnackBar();
+  const { colorScheme } = useColorScheme();
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
@@ -146,7 +155,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       <DropdownMenuSeparator />
       <MenuItem
         LeftIcon={IconSunMoon}
-        text={t`Theme`}
+        text={
+          <>
+            {t`Theme `}
+            <StyledDescription>{` · ${colorScheme}`}</StyledDescription>
+          </>
+        }
         hasSubMenu={true}
         onClick={() => setMultiWorkspaceDropdownState('themes')}
       />
