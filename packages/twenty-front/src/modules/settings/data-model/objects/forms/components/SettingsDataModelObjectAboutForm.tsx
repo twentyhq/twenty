@@ -179,6 +179,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fillNamePluralFromLabelPlural(value);
                 }
               }}
+              onBlur={() => onNewDirtyField?.()}
               disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}

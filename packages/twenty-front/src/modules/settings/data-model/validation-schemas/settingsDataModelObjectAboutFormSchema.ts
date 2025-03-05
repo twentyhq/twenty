@@ -1,6 +1,7 @@
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import { isCapitalizedWord, isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
+import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 const requiredFormFields = objectMetadataItemSchema.pick({
   description: true, // what happens if empty string ?
@@ -36,29 +37,43 @@ export const settingsDataModelObjectAboutFormSchema = requiredFormFields
             code: z.ZodIssueCode.custom,
             message: 'Invalid label',
             path: [field],
-            fatal: true,
           }),
         );
+      }
 
-        return z.NEVER;
+      const nameAreDifferent = nameSingular !== namePlural;
+      if (!nameAreDifferent) {
+        ['nameSingular', 'namePlural'].forEach((field) =>
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Invalid name',
+            path: [field],
+          }),
+        );
       }
 
       if (
         !isDefined(isLabelSyncedWithName) ||
         isLabelSyncedWithName === false
       ) {
-        if (nameSingular && isCapitalizedWord(nameSingular)) {
+        if (
+          nameSingular &&
+          !camelCaseStringSchema.safeParse(nameSingular).success
+        ) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'nameSingular should follow camel case',
+            message: 'Should follow camel case',
             path: ['nameSingular'],
           });
         }
 
-        if (namePlural && isCapitalizedWord(namePlural)) {
+        if (
+          namePlural &&
+          !camelCaseStringSchema.safeParse(namePlural).success
+        ) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'namePlural should follow camel case',
+            message: 'Should follow camel case',
             path: ['namePlural'],
           });
         }
