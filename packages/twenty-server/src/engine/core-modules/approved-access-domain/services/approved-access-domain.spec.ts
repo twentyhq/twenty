@@ -156,9 +156,9 @@ describe('ApprovedAccessDomainService', () => {
         id: approvedAccessDomainId,
         workspaceId: workspace.id,
       });
-      expect(approvedAccessDomainRepository.delete).toHaveBeenCalledWith(
-        approvedAccessDomainEntity,
-      );
+      expect(approvedAccessDomainRepository.delete).toHaveBeenCalledWith({
+        id: approvedAccessDomainEntity.id,
+      });
     });
 
     it('should throw an error if the approved access domain does not exist', async () => {
