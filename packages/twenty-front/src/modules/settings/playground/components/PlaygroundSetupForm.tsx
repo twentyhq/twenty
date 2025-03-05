@@ -40,14 +40,6 @@ const StyledForm = styled.form`
   width: 100%;
 `;
 
-const StyledSelect = styled(Select)`
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledButton = styled(Button)`
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-`;
-
 export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
@@ -97,6 +89,7 @@ export const PlaygroundSetupForm = () => {
         render={({ field: { onChange, value } }) => (
           <TextInput
             label={'API Key'}
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzQxMTkyODk5LCJleHAiOjQ4OTQ3OTI4OTgsImp0aSI6ImRjZjhmMGZiLTExMTMtNDhmNC1iZWY2LWQ2N2UxNWM0NGM5ZSJ9.jPvNMtWsjbe-MvAWvqia3MJNtoVDHxhAf9o8BLDNBEc"
             value={value}
             onChange={(value) => {
               onChange(value);
@@ -109,7 +102,7 @@ export const PlaygroundSetupForm = () => {
         control={control}
         defaultValue={PlaygroundSchemas.CORE}
         render={({ field: { onChange, value } }) => (
-          <StyledSelect
+          <Select
             dropdownId="schema"
             label={t`Schema`}
             options={[
@@ -134,7 +127,7 @@ export const PlaygroundSetupForm = () => {
         control={control}
         defaultValue={PlaygroundTypes.REST}
         render={({ field: { onChange, value } }) => (
-          <StyledSelect
+          <Select
             dropdownId="apiPlaygroundType"
             label={t`API`}
             options={[
@@ -154,12 +147,7 @@ export const PlaygroundSetupForm = () => {
           />
         )}
       />
-      <StyledButton
-        title={t`Launch`}
-        variant="primary"
-        accent="blue"
-        type="submit"
-      />
+      <Button title={t`Launch`} variant="primary" accent="blue" type="submit" />
     </StyledForm>
   );
 };

@@ -9,7 +9,7 @@ import {
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import '@scalar/api-reference-react/style.css';
-import { Button, IconX, useIsMobile } from 'twenty-ui';
+import { IconButton, IconX, useIsMobile } from 'twenty-ui';
 
 type FullScreenContainerProps = {
   children: JSX.Element | JSX.Element[];
@@ -47,7 +47,7 @@ export const FullScreenContainer = ({
   return (
     <StyledFullScreen>
       <PageHeader title={<Breadcrumb links={links} />}>
-        <Button
+        <IconButton
           Icon={IconX}
           dataTestId="close-button"
           size={isMobile ? 'medium' : 'small'}
