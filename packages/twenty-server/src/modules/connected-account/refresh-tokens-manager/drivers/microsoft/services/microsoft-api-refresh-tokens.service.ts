@@ -40,7 +40,6 @@ export class MicrosoftAPIRefreshAccessTokenService {
       },
     );
 
-    // todo make sure the catch is explicit enough for the logs
     z.string().parse(response.data.access_token);
     z.string().parse(response.data.refresh_token);
 
