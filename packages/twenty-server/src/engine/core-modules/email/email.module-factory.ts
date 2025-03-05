@@ -34,11 +34,10 @@ export const emailModuleFactory = (
 
       if (user && pass) options.auth = { user, pass };
 
-      if (noTLS){
-        options.secure = false; 
+      if (noTLS) {
+        options.secure = false;
         options.ignoreTLS = true;
       }
-    
 
       return options;
     }

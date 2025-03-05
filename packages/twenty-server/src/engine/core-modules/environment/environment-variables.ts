@@ -297,7 +297,7 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   EMAIL_SMTP_NO_TLS = false;
-  
+
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.EmailSettings,
     description: 'SMTP port for sending emails',
