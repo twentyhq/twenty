@@ -5,10 +5,14 @@ import {
   ComponentDecorator,
   IconChevronLeft,
   IconChevronRight,
+  IconPlus,
   MenuItem,
 } from 'twenty-ui';
 
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',
@@ -64,8 +68,16 @@ export const ContextDropdownAndAvatar: Story = {
     StartAvatar: (
       <Avatar placeholder="placeholder" avatarUrl={AVATAR_URL_MOCK} />
     ),
-    dropdownId: 'story-dropdown-id',
-    dropdownPlacement: 'bottom-end',
-    dropdownComponents: <MenuItem text="Add subscriber" />,
+    DropdownOnEndIcon: (
+      <Dropdown
+        dropdownId={'story-dropdown-id-context-menu'}
+        dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+        dropdownComponents={
+          <DropdownMenuItemsContainer>
+            <MenuItem LeftIcon={IconPlus} text={`Create Workspace`} />
+          </DropdownMenuItemsContainer>
+        }
+      />
+    ),
   },
 };
