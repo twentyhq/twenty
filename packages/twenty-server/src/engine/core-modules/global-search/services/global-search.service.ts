@@ -1,6 +1,7 @@
-import { Entity } from '@microsoft/microsoft-graph-types';
+import { Injectable } from '@nestjs/common';
+
 import { FieldMetadataType, getLogoUrlFromDomainName } from 'twenty-shared';
-import { Brackets } from 'typeorm';
+import { Brackets, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -20,6 +21,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
+@Injectable()
 export class GlobalSearchService {
   filterObjectMetadataItems({
     objectMetadataItemWithFieldMaps,
@@ -47,7 +49,7 @@ export class GlobalSearchService {
     );
   }
 
-  async buildSearchQueryAndGetRecords({
+  async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({
     entityManager,
     objectMetadataItem,
     featureFlagMap,

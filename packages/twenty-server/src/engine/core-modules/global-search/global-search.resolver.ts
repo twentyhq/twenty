@@ -97,8 +97,6 @@ export class GlobalSearchResolver {
             objectMetadataItem.nameSingular,
           );
 
-          repository.createQueryBuilder();
-
           return {
             objectMetadataItem,
             records:
