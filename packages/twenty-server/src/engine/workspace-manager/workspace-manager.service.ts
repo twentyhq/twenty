@@ -99,12 +99,8 @@ export class WorkspaceManagerService {
     );
 
     const permissionsEnabledStart = performance.now();
-    const permissionsEnabled =
-      await this.permissionsService.isPermissionsEnabled();
 
-    if (permissionsEnabled === true) {
-      await this.initPermissions({ workspaceId, userId });
-    }
+    await this.initPermissions({ workspaceId, userId });
 
     const permissionsEnabledEnd = performance.now();
 
@@ -168,12 +164,7 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
-    const permissionsEnabled =
-      await this.permissionsService.isPermissionsEnabled();
-
-    if (permissionsEnabled === true) {
-      await this.initPermissionsDev(workspaceId);
-    }
+    await this.initPermissionsDev(workspaceId);
   }
 
   /**
