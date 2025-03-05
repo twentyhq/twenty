@@ -3,7 +3,7 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import { getWorkflowRunStepContext } from '../getWorkflowRunStepContext';
 
 describe('getWorkflowRunStepContext', () => {
-  it('should return an empty object for trigger step', () => {
+  it('should return an empty array for trigger step', () => {
     const flow = {
       trigger: {
         name: 'Company Created',
@@ -25,7 +25,7 @@ describe('getWorkflowRunStepContext', () => {
       context,
     });
 
-    expect(result).toEqual({});
+    expect(result).toEqual([]);
   });
 
   it('should include previous steps context', () => {
@@ -86,10 +86,18 @@ describe('getWorkflowRunStepContext', () => {
       context,
     });
 
-    expect(result).toEqual({
-      'Company Created': { company: { id: '123' } },
-      'Create company': { taskId: '456' },
-    });
+    expect(result).toEqual([
+      {
+        id: TRIGGER_STEP_ID,
+        name: 'Company Created',
+        context: { company: { id: '123' } },
+      },
+      {
+        id: 'step1',
+        name: 'Create company',
+        context: { taskId: '456' },
+      },
+    ]);
   });
 
   it('should not include subsequent steps context', () => {
@@ -151,8 +159,12 @@ describe('getWorkflowRunStepContext', () => {
       context,
     });
 
-    expect(result).toEqual({
-      'Company Created': { company: { id: '123' } },
-    });
+    expect(result).toEqual([
+      {
+        id: TRIGGER_STEP_ID,
+        name: 'Company Created',
+        context: { company: { id: '123' } },
+      },
+    ]);
   });
 });
