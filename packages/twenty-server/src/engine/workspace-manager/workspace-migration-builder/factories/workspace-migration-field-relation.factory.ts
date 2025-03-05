@@ -165,6 +165,19 @@ export class WorkspaceMigrationFieldRelationFactory {
           sourceFieldMetadata.relationTargetObjectMetadataId
         ];
 
+      if (!sourceFieldMetadata.settings) {
+        throw new Error(
+          `FieldMetadata for relation with id ${sourceFieldMetadata.id} has no settings`,
+        );
+      }
+
+      // We're creating it from `ONE_TO_MANY` with the join column so we don't need to create a migration for `MANY_TO_ONE`
+      if (
+        sourceFieldMetadata.settings.relationType === RelationType.MANY_TO_ONE
+      ) {
+        continue;
+      }
+
       if (!sourceObjectMetadata) {
         throw new Error(
           `ObjectMetadata with id ${sourceFieldMetadata.objectMetadataId} not found`,
@@ -205,6 +218,10 @@ export class WorkspaceMigrationFieldRelationFactory {
         );
       }
 
+      if (!targetFieldMetadata.settings.joinColumnName) {
+        continue;
+      }
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(targetObjectMetadata),
@@ -212,7 +229,9 @@ export class WorkspaceMigrationFieldRelationFactory {
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: `${camelCase(targetFieldMetadata.name)}Id`,
+              columnName:
+                targetFieldMetadata.settings.joinColumnName ??
+                `${camelCase(targetFieldMetadata.name)}Id`,
               referencedTableName:
                 computeObjectTargetTable(sourceObjectMetadata),
               referencedTableColumnName: 'id',

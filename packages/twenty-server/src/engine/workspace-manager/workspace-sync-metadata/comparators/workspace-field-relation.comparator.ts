@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import pick from 'lodash.pick';
 import diff from 'microdiff';
 import { FieldMetadataType } from 'twenty-shared';
 
@@ -133,7 +134,8 @@ export class WorkspaceFieldRelationComparator {
             result.push({
               action: ComparatorAction.CREATE,
               object: {
-                ...standardFieldMetadata,
+                ...pick(standardFieldMetadata, fieldPropertiesToCompare),
+                id: originalFieldMetadata.id,
                 standardId: standardFieldMetadata.standardId ?? undefined,
               },
             });

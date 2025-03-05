@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared';
-import { EntityManager, In } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 import {
@@ -44,7 +44,6 @@ export class WorkspaceSyncFieldMetadataRelationService {
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
-    const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
 
     // Retrieve object metadata collection from DB
     const originalObjectMetadataCollection =
@@ -86,7 +85,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
     this.logger.log('Updating workspace metadata');
 
     // Save field metadata to DB
-    const metadataFieldRelationUpdaterResult =
+    const { updatedFieldMetadataCollection } =
       await this.workspaceMetadataUpdaterService.updateFieldRelationMetadata(
         manager,
         storage,
@@ -97,44 +96,67 @@ export class WorkspaceSyncFieldMetadataRelationService {
     const updateFieldWorkspaceMigrations =
       await this.workspaceMigrationFieldFactory.create(
         originalObjectMetadataCollection,
-        metadataFieldRelationUpdaterResult.updatedFieldMetadataCollection,
+        updatedFieldMetadataCollection,
         WorkspaceMigrationBuilderAction.UPDATE,
       );
 
-    const createFieldMetadataCollection = (await fieldMetadataRepository.find({
-      where: {
-        id: In(
-          storage.fieldRelationMetadataCreateCollection.map(
-            (field) => field.id,
-          ),
-        ),
-        workspaceId: context.workspaceId,
-        type: FieldMetadataType.RELATION,
+    const originalObjectMetadataCollection2 =
+      await objectMetadataRepository.find({
+        where: {
+          workspaceId: context.workspaceId,
+          fields: {
+            type: FieldMetadataType.RELATION,
+          },
+        },
+        relations: ['dataSource', 'fields'],
+      });
+
+    const createFieldMetadataCollection = updatedFieldMetadataCollection.reduce(
+      (acc, field) => {
+        if (
+          storage.fieldRelationMetadataCreateCollection.some(
+            (createField) => createField.id === field.altered.id,
+          )
+        ) {
+          acc.push(
+            field.altered as FieldMetadataEntity<FieldMetadataType.RELATION>,
+          );
+        }
+
+        return acc;
       },
-    })) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+      [] as FieldMetadataEntity<FieldMetadataType.RELATION>[],
+    );
 
     const createFieldRelationWorkspaceMigrations =
       await this.workspaceMigrationFieldRelationFactory.create(
-        originalObjectMetadataCollection,
+        originalObjectMetadataCollection2,
         createFieldMetadataCollection,
         WorkspaceMigrationBuilderAction.CREATE,
       );
 
-    const updateFieldMetadataCollection = (await fieldMetadataRepository.find({
-      where: {
-        id: In(
-          storage.fieldRelationMetadataUpdateCollection.map(
-            (field) => field.id,
-          ),
-        ),
-        workspaceId: context.workspaceId,
-        type: FieldMetadataType.RELATION,
+    const updateFieldMetadataCollection = updatedFieldMetadataCollection.reduce(
+      (acc, field) => {
+        if (
+          storage.fieldRelationMetadataUpdateCollection.some(
+            (updateField) => updateField.id === field.altered.id,
+          )
+        ) {
+          acc.push(
+            field.altered as FieldMetadataEntity<FieldMetadataType.RELATION>,
+          );
+        }
+
+        return acc;
       },
-    })) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+      [] as FieldMetadataEntity<FieldMetadataType.RELATION>[],
+    );
+
+    console.log(updateFieldMetadataCollection);
 
     const updateFieldRelationWorkspaceMigrations =
       await this.workspaceMigrationFieldRelationFactory.create(
-        originalObjectMetadataCollection,
+        originalObjectMetadataCollection2,
         updateFieldMetadataCollection,
         WorkspaceMigrationBuilderAction.UPDATE,
       );

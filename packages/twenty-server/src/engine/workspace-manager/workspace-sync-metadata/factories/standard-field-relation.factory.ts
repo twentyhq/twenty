@@ -156,14 +156,6 @@ export class StandardFieldRelationFactory {
           (field) => field.name === sourceFieldMetadataName,
         ) as FieldMetadataEntity<FieldMetadataType.RELATION>;
 
-        if (!sourceFieldMetadata) {
-          console.log(
-            'sourceFieldMetadata',
-            sourceObjectMetadata?.fields,
-            sourceFieldMetadataName,
-          );
-        }
-
         assert(
           sourceFieldMetadata,
           `Source field ${sourceFieldMetadataName} not found in object ${sourceObjectNameSingular} for relation ${workspaceRelationMetadataArgs.name} of type ${workspaceRelationMetadataArgs.type}`,
