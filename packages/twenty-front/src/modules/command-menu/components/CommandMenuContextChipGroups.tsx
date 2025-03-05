@@ -45,6 +45,7 @@ export const CommandMenuContextChipGroups = ({
             <CommandMenuContextChip
               Icons={firstThreeChips.map((chip) => chip.Icons?.[0])}
               onClick={() => {}}
+              text={`${firstChips.length}`}
             />
           }
           dropdownComponents={
