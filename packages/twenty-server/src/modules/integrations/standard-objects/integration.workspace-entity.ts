@@ -81,7 +81,7 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: INTEGRATION_STANDARD_FIELD_IDS.traceable,
     type: RelationMetadataType.ONE_TO_MANY,
     label: msg`Traceable`,
-    description: msg`Integration linked to the traceable`,
+    description: msg`Integration linked to the traceable link`,
     icon: 'IconPhone',
     inverseSideTarget: () => TraceableWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
