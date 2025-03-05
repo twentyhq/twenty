@@ -102,7 +102,7 @@ const StyledInput = styled.input<InputProps>`
       checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
     background: ${({ theme, indeterminate, isChecked, disabled }) =>
       disabled && isChecked
-        ? theme.color.blue
+        ? theme.adaptiveColors.blue3
         : indeterminate || isChecked
           ? theme.color.blue
           : 'transparent'};
@@ -115,9 +115,9 @@ const StyledInput = styled.input<InputProps>`
     }) => {
       switch (true) {
         case isChecked:
-          return theme.color.blue;
+          return disabled ? theme.adaptiveColors.blue3 : theme.color.blue;
         case disabled:
-          return theme.background.transparent.medium;
+          return theme.border.color.strong;
         case indeterminate || isChecked:
           return theme.color.blue;
         case variant === CheckboxVariant.Primary:
@@ -166,7 +166,7 @@ export const Checkbox = ({
   variant = CheckboxVariant.Primary,
   size = CheckboxSize.Small,
   shape = CheckboxShape.Squared,
-  hoverable = false,
+  hoverable = true,
   className,
   disabled = false,
 }: CheckboxProps) => {
