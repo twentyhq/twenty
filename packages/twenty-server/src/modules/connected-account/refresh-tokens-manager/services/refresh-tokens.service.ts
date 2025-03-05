@@ -1,24 +1,23 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  assertUnreachable,
-  ConnectedAccountProvider,
-  isDefined,
-} from 'twenty-shared';
+import { assertUnreachable, ConnectedAccountProvider } from 'twenty-shared';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
-import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
+import {
+  GoogleAPIRefreshAccessTokenService,
+  GoogleTokens,
+} from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
+import {
+  MicrosoftAPIRefreshAccessTokenService,
+  MicrosoftTokens,
+} from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
   RefreshAccessTokenException,
   RefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/refresh-tokens.exception';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
-export type NewTokens = {
-  newAccessToken: string;
-  newRefreshToken?: string;
-};
+export type ConnectedAccountTokens = GoogleTokens | MicrosoftTokens;
 
 @Injectable()
 export class RefreshTokensService {
@@ -41,7 +40,7 @@ export class RefreshTokensService {
       );
     }
 
-    const connectedAccountToken = await this.refreshTokens(
+    const connectedAccountTokens = await this.refreshTokens(
       connectedAccount,
       refreshToken,
       workspaceId,
@@ -53,36 +52,24 @@ export class RefreshTokensService {
           'connectedAccount',
         );
 
-      if (isDefined(connectedAccountToken.newRefreshToken)) {
-        await connectedAccountRepository.update(
-          { id: connectedAccount.id },
-          {
-            accessToken: connectedAccountToken.newAccessToken,
-            refreshToken: connectedAccountToken.newRefreshToken,
-          },
-        );
-      } else {
-        await connectedAccountRepository.update(
-          { id: connectedAccount.id },
-          {
-            accessToken: connectedAccountToken.newAccessToken,
-          },
-        );
-      }
+      await connectedAccountRepository.update(
+        { id: connectedAccount.id },
+        connectedAccountTokens,
+      );
     } catch (error) {
       throw new Error(
         `Error saving the new tokens for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message} `,
       );
     }
 
-    return connectedAccountToken.newAccessToken;
+    return connectedAccountTokens.accessToken;
   }
 
   async refreshTokens(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     refreshToken: string,
     workspaceId: string,
-  ): Promise<NewTokens> {
+  ): Promise<ConnectedAccountTokens> {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:
