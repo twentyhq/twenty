@@ -18,8 +18,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -106,7 +106,7 @@ export const SettingsAccountsRowDropdownMenu = ({
           </Trans>
         }
         onConfirmClick={deleteAccount}
-        deleteButtonText={t`Delete account`}
+        confirmButtonText={t`Delete account`}
       />
     </>
   );

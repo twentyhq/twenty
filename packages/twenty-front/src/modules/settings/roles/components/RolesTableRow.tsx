@@ -24,20 +24,21 @@ const StyledAvatarContainer = styled.div`
 `;
 
 const StyledAssignedText = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledNameCell = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const StyledAssignedCell = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledAvatarGroup = styled.div`
@@ -71,7 +72,11 @@ export const RolesTableRow = ({ role }: { role: Role }) => {
   };
 
   return (
-    <StyledTableRow key={role.id} onClick={() => handleRoleClick(role.id)}>
+    <StyledTableRow
+      key={role.id}
+      gridAutoColumns="3fr 2fr 1fr"
+      onClick={() => handleRoleClick(role.id)}
+    >
       <TableCell>
         <StyledNameCell>
           <IconUser size={theme.icon.size.md} />

@@ -4,13 +4,14 @@ import { t } from '@lingui/core/macro';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { Section } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
 
 const StyledInputsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInputContainer = styled.div`
@@ -24,7 +25,7 @@ type RoleSettingsProps = {
 
 export const RoleSettings = ({ role }: RoleSettingsProps) => {
   return (
-    <>
+    <Section>
       <StyledInputsContainer>
         <StyledInputContainer>
           <IconPicker
@@ -41,6 +42,6 @@ export const RoleSettings = ({ role }: RoleSettingsProps) => {
         value={role.description || ''}
         disabled
       />
-    </>
+    </Section>
   );
 };

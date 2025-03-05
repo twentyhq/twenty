@@ -115,7 +115,7 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
         title={'Delete Records'}
         subtitle={`Are you sure you want to delete these records? They can be recovered from the Options menu.`}
         onConfirmClick={handleDeleteClick}
-        deleteButtonText={'Delete Records'}
+        confirmButtonText={'Delete Records'}
       />
     );
 

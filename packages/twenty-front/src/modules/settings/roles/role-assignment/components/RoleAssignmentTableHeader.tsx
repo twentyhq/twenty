@@ -10,10 +10,9 @@ const StyledTableHeaderRow = styled(Table)`
 
 export const RoleAssignmentTableHeader = () => (
   <StyledTableHeaderRow>
-    <TableRow gridAutoColumns="150px 1fr 1fr">
+    <TableRow gridAutoColumns="2fr 4fr">
       <TableHeader>{t`Name`}</TableHeader>
       <TableHeader>{t`Email`}</TableHeader>
-      <TableHeader align={'right'} aria-label={t`Actions`}></TableHeader>
     </TableRow>
   </StyledTableHeaderRow>
 );
