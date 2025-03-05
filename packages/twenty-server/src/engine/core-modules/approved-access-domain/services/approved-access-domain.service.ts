@@ -78,8 +78,6 @@ export class ApprovedAccessDomainService {
       plainText: true,
     });
 
-    console.log('>>>>>>>>>>>>>>', html);
-
     await this.emailService.send({
       from: `${sender.firstName} ${sender.lastName} (via Twenty) <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to,
