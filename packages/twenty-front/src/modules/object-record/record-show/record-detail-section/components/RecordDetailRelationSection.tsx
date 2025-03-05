@@ -241,7 +241,11 @@ export const RecordDetailRelationSection = ({
                       onChange={updateRelation}
                       onSubmit={closeDropdown}
                       onClickOutside={closeDropdown}
-                      dropdownPlacement={dropdownPlacement}
+                      layoutDirection={
+                        dropdownPlacement?.includes('end')
+                          ? 'search-bar-on-bottom'
+                          : 'search-bar-on-top'
+                      }
                     />
                   )
                 }

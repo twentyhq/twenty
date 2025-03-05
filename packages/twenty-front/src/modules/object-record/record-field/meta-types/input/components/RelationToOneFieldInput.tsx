@@ -7,6 +7,7 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { IconForbid } from 'twenty-ui';
 import { FieldInputEvent } from './DateTimeFieldInput';
@@ -20,8 +21,7 @@ export const RelationToOneFieldInput = ({
   onSubmit,
   onCancel,
 }: RelationToOneFieldInputProps) => {
-  const { fieldDefinition, recordId } =
-    useRelationField<SingleRecordPickerRecord>();
+  const { fieldDefinition, recordId } = useRelationField<ObjectRecord>();
 
   const persistField = usePersistField();
 

@@ -17,7 +17,7 @@ export const RelationFromManyFieldInput = ({
   onSubmit,
 }: RelationFromManyFieldInputProps) => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
-  const recordPickerInstanceId = `record-picker-${fieldDefinition.fieldMetadataId}`;
+  const recordPickerInstanceId = `relation-from-many-field-input-${recordId}`;
 
   const { updateRelation } = useUpdateRelationFromManyFieldInput({
     scopeId: recordPickerInstanceId,

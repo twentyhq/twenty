@@ -6,7 +6,7 @@ import { useSingleRecordPickerRecords } from '@/object-record/record-picker/sing
 import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
-import { SingleRecordPickerLayoutDirection } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerLayoutDirection';
+import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -22,7 +22,7 @@ export type SingleRecordPickerMenuItemsWithSearchProps = {
   onCreate?: ((searchInput?: string) => void) | (() => void);
   objectNameSingular: string;
   recordPickerInstanceId?: string;
-  layoutDirection?: SingleRecordPickerLayoutDirection;
+  layoutDirection?: RecordPickerLayoutDirection;
 } & Pick<
   SingleRecordPickerMenuItemsProps,
   | 'EmptyIcon'

@@ -7,6 +7,7 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { multipleRecordPickerPickableMorphItemsLengthComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableMorphItemsLengthComponentSelector';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
+import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -20,13 +21,11 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { Placement } from '@floating-ui/react';
 import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared';
 import { IconPlus } from 'twenty-ui';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -37,7 +36,7 @@ type MultipleRecordPickerProps = {
   onChange?: (changedRecordForSelectId: string) => void;
   onSubmit?: () => void;
   onCreate?: ((searchInput?: string) => void) | (() => void);
-  dropdownPlacement?: Placement | null;
+  layoutDirection?: RecordPickerLayoutDirection;
   componentInstanceId: string;
   onClickOutside: () => void;
 };
@@ -47,7 +46,7 @@ export const MultipleRecordPicker = ({
   onSubmit,
   onCreate,
   onClickOutside,
-  dropdownPlacement,
+  layoutDirection = 'search-bar-on-bottom',
   componentInstanceId,
 }: MultipleRecordPickerProps) => {
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
@@ -59,12 +58,12 @@ export const MultipleRecordPicker = ({
     selectableListComponentInstanceId,
   );
 
-  const recordMultiSelectIsLoading = useRecoilComponentValueV2(
+  const multipleRecordPickerIsLoading = useRecoilComponentValueV2(
     multipleRecordPickerIsLoadingComponentState,
     componentInstanceId,
   );
 
-  const selectedRecordsWithObjectItemLength = useRecoilComponentValueV2(
+  const itemsLength = useRecoilComponentValueV2(
     multipleRecordPickerPickableMorphItemsLengthComponentSelector,
     componentInstanceId,
   );
@@ -123,7 +122,7 @@ export const MultipleRecordPicker = ({
         onClickOutside={onClickOutside}
       />
       <DropdownMenu ref={containerRef} data-select-disable width={200}>
-        {dropdownPlacement?.includes('end') && (
+        {layoutDirection === 'search-bar-on-bottom' && (
           <>
             {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
               <DropdownMenuItemsContainer scrollable={false}>
@@ -131,37 +130,32 @@ export const MultipleRecordPicker = ({
               </DropdownMenuItemsContainer>
             )}
             <DropdownMenuSeparator />
-            {selectedRecordsWithObjectItemLength > 0 && (
+            {itemsLength > 0 && (
               <MultipleRecordPickerMenuItems onChange={onChange} />
             )}
-            {recordMultiSelectIsLoading && (
+            {multipleRecordPickerIsLoading && (
               <>
                 <DropdownMenuSkeletonItem />
                 <DropdownMenuSeparator />
               </>
             )}
-            {selectedRecordsWithObjectItemLength > 0 && (
-              <DropdownMenuSeparator />
-            )}
+            {itemsLength > 0 && <DropdownMenuSeparator />}
           </>
         )}
         <MultipleRecordPickerSearchInput />
-        {(dropdownPlacement?.includes('start') ||
-          isUndefinedOrNull(dropdownPlacement)) && (
+        {layoutDirection === 'search-bar-on-top' && (
           <>
             <DropdownMenuSeparator />
-            {recordMultiSelectIsLoading && (
+            {multipleRecordPickerIsLoading && (
               <>
                 <DropdownMenuSkeletonItem />
                 <DropdownMenuSeparator />
               </>
             )}
-            {selectedRecordsWithObjectItemLength > 0 && (
+            {itemsLength > 0 && (
               <MultipleRecordPickerMenuItems onChange={onChange} />
             )}
-            {selectedRecordsWithObjectItemLength > 0 && (
-              <DropdownMenuSeparator />
-            )}
+            {itemsLength > 0 && <DropdownMenuSeparator />}
             {isDefined(onCreate) && (
               <DropdownMenuItemsContainer scrollable={false}>
                 {createNewButton}

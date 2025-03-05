@@ -1,75 +1,73 @@
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import {
+  FieldRelationFromManyValue,
+  FieldRelationValue,
+} from '@/object-record/record-field/types/FieldMetadata';
+import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useRecoilCallback } from 'recoil';
+
 export const useOpenRelationFromManyFieldInput = () => {
-  // const { fieldValue, fieldDefinition } =
-  //   useRelationField<SingleRecordPickerRecord[]>();
+  const openRelationFromManyFieldInput = useRecoilCallback(
+    ({ set, snapshot }) =>
+      ({
+        fieldName,
+        recordId,
+        objectNameSingular,
+      }: {
+        fieldName: string;
+        recordId: string;
+        objectNameSingular: string;
+      }) => {
+        const recordPickerInstanceId = `relation-from-many-field-input-${recordId}`;
 
-  // const { objectMetadataItem } = useObjectMetadataItem({
-  //   objectNameSingular:
-  //     fieldDefinition.metadata.relationObjectMetadataNameSingular,
-  // });
+        const fieldValue = snapshot
+          .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
+            recordStoreFamilySelector({
+              recordId,
+              fieldName,
+            }),
+          )
+          .getValue();
 
-  // const openRelationFromManyFieldInput = useRecoilCallback(
-  //   ({ set, snapshot }) =>
-  //     ({ fieldName, recordId }: { fieldName: string; recordId: string }) => {
-  //       const recordPickerInstanceId = `relation-from-many-field-input-${recordId}`;
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue();
 
-  // const newRecords = records.recordsToSelect.map((entity) => {
-  //   const { record, ...recordIdentifier } = entity;
-  //   return {
-  //     objectMetadataItem: objectMetadataItem,
-  //     record: record,
-  //     recordIdentifier: recordIdentifier,
-  //   };
-  // });
+        const objectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.nameSingular === objectNameSingular,
+        );
 
-  // for (const newRecord of newRecords) {
-  //   const currentRecord = snapshot
-  //     .getLoadable(
-  //       multipleRecordPickerIsSelectedFamilyState(newRecord.record.id),
-  //     )
-  //     .getValue();
+        if (!objectMetadataItem) {
+          return;
+        }
 
-  //   const objectRecordMultiSelectCheckedRecordsIds = snapshot
-  //     .getLoadable(multipleRecordPickerSelectedRecordsIdsFamilyState)
-  //     .getValue();
+        const pickableMorphItems: RecordPickerPickableMorphItem[] =
+          fieldValue.map((record) => {
+            return {
+              objectMetadataId: objectMetadataItem.id,
+              recordId: record.id,
+              isSelected: true,
+              isMatchingSearchFilter: true,
+            };
+          });
 
-  //   const newRecordWithSelected = {
-  //     ...newRecord,
-  //     selected: objectRecordMultiSelectCheckedRecordsIds.includes(
-  //       newRecord.record.id,
-  //     ),
-  //   };
+        for (const record of fieldValue) {
+          set(recordStoreFamilyState(record.id), record);
+        }
 
-  //   if (
-  //     !isDeeplyEqual(
-  //       newRecordWithSelected.selected,
-  //       currentRecord?.selected,
-  //     )
-  //   ) {
-  //     set(
-  //       multipleRecordPickerIsSelectedFamilyState(
-  //         newRecordWithSelected.record.id,
-  //       ),
-  //       newRecordWithSelected,
-  //     );
-  //   }
-  // }
-  // const allRecordsIds = allRecords.map((record) => record.record.id);
-  // if (!isDeeplyEqual(allRecordsIds, objectRecordsIdsMultiSelect)) {
-  //   setObjectRecordsIdsMultiSelect(allRecordsIds);
-  // }
+        set(
+          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
+            instanceId: recordPickerInstanceId,
+          }),
+          pickableMorphItems,
+        );
+      },
+    [],
+  );
 
-  // setObjectRecordsIdsMultiSelect(
-  //   fieldValue
-  //     ? fieldValue.map(
-  //         (fieldValueItem: SingleRecordPickerRecord) => fieldValueItem.id,
-  //       )
-  //     : [],
-  // );
-
-  // setRecordMultiSelectIsLoading(records.loading);
-  //     },
-  //   [],
-  // );
-
-  return { openRelationFromManyFieldInput: () => {} };
+  return { openRelationFromManyFieldInput };
 };
