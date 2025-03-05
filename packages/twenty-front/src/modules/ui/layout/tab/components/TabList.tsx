@@ -58,7 +58,7 @@ export const TabList = ({
     visibleTabs.length,
   );
 
-  const containerRef = useCallback((node: HTMLDivElement) => {
+  const containerRef = (node: HTMLDivElement) => {
     const containerWidth = node.offsetWidth;
     const firstTab = node.querySelector(
       '.tab-item',
@@ -68,7 +68,7 @@ export const TabList = ({
     const tabWidth = firstTab.offsetWidth + 16; // 16px := gap between tabs
     const calculatedMaxVisible = Math.floor(containerWidth / tabWidth) - 1; // -1 to make space for the dropdown button
     setMaxVisibleTabs(calculatedMaxVisible);
-  }, []);
+  };
 
   const truncatedTabs = visibleTabs.slice(0, maxVisibleTabs);
   const remainingTabs = visibleTabs.slice(maxVisibleTabs);
