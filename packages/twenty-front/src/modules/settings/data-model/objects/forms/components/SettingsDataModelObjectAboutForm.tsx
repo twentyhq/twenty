@@ -132,6 +132,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 selectedIconKey={value}
                 onChange={({ iconKey }) => {
                   onChange(iconKey);
+                  onNewDirtyField?.();
                 }}
               />
             )}

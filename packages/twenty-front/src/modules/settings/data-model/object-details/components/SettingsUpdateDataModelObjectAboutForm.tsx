@@ -28,9 +28,27 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     updatedObjectNamePluralState,
   );
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+  const {
+    description,
+    icon,
+    isLabelSyncedWithName,
+    labelPlural,
+    labelSingular,
+    namePlural,
+    nameSingular,
+  } = objectMetadataItem;
   const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
+    defaultValues: {
+      description,
+      icon: icon ?? undefined,
+      isLabelSyncedWithName,
+      labelPlural,
+      labelSingular,
+      namePlural,
+      nameSingular,
+    },
   });
 
   const handleSave = async (
