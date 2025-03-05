@@ -21,7 +21,7 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
-
+// TO_REMOVE comment to trigger ci server
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
