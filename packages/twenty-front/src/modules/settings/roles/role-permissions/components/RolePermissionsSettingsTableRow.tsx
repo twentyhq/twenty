@@ -34,6 +34,18 @@ const StyledTableRow = styled(TableRow)`
   display: flex;
 `;
 
+const StyledIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 type RolePermissionsSettingsTableRowProps = {
   permission: RolePermissionsSettingPermission;
 };
@@ -47,6 +59,9 @@ export const RolePermissionsSettingsTableRow = ({
         <StyledLabel>{permission.label}</StyledLabel>
       </StyledPermissionCell>
       <StyledPermissionCell>
+        <StyledIconWrapper>
+          <StyledIcon>{permission.icon}</StyledIcon>
+        </StyledIconWrapper>
         <StyledType>{permission.type}</StyledType>
       </StyledPermissionCell>
       <StyledCheckboxCell>

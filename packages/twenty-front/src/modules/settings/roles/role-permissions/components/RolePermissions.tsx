@@ -2,14 +2,22 @@ import { RolePermissionsObjectsTableHeader } from '@/settings/roles/role-permiss
 import { RolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader';
 import { RolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableRow';
 import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePermissionsObjectPermission';
+import { RolePermissionsSettingPermission } from '@/settings/roles/types/RolePermissionsSettingPermission';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
   H2Title,
+  IconCode,
   IconEye,
+  IconHierarchy,
+  IconKey,
+  IconLock,
   IconPencil,
+  IconSettings,
   IconTrash,
   IconTrashX,
+  IconUserCog,
+  IconUsers,
   Section,
 } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
@@ -67,48 +75,55 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
     },
   ];
 
-  const settingsPermissionsConfig = [
+  const settingsPermissionsConfig: RolePermissionsSettingPermission[] = [
     {
       key: SettingsPermissions.API_KEYS_AND_WEBHOOKS,
-      label: 'API Keys and Webhooks',
+      label: 'Manage API Keys & Webhooks',
       type: 'Developer',
       value: role.canUpdateAllSettings,
-    },
-    {
-      key: SettingsPermissions.ROLES,
-      label: 'Roles',
-      type: 'Members',
-      value: role.canUpdateAllSettings,
+      icon: <IconCode size={14} />,
     },
     {
       key: SettingsPermissions.WORKSPACE,
-      label: 'Workspace Settings',
+      label: 'Manage Workspace Settings',
       type: 'General',
       value: role.canUpdateAllSettings,
+      icon: <IconSettings size={14} />,
     },
     {
       key: SettingsPermissions.WORKSPACE_MEMBERS,
-      label: 'Workspace Users',
+      label: 'Manage Members',
       type: 'Members',
       value: role.canUpdateAllSettings,
+      icon: <IconUsers size={14} />,
+    },
+    {
+      key: SettingsPermissions.ROLES,
+      label: 'Manage Roles',
+      type: 'Members',
+      value: role.canUpdateAllSettings,
+      icon: <IconLock size={14} />,
     },
     {
       key: SettingsPermissions.DATA_MODEL,
-      label: 'Data Model',
+      label: 'Manage Data Model',
       type: 'Data Model',
       value: role.canUpdateAllSettings,
+      icon: <IconHierarchy size={14} />,
     },
     {
       key: SettingsPermissions.ADMIN_PANEL,
-      label: 'Admin Panel',
+      label: 'Manage Admin Panel',
       type: 'Admin Panel',
       value: role.canUpdateAllSettings,
+      icon: <IconUserCog size={14} />,
     },
     {
       key: SettingsPermissions.SECURITY,
-      label: 'Security Settings',
+      label: 'Manage Security Settings',
       type: 'Security',
       value: role.canUpdateAllSettings,
+      icon: <IconKey size={14} />,
     },
   ];
 

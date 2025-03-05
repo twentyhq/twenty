@@ -3,4 +3,5 @@ export type RolePermissionsSettingPermission = {
   label: string;
   type: string;
   value: boolean;
+  icon: React.ReactNode;
 };
