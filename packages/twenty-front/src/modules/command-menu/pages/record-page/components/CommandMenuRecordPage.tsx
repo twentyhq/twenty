@@ -2,16 +2,17 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { isNewViewableRecordLoadingComponentState } from '@/command-menu/pages/record-page/states/isNewViewableRecordLoadingComponentState';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RIGHT_DRAWER_RECORD_INSTANCE_ID } from '@/object-record/record-right-drawer/constants/RightDrawerRecordInstanceId';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 
@@ -42,6 +43,14 @@ export const CommandMenuRecordPage = () => {
     viewableRecordId ?? '',
   );
 
+  const commandMenuPageInstanceId = useComponentInstanceStateContext(
+    CommandMenuPageComponentInstanceContext,
+  )?.instanceId;
+
+  if (!commandMenuPageInstanceId) {
+    throw new Error('Command menu page instance id is not defined');
+  }
+
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
       value={{ instanceId: `record-show-${objectRecordId}` }}
@@ -54,11 +63,11 @@ export const CommandMenuRecordPage = () => {
         >
           <ContextStoreComponentInstanceContext.Provider
             value={{
-              instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+              instanceId: commandMenuPageInstanceId,
             }}
           >
             <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID }}
+              value={{ instanceId: commandMenuPageInstanceId }}
             >
               <StyledRightDrawerRecord isMobile={isMobile}>
                 <RecordFieldValueSelectorContextProvider>

@@ -31,7 +31,6 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { RIGHT_DRAWER_RECORD_INSTANCE_ID } from '@/object-record/record-right-drawer/constants/RightDrawerRecordInstanceId';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
@@ -276,6 +275,7 @@ export const useCommandMenu = () => {
         isNewRecord?: boolean;
       }) => {
         const pageComponentInstanceId = v4();
+
         set(
           viewableRecordNameSingularComponentState.atomFamily({
             instanceId: pageComponentInstanceId,
@@ -307,14 +307,14 @@ export const useCommandMenu = () => {
 
         set(
           contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
-            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+            instanceId: pageComponentInstanceId,
           }),
           objectMetadataItem,
         );
 
         set(
           contextStoreTargetedRecordsRuleComponentState.atomFamily({
-            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+            instanceId: pageComponentInstanceId,
           }),
           {
             mode: 'selection',
@@ -324,21 +324,21 @@ export const useCommandMenu = () => {
 
         set(
           contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+            instanceId: pageComponentInstanceId,
           }),
           1,
         );
 
         set(
           contextStoreCurrentViewTypeComponentState.atomFamily({
-            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+            instanceId: pageComponentInstanceId,
           }),
           ContextStoreViewType.ShowPage,
         );
 
         set(
           contextStoreCurrentViewIdComponentState.atomFamily({
-            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+            instanceId: pageComponentInstanceId,
           }),
           snapshot
             .getLoadable(
