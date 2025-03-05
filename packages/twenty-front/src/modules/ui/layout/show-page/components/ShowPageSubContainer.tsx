@@ -1,4 +1,5 @@
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
+import { RecordShowRightDrawerOpenRecordButton } from '@/action-menu/components/RecordShowRightDrawerOpenRecordButton';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
@@ -9,6 +10,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
+import { ShowPageSubContainerTabListContainer } from '@/ui/layout/show-page/components/ShowPageSubContainerTabListContainer';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -26,14 +28,8 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
 `;
 
 const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
-  align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
   display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-`;
+`.withComponent(ShowPageSubContainerTabListContainer);
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;
@@ -138,8 +134,16 @@ export const ShowPageSubContainer = ({
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
         </StyledContentContainer>
-        {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
-          <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
+        {isInRightDrawer && recordFromStore && (
+          <RightDrawerFooter
+            actions={[
+              <RecordShowRightDrawerActionMenu />,
+              <RecordShowRightDrawerOpenRecordButton
+                objectNameSingular={targetableObject.targetObjectNameSingular}
+                record={recordFromStore}
+              />,
+            ]}
+          />
         )}
       </StyledShowPageRightContainer>
     </>

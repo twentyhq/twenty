@@ -2,23 +2,27 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
-import { useGetViewFilterGroupsCombined } from '@/views/hooks/useGetCombinedViewFilterGroups';
-import { useGetViewFiltersCombined } from '@/views/hooks/useGetCombinedViewFilters';
-import { useGetViewSortsCombined } from '@/views/hooks/useGetCombinedViewSorts';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
+import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
+import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
+import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
@@ -36,12 +40,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { createViewFieldRecords } = usePersistViewFieldRecords();
 
-  const { getViewSortsCombined } = useGetViewSortsCombined(viewBarComponentId);
-  const { getViewFiltersCombined } =
-    useGetViewFiltersCombined(viewBarComponentId);
-  const { getViewFilterGroupsCombined } =
-    useGetViewFilterGroupsCombined(viewBarComponentId);
-
   const { createViewSortRecords } = usePersistViewSortRecords();
 
   const { createViewGroupRecords } = usePersistViewGroupRecords();
@@ -56,6 +54,18 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
     objectNameSingular: CoreObjectNameSingular.View,
     fetchPolicy: 'network-only',
   });
+
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
+  );
+
+  const currentRecordSorts = useRecoilComponentValueV2(
+    currentRecordSortsComponentState,
+  );
+
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
 
   const createViewFromCurrentView = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -157,20 +167,24 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         if (shouldCopyFiltersAndSortsAndAggregate === true) {
-          const sourceViewCombinedFilterGroups = getViewFilterGroupsCombined(
-            sourceView.id,
+          const viewFilterGroupsToCreate = currentRecordFilterGroups.map(
+            (recordFilterGroup) =>
+              mapRecordFilterGroupToViewFilterGroup({
+                recordFilterGroup,
+                view: newView,
+              }),
           );
-          const sourceViewCombinedFilters = getViewFiltersCombined(
-            sourceView.id,
-          );
-          const sourceViewCombinedSorts = getViewSortsCombined(sourceView.id);
 
-          await createViewSortRecords(sourceViewCombinedSorts, newView);
-          await createViewFilterRecords(sourceViewCombinedFilters, newView);
-          await createViewFilterGroupRecords(
-            sourceViewCombinedFilterGroups,
-            newView,
+          const viewSortsToCreate = currentRecordSorts.map(
+            mapRecordSortToViewSort,
           );
+          const viewFiltersToCreate = currentRecordFilters.map(
+            mapRecordFilterToViewFilter,
+          );
+
+          await createViewSortRecords(viewSortsToCreate, newView);
+          await createViewFilterRecords(viewFiltersToCreate, newView);
+          await createViewFilterGroupRecords(viewFilterGroupsToCreate, newView);
         }
 
         await findManyRecords();
@@ -183,12 +197,12 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       findManyRecords,
       objectMetadataItem.fields,
       createViewGroupRecords,
-      getViewFilterGroupsCombined,
-      getViewFiltersCombined,
-      getViewSortsCombined,
       createViewSortRecords,
       createViewFilterRecords,
       createViewFilterGroupRecords,
+      currentRecordFilters,
+      currentRecordSorts,
+      currentRecordFilterGroups,
     ],
   );
 

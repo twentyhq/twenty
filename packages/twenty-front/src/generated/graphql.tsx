@@ -27,7 +27,10 @@ export type ActivateWorkspaceInput = {
 
 export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
+  description: Scalars['String'];
   details?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  label: Scalars['String'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
   status: AdminPanelHealthServiceStatus;
 };
@@ -37,19 +40,11 @@ export enum AdminPanelHealthServiceStatus {
   OUTAGE = 'OUTAGE'
 }
 
-export enum AdminPanelIndicatorHealthStatusInputEnum {
-  DATABASE = 'DATABASE',
-  MESSAGE_SYNC = 'MESSAGE_SYNC',
-  REDIS = 'REDIS',
-  WORKER = 'WORKER'
-}
-
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
-  metrics: WorkerQueueMetrics;
-  name: Scalars['String'];
+  id: Scalars['String'];
+  queueName: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
-  workers: Scalars['Float'];
 };
 
 export type Analytics = {
@@ -93,6 +88,14 @@ export type AppTokenEdge = {
   cursor: Scalars['ConnectionCursor'];
   /** The node containing the AppToken */
   node: AppToken;
+};
+
+export type ApprovedAccessDomain = {
+  __typename?: 'ApprovedAccessDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
+  isValidated: Scalars['Boolean'];
 };
 
 export type AuthProviders = {
@@ -243,11 +246,6 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type BuildDraftServerlessFunctionInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
-};
-
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING'
@@ -292,6 +290,11 @@ export type ClientConfig = {
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
+};
+
+export type CreateApprovedAccessDomainInput = {
+  domain: Scalars['String'];
+  email: Scalars['String'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -363,6 +366,10 @@ export type CustomDomainValidRecords = {
   customDomain: Scalars['String'];
   id: Scalars['String'];
   records: Array<CustomDomainRecord>;
+};
+
+export type DeleteApprovedAccessDomainInput = {
+  id: Scalars['String'];
 };
 
 export type DeleteOneFieldInput = {
@@ -482,6 +489,7 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
   IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
@@ -491,7 +499,6 @@ export enum FeatureFlagKey {
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
-  IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
@@ -618,6 +625,23 @@ export type GetServerlessFunctionSourceCodeInput = {
   /** The version of the function */
   version?: Scalars['String'];
 };
+
+export type GlobalSearchRecord = {
+  __typename?: 'GlobalSearchRecord';
+  imageUrl?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
+  objectSingularName: Scalars['String'];
+  recordId: Scalars['String'];
+  tsRank: Scalars['Float'];
+  tsRankCD: Scalars['Float'];
+};
+
+export enum HealthIndicatorId {
+  connectedAccount = 'connectedAccount',
+  database = 'database',
+  redis = 'redis',
+  worker = 'worker'
+}
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -760,10 +784,10 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
-  buildDraftServerlessFunction: ServerlessFunction;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createApprovedAccessDomain: ApprovedAccessDomain;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
@@ -773,6 +797,7 @@ export type Mutation = {
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
+  deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
@@ -801,6 +826,7 @@ export type Mutation = {
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
+  submitFormStep: Scalars['Boolean'];
   track: Analytics;
   updateBillingSubscription: BillingUpdateOutput;
   updateLabPublicFeatureFlag: FeatureFlag;
@@ -817,6 +843,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   userLookupAdminPanel: UserLookup;
+  validateApprovedAccessDomain: ApprovedAccessDomain;
 };
 
 
@@ -837,11 +864,6 @@ export type MutationAuthorizeAppArgs = {
 };
 
 
-export type MutationBuildDraftServerlessFunctionArgs = {
-  input: BuildDraftServerlessFunctionInput;
-};
-
-
 export type MutationCheckoutSessionArgs = {
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
@@ -852,6 +874,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateApprovedAccessDomainArgs = {
+  input: CreateApprovedAccessDomainInput;
 };
 
 
@@ -887,6 +914,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
+};
+
+
+export type MutationDeleteApprovedAccessDomainArgs = {
+  input: DeleteApprovedAccessDomainInput;
 };
 
 
@@ -927,6 +959,7 @@ export type MutationEditSsoIdentityProviderArgs = {
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
+  workspaceId: Scalars['String'];
 };
 
 
@@ -1011,6 +1044,11 @@ export type MutationSignUpArgs = {
 };
 
 
+export type MutationSubmitFormStepArgs = {
+  input: SubmitFormStepInput;
+};
+
+
 export type MutationTrackArgs = {
   action: Scalars['String'];
   payload: Scalars['JSON'];
@@ -1061,7 +1099,7 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 
 
 export type MutationUpdateWorkspaceMemberRoleArgs = {
-  roleId?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['String'];
   workspaceMemberId: Scalars['String'];
 };
 
@@ -1092,6 +1130,11 @@ export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String'];
 };
 
+
+export type MutationValidateApprovedAccessDomainArgs = {
+  input: ValidateApprovedAccessDomainInput;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime'];
@@ -1108,6 +1151,7 @@ export type Object = {
   isCustom: Scalars['Boolean'];
   isLabelSyncedWithName: Scalars['Boolean'];
   isRemote: Scalars['Boolean'];
+  isSearchable: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural: Scalars['String'];
@@ -1160,6 +1204,7 @@ export type ObjectFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isRemote?: InputMaybe<BooleanFieldComparison>;
+  isSearchable?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
 };
@@ -1252,27 +1297,29 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findAvailableWorkspacesByEmail: Array<AvailableWorkspaceOutput>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
+  getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  globalSearch: Array<GlobalSearchRecord>;
   index: Index;
   indexMetadatas: IndexConnection;
-  listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -1296,11 +1343,6 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
-export type QueryFindAvailableWorkspacesByEmailArgs = {
-  email: Scalars['String'];
-};
-
-
 export type QueryFindOneServerlessFunctionArgs = {
   input: ServerlessFunctionIdInput;
 };
@@ -1317,12 +1359,18 @@ export type QueryGetAvailablePackagesArgs = {
 
 
 export type QueryGetIndicatorHealthStatusArgs = {
-  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
+  indicatorId: HealthIndicatorId;
 };
 
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
+};
+
+
+export type QueryGetQueueMetricsArgs = {
+  queueName: Scalars['String'];
+  timeRange?: InputMaybe<QueueMetricsTimeRange>;
 };
 
 
@@ -1359,9 +1407,45 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 };
 
 
+export type QueryGlobalSearchArgs = {
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
+  limit: Scalars['Int'];
+  searchInput: Scalars['String'];
+};
+
+
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
 };
+
+export type QueueMetricsData = {
+  __typename?: 'QueueMetricsData';
+  data: Array<QueueMetricsSeries>;
+  details?: Maybe<WorkerQueueMetrics>;
+  queueName: Scalars['String'];
+  timeRange: QueueMetricsTimeRange;
+  workers: Scalars['Float'];
+};
+
+export type QueueMetricsDataPoint = {
+  __typename?: 'QueueMetricsDataPoint';
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type QueueMetricsSeries = {
+  __typename?: 'QueueMetricsSeries';
+  data: Array<QueueMetricsDataPoint>;
+  id: Scalars['String'];
+};
+
+export enum QueueMetricsTimeRange {
+  FourHours = 'FourHours',
+  OneDay = 'OneDay',
+  OneHour = 'OneHour',
+  SevenDays = 'SevenDays',
+  TwelveHours = 'TwelveHours'
+}
 
 export type Relation = {
   __typename?: 'Relation';
@@ -1574,14 +1658,14 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY'
 }
 
-export enum SettingsFeatures {
+export enum SettingsPermissions {
   ADMIN_PANEL = 'ADMIN_PANEL',
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   WORKSPACE = 'WORKSPACE',
-  WORKSPACE_USERS = 'WORKSPACE_USERS'
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
 
 export type SetupOidcSsoInput = {
@@ -1615,6 +1699,15 @@ export type SignUpOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export type SubmitFormStepInput = {
+  /** Form response in JSON format */
+  response: Scalars['JSON'];
+  /** Workflow version ID */
+  stepId: Scalars['String'];
+  /** Workflow run ID */
+  workflowRunId: Scalars['String'];
+};
+
 export enum SubscriptionInterval {
   Day = 'Day',
   Month = 'Month',
@@ -1641,10 +1734,14 @@ export type Support = {
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
-  database: AdminPanelHealthServiceData;
-  messageSync: AdminPanelHealthServiceData;
-  redis: AdminPanelHealthServiceData;
-  worker: AdminPanelHealthServiceData;
+  services: Array<SystemHealthService>;
+};
+
+export type SystemHealthService = {
+  __typename?: 'SystemHealthService';
+  id: HealthIndicatorId;
+  label: Scalars['String'];
+  status: AdminPanelHealthServiceStatus;
 };
 
 export type TimelineCalendarEvent = {
@@ -1799,6 +1896,7 @@ export type UpdateWorkflowVersionStepInput = {
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   customDomain?: InputMaybe<Scalars['String']>;
+  defaultRoleId?: InputMaybe<Scalars['String']>;
   displayName?: InputMaybe<Scalars['String']>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -1812,6 +1910,7 @@ export type UpdateWorkspaceInput = {
 export type User = {
   __typename?: 'User';
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
+  canAccessFullAdminPanel: Scalars['Boolean'];
   canImpersonate: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   currentUserWorkspace?: Maybe<UserWorkspace>;
@@ -1882,12 +1981,17 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
-  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
+  settingsPermissions?: Maybe<Array<SettingsPermissions>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
   workspace?: Maybe<Workspace>;
   workspaceId: Scalars['String'];
+};
+
+export type ValidateApprovedAccessDomainInput = {
+  approvedAccessDomainId: Scalars['String'];
+  validationToken: Scalars['String'];
 };
 
 export type ValidatePasswordResetToken = {
@@ -1900,9 +2004,11 @@ export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float'];
   completed: Scalars['Float'];
+  completedData?: Maybe<Array<Scalars['Float']>>;
   delayed: Scalars['Float'];
   failed: Scalars['Float'];
-  prioritized: Scalars['Float'];
+  failedData?: Maybe<Array<Scalars['Float']>>;
+  failureRate: Scalars['Float'];
   waiting: Scalars['Float'];
 };
 
@@ -1935,6 +2041,7 @@ export type Workspace = {
   customDomain?: Maybe<Scalars['String']>;
   databaseSchema: Scalars['String'];
   databaseUrl: Scalars['String'];
+  defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   featureFlags?: Maybe<Array<FeatureFlag>>;
@@ -1950,6 +2057,7 @@ export type Workspace = {
   metadataVersion: Scalars['Float'];
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  version?: Maybe<Scalars['String']>;
   workspaceMembersCount?: Maybe<Scalars['Float']>;
   workspaceUrls: WorkspaceUrls;
 };
@@ -2089,6 +2197,11 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
+export type EmptyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EmptyQuery = { __typename: 'Query' };
+
 export type TrackMutationVariables = Exact<{
   action: Scalars['String'];
   payload: Scalars['JSON'];
@@ -2130,6 +2243,7 @@ export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __
 
 export type EmailPasswordResetLinkMutationVariables = Exact<{
   email: Scalars['String'];
+  workspaceId: Scalars['String'];
 }>;
 
 
@@ -2276,6 +2390,15 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, isAttachmentPreviewEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, isMicrosoftMessagingEnabled: boolean, isMicrosoftCalendarEnabled: boolean, isGoogleMessagingEnabled: boolean, isGoogleCalendarEnabled: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
 
+export type GlobalSearchQueryVariables = Exact<{
+  searchInput: Scalars['String'];
+  limit: Scalars['Int'];
+  excludedObjectNameSingulars: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type GlobalSearchQuery = { __typename?: 'Query', globalSearch: Array<{ __typename?: 'GlobalSearchRecord', recordId: string, objectSingularName: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number }> };
+
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2303,16 +2426,24 @@ export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]
 export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> } };
 
 export type GetIndicatorHealthStatusQueryVariables = Exact<{
-  indicatorName: AdminPanelIndicatorHealthStatusInputEnum;
+  indicatorId: HealthIndicatorId;
 }>;
 
 
-export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', name: string, status: AdminPanelHealthServiceStatus, workers: number, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null } };
+export type GetIndicatorHealthStatusQuery = { __typename?: 'Query', getIndicatorHealthStatus: { __typename?: 'AdminPanelHealthServiceData', id: string, label: string, description: string, status: AdminPanelHealthServiceStatus, details?: string | null, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', id: string, queueName: string, status: AdminPanelHealthServiceStatus }> | null } };
+
+export type GetQueueMetricsQueryVariables = Exact<{
+  queueName: Scalars['String'];
+  timeRange?: InputMaybe<QueueMetricsTimeRange>;
+}>;
+
+
+export type GetQueueMetricsQuery = { __typename?: 'Query', getQueueMetrics: { __typename?: 'QueueMetricsData', queueName: string, timeRange: QueueMetricsTimeRange, workers: number, details?: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, failureRate: number } | null, data: Array<{ __typename?: 'QueueMetricsSeries', id: string, data: Array<{ __typename?: 'QueueMetricsDataPoint', x: number, y: number }> }> } };
 
 export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', database: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null }, redis: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null }, worker: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, queues?: Array<{ __typename?: 'AdminPanelWorkerQueueHealth', name: string, workers: number, status: AdminPanelHealthServiceStatus, metrics: { __typename?: 'WorkerQueueMetrics', failed: number, completed: number, waiting: number, active: number, delayed: number, prioritized: number } }> | null }, messageSync: { __typename?: 'AdminPanelHealthServiceData', status: AdminPanelHealthServiceStatus, details?: string | null } } };
+export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -2321,20 +2452,27 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean } };
 
-export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean };
+export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean };
 
 export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
   workspaceMemberId: Scalars['String'];
-  roleId?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['String'];
 }>;
 
 
-export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
+export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
 
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> }> };
+
+export type CreateApprovedAccessDomainMutationVariables = Exact<{
+  input: CreateApprovedAccessDomainInput;
+}>;
+
+
+export type CreateApprovedAccessDomainMutation = { __typename?: 'Mutation', createApprovedAccessDomain: { __typename?: 'ApprovedAccessDomain', id: any, domain: string, isValidated: boolean, createdAt: string } };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -2350,6 +2488,13 @@ export type CreateSamlIdentityProviderMutationVariables = Exact<{
 
 export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
+export type DeleteApprovedAccessDomainMutationVariables = Exact<{
+  input: DeleteApprovedAccessDomainInput;
+}>;
+
+
+export type DeleteApprovedAccessDomainMutation = { __typename?: 'Mutation', deleteApprovedAccessDomain: boolean };
+
 export type DeleteSsoIdentityProviderMutationVariables = Exact<{
   input: DeleteSsoInput;
 }>;
@@ -2364,12 +2509,24 @@ export type EditSsoIdentityProviderMutationVariables = Exact<{
 
 export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
-export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
+export type ValidateApprovedAccessDomainMutationVariables = Exact<{
+  input: ValidateApprovedAccessDomainInput;
+}>;
 
 
-export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+export type ValidateApprovedAccessDomainMutation = { __typename?: 'Mutation', validateApprovedAccessDomain: { __typename?: 'ApprovedAccessDomain', id: any, isValidated: boolean, domain: string, createdAt: string } };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingsFeatures> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> };
+export type GetApprovedAccessDomainsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetApprovedAccessDomainsQuery = { __typename?: 'Query', getApprovedAccessDomains: Array<{ __typename?: 'ApprovedAccessDomain', id: any, createdAt: string, domain: string, isValidated: boolean }> };
+
+export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+
+export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingsPermissions> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2386,7 +2543,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingsFeatures> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }> } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingsPermissions> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> } };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
@@ -2489,7 +2646,7 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: any, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean } };
+export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: any, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } };
 
 export type UploadWorkspaceLogoMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -2609,15 +2766,6 @@ export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
   }
 }
     `;
-export const RoleFragmentFragmentDoc = gql`
-    fragment RoleFragment on Role {
-  id
-  label
-  description
-  canUpdateAllSettings
-  isEditable
-}
-    `;
 export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
     fragment WorkspaceMemberQueryFragment on WorkspaceMember {
   id
@@ -2634,12 +2782,26 @@ export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
   timeFormat
 }
     `;
+export const RoleFragmentFragmentDoc = gql`
+    fragment RoleFragment on Role {
+  id
+  label
+  description
+  canUpdateAllSettings
+  isEditable
+  canReadAllObjectRecords
+  canUpdateAllObjectRecords
+  canSoftDeleteAllObjectRecords
+  canDestroyAllObjectRecords
+}
+    `;
 export const UserQueryFragmentFragmentDoc = gql`
     fragment UserQueryFragment on User {
   id
   firstName
   lastName
   email
+  canAccessFullAdminPanel
   canImpersonate
   supportUserHash
   analyticsTinybirdJwts {
@@ -2675,6 +2837,7 @@ export const UserQueryFragmentFragmentDoc = gql`
     subdomain
     hasValidEnterpriseKey
     customDomain
+    isCustomDomainEnabled
     workspaceUrls {
       subdomainUrl
       customUrl
@@ -2696,6 +2859,9 @@ export const UserQueryFragmentFragmentDoc = gql`
       status
     }
     workspaceMembersCount
+    defaultRole {
+      ...RoleFragment
+    }
   }
   workspaces {
     workspace {
@@ -2712,7 +2878,8 @@ export const UserQueryFragmentFragmentDoc = gql`
   }
   userVars
 }
-    ${WorkspaceMemberQueryFragmentFragmentDoc}`;
+    ${WorkspaceMemberQueryFragmentFragmentDoc}
+${RoleFragmentFragmentDoc}`;
 export const GetTimelineCalendarEventsFromCompanyIdDocument = gql`
     query GetTimelineCalendarEventsFromCompanyId($companyId: UUID!, $page: Int!, $pageSize: Int!) {
   getTimelineCalendarEventsFromCompanyId(
@@ -2877,6 +3044,38 @@ export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.
 export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
+export const EmptyDocument = gql`
+    query Empty {
+  __typename
+}
+    `;
+
+/**
+ * __useEmptyQuery__
+ *
+ * To run a query within a React component, call `useEmptyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEmptyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEmptyQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEmptyQuery(baseOptions?: Apollo.QueryHookOptions<EmptyQuery, EmptyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EmptyQuery, EmptyQueryVariables>(EmptyDocument, options);
+      }
+export function useEmptyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EmptyQuery, EmptyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EmptyQuery, EmptyQueryVariables>(EmptyDocument, options);
+        }
+export type EmptyQueryHookResult = ReturnType<typeof useEmptyQuery>;
+export type EmptyLazyQueryHookResult = ReturnType<typeof useEmptyLazyQuery>;
+export type EmptyQueryResult = Apollo.QueryResult<EmptyQuery, EmptyQueryVariables>;
 export const TrackDocument = gql`
     mutation Track($action: String!, $payload: JSON!) {
   track(action: $action, payload: $payload) {
@@ -3015,8 +3214,8 @@ export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMu
 export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
 export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
 export const EmailPasswordResetLinkDocument = gql`
-    mutation EmailPasswordResetLink($email: String!) {
-  emailPasswordResetLink(email: $email) {
+    mutation EmailPasswordResetLink($email: String!, $workspaceId: String!) {
+  emailPasswordResetLink(email: $email, workspaceId: $workspaceId) {
     success
   }
 }
@@ -3037,6 +3236,7 @@ export type EmailPasswordResetLinkMutationFn = Apollo.MutationFunction<EmailPass
  * const [emailPasswordResetLinkMutation, { data, loading, error }] = useEmailPasswordResetLinkMutation({
  *   variables: {
  *      email: // value for 'email'
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
@@ -3856,6 +4056,52 @@ export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
+export const GlobalSearchDocument = gql`
+    query GlobalSearch($searchInput: String!, $limit: Int!, $excludedObjectNameSingulars: [String!]!) {
+  globalSearch(
+    searchInput: $searchInput
+    limit: $limit
+    excludedObjectNameSingulars: $excludedObjectNameSingulars
+  ) {
+    recordId
+    objectSingularName
+    label
+    imageUrl
+    tsRankCD
+    tsRank
+  }
+}
+    `;
+
+/**
+ * __useGlobalSearchQuery__
+ *
+ * To run a query within a React component, call `useGlobalSearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGlobalSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGlobalSearchQuery({
+ *   variables: {
+ *      searchInput: // value for 'searchInput'
+ *      limit: // value for 'limit'
+ *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
+ *   },
+ * });
+ */
+export function useGlobalSearchQuery(baseOptions: Apollo.QueryHookOptions<GlobalSearchQuery, GlobalSearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GlobalSearchQuery, GlobalSearchQueryVariables>(GlobalSearchDocument, options);
+      }
+export function useGlobalSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GlobalSearchQuery, GlobalSearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GlobalSearchQuery, GlobalSearchQueryVariables>(GlobalSearchDocument, options);
+        }
+export type GlobalSearchQueryHookResult = ReturnType<typeof useGlobalSearchQuery>;
+export type GlobalSearchLazyQueryHookResult = ReturnType<typeof useGlobalSearchLazyQuery>;
+export type GlobalSearchQueryResult = Apollo.QueryResult<GlobalSearchQuery, GlobalSearchQueryVariables>;
 export const SkipSyncEmailOnboardingStepDocument = gql`
     mutation SkipSyncEmailOnboardingStep {
   skipSyncEmailOnboardingStep {
@@ -4025,22 +4271,17 @@ export type GetEnvironmentVariablesGroupedQueryHookResult = ReturnType<typeof us
 export type GetEnvironmentVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedLazyQuery>;
 export type GetEnvironmentVariablesGroupedQueryResult = Apollo.QueryResult<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>;
 export const GetIndicatorHealthStatusDocument = gql`
-    query GetIndicatorHealthStatus($indicatorName: AdminPanelIndicatorHealthStatusInputEnum!) {
-  getIndicatorHealthStatus(indicatorName: $indicatorName) {
+    query GetIndicatorHealthStatus($indicatorId: HealthIndicatorId!) {
+  getIndicatorHealthStatus(indicatorId: $indicatorId) {
+    id
+    label
+    description
     status
     details
     queues {
-      name
+      id
+      queueName
       status
-      workers
-      metrics {
-        failed
-        completed
-        waiting
-        active
-        delayed
-        prioritized
-      }
     }
   }
 }
@@ -4058,7 +4299,7 @@ export const GetIndicatorHealthStatusDocument = gql`
  * @example
  * const { data, loading, error } = useGetIndicatorHealthStatusQuery({
  *   variables: {
- *      indicatorName: // value for 'indicatorName'
+ *      indicatorId: // value for 'indicatorId'
  *   },
  * });
  */
@@ -4073,36 +4314,66 @@ export function useGetIndicatorHealthStatusLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetIndicatorHealthStatusQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusQuery>;
 export type GetIndicatorHealthStatusLazyQueryHookResult = ReturnType<typeof useGetIndicatorHealthStatusLazyQuery>;
 export type GetIndicatorHealthStatusQueryResult = Apollo.QueryResult<GetIndicatorHealthStatusQuery, GetIndicatorHealthStatusQueryVariables>;
+export const GetQueueMetricsDocument = gql`
+    query GetQueueMetrics($queueName: String!, $timeRange: QueueMetricsTimeRange) {
+  getQueueMetrics(queueName: $queueName, timeRange: $timeRange) {
+    queueName
+    timeRange
+    workers
+    details {
+      failed
+      completed
+      waiting
+      active
+      delayed
+      failureRate
+    }
+    data {
+      id
+      data {
+        x
+        y
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetQueueMetricsQuery__
+ *
+ * To run a query within a React component, call `useGetQueueMetricsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetQueueMetricsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQueueMetricsQuery({
+ *   variables: {
+ *      queueName: // value for 'queueName'
+ *      timeRange: // value for 'timeRange'
+ *   },
+ * });
+ */
+export function useGetQueueMetricsQuery(baseOptions: Apollo.QueryHookOptions<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>(GetQueueMetricsDocument, options);
+      }
+export function useGetQueueMetricsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>(GetQueueMetricsDocument, options);
+        }
+export type GetQueueMetricsQueryHookResult = ReturnType<typeof useGetQueueMetricsQuery>;
+export type GetQueueMetricsLazyQueryHookResult = ReturnType<typeof useGetQueueMetricsLazyQuery>;
+export type GetQueueMetricsQueryResult = Apollo.QueryResult<GetQueueMetricsQuery, GetQueueMetricsQueryVariables>;
 export const GetSystemHealthStatusDocument = gql`
     query GetSystemHealthStatus {
   getSystemHealthStatus {
-    database {
+    services {
+      id
+      label
       status
-      details
-    }
-    redis {
-      status
-      details
-    }
-    worker {
-      status
-      queues {
-        name
-        workers
-        status
-        metrics {
-          failed
-          completed
-          waiting
-          active
-          delayed
-          prioritized
-        }
-      }
-    }
-    messageSync {
-      status
-      details
     }
   }
 }
@@ -4170,7 +4441,7 @@ export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof use
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
 export const UpdateWorkspaceMemberRoleDocument = gql`
-    mutation UpdateWorkspaceMemberRole($workspaceMemberId: String!, $roleId: String) {
+    mutation UpdateWorkspaceMemberRole($workspaceMemberId: String!, $roleId: String!) {
   updateWorkspaceMemberRole(
     workspaceMemberId: $workspaceMemberId
     roleId: $roleId
@@ -4248,6 +4519,42 @@ export function useGetRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetRolesQueryHookResult = ReturnType<typeof useGetRolesQuery>;
 export type GetRolesLazyQueryHookResult = ReturnType<typeof useGetRolesLazyQuery>;
 export type GetRolesQueryResult = Apollo.QueryResult<GetRolesQuery, GetRolesQueryVariables>;
+export const CreateApprovedAccessDomainDocument = gql`
+    mutation CreateApprovedAccessDomain($input: CreateApprovedAccessDomainInput!) {
+  createApprovedAccessDomain(input: $input) {
+    id
+    domain
+    isValidated
+    createdAt
+  }
+}
+    `;
+export type CreateApprovedAccessDomainMutationFn = Apollo.MutationFunction<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>;
+
+/**
+ * __useCreateApprovedAccessDomainMutation__
+ *
+ * To run a mutation, you first call `useCreateApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateApprovedAccessDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createApprovedAccessDomainMutation, { data, loading, error }] = useCreateApprovedAccessDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>(CreateApprovedAccessDomainDocument, options);
+      }
+export type CreateApprovedAccessDomainMutationHookResult = ReturnType<typeof useCreateApprovedAccessDomainMutation>;
+export type CreateApprovedAccessDomainMutationResult = Apollo.MutationResult<CreateApprovedAccessDomainMutation>;
+export type CreateApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<CreateApprovedAccessDomainMutation, CreateApprovedAccessDomainMutationVariables>;
 export const CreateOidcIdentityProviderDocument = gql`
     mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
   createOIDCIdentityProvider(input: $input) {
@@ -4322,6 +4629,37 @@ export function useCreateSamlIdentityProviderMutation(baseOptions?: Apollo.Mutat
 export type CreateSamlIdentityProviderMutationHookResult = ReturnType<typeof useCreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationResult = Apollo.MutationResult<CreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationOptions = Apollo.BaseMutationOptions<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>;
+export const DeleteApprovedAccessDomainDocument = gql`
+    mutation DeleteApprovedAccessDomain($input: DeleteApprovedAccessDomainInput!) {
+  deleteApprovedAccessDomain(input: $input)
+}
+    `;
+export type DeleteApprovedAccessDomainMutationFn = Apollo.MutationFunction<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>;
+
+/**
+ * __useDeleteApprovedAccessDomainMutation__
+ *
+ * To run a mutation, you first call `useDeleteApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteApprovedAccessDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteApprovedAccessDomainMutation, { data, loading, error }] = useDeleteApprovedAccessDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>(DeleteApprovedAccessDomainDocument, options);
+      }
+export type DeleteApprovedAccessDomainMutationHookResult = ReturnType<typeof useDeleteApprovedAccessDomainMutation>;
+export type DeleteApprovedAccessDomainMutationResult = Apollo.MutationResult<DeleteApprovedAccessDomainMutation>;
+export type DeleteApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<DeleteApprovedAccessDomainMutation, DeleteApprovedAccessDomainMutationVariables>;
 export const DeleteSsoIdentityProviderDocument = gql`
     mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
   deleteSSOIdentityProvider(input: $input) {
@@ -4392,9 +4730,82 @@ export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.Mutation
 export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
 export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
-export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
-    query ListSSOIdentityProvidersByWorkspaceId {
-  listSSOIdentityProvidersByWorkspaceId {
+export const ValidateApprovedAccessDomainDocument = gql`
+    mutation ValidateApprovedAccessDomain($input: ValidateApprovedAccessDomainInput!) {
+  validateApprovedAccessDomain(input: $input) {
+    id
+    isValidated
+    domain
+    createdAt
+  }
+}
+    `;
+export type ValidateApprovedAccessDomainMutationFn = Apollo.MutationFunction<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>;
+
+/**
+ * __useValidateApprovedAccessDomainMutation__
+ *
+ * To run a mutation, you first call `useValidateApprovedAccessDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useValidateApprovedAccessDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [validateApprovedAccessDomainMutation, { data, loading, error }] = useValidateApprovedAccessDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useValidateApprovedAccessDomainMutation(baseOptions?: Apollo.MutationHookOptions<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>(ValidateApprovedAccessDomainDocument, options);
+      }
+export type ValidateApprovedAccessDomainMutationHookResult = ReturnType<typeof useValidateApprovedAccessDomainMutation>;
+export type ValidateApprovedAccessDomainMutationResult = Apollo.MutationResult<ValidateApprovedAccessDomainMutation>;
+export type ValidateApprovedAccessDomainMutationOptions = Apollo.BaseMutationOptions<ValidateApprovedAccessDomainMutation, ValidateApprovedAccessDomainMutationVariables>;
+export const GetApprovedAccessDomainsDocument = gql`
+    query GetApprovedAccessDomains {
+  getApprovedAccessDomains {
+    id
+    createdAt
+    domain
+    isValidated
+  }
+}
+    `;
+
+/**
+ * __useGetApprovedAccessDomainsQuery__
+ *
+ * To run a query within a React component, call `useGetApprovedAccessDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApprovedAccessDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApprovedAccessDomainsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetApprovedAccessDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>(GetApprovedAccessDomainsDocument, options);
+      }
+export function useGetApprovedAccessDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>(GetApprovedAccessDomainsDocument, options);
+        }
+export type GetApprovedAccessDomainsQueryHookResult = ReturnType<typeof useGetApprovedAccessDomainsQuery>;
+export type GetApprovedAccessDomainsLazyQueryHookResult = ReturnType<typeof useGetApprovedAccessDomainsLazyQuery>;
+export type GetApprovedAccessDomainsQueryResult = Apollo.QueryResult<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>;
+export const GetSsoIdentityProvidersDocument = gql`
+    query GetSSOIdentityProviders {
+  getSSOIdentityProviders {
     type
     id
     name
@@ -4405,31 +4816,31 @@ export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     `;
 
 /**
- * __useListSsoIdentityProvidersByWorkspaceIdQuery__
+ * __useGetSsoIdentityProvidersQuery__
  *
- * To run a query within a React component, call `useListSsoIdentityProvidersByWorkspaceIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useListSsoIdentityProvidersByWorkspaceIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetSsoIdentityProvidersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSsoIdentityProvidersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useListSsoIdentityProvidersByWorkspaceIdQuery({
+ * const { data, loading, error } = useGetSsoIdentityProvidersQuery({
  *   variables: {
  *   },
  * });
  */
-export function useListSsoIdentityProvidersByWorkspaceIdQuery(baseOptions?: Apollo.QueryHookOptions<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>) {
+export function useGetSsoIdentityProvidersQuery(baseOptions?: Apollo.QueryHookOptions<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
+        return Apollo.useQuery<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>(GetSsoIdentityProvidersDocument, options);
       }
-export function useListSsoIdentityProvidersByWorkspaceIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>) {
+export function useGetSsoIdentityProvidersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>(ListSsoIdentityProvidersByWorkspaceIdDocument, options);
+          return Apollo.useLazyQuery<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>(GetSsoIdentityProvidersDocument, options);
         }
-export type ListSsoIdentityProvidersByWorkspaceIdQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdQuery>;
-export type ListSsoIdentityProvidersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdLazyQuery>;
-export type ListSsoIdentityProvidersByWorkspaceIdQueryResult = Apollo.QueryResult<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>;
+export type GetSsoIdentityProvidersQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersQuery>;
+export type GetSsoIdentityProvidersLazyQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersLazyQuery>;
+export type GetSsoIdentityProvidersQueryResult = Apollo.QueryResult<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUser {
@@ -5024,9 +5435,12 @@ export const UpdateWorkspaceDocument = gql`
     isGoogleAuthEnabled
     isMicrosoftAuthEnabled
     isPasswordAuthEnabled
+    defaultRole {
+      ...RoleFragment
+    }
   }
 }
-    `;
+    ${RoleFragmentFragmentDoc}`;
 export type UpdateWorkspaceMutationFn = Apollo.MutationFunction<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
 
 /**

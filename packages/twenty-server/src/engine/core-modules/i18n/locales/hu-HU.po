@@ -128,6 +128,14 @@ msgstr "Fióktulajdonos cégek esetén"
 msgid "Account Owner For Companies"
 msgstr "Fióktulajdonos cégek esetén"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Művelet szükséges a munkaterület törlésének megakadályozásához"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Művelet szükséges a jelszó visszaállításához"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Cím"
@@ -586,6 +594,10 @@ msgstr "Irány"
 msgid "Display Name"
 msgstr "Megjelenítendő név"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr "A rekordok megjelenítése oldalsó panelen vagy rekordoldalon"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Megjelenítési érték"
@@ -970,6 +982,10 @@ msgstr "Szinkronizálás Aktiválva"
 msgid "Job Title"
 msgstr "Munkakör megnevezése"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Csatlakozzon a csapatához a Twentyn"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1327,6 +1343,10 @@ msgstr "Objektum Metaadat Azonosító"
 msgid "Object name"
 msgstr "Objektum neve"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr "Rekord megnyitása"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operándus"
@@ -1444,6 +1464,7 @@ msgstr "Telefonok"
 msgid "Point of Contact"
 msgstr "Kapcsolattartó"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2107,6 +2128,10 @@ msgstr "Webhorgok c&eacute;l URL-je"
 msgid "Webhooks"
 msgstr "Webhorgok"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Üdvözöljük a Twenty-ben: Kérjük, erősítse meg e-mail-címét"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2237,6 +2262,10 @@ msgid "Workspace member name"
 msgstr "Munkaterület tag neve"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Munkaterület tag pozíciója"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Munkaterület Tagjai"
 
@@ -2250,7 +2279,10 @@ msgstr "MunkaterületTag"
 msgid "X"
 msgstr "X"
 
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Jelszavát sikeresen megváltoztatta"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Az Ön csapatának megbízott tagja, aki a cégfiókot kezeli"
-

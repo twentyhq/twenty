@@ -1,5 +1,6 @@
 import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
@@ -22,6 +23,8 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
       limit: 3,
     });
 
+  const { openRootCommandMenu } = useCommandMenu();
+
   if (loading) {
     return null;
   }
@@ -34,16 +37,18 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
     />
   ));
 
-  const recordSelectionContextChip = totalCount
-    ? {
-        text: getSelectedRecordsContextText(
-          objectMetadataItem,
-          records,
-          totalCount,
-        ),
-        Icons: Avatars,
-      }
-    : undefined;
+  const recordSelectionContextChip =
+    totalCount && records.length > 0
+      ? {
+          text: getSelectedRecordsContextText(
+            objectMetadataItem,
+            records,
+            totalCount,
+          ),
+          Icons: Avatars,
+          onClick: contextChips.length > 0 ? openRootCommandMenu : undefined,
+        }
+      : undefined;
 
   const contextChipsWithRecordSelection = [
     recordSelectionContextChip,

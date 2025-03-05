@@ -39,7 +39,7 @@ export const AdvancedFilterRootLevelViewFilterGroup = ({
     childViewFiltersAndViewFilterGroups,
     lastChildPosition,
   } = useCurrentViewViewFilterGroup({
-    viewFilterGroupId: rootLevelViewFilterGroupId,
+    recordFilterGroupId: rootLevelViewFilterGroupId,
   });
 
   if (!isDefined(rootLevelViewFilterGroup)) {
@@ -49,11 +49,11 @@ export const AdvancedFilterRootLevelViewFilterGroup = ({
   return (
     <StyledContainer>
       {childViewFiltersAndViewFilterGroups.map((child, i) =>
-        child.__typename === 'ViewFilterGroup' ? (
+        (child as any).__typename === 'ViewFilterGroup' ? (
           <StyledRow key={child.id}>
             <AdvancedFilterLogicalOperatorCell
               index={i}
-              viewFilterGroup={rootLevelViewFilterGroup}
+              recordFilterGroup={rootLevelViewFilterGroup}
             />
             <AdvancedFilterViewFilterGroup viewFilterGroupId={child.id} />
             <AdvancedFilterRuleOptionsDropdown viewFilterGroupId={child.id} />
@@ -62,7 +62,7 @@ export const AdvancedFilterRootLevelViewFilterGroup = ({
           <StyledRow key={child.id}>
             <AdvancedFilterLogicalOperatorCell
               index={i}
-              viewFilterGroup={rootLevelViewFilterGroup}
+              recordFilterGroup={rootLevelViewFilterGroup}
             />
             <AdvancedFilterViewFilter viewFilterId={child.id} />
             <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
@@ -70,7 +70,7 @@ export const AdvancedFilterRootLevelViewFilterGroup = ({
         ),
       )}
       <AdvancedFilterAddFilterRuleSelect
-        viewFilterGroup={rootLevelViewFilterGroup}
+        recordFilterGroup={rootLevelViewFilterGroup}
         lastChildPosition={lastChildPosition}
       />
     </StyledContainer>

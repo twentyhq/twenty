@@ -128,6 +128,14 @@ msgstr "Kontoinhaber für Unternehmen"
 msgid "Account Owner For Companies"
 msgstr "Kontoinhaber für Unternehmen"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Aktion erforderlich, um die Löschung des Arbeitsbereichs zu verhindern"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Aktion erforderlich, um das Passwort zurückzusetzen"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Adresse"
@@ -586,6 +594,10 @@ msgstr "Richtung"
 msgid "Display Name"
 msgstr "Anzeigename"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr "Zeige die Datensätze in einem Seitenpanel oder auf einer Datensatzseite an"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Anzeigewert"
@@ -970,6 +982,10 @@ msgstr "Ist Synchronisierung aktiviert"
 msgid "Job Title"
 msgstr "Berufsbezeichnung"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Treten Sie Ihrem Team auf Twenty bei"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1327,6 +1343,10 @@ msgstr "Objekt-Metadaten-ID"
 msgid "Object name"
 msgstr "Objektname"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr "Datensatz öffnen in"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operand"
@@ -1444,6 +1464,7 @@ msgstr "Telefone"
 msgid "Point of Contact"
 msgstr "Ansprechpartner"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2107,6 +2128,10 @@ msgstr "Webhook-Ziel-URL"
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Willkommen bei Twenty: Bitte bestätigen Sie Ihre E-Mail-Adresse"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2237,6 +2262,10 @@ msgid "Workspace member name"
 msgstr "Name des Arbeitsbereichsmitglieds"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Position des Arbeitsbereichsmitglieds"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Arbeitsbereichsmitglieder"
 
@@ -2250,7 +2279,10 @@ msgstr "Arbeitsbereichsmitglied"
 msgid "X"
 msgstr "X"
 
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Ihr Passwort wurde erfolgreich geändert"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Ihr Teammitglied, das für die Verwaltung des Unternehmenskontos verantwortlich ist"
-

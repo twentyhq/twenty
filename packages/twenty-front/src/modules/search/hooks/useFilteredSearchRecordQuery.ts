@@ -1,8 +1,8 @@
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
-import { RecordsForMultipleRecordSelect } from '@/object-record/relation-picker/types/RecordsForMultipleRecordSelect';
+import { MultipleRecordPickerRecords } from '@/object-record/record-picker/types/MultipleRecordPickerRecords';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared';
 
@@ -21,7 +21,7 @@ export const useFilteredSearchRecordQuery = ({
   excludedRecordIds?: string[];
   objectNameSingular: string;
   searchFilter?: string;
-}): RecordsForMultipleRecordSelect<RecordForSelect> => {
+}): MultipleRecordPickerRecords<SingleRecordPickerRecord> => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
     objectNameSingular,
   });

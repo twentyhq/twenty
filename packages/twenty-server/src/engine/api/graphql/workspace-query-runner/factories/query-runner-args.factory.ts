@@ -21,6 +21,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
@@ -204,6 +205,10 @@ export class QueryRunnerArgsFactory {
         }
         case FieldMetadataType.NUMBER:
           return [key, value === null ? null : Number(value)];
+        case FieldMetadataType.RICH_TEXT:
+          throw new Error(
+            'Rich text is not supported, please use RICH_TEXT_V2 instead',
+          );
         case FieldMetadataType.RICH_TEXT_V2: {
           const richTextV2Value = richTextV2ValueSchema.parse(value);
 
@@ -229,6 +234,63 @@ export class QueryRunnerArgsFactory {
           };
 
           return [key, valueInBothFormats];
+        }
+        case FieldMetadataType.LINKS: {
+          const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
+
+          let secondaryLinks = value?.secondaryLinks;
+
+          if (secondaryLinks) {
+            try {
+              const secondaryLinksArray = JSON.parse(secondaryLinks);
+
+              secondaryLinks = JSON.stringify(
+                secondaryLinksArray.map((link) => {
+                  return {
+                    ...link,
+                    url: lowercaseDomain(link.url),
+                  };
+                }),
+              );
+            } catch {
+              /* empty */
+            }
+          }
+
+          return [
+            key,
+            {
+              ...value,
+              primaryLinkUrl: newPrimaryLinkUrl,
+              secondaryLinks,
+            },
+          ];
+        }
+        case FieldMetadataType.EMAILS: {
+          let additionalEmails = value?.additionalEmails;
+          const primaryEmail = value?.primaryEmail
+            ? value.primaryEmail.toLowerCase()
+            : '';
+
+          if (additionalEmails) {
+            try {
+              const emailArray = JSON.parse(additionalEmails) as string[];
+
+              additionalEmails = JSON.stringify(
+                emailArray.map((email) => email.toLowerCase()),
+              );
+            } catch {
+              /* empty */
+            }
+          }
+
+          return [
+            key,
+            {
+              primaryEmail,
+              additionalEmails,
+            },
+          ];
         }
         default:
           return [key, value];

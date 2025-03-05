@@ -6,8 +6,10 @@ import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dro
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -16,6 +18,7 @@ import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -28,6 +31,7 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
     'Modules/ObjectRecord/ObjectOptionsDropdown/ObjectOptionsDropdownContent',
   component: ObjectOptionsDropdownContent,
   decorators: [
+    I18nFrontDecorator,
     (Story) => {
       const setObjectMetadataItems = useSetRecoilState(
         objectMetadataItemsState,
@@ -38,22 +42,30 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
       }, [setObjectMetadataItems]);
 
       return (
-        <RecordFiltersComponentInstanceContext.Provider
-          value={{ instanceId: 'object-options-dropdown' }}
+        <RecordFilterGroupsComponentInstanceContext.Provider
+          value={{ instanceId }}
         >
-          <RecordTableComponentInstanceContext.Provider
-            value={{ instanceId, onColumnsChange: () => {} }}
+          <RecordFiltersComponentInstanceContext.Provider
+            value={{ instanceId }}
           >
-            <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-              <MemoryRouter
-                initialEntries={['/one', '/two', { pathname: '/three' }]}
-                initialIndex={1}
+            <RecordSortsComponentInstanceContext.Provider
+              value={{ instanceId }}
+            >
+              <RecordTableComponentInstanceContext.Provider
+                value={{ instanceId, onColumnsChange: () => {} }}
               >
-                <Story />
-              </MemoryRouter>
-            </ViewComponentInstanceContext.Provider>
-          </RecordTableComponentInstanceContext.Provider>
-        </RecordFiltersComponentInstanceContext.Provider>
+                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                  <MemoryRouter
+                    initialEntries={['/one', '/two', { pathname: '/three' }]}
+                    initialIndex={1}
+                  >
+                    <Story />
+                  </MemoryRouter>
+                </ViewComponentInstanceContext.Provider>
+              </RecordTableComponentInstanceContext.Provider>
+            </RecordSortsComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
+        </RecordFilterGroupsComponentInstanceContext.Provider>
       );
     },
     ContextStoreDecorator,

@@ -128,6 +128,14 @@ msgstr "Proprietarul contului pentru companii"
 msgid "Account Owner For Companies"
 msgstr "Proprietarul Contului Pentru Companii"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Acțiune necesară pentru a preveni ștergerea spațiului de lucru"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Acțiune necesară pentru a reseta parola"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Adresă"
@@ -586,6 +594,10 @@ msgstr "Direcție"
 msgid "Display Name"
 msgstr "Nume afișat"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr "Afișați înregistrările într-un panou lateral sau pe o pagină de înregistrare"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Valoare afișată"
@@ -970,6 +982,10 @@ msgstr "Sincronizarea este activată"
 msgid "Job Title"
 msgstr "Titlu Funcție"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Alăturați-vă echipei pe Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1327,6 +1343,10 @@ msgstr "Id-ul Metadatelor Obiectului"
 msgid "Object name"
 msgstr "Numele obiectului"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr "Deschide Înregistrarea În"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operand"
@@ -1444,6 +1464,7 @@ msgstr "Telefoane"
 msgid "Point of Contact"
 msgstr "Punct de Contact"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2107,6 +2128,10 @@ msgstr "URL țintă al webhook"
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Bine ați venit la Twenty: Vă rugăm să confirmați adresa de e-mail"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2237,6 +2262,10 @@ msgid "Workspace member name"
 msgstr "Numele membrului spațiului de lucru"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Funcția membrului spațiului de lucru"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Membri ai Spațiului de Lucru"
 
@@ -2250,7 +2279,10 @@ msgstr "MembruSpațiuDeLucru"
 msgid "X"
 msgstr "X"
 
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Parola dumneavoastră a fost schimbată cu succes"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Membrul echipei dumneavoastră responsabil de gestionarea contului companiei"
-

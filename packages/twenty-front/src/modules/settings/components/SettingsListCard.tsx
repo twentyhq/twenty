@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ComponentType } from 'react';
-import { IconComponent, IconPlus, Card, CardFooter } from 'twenty-ui';
+import { Card, CardFooter, IconComponent, IconPlus } from 'twenty-ui';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
@@ -36,6 +36,7 @@ const StyledButton = styled.button`
 type SettingsListCardProps<ListItem extends { id: string }> = {
   items: ListItem[];
   getItemLabel: (item: ListItem) => string;
+  getItemDescription?: (item: ListItem) => string;
   hasFooter?: boolean;
   isLoading?: boolean;
   onRowClick?: (item: ListItem) => void;
@@ -44,6 +45,7 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   RowRightComponent: ComponentType<{ item: ListItem }>;
   footerButtonLabel?: string;
   onFooterButtonClick?: () => void;
+  to?: (item: ListItem) => string;
 };
 
 export const SettingsListCard = <
@@ -53,6 +55,7 @@ export const SettingsListCard = <
 >({
   items,
   getItemLabel,
+  getItemDescription,
   hasFooter,
   isLoading,
   onRowClick,
@@ -61,6 +64,7 @@ export const SettingsListCard = <
   RowRightComponent,
   onFooterButtonClick,
   footerButtonLabel,
+  to,
 }: SettingsListCardProps<ListItem>) => {
   const theme = useTheme();
 
@@ -73,9 +77,11 @@ export const SettingsListCard = <
           key={item.id}
           LeftIcon={RowIconFn ? RowIconFn(item) : RowIcon}
           label={getItemLabel(item)}
+          description={getItemDescription?.(item)}
           rightComponent={<RowRightComponent item={item} />}
           divider={index < items.length - 1}
           onClick={() => onRowClick?.(item)}
+          to={to?.(item)}
         />
       ))}
       {hasFooter && (

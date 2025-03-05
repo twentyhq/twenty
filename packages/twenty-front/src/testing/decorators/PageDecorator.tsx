@@ -22,7 +22,9 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
@@ -87,19 +89,30 @@ const Providers = () => {
                   <ObjectMetadataItemsProvider>
                     <FullHeightStorybookLayout>
                       <HelmetProvider>
-                        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                          <IconsProvider>
-                            <PrefetchDataProvider>
+                        <IconsProvider>
+                          <PrefetchDataProvider>
+                            <RecordFilterGroupsComponentInstanceContext.Provider
+                              value={{
+                                instanceId:
+                                  'storybook-test-record-filter-groups',
+                              }}
+                            >
                               <RecordFiltersComponentInstanceContext.Provider
                                 value={{
                                   instanceId: 'storybook-test-record-filters',
                                 }}
                               >
-                                <Outlet />
+                                <RecordSortsComponentInstanceContext.Provider
+                                  value={{
+                                    instanceId: 'storybook-test-record-sorts',
+                                  }}
+                                >
+                                  <Outlet />
+                                </RecordSortsComponentInstanceContext.Provider>
                               </RecordFiltersComponentInstanceContext.Provider>
-                            </PrefetchDataProvider>
-                          </IconsProvider>
-                        </SnackBarProviderScope>
+                            </RecordFilterGroupsComponentInstanceContext.Provider>
+                          </PrefetchDataProvider>
+                        </IconsProvider>
                       </HelmetProvider>
                     </FullHeightStorybookLayout>
                   </ObjectMetadataItemsProvider>

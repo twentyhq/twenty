@@ -128,6 +128,14 @@ msgstr "Kontoinnehavare för företag"
 msgid "Account Owner For Companies"
 msgstr "Kontoinnehavare För Företag"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Åtgärder krävs för att förhindra radering av arbetsyta"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Åtgärd Krävs för att Återställa Lösenord"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Adress"
@@ -586,6 +594,10 @@ msgstr "Riktning"
 msgid "Display Name"
 msgstr "Visningsnamn"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr "Visa posterna i en sidopanel eller på en postsida"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Visningsvärde"
@@ -970,6 +982,10 @@ msgstr "\\u00c4r synkronisering aktiverad"
 msgid "Job Title"
 msgstr "Arbetstitel"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Gå med i ditt team på Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1327,6 +1343,10 @@ msgstr "Objektmetadata-id"
 msgid "Object name"
 msgstr "Objektnamn"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr "Öppna Post I"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operand"
@@ -1444,6 +1464,7 @@ msgstr "Telefoner"
 msgid "Point of Contact"
 msgstr "Kontaktperson"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1481,7 +1502,8 @@ msgstr "F\"or\"aldrade f\"argschema"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred language"
-msgstr "F\"or\"aldrat spr\n"
+msgstr ""
+"F\"or\"aldrat spr\n"
 "k"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1585,7 +1607,8 @@ msgstr "Synkkurs"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr "Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
+msgstr ""
+"Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
 "n kalenderleverant\"oren"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2109,6 +2132,10 @@ msgstr "Webbkroks mål-URL"
 msgid "Webhooks"
 msgstr "Webbkrokar"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Välkommen till Twenty: Bekräfta din e-post"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2239,6 +2266,10 @@ msgid "Workspace member name"
 msgstr "Arbetsytemedlemsnamn"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Arbetsplatsmedlems position"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Arbetsytemedlemmar"
 
@@ -2252,7 +2283,10 @@ msgstr "Arbetsytemedlem"
 msgid "X"
 msgstr "X"
 
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Ditt lösenord har ändrats"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Ditt teammedlem ansvarig för att hantera företagskontot"
-

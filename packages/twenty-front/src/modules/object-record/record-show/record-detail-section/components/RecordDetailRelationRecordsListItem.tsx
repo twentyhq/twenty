@@ -300,7 +300,7 @@ export const RecordDetailRelationRecordsListItem = ({
             </>
           }
           onConfirmClick={handleConfirmDelete}
-          deleteButtonText={`Delete ${relationObjectTypeName}`}
+          confirmButtonText={`Delete ${relationObjectTypeName}`}
         />,
         document.body,
       )}

@@ -4,11 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import {
-  isDefined,
-  SettingsFeatures,
-  WorkspaceActivationStatus,
-} from 'twenty-shared';
+import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -20,6 +16,13 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import {
+  FileWorkspaceFolderDeletionJob,
+  FileWorkspaceFolderDeletionJobData,
+} from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -30,6 +33,7 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -63,6 +67,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly permissionsService: PermissionsService,
     private readonly customDomainService: CustomDomainService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {
     super(workspaceRepository);
   }
@@ -133,9 +139,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
+    apiKey,
   }: {
     payload: Partial<Workspace> & { id: string };
     userWorkspaceId?: string;
+    apiKey?: string;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -153,12 +161,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         payload,
         userWorkspaceId,
         workspaceId: workspace.id,
+        apiKey,
       });
 
       await this.validateWorkspacePermissions({
         payload,
         userWorkspaceId,
         workspaceId: workspace.id,
+        apiKey,
       });
     }
 
@@ -312,12 +322,20 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     );
 
     if (softDelete) {
-      return await this.workspaceRepository.softDelete({ id });
+      await this.workspaceRepository.softDelete({ id });
+
+      return workspace;
     }
 
     await this.deleteMetadataSchemaCacheAndUserWorkspace(workspace);
 
-    return await this.workspaceRepository.delete(id);
+    await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
+      FileWorkspaceFolderDeletionJob.name,
+      { workspaceId: id },
+    );
+    await this.workspaceRepository.delete(id);
+
+    return workspace;
   }
 
   async handleRemoveWorkspaceMember(
@@ -381,10 +399,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     payload,
     userWorkspaceId,
     workspaceId,
+    apiKey,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
     workspaceId: string;
+    apiKey?: string;
   }) {
     if (
       'isGoogleAuthEnabled' in payload ||
@@ -399,8 +419,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          _setting: SettingsFeatures.SECURITY,
+          _setting: SettingsPermissions.SECURITY,
           workspaceId: workspaceId,
+          isExecutedByApiKey: isDefined(apiKey),
         });
 
       if (!userHasPermission) {
@@ -416,10 +437,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     payload,
     userWorkspaceId,
     workspaceId,
+    apiKey,
   }: {
     payload: Partial<Workspace>;
     userWorkspaceId?: string;
     workspaceId: string;
+    apiKey?: string;
   }) {
     if (
       'displayName' in payload ||
@@ -435,7 +458,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
-          _setting: SettingsFeatures.WORKSPACE,
+          _setting: SettingsPermissions.WORKSPACE,
+          isExecutedByApiKey: isDefined(apiKey),
         });
 
       if (!userHasPermission) {

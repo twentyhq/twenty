@@ -5,7 +5,7 @@ import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/components/DocumentVi
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -16,7 +16,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
+import {
+  IconCalendar,
+  OverflowingTextWithTooltip,
+  isModifiedEvent,
+} from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
@@ -95,12 +99,12 @@ export const AttachmentRow = ({
     [attachment?.id],
   );
 
-  const { deleteOneRecord: deleteOneAttachment } = useDeleteOneRecord({
+  const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
 
   const handleDelete = () => {
-    deleteOneAttachment(attachment.id);
+    destroyOneAttachment(attachment.id);
   };
 
   const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
@@ -145,7 +149,7 @@ export const AttachmentRow = ({
 
   const handleOpenDocument = (e: React.MouseEvent) => {
     // Cmd/Ctrl+click opens new tab, right click opens context menu
-    if (e.metaKey || e.ctrlKey || e.button === 2) {
+    if (isModifiedEvent(e) || e.button === 2) {
       return;
     }
 

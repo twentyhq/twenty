@@ -105,6 +105,7 @@ const companyMocks = [
                   createdAt
                   deletedAt
                   favoriteFolderId
+                  forWorkspaceMemberId
                   id
                   noteId
                   opportunityId
@@ -118,7 +119,6 @@ const companyMocks = [
                   workflowId
                   workflowRunId
                   workflowVersionId
-                  workspaceMemberId
                 }
               }
             }
@@ -345,7 +345,7 @@ describe('useSpreadsheetCompanyImport', () => {
           spreadsheetImportDialogState,
         );
         const {
-          openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
+          openObjectRecordsSpreadsheetImportDialog: openRecordSpreadsheetImport,
         } = useOpenObjectRecordsSpreadsheetImportDialog(
           CoreObjectNameSingular.Company,
         );

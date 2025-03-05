@@ -3,10 +3,10 @@ import { InformationBannerFailPaymentInfo } from '@/information-banner/component
 import { InformationBannerNoBillingSubscription } from '@/information-banner/components/billing/InformationBannerNoBillingSubscription';
 import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
 import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
+import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledInformationBannerWrapper = styled.div`
@@ -20,7 +20,9 @@ const StyledInformationBannerWrapper = styled.div`
 
 export const InformationBannerWrapper = () => {
   const subscriptionStatus = useSubscriptionStatus();
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
 
   const displayBillingSubscriptionPausedBanner =
     isWorkspaceSuspended && subscriptionStatus === SubscriptionStatus.Paused;

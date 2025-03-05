@@ -3,6 +3,8 @@ import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-ac
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
+import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
+import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -31,6 +33,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconDatabaseExport,
+  IconFileImport,
   IconHeart,
   IconHeartOff,
   IconHistory,
@@ -40,6 +43,7 @@ import {
   IconPlayerPlay,
   IconPlus,
   IconPower,
+  IconRotate2,
   IconTrash,
   IconTrashX,
 } from 'twenty-ui';
@@ -52,7 +56,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
 > = {
   createNewRecord: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
     label: msg`Create new record`,
     shortLabel: msg`New record`,
@@ -262,13 +266,29 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     ],
     useAction: useDestroySingleRecordAction,
   },
+  exportSingleRecord: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: SingleRecordActionKeys.EXPORT,
+    label: msg`Export workflow`,
+    shortLabel: msg`Export`,
+    position: 15,
+    Icon: IconDatabaseExport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+    ],
+    useAction: useExportMultipleRecordsAction,
+  },
   exportMultipleRecords: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.EXPORT,
-    label: msg`Export Workflows`,
+    label: msg`Export workflows`,
     shortLabel: msg`Export`,
-    position: 15,
+    position: 16,
     Icon: IconDatabaseExport,
     accent: 'default',
     isPinned: false,
@@ -277,11 +297,11 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
   },
   exportView: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: msg`Export view`,
     shortLabel: msg`Export`,
-    position: 16,
+    position: 17,
     Icon: IconDatabaseExport,
     accent: 'default',
     isPinned: false,
@@ -294,11 +314,67 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy workflows`,
     shortLabel: msg`Destroy`,
-    position: 17,
+    position: 18,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDestroyMultipleRecordsAction,
   },
+  seeDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
+    label: msg`See deleted workflows`,
+    shortLabel: msg`Deleted workflows`,
+    position: 19,
+    Icon: IconRotate2,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeDeletedRecordsNoSelectionRecordAction,
+  },
+  importRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
+    label: msg`Import workflows`,
+    shortLabel: msg`Import`,
+    position: 20,
+    Icon: IconFileImport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useImportRecordsNoSelectionRecordAction,
+  },
+  // TODO: uncomment when restore is implemented for workflows
+  // restoreSingleRecord: {
+  //   type: ActionMenuEntryType.Standard,
+  //   scope: ActionMenuEntryScope.RecordSelection,
+  //   key: SingleRecordActionKeys.RESTORE,
+  //   label: msg`Restore workflow`,
+  //   shortLabel: msg`Restore`,
+  //   position: 15,
+  //   Icon: IconRefresh,
+  //   accent: 'default',
+  //   isPinned: true,
+  //   availableOn: [
+  //     ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+  //     ActionViewType.SHOW_PAGE,
+  //   ],
+  //   useAction: useRestoreSingleRecordAction,
+  // },
+  // restoreMultipleRecords: {
+  //   type: ActionMenuEntryType.Standard,
+  //   scope: ActionMenuEntryScope.RecordSelection,
+  //   key: MultipleRecordsActionKeys.RESTORE,
+  //   label: msg`Restore workflows`,
+  //   shortLabel: msg`Restore`,
+  //   position: 16,
+  //   Icon: IconRefresh,
+  //   accent: 'default',
+  //   isPinned: true,
+  //   availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+  //   useAction: useRestoreMultipleRecordsAction,
+  // },
 };

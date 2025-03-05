@@ -17,7 +17,7 @@ export const useCreateFavorite = () => {
     const relevantFavorites = favoriteFolderId
       ? favorites.filter((fav) => fav.favoriteFolderId === favoriteFolderId)
       : favorites.filter(
-          (fav) => !fav.favoriteFolderId && fav.workspaceMemberId,
+          (fav) => !fav.favoriteFolderId && fav.forWorkspaceMemberId,
         );
 
     const maxPosition = Math.max(
@@ -28,7 +28,7 @@ export const useCreateFavorite = () => {
     createOneFavorite({
       [`${targetObjectNameSingular}Id`]: targetRecord.id,
       position: maxPosition + 1,
-      workspaceMemberId: currentWorkspaceMemberId,
+      forWorkspaceMemberId: currentWorkspaceMemberId,
       favoriteFolderId,
     });
   };

@@ -1,4 +1,3 @@
-import { useBuildDraftServerlessFunction } from '@/settings/serverless-functions/hooks/useBuildDraftServerlessFunction';
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { useState } from 'react';
@@ -14,21 +13,12 @@ export const useTestServerlessFunction = ({
   callback?: (testResult: object) => void;
 }) => {
   const [isTesting, setIsTesting] = useState(false);
-  const [isBuilding, setIsBuilding] = useState(false);
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
-  const { buildDraftServerlessFunction } = useBuildDraftServerlessFunction();
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
     useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
 
-  const testServerlessFunction = async (shouldBuild = true) => {
+  const testServerlessFunction = async () => {
     try {
-      if (shouldBuild) {
-        setIsBuilding(true);
-        await buildDraftServerlessFunction({
-          id: serverlessFunctionId,
-        });
-        setIsBuilding(false);
-      }
       setIsTesting(true);
       await sleep(200); // Delay artificially to avoid flashing the UI
       const result = await executeOneServerlessFunction({
@@ -67,11 +57,10 @@ export const useTestServerlessFunction = ({
         },
       }));
     } catch (error) {
-      setIsBuilding(false);
       setIsTesting(false);
       throw error;
     }
   };
 
-  return { testServerlessFunction, isTesting, isBuilding };
+  return { testServerlessFunction, isTesting };
 };

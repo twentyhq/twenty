@@ -34,6 +34,10 @@ msgstr "Confirmez votre adresse e-mail"
 msgid "Connect to Twenty"
 msgstr "Connectez-vous à Twenty"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr "Créez un nouvel espace de travail"
+
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr "Dear"
@@ -42,6 +46,14 @@ msgstr "Connectez-vous à Twenty"
 msgid "Dear {userName}"
 msgstr "Cher {userName}"
 
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Dear {userName},"
+msgstr "Cher {userName},"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr "Espace de travail supprimé"
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "vous a invité à rejoindre un espace de travail appelé "
@@ -49,6 +61,10 @@ msgstr "vous a invité à rejoindre un espace de travail appelé "
 #: src/emails/password-update-notify.email.tsx
 msgid "Hello"
 msgstr "Bonjour"
+
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr "Bonjour,"
 
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
@@ -74,6 +90,10 @@ msgstr "Rejoignez votre équipe sur Twenty"
 msgid "Password updated"
 msgstr "Mot de passe mis à jour"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+msgstr "Veuillez valider ce domaine pour permettre aux utilisateurs avec des adresses e-mail <0>@{domain}</0> de rejoindre votre espace de travail sans nécessiter d'invitation."
+
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "Réinitialiser"
@@ -81,6 +101,10 @@ msgstr "Réinitialiser"
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Réinitialisez votre mot de passe 🗝"
+
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Suspended Workspace "
+msgstr "Espace de travail suspendu "
 
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -110,6 +134,11 @@ msgstr "Ce lien n'est valable que pour les {duration} suivants. Si le lien ne fo
 msgid "Update your subscription"
 msgstr "Mettez à jour votre abonnement"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Valider le domaine"
+
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "Vérifiez l'e-mail"
@@ -121,4 +150,3 @@ msgstr "Votre espace de travail <0>{workspaceDisplayName}</0> a été supprimé 
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 #~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-

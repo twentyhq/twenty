@@ -128,6 +128,14 @@ msgstr "Власник аккаунта компанії"
 msgid "Account Owner For Companies"
 msgstr "Власник аккаунта для компаній"
 
+#: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
+msgid "Action needed to prevent workspace deletion"
+msgstr "Потрібна дія, щоб запобігти видаленню робочої області"
+
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Reset Password"
+msgstr "Потрібна дія для скидання паролю"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "Адреса"
@@ -586,6 +594,10 @@ msgstr "Напрямок"
 msgid "Display Name"
 msgstr "Назва для відображення"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Display the records in a side panel or in a record page"
+msgstr "Відображення записів у бічній панелі або на сторінці запису"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "Значення для відображення"
@@ -970,6 +982,10 @@ msgstr "Чи включено синхронізацію"
 msgid "Job Title"
 msgstr "Посада"
 
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on Twenty"
+msgstr "Приєднуйтесь до своєї команди на Twenty"
+
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
@@ -1327,6 +1343,10 @@ msgstr "ID метаданих об'єкту"
 msgid "Object name"
 msgstr "Назва об'єкта"
 
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Open Record In"
+msgstr "Відкрити запис у"
+
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Операнд"
@@ -1444,6 +1464,7 @@ msgstr "Телефони"
 msgid "Point of Contact"
 msgstr "Контактна особа"
 
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2107,6 +2128,10 @@ msgstr "Цільова URL-адреса вебхука"
 msgid "Webhooks"
 msgstr "Вебхуки"
 
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to Twenty: Please Confirm Your Email"
+msgstr "Ласкаво просимо до Twenty: Будь ласка, підтвердіть свою електронну пошту"
+
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2237,6 +2262,10 @@ msgid "Workspace member name"
 msgstr "Ім'я члена робочого простору"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Workspace member position"
+msgstr "Посада учасника робочого простору"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Члени робочого простору"
 
@@ -2250,7 +2279,10 @@ msgstr "ЧленРобочогоПростору"
 msgid "X"
 msgstr "Х"
 
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Your Password Has Been Successfully Changed"
+msgstr "Ваш пароль було успішно змінено"
+
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Ваш колега з команди, відповідальний за управління обліковим записом компанії"
-

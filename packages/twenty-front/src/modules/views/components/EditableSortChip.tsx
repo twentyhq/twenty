@@ -1,36 +1,43 @@
 import { IconArrowDown, IconArrowUp } from 'twenty-ui';
 
-import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
+import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
+import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useDeleteCombinedViewSorts } from '@/views/hooks/useDeleteCombinedViewSorts';
-import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
 
 type EditableSortChipProps = {
-  viewSort: Sort;
+  recordSort: RecordSort;
 };
 
-export const EditableSortChip = ({ viewSort }: EditableSortChipProps) => {
-  const { deleteCombinedViewSort } = useDeleteCombinedViewSorts();
+export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
+  const { removeRecordSort } = useRemoveRecordSort();
 
-  const { upsertCombinedViewSort } = useUpsertCombinedViewSorts();
+  const { upsertRecordSort } = useUpsertRecordSort();
 
   const handleRemoveClick = () => {
-    deleteCombinedViewSort(viewSort.fieldMetadataId);
+    removeRecordSort(recordSort.fieldMetadataId);
   };
 
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    recordSort.fieldMetadataId,
+  );
+
   const handleClick = () => {
-    upsertCombinedViewSort({
-      ...viewSort,
-      direction: viewSort.direction === 'asc' ? 'desc' : 'asc',
-    });
+    const newSort: RecordSort = {
+      ...recordSort,
+      direction: recordSort.direction === 'asc' ? 'desc' : 'asc',
+    };
+
+    upsertRecordSort(newSort);
   };
 
   return (
     <SortOrFilterChip
-      key={viewSort.fieldMetadataId}
-      testId={viewSort.fieldMetadataId}
-      labelValue={viewSort.definition.label}
-      Icon={viewSort.direction === 'desc' ? IconArrowDown : IconArrowUp}
+      key={recordSort.fieldMetadataId}
+      testId={recordSort.fieldMetadataId}
+      labelValue={fieldMetadataItem.label}
+      Icon={recordSort.direction === 'desc' ? IconArrowDown : IconArrowUp}
       onRemove={handleRemoveClick}
       onClick={handleClick}
     />

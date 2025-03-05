@@ -18,6 +18,34 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Empty"
+msgstr ": Leer"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Future"
+msgstr ": Zukunft"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Not"
+msgstr ": Nicht"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": NotEmpty"
+msgstr ": NichtLeer"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": NotNull"
+msgstr ": NichtNull"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Past"
+msgstr ": Vergangenheit"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid ": Today"
+msgstr ": Heute"
+
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} von {fieldLabel}"
@@ -31,7 +59,7 @@ msgstr "{apiKeyName} API-Schlüssel"
 msgid "{name}"
 msgstr "{name}"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} wird von folgender Rolle abgezogen:"
 
@@ -39,9 +67,23 @@ msgstr "{workspaceMemberName} wird von folgender Rolle abgezogen:"
 msgid "1 000 workflow node executions"
 msgstr "1.000 Workflow-Knotenausführungen"
 
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
+msgid "1. Select a field type"
+msgstr "1. Wählen Sie einen Feldtyp aus"
+
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
+msgid "1. Type"
+msgstr "1. Typ"
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12h ({hour12Label})"
+
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
+msgid "2. Configure"
+msgstr "2. Konfigurieren"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
@@ -55,7 +97,7 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Eine gemeinsame Umgebung, in der Sie Ihre Kundenbeziehungen zusammen mit Ihrem Team verwalten können."
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Fähigkeit, mit jedem Objekt zu interagieren"
 
@@ -65,6 +107,7 @@ msgstr "Abbrechen"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "Über"
 
@@ -84,14 +127,15 @@ msgstr "Kontolöschung"
 msgid "Accounts"
 msgstr "Konten"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "Aktionen"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Activate"
 msgstr "Aktivieren"
@@ -113,21 +157,46 @@ msgstr "Aktive API-Schlüssel, die von Ihnen oder Ihrem Team erstellt wurden."
 msgid "Add"
 msgstr "Hinzufügen"
 
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
+msgid "Add account"
+msgstr "Konto hinzufügen"
+
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Add Approved Access Domain"
+msgstr "Genehmigte Zugriffsdomäne hinzufügen"
+
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "Feld hinzufügen"
+
+#: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
+msgid "Add filter"
+msgstr "Filter hinzufügen"
+
+#: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
+msgid "Add new"
+msgstr "Neu hinzufügen"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Objekt hinzufügen"
 
-#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "Add option"
+msgstr "Option hinzufügen"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
 msgstr "SSO-Identitätsanbieter hinzufügen"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
 msgstr "Zur Blockliste hinzufügen"
+
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+msgid "Add to Favorite"
+msgstr "Zu Favoriten hinzufügen"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
@@ -143,6 +212,10 @@ msgstr "Zur Blockliste hinzufügen"
 msgid "Add to favorites"
 msgstr "Zu Favoriten hinzufügen"
 
+#: src/modules/views/view-picker/components/ViewPickerListContent.tsx
+msgid "Add view"
+msgstr "Ansicht hinzufügen"
+
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
 msgstr "Fügen Sie Ihr erstes {objectLabel} hinzu"
@@ -150,6 +223,18 @@ msgstr "Fügen Sie Ihr erstes {objectLabel} hinzu"
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Hinzugefügt am {beautifiedCreatedAt}"
+
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+msgid "Added {beautifyPastDateRelative}"
+msgstr "Hinzugefügt am {beautifyPastDateRelative}"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
+msgid "Added to blocklist"
+msgstr "Zur Blockliste hinzugefügt"
+
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+msgid "Adjust the role-related settings"
+msgstr "Passen Sie die rollenspezifischen Einstellungen an"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -167,23 +252,39 @@ msgstr "Alle"
 msgid "All ({relationRecordsCount})"
 msgstr "Alle ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "All Actions"
+msgstr "Alle Aktionen"
+
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "All emails and events linked to this account will be deleted"
+msgstr "Alle E-Mails und Ereignisse, die mit diesem Konto verknüpft sind, werden gelöscht"
+
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "All lines"
+msgstr "Alle Zeilen"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "All Objects"
+msgstr "Alle Objekte"
+
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Alle Rollen"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
 msgstr "Anmeldungen über Google Single Sign-On zulassen."
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Anmeldungen über Microsoft Single Sign-On zulassen."
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Einladung neuer Benutzer durch Teilen eines Einladungslinks zulassen."
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow users to sign in with an email and password."
 msgstr "Benutzern erlauben, sich mit E-Mail und Passwort anzumelden."
 
@@ -199,6 +300,10 @@ msgstr "Eine optionale Beschreibung"
 msgid "and"
 msgstr "und"
 
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
+msgstr "Jeder mit einer E-Mail-Adresse in diesen Domänen darf sich für diesen Arbeitsbereich anmelden."
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
@@ -208,6 +313,10 @@ msgstr "API & Webhooks"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "API Key"
 msgstr "API-Schlüssel"
+
+#: src/modules/settings/developers/components/ApiKeyInput.tsx
+msgid "API Key copied to clipboard"
+msgstr "API-Schlüssel in die Zwischenablage kopiert"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "API keys"
@@ -225,9 +334,21 @@ msgstr "API-Name (Mehrzahl)"
 msgid "API Name (Singular)"
 msgstr "API-Name (Einzahl)"
 
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "API values"
+msgstr "API-Werte"
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Erscheinungsbild"
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Approved Domains"
+msgstr "Genehmigte Domänen"
+
+#: src/pages/settings/security/SettingsSecurity.tsx
+#~ msgid "Approved Email Domain"
+#~ msgstr "Approved Email Domain"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -238,31 +359,31 @@ msgid "Are you sure that you want to change your billing interval?"
 msgstr "Sind Sie sicher, dass Sie Ihr Abrechnungsintervall ändern möchten?"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "Are you sure you want to assign this role?"
-msgstr "Sind Sie sicher, dass Sie diese Rolle zuweisen m\\u00f6chten?"
+#~ msgid "Are you sure you want to assign this role?"
+#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Ascending"
 msgstr "Aufsteigend"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "{workspaceMemberName} zuweisen?"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Rollen zuweisen, um die Zugriffsrechte der Mitglieder festzulegen"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Mitglied zuweisen"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Zugewiesene Mitglieder"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Zugewiesen an"
 
@@ -274,7 +395,7 @@ msgstr "Zuweisung"
 msgid "At least 8 characters long."
 msgstr "Mindestens 8 Zeichen lang."
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "At least one authentication method must be enabled"
 msgstr "Mindestens eine Authentifizierungsmethode muss aktiviert sein"
 
@@ -282,9 +403,37 @@ msgstr "Mindestens eine Authentifizierungsmethode muss aktiviert sein"
 msgid "Authentication"
 msgstr "Authentifizierung"
 
+#: src/modules/auth/hooks/useVerifyLogin.ts
+msgid "Authentication failed"
+msgstr "Authentifizierung fehlgeschlagen"
+
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
 msgstr "Autorisieren"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Authorized URI"
+msgstr "Autorisierte URI"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Authorized URL copied to clipboard"
+msgstr "Autorisierte URL in die Zwischenablage kopiert"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Auto-creation"
+msgstr "Automatische Erstellung"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Automatically create contacts for people you've participated in an event with."
+msgstr "Automatisch Kontakte für Personen erstellen, mit denen Sie an einer Veranstaltung teilgenommen haben."
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Automatically create contacts for people."
+msgstr "Automatisch Kontakte für Personen erstellen."
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Automatically create People records when receiving or sending emails"
+msgstr "Automatisch Personendatensätze erstellen beim Empfangen oder Senden von E-Mails"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -320,6 +469,10 @@ msgstr "Berechnen"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
 msgstr "Kalender"
+
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Calendar settings"
+msgstr "Kalendereinstellungen"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -372,6 +525,14 @@ msgstr "Chinesisch - Traditionell"
 msgid "Choose an object"
 msgstr "Objekt auswählen"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+msgid "Choose between OIDC and SAML protocols"
+msgstr "Wählen Sie zwischen OIDC- und SAML-Protokollen"
+
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "Choose the default currency that will apply"
+msgstr "Wählen Sie die Standardwährung aus, die angewendet werden soll"
+
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Choose the fields that will identify your records"
 msgstr "Wählen Sie die Felder aus, die Ihre Datensätze identifizieren werden"
@@ -384,6 +545,22 @@ msgstr "Anbieter auswählen"
 msgid "Choose your Trial"
 msgstr "Wählen Sie Ihre Testphase"
 
+#: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
+msgid "Clear"
+msgstr "Löschen"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Client ID"
+msgstr "Client-ID"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Client Secret"
+msgstr "Client-Geheimnis"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Client Settings"
+msgstr "Client-Einstellungen"
+
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "Schließen"
@@ -391,6 +568,18 @@ msgstr "Schließen"
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Close command menu"
 msgstr "Befehlsmenü schließen"
+
+#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+msgid "Collapse"
+msgstr "Einklappen"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Color code"
+msgstr "Farbcode"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+msgid "Compact view"
+msgstr "Kompaktansicht"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -404,11 +593,15 @@ msgstr "Kalendereinstellungen konfigurieren und anpassen."
 msgid "Configure how dates are displayed across the app"
 msgstr "Anzeigen von Datumsangaben in der App konfigurieren"
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Configure how we should display your events in your calendar"
+msgstr "Konfigurieren Sie, wie wir Ihre Ereignisse in Ihrem Kalender anzeigen sollen"
+
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
 msgstr "E-Mail- und Kalendereinstellungen konfigurieren."
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Best\\u00e4tigen"
 
@@ -427,6 +620,15 @@ msgstr "Mit Microsoft verbinden"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Connected accounts"
 msgstr "Verbundene Konten"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Contact auto-creation"
+msgstr "Richtlinie zur automatischen Kontakterstellung"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Contains"
+msgstr "Enthält"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Context"
@@ -452,9 +654,20 @@ msgstr "Mit Google fortfahren"
 msgid "Continue with Microsoft"
 msgstr "Mit Microsoft fortfahren"
 
+#: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+msgid "Copied to clipboard!"
+msgstr "In die Zwischenablage kopiert!"
+
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Copilot"
 msgstr "Copilot"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+#: src/modules/settings/developers/components/ApiKeyInput.tsx
+msgid "Copy"
+msgstr "Kopieren"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -468,6 +681,7 @@ msgstr "Link kopieren"
 msgid "Copy this key as it will not be visible again"
 msgstr "Diesen Schlüssel kopieren, da er nicht mehr sichtbar sein wird"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "Count"
@@ -489,6 +703,10 @@ msgstr "Nicht leere zählen"
 msgid "Count unique values"
 msgstr "Eindeutige Werte zählen"
 
+#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+msgid "Create"
+msgstr "Erstellen"
+
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
 msgstr "Erstellen Sie einen Workflow und kehren Sie hierher zurück, um die Versionen anzuzeigen"
@@ -506,9 +724,18 @@ msgstr "Neuen Datensatz erstellen"
 msgid "Create profile"
 msgstr "Profil erstellen"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Rolle erstellen"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+msgid "Create select field"
+msgstr "Auswahlfeld erstellen"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+#: src/modules/views/components/UpdateViewButtonGroup.tsx
+msgid "Create view"
+msgstr "Ansicht erstellen"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Create Webhook"
@@ -518,9 +745,17 @@ msgstr "Webhook erstellen"
 msgid "Create your workspace"
 msgstr "Ihren Arbeitsbereich erstellen"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Created"
+msgstr "Erstellt"
+
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Benutzerdefinierte Domäne"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Custom domain updated"
+msgstr "Benutzerdefinierte Domain aktualisiert"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
@@ -533,6 +768,10 @@ msgstr "Passen Sie die verfügbaren Felder in den {objectLabelSingular}-Ansichte
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Customize Domain"
 msgstr "Domäne anpassen"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
+msgid "Customize fields"
+msgstr "Felder anpassen"
 
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
@@ -559,6 +798,10 @@ msgstr "D\\u00e4nisch"
 msgid "Dark"
 msgstr "Dunkel"
 
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Data deletion"
+msgstr "Datenlöschung"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Data model"
@@ -580,8 +823,13 @@ msgstr "Datum"
 msgid "Date and time"
 msgstr "Datum und Uhrzeit"
 
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
+msgid "Date format"
+msgstr "Datumsformat"
+
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deactivate"
@@ -604,12 +852,39 @@ msgstr "Dieses Feld deaktivieren"
 msgid "Deactivate Workflow"
 msgstr "Workflow deaktivieren"
 
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "Deactivated"
+msgstr "Deaktiviert"
+
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "Default Country"
+msgstr "Standardland"
+
+#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
+msgid "Default Country Code"
+msgstr "Standard-Ländercode"
+
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+msgid "Default Value"
+msgstr "Standardwert"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
 msgstr "Namen und Beschreibung des Objekts definieren"
 
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Define what will be visible to other users in your workspace"
+msgstr "Definieren Sie, was für andere Benutzer in Ihrem Arbeitsbereich sichtbar sein soll"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
@@ -627,6 +902,7 @@ msgstr "Löschen"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account"
 msgstr "Konto löschen"
 
@@ -674,6 +950,31 @@ msgstr "Arbeitsbereich löschen"
 msgid "Delete your whole workspace"
 msgstr "Gesamten Arbeitsbereich löschen"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Deleted"
+msgstr "Gelöscht"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#~ msgid "Deleted {objectNamePlural}"
+#~ msgstr "Deleted {objectNamePlural}"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Deleted records"
+msgstr "Gelöschte Datensätze"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Deleted runs"
+msgstr "Gelöschte Ausführungen"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Deleted versions"
+msgstr "Gelöschte Versionen"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Deleted workflows"
+msgstr "Gelöschte Workflows"
+
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
@@ -707,15 +1008,56 @@ msgstr "Entwickler"
 msgid "Discard Draft"
 msgstr "Entwurf verwerfen"
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Display"
+msgstr "Anzeigen"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Display as a plain number or a percentage"
+msgstr "Als einfache Zahl oder als Prozentsatz anzeigen"
+
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
 msgstr "Als relatives Datum anzeigen"
 
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "Display text on multiple lines"
+msgstr "Text auf mehreren Zeilen anzeigen"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Doesn't contain"
+msgstr "Enthält nicht"
+
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
 msgstr "Domäne"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domain added successfully."
+msgstr "Domäne erfolgreich hinzugefügt."
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
+msgstr "Domänen müssen kürzer als 256 Zeichen sein, dürfen keine Leerzeichen enthalten und keine Sonderzeichen enthalten."
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "Don’t auto-create contacts."
+msgstr "Keine Kontakte automatisch erstellen."
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Don’t create contacts from/to Gmail, Outlook emails"
+msgstr "Keine Kontakte von/an Gmail-, Outlook-E-Mails erstellen"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Don’t sync emails from team@ support@ noreply@..."
+msgstr "Kein E-Mail-Sync von team@ support@ noreply@..."
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Download file"
+msgstr "Datei herunterladen"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
@@ -734,9 +1076,22 @@ msgstr "Früheste"
 msgid "Earliest date"
 msgstr "Frühestes Datum"
 
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+msgid "Edit"
+msgstr "Bearbeiten"
+
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
 msgstr "Abrechnungsintervall bearbeiten"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
+msgid "Edit field values"
+msgstr "Feldwerte bearbeiten"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
+msgid "Edit Fields"
+msgstr "Felder bearbeiten"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -749,10 +1104,18 @@ msgstr "Bearbeiten Sie den Namen Ihrer Subdomain oder legen Sie eine benutzerdef
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
 msgstr "E-Mail"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#~ msgid "Email can not be empty"
+#~ msgstr "Email can not be empty"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email cannot be empty"
+msgstr "E-Mail darf nicht leer sein"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
@@ -762,12 +1125,36 @@ msgstr "E-Mail-Integration"
 msgid "Email or domain is already in blocklist"
 msgstr "E-Mail oder Domain ist bereits in der Blockliste"
 
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Email verification"
+msgstr "E-Mail-Verifizierung"
+
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verification failed."
+msgstr "E-Mail-Verifizierung fehlgeschlagen."
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
+msgid "Email verification link resent!"
+msgstr "E-Mail-Verifizierungslink erneut gesendet!"
+
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Email verified."
+msgstr "E-Mail verifiziert."
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
+msgid "Email/Domain"
+msgstr "E-Mail/Domain"
+
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Emails"
 msgstr "E-Mails"
+
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Emails settings"
+msgstr "E-Mail-Einstellungen"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -795,17 +1182,57 @@ msgstr "Englisch"
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Genießen Sie eine {withCreditCardTrialPeriodDuration}-tägige kostenlose Testphase"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Enter the credentials to set the connection"
+msgstr "Geben Sie die Anmeldedaten ein, um die Verbindung herzustellen"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Enter the infos to set the connection"
+msgstr "Geben Sie die Informationen ein, um die Verbindung herzustellen"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Enter user ID or email address"
+msgstr "Benutzer-ID oder E-Mail-Adresse eingeben"
+
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
 msgstr "Unternehmen"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Entity ID copied to clipboard"
+msgstr "Entity ID in die Zwischenablage kopiert"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+msgid "Env Variables"
+msgstr "Umgebungsvariablen"
+
+#: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
+msgid "Error copying to clipboard"
+msgstr "Fehler beim Kopieren in die Zwischenablage"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key: {err}"
 msgstr "Fehler beim Löschen des API-Schlüssels: {err}"
 
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Error deleting invitation"
+msgstr "Fehler beim Löschen der Einladung"
+
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+msgid "Error deleting SSO Identity Provider"
+msgstr "Fehler beim Löschen des SSO-Identitätsanbieters"
+
+#: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+msgid "Error editing SSO Identity Provider"
+msgstr "Fehler beim Bearbeiten des SSO-Identitätsanbieters"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
 msgstr "Fehler beim Regenerieren des API-Schlüssels: {err}"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Error resending invitation"
+msgstr "Fehler beim erneuten Senden der Einladung"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
@@ -815,9 +1242,35 @@ msgstr "Fehler beim Wechseln des Abonnements {to}."
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Erstellen Sie Webhook-Endpunkte für Benachrichtigungen über asynchrone Ereignisse."
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Event visibility"
+msgstr "Ereignissichtbarkeit"
+
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Events you participated in are displayed in red."
+msgstr "Ereignisse, an denen Sie teilgenommen haben, werden rot angezeigt."
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Everything"
+msgstr "Alles"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Exclude group emails"
+msgstr "Gruppen-E-Mails ausschließen"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Exclude non-professional emails"
+msgstr "Nicht berufliche E-Mails ausschließen"
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-msgid "Exclude the following people and domains from my email sync"
-msgstr "Die folgenden Personen und Domains von der E-Mail-Synchronisierung ausschließen"
+#~ msgid "Exclude the following people and domains from my email sync"
+#~ msgstr "Exclude the following people and domains from my email sync"
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
+msgstr "Folgende Personen und Domains von meiner E-Mail-Synchronisation ausschließen. Interne Gespräche werden nicht importiert"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
@@ -826,6 +1279,10 @@ msgstr "Vorhandene Objekte"
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
 msgstr "Einstellungen verlassen"
+
+#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+msgid "Expand"
+msgstr "Expandieren"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
@@ -838,6 +1295,7 @@ msgid "Experience"
 msgstr "Erfahrung"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Expiration"
 msgstr "Ablauf"
 
@@ -846,9 +1304,14 @@ msgid "Expiration Date"
 msgstr "Ablaufdatum"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Expired"
+msgstr "Abgelaufen"
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
 msgstr "Läuft ab in"
 
+#: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -856,24 +1319,38 @@ msgstr "Läuft ab in"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export"
 msgstr "Exportieren"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Export record"
+msgstr "Datensatz exportieren"
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export records"
 msgstr "Datensätze exportieren"
 
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Export runs"
+msgstr "Ausführungen exportieren"
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Export to PDF"
 msgstr "Als PDF exportieren"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Export versions"
+msgstr "Versionen exportieren"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -884,12 +1361,36 @@ msgid "Export view"
 msgstr "Ansicht exportieren"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-msgid "Export Workflows"
+msgid "Export workflow"
+msgstr "Workflow exportieren"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Export workflows"
 msgstr "Workflows exportieren"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#~ msgid "Export Workflows"
+#~ msgstr "Export Workflows"
+
+#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+msgid "False"
+msgstr "Falsch"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
 msgstr "Favoriten"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Feature Flag"
+msgstr "Feature-Flag"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Feature Flags & Impersonation"
+msgstr "Feature-Flags & Nachahmung"
+
+#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+msgid "Field name"
+msgstr "Feldname"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
@@ -899,6 +1400,8 @@ msgstr "Feldtyp"
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Fields"
 msgstr "Felder"
 
@@ -920,7 +1423,20 @@ msgstr "Filter"
 msgid "Finnish"
 msgstr "Finnisch"
 
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "First 10 lines"
+msgstr "Ersten 10 Zeilen"
+
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "First 2 lines"
+msgstr "Ersten 2 Zeilen"
+
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "First 5 lines"
+msgstr "Ersten 5 Zeilen"
+
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "Vorname"
 
@@ -952,6 +1468,7 @@ msgstr "Funktionen"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "General"
 msgstr "Allgemein"
 
@@ -971,15 +1488,29 @@ msgstr "Abonnement abschließen"
 msgid "Global"
 msgstr "Global"
 
+#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+msgid "Go to Settings"
+msgstr "Zu den Einstellungen gehen"
+
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Gewähren Sie dem Twenty-Support vorübergehend Zugang zu Ihrem Arbeitsbereich, damit wir Probleme beheben oder Inhalte in Ihrem Namen wiederherstellen können. Sie können den Zugriff jederzeit widerrufen."
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Greater than"
+msgstr "Größer als"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Greek"
 msgstr "Griechisch"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Group by"
+msgstr "Gruppieren nach"
+
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "Gesundheitsstatus"
 
@@ -987,9 +1518,22 @@ msgstr "Gesundheitsstatus"
 msgid "Hebrew"
 msgstr "Hebr\\u00e4isch"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
+msgid "Hidden"
+msgstr "Versteckt"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+msgid "Hidden Fields"
+msgstr "Versteckte Felder"
+
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
 msgstr "Ausblenden"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+msgid "Hide empty groups"
+msgstr "Leere Gruppen ausblenden"
 
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -998,6 +1542,10 @@ msgstr "Wie Sie in der App identifiziert werden."
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
 msgstr "Ungarisch"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Icon"
+msgstr "Symbol"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -1008,9 +1556,40 @@ msgstr "Symbol und Name"
 msgid "Identifier"
 msgstr "Kennung"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Identity Provider"
+msgstr "Identitätsanbieter"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Identity Provider Metadata XML"
+msgstr "Identitätsanbieter-Metadaten XML"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Wenn Sie diesen Schlüssel verloren haben, können Sie ihn neu generieren, aber beachten Sie, dass jedes Skript, das diesen Schlüssel verwendet, aktualisiert werden muss. Bitte geben Sie zur Bestätigung \"{confirmationValue}\" ein."
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Impersonate"
+msgstr "Nachahmen"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Import"
+msgstr "Importieren"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Import records"
+msgstr "Datensätze importieren"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Import workflows"
+msgstr "Workflows importieren"
+
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+msgid "Importing"
+msgstr "Importieren"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1036,15 +1615,24 @@ msgstr "Instanzen"
 msgid "Integrations"
 msgstr "Integrationen"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Ungültiger Authentifizierungsanbieter"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
-msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Ung\\u00fcltige benutzerdefinierte Domain. Benutzerdefinierte Domains m\\u00fcssen k\\u00fcrzer als 256 Zeichen sein, d\\u00fcrfen keine IP-Adressen sein, d\\u00fcrfen keine Leerzeichen enthalten, d\\u00fcrfen keine Sonderzeichen wie _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? enthalten und d\\u00fcrfen nicht mit einem '-' Zeichen beginnen oder enden."
+#~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+#~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
+msgstr "Ungültige benutzerdefinierte Domain. Bitte fügen Sie mindestens eine Subdomain hinzu (z.B. sub.beispiel.com)."
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr "Ungültige Domäne. Domänen müssen kleiner als 256 Zeichen sein, dürfen keine IP-Adressen sein, dürfen keine Leerzeichen enthalten, dürfen keine Sonderzeichen wie _~`!@#$%^*()=+{}[]|\\;:'\",<>/? enthalten und dürfen nicht mit einem '-' Zeichen beginnen oder enden."
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+#: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
 msgstr "Ungültige E-Mail"
 
@@ -1053,9 +1641,21 @@ msgstr "Ungültige E-Mail"
 msgid "Invalid email or domain"
 msgstr "Ungültige E-Mail oder Domain"
 
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Invalid email verification link."
+msgstr "Ungültiger E-Mail-Verifizierungslink."
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Invalid File"
+msgstr "Ungültige Datei"
+
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Ungültige Formularwerte"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr "Ungültiger Arbeitsbereich"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -1069,7 +1669,7 @@ msgstr "Per E-Mail einladen"
 msgid "Invite by link"
 msgstr "Per Link einladen"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invite by Link"
 msgstr "Per Link einladen"
 
@@ -1081,6 +1681,54 @@ msgstr "Einladungslink an E-Mail-Adressen gesendet"
 msgid "Invite your team"
 msgstr "Laden Sie Ihr Team ein"
 
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is"
+msgstr "Ist"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is after"
+msgstr "Ist nach"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is before"
+msgstr "Ist vor"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is empty"
+msgstr "Ist leer"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is in future"
+msgstr "Liegt in der Zukunft"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is in past"
+msgstr "Liegt in der Vergangenheit"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is not"
+msgstr "Ist nicht"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is not empty"
+msgstr "Ist nicht leer"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is not null"
+msgstr "Ist nicht null"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is relative"
+msgstr "Ist relativ"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Is today"
+msgstr "Ist heute"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Issuer URI"
+msgstr "Aussteller-URI"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
 msgstr "Italienisch"
@@ -1089,10 +1737,16 @@ msgstr "Italienisch"
 msgid "Japanese"
 msgstr "Japanisch"
 
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Kanban"
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Korean"
 msgstr "Koreanisch"
 
+#: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/lab/SettingsLab.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Lab"
 msgstr "Labor"
@@ -1102,6 +1756,7 @@ msgid "Language"
 msgstr "Sprache"
 
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
 msgstr "Nachname"
 
@@ -1112,6 +1767,10 @@ msgstr "Neueste"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Latest date"
 msgstr "Neuester Termin"
+
+#: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
+msgid "Less than"
+msgstr "Kleiner als"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Light"
@@ -1130,9 +1789,22 @@ msgstr "Auflistungen"
 msgid "Log out"
 msgstr "Abmelden"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Abmelden"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Look up users and manage their workspace feature flags or impersonate them."
+msgstr "Benutzer suchen und ihre Arbeitsbereich-Feature-Flags verwalten oder sie nachahmen."
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Look up users to impersonate them."
+msgstr "Benutzer suchen, um sie nachzuahmen."
+
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+msgid "Manage favorite"
+msgstr "Favoriten verwalten"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
@@ -1166,11 +1838,22 @@ msgstr "Max"
 msgid "Members"
 msgstr "Mitglieder"
 
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Metadata"
+msgstr "Metadaten"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Metadata file generation failed"
+msgstr "Generierung der Metadatendatei fehlgeschlagen"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Min"
 msgstr "Min"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "More options"
@@ -1188,10 +1871,6 @@ msgstr "Nach rechts verschieben"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
-#: src/pages/settings/roles/components/RolePermissionsObjectsTableHeader.tsx
-#: src/pages/settings/roles/components/RoleAssignmentTableHeader.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1199,6 +1878,13 @@ msgstr "Nach rechts verschieben"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Name"
 msgstr "Name"
 
@@ -1219,10 +1905,13 @@ msgstr "Name Ihres API-Schlüssels"
 msgid "Name of your workspace"
 msgstr "Name Ihres Arbeitsbereichs"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Navigate to next record"
 msgstr "Zum nächsten Datensatz navigieren"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Navigate to next run"
+msgstr "Zur nächsten Ausführung navigieren"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
@@ -1232,10 +1921,13 @@ msgstr "Zur nächsten Version navigieren"
 msgid "Navigate to next workflow"
 msgstr "Zum nächsten Workflow navigieren"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Navigate to previous record"
 msgstr "Zum vorherigen Datensatz navigieren"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Navigate to previous run"
+msgstr "Zur vorherigen Ausführung navigieren"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
@@ -1256,6 +1948,10 @@ msgstr "Neue {capitalizedObjectNameSingular}"
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "New account"
 msgstr "Neues Konto"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "New Approved Access Domain"
+msgstr "Neue genehmigte Zugriffsdomäne"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -1288,13 +1984,29 @@ msgstr "Neuer Datensatz"
 #~ msgid "New Role"
 #~ msgstr "New Role"
 
+#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
+msgid "New SSO Configuration"
+msgstr "Neue SSO-Konfiguration"
+
+#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
+msgid "New SSO provider"
+msgstr "Neuer SSO-Anbieter"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
 #~ msgid "New Webhook"
 #~ msgstr "New Webhook"
 
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "No change detected"
+msgstr "Keine Änderung festgestellt"
+
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
 msgstr "Kein verbundenes Konto"
+
+#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
+msgid "No country"
+msgstr "Kein Land"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members assigned to this role yet"
@@ -1312,17 +2024,25 @@ msgstr "Kein verbundenes Konto"
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Keine Mitglieder mehr zuzuweisen"
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+msgid "No records found"
+msgstr "Keine Einträge gefunden"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Keine Ergebnisse"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "No Select field"
+msgstr "Kein Auswahlfeld"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
@@ -1332,24 +2052,56 @@ msgstr "Noch keine Workflow-Ausführungen"
 msgid "No workflow versions yet"
 msgstr "Noch keine Workflow-Versionen"
 
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+msgid "None"
+msgstr "Keine"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Norwegian"
 msgstr "Norwegisch"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Not available on Default View"
+msgstr "Nicht verfügbar in der Standardansicht"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "Nicht leer"
 
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+msgid "Not synced"
+msgstr "Nicht synchronisiert"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Number"
+msgstr "Nummer"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Number of decimals"
+msgstr "Anzahl der Dezimalstellen"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Number type"
+msgstr "Zahlentyp"
+
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Objekt"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+msgid "Object destination"
+msgstr "Objektdestination"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Objects"
 msgstr "Objekte"
 
@@ -1357,15 +2109,34 @@ msgstr "Objekte"
 msgid "Off the beaten path"
 msgstr "Abseits der ausgetretenen Pfade"
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "Only date & participants will be shared with your team."
+msgstr "Nur Datum & Teilnehmer werden mit Ihrem Team geteilt."
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Only the timestamp & participants will be shared with your team."
+msgstr "Nur der Zeitstempel & Teilnehmer werden mit Ihrem Team geteilt."
+
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
 msgstr "Befehlsmenü öffnen"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+msgid "Open in"
+msgstr "Öffnen in"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Geöffnet"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+msgstr "Optional: Definieren Sie einen geheimen String, den wir in jedem Webhook enthalten. Verwenden Sie dies zur Authentifizierung und Überprüfung des Webhooks bei Erhalt."
+
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
 msgid "Options"
 msgstr "Optionen"
@@ -1374,6 +2145,8 @@ msgstr "Optionen"
 msgid "or"
 msgstr "oder"
 
+#: src/pages/settings/Releases.tsx
+#: src/pages/settings/lab/SettingsLab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1384,7 +2157,7 @@ msgstr "Andere"
 msgid "Page Not Found"
 msgstr "Seite nicht gefunden"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Password"
 msgstr "Passwort"
 
@@ -1392,10 +2165,19 @@ msgstr "Passwort"
 msgid "Password has been updated"
 msgstr "Das Passwort wurde aktualisiert"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Der Link zum Zurücksetzen des Passworts wurde an die E-Mail gesendet"
 
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "People I’ve sent emails to and received emails from."
+msgstr "Personen, an die ich E-Mails gesendet habe und von denen ich E-Mails erhalten habe."
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "People I’ve sent emails to."
+msgstr "Personen, an die ich E-Mails gesendet habe."
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "Percent"
@@ -1408,6 +2190,10 @@ msgstr "Prozent leer"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Percent not empty"
 msgstr "Prozent nicht leer"
+
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "Percentage"
+msgstr "Prozentsatz"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -1426,6 +2212,10 @@ msgstr "Workflows dauerhaft vernichten"
 msgid "Permissions"
 msgstr "Berechtigungen"
 
+#: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
+msgid "Phone number copied to clipboard"
+msgstr "Telefonnummer in die Zwischenablage kopiert"
+
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Picture"
@@ -1434,6 +2224,10 @@ msgstr "Bild"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
 msgstr "Bitte geben Sie eine gültige URL ein"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Please search for a user first"
+msgstr "Bitte suchen Sie zuerst nach einem Benutzer"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
@@ -1486,6 +2280,10 @@ msgstr "Datenschutzrichtlinie"
 msgid "Profile"
 msgstr "Profil"
 
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Provide your OIDC provider details"
+msgstr "Bitte geben Sie die Details Ihres OIDC-Anbieters an"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
 msgstr "Pseudo-Englisch"
@@ -1498,9 +2296,34 @@ msgstr "Dokumentation lesen"
 msgid "Receive an email containing password update link"
 msgstr "Erhalten Sie eine E-Mail mit einem Link zur Passwortaktualisierung"
 
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Reconnect"
+msgstr "Erneut verbinden"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+msgid "Record image"
+msgstr "Bild aufzeichnen"
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+msgid "Record label"
+msgstr "Bezeichnung aufzeichnen"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+msgid "Record Page"
+msgstr "Rekordseite"
+
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
 msgstr "Datensatz-Auswahl"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Redirect Url copied to clipboard"
+msgstr "Umleitungs-URL in die Zwischenablage kopiert"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
+msgid "Redirection URI"
+msgstr "Umleitungs-URI"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1515,21 +2338,35 @@ msgstr "Schlüssel neu generieren"
 msgid "Regenerate Key"
 msgstr "Schlüssel regenerieren"
 
+#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+msgid "Relation type"
+msgstr "Beziehungstyp"
+
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/Releases.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Releases"
 msgstr "Veröffentlichungen"
 
-#: src/pages/settings/roles/components/RoleAssignmentTableRow.tsx
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+msgid "Reload"
+msgstr "Neu laden"
+
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Entfernen"
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-msgid "Remove {workspaceMemberName}?"
-msgstr "{workspaceMemberName} entfernen?"
+#~ msgid "Remove {workspaceMemberName}?"
+#~ msgstr "Remove {workspaceMemberName}?"
+
+#: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+msgid "Remove account"
+msgstr "Konto entfernen"
+
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Remove as default"
+msgstr "Als Standard entfernen"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -1543,6 +2380,14 @@ msgstr "{workspaceMemberName} entfernen?"
 msgid "Remove from favorites"
 msgstr "Aus Favoriten entfernen"
 
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Remove option"
+msgstr "Option entfernen"
+
+#: src/modules/views/components/ViewBarDetails.tsx
+msgid "Reset"
+msgstr "Zurücksetzen"
+
 #: src/pages/auth/PasswordReset.tsx
 msgid "Reset Password"
 msgstr "Passwort zurücksetzen"
@@ -1550,6 +2395,23 @@ msgstr "Passwort zurücksetzen"
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
 msgid "Reset to"
 msgstr "Zurücksetzen auf"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore record"
+msgstr "Datensatz wiederherstellen"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore records"
+msgstr "Datensätze wiederherstellen"
 
 #: src/modules/command-menu/hooks/useSearchRecords.tsx
 msgid "Results"
@@ -1573,7 +2435,16 @@ msgstr "Führen Sie einen Workflow aus und kehren Sie zurück, um die Ausführun
 msgid "Russian"
 msgstr "Russisch"
 
+#: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
+msgid "Save"
+msgstr "Speichern"
+
+#: src/modules/views/components/UpdateViewButtonGroup.tsx
+msgid "Save as new view"
+msgstr "Als neue Ansicht speichern"
+
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
@@ -1588,15 +2459,20 @@ msgstr "Suche ''{commandMenuSearch}'' mit..."
 msgid "Search a field..."
 msgstr "Feld suchen..."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search a member"
 msgstr "Ein Mitglied suchen"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
+msgid "Search a type"
+msgstr "Einen Typ suchen"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Search an index..."
 msgstr "Index suchen..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx
 msgid "Search fields"
 msgstr "Felder suchen"
@@ -1605,11 +2481,21 @@ msgstr "Felder suchen"
 msgid "Search for an object..."
 msgstr "Objekt suchen..."
 
+#: src/modules/ui/input/components/IconPicker.tsx
+msgid "Search icon"
+msgstr "Suchsymbol"
+
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search records"
 msgstr "Datensätze suchen"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Secret"
+msgstr "Geheimnis"
+
+#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1620,6 +2506,23 @@ msgstr "Sicherheit"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "Aktive Version anzeigen"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "See deleted records"
+msgstr "Gelöschte Datensätze anzeigen"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "See deleted runs"
+msgstr "Gelöschte Ausführungen anzeigen"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "See deleted versions"
+msgstr "Gelöschte Versionen anzeigen"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "See deleted workflows"
+msgstr "Gelöschte Workflows anzeigen"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -1638,6 +2541,10 @@ msgstr "Versionen anzeigen"
 msgid "See versions history"
 msgstr "Versionsverlauf anzeigen"
 
+#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+msgid "Select the default value for this boolean field"
+msgstr "Wählen Sie den Standardwert für dieses boolesche Feld aus"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Wählen Sie die Ereignisse aus, die Sie an diesen Endpunkt senden möchten"
@@ -1649,6 +2556,14 @@ msgstr "Bevorzugte Sprache auswählen"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "Einladung per E-Mail an Ihr Team senden"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "Sent"
+msgstr "Gesendet"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
+msgid "Sent and Received"
+msgstr "Gesendet und Empfangen"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
@@ -1663,6 +2578,18 @@ msgstr "Server-Admin"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 msgid "Server Admin Panel"
 msgstr "Server-Admin-Bereich"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Service Provider Details"
+msgstr "Details des Dienstanbieters"
+
+#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+msgid "Set a default role for this workspace"
+msgstr "Legen Sie eine Standardrolle für diesen Arbeitsbereich fest"
+
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Set as default"
+msgstr "Als Standard festlegen"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
@@ -1681,15 +2608,15 @@ msgid "Set the name of your subdomain"
 msgstr "Subdomainnamen festlegen"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
-#: src/pages/settings/roles/components/RolePermissions.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/pages/settings/roles/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Einstellungen Berechtigungen"
 
@@ -1705,6 +2632,11 @@ msgstr "Sollte die Änderung einer Feldbezeichnung auch den API-Namen ändern?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Sollte die Änderung eines Objektnamens auch den API-Namen ändern?"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+msgid "Side Panel"
+msgstr "Seitenpanel"
+
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Anmelden"
@@ -1717,12 +2649,17 @@ msgstr "Registrieren"
 msgid "Single sign-on (SSO)"
 msgstr "Single Sign-On (SSO)"
 
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Singular"
+msgstr "Einzahl"
+
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
 msgstr "Überspringen"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Sort"
 msgstr "Sortieren"
 
@@ -1733,6 +2670,14 @@ msgstr "Spanisch"
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "SSO"
 msgstr "SSO"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Stages"
+msgstr "Phasen"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Status"
+msgstr "Status"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Subdomain"
@@ -1750,6 +2695,23 @@ msgstr "Die Subdomain darf nicht länger als 30 Zeichen sein"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Die Subdomain darf nicht kürzer als 3 Zeichen sein"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx
+msgid "Subdomain updated"
+msgstr "Subdomain aktualisiert"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Subject and metadata"
+msgstr "Betreff und Metadaten"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+msgid "Subject and metadata will be shared with your team."
+msgstr "Betreff und Metadaten werden mit Ihrem Team geteilt."
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+msgid "Subject, body and attachments will be shared with your team."
+msgstr "Betreff, Text und Anlagen werden mit Ihrem Team geteilt."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Subscription has been switched {to}"
@@ -1780,6 +2742,14 @@ msgstr "Wechseln zu {to}"
 msgid "Switch billing {to}"
 msgstr "Abrechnung auf {to} umstellen"
 
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+msgid "Sync failed"
+msgstr "Synchronisierung fehlgeschlagen"
+
+#: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+msgid "Synced"
+msgstr "Synchronisiert"
+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Synchronize Field Label and API Name"
 msgstr "Feldbezeichnung und API-Name synchronisieren"
@@ -1789,6 +2759,8 @@ msgid "Synchronize Objects Labels and API Names"
 msgstr "Objektbezeichnung und API-Namen synchronisieren"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "System settings"
 msgstr "Systemeinstellungen"
 
@@ -1799,6 +2771,10 @@ msgstr "Systemeinstellungen - {systemDateFormatLabel}"
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr "Systemeinstellungen - {systemTimeFormatLabel}"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Table"
+msgstr "Tabelle"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -1813,6 +2789,18 @@ msgstr "Test"
 msgid "Test Workflow"
 msgstr "Test-Workflow"
 
+#: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
+msgid "Text copied to clipboard"
+msgstr "Text in die Zwischenablage kopiert"
+
+#: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
+msgid "The default country code for new phone numbers."
+msgstr "Der Standard-Ländercode für neue Telefonnummern."
+
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+msgid "The default country for new addresses"
+msgstr "Das Standardland für neue Adressen"
+
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
@@ -1826,6 +2814,14 @@ msgstr "Die mit Ihrem Konto verknüpfte E-Mail"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The name and icon of this field"
 msgstr "Der Name und das Symbol dieses Felds"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+msgid "The name of your connection"
+msgstr "Der Name Ihrer Verbindung"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "The name of your Domain"
+msgstr "Der Name Ihrer Domain"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
@@ -1844,11 +2840,16 @@ msgstr "Die Werte dieses Felds"
 msgid "The values of this field must be unique"
 msgstr "Die Werte dieses Felds müssen eindeutig sein"
 
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
+msgid "The whole event details will be shared with your team."
+msgstr "Die gesamten Ereignisdetails werden mit Ihrem Team geteilt."
+
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Beim Aktualisieren des Passworts ist ein Fehler aufgetreten."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+#: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"
 msgstr "Es gab ein Problem"
 
@@ -1861,8 +2862,8 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch wird Ihr gesamter Arbeitsbereich dauerhaft gelöscht. <0/> Bitte geben Sie zur Bestätigung Ihre E-Mail ein."
 
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-msgid "This member will be unassigned from this role."
-msgstr "Dieses Mitglied wird von dieser Rolle abgezogen."
+#~ msgid "This member will be unassigned from this role."
+#~ msgstr "This member will be unassigned from this role."
 
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
@@ -1872,13 +2873,21 @@ msgstr "Dieses Mitglied wird von dieser Rolle abgezogen."
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Diese Rolle ist diesen Arbeitsbereichsmitgliedern zugewiesen."
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
 msgstr "Zeitformat"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
+msgid "Time zone"
+msgstr "Zeitzone"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
+msgid "Timestamp and participants will be shared with your team."
+msgstr "Zeitstempel und Teilnehmer werden mit Ihrem Team geteilt."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to monthly"
@@ -1888,6 +2897,10 @@ msgstr "zu monatlich"
 msgid "to yearly"
 msgstr "zu jährlich"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Total Users"
+msgstr "Gesamtbenutzer"
+
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 msgid "Trigger Type"
 msgstr "Auslöser-Typ"
@@ -1896,13 +2909,18 @@ msgstr "Auslöser-Typ"
 msgid "Trigger type should be Manual - when no record(s) are selected"
 msgstr "Der Auslöser-Typ sollte manuell sein - wenn keine Aufzeichnung(en) ausgewählt ist/sind"
 
+#: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+msgid "True"
+msgstr "Wahr"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "T\\u00fcrkisch"
 
-#: src/pages/settings/roles/components/RolePermissionsSettingsTableHeader.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Typ"
 
@@ -1927,9 +2945,21 @@ msgstr "Unbekannter Fehler"
 msgid "Unlimited contacts"
 msgstr "Unbegrenzte Kontakte"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Updated"
+msgstr "Aktualisiert"
+
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
 msgstr "Hochladen"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Upload file"
+msgstr "Datei hochladen"
+
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Upload the XML file with your connection infos"
+msgstr "Laden Sie die XML-Datei mit Ihren Verbindungsinformationen hoch"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "URL"
@@ -1954,13 +2984,38 @@ msgstr "Verwenden Sie unsere API oder fügen Sie Ihr erstes {objectLabel} manuel
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Benutzer"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User Email"
+msgstr "Benutzer-E-Mail"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User ID"
+msgstr "Benutzer-ID"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User Impersonation"
+msgstr "Benutzernachahmung"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User Info"
+msgstr "Benutzerinfo"
+
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Benutzer ist nicht eingeloggt"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "User Name"
+msgstr "Benutzername"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Users"
+msgstr "Benutzer"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -1968,13 +3023,46 @@ msgstr "Benutzer ist nicht eingeloggt"
 msgid "Values"
 msgstr "Werte"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Version of the application"
+msgstr "Anwendungsversion"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+msgid "View"
+msgstr "Ansicht"
+
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
 msgstr "Rechnungsdetails anzeigen"
+
+#: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
+msgid "View execution details"
+msgstr "Ausführungsdetails anzeigen"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "View settings"
+msgstr "Ansichtseinstellungen"
+
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "View type"
+msgstr "Ansichtstyp"
+
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Visibility"
+msgstr "Sichtbarkeit"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+msgid "Visible"
+msgstr "Sichtbar"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+msgid "Visible groups"
+msgstr "Sichtbare Gruppen"
 
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
@@ -1987,6 +3075,10 @@ msgstr "Wir unterstützen Ihre quadratischen PNGs, JPEGs und GIFs unter 10MB"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Wir senden POST-Anfragen an diesen Endpunkt für jedes neue Ereignis"
+
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "We will send your a link to verify domain ownership"
+msgstr "Wir senden Ihnen einen Link, um den Besitz der Domain zu verifizieren"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Webhook"
@@ -2016,11 +3108,20 @@ msgstr "Wann der Schlüssel deaktiviert wird"
 msgid "Workflow cannot be tested"
 msgstr "Workflow kann nicht getestet werden"
 
+#: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
+msgid "Workflow is running..."
+msgstr "Workflow läuft..."
+
+#: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
+msgid "Workflow run failed"
+msgstr "Workflowausführung fehlgeschlagen"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
-#: src/pages/settings/Releases.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
@@ -2032,6 +3133,7 @@ msgstr "Workflow kann nicht getestet werden"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2051,16 +3153,45 @@ msgstr "Arbeitsbereichslogo"
 msgid "Workspace name"
 msgstr "Arbeitsbereichsname"
 
-#: src/pages/settings/roles/components/RoleSettings.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Name"
+msgstr "Arbeitsbereichsname"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Workspaces"
+msgstr "Arbeitsbereiche"
+
+#: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
+msgid "Wrap on record pages"
+msgstr "Auf Rekordseiten umwickeln"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
 msgstr "Beschreibung schreiben"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+msgid "Write a secret"
+msgstr "Ein Geheimnis schreiben"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
 msgstr "ja"
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+msgid "You are not allowed to create records for this object"
+msgstr "Sie dürfen keine Datensätze für dieses Objekt erstellen"
+
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#~ msgid "You are not allowed to create records in this object"
+#~ msgstr "You are not allowed to create records in this object"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "You do not have access to impersonate users."
+msgstr "Sie haben keinen Zugriff, um Benutzer zu imitieren."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
@@ -2069,6 +3200,14 @@ msgstr "Sie werden sofort für das gesamte Jahr belastet."
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr "Ihr Guthaben wird zur Begleichung der monatlichen Rechnungen verwendet."
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your email subjects and meeting titles will be shared with your team."
+msgstr "Ihre E-Mail-Betreffzeilen und Besprechungstitel werden mit Ihrem Team geteilt."
+
+#: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
+msgid "Your emails and events content will be shared with your team."
+msgstr "Der Inhalt Ihrer E-Mails und Ereignisse wird mit Ihrem Team geteilt."
 
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"
@@ -2085,4 +3224,3 @@ msgstr "Ihr Arbeitsbereich"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Ihr Arbeitsbereich wird deaktiviert"
-

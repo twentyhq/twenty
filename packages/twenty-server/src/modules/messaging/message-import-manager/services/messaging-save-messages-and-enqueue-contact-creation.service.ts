@@ -83,6 +83,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   isGroupEmail(participant.handle);
 
                 const shouldCreateContact =
+                  !!participant.handle &&
                   !isParticipantConnectedAccount &&
                   !isExcludedByNonProfessionalEmails &&
                   !isExcludedByGroupEmails &&

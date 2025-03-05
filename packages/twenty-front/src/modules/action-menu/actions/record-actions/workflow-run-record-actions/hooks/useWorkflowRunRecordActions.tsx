@@ -62,7 +62,7 @@ export const useWorkflowRunRecordActions = ({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.RecordSelection,
-        label: msg`${name}`, // eslint-disable-line lingui/no-single-variables-to-translate
+        label: msg`${name}`,
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {

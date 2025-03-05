@@ -10,6 +10,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { Trans } from '@lingui/react/macro';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -38,8 +39,12 @@ export const SettingsApiKeysTable = () => {
   return (
     <Table>
       <StyledTableRow>
-        <TableHeader>Name</TableHeader>
-        <TableHeader>Expiration</TableHeader>
+        <TableHeader>
+          <Trans>Name</Trans>
+        </TableHeader>
+        <TableHeader>
+          <Trans>Expiration</Trans>
+        </TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
       {!!apiKeys.length && (

@@ -1,21 +1,36 @@
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
+  IconLayoutNavbar,
+  IconLayoutSidebarRight,
+  MenuItem,
   MenuItemToggle,
 } from 'twenty-ui';
 
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownViewSettingsContent = () => {
+  const { t } = useLingui();
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const { recordIndexId, objectMetadataItem, viewType, resetContent } =
-    useOptionsDropdown();
+  const {
+    recordIndexId,
+    objectMetadataItem,
+    viewType,
+    resetContent,
+    onContentChange,
+  } = useOptionsDropdown();
 
   const { isCompactModeActive, setAndPersistIsCompactModeActive } =
     useObjectOptionsForBoard({
@@ -24,12 +39,35 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
       viewBarId: recordIndexId,
     });
 
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        View settings
+        {t`View settings`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
+        {isCommandMenuV2Enabled && (
+          <MenuItem
+            onClick={() => onContentChange('viewSettingsOpenIn')}
+            LeftIcon={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? IconLayoutSidebarRight
+                : IconLayoutNavbar
+            }
+            text={t`Open in`}
+            contextualText={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? t`Side Panel`
+                : t`Record Page`
+            }
+            hasSubMenu
+          />
+        )}
         {viewType === ViewType.Kanban && (
           <MenuItemToggle
             LeftIcon={IconBaselineDensitySmall}
@@ -40,7 +78,7 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
               )
             }
             toggled={isCompactModeActive}
-            text="Compact view"
+            text={t`Compact view`}
             toggleSize="small"
           />
         )}

@@ -21,6 +21,12 @@ export const ViewBarRecordFilterEffect = () => {
     contextStoreCurrentObjectMetadataItemComponentState,
   );
 
+  const currentView = useRecoilValue(
+    prefetchViewFromViewIdFamilySelector({
+      viewId: currentViewId ?? '',
+    }),
+  );
+
   const [
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
@@ -35,18 +41,8 @@ export const ViewBarRecordFilterEffect = () => {
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
-    currentRecordFiltersComponentState,
-  );
-
   const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
     contextStoreCurrentObjectMetadataItem?.id,
-  );
-
-  const currentView = useRecoilValue(
-    prefetchViewFromViewIdFamilySelector({
-      viewId: currentViewId ?? '',
-    }),
   );
 
   useEffect(() => {
@@ -65,6 +61,7 @@ export const ViewBarRecordFilterEffect = () => {
             filterableFieldMetadataItems,
           ),
         );
+
         setHasInitializedCurrentRecordFilters(true);
       }
     }
@@ -72,7 +69,6 @@ export const ViewBarRecordFilterEffect = () => {
     currentViewId,
     setCurrentRecordFilters,
     filterableFieldMetadataItems,
-    currentRecordFilters,
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
     contextStoreCurrentObjectMetadataItem?.id,

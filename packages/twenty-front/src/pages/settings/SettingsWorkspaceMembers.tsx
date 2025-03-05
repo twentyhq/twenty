@@ -114,7 +114,7 @@ export const SettingsWorkspaceMembers = () => {
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
     if (isDefined(result.errors)) {
-      enqueueSnackBar('Error deleting invitation', {
+      enqueueSnackBar(t`Error deleting invitation`, {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
@@ -124,7 +124,7 @@ export const SettingsWorkspaceMembers = () => {
   const handleResendWorkspaceInvitation = async (appTokenId: string) => {
     const result = await resendInvitation({ appTokenId });
     if (isDefined(result.errors)) {
-      enqueueSnackBar('Error resending invitation', {
+      enqueueSnackBar(t`Error resending invitation`, {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
@@ -134,7 +134,7 @@ export const SettingsWorkspaceMembers = () => {
   const getExpiresAtText = (expiresAt: string) => {
     const expiresAtDate = new Date(expiresAt);
     return expiresAtDate < new Date()
-      ? 'Expired'
+      ? t`Expired`
       : formatDistanceToNow(new Date(expiresAt));
   };
 
@@ -329,7 +329,7 @@ export const SettingsWorkspaceMembers = () => {
           workspaceMemberToDelete &&
           handleRemoveWorkspaceMember(workspaceMemberToDelete)
         }
-        deleteButtonText={t`Delete account`}
+        confirmButtonText={t`Delete account`}
       />
     </SubMenuTopBarContainer>
   );

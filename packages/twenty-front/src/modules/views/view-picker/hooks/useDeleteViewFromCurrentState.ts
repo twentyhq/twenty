@@ -32,7 +32,7 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
       viewBarInstanceId,
     );
 
-  const { changeView } = useChangeView(viewBarInstanceId);
+  const { changeView } = useChangeView();
 
   const { deleteView } = useDeleteView();
 

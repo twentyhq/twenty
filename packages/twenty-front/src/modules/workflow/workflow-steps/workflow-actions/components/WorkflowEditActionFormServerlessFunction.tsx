@@ -17,6 +17,7 @@ import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctio
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { ShowPageSubContainerTabListContainer } from '@/ui/layout/show-page/components/ShowPageSubContainerTabListContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
@@ -48,14 +49,7 @@ const StyledCodeEditorContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledTabListContainer = styled.div`
-  align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(10)};
+const StyledTabListContainer = styled(ShowPageSubContainerTabListContainer)`
   background-color: ${({ theme }) => theme.background.secondary};
 `;
 
@@ -81,8 +75,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const [shouldBuildServerlessFunction, setShouldBuildServerlessFunction] =
-    useState(false);
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const serverlessFunctionVersion =
     action.settings.input.serverlessFunctionVersion;
@@ -123,14 +115,12 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
-  const { testServerlessFunction, isTesting, isBuilding } =
-    useTestServerlessFunction({
-      serverlessFunctionId,
-      callback: updateOutputSchemaFromTestResult,
-    });
+  const { testServerlessFunction, isTesting } = useTestServerlessFunction({
+    serverlessFunctionId,
+    callback: updateOutputSchemaFromTestResult,
+  });
 
   const handleSave = useDebouncedCallback(async () => {
-    setShouldBuildServerlessFunction(true);
     await updateOneServerlessFunction({
       name: formValues.name,
       description: formValues.description,
@@ -238,8 +228,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
     }
 
     if (!isTesting) {
-      await testServerlessFunction(shouldBuildServerlessFunction);
-      setShouldBuildServerlessFunction(false);
+      await testServerlessFunction();
     }
   };
 
@@ -348,7 +337,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 <InputLabel>Result</InputLabel>
                 <ServerlessFunctionExecutionResult
                   serverlessFunctionTestData={serverlessFunctionTestData}
-                  isBuilding={isBuilding}
                   isTesting={isTesting}
                 />
               </StyledCodeEditorContainer>
@@ -361,7 +349,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
               <CmdEnterActionButton
                 title="Test"
                 onClick={handleRunFunction}
-                disabled={isTesting || isBuilding || actionOptions.readonly}
+                disabled={isTesting || actionOptions.readonly}
               />,
             ]}
           />

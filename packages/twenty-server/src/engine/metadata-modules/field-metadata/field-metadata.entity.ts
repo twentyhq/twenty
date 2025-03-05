@@ -36,7 +36,7 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
   'relationTargetObjectMetadataId',
 ])
 export class FieldMetadataEntity<
-  T extends FieldMetadataType | 'default' = 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > implements FieldMetadataInterface<T>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -59,7 +59,7 @@ export class FieldMetadataEntity<
     nullable: false,
     type: 'varchar',
   })
-  type: FieldMetadataType;
+  type: T;
 
   @Column({ nullable: false })
   name: string;

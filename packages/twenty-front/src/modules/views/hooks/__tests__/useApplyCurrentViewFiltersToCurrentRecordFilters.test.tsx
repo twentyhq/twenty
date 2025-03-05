@@ -10,6 +10,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { View } from '@/views/types/View';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { act } from 'react';
 import { isDefined } from 'twenty-shared';
@@ -51,6 +52,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     type: ViewType.Table,
     key: null,
     isCompact: false,
+    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
     viewFields: [],
     viewGroups: [],
     viewSorts: [],
@@ -83,13 +85,8 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
+          contextStoreCurrentViewId: mockView.id,
           onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              contextStoreCurrentViewIdComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              mockView.id,
-            );
             snapshot.set(prefetchViewsState, [mockView]);
           },
         }),
@@ -107,8 +104,8 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         value: mockViewFilter.value,
         displayValue: mockViewFilter.displayValue,
         operand: mockViewFilter.operand,
-        viewFilterGroupId: mockViewFilter.viewFilterGroupId,
-        positionInViewFilterGroup: mockViewFilter.positionInViewFilterGroup,
+        recordFilterGroupId: mockViewFilter.viewFilterGroupId,
+        positionInRecordFilterGroup: mockViewFilter.positionInViewFilterGroup,
         label: mockFieldMetadataItem.label,
         type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
       } satisfies RecordFilter,
