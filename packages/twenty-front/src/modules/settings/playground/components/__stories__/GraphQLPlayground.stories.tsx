@@ -3,7 +3,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator, ComponentWithRouterDecorator } from 'twenty-ui';
 import { SettingsGraphQLPlayground } from '~/pages/settings/developers/playground/SettingsGraphQLPlayground';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { getValidMockSession, PlaygroundDecorator } from '~/testing/decorators/PlaygroundDecorator';
+import {
+  getValidMockSession,
+  PlaygroundDecorator,
+} from '~/testing/decorators/PlaygroundDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<any> = {
@@ -13,7 +16,7 @@ const meta: Meta<any> = {
     ComponentDecorator,
     I18nFrontDecorator,
     ComponentWithRouterDecorator,
-    PlaygroundDecorator
+    PlaygroundDecorator,
   ],
   parameters: {
     docs: {
@@ -31,23 +34,23 @@ type Story = StoryObj<any>;
 
 export const Default: Story = {
   args: {
-    onError: action('GraphQL Playground encountered unexpected error')
+    onError: action('GraphQL Playground encountered unexpected error'),
   },
   parameters: {
-    session: getValidMockSession()
-  }
+    session: getValidMockSession(),
+  },
 };
 
 export const Error: Story = {
   args: {
-    onError: action('GraphQL Playground encountered an error')
+    onError: action('GraphQL Playground encountered an error'),
   },
   parameters: {
     session: {
       apiKey: null,
       baseUrl: null,
       schema: null,
-      isValid: false
-    }
-  }
+      isValid: false,
+    },
+  },
 };

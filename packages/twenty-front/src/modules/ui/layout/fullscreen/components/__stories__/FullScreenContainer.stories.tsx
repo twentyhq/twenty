@@ -39,7 +39,7 @@ export const Default: Story = {
         href: '/',
       },
     ],
-    exitFullScreen: function () {},
+    exitFullScreen: () => {},
   },
   decorators: [ComponentDecorator],
 };

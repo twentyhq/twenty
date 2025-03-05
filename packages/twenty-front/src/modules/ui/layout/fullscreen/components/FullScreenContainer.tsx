@@ -1,10 +1,10 @@
 import {
   PAGE_BAR_MIN_HEIGHT,
-  PageHeader
+  PageHeader,
 } from '@/ui/layout/page/components/PageHeader';
 import {
   Breadcrumb,
-  BreadcrumbProps
+  BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -46,7 +46,7 @@ export const FullScreenContainer = ({
 
   return (
     <StyledFullScreen>
-      <PageHeader title={<Breadcrumb links={links}/>}>
+      <PageHeader title={<Breadcrumb links={links} />}>
         <Button
           Icon={IconX}
           dataTestId="close-button"

@@ -56,18 +56,18 @@ export const graphqlMocks = {
                   {
                     name: 'name',
                     type: { kind: 'SCALAR', name: 'String' },
-                    args: []
+                    args: [],
                   },
                 ],
                 interfaces: [],
-                args: []
+                args: [],
               },
               {
                 kind: 'SCALAR',
                 name: 'String',
                 fields: [],
                 interfaces: [],
-                args: []
+                args: [],
               },
             ],
             directives: [],
@@ -75,7 +75,7 @@ export const graphqlMocks = {
         },
       });
     }),
-    
+
     graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
       return HttpResponse.json({
         data: {
