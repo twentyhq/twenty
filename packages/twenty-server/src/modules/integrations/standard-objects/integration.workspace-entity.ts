@@ -72,7 +72,6 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPhone',
     inverseSideTarget: () => ChargeWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
-    inverseSideFieldKey: 'integration',
   })
   @WorkspaceIsNullable()
   charges: Relation<ChargeWorkspaceEntity[]>;
