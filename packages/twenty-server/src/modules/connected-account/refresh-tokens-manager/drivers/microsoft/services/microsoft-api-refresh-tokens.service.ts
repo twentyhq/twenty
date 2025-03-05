@@ -40,8 +40,10 @@ export class MicrosoftAPIRefreshAccessTokenService {
       },
     );
 
-    z.string().parse(response.data.access_token);
-    z.string().parse(response.data.refresh_token);
+    z.object({
+      access_token: z.string(),
+      refresh_token: z.string(),
+    }).parse(response.data)
 
     return {
       accessToken: response.data.access_token,
