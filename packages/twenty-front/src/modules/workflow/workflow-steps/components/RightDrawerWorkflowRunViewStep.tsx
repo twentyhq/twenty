@@ -6,6 +6,7 @@ import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hook
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
+import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import styled from '@emotion/styled';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
 
@@ -23,9 +24,16 @@ export const RightDrawerWorkflowRunViewStep = () => {
     WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
   );
 
+  const isInputTabDisabled = workflowSelectedNode === TRIGGER_STEP_ID;
+
   const tabs: SingleTabProps<TabId>[] = [
     { id: 'node', title: 'Node', Icon: IconStepInto },
-    { id: 'input', title: 'Input', Icon: IconLogin2 },
+    {
+      id: 'input',
+      title: 'Input',
+      Icon: IconLogin2,
+      disabled: isInputTabDisabled,
+    },
     { id: 'output', title: 'Output', Icon: IconLogout },
   ];
 
