@@ -134,7 +134,6 @@ export const TaskRow = ({ task }: { task: Task }) => {
               activity={task}
               showLabel={false}
               maxWidth={200}
-              readonly
             />
           </TaskTargetsContextProvider>
         )}
