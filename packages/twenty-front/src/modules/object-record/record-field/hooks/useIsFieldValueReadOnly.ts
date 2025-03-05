@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -20,9 +19,9 @@ export const useIsFieldValueReadOnly = () => {
     recordStoreFamilyState(recordId),
   );
 
-  const isShowPage =
-    useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
-    ContextStoreViewType.ShowPage;
+  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+    contextStoreCurrentViewTypeComponentState,
+  );
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: metadata.objectMetadataNameSingular ?? '',
@@ -37,6 +36,6 @@ export const useIsFieldValueReadOnly = () => {
     isObjectRemote: objectMetadataItem.isRemote,
     isRecordDeleted: recordFromStore?.deletedAt,
     hasObjectReadOnlyPermission,
-    isShowPage,
+    contextStoreCurrentViewType,
   });
 };
