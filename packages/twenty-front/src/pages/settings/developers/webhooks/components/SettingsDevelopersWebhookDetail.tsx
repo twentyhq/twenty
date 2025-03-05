@@ -262,7 +262,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
               </Trans>
             }
             onConfirmClick={deleteWebhook}
-            deleteButtonText={t`Delete webhook`}
+            confirmButtonText={t`Delete webhook`}
           />
         </Section>
       </SettingsPageContainer>

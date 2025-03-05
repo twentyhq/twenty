@@ -93,7 +93,7 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
             closeRightDrawer({ emitCloseEvent: false });
           }
         }}
-        deleteButtonText={'Delete Record'}
+        confirmButtonText={'Delete Record'}
       />
     ),
   };

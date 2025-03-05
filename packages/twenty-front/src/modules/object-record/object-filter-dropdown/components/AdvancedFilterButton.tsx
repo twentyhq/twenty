@@ -133,8 +133,8 @@ export const AdvancedFilterButton = () => {
       });
     }
 
-    openAdvancedFilterDropdown();
     closeObjectFilterDropdown();
+    openAdvancedFilterDropdown();
   };
 
   return (

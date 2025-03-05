@@ -12,6 +12,7 @@ export {
   IconArrowDown,
   IconArrowLeft,
   IconArrowRight,
+  IconArrowsDiagonal,
   IconArrowsVertical,
   IconArrowUp,
   IconArrowUpRight,
@@ -32,6 +33,7 @@ export {
   IconBrandLinkedin,
   IconBrandX,
   IconBriefcase,
+  IconBrowserMaximize,
   IconBuildingSkyscraper,
   IconCalendar,
   IconCalendarDue,
@@ -157,6 +159,7 @@ export {
   IconHeart,
   IconHeartOff,
   IconHelpCircle,
+  IconHierarchy,
   IconHierarchy2,
   IconHistory,
   IconHistoryToggle,
@@ -270,6 +273,7 @@ export {
   IconUpload,
   IconUser,
   IconUserCircle,
+  IconUserCog,
   IconUserPin,
   IconUserPlus,
   IconUsers,
@@ -282,4 +286,4 @@ export {
   IconX
 } from '@tabler/icons-react';
 
-export type { TablerIconsProps } from '@tabler/icons-react';
+export type { IconProps as TablerIconsProps } from '@tabler/icons-react';
