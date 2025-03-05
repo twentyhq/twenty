@@ -99,12 +99,8 @@ export class WorkspaceManagerService {
     );
 
     const permissionsEnabledStart = performance.now();
-    const permissionsEnabled =
-      await this.permissionsService.isPermissionsEnabled();
 
-    if (permissionsEnabled === true) {
-      await this.initPermissions({ workspaceId, userId });
-    }
+    await this.initPermissions({ workspaceId, userId });
 
     const permissionsEnabledEnd = performance.now();
 
@@ -168,12 +164,7 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
-    const permissionsEnabled =
-      await this.permissionsService.isPermissionsEnabled();
-
-    if (permissionsEnabled === true) {
-      await this.initPermissionsDev(workspaceId);
-    }
+    await this.initPermissionsDev(workspaceId);
   }
 
   /**
@@ -296,12 +287,13 @@ export class WorkspaceManagerService {
       roleId: adminRole.id,
     });
 
-    const memberRole = await this.roleService.createMemberRole({
+    await this.roleService.createMemberRole({
       workspaceId,
     });
 
+    // Temporary - after permissions are rolled-out we will set member role as the default role
     await this.workspaceRepository.update(workspaceId, {
-      defaultRoleId: memberRole.id,
+      defaultRoleId: adminRole.id,
     });
   }
 
