@@ -27,7 +27,7 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
   },
   [FileFolder.PersonPicture]: {
-    ignoreExpirationToken: true,
+    ignoreExpirationToken: false,
   },
   [FileFolder.ServerlessFunction]: {
     ignoreExpirationToken: false,

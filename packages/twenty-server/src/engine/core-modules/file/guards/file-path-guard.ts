@@ -21,7 +21,6 @@ export class FilePathGuard implements CanActivate {
       return false;
     }
 
-    // Only verify workspace token if the file folder is not public.
     try {
       const payload = await this.jwtWrapperService.verifyWorkspaceToken(
         query['token'],
