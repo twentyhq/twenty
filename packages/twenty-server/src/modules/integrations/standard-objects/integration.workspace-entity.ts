@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
-import { Relation } from 'typeorm';
+import { OneToMany, Relation } from 'typeorm';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -25,6 +25,7 @@ import {
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -75,6 +76,25 @@ export class IntegrationWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   charge: Relation<ChargeWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: INTEGRATION_STANDARD_FIELD_IDS.traceable,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: msg`Traceable`,
+    description: msg`Integration linked to the traceable`,
+    icon: 'IconPhone',
+    inverseSideTarget: () => TraceableWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  @OneToMany(
+    () => TraceableWorkspaceEntity,
+    (traceable) => traceable.integration,
+    {
+      nullable: true,
+    },
+  )
+  traceables: TraceableWorkspaceEntity[];
 
   @WorkspaceRelation({
     standardId: INTEGRATION_STANDARD_FIELD_IDS.timelineActivities,

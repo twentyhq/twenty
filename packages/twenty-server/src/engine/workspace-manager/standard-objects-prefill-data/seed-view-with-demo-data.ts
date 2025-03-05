@@ -11,6 +11,7 @@ import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-pre
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
+import { tracaebleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/traceable-all-views';
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
@@ -24,6 +25,7 @@ export const seedViewWithDemoData = async (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   const viewDefinitions = [
+    tracaebleAllView(objectMetadataStandardIdToIdMap),
     seedCompaniesAllView(objectMetadataStandardIdToIdMap),
     peopleAllView(objectMetadataStandardIdToIdMap),
     chargesAllView(objectMetadataStandardIdToIdMap),

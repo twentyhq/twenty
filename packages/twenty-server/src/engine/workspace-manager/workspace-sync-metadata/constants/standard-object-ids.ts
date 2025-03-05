@@ -50,5 +50,6 @@ export const STANDARD_OBJECT_IDS = {
   workflowVersion: '20202020-d65d-4ab9-9344-d77bfb376a3d',
   workspaceMember: '20202020-3319-4234-a34c-82d5c0e881a6',
   charge: '20202020-e674-48e5-a542-72570eee7216',
+  traceable: '20202020-1234-5678-9abc-def123456789',
   integration: '20202020-4b4b-4b4b-4b4b-4b4b4b4b4b4b',
 };

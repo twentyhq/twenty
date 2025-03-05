@@ -26,6 +26,7 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { BehavioralEventWorkspaceEntity } from 'src/modules/timeline/standard-objects/behavioral-event.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
@@ -80,5 +81,6 @@ export const standardObjectMetadataDefinitions = [
   TaskWorkspaceEntity,
   TaskTargetWorkspaceEntity,
   ChargeWorkspaceEntity,
+  TraceableWorkspaceEntity,
   IntegrationWorkspaceEntity,
 ];
