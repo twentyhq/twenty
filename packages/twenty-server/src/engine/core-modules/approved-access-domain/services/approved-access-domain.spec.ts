@@ -113,6 +113,22 @@ describe('ApprovedAccessDomainService', () => {
       );
       expect(result).toEqual(expectedApprovedAccessDomain);
     });
+    it('should throw an exception if approved access domain is not a company domain', async () => {
+      await expect(
+        service.createApprovedAccessDomain(
+          'gmail.com',
+          { id: 'workspace-id' } as Workspace,
+          { email: 'user@gmail.com', isEmailVerified: true } as User,
+          'user@gmail.com',
+        ),
+      ).rejects.toThrowError(
+        new ApprovedAccessDomainException(
+          'Approved access domain must be a company domain',
+          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN,
+        ),
+      );
+      expect(approvedAccessDomainRepository.save).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteApprovedAccessDomain', () => {
