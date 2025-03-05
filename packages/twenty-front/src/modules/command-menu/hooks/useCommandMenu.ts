@@ -30,6 +30,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RIGHT_DRAWER_RECORD_INSTANCE_ID } from '@/object-record/record-right-drawer/constants/RightDrawerRecordInstanceId';
+import { viewableRecordIdComponentState } from '@/object-record/record-right-drawer/states/viewableRecordIdComponentState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularComponentState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularComponentState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
@@ -161,11 +162,7 @@ export const useCommandMenu = () => {
           ? []
           : snapshot.getLoadable(commandMenuNavigationStackState).getValue();
 
-        const itemIsAlreadyInStack = currentNavigationStack.some(
-          (item) => item.page === page,
-        );
-
-        if (resetNavigationStack || itemIsAlreadyInStack) {
+        if (resetNavigationStack) {
           set(commandMenuNavigationStackState, [
             { page, pageTitle, pageIcon, pageComponentInstanceId },
           ]);
@@ -285,6 +282,12 @@ export const useCommandMenu = () => {
           }),
           objectNameSingular,
         );
+        set(
+          viewableRecordIdComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          recordId,
+        );
         set(viewableRecordIdState, recordId);
 
         const objectMetadataItem = snapshot
@@ -359,6 +362,7 @@ export const useCommandMenu = () => {
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
           pageComponentInstanceId,
+          resetNavigationStack: false,
         });
       };
     },

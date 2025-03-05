@@ -6,7 +6,7 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RIGHT_DRAWER_RECORD_INSTANCE_ID } from '@/object-record/record-right-drawer/constants/RightDrawerRecordInstanceId';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
-import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { viewableRecordIdComponentState } from '@/object-record/record-right-drawer/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularComponentState';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
@@ -31,7 +31,9 @@ export const RightDrawerRecord = () => {
   const isNewViewableRecordLoading = useRecoilValue(
     isNewViewableRecordLoadingState,
   );
-  const viewableRecordId = useRecoilValue(viewableRecordIdState);
+  const viewableRecordId = useRecoilComponentValueV2(
+    viewableRecordIdComponentState,
+  );
 
   if (!viewableRecordNameSingular && !isNewViewableRecordLoading) {
     throw new Error(`Object name is not defined`);
