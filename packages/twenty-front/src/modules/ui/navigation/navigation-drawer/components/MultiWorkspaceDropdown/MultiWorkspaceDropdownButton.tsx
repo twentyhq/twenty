@@ -4,8 +4,8 @@ import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/t
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useRecoilState } from 'recoil';
 import { useMemo } from 'react';
-import { MultiWorkspaceDropdownClickableComponent as MultiWorkspaceDefaultStateClickableComponent } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownClickableComponent';
-import { MultiWorkspaceDropdownDefaultComponents as MultiWorkspaceDefaultStateDropdownComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents';
+import { MultiWorkspaceDropdownClickableComponent } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownClickableComponent';
+import { MultiWorkspaceDropdownDefaultComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents';
 import { MultiWorkspaceDropdownThemesComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents';
 import { MultiWorkspaceDropdownWorkspacesListComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents';
 
@@ -21,7 +21,7 @@ export const MultiWorkspaceDropdownButton = () => {
       case 'workspaces-list':
         return MultiWorkspaceDropdownWorkspacesListComponents;
       default:
-        return MultiWorkspaceDefaultStateDropdownComponents;
+        return MultiWorkspaceDropdownDefaultComponents;
     }
   }, [multiWorkspaceDropdown]);
 
@@ -32,7 +32,7 @@ export const MultiWorkspaceDropdownButton = () => {
         scope: NavigationDrawerHotKeyScope.MultiWorkspaceDropdownButton,
       }}
       dropdownOffset={{ y: -30, x: 0 }}
-      clickableComponent={<MultiWorkspaceDefaultStateClickableComponent />}
+      clickableComponent={<MultiWorkspaceDropdownClickableComponent />}
       dropdownComponents={<DropdownComponents />}
       onClose={() => {
         setMultiWorkspaceDropdown('default');
