@@ -2,7 +2,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import {
   Avatar,
   IconChevronLeft,
-  MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui';
@@ -18,6 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useState } from 'react';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -36,12 +36,12 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
 
   return (
     <DropdownMenuItemsContainer>
-      <MenuItem
-        LeftIcon={IconChevronLeft}
-        text={t`Other workspaces`}
-        onClick={() => setMultiWorkspaceDropdownState('default')}
-      />
-      <DropdownMenuSeparator />
+      <DropdownMenuHeader
+        StartIcon={IconChevronLeft}
+        onStartIconClick={() => setMultiWorkspaceDropdownState('default')}
+      >
+        {t`Other workspaces`}
+      </DropdownMenuHeader>
       <DropdownMenuSearchInput
         placeholder={t`Search`}
         autoFocus

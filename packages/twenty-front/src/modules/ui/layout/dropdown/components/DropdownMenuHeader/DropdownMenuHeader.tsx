@@ -1,11 +1,13 @@
 import styled from '@emotion/styled';
-import { ComponentProps, MouseEvent, ReactElement, ReactNode } from 'react';
+import { ComponentProps, MouseEvent, ReactElement } from 'react';
 import { Avatar, AvatarProps, IconComponent } from 'twenty-ui';
 import { DropdownMenuHeaderStartIcon } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderStartIcon';
 import { isDefined } from 'twenty-shared';
-import { DropdownMenuHeaderWithDropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderWithDropdownMenu';
 import { useTheme } from '@emotion/react';
-import { Placement } from '@floating-ui/react';
+import {
+  Dropdown,
+  DropdownProps,
+} from '@/ui/layout/dropdown/components/Dropdown';
 
 const StyledHeader = styled.li`
   align-items: center;
@@ -55,17 +57,10 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   onStartIconClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
   className?: string;
+  DropdownOnEndIcon?: ReactElement<DropdownProps, typeof Dropdown>;
 } & (
     | { StartIcon?: IconComponent }
     | { StartAvatar?: ReactElement<AvatarProps, typeof Avatar> }
-  ) &
-  (
-    | {
-        dropdownId: string;
-        dropdownPlacement: Placement;
-        dropdownComponents: ReactNode;
-      }
-    | Record<never, never>
   );
 export const DropdownMenuHeader = ({
   children,
@@ -93,17 +88,10 @@ export const DropdownMenuHeader = ({
         />
       )}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-      {'dropdownId' in props && (
-        <StyledEndIcon>
-          <DropdownMenuHeaderWithDropdownMenu
-            EndIcon={EndIcon}
-            dropdownId={props.dropdownId}
-            dropdownPlacement={props.dropdownPlacement}
-            dropdownComponents={props.dropdownComponents}
-          />
-        </StyledEndIcon>
+      {'DropdownOnEndIcon' in props && (
+        <StyledEndIcon>{props.DropdownOnEndIcon}</StyledEndIcon>
       )}
-      {!('dropdownId' in props) && EndIcon && (
+      {!('DropdownOnEndIcon' in props) && EndIcon && (
         <StyledEndIcon>
           <EndIcon size={theme.icon.size.md} />
         </StyledEndIcon>

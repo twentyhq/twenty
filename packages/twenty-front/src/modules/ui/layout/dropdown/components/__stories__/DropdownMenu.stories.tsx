@@ -219,10 +219,7 @@ export const WithHeaders: Story = {
   args: {
     dropdownComponents: (
       <>
-        <DropdownMenuHeader
-          StartIcon={IconChevronLeft}
-          onStartIconClick={() => ''}
-        >
+        <DropdownMenuHeader StartIcon={IconChevronLeft}>
           Header
         </DropdownMenuHeader>
         <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>

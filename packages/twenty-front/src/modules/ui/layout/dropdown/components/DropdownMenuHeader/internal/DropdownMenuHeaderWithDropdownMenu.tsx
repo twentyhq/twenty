@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 
 export type DropdownMenuHeaderWithDropdownMenuProps = {
   EndIcon?: IconComponent;
-  dropdownPlacement: Placement;
+  dropdownPlacement?: Placement;
   dropdownComponents: ReactNode;
   dropdownId: string;
 };
@@ -24,7 +24,7 @@ export const DropdownMenuHeaderWithDropdownMenu = (
             accent="tertiary"
           />
         }
-        dropdownPlacement={props.dropdownPlacement}
+        dropdownPlacement={props.dropdownPlacement ?? 'bottom-end'}
         dropdownComponents={props.dropdownComponents}
         dropdownId={props.dropdownId}
         dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}

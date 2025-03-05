@@ -1,10 +1,12 @@
 import {
   Avatar,
+  IconDotsVertical,
   IconLogout,
   IconPlus,
   IconSunMoon,
   IconSwitchHorizontal,
   IconUserPlus,
+  LightIconButton,
   MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
@@ -31,7 +33,9 @@ import { AppPath } from '@/types/AppPath';
 import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -75,28 +79,38 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   return (
     <DropdownMenuItemsContainer>
-      <DropdownMenuHeader StartIcon={IconPlus}>
+      <DropdownMenuHeader
+        StartAvatar={
+          <Avatar
+            placeholder={currentWorkspace?.displayName || ''}
+            avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
+          />
+        }
+        DropdownOnEndIcon={
+          <Dropdown
+            clickableComponent={
+              <LightIconButton
+                Icon={IconDotsVertical}
+                size="small"
+                accent="tertiary"
+              />
+            }
+            dropdownId={'multi-workspace-dropdown-context-menu'}
+            dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+            dropdownComponents={
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  LeftIcon={IconPlus}
+                  text={t`Create Workspace`}
+                  onClick={createWorkspace}
+                />
+              </DropdownMenuItemsContainer>
+            }
+          />
+        }
+      >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
-      {/*<MenuItemWithOptionDropdown*/}
-      {/*  LeftComponent={*/}
-      {/*    <Avatar*/}
-      {/*      placeholder={currentWorkspace?.displayName || ''}*/}
-      {/*      avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}*/}
-      {/*    />*/}
-      {/*  }*/}
-      {/*  dropdownId="multiworkspace-dropdown"*/}
-      {/*  text={currentWorkspace?.displayName}*/}
-      {/*  dropdownContent={*/}
-      {/*    <DropdownMenuItemsContainer>*/}
-      {/*      <MenuItem*/}
-      {/*        LeftIcon={IconPlus}*/}
-      {/*        text={t`Create Workspace`}*/}
-      {/*        onClick={createWorkspace}*/}
-      {/*      />*/}
-      {/*    </DropdownMenuItemsContainer>*/}
-      {/*  }*/}
-      {/*/>*/}
       {workspaces
         .filter(({ id }) => id !== currentWorkspace?.id)
         .slice(0, 3)
