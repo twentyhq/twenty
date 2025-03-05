@@ -1,6 +1,7 @@
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from 'twenty-shared';
 import { MenuItem } from 'twenty-ui';
@@ -14,6 +15,8 @@ export const CommandMenuContextChipGroups = ({
 }: {
   contextChips: CommandMenuContextChipProps[];
 }) => {
+  const { closeDropdown } = useDropdownV2();
+
   if (contextChips.length === 0) {
     return null;
   }
@@ -54,7 +57,10 @@ export const CommandMenuContextChipGroups = ({
                 <MenuItem
                   LeftComponent={chip.Icons}
                   text={chip.text}
-                  onClick={chip.onClick}
+                  onClick={() => {
+                    closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
+                    chip.onClick?.();
+                  }}
                 />
               ))}
             </DropdownMenuItemsContainer>
