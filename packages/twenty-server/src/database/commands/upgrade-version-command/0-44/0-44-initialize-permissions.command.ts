@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandOptions,
@@ -62,7 +62,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
         });
       }
 
-      await this.assignAdminRole({
+      await this.assignAdminRoleToMembers({
         workspaceId,
         adminRoleId,
         options,
@@ -82,12 +82,6 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       }
 
       await this.setMemberRoleAsDefaultRole({
-        workspaceId,
-        memberRoleId,
-        options,
-      });
-
-      await this.assignMemberRoleToUserWorkspacesWithoutRole({
         workspaceId,
         memberRoleId,
         options,
@@ -175,7 +169,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
     }
   }
 
-  private async assignAdminRole({
+  private async assignAdminRoleToMembers({
     workspaceId,
     adminRoleId,
     options,
@@ -184,57 +178,9 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
     adminRoleId: string;
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
   }) {
-    const oldestUserWorkspace = await this.userWorkspaceRepository.findOne({
-      where: {
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      relations: {
-        user: true,
-      },
-      order: {
-        user: {
-          createdAt: 'ASC',
-        },
-      },
-    });
-
-    if (!oldestUserWorkspace) {
-      throw new Error('No user workspace found');
-    }
-
-    this.logger.log(
-      chalk.green(
-        `Assigning admin role to user ${oldestUserWorkspace.id} ${options.dryRun ? '(dry run)' : ''}`,
-      ),
-    );
-
-    if (options.dryRun) {
-      return;
-    }
-
-    await this.userRoleService.assignRoleToUserWorkspace({
-      roleId: adminRoleId,
-      userWorkspaceId: oldestUserWorkspace.id,
-      workspaceId,
-    });
-  }
-
-  private async assignMemberRoleToUserWorkspacesWithoutRole({
-    workspaceId,
-    memberRoleId,
-    options,
-  }: {
-    workspaceId: string;
-    memberRoleId: string;
-    options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
-  }) {
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         workspaceId,
-      },
-      relations: {
-        user: true,
       },
     });
 
@@ -247,7 +193,6 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       });
 
     for (const userWorkspace of userWorkspaces) {
-      // If userWorkspace has a role, do nothing
       if (
         rolesByUserWorkspace
           .get(userWorkspace.id)
@@ -255,7 +200,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       ) {
         this.logger.log(
           chalk.green(
-            `User workspace ${userWorkspace.id} already has a role. Skipping member role assignation`,
+            `User workspace ${userWorkspace.id} already has a role. Skipping role assignation`,
           ),
         );
         continue;
@@ -263,17 +208,15 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
 
       this.logger.log(
         chalk.green(
-          `Assigning member role to user workspace ${userWorkspace.id} ${options.dryRun ? '(dry run)' : ''}`,
+          `Assigning admin role to workspace member ${userWorkspace.id} ${options.dryRun ? '(dry run)' : ''}`,
         ),
       );
 
       if (options.dryRun) {
-        continue;
+        return;
       }
-
-      // Otherwise, assign member role to userWorkspace
       await this.userRoleService.assignRoleToUserWorkspace({
-        roleId: memberRoleId,
+        roleId: adminRoleId,
         userWorkspaceId: userWorkspace.id,
         workspaceId,
       });
