@@ -43,7 +43,7 @@ export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
   namePlural: 'traceable',
   labelSingular: msg`Traceable`,
   labelPlural: msg`Traceable`,
-  description: msg`A traceable`,
+  description: msg`A traceable link`,
   icon: 'IconLink',
   labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.product,
 })
