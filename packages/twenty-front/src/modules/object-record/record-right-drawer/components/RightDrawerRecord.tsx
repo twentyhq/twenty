@@ -7,13 +7,14 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RIGHT_DRAWER_RECORD_INSTANCE_ID } from '@/object-record/record-right-drawer/constants/RightDrawerRecordInstanceId';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { viewableRecordNameSingularComponentState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularComponentState';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 
 const StyledRightDrawerRecord = styled.div<{ isMobile: boolean }>`
@@ -24,8 +25,8 @@ const StyledRightDrawerRecord = styled.div<{ isMobile: boolean }>`
 export const RightDrawerRecord = () => {
   const isMobile = useIsMobile();
 
-  const viewableRecordNameSingular = useRecoilValue(
-    viewableRecordNameSingularState,
+  const viewableRecordNameSingular = useRecoilComponentValueV2(
+    viewableRecordNameSingularComponentState,
   );
   const isNewViewableRecordLoading = useRecoilValue(
     isNewViewableRecordLoadingState,

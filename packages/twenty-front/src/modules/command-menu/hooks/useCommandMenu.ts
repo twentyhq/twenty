@@ -31,7 +31,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RIGHT_DRAWER_RECORD_INSTANCE_ID } from '@/object-record/record-right-drawer/constants/RightDrawerRecordInstanceId';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { viewableRecordNameSingularComponentState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularComponentState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
@@ -140,12 +140,11 @@ export const useCommandMenu = () => {
         page,
         pageTitle,
         pageIcon,
+        pageComponentInstanceId,
         resetNavigationStack = false,
       }: CommandMenuNavigationStackItem & {
         resetNavigationStack?: boolean;
       }) => {
-        const pageComponentInstanceId = v4();
-
         openCommandMenu();
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
@@ -279,7 +278,13 @@ export const useCommandMenu = () => {
         objectNameSingular: string;
         isNewRecord?: boolean;
       }) => {
-        set(viewableRecordNameSingularState, objectNameSingular);
+        const pageComponentInstanceId = v4();
+        set(
+          viewableRecordNameSingularComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          objectNameSingular,
+        );
         set(viewableRecordIdState, recordId);
 
         const objectMetadataItem = snapshot
@@ -353,7 +358,7 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
-          pageComponentInstanceId: v4(),
+          pageComponentInstanceId,
         });
       };
     },
