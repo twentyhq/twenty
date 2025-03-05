@@ -2,8 +2,8 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { checkFileFolder } from 'src/engine/core-modules/file/file.utils';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {
@@ -12,7 +12,8 @@ export class FilePathGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const fileFolder = checkFileFolder(request.params[0]);
-    const isFileFolderPublic = fileFolderConfigs[fileFolder].isPublic;
+    const ignoreExpirationToken =
+      fileFolderConfigs[fileFolder].ignoreExpirationToken;
 
     const query = request.query;
 
@@ -25,7 +26,7 @@ export class FilePathGuard implements CanActivate {
       const payload = await this.jwtWrapperService.verifyWorkspaceToken(
         query['token'],
         'FILE',
-        isFileFolderPublic ? { ignoreExpiration: true } : {},
+        ignoreExpirationToken ? { ignoreExpiration: true } : {},
       );
 
       if (!payload.workspaceId) {

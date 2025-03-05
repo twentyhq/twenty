@@ -13,23 +13,23 @@ registerEnumType(FileFolder, {
 });
 
 export type FileFolderConfig = {
-  isPublic: boolean;
+  ignoreExpirationToken: boolean;
 };
 
 export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.ProfilePicture]: {
-    isPublic: true,
+    ignoreExpirationToken: true,
   },
   [FileFolder.WorkspaceLogo]: {
-    isPublic: true,
+    ignoreExpirationToken: true,
   },
   [FileFolder.Attachment]: {
-    isPublic: false,
+    ignoreExpirationToken: false,
   },
   [FileFolder.PersonPicture]: {
-    isPublic: true,
+    ignoreExpirationToken: true,
   },
   [FileFolder.ServerlessFunction]: {
-    isPublic: false,
+    ignoreExpirationToken: false,
   },
 };
