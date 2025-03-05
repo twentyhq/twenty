@@ -2,7 +2,6 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { AppPath } from '@/types/AppPath';
 import { Trans, useLingui } from '@lingui/react/macro';
 
-import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import styled from '@emotion/styled';
 import {
   AnimatedPlaceholder,
@@ -38,7 +37,6 @@ export const Deactived = () => {
 
   return (
     <>
-      <PageTitle title={t`Deactived Object` + ' | Twenty'} />
       <StyledBackDrop>
         <AnimatedPlaceholderErrorContainer>
         <AnimatedPlaceholder type="errorIndex" />
