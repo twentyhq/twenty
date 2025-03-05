@@ -142,8 +142,9 @@ export const SettingsDataModelObjectAboutForm = ({
           name={'labelSingular'}
           control={control}
           defaultValue={objectMetadataItem?.labelSingular}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
+              error={errors.labelSingular?.message}
               label={t`Singular`}
               placeholder={'Listing'}
               value={value}
@@ -166,8 +167,9 @@ export const SettingsDataModelObjectAboutForm = ({
           name={'labelPlural'}
           control={control}
           defaultValue={objectMetadataItem?.labelPlural}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
+              error={errors.labelPlural?.message}
               label={t`Plural`}
               placeholder={t`Listings`}
               value={value}
@@ -234,7 +236,10 @@ export const SettingsDataModelObjectAboutForm = ({
                       name={fieldName}
                       control={control}
                       defaultValue={defaultValue}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        formState: { errors },
+                      }) => (
                         <>
                           <TextInput
                             label={label}
@@ -245,6 +250,7 @@ export const SettingsDataModelObjectAboutForm = ({
                             fullWidth
                             maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
                             onBlur={() => onNewDirtyField?.()}
+                            error={errors[fieldName]?.message}
                             RightIcon={() =>
                               tooltip && (
                                 <>
